@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "retell": {
+      "command": "npx",
+      "args": ["-y", "@retell-ai/mcp-server"],
+      "env": {
+        "RETELL_API_KEY": "${RETELL_API_KEY}"
+      }
+    }
+  }
+}
