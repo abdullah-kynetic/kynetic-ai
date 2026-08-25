@@ -21,6 +21,9 @@ service. Reselling this white-labeled to clients with proprietary changes requir
 commercial/Agency tier — see `LICENSING.md` in this folder before that happens.
 
 ## Status
-Just vendored — nothing configured, no feature flags added yet, not deployed, not
-connected to any of Kynetic's data. Next steps: pnpm install, stand up Postgres (Neon),
-scope down what's exposed via feature flags, wire the Modal → Postgres write path.
+Vercel project created (`kynetic-ai`, team `abdullahkynetic-projects`), Root Directory
+set to `platform/seldonframe/packages/crm`, tracking the `main` branch. Env vars
+(DATABASE_URL, ANTHROPIC_API_KEY via OpenRouter, etc.) still being wired in. Not yet
+connected to any of Kynetic's data. Next steps: confirm this build goes green, connect
+Postgres via Vercel Storage, finish env vars, scope down what's exposed via feature
+flags, wire the Modal → Postgres write path.
