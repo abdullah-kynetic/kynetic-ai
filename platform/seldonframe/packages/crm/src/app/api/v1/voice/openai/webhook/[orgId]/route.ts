@@ -84,7 +84,7 @@ export const runtime = "nodejs";
 // Matches the platform route's ceiling — Vercel Pro/Enterprise allows up to
 // 800s; clamped to 300 on Hobby automatically. Wall-clock budget for the
 // whole invocation INCLUDING the after() WS hold.
-export const maxDuration = 800;
+export const maxDuration = 300;
 
 // Webhooks must not be statically optimized / cached.
 export const dynamic = "force-dynamic";
