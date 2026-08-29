@@ -41,7 +41,11 @@ DO $$ BEGIN
 END $$;--> statement-breakpoint
 ALTER TABLE "organizations" ALTER COLUMN "owner_id" DROP DEFAULT;--> statement-breakpoint
 ALTER TABLE "organizations" ALTER COLUMN "owner_id" DROP NOT NULL;--> statement-breakpoint
-ALTER TABLE "organizations" ALTER COLUMN "parent_user_id" SET DATA TYPE uuid;--> statement-breakpoint
+DO $$ BEGIN
+  IF (SELECT data_type FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'organizations' AND column_name = 'parent_user_id') <> 'uuid' THEN
+    ALTER TABLE "organizations" ALTER COLUMN "parent_user_id" SET DATA TYPE uuid USING "parent_user_id"::uuid;
+  END IF;
+END $$;--> statement-breakpoint
 ALTER TABLE "org_members" ADD CONSTRAINT "org_members_org_id_organizations_id_fk" FOREIGN KEY ("org_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "org_members" ADD CONSTRAINT "org_members_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "seldon_usage" ADD CONSTRAINT "seldon_usage_org_id_organizations_id_fk" FOREIGN KEY ("org_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
