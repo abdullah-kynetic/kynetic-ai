@@ -88,6 +88,12 @@
 // top-level ';' itself, respecting quoted strings and dollar-quoted
 // bodies (so a semicolon inside a DO $$ ... $$ block, ours or a
 // migration's own, is never mistaken for a statement boundary).
+//
+// 2026-08-29 (still later) — Added readAllMigrationFiles() (merges the
+// journaled + out-of-band file sets, see its own header comment) and a
+// one-pass deferred retry for undefined_table (42P01) failures, since
+// merging by numeric prefix doesn't always match true dependency order
+// (see DEFERRABLE_CODE's comment).
 
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -333,6 +339,30 @@ export function readAllMigrationFiles() {
   });
 }
 
+// Postgres class 42P01 is "undefined_table" — the ONE fatal-classified
+// error worth deferring rather than aborting on immediately. Merging
+// journaled and out-of-band files by numeric prefix (see
+// readAllMigrationFiles) gets the order right almost everywhere, but
+// numbering isn't a true dependency graph: an out-of-band file can be
+// numbered earlier than the journaled file that creates the table it
+// alters (0012_brain_event_salience alters brain_events, which
+// 0018_short_spiral — journaled, later in number — actually creates).
+// Deferring undefined_table failures to a single end-of-run retry lets
+// every file get a chance to create its own tables first, without
+// weakening the classifier: a retry that STILL hits undefined_table is
+// treated as genuinely fatal, same as any other real bug.
+const DEFERRABLE_CODE = "42P01";
+
+async function attemptStatement(db, stmt) {
+  try {
+    await db.execute(sqlTemplate.raw(stmt));
+    return { ok: true };
+  } catch (err) {
+    const code = codeFromError(err);
+    return { ok: false, err, code, disposition: classifyMigrateError(code) };
+  }
+}
+
 async function runMigrate() {
   if (!process.env.DATABASE_URL) {
     console.log("[migrate-tolerant] DATABASE_URL not set — skipping");
@@ -352,6 +382,21 @@ async function runMigrate() {
   let appliedCount = 0;
   let skippedCount = 0;
   let alreadyDoneCount = 0;
+  const deferred = [];
+
+  const logFatal = (code, msgLine, err, { isRetry }) => {
+    console.error(`[migrate-tolerant] FATAL${isRetry ? " (after deferred retry)" : ""}: ${code} ${msgLine}`);
+    if (err?.stack) console.error(err.stack);
+    if (err?.cause) console.error(`[migrate-tolerant] cause: ${util.inspect(err.cause, { depth: 5 })}`);
+    console.error(`[migrate-tolerant] full error: ${util.inspect(err, { depth: 5 })}`);
+    console.error(
+      "[migrate-tolerant] This is NOT an idempotent re-run — a migration errored " +
+        "for a real reason (or the DB was unreachable). FAILING THE BUILD so broken " +
+        "schema never reaches production. Investigate the error above; do not just " +
+        "re-deploy. Statements before this one in this run are already recorded as " +
+        "done and will not be retried.",
+    );
+  };
 
   for (const migration of migrations) {
     const statements = migration.sql.flatMap((chunk) => splitStatements(chunk));
@@ -366,58 +411,83 @@ async function runMigrate() {
         continue;
       }
 
-      try {
-        await db.execute(sqlTemplate.raw(stmt));
+      const result = await attemptStatement(db, stmt);
+      if (result.ok) {
         await markStatementApplied(db, migration.hash, i);
         appliedCount++;
-      } catch (err) {
-        const code = codeFromError(err);
-        const disposition = classifyMigrateError(code);
-        const codeStr = code ?? "(no SQLSTATE found)";
-        const msgLine = err?.message ?? String(err);
+        continue;
+      }
 
-        if (disposition === "safe-skip" && !strict) {
-          console.warn(`[migrate-tolerant] SAFE-SKIP: ${codeStr} ${msgLine}`);
-          console.warn(
-            "[migrate-tolerant] This statement's target already exists — expected " +
-              "after an out-of-band Neon MCP apply. Marking it done so it's never " +
-              "retried, and continuing to the next statement.",
-          );
-          // The desired end state (the object exists) is already true, so
-          // this counts as done — retrying it forever would just repeat the
-          // same warning, and for a non-idempotent statement (e.g. a type
-          // cast) could break differently on a future retry.
-          await markStatementApplied(db, migration.hash, i);
-          skippedCount++;
-          continue;
-        }
+      const codeStr = result.code ?? "(no SQLSTATE found)";
+      const msgLine = result.err?.message ?? String(result.err);
 
-        if (disposition === "safe-skip" && strict) {
-          console.error(`[migrate-tolerant] FATAL (MIGRATION_STRICT=1): ${codeStr} ${msgLine}`);
-          console.error(
-            "[migrate-tolerant] Would normally SAFE-SKIP, but strict mode forbids drift. " +
-              "Reconcile the schema before deploying.",
-          );
-          process.exitCode = 1;
-          return;
-        }
+      if (result.disposition === "safe-skip" && !strict) {
+        console.warn(`[migrate-tolerant] SAFE-SKIP: ${codeStr} ${msgLine}`);
+        console.warn(
+          "[migrate-tolerant] This statement's target already exists — expected " +
+            "after an out-of-band Neon MCP apply. Marking it done so it's never " +
+            "retried, and continuing to the next statement.",
+        );
+        // The desired end state (the object exists) is already true, so
+        // this counts as done — retrying it forever would just repeat the
+        // same warning, and for a non-idempotent statement (e.g. a type
+        // cast) could break differently on a future retry.
+        await markStatementApplied(db, migration.hash, i);
+        skippedCount++;
+        continue;
+      }
 
-        // disposition === "fatal"
-        console.error(`[migrate-tolerant] FATAL: ${codeStr} ${msgLine}`);
-        if (err?.stack) console.error(err.stack);
-        if (err?.cause) console.error(`[migrate-tolerant] cause: ${util.inspect(err.cause, { depth: 5 })}`);
-        console.error(`[migrate-tolerant] full error: ${util.inspect(err, { depth: 5 })}`);
+      if (result.disposition === "safe-skip" && strict) {
+        console.error(`[migrate-tolerant] FATAL (MIGRATION_STRICT=1): ${codeStr} ${msgLine}`);
         console.error(
-          "[migrate-tolerant] This is NOT an idempotent re-run — a migration errored " +
-            "for a real reason (or the DB was unreachable). FAILING THE BUILD so broken " +
-            "schema never reaches production. Investigate the error above; do not just " +
-            "re-deploy. Statements before this one in this run are already recorded as " +
-            "done and will not be retried.",
+          "[migrate-tolerant] Would normally SAFE-SKIP, but strict mode forbids drift. " +
+            "Reconcile the schema before deploying.",
         );
         process.exitCode = 1;
         return;
       }
+
+      if (result.code === DEFERRABLE_CODE) {
+        console.warn(`[migrate-tolerant] DEFERRED: ${codeStr} ${msgLine}`);
+        console.warn(
+          "[migrate-tolerant] Target relation doesn't exist yet — a later-ordered file " +
+            "may create it. Deferring to a single end-of-run retry instead of failing " +
+            "immediately.",
+        );
+        deferred.push({ migration, i, stmt });
+        continue;
+      }
+
+      // disposition === "fatal", not deferrable
+      logFatal(codeStr, msgLine, result.err, { isRetry: false });
+      process.exitCode = 1;
+      return;
     }
+  }
+
+  for (const { migration, i, stmt } of deferred) {
+    const result = await attemptStatement(db, stmt);
+    if (result.ok) {
+      await markStatementApplied(db, migration.hash, i);
+      appliedCount++;
+      continue;
+    }
+
+    const codeStr = result.code ?? "(no SQLSTATE found)";
+    const msgLine = result.err?.message ?? String(result.err);
+
+    if (result.disposition === "safe-skip" && !strict) {
+      console.warn(`[migrate-tolerant] SAFE-SKIP (deferred retry): ${codeStr} ${msgLine}`);
+      await markStatementApplied(db, migration.hash, i);
+      skippedCount++;
+      continue;
+    }
+
+    // Still failing on retry — every other file already had its chance to
+    // create what this needed, so this is a genuine problem now.
+    logFatal(codeStr, msgLine, result.err, { isRetry: true });
+    process.exitCode = 1;
+    return;
   }
 
   console.log(
