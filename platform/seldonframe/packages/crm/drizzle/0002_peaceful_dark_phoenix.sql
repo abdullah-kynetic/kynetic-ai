@@ -31,6 +31,11 @@ CREATE TABLE "seldon_sessions" (
 --> statement-breakpoint
 DO $$ BEGIN
   IF (SELECT data_type FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'organizations' AND column_name = 'owner_id') <> 'uuid' THEN
+    -- Postgres refuses to change a column's type while its DEFAULT can't
+    -- itself be cast to the new type ("default for column ... cannot be
+    -- cast automatically to type uuid") — drop the (soon-to-be-dropped
+    -- anyway, per the statements below) '' default first.
+    ALTER TABLE "organizations" ALTER COLUMN "owner_id" DROP DEFAULT;
     ALTER TABLE "organizations" ALTER COLUMN "owner_id" SET DATA TYPE uuid USING (CASE WHEN "owner_id" = '' THEN NULL ELSE "owner_id"::uuid END);
   END IF;
 END $$;--> statement-breakpoint
