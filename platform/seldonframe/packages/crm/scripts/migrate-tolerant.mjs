@@ -115,14 +115,24 @@ function runMigrate() {
   console.log("[migrate-tolerant] running drizzle-kit migrate");
   // Capture output (not inherit) so we can classify the error. We echo it back
   // so the build log still shows drizzle's full output.
+  // CI=true / FORCE_COLOR=0 stop drizzle-kit's ora-based spinner from
+  // redrawing the line with \r + ANSI clear codes — in a non-TTY build log
+  // (Vercel) that redraw was overwriting the real Postgres error text before
+  // it ever reached the log, leaving only "(no SQLSTATE found)" behind.
   const result = spawnSync("drizzle-kit", ["migrate"], {
     encoding: "utf8",
     shell: true,
+    env: { ...process.env, CI: "true", FORCE_COLOR: "0", NO_COLOR: "1" },
   });
 
-  const combined = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
-  if (result.stdout) process.stdout.write(result.stdout);
-  if (result.stderr) process.stderr.write(result.stderr);
+  // Strip any ANSI/cursor-control codes that still slip through, so the
+  // logged output and the classifier both see plain text.
+  const strip = (s) => (s ?? "").replace(/\x1b\[[0-9;]*[A-Za-z]/g, "").replace(/\r/g, "\n");
+  const stdout = strip(result.stdout);
+  const stderr = strip(result.stderr);
+  const combined = `${stdout}\n${stderr}`;
+  if (stdout) process.stdout.write(stdout);
+  if (stderr) process.stderr.write(stderr);
 
   if (result.status === 0) {
     console.log("[migrate-tolerant] migrations applied cleanly");
