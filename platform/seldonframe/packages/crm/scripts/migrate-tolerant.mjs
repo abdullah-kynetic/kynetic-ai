@@ -249,6 +249,16 @@ export function splitStatements(sql) {
       i++;
       continue;
     }
+    if (ch === "-" && sql[i + 1] === "-") {
+      // Line comment: copy verbatim to (not including) the next newline,
+      // so a stray apostrophe in prose (e.g. "org's name") never gets
+      // mistaken for the start of a string literal.
+      const nl = sql.indexOf("\n", i);
+      const end = nl === -1 ? sql.length : nl;
+      current += sql.slice(i, end);
+      i = end;
+      continue;
+    }
     const dollarMatch = /^\$[A-Za-z_]*\$/.exec(sql.slice(i));
     if (dollarMatch) {
       dollarTag = dollarMatch[0];
