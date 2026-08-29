@@ -28,9 +28,18 @@
 -- dups before queuing this migration; the backfill is defense-in-
 -- depth in case dups sneak in between dev and deploy.
 
-BEGIN;
-
 -- ─── 1. defensive backfill ────────────────────────────────────────────────
+--
+-- Note: this used to be a temp table (_v19_contact_dedup_picks) shared
+-- across several separate statements inside an explicit BEGIN/COMMIT.
+-- That relies on all statements running in the SAME database session —
+-- true for psql, but not for this migration runner: migrate-tolerant.mjs
+-- runs against Neon's HTTP driver, where every top-level statement is an
+-- independent HTTP call with no shared session, so a temp table created
+-- in one call is already gone by the next ("relation ... does not
+-- exist", confirmed live). Folded the whole backfill into one DO block
+-- so it's a single atomic statement/session; the temp table now only
+-- ever needs to live for the duration of this one block.
 
 -- Build the dedup picks in a temp table. Group by (org_id, lower(email))
 -- and pick the winner using a deterministic ranking:
@@ -38,45 +47,40 @@ BEGIN;
 --            already been opted in by the operator)
 --   tier 2: oldest created_at (longest history of activity)
 --   tier 3: smallest id (uuid lex order, just for total ordering)
-CREATE TEMP TABLE IF NOT EXISTS _v19_contact_dedup_picks AS
-WITH dup_groups AS (
-  SELECT
-    org_id,
-    lower(email) AS lower_email,
-    array_agg(id ORDER BY portal_access_enabled DESC, created_at ASC, id ASC) AS ids_ranked
-  FROM contacts
-  WHERE email IS NOT NULL AND email <> ''
-  GROUP BY org_id, lower(email)
-  HAVING count(*) > 1
-)
-SELECT
-  org_id,
-  lower_email,
-  ids_ranked[1] AS winner_id,
-  ids_ranked[2:array_length(ids_ranked, 1)] AS loser_ids
-FROM dup_groups;
-
--- Surface the dedup plan in the migration log (psql will print it).
 DO $$
 DECLARE
   v_pairs int;
+  pick RECORD;
+  loser uuid;
 BEGIN
+  CREATE TEMP TABLE IF NOT EXISTS _v19_contact_dedup_picks AS
+  WITH dup_groups AS (
+    SELECT
+      org_id,
+      lower(email) AS lower_email,
+      array_agg(id ORDER BY portal_access_enabled DESC, created_at ASC, id ASC) AS ids_ranked
+    FROM contacts
+    WHERE email IS NOT NULL AND email <> ''
+    GROUP BY org_id, lower(email)
+    HAVING count(*) > 1
+  )
+  SELECT
+    org_id,
+    lower_email,
+    ids_ranked[1] AS winner_id,
+    ids_ranked[2:array_length(ids_ranked, 1)] AS loser_ids
+  FROM dup_groups;
+
   SELECT count(*) INTO v_pairs FROM _v19_contact_dedup_picks;
   IF v_pairs > 0 THEN
     RAISE NOTICE 'v1.19 contacts dedup: % duplicate group(s) detected, repointing FKs and deleting losers', v_pairs;
   ELSE
     RAISE NOTICE 'v1.19 contacts dedup: no duplicate groups detected, skipping repoint+delete';
   END IF;
-END$$;
 
--- Repoint FKs from loser_ids → winner_id across all 14 tables that
--- reference contacts.id. Each UPDATE is idempotent; running on a
--- dup-free DB does nothing.
-DO $$
-DECLARE
-  pick RECORD;
-  loser uuid;
-BEGIN
+  -- Repoint FKs from loser_ids → winner_id across all 14 tables that
+  -- reference contacts.id. Each UPDATE is idempotent; running on a
+  -- dup-free DB does nothing.
   FOR pick IN SELECT * FROM _v19_contact_dedup_picks LOOP
     FOREACH loser IN ARRAY pick.loser_ids LOOP
       -- order: alphabetical by table name to keep this scan-friendly.
@@ -97,23 +101,18 @@ BEGIN
       UPDATE workspace_records  SET contact_id = pick.winner_id WHERE contact_id = loser;
     END LOOP;
   END LOOP;
-END$$;
 
--- Delete the loser contact rows. After the FK repoint step, no
--- referencing rows remain pointing to losers, so cascade-delete is a
--- non-issue. (Even if a stray ref was missed, ON DELETE SET NULL /
--- CASCADE on the dependent tables makes this safe.)
-DO $$
-DECLARE
-  pick RECORD;
-BEGIN
+  -- Delete the loser contact rows. After the FK repoint step above, no
+  -- referencing rows remain pointing to losers, so cascade-delete is a
+  -- non-issue. (Even if a stray ref was missed, ON DELETE SET NULL /
+  -- CASCADE on the dependent tables makes this safe.)
   FOR pick IN SELECT * FROM _v19_contact_dedup_picks LOOP
     DELETE FROM contacts
      WHERE id = ANY(pick.loser_ids);
   END LOOP;
-END$$;
 
-DROP TABLE IF EXISTS _v19_contact_dedup_picks;
+  DROP TABLE IF EXISTS _v19_contact_dedup_picks;
+END $$;
 
 -- ─── 2. unique partial index ──────────────────────────────────────────────
 
@@ -122,5 +121,3 @@ DROP TABLE IF EXISTS _v19_contact_dedup_picks;
 CREATE UNIQUE INDEX IF NOT EXISTS contacts_org_lower_email_uniq
   ON contacts (org_id, lower(email))
   WHERE email IS NOT NULL AND email <> '';
-
-COMMIT;
