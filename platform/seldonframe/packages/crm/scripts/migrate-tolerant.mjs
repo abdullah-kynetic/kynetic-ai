@@ -64,6 +64,18 @@
 // assert-schema-drift.mjs, whose whole job is catching this). Running each
 // file independently means one safe-skipped migration no longer blocks every
 // migration after it — only a genuinely FATAL error still stops the run.
+//
+// 2026-08-29 (later, later) — Moved completion tracking from per-migration
+// to per-STATEMENT. A file left with a mix of succeeded and safe-skipped
+// statements was being retried wholesale on every future run, and several
+// statements are not naturally idempotent on a second pass — e.g. re-running
+// an epoch-extract cast against a column that's already an integer (from
+// the FIRST successful pass) fails with a different error (42883,
+// undefined_function) than the original problem ever was. Tracking
+// (migration hash, statement index) individually in our own
+// drizzle.__migrate_tolerant_statements table means a statement that
+// already succeeded — or was safe-skipped, since "the object already
+// exists" IS the desired end state — is simply never re-attempted.
 
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -151,32 +163,42 @@ function codeFromError(err) {
 }
 
 const MIGRATIONS_SCHEMA = "drizzle";
-const MIGRATIONS_TABLE = "__drizzle_migrations";
+// Own table, deliberately separate from drizzle's own "__drizzle_migrations"
+// (which we no longer read or write — see the 2026-08-29 (later, later) note
+// above). Tracks completion per STATEMENT, not per file: a migration file
+// left in a mixed state (some statements done, some skipped as
+// already-exists) must never have its already-succeeded statements
+// re-executed on the next run — several of them are not naturally
+// idempotent (e.g. re-running an epoch-extract cast on a column that's
+// already an integer fails with a completely different error).
+const STATEMENTS_TABLE = "__migrate_tolerant_statements";
 
 async function ensureTrackingTable(db) {
   await db.execute(sqlTemplate.raw(`CREATE SCHEMA IF NOT EXISTS "${MIGRATIONS_SCHEMA}"`));
   await db.execute(
     sqlTemplate.raw(
-      `CREATE TABLE IF NOT EXISTS "${MIGRATIONS_SCHEMA}"."${MIGRATIONS_TABLE}" (
-         id SERIAL PRIMARY KEY,
-         hash text NOT NULL,
-         created_at bigint
+      `CREATE TABLE IF NOT EXISTS "${MIGRATIONS_SCHEMA}"."${STATEMENTS_TABLE}" (
+         migration_hash text NOT NULL,
+         stmt_index integer NOT NULL,
+         applied_at bigint NOT NULL,
+         PRIMARY KEY (migration_hash, stmt_index)
        )`,
     ),
   );
 }
 
-async function appliedHashes(db) {
+async function appliedStatementKeys(db) {
   const rows = await db.execute(
-    sqlTemplate.raw(`SELECT hash FROM "${MIGRATIONS_SCHEMA}"."${MIGRATIONS_TABLE}"`),
+    sqlTemplate.raw(`SELECT migration_hash, stmt_index FROM "${MIGRATIONS_SCHEMA}"."${STATEMENTS_TABLE}"`),
   );
-  return new Set(rows.rows.map((r) => r.hash));
+  return new Set(rows.rows.map((r) => `${r.migration_hash}:${r.stmt_index}`));
 }
 
-async function markApplied(db, migration) {
+async function markStatementApplied(db, migrationHash, stmtIndex) {
   await db.execute(
-    sqlTemplate`insert into ${sqlTemplate.identifier(MIGRATIONS_SCHEMA)}.${sqlTemplate.identifier(MIGRATIONS_TABLE)}
-      ("hash", "created_at") values (${migration.hash}, ${migration.folderMillis})`,
+    sqlTemplate`insert into ${sqlTemplate.identifier(MIGRATIONS_SCHEMA)}.${sqlTemplate.identifier(STATEMENTS_TABLE)}
+      ("migration_hash", "stmt_index", "applied_at") values (${migrationHash}, ${stmtIndex}, ${Date.now()})
+      on conflict (migration_hash, stmt_index) do nothing`,
   );
 }
 
@@ -194,21 +216,27 @@ async function runMigrate() {
 
   const migrations = readMigrationFiles({ migrationsFolder });
   await ensureTrackingTable(db);
-  const done = await appliedHashes(db);
+  const done = await appliedStatementKeys(db);
 
   let appliedCount = 0;
   let skippedCount = 0;
+  let alreadyDoneCount = 0;
 
   for (const migration of migrations) {
-    if (done.has(migration.hash)) continue;
-
-    let fileHadSkip = false;
-
-    for (const stmt of migration.sql) {
+    for (let i = 0; i < migration.sql.length; i++) {
+      const stmt = migration.sql[i];
       if (!stmt.trim()) continue;
+
+      const key = `${migration.hash}:${i}`;
+      if (done.has(key)) {
+        alreadyDoneCount++;
+        continue;
+      }
 
       try {
         await db.execute(sqlTemplate.raw(stmt));
+        await markStatementApplied(db, migration.hash, i);
+        appliedCount++;
       } catch (err) {
         const code = codeFromError(err);
         const disposition = classifyMigrateError(code);
@@ -219,10 +247,15 @@ async function runMigrate() {
           console.warn(`[migrate-tolerant] SAFE-SKIP: ${codeStr} ${msgLine}`);
           console.warn(
             "[migrate-tolerant] This statement's target already exists — expected " +
-              "after an out-of-band Neon MCP apply. Continuing to the next statement " +
-              "in this migration (not just the next migration file).",
+              "after an out-of-band Neon MCP apply. Marking it done so it's never " +
+              "retried, and continuing to the next statement.",
           );
-          fileHadSkip = true;
+          // The desired end state (the object exists) is already true, so
+          // this counts as done — retrying it forever would just repeat the
+          // same warning, and for a non-idempotent statement (e.g. a type
+          // cast) could break differently on a future retry.
+          await markStatementApplied(db, migration.hash, i);
+          skippedCount++;
           continue;
         }
 
@@ -230,7 +263,7 @@ async function runMigrate() {
           console.error(`[migrate-tolerant] FATAL (MIGRATION_STRICT=1): ${codeStr} ${msgLine}`);
           console.error(
             "[migrate-tolerant] Would normally SAFE-SKIP, but strict mode forbids drift. " +
-              "Reconcile the journal/__drizzle_migrations before deploying.",
+              "Reconcile the schema before deploying.",
           );
           process.exitCode = 1;
           return;
@@ -243,31 +276,18 @@ async function runMigrate() {
           "[migrate-tolerant] This is NOT an idempotent re-run — a migration errored " +
             "for a real reason (or the DB was unreachable). FAILING THE BUILD so broken " +
             "schema never reaches production. Investigate the error above; do not just " +
-            "re-deploy.",
+            "re-deploy. Statements before this one in this run are already recorded as " +
+            "done and will not be retried.",
         );
         process.exitCode = 1;
         return;
       }
     }
-
-    if (fileHadSkip) {
-      // At least one statement in this file hit an already-exists conflict.
-      // Don't mark the file as fully applied — leave it eligible for retry so
-      // any statement that DID newly succeed just now isn't silently lost
-      // from view, and any that's still genuinely missing gets another shot
-      // next run. The statements that succeeded are already committed
-      // (neon-http autocommits per statement); re-running them next time is
-      // itself just another safe-skip.
-      skippedCount++;
-    } else {
-      await markApplied(db, migration);
-      appliedCount++;
-    }
   }
 
   console.log(
-    `[migrate-tolerant] done — ${appliedCount} migration(s) newly applied, ${skippedCount} safe-skipped, ` +
-      `${migrations.length - appliedCount - skippedCount} already up to date.`,
+    `[migrate-tolerant] done — ${appliedCount} statement(s) newly applied, ${skippedCount} safe-skipped, ` +
+      `${alreadyDoneCount} already applied in a previous run.`,
   );
 }
 
