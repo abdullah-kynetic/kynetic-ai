@@ -209,7 +209,11 @@ CREATE TABLE "marketplace_blocks" (
 	CONSTRAINT "marketplace_blocks_block_id_unique" UNIQUE("block_id")
 );
 --> statement-breakpoint
-ALTER TABLE "accounts" ALTER COLUMN "expires_at" SET DATA TYPE integer USING extract(epoch from "expires_at")::integer;--> statement-breakpoint
+DO $$ BEGIN
+  IF (SELECT data_type FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'accounts' AND column_name = 'expires_at') <> 'integer' THEN
+    ALTER TABLE "accounts" ALTER COLUMN "expires_at" SET DATA TYPE integer USING extract(epoch from "expires_at")::integer;
+  END IF;
+END $$;--> statement-breakpoint
 ALTER TABLE "organizations" ADD COLUMN "owner_id" text DEFAULT '' NOT NULL;--> statement-breakpoint
 ALTER TABLE "organizations" ADD COLUMN "parent_user_id" text;--> statement-breakpoint
 ALTER TABLE "organizations" ADD COLUMN "soul_id" text;--> statement-breakpoint

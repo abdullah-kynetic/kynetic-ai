@@ -29,7 +29,11 @@ CREATE TABLE "seldon_sessions" (
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-ALTER TABLE "organizations" ALTER COLUMN "owner_id" SET DATA TYPE uuid USING NULLIF("owner_id", '')::uuid;--> statement-breakpoint
+DO $$ BEGIN
+  IF (SELECT data_type FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'organizations' AND column_name = 'owner_id') <> 'uuid' THEN
+    ALTER TABLE "organizations" ALTER COLUMN "owner_id" SET DATA TYPE uuid USING NULLIF("owner_id", '')::uuid;
+  END IF;
+END $$;--> statement-breakpoint
 ALTER TABLE "organizations" ALTER COLUMN "owner_id" DROP DEFAULT;--> statement-breakpoint
 ALTER TABLE "organizations" ALTER COLUMN "owner_id" DROP NOT NULL;--> statement-breakpoint
 ALTER TABLE "organizations" ALTER COLUMN "parent_user_id" SET DATA TYPE uuid;--> statement-breakpoint
