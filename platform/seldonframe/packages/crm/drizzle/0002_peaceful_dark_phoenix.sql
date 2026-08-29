@@ -29,7 +29,7 @@ CREATE TABLE "seldon_sessions" (
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-ALTER TABLE "organizations" ALTER COLUMN "owner_id" SET DATA TYPE uuid;--> statement-breakpoint
+ALTER TABLE "organizations" ALTER COLUMN "owner_id" SET DATA TYPE uuid USING NULLIF("owner_id", '')::uuid;--> statement-breakpoint
 ALTER TABLE "organizations" ALTER COLUMN "owner_id" DROP DEFAULT;--> statement-breakpoint
 ALTER TABLE "organizations" ALTER COLUMN "owner_id" DROP NOT NULL;--> statement-breakpoint
 ALTER TABLE "organizations" ALTER COLUMN "parent_user_id" SET DATA TYPE uuid;--> statement-breakpoint
