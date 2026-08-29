@@ -35,10 +35,31 @@
 //
 // Escape hatch: MIGRATION_STRICT=1 forces even SAFE-SKIP classes to fail
 // (useful when you want a hard guarantee the journal/tracker are in sync).
+//
+// 2026-08-29 — Switched from shelling out to `drizzle-kit migrate` to calling
+// drizzle-orm's own `migrate()` directly over the neon-http driver (the same
+// driver src/db/index.ts uses at runtime). Two independent reasons:
+//   1. drizzle-kit's CLI spinner was swallowing the real Postgres/connection
+//      error on every Vercel build failure — logs only ever showed
+//      "(no SQLSTATE found)" and a wall of unreadable spinner frames, even
+//      with CI=1/FORCE_COLOR=0 set on the child process.
+//   2. drizzle-kit migrate opens a WebSocket connection to Neon; the app's
+//      own runtime queries go over plain HTTPS via neon-http. If Vercel's
+//      build sandbox allows outbound HTTPS but blocks the WebSocket
+//      upgrade, that alone would explain a silent connection failure on
+//      every build — switching to the same driver the app already uses
+//      successfully removes that as a variable entirely.
+// The SAFE_SKIP/FATAL classification and log format are unchanged; only how
+// the migration actually runs and how its error is obtained changed.
 
-import { spawnSync } from "node:child_process";
-import { resolve } from "node:path";
+import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { neon } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-http";
+import { migrate } from "drizzle-orm/neon-http/migrator";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const migrationsFolder = join(__dirname, "..", "drizzle");
 
 // Postgres SQLSTATE codes that mean "the schema already has this" — safe to
 // skip during an idempotent re-run after an out-of-band Neon MCP apply.
@@ -106,77 +127,65 @@ export function extractPgCode(output) {
   return null;
 }
 
-function runMigrate() {
+// Pull a Postgres SQLSTATE off a thrown error, wherever it landed. The neon
+// driver wraps the underlying pg error, so the code can show up as
+// err.code, err.cause.code, or only inside the stringified message/stack.
+function codeFromError(err) {
+  const direct = err?.code ?? err?.cause?.code;
+  if (typeof direct === "string" && /^[0-9A-Z]{5}$/.test(direct)) return direct;
+  return extractPgCode(`${err?.stack ?? ""}\n${err?.message ?? ""}\n${err?.cause?.message ?? ""}`);
+}
+
+async function runMigrate() {
   if (!process.env.DATABASE_URL) {
     console.log("[migrate-tolerant] DATABASE_URL not set — skipping");
-    process.exit(0);
+    return;
   }
 
-  console.log("[migrate-tolerant] running drizzle-kit migrate");
-  // Capture output (not inherit) so we can classify the error. We echo it back
-  // so the build log still shows drizzle's full output.
-  // CI=true / FORCE_COLOR=0 stop drizzle-kit's ora-based spinner from
-  // redrawing the line with \r + ANSI clear codes — in a non-TTY build log
-  // (Vercel) that redraw was overwriting the real Postgres error text before
-  // it ever reached the log, leaving only "(no SQLSTATE found)" behind.
-  const result = spawnSync("drizzle-kit", ["migrate"], {
-    encoding: "utf8",
-    shell: true,
-    env: { ...process.env, CI: "true", FORCE_COLOR: "0", NO_COLOR: "1" },
-  });
+  console.log("[migrate-tolerant] running migrations via neon-http (same driver as the app's runtime db client)");
 
-  // Strip any ANSI/cursor-control codes that still slip through, so the
-  // logged output and the classifier both see plain text.
-  const strip = (s) => (s ?? "").replace(/\x1b\[[0-9;]*[A-Za-z]/g, "").replace(/\r/g, "\n");
-  const stdout = strip(result.stdout);
-  const stderr = strip(result.stderr);
-  const combined = `${stdout}\n${stderr}`;
-  if (stdout) process.stdout.write(stdout);
-  if (stderr) process.stderr.write(stderr);
-
-  if (result.status === 0) {
+  try {
+    const sql = neon(process.env.DATABASE_URL);
+    const db = drizzle(sql);
+    await migrate(db, { migrationsFolder });
     console.log("[migrate-tolerant] migrations applied cleanly");
-    process.exit(0);
-  }
+  } catch (err) {
+    const strict = process.env.MIGRATION_STRICT === "1";
+    const code = codeFromError(err);
+    const disposition = classifyMigrateError(code);
+    const codeStr = code ?? "(no SQLSTATE found)";
+    const msgLine = err?.message ?? String(err);
 
-  const strict = process.env.MIGRATION_STRICT === "1";
-  const code = extractPgCode(combined);
-  const disposition = classifyMigrateError(code);
-  const codeStr = code ?? "(no SQLSTATE found)";
-  // Best-effort one-line message for the log.
-  const msgLine =
-    combined
-      .split(/\r?\n/)
-      .map((l) => l.trim())
-      .find((l) => /error|fail|exist|violat/i.test(l)) ?? `drizzle-kit migrate exited ${result.status}`;
+    if (disposition === "safe-skip" && !strict) {
+      console.warn(`[migrate-tolerant] SAFE-SKIP: ${codeStr} ${msgLine}`);
+      console.warn(
+        "[migrate-tolerant] This error means the schema already has the object — " +
+          "expected after an out-of-band Neon MCP apply. Continuing the build.",
+      );
+      return;
+    }
 
-  if (disposition === "safe-skip" && !strict) {
-    console.warn(`[migrate-tolerant] SAFE-SKIP: ${codeStr} ${msgLine}`);
-    console.warn(
-      "[migrate-tolerant] This error means the schema already has the object — " +
-        "expected after an out-of-band Neon MCP apply. Continuing the build.",
-    );
-    process.exit(0);
-  }
+    if (disposition === "safe-skip" && strict) {
+      console.error(`[migrate-tolerant] FATAL (MIGRATION_STRICT=1): ${codeStr} ${msgLine}`);
+      console.error(
+        "[migrate-tolerant] Would normally SAFE-SKIP, but strict mode forbids drift. " +
+          "Reconcile the journal/__drizzle_migrations before deploying.",
+      );
+      process.exitCode = 1;
+      return;
+    }
 
-  if (disposition === "safe-skip" && strict) {
-    console.error(`[migrate-tolerant] FATAL (MIGRATION_STRICT=1): ${codeStr} ${msgLine}`);
+    // disposition === "fatal"
+    console.error(`[migrate-tolerant] FATAL: ${codeStr} ${msgLine}`);
+    if (err?.stack) console.error(err.stack);
     console.error(
-      "[migrate-tolerant] Would normally SAFE-SKIP, but strict mode forbids drift. " +
-        "Reconcile the journal/__drizzle_migrations before deploying.",
+      "[migrate-tolerant] This is NOT an idempotent re-run — a migration errored " +
+        "for a real reason (or the DB was unreachable). FAILING THE BUILD so broken " +
+        "schema never reaches production. Investigate the error above; do not just " +
+        "re-deploy.",
     );
-    process.exit(result.status ?? 1);
+    process.exitCode = 1;
   }
-
-  // disposition === "fatal"
-  console.error(`[migrate-tolerant] FATAL: ${codeStr} ${msgLine}`);
-  console.error(
-    "[migrate-tolerant] This is NOT an idempotent re-run — a migration errored " +
-      "for a real reason (or the DB was unreachable). FAILING THE BUILD so broken " +
-      "schema never reaches production. Investigate the SQL above; do not just " +
-      "re-deploy.",
-  );
-  process.exit(result.status && result.status !== 0 ? result.status : 1);
 }
 
 // Only run when invoked directly, not when imported by tests (importing must
@@ -184,4 +193,4 @@ function runMigrate() {
 // runner mid-suite).
 const invokedDirectly =
   process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import.meta.url));
-if (invokedDirectly) runMigrate();
+if (invokedDirectly) await runMigrate();
