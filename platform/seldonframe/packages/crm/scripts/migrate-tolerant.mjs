@@ -76,6 +76,18 @@
 // drizzle.__migrate_tolerant_statements table means a statement that
 // already succeeded — or was safe-skipped, since "the object already
 // exists" IS the desired end state — is simply never re-attempted.
+//
+// 2026-08-29 (yet later) — Added splitStatements(): 19 of the 56 journaled
+// .sql files have two-or-more real SQL statements inside one
+// --> statement-breakpoint chunk (pre-dating that convention). drizzle's
+// own readMigrationFiles() only splits on the breakpoint marker, so those
+// chunks were being handed to neon-http as one multi-command string —
+// which it flatly rejects ("cannot insert multiple commands into a
+// prepared statement", 42601), unlike a real session connection. Rather
+// than hand-edit every file, the runner now further splits each chunk on
+// top-level ';' itself, respecting quoted strings and dollar-quoted
+// bodies (so a semicolon inside a DO $$ ... $$ block, ours or a
+// migration's own, is never mistaken for a statement boundary).
 
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -195,6 +207,69 @@ async function appliedStatementKeys(db) {
   return new Set(rows.rows.map((r) => `${r.migration_hash}:${r.stmt_index}`));
 }
 
+// Splits a chunk of SQL (already split on --> statement-breakpoint) into
+// individual top-level statements on ';', the way it needs to be for
+// neon-http: each execute() call accepts exactly ONE command ("cannot
+// insert multiple commands into a prepared statement", 42601) — unlike a
+// real session connection, it won't silently run a semicolon-separated
+// batch. 19 of the 56 journaled migration files have two or more
+// statements in one breakpoint chunk (some hand-authored, pre-dating this
+// constraint). Rather than hand-edit every file, split defensively here,
+// respecting single-quoted string literals (with '' escaping) and
+// dollar-quoted bodies ($$...$$ or $tag$...$tag$, e.g. our own DO blocks)
+// so a semicolon inside either is never treated as a statement boundary.
+export function splitStatements(sql) {
+  const statements = [];
+  let current = "";
+  let i = 0;
+  let inSingleQuote = false;
+  let dollarTag = null;
+  while (i < sql.length) {
+    const ch = sql[i];
+    if (dollarTag) {
+      if (sql.startsWith(dollarTag, i)) {
+        current += dollarTag;
+        i += dollarTag.length;
+        dollarTag = null;
+      } else {
+        current += ch;
+        i++;
+      }
+      continue;
+    }
+    if (inSingleQuote) {
+      current += ch;
+      i++;
+      if (ch === "'") inSingleQuote = false;
+      continue;
+    }
+    if (ch === "'") {
+      inSingleQuote = true;
+      current += ch;
+      i++;
+      continue;
+    }
+    const dollarMatch = /^\$[A-Za-z_]*\$/.exec(sql.slice(i));
+    if (dollarMatch) {
+      dollarTag = dollarMatch[0];
+      current += dollarTag;
+      i += dollarTag.length;
+      continue;
+    }
+    if (ch === ";") {
+      current += ch;
+      statements.push(current);
+      current = "";
+      i++;
+      continue;
+    }
+    current += ch;
+    i++;
+  }
+  if (current.trim()) statements.push(current);
+  return statements;
+}
+
 async function markStatementApplied(db, migrationHash, stmtIndex) {
   await db.execute(
     sqlTemplate`insert into ${sqlTemplate.identifier(MIGRATIONS_SCHEMA)}.${sqlTemplate.identifier(STATEMENTS_TABLE)}
@@ -224,8 +299,10 @@ async function runMigrate() {
   let alreadyDoneCount = 0;
 
   for (const migration of migrations) {
-    for (let i = 0; i < migration.sql.length; i++) {
-      const stmt = migration.sql[i];
+    const statements = migration.sql.flatMap((chunk) => splitStatements(chunk));
+
+    for (let i = 0; i < statements.length; i++) {
+      const stmt = statements[i];
       if (!stmt.trim()) continue;
 
       const key = `${migration.hash}:${i}`;
