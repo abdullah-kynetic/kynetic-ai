@@ -79,6 +79,7 @@
 
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import util from "node:util";
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import { sql as sqlTemplate } from "drizzle-orm";
@@ -272,6 +273,8 @@ async function runMigrate() {
         // disposition === "fatal"
         console.error(`[migrate-tolerant] FATAL: ${codeStr} ${msgLine}`);
         if (err?.stack) console.error(err.stack);
+        if (err?.cause) console.error(`[migrate-tolerant] cause: ${util.inspect(err.cause, { depth: 5 })}`);
+        console.error(`[migrate-tolerant] full error: ${util.inspect(err, { depth: 5 })}`);
         console.error(
           "[migrate-tolerant] This is NOT an idempotent re-run — a migration errored " +
             "for a real reason (or the DB was unreachable). FAILING THE BUILD so broken " +
