@@ -51,12 +51,26 @@
 //      successfully removes that as a variable entirely.
 // The SAFE_SKIP/FATAL classification and log format are unchanged; only how
 // the migration actually runs and how its error is obtained changed.
+//
+// 2026-08-29 (later) — Stopped calling drizzle-orm's built-in migrate() and
+// apply each journaled migration file in its own loop instead. The built-in
+// migrate() runs every pending migration's statements in ONE pass with no
+// per-file recovery: the first thrown error — including one we'd classify as
+// SAFE-SKIP — aborts the loop immediately, so every migration listed AFTER
+// it in the journal never even gets attempted, safe or not. That silently
+// starved real, new migrations behind an earlier idempotent conflict, which
+// is exactly how users.stripe_payment_method_id and 6 other critical columns
+// stayed missing even on a "successfully tolerated" build (caught live via
+// assert-schema-drift.mjs, whose whole job is catching this). Running each
+// file independently means one safe-skipped migration no longer blocks every
+// migration after it — only a genuinely FATAL error still stops the run.
 
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
-import { migrate } from "drizzle-orm/neon-http/migrator";
+import { sql as sqlTemplate } from "drizzle-orm";
+import { readMigrationFiles } from "drizzle-orm/migrator";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const migrationsFolder = join(__dirname, "..", "drizzle");
@@ -136,6 +150,36 @@ function codeFromError(err) {
   return extractPgCode(`${err?.stack ?? ""}\n${err?.message ?? ""}\n${err?.cause?.message ?? ""}`);
 }
 
+const MIGRATIONS_SCHEMA = "drizzle";
+const MIGRATIONS_TABLE = "__drizzle_migrations";
+
+async function ensureTrackingTable(db) {
+  await db.execute(sqlTemplate.raw(`CREATE SCHEMA IF NOT EXISTS "${MIGRATIONS_SCHEMA}"`));
+  await db.execute(
+    sqlTemplate.raw(
+      `CREATE TABLE IF NOT EXISTS "${MIGRATIONS_SCHEMA}"."${MIGRATIONS_TABLE}" (
+         id SERIAL PRIMARY KEY,
+         hash text NOT NULL,
+         created_at bigint
+       )`,
+    ),
+  );
+}
+
+async function appliedHashes(db) {
+  const rows = await db.execute(
+    sqlTemplate.raw(`SELECT hash FROM "${MIGRATIONS_SCHEMA}"."${MIGRATIONS_TABLE}"`),
+  );
+  return new Set(rows.rows.map((r) => r.hash));
+}
+
+async function markApplied(db, migration) {
+  await db.execute(
+    sqlTemplate`insert into ${sqlTemplate.identifier(MIGRATIONS_SCHEMA)}.${sqlTemplate.identifier(MIGRATIONS_TABLE)}
+      ("hash", "created_at") values (${migration.hash}, ${migration.folderMillis})`,
+  );
+}
+
 async function runMigrate() {
   if (!process.env.DATABASE_URL) {
     console.log("[migrate-tolerant] DATABASE_URL not set — skipping");
@@ -144,48 +188,71 @@ async function runMigrate() {
 
   console.log("[migrate-tolerant] running migrations via neon-http (same driver as the app's runtime db client)");
 
-  try {
-    const sql = neon(process.env.DATABASE_URL);
-    const db = drizzle(sql);
-    await migrate(db, { migrationsFolder });
-    console.log("[migrate-tolerant] migrations applied cleanly");
-  } catch (err) {
-    const strict = process.env.MIGRATION_STRICT === "1";
-    const code = codeFromError(err);
-    const disposition = classifyMigrateError(code);
-    const codeStr = code ?? "(no SQLSTATE found)";
-    const msgLine = err?.message ?? String(err);
+  const strict = process.env.MIGRATION_STRICT === "1";
+  const sqlClient = neon(process.env.DATABASE_URL);
+  const db = drizzle(sqlClient);
 
-    if (disposition === "safe-skip" && !strict) {
-      console.warn(`[migrate-tolerant] SAFE-SKIP: ${codeStr} ${msgLine}`);
-      console.warn(
-        "[migrate-tolerant] This error means the schema already has the object — " +
-          "expected after an out-of-band Neon MCP apply. Continuing the build.",
-      );
-      return;
-    }
+  const migrations = readMigrationFiles({ migrationsFolder });
+  await ensureTrackingTable(db);
+  const done = await appliedHashes(db);
 
-    if (disposition === "safe-skip" && strict) {
-      console.error(`[migrate-tolerant] FATAL (MIGRATION_STRICT=1): ${codeStr} ${msgLine}`);
+  let appliedCount = 0;
+  let skippedCount = 0;
+
+  for (const migration of migrations) {
+    if (done.has(migration.hash)) continue;
+
+    try {
+      for (const stmt of migration.sql) {
+        if (stmt.trim()) await db.execute(sqlTemplate.raw(stmt));
+      }
+      await markApplied(db, migration);
+      appliedCount++;
+    } catch (err) {
+      const code = codeFromError(err);
+      const disposition = classifyMigrateError(code);
+      const codeStr = code ?? "(no SQLSTATE found)";
+      const msgLine = err?.message ?? String(err);
+
+      if (disposition === "safe-skip" && !strict) {
+        console.warn(`[migrate-tolerant] SAFE-SKIP: ${codeStr} ${msgLine}`);
+        console.warn(
+          "[migrate-tolerant] This error means the schema already has the object — " +
+            "expected after an out-of-band Neon MCP apply. Not marking it applied " +
+            "(so it's retried next run); continuing to the next migration.",
+        );
+        skippedCount++;
+        continue;
+      }
+
+      if (disposition === "safe-skip" && strict) {
+        console.error(`[migrate-tolerant] FATAL (MIGRATION_STRICT=1): ${codeStr} ${msgLine}`);
+        console.error(
+          "[migrate-tolerant] Would normally SAFE-SKIP, but strict mode forbids drift. " +
+            "Reconcile the journal/__drizzle_migrations before deploying.",
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      // disposition === "fatal"
+      console.error(`[migrate-tolerant] FATAL: ${codeStr} ${msgLine}`);
+      if (err?.stack) console.error(err.stack);
       console.error(
-        "[migrate-tolerant] Would normally SAFE-SKIP, but strict mode forbids drift. " +
-          "Reconcile the journal/__drizzle_migrations before deploying.",
+        "[migrate-tolerant] This is NOT an idempotent re-run — a migration errored " +
+          "for a real reason (or the DB was unreachable). FAILING THE BUILD so broken " +
+          "schema never reaches production. Investigate the error above; do not just " +
+          "re-deploy.",
       );
       process.exitCode = 1;
       return;
     }
-
-    // disposition === "fatal"
-    console.error(`[migrate-tolerant] FATAL: ${codeStr} ${msgLine}`);
-    if (err?.stack) console.error(err.stack);
-    console.error(
-      "[migrate-tolerant] This is NOT an idempotent re-run — a migration errored " +
-        "for a real reason (or the DB was unreachable). FAILING THE BUILD so broken " +
-        "schema never reaches production. Investigate the error above; do not just " +
-        "re-deploy.",
-    );
-    process.exitCode = 1;
   }
+
+  console.log(
+    `[migrate-tolerant] done — ${appliedCount} migration(s) newly applied, ${skippedCount} safe-skipped, ` +
+      `${migrations.length - appliedCount - skippedCount} already up to date.`,
+  );
 }
 
 // Only run when invoked directly, not when imported by tests (importing must
