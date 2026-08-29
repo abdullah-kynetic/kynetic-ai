@@ -91,11 +91,14 @@
 
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import util from "node:util";
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import { sql as sqlTemplate } from "drizzle-orm";
 import { readMigrationFiles } from "drizzle-orm/migrator";
+import { OUT_OF_BAND_BASELINE } from "./check-migrations-journaled.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const migrationsFolder = join(__dirname, "..", "drizzle");
@@ -288,6 +291,48 @@ async function markStatementApplied(db, migrationHash, stmtIndex) {
   );
 }
 
+// The 44-ish out-of-band files were designed to be applied through a
+// separate, manual process (scripts/apply-prod-migrations.mjs, run against
+// production once back in 2026-04) and were deliberately left out of
+// meta/_journal.json so drizzle-kit would never try to re-run them. That
+// split made sense when this ran through drizzle-kit's journal-only view,
+// but this runner doesn't consult the journal for anything except finding
+// files anymore — it tracks real completion itself, per statement. Splitting
+// migrations across "journaled" and "out-of-band" is now just an artificial
+// gap: a later journaled migration can depend on a table only an
+// out-of-band file creates (workflow_runs, from the out-of-band
+// 0019_workflow_tables, needed by the journaled 0026's ALTER). Reading both
+// sets and merging them by numeric prefix — the order a human would read the
+// directory in — closes that gap without touching drizzle's own journal or
+// snapshot metadata at all.
+export function readAllMigrationFiles() {
+  // readMigrationFiles() returns entries in the same order as
+  // journal.entries (see drizzle-orm/migrator.js: it iterates
+  // journal.entries directly, one push per entry) but doesn't include the
+  // tag on its own output — re-read the journal ourselves to zip tags back
+  // on by position rather than assuming it elsewhere.
+  const journal = JSON.parse(readFileSync(join(migrationsFolder, "meta", "_journal.json"), "utf8"));
+  const journaled = readMigrationFiles({ migrationsFolder }).map((m, i) => ({
+    ...m,
+    tag: journal.entries[i].tag,
+  }));
+
+  const outOfBand = [...OUT_OF_BAND_BASELINE].map((tag) => {
+    const query = readFileSync(join(migrationsFolder, `${tag}.sql`), "utf8");
+    return {
+      tag,
+      sql: query.split("--> statement-breakpoint"),
+      hash: createHash("sha256").update(query).digest("hex"),
+    };
+  });
+
+  const numericPrefix = (tag) => parseInt(tag.slice(0, 4), 10) || 0;
+  return [...journaled, ...outOfBand].sort((a, b) => {
+    const byNumber = numericPrefix(a.tag) - numericPrefix(b.tag);
+    return byNumber !== 0 ? byNumber : a.tag.localeCompare(b.tag);
+  });
+}
+
 async function runMigrate() {
   if (!process.env.DATABASE_URL) {
     console.log("[migrate-tolerant] DATABASE_URL not set — skipping");
@@ -300,7 +345,7 @@ async function runMigrate() {
   const sqlClient = neon(process.env.DATABASE_URL);
   const db = drizzle(sqlClient);
 
-  const migrations = readMigrationFiles({ migrationsFolder });
+  const migrations = readAllMigrationFiles();
   await ensureTrackingTable(db);
   const done = await appliedStatementKeys(db);
 
