@@ -45,10 +45,18 @@ END $$;
 -- Use a NOT VALID style add so existing rows (where both might be
 -- NULL after a partial migration) don't block the deployment, then
 -- backfill + validate.
-ALTER TABLE "partner_agencies"
-  ADD CONSTRAINT IF NOT EXISTS "partner_agencies_at_least_one_owner_check"
-  CHECK ("owner_user_id" IS NOT NULL OR "owner_workspace_id" IS NOT NULL)
-  NOT VALID;
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'partner_agencies_at_least_one_owner_check'
+      AND conrelid = '"partner_agencies"'::regclass
+  ) THEN
+    ALTER TABLE "partner_agencies"
+      ADD CONSTRAINT "partner_agencies_at_least_one_owner_check"
+      CHECK ("owner_user_id" IS NOT NULL OR "owner_workspace_id" IS NOT NULL)
+      NOT VALID;
+  END IF;
+END $$;
 
 -- Lookup index for "find all agencies owned by this workspace."
 CREATE INDEX IF NOT EXISTS "partner_agencies_owner_workspace_idx"
