@@ -202,50 +202,66 @@ async function runMigrate() {
   for (const migration of migrations) {
     if (done.has(migration.hash)) continue;
 
-    try {
-      for (const stmt of migration.sql) {
-        if (stmt.trim()) await db.execute(sqlTemplate.raw(stmt));
-      }
-      await markApplied(db, migration);
-      appliedCount++;
-    } catch (err) {
-      const code = codeFromError(err);
-      const disposition = classifyMigrateError(code);
-      const codeStr = code ?? "(no SQLSTATE found)";
-      const msgLine = err?.message ?? String(err);
+    let fileHadSkip = false;
 
-      if (disposition === "safe-skip" && !strict) {
-        console.warn(`[migrate-tolerant] SAFE-SKIP: ${codeStr} ${msgLine}`);
-        console.warn(
-          "[migrate-tolerant] This error means the schema already has the object — " +
-            "expected after an out-of-band Neon MCP apply. Not marking it applied " +
-            "(so it's retried next run); continuing to the next migration.",
-        );
-        skippedCount++;
-        continue;
-      }
+    for (const stmt of migration.sql) {
+      if (!stmt.trim()) continue;
 
-      if (disposition === "safe-skip" && strict) {
-        console.error(`[migrate-tolerant] FATAL (MIGRATION_STRICT=1): ${codeStr} ${msgLine}`);
+      try {
+        await db.execute(sqlTemplate.raw(stmt));
+      } catch (err) {
+        const code = codeFromError(err);
+        const disposition = classifyMigrateError(code);
+        const codeStr = code ?? "(no SQLSTATE found)";
+        const msgLine = err?.message ?? String(err);
+
+        if (disposition === "safe-skip" && !strict) {
+          console.warn(`[migrate-tolerant] SAFE-SKIP: ${codeStr} ${msgLine}`);
+          console.warn(
+            "[migrate-tolerant] This statement's target already exists — expected " +
+              "after an out-of-band Neon MCP apply. Continuing to the next statement " +
+              "in this migration (not just the next migration file).",
+          );
+          fileHadSkip = true;
+          continue;
+        }
+
+        if (disposition === "safe-skip" && strict) {
+          console.error(`[migrate-tolerant] FATAL (MIGRATION_STRICT=1): ${codeStr} ${msgLine}`);
+          console.error(
+            "[migrate-tolerant] Would normally SAFE-SKIP, but strict mode forbids drift. " +
+              "Reconcile the journal/__drizzle_migrations before deploying.",
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        // disposition === "fatal"
+        console.error(`[migrate-tolerant] FATAL: ${codeStr} ${msgLine}`);
+        if (err?.stack) console.error(err.stack);
         console.error(
-          "[migrate-tolerant] Would normally SAFE-SKIP, but strict mode forbids drift. " +
-            "Reconcile the journal/__drizzle_migrations before deploying.",
+          "[migrate-tolerant] This is NOT an idempotent re-run — a migration errored " +
+            "for a real reason (or the DB was unreachable). FAILING THE BUILD so broken " +
+            "schema never reaches production. Investigate the error above; do not just " +
+            "re-deploy.",
         );
         process.exitCode = 1;
         return;
       }
+    }
 
-      // disposition === "fatal"
-      console.error(`[migrate-tolerant] FATAL: ${codeStr} ${msgLine}`);
-      if (err?.stack) console.error(err.stack);
-      console.error(
-        "[migrate-tolerant] This is NOT an idempotent re-run — a migration errored " +
-          "for a real reason (or the DB was unreachable). FAILING THE BUILD so broken " +
-          "schema never reaches production. Investigate the error above; do not just " +
-          "re-deploy.",
-      );
-      process.exitCode = 1;
-      return;
+    if (fileHadSkip) {
+      // At least one statement in this file hit an already-exists conflict.
+      // Don't mark the file as fully applied — leave it eligible for retry so
+      // any statement that DID newly succeed just now isn't silently lost
+      // from view, and any that's still genuinely missing gets another shot
+      // next run. The statements that succeeded are already committed
+      // (neon-http autocommits per statement); re-running them next time is
+      // itself just another safe-skip.
+      skippedCount++;
+    } else {
+      await markApplied(db, migration);
+      appliedCount++;
     }
   }
 
