@@ -31,7 +31,7 @@ CREATE TABLE "seldon_sessions" (
 --> statement-breakpoint
 DO $$ BEGIN
   IF (SELECT data_type FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'organizations' AND column_name = 'owner_id') <> 'uuid' THEN
-    ALTER TABLE "organizations" ALTER COLUMN "owner_id" SET DATA TYPE uuid USING NULLIF("owner_id", '')::uuid;
+    ALTER TABLE "organizations" ALTER COLUMN "owner_id" SET DATA TYPE uuid USING (CASE WHEN "owner_id" = '' THEN NULL ELSE "owner_id"::uuid END);
   END IF;
 END $$;--> statement-breakpoint
 ALTER TABLE "organizations" ALTER COLUMN "owner_id" DROP DEFAULT;--> statement-breakpoint
