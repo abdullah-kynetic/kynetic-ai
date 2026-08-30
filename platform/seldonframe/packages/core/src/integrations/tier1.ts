@@ -1,6 +1,7 @@
 import { claudeAdapter } from "./ai/claude";
 import { googleCalendarAdapter } from "./calendar/google";
 import { microsoftGraphAdapter } from "./calendar/microsoft";
+import { n8nGmailAdapter } from "./email/n8n-gmail";
 import { postmarkAdapter } from "./email/postmark";
 import { resendAdapter } from "./email/resend";
 import { sendGridAdapter } from "./email/sendgrid";
@@ -9,6 +10,7 @@ import type { AdapterDescriptor } from "./types";
 
 export const tier1Adapters: AdapterDescriptor[] = [
   { id: "stripe", tier: "tier1", adapter: stripeAdapter },
+  { id: "n8n-gmail", tier: "tier1", adapter: n8nGmailAdapter },
   { id: "resend", tier: "tier1", adapter: resendAdapter },
   { id: "sendgrid", tier: "tier1", adapter: sendGridAdapter },
   { id: "postmark", tier: "tier1", adapter: postmarkAdapter },
