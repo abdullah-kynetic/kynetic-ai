@@ -8,7 +8,7 @@ export default function Page() {
       category="Billing & plans"
       categoryHref="/docs"
       title="Invoices & receipts"
-      lede="Your SeldonFrame subscription is billed through Stripe. Receipts auto-email; invoices are downloadable from the dashboard."
+      lede="Your Kynetic OS subscription is billed through Stripe. Receipts auto-email; invoices are downloadable from the dashboard."
       githubPath="app/docs/billing/invoices/page.tsx"
     >
       <h2>Where to find them</h2>
@@ -28,7 +28,7 @@ export default function Page() {
 
       <h2>Tax / VAT</h2>
       <p>
-        SeldonFrame collects VAT for EU/UK customers (we have a Stripe
+        Kynetic OS collects VAT for EU/UK customers (we have a Stripe
         Tax integration). Add your VAT ID in{" "}
         <a href="/settings/billing">Settings → Billing → Tax info</a>{" "}
         to have it appear on invoices and (where applicable) reverse-

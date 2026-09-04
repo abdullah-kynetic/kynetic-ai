@@ -4,7 +4,7 @@ import { ArticleShell, Callout, CodeBlock, InAppLink, Step } from "../../article
 
 export const metadata = {
   title: "Connect Claude Code · Docs",
-  description: "Plug Claude Code into SeldonFrame via MCP and operate branded client workspaces from the terminal.",
+  description: "Plug Claude Code into Kynetic OS via MCP and operate branded client workspaces from the terminal.",
 };
 
 export default function Page() {
@@ -13,7 +13,7 @@ export default function Page() {
       category="Getting started"
       categoryHref="/docs"
       title="Connect Claude Code"
-      lede="SeldonFrame ships with an MCP server. Paste your token into Claude Code and build, test, publish, and operate client workspaces from natural language."
+      lede="Kynetic OS ships with an MCP server. Paste your token into Claude Code and build, test, publish, and operate client workspaces from natural language."
       githubPath="app/docs/getting-started/connect-claude-code/page.tsx"
     >
       <h2>What you'll get</h2>
@@ -34,11 +34,11 @@ export default function Page() {
         scopes Claude Code to your workspace.)
       </Step>
 
-      <Step n={2} title="Install the SeldonFrame MCP server">
+      <Step n={2} title="Install the Kynetic OS MCP server">
         It's an npm package. In any Claude Code project:
         <CodeBlock language="bash">{`claude mcp add seldonframe \\
   --transport http \\
-  --url https://app.seldonframe.com/api/mcp \\
+  --url https://app.kyneticai.com/api/mcp \\
   --header "Authorization: Bearer <your-token>"`}</CodeBlock>
         Or use the local stdio server (no token, scoped to a single
         workspace via env var):
@@ -54,7 +54,7 @@ claude mcp add seldonframe --command "npx @seldonframe/mcp"`}</CodeBlock>
       </Step>
 
       <Callout variant="tip" title="One tool to rule them all">
-        SeldonFrame's MCP exposes 140+ tools, but Claude Code only needs
+        Kynetic OS's MCP exposes 140+ tools, but Claude Code only needs
         two to get oriented: <code>get_workspace_state</code> (snapshot
         of your workspace) and <code>build_website_chatbot</code>{" "}
         (bundled "create + configure + run evals + publish" flow). We
@@ -74,7 +74,7 @@ claude mcp add seldonframe --command "npx @seldonframe/mcp"`}</CodeBlock>
       </ul>
 
       <Callout variant="info" title="AI is included">
-        On hosted SeldonFrame, your agent's brain runs on managed AI —
+        On hosted Kynetic OS, your agent's brain runs on managed AI —
         there's no LLM key to paste and no token bill to watch. (If you{" "}
         <a href="/docs/integrations/llm">self-host</a> instead, that's the
         one path where you bring your own Anthropic or OpenAI key.)

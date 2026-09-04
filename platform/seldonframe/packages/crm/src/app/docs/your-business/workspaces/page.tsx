@@ -13,7 +13,7 @@ export default function Page() {
     >
       <h2>Why workspaces</h2>
       <p>
-        SeldonFrame is multi-tenant by design. One person can run several
+        Kynetic OS is multi-tenant by design. One person can run several
         independent businesses (a coaching practice + a Shopify store + a
         side agency) without their data, agents, or branding bleeding
         between them. Agencies use the same model to host clients — each
@@ -36,7 +36,7 @@ export default function Page() {
       </p>
 
       <Callout variant="tip" title="AI is included on every workspace">
-        On hosted SeldonFrame, managed AI comes with each workspace —
+        On hosted Kynetic OS, managed AI comes with each workspace —
         there's no per-workspace LLM key to set up or bill to track.
         (Bringing your own Anthropic / OpenAI key is only for the{" "}
         <a href="/docs/integrations/llm">self-host</a> path.)

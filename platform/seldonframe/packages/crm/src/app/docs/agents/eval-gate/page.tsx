@@ -15,7 +15,7 @@ export default function Page() {
       <p>
         A chatbot that hallucinates a price, makes up a policy, or says
         it booked an appointment when it didn't — those are real-money
-        bugs. SeldonFrame ships every agent through an automated eval
+        bugs. Kynetic OS ships every agent through an automated eval
         suite before it's allowed to talk to customers. No exceptions.
       </p>
 

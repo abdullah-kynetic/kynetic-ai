@@ -13,7 +13,7 @@ export default function Page() {
     >
       <h2>What runs by default</h2>
       <p>
-        When a booking is created, SeldonFrame schedules a durable
+        When a booking is created, Kynetic OS schedules a durable
         workflow that sleeps until 24 hours before the appointment, then
         sends a reminder. SMS first if Twilio is connected; otherwise
         email via Resend.
@@ -28,7 +28,7 @@ export default function Page() {
 
       <Callout variant="info" title="Durable, not cron-fragile">
         The reminder is a Vercel Workflow with <code>sleep("24h")</code>{" "}
-        scheduled exactly to the booking. If you redeploy SeldonFrame,
+        scheduled exactly to the booking. If you redeploy Kynetic OS,
         the workflow keeps its place. If a booking is rescheduled, the
         old workflow is cancelled and a new one is scheduled to the new
         time — no orphan reminders, no double sends.

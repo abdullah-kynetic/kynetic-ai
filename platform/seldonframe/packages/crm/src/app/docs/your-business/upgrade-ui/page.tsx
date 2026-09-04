@@ -9,7 +9,7 @@ import { ArticleShell, Callout, CodeBlock, InAppLink, Step } from "../../article
 export const metadata = {
   title: "Upgrade your UI · Docs",
   description:
-    "Your SeldonFrame site already ships polished by default. When you want it to look like a $10K design — apply a motion preset, bring a DESIGN.md, import a Claude Design handoff, or fork the block library.",
+    "Your Kynetic OS site already ships polished by default. When you want it to look like a $10K design — apply a motion preset, bring a DESIGN.md, import a Claude Design handoff, or fork the block library.",
 };
 
 export default function Page() {
@@ -18,7 +18,7 @@ export default function Page() {
       category="Your business"
       categoryHref="/docs"
       title="Upgrade your UI"
-      lede="Every SeldonFrame workspace ships polished by default — scroll-reveal on sections, stagger on grids, hover-lift on CTAs. When you want more, four levers stack on top, each composable through Claude Code in one prompt."
+      lede="Every Kynetic OS workspace ships polished by default — scroll-reveal on sections, stagger on grids, hover-lift on CTAs. When you want more, four levers stack on top, each composable through Claude Code in one prompt."
       githubPath="app/docs/your-business/upgrade-ui/page.tsx"
     >
       <h2>Start with the smart defaults</h2>
@@ -36,7 +36,7 @@ export default function Page() {
       </p>
 
       <Callout variant="tip" title="Why we don't ask">
-        SeldonFrame doesn't pop a wizard asking you to "configure your
+        Kynetic OS doesn't pop a wizard asking you to "configure your
         animations" after workspace creation. The defaults are the
         defaults. You only need this page if you want to push beyond.
       </Callout>
@@ -149,7 +149,7 @@ export default function Page() {
 
       <h3>Lever 4 — Fork the block library directly</h3>
       <p>
-        SeldonFrame is AGPL-3.0. For pixel-perfect customization beyond
+        Kynetic OS is AGPL-3.0. For pixel-perfect customization beyond
         what the levers above support:
       </p>
       <Step n={1} title="Fork the repo">
@@ -193,7 +193,7 @@ pnpm dev`}</CodeBlock>
       <h2>The thin-harness, fat-skill principle</h2>
       <p>
         The four levers above stack because of one architectural choice:
-        SeldonFrame doesn't hardcode "specific animations for specific
+        Kynetic OS doesn't hardcode "specific animations for specific
         blocks." That would be brittle — every new vertical needs a new
         preset, and the animations don't get better when models do.
       </p>

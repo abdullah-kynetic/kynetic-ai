@@ -14,7 +14,7 @@ export default function Page() {
       <h2>What you get</h2>
       <p>
         Each booking page is a public URL where customers pick a time
-        from your real calendar. SeldonFrame syncs with Google Calendar
+        from your real calendar. Kynetic OS syncs with Google Calendar
         (Outlook coming) so a slot booked here disappears from your
         availability everywhere.
       </p>
@@ -37,7 +37,7 @@ export default function Page() {
       </Step>
       <Step n={4} title="Share the link">
         Each booking type has a public URL like{" "}
-        <code>acme-hvac.app.seldonframe.com/book/diagnostic</code>. Share
+        <code>acme-hvac.app.kyneticai.com/book/diagnostic</code>. Share
         it directly, embed it on a page, or hand it to your chatbot.
       </Step>
 

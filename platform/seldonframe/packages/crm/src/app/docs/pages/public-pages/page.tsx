@@ -8,13 +8,13 @@ export default function Page() {
       category="Pages & website"
       categoryHref="/docs"
       title="Public pages"
-      lede="Every workspace gets a public site at your-name.app.seldonframe.com. Add landing pages, services pages, blog posts — all themed from your brand."
+      lede="Every workspace gets a public site at your-name.app.kyneticai.com. Add landing pages, services pages, blog posts — all themed from your brand."
       githubPath="app/docs/pages/public-pages/page.tsx"
     >
       <h2>Your subdomain</h2>
       <p>
         When you create a workspace called "Acme HVAC," you immediately
-        get <code>acme-hvac.app.seldonframe.com</code>. It's live the
+        get <code>acme-hvac.app.kyneticai.com</code>. It's live the
         moment you sign up — with a starter homepage that pulls your
         business name, brand color, and logo.
       </p>
@@ -34,7 +34,7 @@ export default function Page() {
       </Step>
       <Step n={4} title="Set the slug and publish">
         <code>/services/furnace-repair</code> → live at{" "}
-        <code>acme-hvac.app.seldonframe.com/services/furnace-repair</code>.
+        <code>acme-hvac.app.kyneticai.com/services/furnace-repair</code>.
       </Step>
 
       <h2>Through Claude Code</h2>
@@ -54,7 +54,7 @@ export default function Page() {
       <h2>SEO basics</h2>
       <p>
         Each page has fields for title, meta description, and OG image.
-        SeldonFrame sets sensible defaults from your block content but
+        Kynetic OS sets sensible defaults from your block content but
         you should override them for any page you actually want to rank.
       </p>
 

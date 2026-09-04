@@ -25,14 +25,14 @@ export default function Page() {
 
       <h2>How they get in</h2>
       <p>
-        Passwordless. They enter their email; SeldonFrame emails them a
+        Passwordless. They enter their email; Kynetic OS emails them a
         magic link; they click and they're in. No accounts to manage on
         your side — the contact record in your CRM is their account.
       </p>
 
       <Callout variant="info" title="Brand-themed, on your domain">
         The portal lives at <code>portal.yourbiz.com</code> (or
-        <code>your-name.app.seldonframe.com/portal</code>). Same brand
+        <code>your-name.app.kyneticai.com/portal</code>). Same brand
         colors, logo, and theme as your public site.
       </Callout>
 

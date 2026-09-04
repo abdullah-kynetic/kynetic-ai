@@ -39,7 +39,7 @@ export default function Page() {
         <li>Booking created / rescheduled / cancelled / completed</li>
         <li>Form submitted</li>
         <li>Time-based (every Monday 8am, 30 days after deal won)</li>
-        <li>Custom webhook (a third-party system POSTs to a SeldonFrame webhook URL)</li>
+        <li>Custom webhook (a third-party system POSTs to a Kynetic OS webhook URL)</li>
       </ul>
 
       <h2>Common actions</h2>

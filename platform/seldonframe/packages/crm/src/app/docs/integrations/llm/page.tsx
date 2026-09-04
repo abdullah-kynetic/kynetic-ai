@@ -8,7 +8,7 @@ export default function Page() {
       category="Integrations"
       categoryHref="/docs"
       title="Anthropic / OpenAI"
-      lede="On hosted SeldonFrame, AI is managed and included on every plan — there's no key to paste. You only supply your own Anthropic or OpenAI key when you self-host."
+      lede="On hosted Kynetic OS, AI is managed and included on every plan — there's no key to paste. You only supply your own Anthropic or OpenAI key when you self-host."
       githubPath="app/docs/integrations/llm/page.tsx"
     >
       <h2>Hosted: AI is managed for you</h2>
@@ -25,15 +25,15 @@ export default function Page() {
       </ul>
 
       <Callout variant="tip" title="Nothing to configure">
-        On hosted SeldonFrame there's no "LLM keys" screen to fill in.
+        On hosted Kynetic OS there's no "LLM keys" screen to fill in.
         Build a chatbot and it just works. AI is part of the plan.
       </Callout>
 
       <h2>Self-host: bring your own key</h2>
       <p>
-        Self-hosting SeldonFrame is free under AGPL-3.0, and it's the one
+        Self-hosting Kynetic OS is free under AGPL-3.0, and it's the one
         path where you supply your own model key. Your agents call your
-        provider directly with your key, encrypted at rest — SeldonFrame
+        provider directly with your key, encrypted at rest — Kynetic OS
         never holds the LLM bill.
       </p>
 
@@ -51,7 +51,7 @@ export default function Page() {
       <Step n={2} title="Add it to your deployment">
         In your self-hosted instance, open{" "}
         <InAppLink href="/settings/integrations/llm">Settings → LLM keys</InAppLink>{" "}
-        → "Add Anthropic key" (or OpenAI). Paste the key. SeldonFrame
+        → "Add Anthropic key" (or OpenAI). Paste the key. Kynetic OS
         encrypts it with your deployment's encryption key and stores it.
       </Step>
       <Step n={3} title="Verify">
@@ -63,7 +63,7 @@ export default function Page() {
         When you bring your own key, Anthropic and OpenAI both require a
         positive balance to make calls. If your agent suddenly stops
         responding, the most common cause is a depleted balance.
-        SeldonFrame surfaces the actual provider error ("credit balance
+        Kynetic OS surfaces the actual provider error ("credit balance
         too low") so you know what to fix.
       </Callout>
 

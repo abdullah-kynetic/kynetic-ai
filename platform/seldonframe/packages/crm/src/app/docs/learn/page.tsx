@@ -8,7 +8,7 @@ export default function Page() {
       category="Docs"
       categoryHref="/docs"
       title="Learn"
-      lede="Tutorials, video walkthroughs, and end-to-end guides for building real things on SeldonFrame."
+      lede="Tutorials, video walkthroughs, and end-to-end guides for building real things on Kynetic OS."
       githubPath="app/docs/learn/page.tsx"
     >
       <h2>Featured walkthroughs</h2>
@@ -21,7 +21,7 @@ export default function Page() {
         <li>
           <strong><InAppLink href="/docs/getting-started/demo">The 3-minute demo</InAppLink></strong>{" "}
           — sign up to live chatbot to first booking. Start here if
-          you've never used SeldonFrame before.
+          you've never used Kynetic OS before.
         </li>
         <li>
           <strong>HVAC end-to-end (15 min)</strong> — from sign-up to
@@ -55,9 +55,9 @@ export default function Page() {
       </ComingSoon>
 
       <h2>Concept guides</h2>
-      <p>For a deeper understanding of how SeldonFrame works:</p>
+      <p>For a deeper understanding of how Kynetic OS works:</p>
       <ul>
-        <li><InAppLink href="/docs/getting-started/what-is-seldonframe">What is SeldonFrame</InAppLink></li>
+        <li><InAppLink href="/docs/getting-started/what-is-seldonframe">What is Kynetic OS</InAppLink></li>
         <li><InAppLink href="/docs/agents/eval-gate">The eval gate (and why it matters)</InAppLink></li>
         <li><InAppLink href="/docs/automation/reminders">Durable workflows in plain English</InAppLink></li>
       </ul>
@@ -90,7 +90,7 @@ export default function Page() {
           >
             Discord
           </a>{" "}
-          — the SeldonFrame community. Fast, helpful, no enterprise sales reps.
+          — the Kynetic OS community. Fast, helpful, no enterprise sales reps.
         </li>
         <li>
           <a

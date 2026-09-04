@@ -28,7 +28,7 @@ export default function Page() {
       </p>
 
       <Callout variant="tip" title="Dedupe on import">
-        SeldonFrame dedupes on email by default (case-insensitive). A
+        Kynetic OS dedupes on email by default (case-insensitive). A
         match merges the new row's data into the existing contact rather
         than creating a duplicate. Toggle this off in the import dialog
         if you have a use case for duplicates.

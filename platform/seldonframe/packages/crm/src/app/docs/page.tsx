@@ -38,7 +38,7 @@ export default function DocsHome() {
       {/* HERO */}
       <header className="space-y-4">
         <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-foreground">
-          SeldonFrame Docs
+          Kynetic OS Docs
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl">
           Everything an agency needs to sell and operate AI front offices:
@@ -85,7 +85,7 @@ export default function DocsHome() {
         <div className="rounded-xl border bg-card overflow-hidden">
           <Step
             num={1}
-            title="Install the SeldonFrame MCP"
+            title="Install the Kynetic OS MCP"
             body="In Claude Code, run claude mcp add seldonframe -- npx -y @seldonframe/mcp@latest. The MCP exposes ~140 tools for building, managing, and observing your business OS."
             code="claude mcp add seldonframe -- npx -y @seldonframe/mcp@latest"
           />
@@ -104,7 +104,7 @@ export default function DocsHome() {
           <Step
             num={4}
             title="Customize from the dashboard"
-            body="Open the dashboard at app.seldonframe.com, apply the client's brand, review the evals, and publish the workspace. Hand the client their branded portal while you keep the agency view."
+            body="Open the dashboard at app.kyneticai.com, apply the client's brand, review the evals, and publish the workspace. Hand the client their branded portal while you keep the agency view."
             isLast
           />
         </div>
@@ -235,7 +235,7 @@ export default function DocsHome() {
           <SmallCard
             icon={<BookOpen className="size-4" />}
             title="Customer stories"
-            description="Real businesses running on SeldonFrame: HVAC, dental, coaching, agency."
+            description="Real businesses running on Kynetic OS: HVAC, dental, coaching, agency."
             href="/docs#case-studies"
           />
         </div>
@@ -257,7 +257,7 @@ export default function DocsHome() {
               Start building
             </Link>
             <Link
-              href="https://seldonframe.com"
+              href="https://kyneticai.com"
               className="inline-flex h-10 items-center gap-1.5 px-5 rounded-md border bg-background text-sm font-medium hover:bg-accent transition-colors"
             >
               See it in action

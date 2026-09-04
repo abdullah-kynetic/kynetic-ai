@@ -32,14 +32,14 @@ export function DocsHeader() {
           <div className="flex size-7 items-center justify-center overflow-hidden rounded-md border border-border/80 bg-card/80 shadow-(--shadow-xs)">
             <Image
               src="/brand/seldonframe-icon.svg"
-              alt="SeldonFrame"
+              alt="Kynetic OS"
               width={18}
               height={18}
               priority
             />
           </div>
           <span className="text-foreground">
-            SeldonFrame <span className="text-muted-foreground">Docs</span>
+            Kynetic OS <span className="text-muted-foreground">Docs</span>
           </span>
         </Link>
 

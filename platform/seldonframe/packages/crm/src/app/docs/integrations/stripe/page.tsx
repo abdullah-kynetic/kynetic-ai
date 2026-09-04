@@ -22,7 +22,7 @@ export default function Page() {
       <ul>
         <li>
           <strong>Send invoices.</strong> From a deal or booking, click
-          "Send invoice." Stripe creates the invoice; SeldonFrame emails
+          "Send invoice." Stripe creates the invoice; Kynetic OS emails
           a paylink to the customer.
         </li>
         <li>
@@ -42,21 +42,21 @@ export default function Page() {
       </ul>
 
       <Callout variant="info" title="Test mode vs. live mode">
-        SeldonFrame respects the mode of the Stripe key you connect. If
+        Kynetic OS respects the mode of the Stripe key you connect. If
         you connect a test-mode account, all charges are test charges
         (no real money moves). Useful for dry-runs.
       </Callout>
 
       <h2>What you don't have to do</h2>
       <ul>
-        <li>You don't enter card numbers — customers do, on Stripe-hosted pages. SeldonFrame is never PCI scope.</li>
+        <li>You don't enter card numbers — customers do, on Stripe-hosted pages. Kynetic OS is never PCI scope.</li>
         <li>You don't reconcile manually — Stripe payouts to your bank are independent of Seldon.</li>
       </ul>
 
       <h2>Refunds</h2>
       <p>
         Refunds go through your Stripe dashboard (we don't currently
-        wrap that flow). When you refund there, SeldonFrame's webhook
+        wrap that flow). When you refund there, Kynetic OS's webhook
         receives <code>charge.refunded</code> and updates the deal /
         invoice status.
       </p>

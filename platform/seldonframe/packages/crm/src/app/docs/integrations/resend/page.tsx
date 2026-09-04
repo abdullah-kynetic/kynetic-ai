@@ -8,7 +8,7 @@ export default function Page() {
       category="Integrations"
       categoryHref="/docs"
       title="Resend (email)"
-      lede="Send transactional and marketing email from your own domain. SeldonFrame uses Resend under the hood — fast, deliverable, modern API."
+      lede="Send transactional and marketing email from your own domain. Kynetic OS uses Resend under the hood — fast, deliverable, modern API."
       githubPath="app/docs/integrations/resend/page.tsx"
     >
       <h2>Setup</h2>
@@ -33,7 +33,7 @@ TXT  resend._domainkey  <DKIM record>
 TXT  @                  v=spf1 include:resend.com ~all`}</CodeBlock>
       </Step>
 
-      <Step n={4} title="Connect Resend to SeldonFrame">
+      <Step n={4} title="Connect Resend to Kynetic OS">
         <InAppLink href="/settings/integrations">Settings → Integrations</InAppLink>{" "}
         → Resend → paste your API key and the domain you verified.
       </Step>

@@ -13,7 +13,7 @@ export default function Page() {
     >
       <h2>The basics</h2>
       <p>
-        A form in SeldonFrame is a list of fields plus a destination. The
+        A form in Kynetic OS is a list of fields plus a destination. The
         fields collect data from a visitor; the destination decides what
         happens with it (create a contact, attach to a deal, fire a
         Zap-style automation, send a confirmation email).
@@ -40,7 +40,7 @@ export default function Page() {
         Drop the form on any Seldon page (it's a block). Or copy the embed
         snippet and paste on an external site:
         <pre className="my-3 overflow-x-auto rounded-lg border bg-muted/30 px-3 py-2 text-xs">
-          {`<iframe src="https://app.seldonframe.com/embed/form/frm_abc123" width="100%" height="500"></iframe>`}
+          {`<iframe src="https://app.kyneticai.com/embed/form/frm_abc123" width="100%" height="500"></iframe>`}
         </pre>
       </Step>
 

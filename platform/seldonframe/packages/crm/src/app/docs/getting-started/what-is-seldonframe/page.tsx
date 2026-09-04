@@ -3,8 +3,8 @@
 import { ArticleShell, Callout, InAppLink } from "../../article-shell";
 
 export const metadata = {
-  title: "What is SeldonFrame · Docs",
-  description: "SeldonFrame is the agent-native, open-source front-office platform agencies use to deploy branded client workspaces.",
+  title: "What is Kynetic OS · Docs",
+  description: "Kynetic OS is the agent-native, open-source front-office platform agencies use to deploy branded client workspaces.",
 };
 
 export default function Page() {
@@ -12,14 +12,14 @@ export default function Page() {
     <ArticleShell
       category="Getting started"
       categoryHref="/docs"
-      title="What is SeldonFrame"
+      title="What is Kynetic OS"
       lede="The agent-native, open-source alternative to GoHighLevel for agencies: deploy a branded website, booking flow, CRM, intake, and agent for every client from one workspace."
       githubPath="app/docs/getting-started/what-is-seldonframe/page.tsx"
     >
       <h2>The short version</h2>
       <p>
         Agencies usually stitch together a CRM, website builder, scheduler,
-        forms, messaging, and an AI layer for every client. SeldonFrame
+        forms, messaging, and an AI layer for every client. Kynetic OS
         turns that delivery work into one repeatable client workspace:
         branded website, booking page, AI receptionist, intake form, CRM,
         reminders, and client portal sharing the same data and operating
@@ -38,7 +38,7 @@ export default function Page() {
           <strong>A CRM</strong> for your contacts, deals, and bookings.
         </li>
         <li>
-          <strong>A public website</strong> at <code>your-name.app.seldonframe.com</code>{" "}
+          <strong>A public website</strong> at <code>your-name.app.kyneticai.com</code>{" "}
           (or the client's custom domain) with landing pages, intake forms, and
           booking pages.
         </li>
@@ -63,10 +63,10 @@ export default function Page() {
         and watch it happen.
       </p>
       <p>
-        Second, the runtime trusts the model. SeldonFrame uses thin
+        Second, the runtime trusts the model. Kynetic OS uses thin
         harnesses and fat skill-packs (markdown skills the prompt composer
         reads), which means the system gets better automatically as
-        Claude / GPT / Gemini get better. You don't rewrite SeldonFrame
+        Claude / GPT / Gemini get better. You don't rewrite Kynetic OS
         when a new model ships.
       </p>
 

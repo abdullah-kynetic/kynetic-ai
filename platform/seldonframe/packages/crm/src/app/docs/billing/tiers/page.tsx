@@ -30,7 +30,7 @@ export default function Page() {
         <li>Booking page + intake forms, wired to the CRM</li>
         <li>Website chatbot that books against the real calendar</li>
         <li>Missed-call text-back so you never lose a lead</li>
-        <li>Managed AI on SeldonFrame's keys under fair use</li>
+        <li>Managed AI on Kynetic OS's keys under fair use</li>
         <li>Email support (24h response)</li>
       </ul>
 
@@ -52,7 +52,7 @@ export default function Page() {
 
       <h2>What triggers a move up</h2>
       <ul>
-        <li>Wanting SeldonFrame-managed AI instead of your own provider key (Builder → Managed).</li>
+        <li>Wanting Kynetic OS-managed AI instead of your own provider key (Builder → Managed).</li>
         <li>Wanting to white-label and resell to clients (→ Agency Starter).</li>
         <li>Going past 10 client workspaces (Agency Starter → Agency Growth).</li>
         <li>Going past 30 client workspaces or needing API/MCP and marketplace access (Agency Growth → Agency Scale).</li>

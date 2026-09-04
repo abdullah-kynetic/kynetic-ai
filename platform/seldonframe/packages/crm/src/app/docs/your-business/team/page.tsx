@@ -42,7 +42,7 @@ export default function Page() {
       <p>
         <InAppLink href="/settings/team">Settings → Team</InAppLink> → row
         menu → "Remove from workspace." Their access ends immediately
-        and any sessions are revoked. Their account on SeldonFrame stays
+        and any sessions are revoked. Their account on Kynetic OS stays
         — you're only removing them from this workspace.
       </p>
 

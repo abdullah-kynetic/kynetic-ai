@@ -33,7 +33,7 @@ export default function Page() {
       <Callout variant="warn" title="Marketing email rules">
         US/EU law (CAN-SPAM, GDPR) requires a physical address in the
         footer of marketing email and a working unsubscribe link in
-        every send. SeldonFrame adds both automatically — set your
+        every send. Kynetic OS adds both automatically — set your
         business address in{" "}
         <a href="/settings/branding">Settings → Branding</a>.
       </Callout>

@@ -42,7 +42,7 @@ export default function Page() {
 
       <Callout variant="warn" title="Compliance reminder">
         Every marketing SMS in the US/Canada must include "Reply STOP to
-        unsubscribe." SeldonFrame appends this automatically to broadcast
+        unsubscribe." Kynetic OS appends this automatically to broadcast
         sends. You're responsible for honoring opt-outs (we maintain the
         suppression list automatically when STOP is received).
       </Callout>
@@ -50,7 +50,7 @@ export default function Page() {
       <h2>Costs</h2>
       <p>
         Twilio bills you directly for SMS, voice, and phone numbers.
-        SeldonFrame doesn't markup or rebill. Typical US SMS is ~$0.0083
+        Kynetic OS doesn't markup or rebill. Typical US SMS is ~$0.0083
         per segment.
       </p>
 

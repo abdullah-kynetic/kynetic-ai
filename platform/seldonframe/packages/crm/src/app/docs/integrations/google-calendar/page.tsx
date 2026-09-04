@@ -21,7 +21,7 @@ export default function Page() {
 
       <Step n={2} title="Pick which calendars to sync">
         Most people have several calendars (Personal, Work, Family).
-        SeldonFrame asks which ones provide busy time and which one
+        Kynetic OS asks which ones provide busy time and which one
         receives new Seldon bookings. You can change this anytime.
       </Step>
 
@@ -29,13 +29,13 @@ export default function Page() {
       <ul>
         <li>
           <strong>Inbound</strong> — every event on your selected
-          calendars (busy time) blocks SeldonFrame booking availability.
+          calendars (busy time) blocks Kynetic OS booking availability.
           So if you put "Lunch 12–1" on Google, no one can book a
-          SeldonFrame slot then.
+          Kynetic OS slot then.
         </li>
         <li>
           <strong>Outbound</strong> — every booking created in
-          SeldonFrame creates a Google Calendar event on your designated
+          Kynetic OS creates a Google Calendar event on your designated
           calendar, with the customer auto-invited as an attendee.
         </li>
         <li>
@@ -45,7 +45,7 @@ export default function Page() {
       </ul>
 
       <Callout variant="info" title="Buffers and travel time">
-        Buffer rules (e.g. "15 min between bookings") are SeldonFrame-side
+        Buffer rules (e.g. "15 min between bookings") are Kynetic OS-side
         only. Google Calendar's "find a time" doesn't know about your
         Seldon buffer rules — but the slots offered to your customers via
         Seldon booking pages do respect them.

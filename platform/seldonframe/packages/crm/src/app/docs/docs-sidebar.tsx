@@ -35,7 +35,7 @@ const CATEGORIES: DocCategory[] = [
     id: "getting-started",
     label: "Getting started",
     items: [
-      { label: "What is SeldonFrame", href: "/docs/getting-started/what-is-seldonframe" },
+      { label: "What is Kynetic OS", href: "/docs/getting-started/what-is-seldonframe" },
       { label: "Build your first workspace", href: "/docs/getting-started/first-workspace" },
       { label: "Connect Claude Code", href: "/docs/getting-started/connect-claude-code" },
       { label: "The 3-minute demo", href: "/docs/getting-started/demo" },

@@ -14,7 +14,7 @@ export default function Page() {
       <h2>What a template includes</h2>
       <p>
         A template (we call them "Souls") is a starter blueprint for a
-        whole vertical. When you pick one, SeldonFrame pre-configures:
+        whole vertical. When you pick one, Kynetic OS pre-configures:
       </p>
       <ul>
         <li><strong>Custom CRM fields</strong> for what that business tracks (e.g. HVAC: equipment age, last service, AHRI ratings).</li>

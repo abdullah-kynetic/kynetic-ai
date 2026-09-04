@@ -8,14 +8,14 @@ export default function Page() {
       category="AI Agents"
       categoryHref="/docs"
       title="Build a chatbot"
-      lede="A SeldonFrame chatbot is a Soul (who it is) plus a Brain (which LLM and key) plus tools (what it can do). Build one in a single Claude Code prompt."
+      lede="A Kynetic OS chatbot is a Soul (who it is) plus a Brain (which LLM and key) plus tools (what it can do). Build one in a single Claude Code prompt."
       githubPath="app/docs/agents/build-chatbot/page.tsx"
     >
       <h2>The fastest path</h2>
       <p>
         Open Claude Code and say what the chatbot is for. Be specific
         about the business, the persona, the tasks, and the price points.
-        SeldonFrame's <code>build_website_chatbot</code> tool bundles
+        Kynetic OS's <code>build_website_chatbot</code> tool bundles
         everything — create, configure, eval, publish — into one round-trip.
       </p>
 

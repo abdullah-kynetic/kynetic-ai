@@ -19,7 +19,7 @@ export default function Page() {
       </p>
 
       <CodeBlock language="html">{`<script async
-  src="https://app.seldonframe.com/embed.js"
+  src="https://app.kyneticai.com/embed.js"
   data-agent="agt_abc123"
   data-position="bottom-right">
 </script>`}</CodeBlock>
@@ -41,17 +41,17 @@ export default function Page() {
       </ul>
 
       <CodeBlock language="html">{`<script async
-  src="https://app.seldonframe.com/embed.js"
+  src="https://app.kyneticai.com/embed.js"
   data-agent="agt_abc123"
   data-position="bottom-right"
   data-greeting-delay="8000"
   data-context='{"page":"/services/furnace-repair","utm":"google-ads"}'>
 </script>`}</CodeBlock>
 
-      <h2>SeldonFrame-hosted pages</h2>
+      <h2>Kynetic OS-hosted pages</h2>
       <Callout variant="tip" title="No snippet needed">
-        If your public site is a SeldonFrame-hosted page (at{" "}
-        <code>your-workspace.app.seldonframe.com</code> or your custom
+        If your public site is a Kynetic OS-hosted page (at{" "}
+        <code>your-workspace.app.kyneticai.com</code> or your custom
         domain), the chatbot is wired automatically. You just toggle it
         on/off in <a href="/landing">Pages → Settings</a>.
       </Callout>
@@ -59,13 +59,13 @@ export default function Page() {
       <h2>Custom domains and CSP</h2>
       <p>
         If your site has a strict Content-Security-Policy, you'll need to
-        allow <code>app.seldonframe.com</code> as a script source and
+        allow <code>app.kyneticai.com</code> as a script source and
         connect source. Minimal example:
       </p>
       <CodeBlock language="text">{`Content-Security-Policy:
-  script-src 'self' https://app.seldonframe.com;
-  connect-src 'self' https://app.seldonframe.com wss://app.seldonframe.com;
-  frame-src 'self' https://app.seldonframe.com;`}</CodeBlock>
+  script-src 'self' https://app.kyneticai.com;
+  connect-src 'self' https://app.kyneticai.com wss://app.kyneticai.com;
+  frame-src 'self' https://app.kyneticai.com;`}</CodeBlock>
 
       <h2>What conversations are recorded</h2>
       <p>

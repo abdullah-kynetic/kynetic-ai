@@ -4,7 +4,7 @@ import { ArticleShell, Callout, InAppLink, Step } from "../../article-shell";
 
 export const metadata = {
   title: "Build your first workspace · Docs",
-  description: "Create a branded SeldonFrame client workspace, run the agent evals, and hand it off from one repeatable workflow.",
+  description: "Create a branded Kynetic OS client workspace, run the agent evals, and hand it off from one repeatable workflow.",
 };
 
 export default function Page() {
@@ -26,7 +26,7 @@ export default function Page() {
 
       <Step n={2} title="Start from the client's URL">
         Open <InAppLink href="/templates">Templates</InAppLink> or connect
-        Claude Code. Give SeldonFrame the client's URL, industry, services,
+        Claude Code. Give Kynetic OS the client's URL, industry, services,
         hours, and brand direction. The starter Soul pre-fills CRM fields,
         pipeline stages, booking types, and the first agent.
       </Step>
@@ -46,7 +46,7 @@ export default function Page() {
 
       <Step n={5} title="Publish and hand off">
         The public site is available at{" "}
-        <code>your-workspace.app.seldonframe.com</code>. Want a custom
+        <code>your-workspace.app.kyneticai.com</code>. Want a custom
         domain like <code>www.clientbiz.com</code>? See{" "}
         <InAppLink href="/docs/your-business/custom-domains">Custom domains</InAppLink>.
         Keep the agency master view and invite the client to their branded

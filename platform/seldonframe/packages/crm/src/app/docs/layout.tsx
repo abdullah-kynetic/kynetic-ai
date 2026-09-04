@@ -21,9 +21,9 @@ import { DocsSidebar } from "./docs-sidebar";
 import { DocsHeader } from "./docs-header";
 
 export const metadata: Metadata = {
-  title: "SeldonFrame Docs",
+  title: "Kynetic OS Docs",
   description:
-    "Get an overview of SeldonFrame's features, agents, integrations, and how to use them.",
+    "Get an overview of Kynetic OS's features, agents, integrations, and how to use them.",
 };
 
 export default function DocsLayout({ children }: { children: React.ReactNode }) {

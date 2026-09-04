@@ -13,7 +13,7 @@ export default function Page() {
       category="Getting started"
       categoryHref="/docs"
       title="The 3-minute demo"
-      lede="Watch SeldonFrame go from sign-up to a live, eval-gated chatbot taking a real booking. Three minutes, zero clicks past sign-up — the rest is Claude Code."
+      lede="Watch Kynetic OS go from sign-up to a live, eval-gated chatbot taking a real booking. Three minutes, zero clicks past sign-up — the rest is Claude Code."
       githubPath="app/docs/getting-started/demo/page.tsx"
     >
       <h2>The flow</h2>
@@ -54,7 +54,7 @@ export default function Page() {
       <Step n={4} title="Embed on a site (15s)">
         Claude Code outputs a one-line embed snippet. Paste it into your
         existing website, or use the auto-generated landing page at{" "}
-        <code>acme-hvac.app.seldonframe.com</code>.
+        <code>acme-hvac.app.kyneticai.com</code>.
       </Step>
 
       <Step n={5} title="Take a booking (45s)">
