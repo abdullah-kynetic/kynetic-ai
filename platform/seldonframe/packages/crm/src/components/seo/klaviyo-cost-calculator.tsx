@@ -222,9 +222,9 @@ export function KlaviyoCostCalculator(): ReactElement {
         rows: [
           { label: "Email plan (interpolated)", value: `~${money(result.emailMonthly)}/mo` },
           { label: "SMS (hedged rate)", value: `~${moneyPrecise(result.smsMonthly)}/mo` },
-          { label: "SeldonFrame Builder (owned business)", value: "$29/mo" },
+          { label: "Kynetic OS Builder (owned business)", value: "$29/mo" },
         ],
-        footer: "built free at seldonframe.com/tools",
+        footer: "built free at kyneticai.com/tools",
       });
     }, 150);
     return () => {
@@ -340,7 +340,7 @@ export function KlaviyoCostCalculator(): ReactElement {
           is $0.01-$0.015).
         </p>
         <p style={{ margin: 0 }}>
-          <strong>SeldonFrame:</strong> {BUILDER_PRICING_CLAIM} {AGENCY_PRICING_CLAIM} The Builder platform price is
+          <strong>Kynetic OS:</strong> {BUILDER_PRICING_CLAIM} {AGENCY_PRICING_CLAIM} The Builder platform price is
           {" "}{money(SELDONFRAME_YEARLY)}/yr, regardless of list size. Different product scope (Seldon is a front office
           with CRM/booking/agent, not ecommerce email marketing) — so weigh this as "what flat pricing looks like," not a
           like-for-like swap.

@@ -51,7 +51,7 @@ const FAQ = [
     a: "Yes. A cheap price means nothing if calls go unanswered or handled badly. One missed job often costs more than any of these options. Look at answer rate and booking accuracy too, not just price.",
   },
   {
-    q: "How does SeldonFrame's pricing work?",
+    q: "How does Kynetic OS's pricing work?",
     a: `${BUILDER_PRICING_CLAIM} ${AGENCY_PRICING_CLAIM} You connect your own AI provider and Twilio account, so you pay them directly at their raw cost — usually a few cents per minute — with no markup on top.`,
   },
 ];

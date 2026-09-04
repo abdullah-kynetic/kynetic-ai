@@ -133,7 +133,7 @@ export function MarketingModules() {
    "Hire agents" — the demand-side rung of the ladder.
    Promoted out of the Modules section (2026-06-22 positioning v2) into its
    own section so the homepage holds one idea per rung. Deep-green #1F2B24
-   slab (the seldonstudio dark-block pattern), SeldonFrame green accents.
+   slab (the seldonstudio dark-block pattern), Kynetic OS green accents.
    ════════════════════════════════════════════════════════════════════════ */
 
 export function MarketingAgents() {

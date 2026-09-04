@@ -14,7 +14,7 @@ import { SharePipelineSvg } from "@/components/share/share-pipeline-svg";
 import { ShareVisitBeacon } from "@/components/share/share-visit-beacon";
 
 const APP_ORIGIN =
-  process.env.NEXT_PUBLIC_APP_URL?.trim().replace(/\/$/, "") || "https://app.seldonframe.com";
+  process.env.NEXT_PUBLIC_APP_URL?.trim().replace(/\/$/, "") || "https://app.kyneticai.com";
 
 export async function generateMetadata({
   params,
@@ -23,10 +23,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const card = await getPublicShareCard(slug);
-  if (!card) return { title: "Agent not found — SeldonFrame" };
+  if (!card) return { title: "Agent not found — Kynetic OS" };
 
-  const title = `${card.agentName} — built with SeldonFrame`;
-  const description = "Built with SeldonFrame from a screen recording.";
+  const title = `${card.agentName} — built with Kynetic OS`;
+  const description = "Built with Kynetic OS from a screen recording.";
   const ogUrl = `${APP_ORIGIN}/api/og?kind=agent-share&name=${encodeURIComponent(card.agentName)}&steps=${encodeURIComponent(
     card.steps.map((s) => s.label).join("|"),
   )}`;
@@ -54,7 +54,7 @@ export default async function PublicShareCardPage({
     <main className="light flex min-h-screen flex-col items-center justify-center gap-8 bg-[#0b0e14] px-6 py-16 text-center">
       <ShareVisitBeacon slug={slug} />
       <div className="space-y-2">
-        <p className="text-xs font-medium uppercase tracking-wide text-[#A39B8D]">Built with SeldonFrame</p>
+        <p className="text-xs font-medium uppercase tracking-wide text-[#A39B8D]">Built with Kynetic OS</p>
         <h1 className="text-2xl font-semibold text-white sm:text-3xl">{card.agentName}</h1>
       </div>
 

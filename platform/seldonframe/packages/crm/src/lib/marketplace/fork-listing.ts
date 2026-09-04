@@ -179,8 +179,8 @@ export async function forkListingIntoNewWorkspace(
 // ─── real deps (lazy — never imported in unit tests) ─────────────────────────
 
 const WORKSPACE_BASE_DOMAIN =
-  process.env.WORKSPACE_BASE_DOMAIN?.trim() || "app.seldonframe.com";
-const APP_URL = (process.env.NEXT_PUBLIC_APP_URL || "https://app.seldonframe.com").replace(/\/$/, "");
+  process.env.WORKSPACE_BASE_DOMAIN?.trim() || "app.kyneticai.com";
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL || "https://app.kyneticai.com").replace(/\/$/, "");
 
 /** Build the real deps, binding the exact same DB/rate-limit/workspace
  *  primitives the ChatGPT app's deps.ts uses. Not a "use server" file (a

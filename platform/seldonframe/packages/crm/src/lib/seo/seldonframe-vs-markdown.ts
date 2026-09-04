@@ -16,41 +16,41 @@ import { getExtras, SF_PROS, SF_CONS, SWITCH_STEPS, DEMO_HREF } from "@/lib/seo/
 import { composeSeldonframeVsFaq, composeSeldonframeVsIntro } from "@/components/seo/seldonframe-vs-page";
 import { emphasizeMd } from "@/lib/seo/emphasize";
 
-const BASE = "https://www.seldonframe.com";
+const BASE = "https://www.kyneticai.com";
 
 export function renderSeldonframeVsMarkdown(c: Competitor): string {
   const x = getExtras(c.slug);
   const faq = [...c.faq, ...composeSeldonframeVsFaq(c), ...SHARED_FAQ];
   const L: string[] = [];
 
-  L.push(`# SeldonFrame vs ${c.name}: Which Should You Choose? (${LAST_UPDATED.split(" ").pop() ?? "2026"})`);
+  L.push(`# Kynetic OS vs ${c.name}: Which Should You Choose? (${LAST_UPDATED.split(" ").pop() ?? "2026"})`);
   L.push("");
   L.push(`> ${c.heroSub}`);
   L.push("");
   L.push(`Last updated: ${LAST_UPDATED}. HTML version: ${BASE}/compare/seldonframe-vs-${c.slug}`);
   L.push("");
-  L.push(`Reviewed by Maxime Houle, Founder, SeldonFrame — facts checked ${LAST_UPDATED}.`);
+  L.push(`Reviewed by Maxime Houle, Founder, Kynetic OS — facts checked ${LAST_UPDATED}.`);
   L.push("");
   L.push(`## The short version`);
   L.push("");
   L.push(`- **${c.name} pricing:** ${emphasizeMd(c.them.pricingModel)}`);
-  L.push(`- **SeldonFrame pricing:** ${emphasizeMd(sfPriceAnchor(c.audience))}`);
+  L.push(`- **Kynetic OS pricing:** ${emphasizeMd(sfPriceAnchor(c.audience))}`);
   L.push(`- **Pick ${c.name} if:** ${emphasizeMd(x.chooseThem[0])}`);
-  L.push(`- **Pick SeldonFrame if:** ${emphasizeMd(x.chooseSf[0])}`);
+  L.push(`- **Pick Kynetic OS if:** ${emphasizeMd(x.chooseSf[0])}`);
   L.push("");
-  L.push(`## SeldonFrame vs ${c.name}: what you need to know`);
+  L.push(`## Kynetic OS vs ${c.name}: what you need to know`);
   L.push("");
   for (const p of composeSeldonframeVsIntro(c)) {
     L.push(p);
     L.push("");
   }
   L.push(
-    `We make SeldonFrame, so read this with that in mind — but we've tried to be specific about where ${c.name} genuinely wins, not just where it doesn't.`,
+    `We make Kynetic OS, so read this with that in mind — but we've tried to be specific about where ${c.name} genuinely wins, not just where it doesn't.`,
   );
   L.push("");
   L.push(`## Full feature & pricing comparison`);
   L.push("");
-  L.push(`| Feature | SeldonFrame | ${c.name} |`);
+  L.push(`| Feature | Kynetic OS | ${c.name} |`);
   L.push("|---|---|---|");
   for (const row of COMPARISON_LABELS) {
     L.push(`| ${row.label} | ${emphasizeMd(SF_COLUMN[row.key])} | ${emphasizeMd(c.them[row.key])} |`);
@@ -64,13 +64,13 @@ export function renderSeldonframeVsMarkdown(c: Competitor): string {
   L.push("");
   L.push(`The honest take: ${c.whenTheyWin}`);
   L.push("");
-  L.push(`## Where SeldonFrame wins`);
+  L.push(`## Where Kynetic OS wins`);
   L.push("");
   for (const r of c.switchReasons) L.push(`- **${r.title}** — ${r.body}`);
   L.push("");
   L.push(`## Pros & cons, side by side`);
   L.push("");
-  L.push(`### SeldonFrame`);
+  L.push(`### Kynetic OS`);
   L.push("");
   for (const p of SF_PROS) L.push(`- **Pro:** ${p}`);
   for (const p of SF_CONS) L.push(`- **Con:** ${p}`);
@@ -80,7 +80,7 @@ export function renderSeldonframeVsMarkdown(c: Competitor): string {
   for (const p of x.pros) L.push(`- **Pro:** ${p}`);
   for (const p of x.cons) L.push(`- **Con:** ${p}`);
   L.push("");
-  L.push(`## How to switch from ${c.name} to SeldonFrame`);
+  L.push(`## How to switch from ${c.name} to Kynetic OS`);
   L.push("");
   SWITCH_STEPS.forEach((step, i) => {
     L.push(`${i + 1}. **${step.title}** — ${i === 1 ? x.switchNote : step.body}`);

@@ -390,7 +390,7 @@ ${skills.cta ?? "(skill missing — write one urgent-but-honest final CTA)"}
 3. Skip throat-clearing. Never start with "Welcome to", "Premier", "The leading", "Your trusted", "Professional X services". These are filler.
 4. Match the vertical's natural voice: HVAC = urgent + reliable, legal = calm authority, coaching = outcome-driven, dental = warm + clean, plumbing = no-nonsense + reassuring.
 5. CTAs are verbs: "Book Service", "Get a Quote", "Schedule a Visit". Never "Learn More", "Click Here", "Get Started".
-6. NEVER include the strings "SeldonFrame", "AI-native", "Business OS", "Replace 5 Tools" or any internal-platform marketing.
+6. NEVER include the strings "SeldonFrame", "Kynetic OS", "AI-native", "Business OS", "Replace 5 Tools" or any internal-platform marketing.
 
 # Service count
 
@@ -504,7 +504,7 @@ The first section above the fold (hero) carries 80-90% of conversion weight. Pou
 3. Skip throat-clearing. Never start with "Welcome to", "Premier", "The leading", "Your trusted", "Professional X services". These are filler.
 4. Match the vertical's natural voice: HVAC = urgent + reliable, legal = calm authority, coaching = outcome-driven, dental = warm + clean, plumbing = no-nonsense + reassuring.
 5. CTAs are verbs: "Book Service", "Get a Quote", "Schedule a Visit". Never "Learn More", "Click Here", "Get Started".
-6. NEVER include the strings "SeldonFrame", "AI-native", "Business OS", "Replace 5 Tools" or any internal-platform marketing.
+6. NEVER include the strings "SeldonFrame", "Kynetic OS", "AI-native", "Business OS", "Replace 5 Tools" or any internal-platform marketing.
 
 # Lucide icon names available (use whichever fits best for any \`icon\` field)
 

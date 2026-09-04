@@ -677,18 +677,18 @@ export const VALUE_FRAME_FAQ: FaqItem[] = [
   },
   {
     q: "What do I need to get started?",
-    a: "A SeldonFrame account and your own AI key — if you already use ChatGPT, Claude, or Gemini, you have one. For phone calls or texts you'll add a number. That's it: no code, no setup project, no integration work.",
+    a: "A Kynetic OS account and your own AI key — if you already use ChatGPT, Claude, or Gemini, you have one. For phone calls or texts you'll add a number. That's it: no code, no setup project, no integration work.",
   },
   {
     q: "How much does it cost?",
-    a: "Build the first workspace free. Agencies start with Agency Starter at $99/mo for 10 client sub-accounts, full white-label, and branded client portals; Growth is $199/mo for 30 clients and Scale is $299/mo for unlimited clients. Running only your own businesses? Builder is $29/mo BYOK and Managed is $49/mo on SeldonFrame's keys. Cancel anytime, with no card required to start building.",
+    a: "Build the first workspace free. Agencies start with Agency Starter at $99/mo for 10 client sub-accounts, full white-label, and branded client portals; Growth is $199/mo for 30 clients and Scale is $299/mo for unlimited clients. Running only your own businesses? Builder is $29/mo BYOK and Managed is $49/mo on Kynetic OS's keys. Cancel anytime, with no card required to start building.",
   },
   {
     q: "How much can it save me?",
     a: "One recovered review, one booked job, or one caught missed call usually pays for the whole month many times over. It works 24/7 for pennies a day — a fraction of what an employee or an agency retainer costs to do the same job, without the gaps.",
   },
   {
-    q: "Why SeldonFrame instead of hiring someone or building it myself?",
+    q: "Why Kynetic OS instead of hiring someone or building it myself?",
     a: "It's live in about 60 seconds instead of the weeks a hire or a DIY build takes, and it's grounded in YOUR business through the Soul — your real services, hours, and pricing — so it never sounds generic or makes things up. And you own it: it's your workspace, your data, your agent.",
   },
   {
@@ -887,7 +887,7 @@ function headlineCasePlural(plural: string): string {
 export function composePageCopy(job: AgentJob, vertical?: Vertical): ComposedPageCopy {
   if (!vertical) {
     return {
-      title: `${job.name} — ${truncateForTitle(job.oneLiner)} | SeldonFrame`,
+      title: `${job.name} — ${truncateForTitle(job.oneLiner)} | Kynetic OS`,
       h1: job.h1,
       metaDescription: clampDescription(job.oneLiner),
       intro: `${job.oneLiner} ${job.painStat.text} ${aOrAn(job.name)} ${job.name} fixes that — and you can deploy a working one in about 60 seconds, grounded in your own business.`,
@@ -914,7 +914,7 @@ export function composePageCopy(job: AgentJob, vertical?: Vertical): ComposedPag
   ];
 
   return {
-    title: `${job.name} for ${pluralCased} — ${shortPromise(job)} | SeldonFrame`,
+    title: `${job.name} for ${pluralCased} — ${shortPromise(job)} | Kynetic OS`,
     h1,
     metaDescription: clampDescription(
       `${job.name} for ${vertical.plural}: build and white-label a working client agent from one agency workspace in about 60 seconds.`,

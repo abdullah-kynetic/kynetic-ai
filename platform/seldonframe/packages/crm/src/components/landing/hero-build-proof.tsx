@@ -56,7 +56,7 @@ export function HeroBuildProof({
           <>
             <img
               src={POSTER_SRC}
-              alt="Preview of a SeldonFrame workspace being built"
+              alt="Preview of a Kynetic OS workspace being built"
               className="size-full object-cover"
             />
             <button

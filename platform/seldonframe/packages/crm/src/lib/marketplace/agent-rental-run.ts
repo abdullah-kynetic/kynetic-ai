@@ -171,7 +171,7 @@ export async function runAgentRentalTurn(input: {
 
 /**
  * Count the rental calls a renter has ALREADY made against one listing in the
- * CURRENT calendar month — the meter behind the SeldonFrame free-allowance
+ * CURRENT calendar month — the meter behind the Kynetic OS free-allowance
  * boundary (no migration: we count the `agent_rental_call` events the rail
  * already logs). Events are attributed to the CREATOR org (orgId = creator) with
  * properties.listing_id + properties.renter_org_id, so we filter on all three

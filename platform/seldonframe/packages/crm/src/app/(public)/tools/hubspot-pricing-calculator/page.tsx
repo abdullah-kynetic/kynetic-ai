@@ -57,7 +57,7 @@ const FAQ = [
   },
   {
     q: "How do I lower my HubSpot bill?",
-    a: "The two biggest levers are seats and onboarding: stay on Starter as long as possible, negotiate or DIY the onboarding where allowed, and watch your marketing-contact count closely since crossing a tier threshold is often what triggers the next price jump. See our honest <a href=\"/compare/seldonframe-vs-hubspot\">SeldonFrame vs HubSpot</a> comparison and the full <a href=\"/hubspot-pricing\">HubSpot pricing breakdown</a> for what a flat-rate alternative looks like.",
+    a: "The two biggest levers are seats and onboarding: stay on Starter as long as possible, negotiate or DIY the onboarding where allowed, and watch your marketing-contact count closely since crossing a tier threshold is often what triggers the next price jump. See our honest <a href=\"/compare/seldonframe-vs-hubspot\">Kynetic OS vs HubSpot</a> comparison and the full <a href=\"/hubspot-pricing\">HubSpot pricing breakdown</a> for what a flat-rate alternative looks like.",
   },
 ];
 
@@ -138,7 +138,7 @@ export default function HubspotPricingCalculatorPage(): ReactElement {
             </Link>
             , and{" "}
             <Link href="/compare/seldonframe-vs-hubspot" className="sf-link" style={{ color: MKT.green, fontWeight: 700 }}>
-              SeldonFrame vs HubSpot
+              Kynetic OS vs HubSpot
             </Link>
             . Zoom out: see the full market on one chart —{" "}
             <Link href="/charts/crm-pricing-index" className="sf-link" style={{ color: MKT.green, fontWeight: 700 }}>

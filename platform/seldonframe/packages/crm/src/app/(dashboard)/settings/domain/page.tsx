@@ -252,7 +252,7 @@ function UpsellCard({
         <p className="text-sm text-muted-foreground">
           Connect your own domain — so your site lives at{" "}
           <i className="text-foreground">yourbusiness.com</i> instead of a
-          SeldonFrame subdomain.
+          Kynetic OS subdomain.
         </p>
       </div>
 

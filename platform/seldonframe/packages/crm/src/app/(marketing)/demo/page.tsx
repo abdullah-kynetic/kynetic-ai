@@ -6,9 +6,9 @@ import type { Metadata } from "next";
 import { MarketingShell } from "../marketing-shell";
 
 export const metadata: Metadata = {
-  title: "Demo — SeldonFrame (Desert Cool HVAC walkthrough)",
+  title: "Demo — Kynetic OS (Desert Cool HVAC walkthrough)",
   description:
-    "End-to-end walkthrough of building a complete agency-deployed Business OS in SeldonFrame. Demo video coming soon.",
+    "End-to-end walkthrough of building a complete agency-deployed Business OS in Kynetic OS. Demo video coming soon.",
 };
 
 export default function DemoPage() {
@@ -22,7 +22,7 @@ export default function DemoPage() {
           </h1>
           <p className="text-[16px] text-[#a1a1aa] leading-[1.7]">
             Phoenix, AZ. 14 technicians. ~1,800 customers. Four production agent
-            flows. Branded portal. Built in SeldonFrame from clean repo to working
+            flows. Branded portal. Built in Kynetic OS from clean repo to working
             product.
           </p>
         </header>

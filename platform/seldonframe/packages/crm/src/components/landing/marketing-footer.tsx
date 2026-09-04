@@ -46,18 +46,18 @@ const COLUMNS: readonly Column[] = [
   {
     heading: "Compare",
     links: [
-      { label: "SeldonFrame vs GoHighLevel", href: "/compare/seldonframe-vs-gohighlevel" },
-      { label: "SeldonFrame vs HubSpot", href: "/compare/seldonframe-vs-hubspot" },
-      { label: "SeldonFrame vs Salesforce", href: "/compare/seldonframe-vs-salesforce" },
-      { label: "SeldonFrame vs Zoho", href: "/compare/seldonframe-vs-zoho" },
-      { label: "SeldonFrame vs ActiveCampaign", href: "/compare/seldonframe-vs-activecampaign" },
-      { label: "SeldonFrame vs ClickFunnels", href: "/compare/seldonframe-vs-clickfunnels" },
-      { label: "SeldonFrame vs Keap", href: "/compare/seldonframe-vs-keap" },
-      { label: "SeldonFrame vs Klaviyo", href: "/compare/seldonframe-vs-klaviyo" },
-      { label: "SeldonFrame vs Kartra", href: "/compare/seldonframe-vs-kartra" },
-      { label: "SeldonFrame vs Vendasta", href: "/compare/seldonframe-vs-vendasta" },
-      { label: "SeldonFrame vs Podium", href: "/compare/seldonframe-vs-podium" },
-      { label: "SeldonFrame vs Linktree", href: "/compare/seldonframe-vs-linktree" },
+      { label: "Kynetic OS vs GoHighLevel", href: "/compare/seldonframe-vs-gohighlevel" },
+      { label: "Kynetic OS vs HubSpot", href: "/compare/seldonframe-vs-hubspot" },
+      { label: "Kynetic OS vs Salesforce", href: "/compare/seldonframe-vs-salesforce" },
+      { label: "Kynetic OS vs Zoho", href: "/compare/seldonframe-vs-zoho" },
+      { label: "Kynetic OS vs ActiveCampaign", href: "/compare/seldonframe-vs-activecampaign" },
+      { label: "Kynetic OS vs ClickFunnels", href: "/compare/seldonframe-vs-clickfunnels" },
+      { label: "Kynetic OS vs Keap", href: "/compare/seldonframe-vs-keap" },
+      { label: "Kynetic OS vs Klaviyo", href: "/compare/seldonframe-vs-klaviyo" },
+      { label: "Kynetic OS vs Kartra", href: "/compare/seldonframe-vs-kartra" },
+      { label: "Kynetic OS vs Vendasta", href: "/compare/seldonframe-vs-vendasta" },
+      { label: "Kynetic OS vs Podium", href: "/compare/seldonframe-vs-podium" },
+      { label: "Kynetic OS vs Linktree", href: "/compare/seldonframe-vs-linktree" },
       { label: "All comparisons →", href: "/alternatives" },
     ],
   },
@@ -93,11 +93,11 @@ const COLUMNS: readonly Column[] = [
   {
     heading: "Company",
     links: [
-      { label: "Contact", href: "mailto:hello@seldonframe.com" },
-      { label: "Partnerships", href: "mailto:partner@seldonframe.com" },
+      { label: "Contact", href: "mailto:hello@kyneticai.com" },
+      { label: "Partnerships", href: "mailto:partner@kyneticai.com" },
       { label: "GitHub", href: "https://github.com/seldonframe/seldonframe", external: true },
-      { label: "Terms", href: "https://app.seldonframe.com/terms", external: true },
-      { label: "Privacy", href: "https://app.seldonframe.com/policy", external: true },
+      { label: "Terms", href: "https://app.kyneticai.com/terms", external: true },
+      { label: "Privacy", href: "https://app.kyneticai.com/policy", external: true },
     ],
   },
 ];
@@ -114,7 +114,7 @@ export function MarketingFooter() {
         {/* Brand block */}
         <div className="grid grid-cols-1 gap-10 md:grid-cols-[1.4fr_repeat(6,1fr)] md:gap-8">
           <div className="flex max-w-[340px] flex-col gap-5">
-            <Link href="/" aria-label="SeldonFrame — home" className="inline-flex items-center">
+            <Link href="/" aria-label="Kynetic OS — home" className="inline-flex items-center">
               <BrandMark size={22} />
             </Link>
             <p className="m-0 text-[13.5px] leading-[1.55] text-[var(--lp-muted)]">

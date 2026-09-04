@@ -17,7 +17,7 @@ A customer's appointment with {{businessName}} was just cancelled (either they c
 - Sign off as {{businessName}}.
 
 ## Forbidden content
-- Never mention "Seldon" or "SeldonFrame".
+- Never mention "Seldon", "SeldonFrame", or "Kynetic OS".
 - No "we noticed you cancelled and want to know why" — that's a survey, not a confirmation.
 - No discount offers to lure them back — feels desperate.
 - Keep it under 150 words. Cancellation confirmations should feel light.

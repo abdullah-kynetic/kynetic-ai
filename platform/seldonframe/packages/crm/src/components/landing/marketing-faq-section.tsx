@@ -49,7 +49,7 @@ const FAQS: readonly FaqItem[] = [
   {
     question: "It's really a flat price? What's the catch?",
     answer:
-      "No catch. Flat monthly, no metered AI bills, no per-seat tax, no per-client surprise invoices — and on agency plans, 0% GMV on everything you bill your clients. We don't tax your client work. (The solo plans carry the only variable fee that exists: a flat 2% when SeldonFrame itself is the sales channel — collect any other way and we take nothing.)",
+      "No catch. Flat monthly, no metered AI bills, no per-seat tax, no per-client surprise invoices — and on agency plans, 0% GMV on everything you bill your clients. We don't tax your client work. (The solo plans carry the only variable fee that exists: a flat 2% when Kynetic OS itself is the sales channel — collect any other way and we take nothing.)",
   },
   {
     question: "Do I need my own AI key?",
@@ -64,7 +64,7 @@ const FAQS: readonly FaqItem[] = [
   {
     question: "Why not just use GoHighLevel?",
     answer:
-      "Reselling GoHighLevel as your own product (SaaS Mode) requires its $497/mo Agency Pro tier — the white-label mobile app is another $497/mo add-on, usage is metered per email and SMS segment on top, and reviewers report build-outs take 2–4 weeks per client. SeldonFrame builds a client's whole front office — website, CRM, booking, intake, and an agent across voice, chat, SMS, and email — in about 3 minutes from their URL, with white-label from $99/mo flat for your entire agency. And you own it: open source, AGPL-3.0, self-host or use the cloud — GoHighLevel's own docs say its websites can't be exported.",
+      "Reselling GoHighLevel as your own product (SaaS Mode) requires its $497/mo Agency Pro tier — the white-label mobile app is another $497/mo add-on, usage is metered per email and SMS segment on top, and reviewers report build-outs take 2–4 weeks per client. Kynetic OS builds a client's whole front office — website, CRM, booking, intake, and an agent across voice, chat, SMS, and email — in about 3 minutes from their URL, with white-label from $99/mo flat for your entire agency. And you own it: open source, AGPL-3.0, self-host or use the cloud — GoHighLevel's own docs say its websites can't be exported.",
   },
   {
     question: "Do my clients still need Zapier, Calendly, or Typeform?",
@@ -74,17 +74,17 @@ const FAQS: readonly FaqItem[] = [
   {
     question: "Can I white-label it for my clients?",
     answer:
-      "Yes — whitelabel is included on every agency plan, from $99/mo. Your brand is on the entire platform and every client sub-account; clients never see SeldonFrame. You set your own per-client pricing and keep the spread, and because it's your brand there's no GMV fee — 0% on everything you bill them. Each workspace can map to its own domain (booking.theirbusiness.com), too.",
+      "Yes — whitelabel is included on every agency plan, from $99/mo. Your brand is on the entire platform and every client sub-account; clients never see Kynetic OS. You set your own per-client pricing and keep the spread, and because it's your brand there's no GMV fee — 0% on everything you bill them. Each workspace can map to its own domain (booking.theirbusiness.com), too.",
   },
   {
     question: "Should I wait until the AI gets better?",
     answer:
-      "It already does — automatically. SeldonFrame is a thin harness over the frontier models, so every time Claude, GPT, or Gemini gets better, every agent you've deployed gets better too, with nothing to migrate across your whole client book. Waiting doesn't get you a better product; it just sends more of your clients' missed calls to voicemail. The best time to have agents answering client phones was last month. The next best time is today — and building the first one is free.",
+      "It already does — automatically. Kynetic OS is a thin harness over the frontier models, so every time Claude, GPT, or Gemini gets better, every agent you've deployed gets better too, with nothing to migrate across your whole client book. Waiting doesn't get you a better product; it just sends more of your clients' missed calls to voicemail. The best time to have agents answering client phones was last month. The next best time is today — and building the first one is free.",
   },
   {
     question: "Can I cancel, and who owns the client work?",
     answer:
-      "Cancel anytime, no lock-in and no penalty. And because SeldonFrame is open source (AGPL-3.0), you can export everything or self-host it whenever you want. Your clients, their data, your content, and your agents are yours — we never hold a client book hostage.",
+      "Cancel anytime, no lock-in and no penalty. And because Kynetic OS is open source (AGPL-3.0), you can export everything or self-host it whenever you want. Your clients, their data, your content, and your agents are yours — we never hold a client book hostage.",
   },
 ];
 

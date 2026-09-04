@@ -310,7 +310,7 @@ export default async function SettingsPage() {
   const advancedItems = [
     { href: "/settings/api", title: "API Keys", description: "Programmatic access for custom integrations", status: null },
     { href: "/settings/webhooks", title: "Webhooks", description: "Push events to external services", status: null },
-    { href: "/settings/branding", title: "White-label Branding", description: "Hide 'Powered by SeldonFrame' (agency tier)", status: brandingStatus ? <span className="text-xs text-emerald-400">{brandingStatus}</span> : null },
+    { href: "/settings/branding", title: "White-label Branding", description: "Hide 'Powered by Kynetic OS' (agency tier)", status: brandingStatus ? <span className="text-xs text-emerald-400">{brandingStatus}</span> : null },
     { href: "/settings/frameworks", title: "Industry Packs", description: "Reusable presets for industry-specific setups", status: <span className="text-xs text-muted-foreground">{frameworksStatus}</span> },
     { href: "/settings/soul-transfer", title: "Export / Import", description: "Download or upload your full workspace configuration as JSON", status: null },
   ] as const;

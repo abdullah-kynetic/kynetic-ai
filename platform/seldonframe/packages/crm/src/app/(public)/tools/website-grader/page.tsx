@@ -71,7 +71,7 @@ const FAQ = [
   },
   {
     q: "My score is low. Now what?",
-    a: "Each failing or warning check comes with a plain-English fix you (or your web person) can make directly. Or skip the manual work entirely: SeldonFrame rebuilds your site with all 10 checks passing — booking, forms, and schema included — in about 3 minutes.",
+    a: "Each failing or warning check comes with a plain-English fix you (or your web person) can make directly. Or skip the manual work entirely: Kynetic OS rebuilds your site with all 10 checks passing — booking, forms, and schema included — in about 3 minutes.",
   },
 ];
 

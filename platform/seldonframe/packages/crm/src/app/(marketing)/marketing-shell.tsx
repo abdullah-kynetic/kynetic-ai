@@ -35,7 +35,7 @@ export function MarketingShell({ children }: { children: ReactNode }) {
       <nav className="sticky top-0 z-[100] flex items-center justify-between px-4 py-3 md:px-12 md:py-[14px] bg-[#09090b]/90 backdrop-blur-[20px] border-b border-white/5">
         <a href="/" className="flex items-center gap-[10px] text-[#fafafa] hover:opacity-90 transition-opacity">
           <LogoSVG />
-          <span className="text-[17px] font-semibold tracking-[-0.02em]">SeldonFrame</span>
+          <span className="text-[17px] font-semibold tracking-[-0.02em]">Kynetic OS</span>
         </a>
         <div className="flex items-center gap-4 md:gap-7">
           <a href="/" className="text-[14px] text-[#a1a1aa] hover:text-[#fafafa] transition-colors">Home</a>

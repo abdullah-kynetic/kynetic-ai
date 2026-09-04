@@ -37,7 +37,7 @@ export const guide: Guide = {
     },
     {
       h2: "The flat-priced AI-front-office alternative",
-      body: "SeldonFrame takes the opposite approach to GoHighLevel. Instead of an agency toolkit you configure, it gives you a finished front office.\n\nIt is **29 dollars a month, flat**, with unlimited workspaces, and the first workspace is free forever. This Builder price is for a business you own and operate yourself; it does not include client sub-accounts or white-label resale. There is no trial gate to schedule around, and you can cancel anytime.\n\nOne booked job pays for the whole month. That is the honest way to think about the price: it is not an expense you have to justify, it is a rounding error against a single sale.\n\nThe AI receptionist is not an add-on here. It **is** the product, and it is included. It answers by voice, chat, and SMS in your business's name, handles the common questions, captures the lead, and books the appointment.\n\nAlongside it you get a website, a CRM, a booking calendar, review collection, a customer booking page, and a custom domain, all in the base price. There is no per-location AI fee, no separate plan to unlock the feature you came for.\n\nThe thing GoHighLevel treats as a paid extra is the thing SeldonFrame is built around — see [is GoHighLevel's AI Employee worth it](/guides/is-gohighlevel-ai-employee-worth-it) for a closer look at that add-on.\n\nThe setup difference is just as sharp. Instead of one to three weeks of learning, you describe your business in one conversation and get a full working workspace in about **three minutes**.\n\nThe reason the price can stay flat is that SeldonFrame runs on your own AI keys and your own Twilio account, so calls and messages bill at raw provider cost, with no platform markup in the middle.\n\nYou do not need to understand that plumbing to use it. You just need to know that when a lead calls while you are busy, someone answers, and the job gets booked.",
+      body: "Kynetic OS takes the opposite approach to GoHighLevel. Instead of an agency toolkit you configure, it gives you a finished front office.\n\nIt is **29 dollars a month, flat**, with unlimited workspaces, and the first workspace is free forever. This Builder price is for a business you own and operate yourself; it does not include client sub-accounts or white-label resale. There is no trial gate to schedule around, and you can cancel anytime.\n\nOne booked job pays for the whole month. That is the honest way to think about the price: it is not an expense you have to justify, it is a rounding error against a single sale.\n\nThe AI receptionist is not an add-on here. It **is** the product, and it is included. It answers by voice, chat, and SMS in your business's name, handles the common questions, captures the lead, and books the appointment.\n\nAlongside it you get a website, a CRM, a booking calendar, review collection, a customer booking page, and a custom domain, all in the base price. There is no per-location AI fee, no separate plan to unlock the feature you came for.\n\nThe thing GoHighLevel treats as a paid extra is the thing Kynetic OS is built around — see [is GoHighLevel's AI Employee worth it](/guides/is-gohighlevel-ai-employee-worth-it) for a closer look at that add-on.\n\nThe setup difference is just as sharp. Instead of one to three weeks of learning, you describe your business in one conversation and get a full working workspace in about **three minutes**.\n\nThe reason the price can stay flat is that Kynetic OS runs on your own AI keys and your own Twilio account, so calls and messages bill at raw provider cost, with no platform markup in the middle.\n\nYou do not need to understand that plumbing to use it. You just need to know that when a lead calls while you are busy, someone answers, and the job gets booked.",
       diagram: {
         type: "compare",
         title: "Solo operator: two ways to get an AI receptionist",
@@ -46,7 +46,7 @@ export const guide: Guide = {
           items: ["$97-497/mo base plan", "AI Employee is a separate add-on", "1-3 weeks to become functional"],
         },
         right: {
-          heading: "SeldonFrame",
+          heading: "Kynetic OS",
           items: ["$29/mo flat, first workspace free", "AI receptionist included in the base price", "Working workspace in ~3 minutes"],
         },
       },
@@ -63,11 +63,11 @@ export const guide: Guide = {
     },
     {
       q: "What is the easiest GoHighLevel alternative?",
-      a: "SeldonFrame is built to be the simple option. Instead of assembling tools yourself, you describe your business in one conversation and get a finished workspace in about three minutes, with the AI receptionist, website, CRM, booking, reviews, and a custom domain already set up. It is 29 dollars a month flat, the first workspace is free forever, and there is no trial gate.",
+      a: "Kynetic OS is built to be the simple option. Instead of assembling tools yourself, you describe your business in one conversation and get a finished workspace in about three minutes, with the AI receptionist, website, CRM, booking, reviews, and a custom domain already set up. It is 29 dollars a month flat, the first workspace is free forever, and there is no trial gate.",
     },
     {
       q: "Can I get an AI receptionist without an agency plan?",
-      a: "Yes. On GoHighLevel the AI Employee is an add-on, reported at roughly 50 to 97 dollars a month per location or usage-based pricing on top of a base plan. With SeldonFrame the AI receptionist is the core product and is included at 29 dollars a month flat on Builder for an own-business workspace; Builder does not include client resale or white-label sub-accounts. It runs on your own AI keys and Twilio, so usage bills at raw provider cost.",
+      a: "Yes. On GoHighLevel the AI Employee is an add-on, reported at roughly 50 to 97 dollars a month per location or usage-based pricing on top of a base plan. With Kynetic OS the AI receptionist is the core product and is included at 29 dollars a month flat on Builder for an own-business workspace; Builder does not include client resale or white-label sub-accounts. It runs on your own AI keys and Twilio, so usage bills at raw provider cost.",
     },
   ],
   sources: [

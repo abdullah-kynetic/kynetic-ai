@@ -131,7 +131,7 @@ export function ClaudeProjectBriefGenerator(): ReactElement {
 
       <div style={{ marginTop: 24, border: `1px solid rgba(31, 43, 36,0.35)`, background: "rgba(31, 43, 36,0.05)", borderRadius: 14, padding: "18px 20px" }}>
         <p style={{ margin: 0, fontSize: 14.5, lineHeight: 1.6, color: "rgba(34,29,23,0.8)" }}>
-          <strong>Doing this once is a good afternoon. Doing it per client, forever, is a job.</strong> SeldonFrame builds and
+          <strong>Doing this once is a good afternoon. Doing it per client, forever, is a job.</strong> Kynetic OS builds and
           maintains this automatically for every client — the standing brief, the grounded knowledge, the retrieval tests —
           plus the website, CRM, booking calendar and AI receptionist the brief can only describe.
         </p>
@@ -140,7 +140,7 @@ export function ClaudeProjectBriefGenerator(): ReactElement {
             Build it free in 3 minutes
           </a>
           <a
-            href="https://app.seldonframe.com/book/seldonframes-workspace-7798/default"
+            href="https://app.kyneticai.com/book/seldonframes-workspace-7798/default"
             style={{ border: `1.5px solid ${INK10}`, color: INK, padding: "11px 22px", borderRadius: 12, fontWeight: 700, fontSize: 14.5, textDecoration: "none", background: "rgba(255,255,255,0.5)" }}
           >
             Book a demo call

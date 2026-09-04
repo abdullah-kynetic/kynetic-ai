@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: RouteParams): Promise<Metadat
     job = getJob(jobSlug);
     vertical = getVertical(verticalSlug);
   } catch {
-    return { title: "Agent not found — SeldonFrame" };
+    return { title: "Agent not found — Kynetic OS" };
   }
   if (!isKeptPair(job.slug, vertical.slug)) permanentRedirect(`/ai-agents/${job.slug}`);
   const copy = composePageCopy(job, vertical);

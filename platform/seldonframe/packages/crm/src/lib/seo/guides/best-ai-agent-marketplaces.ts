@@ -46,9 +46,9 @@ The page is explicit that buyers get "pay-as-you-go and contract subscriptions, 
 
 Two adjacent channels are worth knowing about, even though they're not agent marketplaces in the strict sense: app directories like Zapier's, and the early *MCP* (Model Context Protocol) server registries now forming. Neither is really a place you "sell an agent" today — they're places a tool or connector gets discovered. Worth watching as the **agents-as-MCP-servers** pattern matures (see the final section).
 
-**SeldonFrame marketplace** — this is our product, so weigh this entry accordingly. SeldonFrame lets builders publish agents they've built, rent them out via a signed MCP key, and deploy white-labeled multi-client versions for agencies serving their own customers. ${AGENCY_PRICING_CLAIM}
+**Kynetic OS marketplace** — this is our product, so weigh this entry accordingly. Kynetic OS lets builders publish agents they've built, rent them out via a signed MCP key, and deploy white-labeled multi-client versions for agencies serving their own customers. ${AGENCY_PRICING_CLAIM}
 
-${BUILDER_PRICING_CLAIM} The first workspace is free and *BYOK* (bring your own key) for model costs — so Seldon's own costs stay near zero and pricing doesn't need to move with usage. Seldon only takes a cut — a **flat 2% GMV fee** — when SeldonFrame is actually the sales channel that brought the buyer, and only on solo tiers (0% on agency plans). If you sell directly and just use Seldon to build and host, that fee doesn't apply.`,
+${BUILDER_PRICING_CLAIM} The first workspace is free and *BYOK* (bring your own key) for model costs — so Seldon's own costs stay near zero and pricing doesn't need to move with usage. Seldon only takes a cut — a **flat 2% GMV fee** — when Kynetic OS is actually the sales channel that brought the buyer, and only on solo tiers (0% on agency plans). If you sell directly and just use Seldon to build and host, that fee doesn't apply.`,
       callout: {
         kind: "analogy",
         text: "A GMV fee that only fires when the platform brought the buyer is like a landlord who only charges rent on the tenants they personally walked through the door — bring your own buyer, and that month's rent is zero.",
@@ -102,7 +102,7 @@ ${BUILDER_PRICING_CLAIM} The first workspace is free and *BYOK* (bring your own 
     },
     {
       q: "Do I need my own hosting to list on one of these marketplaces?",
-      a: "It depends on the category. Consumer app stores (GPT Store, Poe) run your agent on their infrastructure — you don't host anything. Enterprise exchanges (AgentExchange, AWS Marketplace) usually expect you to bring a deployable package or a hosted service you operate and support. Deploy-and-operate marketplaces vary by platform; SeldonFrame's, for example, hosts the runtime so a builder isn't standing up their own infrastructure per client.",
+      a: "It depends on the category. Consumer app stores (GPT Store, Poe) run your agent on their infrastructure — you don't host anything. Enterprise exchanges (AgentExchange, AWS Marketplace) usually expect you to bring a deployable package or a hosted service you operate and support. Deploy-and-operate marketplaces vary by platform; Kynetic OS's, for example, hosts the runtime so a builder isn't standing up their own infrastructure per client.",
     },
     {
       q: "Is it better to sell through a marketplace or sell directly?",

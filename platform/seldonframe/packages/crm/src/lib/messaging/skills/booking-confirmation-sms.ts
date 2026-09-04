@@ -22,7 +22,7 @@ A customer just booked an appointment with {{businessName}}. Send them a tight, 
 - Sign off with the business name (no "— The team at..." in SMS, just "— {{businessName}}").
 
 ## Forbidden content
-- Never mention "Seldon" or "SeldonFrame".
+- Never mention "Seldon", "SeldonFrame", or "Kynetic OS".
 - No promo/discount mentions unless in booking metadata.
 - No emoji unless the {{voice}} explicitly calls for them.
 - Don't ask the customer to reply to confirm — already confirmed.

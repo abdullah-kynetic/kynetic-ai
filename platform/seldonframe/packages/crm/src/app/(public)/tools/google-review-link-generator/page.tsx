@@ -45,7 +45,7 @@ const FAQ = [
   },
   {
     q: "Is this tool free and does it store my data?",
-    a: "Yes. It's <strong>completely free</strong> and runs in your browser. Nothing you type is sent to or stored by SeldonFrame. The QR code image comes from a free third-party service (api.qrserver.com).",
+    a: "Yes. It's <strong>completely free</strong> and runs in your browser. Nothing you type is sent to or stored by Kynetic OS. The QR code image comes from a free third-party service (api.qrserver.com).",
   },
   {
     q: "Where should I put my review link or QR code?",

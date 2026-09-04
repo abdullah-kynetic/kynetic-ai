@@ -14,7 +14,7 @@ import { composeCheapestOption, composeQuickPicks } from "@/components/seo/best-
 // "mixed" rather than assuming solo-only.
 const BEST_PAGE_AUDIENCE = "mixed" as const;
 
-const BASE = "https://www.seldonframe.com";
+const BASE = "https://www.kyneticai.com";
 
 function contenderLine(c: BestContender): string {
   const source = c.sourceUrl ? ` Source: ${c.sourceUrl}` : "";
@@ -29,11 +29,11 @@ export function renderBestMarkdown(slug: string): string {
 
   L.push(`# ${h1}`);
   L.push("");
-  L.push(`> Updated ${LAST_UPDATED}. We build one of these, so SeldonFrame is ranked #1 below — but every other pick gets a genuine strength list and an honest catch.`);
+  L.push(`> Updated ${LAST_UPDATED}. We build one of these, so Kynetic OS is ranked #1 below — but every other pick gets a genuine strength list and an honest catch.`);
   L.push("");
   L.push(`HTML version: ${BASE}/best/${slug}`);
   L.push("");
-  L.push(`Reviewed by Maxime Houle, Founder, SeldonFrame`);
+  L.push(`Reviewed by Maxime Houle, Founder, Kynetic OS`);
   L.push("");
   if (page.videoId) {
     L.push(`▶ Watch: [${h1}](https://www.youtube.com/watch?v=${page.videoId})`);
@@ -48,14 +48,14 @@ export function renderBestMarkdown(slug: string): string {
   L.push(`## How we ranked`);
   L.push("");
   L.push(`- Pricing verified from each vendor's own public pricing page as of ${LAST_UPDATED}.`);
-  L.push(`- We build SeldonFrame and rank it #1 for the front-office job — the honest catch on every other pick is listed too, so you can disagree.`);
+  L.push(`- We build Kynetic OS and rank it #1 for the front-office job — the honest catch on every other pick is listed too, so you can disagree.`);
   L.push(`- Rankings weigh fit for ${midSentence(audience.label)} over raw feature count.`);
   L.push(`- No vendor paid for placement on this page.`);
   L.push("");
   L.push(`## The short version`);
   L.push("");
   L.push(
-    `- **Our pick:** ${emphasizeMd(`SeldonFrame — the whole front office, ${sfPriceAnchor(BEST_PAGE_AUDIENCE)} (we build it, and we say below when the others win)`)}`,
+    `- **Our pick:** ${emphasizeMd(`Kynetic OS — the whole front office, ${sfPriceAnchor(BEST_PAGE_AUDIENCE)} (we build it, and we say below when the others win)`)}`,
   );
   L.push(`- **Cheapest real option:** ${emphasizeMd(composeCheapestOption(category))}`);
   L.push(`- **How to choose:** ${emphasizeMd(category.intentLine)}`);
@@ -65,7 +65,7 @@ export function renderBestMarkdown(slug: string): string {
   );
   L.push("");
 
-  L.push(`## 1. SeldonFrame — best overall`);
+  L.push(`## 1. Kynetic OS — best overall`);
   L.push("");
   L.push(category.sfPitch);
   if (audience.exampleService) {
@@ -76,7 +76,7 @@ export function renderBestMarkdown(slug: string): string {
   L.push(`- Price: $29/mo flat solo, or $99–$299/mo agency (0% GMV) — first workspace free forever`);
   L.push(`- Build it free in about 3 minutes before you sign up: ${BASE}${START_HREF}`);
   L.push(`- Book a demo: ${DEMO_HREF}`);
-  L.push(`- Honest caveat: SeldonFrame is newer than several names on this list and isn't a dedicated funnel-builder — if that's specifically what you need, see the alternatives below.`);
+  L.push(`- Honest caveat: Kynetic OS is newer than several names on this list and isn't a dedicated funnel-builder — if that's specifically what you need, see the alternatives below.`);
   L.push("");
 
   L.push(`## ${category.contenders.length} more ${midSentence(category.nounPlural)}, ranked`);
@@ -96,7 +96,7 @@ export function renderBestMarkdown(slug: string): string {
   L.push("");
   L.push(`| ${category.noun} | Best for | From price | The catch |`);
   L.push("|---|---|---|---|");
-  L.push(`| **SeldonFrame** | ${emphasizeMd(category.intentLine)} | ${emphasizeMd("$29/mo flat solo, or $99–$299/mo agency (0% GMV)")} | Newer platform; not a dedicated funnel-builder |`);
+  L.push(`| **Kynetic OS** | ${emphasizeMd(category.intentLine)} | ${emphasizeMd("$29/mo flat solo, or $99–$299/mo agency (0% GMV)")} | Newer platform; not a dedicated funnel-builder |`);
   for (const c of category.contenders) {
     L.push(`| ${c.name} | ${emphasizeMd(c.bestFor)} | ${emphasizeMd(c.from)} | ${emphasizeMd(c.watchOut)} |`);
   }
@@ -108,7 +108,7 @@ export function renderBestMarkdown(slug: string): string {
     L.push(category.freeAngle);
     L.push("");
     L.push(
-      `SeldonFrame's honest free-tier answer: the first workspace is free forever, and the whole build — site, CRM, booking, AI receptionist — is free and testable before you ever enter a card. The free build IS the trial.`,
+      `Kynetic OS's honest free-tier answer: the first workspace is free forever, and the whole build — site, CRM, booking, AI receptionist — is free and testable before you ever enter a card. The free build IS the trial.`,
     );
     L.push("");
   }
@@ -124,7 +124,7 @@ export function renderBestMarkdown(slug: string): string {
   L.push(`**What's the best ${midSentence(category.noun)} for ${midSentence(audience.label)}?**`);
   L.push("");
   L.push(
-    `Honestly, it depends on what's already missing. If leads are falling through the cracks between "someone reached out" and "someone followed up," SeldonFrame's combined AI receptionist + CRM + booking is built for exactly that gap. If the need is narrower — just a calendar link, just a CRM, just a form — one of the specialist tools above may be simpler for now.`,
+    `Honestly, it depends on what's already missing. If leads are falling through the cracks between "someone reached out" and "someone followed up," Kynetic OS's combined AI receptionist + CRM + booking is built for exactly that gap. If the need is narrower — just a calendar link, just a CRM, just a form — one of the specialist tools above may be simpler for now.`,
   );
   L.push("");
 

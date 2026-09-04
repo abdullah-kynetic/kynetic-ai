@@ -16,7 +16,7 @@ import { MarketingFinalCta } from "@/components/landing/marketing-final-cta";
 import { MarketingFooter } from "@/components/landing/marketing-footer";
 
 export const metadata: Metadata = {
-  title: "Pricing — SeldonFrame",
+  title: "Pricing — Kynetic OS",
   description:
   "Agency plans from $99/mo with white-label client workspaces, branded portals, and 0% GMV. Builder and Managed plans cover your own operation.",
 };

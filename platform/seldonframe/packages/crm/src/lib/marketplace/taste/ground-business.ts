@@ -35,7 +35,7 @@ export const REAL_GROUND_DEPS: Omit<GroundDeps, "flagshipOrgIds"> = {
   assertUrl: (raw) => assertPublicHttpUrl(raw),
   fetchPage: async (safeUrl) => {
     const response = await fetchPublicUrlSafe(safeUrl, {
-      headers: { "User-Agent": "SeldonFrame/1.0 (Business Analysis)" },
+      headers: { "User-Agent": "Kynetic OS/1.0 (Business Analysis)" },
       signal: AbortSignal.timeout(10_000),
     });
     const html = await response.text();

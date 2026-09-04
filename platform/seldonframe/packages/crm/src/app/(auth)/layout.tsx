@@ -24,7 +24,7 @@ export default function AuthLayout({
               to "SeldonFra…" on render. Widened the viewBox to 400x100
               and updated Image dimensions to the new 4:1 aspect ratio so
               the browser doesn't stretch the SVG. */}
-          <Image src="/brand/seldonframe-wordmark.svg" alt="SeldonFrame" width={200} height={50} priority />
+          <Image src="/brand/seldonframe-wordmark.svg" alt="Kynetic OS" width={200} height={50} priority />
         </div>
         {children}
       </div>

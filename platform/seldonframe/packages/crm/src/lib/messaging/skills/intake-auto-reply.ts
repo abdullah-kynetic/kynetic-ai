@@ -18,7 +18,7 @@ Someone just submitted an intake form for {{businessName}}. Send them a fast ack
 - Sign off as {{businessName}}.
 
 ## Forbidden content
-- Never mention "Seldon" or "SeldonFrame".
+- Never mention "Seldon", "SeldonFrame", or "Kynetic OS".
 - No promo/discount mentions unless the soul indicates a free consultation.
 - Don't make promises about exact response time we can't keep ("we'll reply in 5 minutes" is a recipe for failure).
 - Keep it under 180 words. Acknowledgments should feel fast and clean.

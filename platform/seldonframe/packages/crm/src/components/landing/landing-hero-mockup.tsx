@@ -95,7 +95,7 @@ export function LandingHeroMockup() {
   return (
     <div
       role="img"
-      aria-label="SeldonFrame workspace dashboard for Acme HVAC: pipeline showing one scheduled $4,800 AC install, AI chatbot live, white-label sidebar."
+      aria-label="Kynetic OS workspace dashboard for Acme HVAC: pipeline showing one scheduled $4,800 AC install, AI chatbot live, white-label sidebar."
       className="relative w-full overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 shadow-2xl shadow-black/40 ring-1 ring-white/[0.04]"
     >
       {/*
@@ -116,7 +116,7 @@ export function LandingHeroMockup() {
         <span className="size-2.5 rounded-full bg-zinc-700" aria-hidden="true" />
         <span className="ml-3 inline-flex items-center gap-1.5 text-xs text-zinc-500">
           <Lock className="size-3 text-zinc-600" strokeWidth={2.25} />
-          acme-hvac.app.seldonframe.com
+          acme-hvac.app.kyneticai.com
         </span>
       </div>
 

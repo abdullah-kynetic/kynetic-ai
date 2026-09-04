@@ -331,7 +331,7 @@ function roundRect(
   ctx.closePath();
 }
 
-/** Draw the SeldonFrame square mark: an outlined square + 4 corner dots. */
+/** Draw the Kynetic OS square mark: an outlined square + 4 corner dots. */
 function drawMark(ctx: CanvasRenderingContext2D, x: number, y: number, size: number): void {
   ctx.save();
   ctx.strokeStyle = CARD_GREEN;
@@ -394,7 +394,7 @@ export function renderResultCard(canvas: HTMLCanvasElement, spec: ResultCardSpec
   drawMark(ctx, marginX, 56, 34);
   ctx.fillStyle = CARD_PAPER_MUTED;
   ctx.font = "700 22px system-ui, -apple-system, Segoe UI, sans-serif";
-  ctx.fillText("seldonframe.com", marginX + 48, 80);
+  ctx.fillText("kyneticai.com", marginX + 48, 80);
 
   // Headline
   ctx.fillStyle = CARD_PAPER;

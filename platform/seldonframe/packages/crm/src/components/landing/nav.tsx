@@ -59,7 +59,7 @@ export function LandingNav() {
           className="text-lg font-semibold tracking-tight text-zinc-100"
           onClick={() => setOpen(false)}
         >
-          SeldonFrame
+          Kynetic OS
         </Link>
 
         {/* Desktop: all links visible inline. Hidden under md. */}

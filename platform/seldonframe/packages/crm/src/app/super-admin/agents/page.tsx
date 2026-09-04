@@ -18,7 +18,7 @@ export default async function AgentsTabPage() {
     <div className="px-6 py-8 sm:px-10 sm:py-10 max-w-[1200px] mx-auto space-y-10">
       <header>
         <p className="text-xs uppercase tracking-[0.12em] text-muted-foreground font-mono mb-2">
-          SeldonFrame · Agents
+          Kynetic OS · Agents
         </p>
         <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           Agent fleet

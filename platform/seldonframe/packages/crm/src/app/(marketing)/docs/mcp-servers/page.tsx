@@ -13,9 +13,9 @@ import {
 } from "./mcp-servers-data";
 
 export const metadata: Metadata = {
-  title: "MCP Servers for SMB Operators — SeldonFrame",
+  title: "MCP Servers for SMB Operators — Kynetic OS",
   description:
-    "Curated, web-verified directory of Model Context Protocol servers for SMB operators building Business OS workflows on SeldonFrame.",
+    "Curated, web-verified directory of Model Context Protocol servers for SMB operators building Business OS workflows on Kynetic OS.",
 };
 
 const STATUS_LABEL: Record<McpStatus, string> = {
@@ -93,7 +93,7 @@ export default function McpServersPage() {
             MCP Servers for SMB Operators
           </h1>
           <p className="text-[16px] text-[#a1a1aa] leading-[1.7] mb-3">
-            Curated list of Model Context Protocol servers that work with SeldonFrame.
+            Curated list of Model Context Protocol servers that work with Kynetic OS.
             Connect external tools to your Business OS via MCP and let agents drive them
             from natural language.
           </p>
@@ -168,7 +168,7 @@ export default function McpServersPage() {
           <ul className="space-y-2 text-[14px]">
             <li>
               <a href="/docs/quickstart" className="text-[#F6F2EA] hover:underline">
-                Install SeldonFrame &rarr;
+                Install Kynetic OS &rarr;
               </a>
               <span className="text-[#71717a]">
                 {" "}
@@ -177,7 +177,7 @@ export default function McpServersPage() {
             </li>
             <li>
               <a href="/docs" className="text-[#F6F2EA] hover:underline">
-                Read the SeldonFrame docs &rarr;
+                Read the Kynetic OS docs &rarr;
               </a>
               <span className="text-[#71717a]">
                 {" "}

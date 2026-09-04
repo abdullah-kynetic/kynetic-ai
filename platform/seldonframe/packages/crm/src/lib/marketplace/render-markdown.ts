@@ -24,7 +24,7 @@ import {
 
 /** The canonical public origin for absolute links in the Markdown. Defaults to
  *  the live storefront host so a pasted `.md` always carries clickable URLs. */
-export const MARKETPLACE_BASE_URL = "https://app.seldonframe.com";
+export const MARKETPLACE_BASE_URL = "https://app.kyneticai.com";
 
 /** Absolute URL of a listing's HTML storefront page. */
 export function listingUrl(slug: string, baseUrl: string = MARKETPLACE_BASE_URL): string {
@@ -68,7 +68,7 @@ export function renderMarketplaceIndexMarkdown(
   baseUrl: string = MARKETPLACE_BASE_URL,
 ): string {
   const lines: string[] = [];
-  lines.push("# SeldonFrame Agent Marketplace");
+  lines.push("# Kynetic OS Agent Marketplace");
   lines.push("");
   lines.push(
     "Vetted AI agents that answer calls, book jobs, chase reviews, and win back customers — built by operators who run businesses like yours. Install one into your own workspace in under a minute, or rent it over MCP.",

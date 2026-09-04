@@ -25,7 +25,7 @@ const STEPS: readonly Step[] = [
   {
     number: 2,
     title: "Paste your client's URL",
-    body: "SeldonFrame reads their site — services, hours, reviews — using your Anthropic key.",
+    body: "Kynetic OS reads their site — services, hours, reviews — using your Anthropic key.",
     screenshot: "/marketing/how-it-works/step-2-spin-up.png",
     alt: "Paste a client URL into the new-workspace form; the live build narrates each step.",
   },

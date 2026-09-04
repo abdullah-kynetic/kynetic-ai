@@ -7,9 +7,9 @@ import type { CSSProperties, ReactElement } from "react";
 
 export const AUTHOR = {
   name: "Maxime Houle",
-  role: "Founder, SeldonFrame",
-  url: "https://www.seldonframe.com",
-  image: "https://www.seldonframe.com/brand/maxime-houle.png",
+  role: "Founder, Kynetic OS",
+  url: "https://www.kyneticai.com",
+  image: "https://www.kyneticai.com/brand/maxime-houle.png",
   sameAs: ["https://x.com/seldonframe", "https://github.com/seldonframe"],
 } as const;
 
@@ -40,12 +40,12 @@ export function articleLd(opts: {
     "@type": "Article",
     headline: opts.headline.slice(0, 110),
     description: opts.description,
-    mainEntityOfPage: `https://www.seldonframe.com${opts.canonicalPath}`,
+    mainEntityOfPage: `https://www.kyneticai.com${opts.canonicalPath}`,
     author: authorPersonLd(),
     publisher: {
       "@type": "Organization",
-      name: "SeldonFrame",
-      url: "https://www.seldonframe.com",
+      name: "Kynetic OS",
+      url: "https://www.kyneticai.com",
     },
     datePublished: opts.datePublished ?? opts.dateModified,
     dateModified: opts.dateModified,

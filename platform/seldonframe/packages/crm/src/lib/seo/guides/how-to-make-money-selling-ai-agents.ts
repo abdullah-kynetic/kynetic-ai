@@ -52,12 +52,12 @@ export const guide: Guide = {
       },
     },
     {
-      h2: "Where SeldonFrame fits in this",
+      h2: "Where Kynetic OS fits in this",
       body:
-        `Disclosure: we build SeldonFrame, so read this section as the sales pitch it partly is.\n\nSeldonFrame is built for the retainer-and-agency models described above: you describe the agent you want in one conversation and get a real, deployed agent — on voice, web chat, SMS, email, or wherever the client needs it — connected to a working CRM, booking calendar, and intake forms.\n\nThat's instead of a demo you then have to wire into a client's actual stack. ${AGENCY_PRICING_CLAIM} The first workspace is free, so the free build-and-use flow functions as the trial; the $29/mo Builder plan remains the separate path for a business you operate yourself and does not include client resale.\n\nYou can list a build on the marketplace for the marketplace-leverage path, or use the same underlying build as a white-label template across multiple clients on an Agency plan.\n\nThat said, DIY is a completely legitimate path too, and some readers should take it. If you're comfortable wiring MCP servers to your tools, hand-rolling context files, and maintaining your own stack, owning that infrastructure end-to-end gives you more control and, if your time is cheap relative to your learning appetite, a lower marginal cost.\n\n**The trade-off is real** — a hand-built stack needs ongoing maintenance as APIs change and doesn't come with review gates or a marketplace built in. But if assembling your own tooling sounds like a feature rather than a chore, it's a reasonable way to run this.`,
+        `Disclosure: we build Kynetic OS, so read this section as the sales pitch it partly is.\n\nKynetic OS is built for the retainer-and-agency models described above: you describe the agent you want in one conversation and get a real, deployed agent — on voice, web chat, SMS, email, or wherever the client needs it — connected to a working CRM, booking calendar, and intake forms.\n\nThat's instead of a demo you then have to wire into a client's actual stack. ${AGENCY_PRICING_CLAIM} The first workspace is free, so the free build-and-use flow functions as the trial; the $29/mo Builder plan remains the separate path for a business you operate yourself and does not include client resale.\n\nYou can list a build on the marketplace for the marketplace-leverage path, or use the same underlying build as a white-label template across multiple clients on an Agency plan.\n\nThat said, DIY is a completely legitimate path too, and some readers should take it. If you're comfortable wiring MCP servers to your tools, hand-rolling context files, and maintaining your own stack, owning that infrastructure end-to-end gives you more control and, if your time is cheap relative to your learning appetite, a lower marginal cost.\n\n**The trade-off is real** — a hand-built stack needs ongoing maintenance as APIs change and doesn't come with review gates or a marketplace built in. But if assembling your own tooling sounds like a feature rather than a chore, it's a reasonable way to run this.`,
       diagram: {
         type: "compare",
-        title: "Build it yourself vs. start from SeldonFrame",
+        title: "Build it yourself vs. start from Kynetic OS",
         left: {
           heading: "Build it yourself",
           items: [
@@ -68,7 +68,7 @@ export const guide: Guide = {
           ],
         },
         right: {
-          heading: "SeldonFrame",
+          heading: "Kynetic OS",
           items: [
             "CRM, calendar, intake pre-connected",
             "$99/mo Agency Starter, 10 client workspaces",
@@ -86,7 +86,7 @@ export const guide: Guide = {
   faq: [
     {
       q: "Do I need to know how to code to sell AI agents?",
-      a: "Not necessarily. Builder platforms (including SeldonFrame) let you configure and deploy an agent through natural-language conversation rather than writing code. What you do need, regardless of platform, is the ability to scope a specific job the agent should do, talk to a business owner about their actual workflow, and support the agent once it's live — that's more sales-and-ops skill than engineering skill.",
+      a: "Not necessarily. Builder platforms (including Kynetic OS) let you configure and deploy an agent through natural-language conversation rather than writing code. What you do need, regardless of platform, is the ability to scope a specific job the agent should do, talk to a business owner about their actual workflow, and support the agent once it's live — that's more sales-and-ops skill than engineering skill.",
     },
     {
       q: "How much can I realistically make doing this?",
@@ -101,7 +101,7 @@ export const guide: Guide = {
       a: "They're not mutually exclusive, but they reward different effort. Direct sales (retainers, white-label agency work) reward outbound hustle and vertical focus, and tend to produce income faster because you control the pipeline. Marketplace listings reward a build that's differentiated enough to get discovered and reused without your involvement in every sale — which is possible, but discovery is genuinely hard, so treat it as a secondary channel to try after you have at least one paying direct client, not your primary plan.",
     },
     {
-      q: "What's the difference between building this myself and using a platform like SeldonFrame?",
+      q: "What's the difference between building this myself and using a platform like Kynetic OS?",
       a: "Building it yourself (MCP servers per tool, hand-maintained context files, your own scheduling and review gates) gives you full control and can cost close to nothing in software, at the price of real, ongoing setup and maintenance work. A platform bundles the CRM, calendar, and deployment machinery so you're configuring rather than building infrastructure, in exchange for a flat monthly fee. Neither is objectively correct — it depends whether owning the stack is a feature or a chore for you.",
     },
   ],

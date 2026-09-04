@@ -36,7 +36,7 @@ import type { AgentBlueprint } from "@/db/schema/agents";
 import { resolveQuoteRange, type QuoteRange } from "@/lib/agents/tools";
 
 /** Advertised MCP protocol version. Matches the client's PROTOCOL_VERSION so a
- *  SeldonFrame-to-SeldonFrame connection negotiates cleanly. Renters on other
+ *  Kynetic OS-to-Kynetic OS connection negotiates cleanly. Renters on other
  *  clients negotiate down as needed. */
 export const MCP_PROTOCOL_VERSION = "2025-06-18";
 

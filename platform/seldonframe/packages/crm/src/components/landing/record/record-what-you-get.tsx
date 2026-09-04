@@ -32,7 +32,7 @@ export function RecordWhatYouGet() {
           From screenshare to deployed agent
         </p>
         <h2 className="mt-3 max-w-[24ch] text-balance font-sans text-[clamp(26px,3.2vw,38px)] font-[500] leading-[1.1] tracking-[-0.02em] text-[var(--lp-ink)]">
-          The same SeldonFrame, entered sideways
+          The same Kynetic OS, entered sideways
         </h2>
         <p className="mt-4 max-w-[62ch] text-pretty text-[16px] leading-[1.55] text-[var(--lp-body)]">
           A recording doesn&apos;t build a toy. It builds the same agent + workspace the

@@ -24,9 +24,9 @@ export const dynamic = "force-dynamic";
 // authed key panel, not a discoverable content page).
 export const metadata = buildPageMetadata({
   path: "/build/keys",
-  title: "Developer keys — SeldonFrame for Builders",
+  title: "Developer keys — Kynetic OS for Builders",
   description:
-    "Mint the workspace bearer your IDE's MCP connector uses to build, test, and sell agents on SeldonFrame.",
+    "Mint the workspace bearer your IDE's MCP connector uses to build, test, and sell agents on Kynetic OS.",
 });
 
 export default async function BuildKeysPage() {
@@ -47,7 +47,7 @@ export default async function BuildKeysPage() {
       <p className="text-sm text-muted-foreground max-w-2xl">
         Mint a key, copy it once, and paste it into your IDE&apos;s MCP connector
         (<code className="font-mono">Authorization: Bearer wst_…</code>). The
-        SeldonFrame MCP then authenticates every build, eval, publish, and
+        Kynetic OS MCP then authenticates every build, eval, publish, and
         pricing call as your workspace — so you can build and sell an agent
         without opening a dashboard.
       </p>

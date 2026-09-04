@@ -185,7 +185,7 @@ export default async function WorkspaceLandingPage({ params }: PageProps) {
   // bisect 3/4: rewrite generic CTA hrefs to workspace-scoped URLs.
   const workspaceUrls = buildWorkspaceUrls(
     slug,
-    process.env.WORKSPACE_BASE_DOMAIN ?? "app.seldonframe.com",
+    process.env.WORKSPACE_BASE_DOMAIN ?? "app.kyneticai.com",
     ctx.orgId,
   );
   const payload = rewriteR1Hrefs(r1.payload, {

@@ -35,7 +35,7 @@ const operatorPricing = AGENCY_PLAN_FACTS.filter((plan) => !plan.id.startsWith("
  *  always carries clickable, on-brand URLs. An env override wins for non-prod. */
 export const AI_AGENTS_BASE_URL =
   (process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/, "") || "") ||
-  "https://seldonframe.com";
+  "https://kyneticai.com";
 
 function trimBase(baseUrl: string): string {
   return baseUrl.replace(/\/+$/, "");
@@ -85,7 +85,7 @@ export function renderAiAgentsIndexMarkdown(
   lines.push("# AI agents that work 24/7 for your business");
   lines.push("");
   lines.push(
-    "Pick the job you need done. Each agent deploys into your own hosted SeldonFrame workspace in about a minute — grounded in your real services, hours, and pricing — or rents over MCP.",
+    "Pick the job you need done. Each agent deploys into your own hosted Kynetic OS workspace in about a minute — grounded in your real services, hours, and pricing — or rents over MCP.",
   );
   lines.push("");
 
@@ -182,7 +182,7 @@ function renderAgentBody(job: AgentJob, vertical: Vertical | undefined, baseUrl:
   lines.push(`Prefer to rent it over MCP? ${capitalize(job.mcpToolHint)}.`);
   if (job.marketplaceSlug) {
     lines.push("");
-    lines.push(`See this agent on the SeldonFrame Marketplace: ${marketplaceListingUrl(job.marketplaceSlug, baseUrl)}`);
+    lines.push(`See this agent on the Kynetic OS Marketplace: ${marketplaceListingUrl(job.marketplaceSlug, baseUrl)}`);
   }
   lines.push("");
 

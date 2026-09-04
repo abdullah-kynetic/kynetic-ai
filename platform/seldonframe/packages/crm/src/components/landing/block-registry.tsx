@@ -57,7 +57,7 @@ export const landingBlockRegistry: BlockRegistry = [
   {
     type: "navbar",
     label: "Navbar",
-    category: "SeldonFrame",
+    category: "Kynetic OS",
     grapesId: "sf-navbar",
     grapesContent:
       '<header class="py-4 border-b"><div class="container mx-auto flex items-center justify-between"><div class="font-semibold">Your Business</div><nav class="space-x-4"><a href="#features">Features</a><a href="#pricing">Pricing</a></nav><a href="#cta" class="px-4 py-2 rounded bg-primary text-white">Book Now</a></div></header>',
@@ -66,7 +66,7 @@ export const landingBlockRegistry: BlockRegistry = [
   {
     type: "hero",
     label: "Hero Section",
-    category: "SeldonFrame",
+    category: "Kynetic OS",
     grapesId: "sf-hero",
     grapesContent:
       '<section class="py-20 text-center"><p class="text-sm uppercase tracking-wider text-muted">For your clients</p><h1 class="text-5xl font-bold mt-2">Your Headline Here</h1><p class="text-xl text-muted mt-4 max-w-2xl mx-auto">Your compelling subheadline that explains what you do and why it matters.</p><a href="#cta" class="mt-8 inline-block px-8 py-3 bg-primary text-white rounded-lg">Book a Call</a></section>',
@@ -75,7 +75,7 @@ export const landingBlockRegistry: BlockRegistry = [
   {
     type: "benefits",
     label: "Benefits",
-    category: "SeldonFrame",
+    category: "Kynetic OS",
     grapesId: "sf-benefits",
     grapesContent:
       '<section class="py-20"><h2 class="text-3xl font-bold text-center mb-12">Why Choose Us</h2><div class="grid grid-cols-3 gap-8 max-w-5xl mx-auto"><div class="text-center p-6"><div class="text-4xl mb-4">✨</div><h3 class="text-xl font-semibold">Benefit One</h3><p class="text-muted mt-2">Description of the first benefit.</p></div><div class="text-center p-6"><div class="text-4xl mb-4">🎯</div><h3 class="text-xl font-semibold">Benefit Two</h3><p class="text-muted mt-2">Description of the second benefit.</p></div><div class="text-center p-6"><div class="text-4xl mb-4">💡</div><h3 class="text-xl font-semibold">Benefit Three</h3><p class="text-muted mt-2">Description of the third benefit.</p></div></div></section>',
@@ -84,7 +84,7 @@ export const landingBlockRegistry: BlockRegistry = [
   {
     type: "whoitsfor",
     label: "Who It's For",
-    category: "SeldonFrame",
+    category: "Kynetic OS",
     grapesId: "sf-whoitsfor",
     grapesContent:
       '<section class="py-20"><h2 class="text-3xl font-bold text-center mb-12">Who this is for</h2><div class="grid grid-cols-3 gap-6 max-w-5xl mx-auto"><div class="p-6 border rounded-xl">Founders</div><div class="p-6 border rounded-xl">Coaches</div><div class="p-6 border rounded-xl">Consultants</div></div></section>',
@@ -93,7 +93,7 @@ export const landingBlockRegistry: BlockRegistry = [
   {
     type: "features",
     label: "Features",
-    category: "SeldonFrame",
+    category: "Kynetic OS",
     grapesId: "sf-features",
     grapesContent:
       '<section class="py-20"><h2 class="text-3xl font-bold text-center mb-8">Features</h2><div class="flex flex-wrap gap-2 justify-center"><span class="px-3 py-1 border rounded-full">Automation</span><span class="px-3 py-1 border rounded-full">Pipeline</span><span class="px-3 py-1 border rounded-full">Booking</span></div></section>',
@@ -102,7 +102,7 @@ export const landingBlockRegistry: BlockRegistry = [
   {
     type: "process",
     label: "Process",
-    category: "SeldonFrame",
+    category: "Kynetic OS",
     grapesId: "sf-process",
     grapesContent:
       '<section class="py-20"><h2 class="text-3xl font-bold text-center mb-12">How it works</h2><div class="grid grid-cols-3 gap-6 max-w-5xl mx-auto"><div class="p-6 border rounded-xl text-center">1. Start</div><div class="p-6 border rounded-xl text-center">2. Build</div><div class="p-6 border rounded-xl text-center">3. Scale</div></div></section>',
@@ -111,7 +111,7 @@ export const landingBlockRegistry: BlockRegistry = [
   {
     type: "testimonials",
     label: "Testimonials",
-    category: "SeldonFrame",
+    category: "Kynetic OS",
     grapesId: "sf-testimonials",
     grapesContent:
       '<section class="py-20"><h2 class="text-3xl font-bold text-center mb-10">What clients say</h2><div class="grid grid-cols-2 gap-6 max-w-5xl mx-auto"><blockquote class="p-6 border rounded-xl">"Amazing results"</blockquote><blockquote class="p-6 border rounded-xl">"Best decision"</blockquote></div></section>',
@@ -120,7 +120,7 @@ export const landingBlockRegistry: BlockRegistry = [
   {
     type: "pricing",
     label: "Pricing",
-    category: "SeldonFrame",
+    category: "Kynetic OS",
     grapesId: "sf-pricing",
     grapesContent:
       '<section class="py-20"><h2 class="text-3xl font-bold text-center mb-10">Pricing</h2><div class="grid grid-cols-3 gap-6 max-w-6xl mx-auto"><div class="p-6 border rounded-xl">Starter</div><div class="p-6 border rounded-xl">Growth</div><div class="p-6 border rounded-xl">Pro</div></div></section>',
@@ -129,7 +129,7 @@ export const landingBlockRegistry: BlockRegistry = [
   {
     type: "faq",
     label: "FAQ",
-    category: "SeldonFrame",
+    category: "Kynetic OS",
     grapesId: "sf-faq",
     grapesContent:
       '<section class="py-20 max-w-4xl mx-auto"><h2 class="text-3xl font-bold text-center mb-8">FAQ</h2><details class="p-4 border rounded-xl mb-2"><summary>Question one?</summary><p class="mt-2">Answer one.</p></details><details class="p-4 border rounded-xl"><summary>Question two?</summary><p class="mt-2">Answer two.</p></details></section>',
@@ -138,7 +138,7 @@ export const landingBlockRegistry: BlockRegistry = [
   {
     type: "cta",
     label: "Call to Action",
-    category: "SeldonFrame",
+    category: "Kynetic OS",
     grapesId: "sf-cta",
     grapesContent:
       '<section class="py-20 text-center"><h2 class="text-3xl font-bold">Ready to Get Started?</h2><p class="text-xl text-muted mt-4 max-w-xl mx-auto">Your compelling closing message here.</p><a href="/book" class="mt-8 inline-block px-8 py-3 bg-primary text-white rounded-lg">Book Your Session</a></section>',
@@ -147,7 +147,7 @@ export const landingBlockRegistry: BlockRegistry = [
   {
     type: "footer",
     label: "Footer",
-    category: "SeldonFrame",
+    category: "Kynetic OS",
     grapesId: "sf-footer",
     grapesContent:
       '<footer class="py-10 border-t"><div class="container mx-auto text-center text-sm">Your Business · All rights reserved</div></footer>',
@@ -161,7 +161,7 @@ export const landingBlockRegistry: BlockRegistry = [
   {
     type: "servicesGrid",
     label: "Services Grid",
-    category: "SeldonFrame",
+    category: "Kynetic OS",
     grapesId: "sf-services-grid",
     grapesContent:
       '<section class="py-20"><h2 class="text-3xl font-bold text-center mb-12">Our Services</h2><div class="grid grid-cols-3 gap-4 max-w-6xl mx-auto"><div class="p-6 border rounded-2xl"><h3 class="text-lg font-semibold">Service 1</h3><p class="text-muted mt-2">Description.</p><div class="mt-4 font-bold">From $99</div></div></div></section>',
@@ -175,7 +175,7 @@ export const landingBlockRegistry: BlockRegistry = [
   {
     type: "emergencyStrip",
     label: "Emergency Call Strip",
-    category: "SeldonFrame",
+    category: "Kynetic OS",
     grapesId: "sf-emergency-strip",
     grapesContent:
       '<section class="py-8"><div class="rounded-2xl bg-primary text-white px-6 py-6 flex items-center justify-between max-w-6xl mx-auto"><div><p class="uppercase text-xs">Emergency</p><h3 class="text-xl font-bold">Pipe burst? Roof leaking? Don\'t wait.</h3></div><a href="tel:" class="inline-block bg-white text-primary px-5 py-3 rounded-full font-bold">(555) 555-0100</a></div></section>',
@@ -187,7 +187,7 @@ export const landingBlockRegistry: BlockRegistry = [
   {
     type: "serviceArea",
     label: "Service Area",
-    category: "SeldonFrame",
+    category: "Kynetic OS",
     grapesId: "sf-service-area",
     grapesContent:
       '<section class="py-20"><h2 class="text-3xl font-bold text-center mb-8">Service Area</h2><div class="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto"><span class="px-4 py-2 border rounded-full">City 1</span><span class="px-4 py-2 border rounded-full">City 2</span><span class="px-4 py-2 border rounded-full">City 3</span></div></section>',
@@ -199,7 +199,7 @@ export const landingBlockRegistry: BlockRegistry = [
   {
     type: "projectGallery",
     label: "Project Gallery",
-    category: "SeldonFrame",
+    category: "Kynetic OS",
     grapesId: "sf-project-gallery",
     grapesContent:
       '<section class="py-20"><h2 class="text-3xl font-bold text-center mb-8">Recent Work</h2><div class="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-6xl mx-auto"><div class="aspect-square bg-muted rounded-2xl"></div><div class="aspect-square bg-muted rounded-2xl"></div><div class="aspect-square bg-muted rounded-2xl"></div><div class="aspect-square bg-muted rounded-2xl"></div></div></section>',
@@ -211,7 +211,7 @@ export const landingBlockRegistry: BlockRegistry = [
   {
     type: "stickyMobileCTA",
     label: "Sticky Mobile CTA",
-    category: "SeldonFrame",
+    category: "Kynetic OS",
     grapesId: "sf-sticky-mobile-cta",
     grapesContent:
       '<div class="fixed bottom-0 inset-x-0 border-t bg-card md:hidden flex"><a class="flex-1 py-4 text-center" href="tel:">Call</a><a class="flex-1 py-4 text-center bg-primary text-white" href="/book">Book</a></div>',
@@ -227,7 +227,7 @@ export const landingBlockRegistry: BlockRegistry = [
   {
     type: "chatbotPreview",
     label: "Chatbot Preview (default public surface)",
-    category: "SeldonFrame",
+    category: "Kynetic OS",
     grapesId: "sf-chatbot-preview",
     grapesContent:
       '<section class="py-20 text-center"><h1 class="text-4xl font-semibold">Your Business</h1><p class="mt-3 opacity-70">AI receptionist — ask anything</p><div class="mt-12 rounded-2xl border p-8 min-h-[400px]">Loading your AI receptionist…</div></section>',

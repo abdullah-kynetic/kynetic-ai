@@ -47,12 +47,12 @@ import {
 export const metadata: Metadata = buildPageMetadata({
   path: "/build",
   markdownPath: "/build.md",
-  title: "Build & sell an AI agent — from your IDE | SeldonFrame for Builders",
+  title: "Build & sell an AI agent — from your IDE | Kynetic OS for Builders",
   description:
-    "set up https://seldonframe.com/SKILL.md, connect the SeldonFrame MCP, and ask your agent to build, test, list, and price an AI agent — without a dashboard. Get paid per call. Free to list, no upfront fee — SeldonFrame earns only a small share of usage.",
+    "set up https://kyneticai.com/SKILL.md, connect the Kynetic OS MCP, and ask your agent to build, test, list, and price an AI agent — without a dashboard. Get paid per call. Free to list, no upfront fee — Kynetic OS earns only a small share of usage.",
   ogTitle: "Build & sell an AI agent — from your IDE",
   ogDescription:
-    "One command — set up https://seldonframe.com/SKILL.md — and your IDE agent can build, eval, list, and price an agent over MCP. MCP-native. No dashboard. No subscription.",
+    "One command — set up https://kyneticai.com/SKILL.md — and your IDE agent can build, eval, list, and price an agent over MCP. MCP-native. No dashboard. No subscription.",
 });
 
 const connectSnippet = buildLandingConnectSnippet();
@@ -107,16 +107,16 @@ export default function BuildLandingPage(): ReactElement {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: "Build & sell an AI agent on SeldonFrame from your IDE",
+    name: "Build & sell an AI agent on Kynetic OS from your IDE",
     description:
-      "The developer front door to the SeldonFrame builder marketplace. Set up the SKILL.md, connect the MCP with a workspace key, then build, eval, publish, and price an agent — and run any tool, skill, or agent in the catalog.",
-    url: "https://seldonframe.com/build",
+      "The developer front door to the Kynetic OS builder marketplace. Set up the SKILL.md, connect the MCP with a workspace key, then build, eval, publish, and price an agent — and run any tool, skill, or agent in the catalog.",
+    url: "https://kyneticai.com/build",
     mainEntity: {
       "@type": "HowTo",
-      name: "Build & sell an AI agent on SeldonFrame from your IDE",
+      name: "Build & sell an AI agent on Kynetic OS from your IDE",
       step: [
         { "@type": "HowToStep", position: 1, name: "Set up the skill", text: `Run: ${BUILD_SETUP_COMMAND}` },
-        { "@type": "HowToStep", position: 2, name: "Mint a key", text: `Mint a workspace key at ${BUILD_KEYS_PATH} and add the SeldonFrame MCP connector.` },
+        { "@type": "HowToStep", position: 2, name: "Mint a key", text: `Mint a workspace key at ${BUILD_KEYS_PATH} and add the Kynetic OS MCP connector.` },
         { "@type": "HowToStep", position: 3, name: "Ask your agent", text: "Ask your agent to build a 24/7 receptionist and list it for $0.10/call." },
       ],
     },
@@ -364,7 +364,7 @@ function ThreeStepFlow(): ReactElement {
               <Link href={BUILD_KEYS_PATH} className="sf-build-link">
                 {BUILD_KEYS_PATH}
               </Link>
-              , copy it once, and add the SeldonFrame MCP connector with it. First workspace is free.
+              , copy it once, and add the Kynetic OS MCP connector with it. First workspace is free.
             </>
           }
         />
@@ -496,7 +496,7 @@ function CommonQuestions(): ReactElement {
         <span style={{ fontFamily: MKT.fontSerif, fontStyle: "italic", fontWeight: 500 }}>questions.</span>
       </h2>
       <p style={{ margin: "0 0 26px", fontSize: 16.5, lineHeight: 1.5, color: "rgba(34,29,23,0.62)", maxWidth: 620 }}>
-        No upfront fee. SeldonFrame earns only a small share of real usage — so we make money when you do.
+        No upfront fee. Kynetic OS earns only a small share of real usage — so we make money when you do.
       </p>
 
       {/* Collapsible accordion via native <details> — no client JS, so /build
@@ -555,7 +555,7 @@ function Connect(): ReactElement {
         Add the MCP in one line
       </h2>
       <p style={{ margin: "0 0 22px", fontSize: 16.5, lineHeight: 1.5, color: "rgba(34,29,23,0.62)", maxWidth: 620 }}>
-        Wire the SeldonFrame MCP into Claude Code over Streamable HTTP. Swap{" "}
+        Wire the Kynetic OS MCP into Claude Code over Streamable HTTP. Swap{" "}
         <code className="sf-build-code">wst_your_key</code> for the key you mint at{" "}
         <Link href={BUILD_KEYS_PATH} className="sf-build-link">
           {BUILD_KEYS_PATH}

@@ -401,7 +401,7 @@ export const PLANS: Plan[] = [
     // (The id stays "agency" so legacy subscriptions + the data-driven
     // webhook tier-resolver keep resolving.)
     id: "agency",
-    name: "SeldonFrame",
+    name: "Kynetic OS",
     tagline: "$29/mo · unlimited workspaces · cancel anytime",
     type: "paid",
     sellable: false,

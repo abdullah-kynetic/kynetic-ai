@@ -3,8 +3,8 @@ import { generatePwaManifest } from "@seldonframe/core/virality";
 
 export default function manifest(): MetadataRoute.Manifest {
   const base = generatePwaManifest({
-    name: "SeldonFrame CRM",
-    shortName: "SeldonFrame",
+    name: "Kynetic OS CRM",
+    shortName: "Kynetic OS",
     description: "Soul-driven CRM framework",
     startUrl: "/hub",
     themeColor: "#0a0e14",

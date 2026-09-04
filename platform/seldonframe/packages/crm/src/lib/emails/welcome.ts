@@ -18,9 +18,9 @@ const DISCORD_INVITE = "https://discord.gg/sbVUu976NW";
 // surfaced to the operator as "the email service is in test mode".
 // Fix: when the env override points at the sandbox domain, IGNORE it
 // and use the verified production domain. Real per-environment
-// overrides (e.g. `staging@seldonframe.com`) still work because they
+// overrides (e.g. `staging@kyneticai.com`) still work because they
 // don't match the sandbox prefix.
-const DEFAULT_FROM = "SeldonFrame <welcome@seldonframe.com>";
+const DEFAULT_FROM = "Kynetic OS <welcome@send.kyneticai.com>";
 const SANDBOX_FROM_PATTERN = /@resend\.dev>?$/i;
 
 export type WelcomeChatbot = {
@@ -165,13 +165,13 @@ export function pickFromAddress(env: NodeJS.ProcessEnv | Record<string, string |
     return DEFAULT_FROM;
   }
   // v1.1.8 — aggressive default. When the env var is not set OR
-  // doesn't carry a seldonframe.com address, force the verified
+  // doesn't carry a kyneticai.com address, force the verified
   // production domain. This guards against env drift where a
   // staging/preview deployment carries an unverified `noreply@example
   // .com`-style override that Resend would reject.
-  if (configured && !/seldonframe\.com>?$/i.test(configured)) {
+  if (configured && !/kyneticai\.com>?$/i.test(configured)) {
     console.warn(
-      `[welcome-email] RESEND_FROM_ADDRESS="${configured}" doesn't use a verified seldonframe.com domain — falling back to ${DEFAULT_FROM} for safety.`,
+      `[welcome-email] RESEND_FROM_ADDRESS="${configured}" doesn't use a verified kyneticai.com domain — falling back to ${DEFAULT_FROM} for safety.`,
     );
     return DEFAULT_FROM;
   }
@@ -211,7 +211,7 @@ function renderUpgradeBlock(req: WelcomeEmailRequest): string {
         <tr><td style="padding:16px 18px;">
           <div style="font-size:13px;color:#92400e;letter-spacing:0.04em;text-transform:uppercase;font-weight:600;margin-bottom:6px;">Go pro for $29/mo</div>
           <ul style="margin:0 0 12px 0;padding-left:18px;font-size:14px;color:#78350f;line-height:1.6;">
-            <li><strong>Your own domain</strong> — joescuts.com → your workspace, auto-SSL, no more *.seldonframe.com in front of customers.</li>
+            <li><strong>Your own domain</strong> — joescuts.com → your workspace, auto-SSL, no more *.kyneticai.com in front of customers.</li>
             <li><strong>Unlimited workspaces</strong> — spin up a new one for every client or business, all on one flat price.</li>
             <li><strong>List &amp; sell your agents on the marketplace</strong> — you keep 95%.</li>
           </ul>
@@ -249,9 +249,9 @@ function renderSellBlock(): string {
       <tr><td style="padding:16px 18px;">
         <div style="font-size:13px;color:#111;letter-spacing:0.04em;text-transform:uppercase;font-weight:600;margin-bottom:6px;">Sell what you just built</div>
         <div style="font-size:14px;color:#374151;line-height:1.55;margin-bottom:8px;">
-          You didn't just get a workspace — you built an AI agent. List it on the SeldonFrame marketplace and earn on every install or rental. You keep 95%; we take a sliver only when it sells.
+          You didn't just get a workspace — you built an AI agent. List it on the Kynetic OS marketplace and earn on every install or rental. You keep 95%; we take a sliver only when it sells.
         </div>
-        <a href="https://seldonframe.com/marketplace" style="color:#1a73e8;text-decoration:none;font-size:13px;font-weight:600;">Browse the marketplace →</a>
+        <a href="https://kyneticai.com/marketplace" style="color:#1a73e8;text-decoration:none;font-size:13px;font-weight:600;">Browse the marketplace →</a>
       </td></tr>
     </table>
   </td></tr>`;
@@ -301,7 +301,7 @@ export function renderWelcomeEmailHtml(req: WelcomeEmailRequest): string {
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Your SeldonFrame workspace is live</title>
+<title>Your Kynetic OS workspace is live</title>
 </head>
 <body style="margin:0;padding:0;background:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#111;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f5f5f7;padding:24px 12px;">
@@ -309,7 +309,7 @@ export function renderWelcomeEmailHtml(req: WelcomeEmailRequest): string {
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
 
         <tr><td style="background:#0b0b10;padding:32px 32px 28px 32px;color:#ffffff;">
-          <div style="font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#9aa0a6;margin-bottom:8px;">SeldonFrame</div>
+          <div style="font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#9aa0a6;margin-bottom:8px;">Kynetic OS</div>
           <div style="font-size:24px;font-weight:600;line-height:1.25;">Your workspace is live.</div>
           <div style="font-size:14px;color:#c8ccd1;margin-top:8px;">Every URL below works right now — no signup, no setup.</div>
         </td></tr>
@@ -317,7 +317,7 @@ export function renderWelcomeEmailHtml(req: WelcomeEmailRequest): string {
         <tr><td style="padding:28px 32px 8px 32px;font-size:15px;line-height:1.55;color:#1a1a1f;">
           <p style="margin:0 0 16px 0;">${greeting}</p>
           <p style="margin:0 0 20px 0;">
-            Thanks for spinning up a workspace on SeldonFrame. Bookmark these four URLs — they're your business OS in production.
+            Thanks for spinning up a workspace on Kynetic OS. Bookmark these four URLs — they're your business OS in production.
           </p>
           <a href="${primaryUrl}" style="display:inline-block;background:#0b0b10;color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:13px 26px;border-radius:8px;">${primaryLabel}</a>
         </td></tr>
@@ -363,7 +363,7 @@ export function renderWelcomeEmailHtml(req: WelcomeEmailRequest): string {
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#5865f2;border-radius:10px;">
             <tr><td align="center" style="padding:18px 24px;">
               <div style="font-size:13px;color:#dbe1ff;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Need help?</div>
-              <div style="font-size:18px;font-weight:600;color:#ffffff;margin-bottom:14px;">Join the SeldonFrame builder community</div>
+              <div style="font-size:18px;font-weight:600;color:#ffffff;margin-bottom:14px;">Join the Kynetic OS builder community</div>
               <a href="${DISCORD_INVITE}" style="display:inline-block;background:#ffffff;color:#5865f2;text-decoration:none;font-size:14px;font-weight:600;padding:11px 22px;border-radius:8px;">Join Discord →</a>
               <div style="font-size:12px;color:#dbe1ff;margin-top:10px;">Live builder Q&amp;A · share what you&apos;re shipping · we read every message</div>
             </td></tr>
@@ -371,7 +371,7 @@ export function renderWelcomeEmailHtml(req: WelcomeEmailRequest): string {
         </td></tr>
 
         <tr><td style="padding:0 32px 24px 32px;border-top:1px solid #eef0f3;font-size:12px;color:#9aa0a6;line-height:1.5;text-align:center;padding-top:16px;">
-          Sent by SeldonFrame · <a href="${DISCORD_INVITE}" style="color:#9aa0a6;text-decoration:underline;">Discord</a>
+          Sent by Kynetic OS · <a href="${DISCORD_INVITE}" style="color:#9aa0a6;text-decoration:underline;">Discord</a>
         </td></tr>
 
       </table>
@@ -404,7 +404,7 @@ function renderUpgradeBlockText(req: WelcomeEmailRequest): string {
   if (tier === "free") {
     return `
 Go pro for $29/mo:
-  - Your own domain — joescuts.com -> your workspace, auto-SSL, no more *.seldonframe.com in front of customers.
+  - Your own domain — joescuts.com -> your workspace, auto-SSL, no more *.kyneticai.com in front of customers.
   - Unlimited workspaces — spin up a new one for every client or business, all on one flat price.
   - List & sell your agents on the marketplace — you keep 95%.
 
@@ -426,7 +426,7 @@ export function renderWelcomeEmailText(req: WelcomeEmailRequest): string {
   const primaryLabel = w.chatbot ? "Test your AI receptionist" : "Open your workspace";
   return `${greeting}
 
-Your SeldonFrame workspace is live. Bookmark these four URLs:
+Your Kynetic OS workspace is live. Bookmark these four URLs:
 
   Landing:  ${w.landing_url}
   Booking:  ${w.booking_url}
@@ -441,12 +441,12 @@ Next steps:
   3. Watch your first lead land in the CRM — every intake + chat feeds the workspace's brain.
 
 Sell what you just built:
-  You didn't just get a workspace — you built an AI agent. List it on the SeldonFrame
+  You didn't just get a workspace — you built an AI agent. List it on the Kynetic OS
   marketplace and earn on every install or rental. You keep 95%; we take a sliver only
-  when it sells. https://seldonframe.com/marketplace
+  when it sells. https://kyneticai.com/marketplace
 ${renderUpgradeBlockText(req)}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Join the SeldonFrame builder community on Discord:
+Join the Kynetic OS builder community on Discord:
 
   ${DISCORD_INVITE}
 
@@ -457,7 +457,7 @@ Live builder Q&A. Share what you're shipping. We read every message.
 
 export function welcomeEmailSubject(req: WelcomeEmailRequest): string {
   void req;
-  return "Your SeldonFrame workspace is live";
+  return "Your Kynetic OS workspace is live";
 }
 
 export async function sendWelcomeEmail(

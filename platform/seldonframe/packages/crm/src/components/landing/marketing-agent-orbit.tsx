@@ -94,7 +94,7 @@ export function MarketingAgentOrbit() {
           {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset */}
           <img
             src="/brand/seldonframe-icon-white.svg"
-            alt="SeldonFrame agent"
+            alt="Kynetic OS agent"
             width={34}
             height={34}
             className="block"

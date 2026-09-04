@@ -28,7 +28,7 @@ export function OperatorMobileShell({
   branding: EffectiveBranding | null;
   children: ReactNode;
 }) {
-  const brandName = branding?.brand_name || "SeldonFrame";
+  const brandName = branding?.brand_name || "Kynetic OS";
   const logoUrl = branding?.logo_url ?? null;
   const accentColor =
     (branding?.is_white_label && branding.primary_color) || "#7c3aed";

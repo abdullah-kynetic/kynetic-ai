@@ -17,15 +17,15 @@
 // The 9 live demo workspaces (name, type, href). The slug is derived from the
 // workspace href and matches the screenshot in /public/shots/<slug>.jpg.
 export const LIVE_DEMOS = [
-  { name: "J. Marin Heating & Air Conditioning", type: "HVAC", href: "https://j-marin-heating-air-conditioning-9599.app.seldonframe.com/" },
-  { name: "Metro MedSpa", type: "Med spa", href: "https://app.seldonframe.com/w/metro-medspa-9d24" },
-  { name: "The Cooling Specialists", type: "Air conditioning", href: "https://app.seldonframe.com/w/the-cooling-specialists" },
-  { name: "Vive Ageless Weight Loss Center", type: "Weight loss", href: "https://app.seldonframe.com/w/vive-ageless-weight-loss-center" },
-  { name: "Crown Plumbing", type: "Plumbing", href: "https://app.seldonframe.com/w/crown-plumbing" },
-  { name: "GameDay Men's Health", type: "Men's health", href: "https://app.seldonframe.com/w/gameday-mens-health-west-palm-beach" },
-  { name: "Rejuvenate MedSpa", type: "Med spa", href: "https://app.seldonframe.com/w/rejuvenate-medspa" },
-  { name: "Clean Cut Landscape Co", type: "Landscaping", href: "https://app.seldonframe.com/w/clean-cut-landscape-co" },
-  { name: "SKINNEY Medspa", type: "Med spa", href: "https://app.seldonframe.com/w/skinney-medspa" },
+  { name: "J. Marin Heating & Air Conditioning", type: "HVAC", href: "https://j-marin-heating-air-conditioning-9599.app.kyneticai.com/" },
+  { name: "Metro MedSpa", type: "Med spa", href: "https://app.kyneticai.com/w/metro-medspa-9d24" },
+  { name: "The Cooling Specialists", type: "Air conditioning", href: "https://app.kyneticai.com/w/the-cooling-specialists" },
+  { name: "Vive Ageless Weight Loss Center", type: "Weight loss", href: "https://app.kyneticai.com/w/vive-ageless-weight-loss-center" },
+  { name: "Crown Plumbing", type: "Plumbing", href: "https://app.kyneticai.com/w/crown-plumbing" },
+  { name: "GameDay Men's Health", type: "Men's health", href: "https://app.kyneticai.com/w/gameday-mens-health-west-palm-beach" },
+  { name: "Rejuvenate MedSpa", type: "Med spa", href: "https://app.kyneticai.com/w/rejuvenate-medspa" },
+  { name: "Clean Cut Landscape Co", type: "Landscaping", href: "https://app.kyneticai.com/w/clean-cut-landscape-co" },
+  { name: "SKINNEY Medspa", type: "Med spa", href: "https://app.kyneticai.com/w/skinney-medspa" },
 ] as const;
 
 type Demo = (typeof LIVE_DEMOS)[number];
@@ -51,7 +51,7 @@ function hostOf(href: string): string {
   try {
     return new URL(href).host;
   } catch {
-    return "app.seldonframe.com";
+    return "app.kyneticai.com";
   }
 }
 
@@ -79,7 +79,7 @@ function DemoCard({ demo }: { demo: Demo }) {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={`/shots/${slug}.jpg`}
-          alt={`${demo.name} — live SeldonFrame workspace`}
+          alt={`${demo.name} — live Kynetic OS workspace`}
           loading="lazy"
           decoding="async"
           className="size-full object-cover object-[center_top]"

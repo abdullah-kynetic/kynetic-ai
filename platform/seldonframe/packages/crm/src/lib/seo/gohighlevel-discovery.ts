@@ -1,6 +1,6 @@
 import { getGuide, type Guide } from "./guides";
 
-const BASE_URL = "https://www.seldonframe.com";
+const BASE_URL = "https://www.kyneticai.com";
 
 export const GOHIGHLEVEL_COLLECTION_PATH = "/guides/gohighlevel";
 export const GOHIGHLEVEL_COLLECTION_MARKDOWN_PATH = "/guides/gohighlevel.md";
@@ -127,10 +127,10 @@ export function renderGohighlevelCollectionMarkdown(): string {
   lines.push(
     "## Useful decision tools",
     "",
-    `- [Compare SeldonFrame and GoHighLevel](${BASE_URL}/alternative-to-gohighlevel)`,
+    `- [Compare Kynetic OS and GoHighLevel](${BASE_URL}/alternative-to-gohighlevel)`,
     `- [Calculate your GoHighLevel agency cost](${BASE_URL}/tools/gohighlevel-cost-calculator)`,
     "",
-    "SeldonFrame is a focused AI-front-office alternative for agencies serving local businesses. It is not a replacement for every HighLevel funnel, campaign, snapshot, or ecosystem workflow.",
+    "Kynetic OS is a focused AI-front-office alternative for agencies serving local businesses. It is not a replacement for every HighLevel funnel, campaign, snapshot, or ecosystem workflow.",
     "",
   );
 

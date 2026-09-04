@@ -23,7 +23,7 @@ function compareFooterItems(): { label: string; href: string }[] {
   return [
     { label: "All comparisons", href: "/alternatives" },
     ...COMPETITORS.map((c) => ({
-      label: `SeldonFrame vs ${c.name}`,
+      label: `Kynetic OS vs ${c.name}`,
       href: `/compare/seldonframe-vs-${c.slug}`,
     })),
     { label: "Best-of guides", href: "/best" },
@@ -130,7 +130,7 @@ export function MarketplaceNav({
           }}
         >
           <SeldonFrameMark size={23} />
-          <span style={{ fontWeight: 700, fontSize: 16.5, letterSpacing: "-0.01em" }}>SeldonFrame</span>
+          <span style={{ fontWeight: 700, fontSize: 16.5, letterSpacing: "-0.01em" }}>Kynetic OS</span>
           <span className="sf-mkt-navword" style={{ fontWeight: 500, fontSize: 16.5, color: "rgba(34,29,23,0.42)", letterSpacing: "-0.01em" }}>
             Marketplace
           </span>
@@ -244,7 +244,7 @@ export function MarketplaceFooter(): ReactElement {
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
             <SeldonFrameMark size={22} color={MKT.paper} accent={MKT.green} />
-            <span style={{ fontWeight: 700, fontSize: 16 }}>SeldonFrame Marketplace</span>
+            <span style={{ fontWeight: 700, fontSize: 16 }}>Kynetic OS Marketplace</span>
           </div>
           <p style={{ margin: 0, fontSize: 14.5, lineHeight: 1.55, color: "rgba(246,242,234,0.6)", maxWidth: 280 }}>
             The marketplace for agents that{" "}

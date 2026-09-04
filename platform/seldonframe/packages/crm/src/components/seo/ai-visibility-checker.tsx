@@ -340,7 +340,7 @@ export function AiVisibilityChecker(): ReactElement {
         </div>
 
         <p style={{ margin: "18px 0 0", fontSize: 12.5, color: "rgba(34,29,23,0.55)", lineHeight: 1.5 }}>
-          Honest by design: these prompts run on your device, in your own AI account. SeldonFrame does not call any AI
+          Honest by design: these prompts run on your device, in your own AI account. Kynetic OS does not call any AI
           model here and makes no claim about what the answer will say — try them and see for yourself.
         </p>
       </section>
@@ -351,7 +351,7 @@ export function AiVisibilityChecker(): ReactElement {
           Want AI to actually recommend you?
         </h2>
         <p style={{ margin: "0 0 18px", fontSize: 14.5, lineHeight: 1.6, color: "rgba(34,29,23,0.72)", maxWidth: 620 }}>
-          SeldonFrame makes a business citable: structured, honest content generative engines can parse, a clean{" "}
+          Kynetic OS makes a business citable: structured, honest content generative engines can parse, a clean{" "}
           <strong>.md / llms.txt</strong> surface for the facts about you, and the listicle presence that best-of answers
           are built from. No tricks — just the signals models trust.
         </p>
@@ -360,7 +360,7 @@ export function AiVisibilityChecker(): ReactElement {
             Get your business cited — start free
           </a>
           <a
-            href="https://app.seldonframe.com/book/seldonframes-workspace-7798/default"
+            href="https://app.kyneticai.com/book/seldonframes-workspace-7798/default"
             style={{ background: "#fff", color: INK, padding: "13px 26px", borderRadius: 12, fontWeight: 700, fontSize: 15.5, textDecoration: "none", border: `1.5px solid ${INK10}` }}
           >
             Book a demo call

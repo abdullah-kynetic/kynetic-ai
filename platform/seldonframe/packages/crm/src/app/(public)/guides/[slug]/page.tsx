@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: RouteParams): Promise<Metadat
   try {
     g = getGuide(slug);
   } catch {
-    return { title: "Not found — SeldonFrame" };
+    return { title: "Not found — Kynetic OS" };
   }
   const canonical = `/guides/${slug}`;
   const ogUrl = buildOgUrl({ kind: "tool", name: g.title, hook: g.targetKeyword });

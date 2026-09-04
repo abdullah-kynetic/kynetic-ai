@@ -52,10 +52,10 @@ export default async function PaymentsSettingsPage() {
             Register this URL as a <span className="font-medium text-foreground">Connect</span> webhook endpoint in your Stripe dashboard (Developers → Webhooks → Add endpoint → Connect). Subscribe to <code className="text-foreground">payment_intent.*</code>, <code className="text-foreground">charge.refunded</code>, <code className="text-foreground">charge.dispute.*</code>, <code className="text-foreground">invoice.*</code>, and <code className="text-foreground">customer.subscription.*</code> events.
           </p>
           <code className="block break-all rounded bg-muted/40 px-2 py-1 text-[11px] text-foreground">
-            {`${process.env.NEXT_PUBLIC_APP_URL ?? "https://app.seldonframe.com"}/api/webhooks/stripe/connect`}
+            {`${process.env.NEXT_PUBLIC_APP_URL ?? "https://app.kyneticai.com"}/api/webhooks/stripe/connect`}
           </code>
           <p className="text-xs text-muted-foreground">
-            Set <code className="text-foreground">STRIPE_CONNECT_WEBHOOK_SECRET</code> in your environment to the signing secret Stripe shows after creating the endpoint. This is distinct from the platform webhook used for SeldonFrame&apos;s own billing.
+            Set <code className="text-foreground">STRIPE_CONNECT_WEBHOOK_SECRET</code> in your environment to the signing secret Stripe shows after creating the endpoint. This is distinct from the platform webhook used for Kynetic OS&apos;s own billing.
           </p>
         </div>
       ) : null}

@@ -82,9 +82,9 @@ export const guide: Guide = {
       },
     },
     {
-      h2: "Where SeldonFrame fits (disclosed)",
+      h2: "Where Kynetic OS fits (disclosed)",
       body:
-        "Disclosure: SeldonFrame is the vendor described in this section, so treat the example as a product explanation and a sales pitch. SeldonFrame is an agent-native, open-source alternative to GoHighLevel for agencies selling AI front offices to service businesses. It combines the five surfaces in a workspace and is designed for an agency to repeat the setup across clients.\n\nThe product is not the only way to assemble a front office. An agency can connect a phone provider, CRM, calendar, website, and review tool itself, or choose another platform. Evaluate the actual handoff, data ownership, model and telephony billing, export path, and client experience—not just whether a vendor uses the phrase “AI front office.” The [AI front office package checklist](/guides/what-to-include-in-an-ai-front-office-package), [AI front office examples](/guides/ai-front-office-examples), and [AI front office software checklist](/guides/ai-front-office-software-for-agencies) are useful companions for implementation and evaluation.",
+        "Disclosure: Kynetic OS is the vendor described in this section, so treat the example as a product explanation and a sales pitch. Kynetic OS is an agent-native, open-source alternative to GoHighLevel for agencies selling AI front offices to service businesses. It combines the five surfaces in a workspace and is designed for an agency to repeat the setup across clients.\n\nThe product is not the only way to assemble a front office. An agency can connect a phone provider, CRM, calendar, website, and review tool itself, or choose another platform. Evaluate the actual handoff, data ownership, model and telephony billing, export path, and client experience—not just whether a vendor uses the phrase “AI front office.” The [AI front office package checklist](/guides/what-to-include-in-an-ai-front-office-package), [AI front office examples](/guides/ai-front-office-examples), and [AI front office software checklist](/guides/ai-front-office-software-for-agencies) are useful companions for implementation and evaluation.",
     },
   ],
   faq: [
@@ -98,7 +98,7 @@ export const guide: Guide = {
     },
     {
       q: "Can an agency sell an AI front office to several clients?",
-      a: "Yes, if the platform and plan support separate client workspaces, a repeatable setup, clear ownership, and a client-facing handoff. Builder is for a business the operator owns; SeldonFrame Agency plans start at $99/mo for client workspaces and white-label delivery.",
+      a: "Yes, if the platform and plan support separate client workspaces, a repeatable setup, clear ownership, and a client-facing handoff. Builder is for a business the operator owns; Kynetic OS Agency plans start at $99/mo for client workspaces and white-label delivery.",
     },
     {
       q: "How should I evaluate an AI front-office platform?",
@@ -107,8 +107,8 @@ export const guide: Guide = {
   ],
   sources: [
     {
-      label: "SeldonFrame documentation",
-      url: "https://www.seldonframe.com/docs",
+      label: "Kynetic OS documentation",
+      url: "https://www.kyneticai.com/docs",
     },
     {
       label: "Model Context Protocol introduction",

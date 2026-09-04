@@ -16,7 +16,7 @@ import { isWebUngatedBuildOn } from "@/lib/web-build/policy";
 import { TryClient } from "./try-client";
 
 export const metadata: Metadata = {
-  title: "Try SeldonFrame — watch your business build itself",
+  title: "Try Kynetic OS — watch your business build itself",
   robots: { index: false, follow: false },
 };
 

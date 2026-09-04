@@ -159,7 +159,7 @@ function BrandMark({ onDark }: { onDark: boolean }): ReactElement {
           letterSpacing: -0.5,
         }}
       >
-        {"seldonframe.com"}
+        {"kyneticai.com"}
       </div>
     </div>
   );
@@ -267,7 +267,7 @@ const BEST_AUD_MAX = 40;
 const TOOL_NAME_MAX = 40;
 const TOOL_HOOK_MAX = 70;
 
-/** kind=sf-vs — the flagship "SeldonFrame vs {Competitor}" card. */
+/** kind=sf-vs — the flagship "Kynetic OS vs {Competitor}" card. */
 export function SfVsCard({ name, price }: { name: string; price: string }): ReactElement {
   const safeName = clampEllipsis(name, SF_VS_NAME_MAX) || "Them";
   const safePrice = clampEllipsis(price, 22) || "See pricing";
@@ -276,7 +276,7 @@ export function SfVsCard({ name, price }: { name: string; price: string }): Reac
       <BrandMark onDark />
       <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
         <div style={{ display: "flex", fontSize: 92, fontWeight: 800, fontFamily: "Inter-ExtraBold", color: OG_COLORS.paper, lineHeight: 1.02 }}>
-          {"SeldonFrame"}
+          {"Kynetic OS"}
         </div>
         <div style={{ display: "flex", fontSize: 92, fontWeight: 800, fontFamily: "Inter-ExtraBold", lineHeight: 1.02 }}>
           {/* sand connector + paper name (not green — green === dark) keeps
@@ -422,7 +422,7 @@ export function AgentShareCard({ name, steps }: { name: string; steps: string })
       <BrandMark onDark />
       <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
         <div style={{ display: "flex", fontSize: 64, fontWeight: 800, fontFamily: "Inter-ExtraBold", color: OG_COLORS.paper, lineHeight: 1.1 }}>
-          {`${safeName} — built with SeldonFrame`}
+          {`${safeName} — built with Kynetic OS`}
         </div>
         {stepList.length > 0 ? (
           <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
@@ -470,7 +470,7 @@ export function DefaultCard(): ReactElement {
       <BrandMark onDark />
       <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
         <div style={{ display: "flex", fontSize: 92, fontWeight: 800, fontFamily: "Inter-ExtraBold", color: OG_COLORS.paper, lineHeight: 1.02 }}>
-          {"SeldonFrame"}
+          {"Kynetic OS"}
         </div>
         {/* sand, not green (green === dark): the tagline was drawn in
             background-colored text on the live fallback card. */}

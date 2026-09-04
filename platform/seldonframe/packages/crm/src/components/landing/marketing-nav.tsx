@@ -84,7 +84,7 @@ export function MarketingNav() {
 
       <div className="mx-auto flex max-w-[1120px] items-center justify-between gap-6 px-6 py-4 md:px-8 lg:px-12 lg:py-[18px]">
         {/* Brand */}
-        <Link href="/" aria-label="SeldonFrame — home">
+        <Link href="/" aria-label="Kynetic OS — home">
           <BrandMark withPathChip />
         </Link>
 

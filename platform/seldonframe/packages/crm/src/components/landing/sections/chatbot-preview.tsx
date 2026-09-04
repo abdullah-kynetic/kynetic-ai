@@ -18,9 +18,9 @@
 
 import type { ChatbotPreviewSectionContent } from "./types";
 
-const AGENTS_BASE_URL = "https://app.seldonframe.com/agents";
-const CONTACTS_URL = "https://app.seldonframe.com/contacts";
-const LLM_SETTINGS_URL = "https://app.seldonframe.com/settings/integrations/llm";
+const AGENTS_BASE_URL = "https://app.kyneticai.com/agents";
+const CONTACTS_URL = "https://app.kyneticai.com/contacts";
+const LLM_SETTINGS_URL = "https://app.kyneticai.com/settings/integrations/llm";
 const ANTHROPIC_BILLING_URL = "https://console.anthropic.com/settings/billing";
 
 type WizardStep = {
@@ -132,7 +132,7 @@ function buildSteps(args: {
           rel="noopener noreferrer"
           style={{ color: "var(--sf-accent)", textDecoration: "underline" }}
         >
-          app.seldonframe.com/contacts
+          app.kyneticai.com/contacts
         </a>
       ),
     },
@@ -268,7 +268,7 @@ export function ChatbotPreviewSection(props: ChatbotPreviewSectionContent) {
                 rel="noopener noreferrer"
                 style={{ color: "var(--sf-bg)", textDecoration: "underline" }}
               >
-                app.seldonframe.com/settings/integrations/llm
+                app.kyneticai.com/settings/integrations/llm
               </a>
               . If the chatbot errors with{" "}
               <code style={{ fontSize: "0.95em" }}>llm_credit_exhausted</code>,

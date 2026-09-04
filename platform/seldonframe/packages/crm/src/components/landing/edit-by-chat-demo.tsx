@@ -88,7 +88,7 @@ export function EditByChatDemo() {
           <span className="size-2 rounded-full bg-[#E5484D]/70" />
           <span className="size-2 rounded-full bg-[#FEBC2E]/70" />
           <span className="size-2 rounded-full bg-[#28C840]/70" />
-          <span className="ml-2 truncate font-mono text-[10.5px] text-[#9A9183]">dallas-heating-air.app.seldonframe.com</span>
+          <span className="ml-2 truncate font-mono text-[10.5px] text-[#9A9183]">dallas-heating-air.app.kyneticai.com</span>
         </div>
         <div className="relative p-5">
           <motion.span

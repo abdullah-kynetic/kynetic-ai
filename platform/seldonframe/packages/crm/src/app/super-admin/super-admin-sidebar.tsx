@@ -50,7 +50,7 @@ export function SuperAdminSidebar({
           {/* eslint-disable-next-line @next/next/no-img-element -- static brand mark */}
           <img src="/brand/seldon-mark.svg" alt="Seldon" width={28} height={28} className="size-7 rounded-md" />
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-foreground leading-tight">SeldonFrame</p>
+            <p className="text-sm font-semibold text-foreground leading-tight">Kynetic OS</p>
             <p className="text-[10px] text-muted-foreground tracking-wide uppercase">Admin</p>
           </div>
         </div>

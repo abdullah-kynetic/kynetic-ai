@@ -218,7 +218,7 @@ function DisabledShell() {
       <section className="w-full max-w-md space-y-3 text-center">
         <h1 className="text-2xl font-semibold tracking-tight">Approval link unavailable</h1>
         <p className="text-sm text-muted-foreground">
-          This SeldonFrame deployment hasn&apos;t enabled customer approval links yet. If
+          This Kynetic OS deployment hasn&apos;t enabled customer approval links yet. If
           you&apos;re expecting to act on a request, please contact the sender.
         </p>
         <div className="pt-4">

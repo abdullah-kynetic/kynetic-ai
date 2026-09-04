@@ -77,7 +77,7 @@ export function MarketingAgencyMath() {
               {[
                 "Create a branded client workspace from a URL",
                 "Build agents in plain English — voice, SMS, chat & email",
-                "From $99/mo: your brand on the entire platform — clients never see SeldonFrame",
+                "From $99/mo: your brand on the entire platform — clients never see Kynetic OS",
                 "Set your own per-client pricing and keep the spread",
                 "10 client sub-accounts on Agency Starter ($99/mo) — 30 on Growth, unlimited on Scale",
                 "Onboard a new client in 3 minutes from a URL",

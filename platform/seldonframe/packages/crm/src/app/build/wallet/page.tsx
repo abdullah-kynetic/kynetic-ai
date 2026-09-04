@@ -34,7 +34,7 @@ export const dynamic = "force-dynamic";
 // authed wallet panel, not a discoverable content page).
 export const metadata = buildPageMetadata({
   path: "/build/wallet",
-  title: "Build wallet — SeldonFrame for Builders",
+  title: "Build wallet — Kynetic OS for Builders",
   description:
     "Top up a prepaid balance; every build run draws it down. Listing is free — you only pay on real usage.",
 });

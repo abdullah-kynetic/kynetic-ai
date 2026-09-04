@@ -182,7 +182,7 @@ export default async function PublicSPage({ params }: PageProps) {
       }
       const workspaceUrls = buildWorkspaceUrls(
         orgSlug,
-        process.env.WORKSPACE_BASE_DOMAIN ?? "app.seldonframe.com",
+        process.env.WORKSPACE_BASE_DOMAIN ?? "app.kyneticai.com",
         r1Data.orgId,
       );
       const payload = rewriteR1Hrefs(r1Data.payload, {
@@ -261,7 +261,7 @@ export default async function PublicSPage({ params }: PageProps) {
       // bisect 3/4: rewrite generic CTA hrefs to workspace-scoped URLs.
       const workspaceUrls = buildWorkspaceUrls(
         orgSlug,
-        process.env.WORKSPACE_BASE_DOMAIN ?? "app.seldonframe.com",
+        process.env.WORKSPACE_BASE_DOMAIN ?? "app.kyneticai.com",
         r1Data.orgId,
       );
       const payload = rewriteR1Hrefs(r1Data.payload, {

@@ -51,23 +51,23 @@ import {
  *  hygiene). Pure + exported for the Markdown twin and unit tests. */
 export function composeSeldonframeVsIntro(c: Competitor): [string, string] {
   return [
-    `${c.name} and SeldonFrame usually end up on the same shortlist for different reasons. ${c.oneLiner} SeldonFrame comes at the same problem from the other direction: the AI receptionist, website, CRM, booking calendar and intake forms arrive pre-wired — ${sfPriceAnchor(c.audience)} — generated from a single conversation in about 3 minutes.`,
-    `${c.whenTheyWin} SeldonFrame's case is the opposite one: when the outcome you're buying is answered calls, qualified leads and jobs booked into a CRM you own, that whole front office ships on day one and the economics stay flat as you grow. The rest of this page walks the differences row by row — pricing model, the AI receptionist, the business system behind it, whitelabel, and what switching actually takes.`,
+    `${c.name} and Kynetic OS usually end up on the same shortlist for different reasons. ${c.oneLiner} Kynetic OS comes at the same problem from the other direction: the AI receptionist, website, CRM, booking calendar and intake forms arrive pre-wired — ${sfPriceAnchor(c.audience)} — generated from a single conversation in about 3 minutes.`,
+    `${c.whenTheyWin} Kynetic OS's case is the opposite one: when the outcome you're buying is answered calls, qualified leads and jobs booked into a CRM you own, that whole front office ships on day one and the economics stay flat as you grow. The rest of this page walks the differences row by row — pricing model, the AI receptionist, the business system behind it, whitelabel, and what switching actually takes.`,
   ];
 }
 
-/** Compose the two extra FAQ items unique to the SeldonFrame-vs-X template
+/** Compose the two extra FAQ items unique to the Kynetic OS-vs-X template
  *  (on top of the competitor's own faq[] + SHARED_FAQ). Pure + exported so it
  *  can be unit-tested and reused by the Markdown twin. */
 export function composeSeldonframeVsFaq(c: Competitor): AltFaqItem[] {
   return [
     {
-      q: `Is SeldonFrame a good ${c.name} alternative?`,
-      a: `For most agencies and builders, yes — SeldonFrame replaces the AI-front-office job (answering, qualifying, booking, tracking in a CRM) at ${sfPriceAnchor(c.audience)}, instead of ${c.name}'s stacked pricing. See the full switching guide: /alternative-to-${c.slug}.`,
+      q: `Is Kynetic OS a good ${c.name} alternative?`,
+      a: `For most agencies and builders, yes — Kynetic OS replaces the AI-front-office job (answering, qualifying, booking, tracking in a CRM) at ${sfPriceAnchor(c.audience)}, instead of ${c.name}'s stacked pricing. See the full switching guide: /alternative-to-${c.slug}.`,
     },
     {
-      q: `How much does ${c.name} cost compared to SeldonFrame?`,
-      a: `${c.name}: ${c.them.pricingModel}. SeldonFrame: ${sfPriceAnchor(c.audience)}, with AI and telephony on your own keys at raw provider cost — no per-minute or per-credit meter.`,
+      q: `How much does ${c.name} cost compared to Kynetic OS?`,
+      a: `${c.name}: ${c.them.pricingModel}. Kynetic OS: ${sfPriceAnchor(c.audience)}, with AI and telephony on your own keys at raw provider cost — no per-minute or per-credit meter.`,
     },
   ];
 }
@@ -77,7 +77,7 @@ export function SeldonFrameVsPage({ competitor }: { competitor: Competitor }): R
   const x = getExtras(c.slug);
   const faq = [...c.faq, ...composeSeldonframeVsFaq(c), ...SHARED_FAQ];
   const year = LAST_UPDATED.split(" ").pop() ?? "2026";
-  const h1 = `SeldonFrame vs ${c.name}: Which Should You Choose? (${year})`;
+  const h1 = `Kynetic OS vs ${c.name}: Which Should You Choose? (${year})`;
 
   const others = COMPETITORS.filter((o) => o.slug !== c.slug);
   const sameCategory = others.filter((o) => o.category === c.category);
@@ -96,9 +96,9 @@ export function SeldonFrameVsPage({ competitor }: { competitor: Competitor }): R
   const softwareLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    name: "SeldonFrame",
+    name: "Kynetic OS",
     applicationCategory: "BusinessApplication",
-    description: `SeldonFrame builds the whole AI front office — website, CRM, booking, and an AI receptionist — ${sfPriceAnchor(c.audience)}.`,
+    description: `Kynetic OS builds the whole AI front office — website, CRM, booking, and an AI receptionist — ${sfPriceAnchor(c.audience)}.`,
     offers: {
       "@type": "Offer",
       name: c.audience === "agency" ? "Agency Starter" : "Builder",
@@ -106,7 +106,7 @@ export function SeldonFrameVsPage({ competitor }: { competitor: Competitor }): R
       priceCurrency: "USD",
       description: sfPriceAnchor(c.audience),
     },
-    provider: { "@type": "Organization", name: "SeldonFrame", url: "https://seldonframe.com" },
+    provider: { "@type": "Organization", name: "Kynetic OS", url: "https://kyneticai.com" },
   };
   const articleJsonLd = articleLd({
     headline: h1,
@@ -138,7 +138,7 @@ export function SeldonFrameVsPage({ competitor }: { competitor: Competitor }): R
             Compare
           </Link>
           <span style={{ color: "rgba(34,29,23,0.3)" }}>/</span>
-          <span style={{ color: "rgba(34,29,23,0.7)" }}>{`SeldonFrame vs ${c.name}`}</span>
+          <span style={{ color: "rgba(34,29,23,0.7)" }}>{`Kynetic OS vs ${c.name}`}</span>
         </nav>
 
         {/* ── HERO ── */}
@@ -161,14 +161,14 @@ export function SeldonFrameVsPage({ competitor }: { competitor: Competitor }): R
             </p>
           ))}
           <p style={{ margin: 0, fontSize: 14.5, lineHeight: 1.6, color: "rgba(34,29,23,0.55)", maxWidth: 760, fontStyle: "italic" }}>
-            {`We make SeldonFrame, so read this comparison with that in mind — but we've tried to be specific about where ${c.name} genuinely wins below, not just where it doesn't.`}
+            {`We make Kynetic OS, so read this comparison with that in mind — but we've tried to be specific about where ${c.name} genuinely wins below, not just where it doesn't.`}
           </p>
           <TldrBox
             items={[
               { icon: "💰", label: `${c.name} pricing`, text: c.them.pricingModel },
-              { icon: "💰", label: "SeldonFrame pricing", text: sfPriceAnchor(c.audience) },
+              { icon: "💰", label: "Kynetic OS pricing", text: sfPriceAnchor(c.audience) },
               { icon: "👍", label: `Pick ${c.name} if`, text: x.chooseThem[0] },
-              { icon: "🏆", label: "Pick SeldonFrame if", text: x.chooseSf[0] },
+              { icon: "🏆", label: "Pick Kynetic OS if", text: x.chooseSf[0] },
             ]}
           />
         </section>
@@ -212,7 +212,7 @@ export function SeldonFrameVsPage({ competitor }: { competitor: Competitor }): R
                 ) : null}
                 {sec.contrast ? (
                   <p style={{ margin: "10px 0 0", fontSize: 14.5, lineHeight: 1.6, color: "rgba(34,29,23,0.7)" }}>
-                    <strong style={{ color: MKT.green }}>SeldonFrame: </strong>
+                    <strong style={{ color: MKT.green }}>Kynetic OS: </strong>
                     {emphasize(sec.contrast)}
                   </p>
                 ) : null}
@@ -249,8 +249,8 @@ export function SeldonFrameVsPage({ competitor }: { competitor: Competitor }): R
         {/* ── THE TWO CONTENDERS ── */}
         <section className="sf-sfvs-cards" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, padding: "10px 0 8px" }}>
           <div style={{ border: "1.5px solid rgba(31, 43, 36,0.4)", borderRadius: 16, padding: "22px 24px", background: "rgba(31, 43, 36,0.05)" }}>
-            <span style={{ fontSize: 10.5, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: MKT.green }}>★ SeldonFrame</span>
-            <h2 style={{ margin: "6px 0 0", fontSize: 20, fontWeight: 800 }}>SeldonFrame</h2>
+            <span style={{ fontSize: 10.5, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: MKT.green }}>★ Kynetic OS</span>
+            <h2 style={{ margin: "6px 0 0", fontSize: 20, fontWeight: 800 }}>Kynetic OS</h2>
             <p style={{ margin: "8px 0 12px", fontSize: 14.5, lineHeight: 1.6, color: "rgba(34,29,23,0.75)" }}>
               {sfPriceAnchor(c.audience)}
             </p>
@@ -300,7 +300,7 @@ export function SeldonFrameVsPage({ competitor }: { competitor: Competitor }): R
 
         {/* ── COMPARISON TABLE ── */}
         <section style={{ padding: "34px 0 8px" }}>
-          <h2 style={H2}>{`SeldonFrame vs ${c.name}: full feature & pricing breakdown`}</h2>
+          <h2 style={H2}>{`Kynetic OS vs ${c.name}: full feature & pricing breakdown`}</h2>
           <div style={{ overflowX: "auto", border: `1px solid ${MKT.ink10}`, borderRadius: 16, background: "rgba(255,255,255,0.55)", marginTop: 18 }}>
             <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 640, fontSize: 14.5 }}>
               <thead>
@@ -310,7 +310,7 @@ export function SeldonFrameVsPage({ competitor }: { competitor: Competitor }): R
                     <span style={{ fontSize: 10.5, letterSpacing: "0.1em", textTransform: "uppercase", display: "block", marginBottom: 2 }}>
                       ★ Recommended
                     </span>
-                    SeldonFrame
+                    Kynetic OS
                   </th>
                   <th style={{ ...TH, width: "38%" }}>{c.name}</th>
                 </tr>
@@ -359,7 +359,7 @@ export function SeldonFrameVsPage({ competitor }: { competitor: Competitor }): R
 
         {/* ── WHERE SELDONFRAME WINS ── */}
         <section style={{ padding: "34px 0 8px" }}>
-          <h2 style={H2}>{`Where SeldonFrame wins`}</h2>
+          <h2 style={H2}>{`Where Kynetic OS wins`}</h2>
           <div className="sf-sfvs-cards" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 20 }}>
             {c.switchReasons.map((reason) => (
               <div
@@ -378,14 +378,14 @@ export function SeldonFrameVsPage({ competitor }: { competitor: Competitor }): R
         <section style={{ padding: "34px 0 8px" }}>
           <h2 style={H2}>{`Pros & cons, side by side`}</h2>
           <div className="sf-sfvs-cards" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 20 }}>
-            <ProsConsCard title="SeldonFrame" pros={SF_PROS} cons={SF_CONS} highlight />
+            <ProsConsCard title="Kynetic OS" pros={SF_PROS} cons={SF_CONS} highlight />
             <ProsConsCard title={c.name} pros={x.pros} cons={x.cons} />
           </div>
         </section>
 
         {/* ── HOW TO SWITCH ── */}
         <section style={{ padding: "34px 0 8px" }}>
-          <h2 style={H2}>{`How to switch from ${c.name} to SeldonFrame`}</h2>
+          <h2 style={H2}>{`How to switch from ${c.name} to Kynetic OS`}</h2>
           <ol style={{ margin: "20px 0 0", padding: 0, listStyle: "none", maxWidth: 760 }}>
             {SWITCH_STEPS.map((step, i) => (
               <li key={step.title} style={{ display: "flex", gap: 16, marginBottom: 18 }}>
@@ -429,7 +429,7 @@ export function SeldonFrameVsPage({ competitor }: { competitor: Competitor }): R
             See it side by side before you decide
           </h2>
           <p style={{ margin: "10px auto 0", fontSize: 15.5, lineHeight: 1.6, color: "rgba(246,242,234,0.75)", maxWidth: 560 }}>
-            Paste a business's website and SeldonFrame builds the site, CRM, booking calendar and AI receptionist in about 3 minutes —
+            Paste a business's website and Kynetic OS builds the site, CRM, booking calendar and AI receptionist in about 3 minutes —
             free, before you sign up. Then it&apos;s{" "}
             {c.audience === "agency"
               ? "$99/mo flat for white-label agency plans (or $29/mo solo)."
@@ -474,7 +474,7 @@ export function SeldonFrameVsPage({ competitor }: { competitor: Competitor }): R
                 className="sf-link"
                 style={{ fontSize: 13.5, fontWeight: 600, color: "rgba(34,29,23,0.7)", border: `1px solid ${MKT.ink10}`, borderRadius: 999, padding: "7px 14px", textDecoration: "none", background: "rgba(255,255,255,0.5)" }}
               >
-                {`SeldonFrame vs ${o.name}`}
+                {`Kynetic OS vs ${o.name}`}
               </Link>
             ))}
             <Link

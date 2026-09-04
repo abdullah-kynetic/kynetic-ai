@@ -44,7 +44,7 @@ const FAQ = [
   },
   {
     q: "How do I actually lower my booking friction?",
-    a: "Give people a <strong>one-tap booking link</strong> they can finish on a phone, confirm the slot instantly, send automatic confirmations and reminders, and make sure after-hours interest still gets answered and booked. SeldonFrame does all of this out of the box.",
+    a: "Give people a <strong>one-tap booking link</strong> they can finish on a phone, confirm the slot instantly, send automatic confirmations and reminders, and make sure after-hours interest still gets answered and booked. Kynetic OS does all of this out of the box.",
   },
 ];
 

@@ -107,7 +107,7 @@ export const PRICING_FAQS: Array<{ q: string; a: string }> = [
     a: `${BUILDER_PRICING_CLAIM} ${AGENCY_PRICING_CLAIM}`,
   },
   {
-    q: "Can I white-label SeldonFrame for my clients?",
+    q: "Can I white-label Kynetic OS for my clients?",
     a: `Yes — white-label delivery and client resale are included on Agency plans. ${AGENCY_PRICING_CLAIM} ${BUILDER_PRICING_CLAIM}`,
   },
   {

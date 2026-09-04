@@ -16,14 +16,14 @@ import { AGENT_JOBS } from "@/lib/seo/agent-pages";
 import { MarkdownPointer } from "@/components/seo/markdown-pointer";
 
 export const metadata: Metadata = {
-  title: "AI Agents for local business — deploy a working one in 60 seconds | SeldonFrame",
+  title: "AI Agents for local business — deploy a working one in 60 seconds | Kynetic OS",
   description:
     "Receptionists, review chasers, missed-call text-back, speed-to-lead, lead qualifiers, booking, quoting, win-back, social, and website chat — each deploys a real working agent into your own hosted workspace.",
   // canonical + the Markdown twin (rel="alternate" type="text/markdown") so
   // DOM-parsing crawlers can discover the agent-legible version of this page.
   alternates: { canonical: "/ai-agents", types: { "text/markdown": "/ai-agents.md" } },
   openGraph: {
-    title: "AI Agents that work 24/7 for your business | SeldonFrame",
+    title: "AI Agents that work 24/7 for your business | Kynetic OS",
     description:
       "Browse AI agents for local service businesses. Each one deploys into your own hosted workspace in about a minute — or rent it over MCP.",
     url: "/ai-agents",

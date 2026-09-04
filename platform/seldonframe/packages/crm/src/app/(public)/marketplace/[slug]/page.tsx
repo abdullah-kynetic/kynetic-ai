@@ -66,10 +66,10 @@ export async function generateMetadata({ params }: ListingPageProps): Promise<Me
   const { slug } = await params;
   const found = await loadAgent(slug);
   if (!found) {
-    return { title: "Agent not found — SeldonFrame Marketplace" };
+    return { title: "Agent not found — Kynetic OS Marketplace" };
   }
   const { agent } = found;
-  const title = `${agent.name} — ${agent.tagline} | SeldonFrame Marketplace`;
+  const title = `${agent.name} — ${agent.tagline} | Kynetic OS Marketplace`;
   const description = agent.blurb;
   const canonical = `/marketplace/${agent.slug}`;
   return {
@@ -159,7 +159,7 @@ export default async function ListingDetailPage({ params, searchParams }: Listin
     "@type": "SoftwareApplication",
     name: agent.name,
     applicationCategory: "BusinessApplication",
-    operatingSystem: "SeldonFrame",
+    operatingSystem: "Kynetic OS",
     description: agent.blurb,
     offers: {
       "@type": "Offer",
@@ -185,9 +185,9 @@ export default async function ListingDetailPage({ params, searchParams }: Listin
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.seldonframe.com" },
-      { "@type": "ListItem", position: 2, name: "Marketplace", item: "https://www.seldonframe.com/marketplace" },
-      { "@type": "ListItem", position: 3, name: agent.name, item: `https://www.seldonframe.com/marketplace/${agent.slug}` },
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.kyneticai.com" },
+      { "@type": "ListItem", position: 2, name: "Marketplace", item: "https://www.kyneticai.com/marketplace" },
+      { "@type": "ListItem", position: 3, name: agent.name, item: `https://www.kyneticai.com/marketplace/${agent.slug}` },
     ],
   };
 
@@ -438,7 +438,7 @@ export default async function ListingDetailPage({ params, searchParams }: Listin
                 <div style={{ borderRadius: 13, overflow: "hidden", border: "1px solid rgba(34,29,23,0.10)", background: MKT.dark, aspectRatio: "1200/630", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: 18, color: MKT.paper }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11, fontWeight: 600, letterSpacing: "0.04em", color: "rgba(246,242,234,0.6)" }}>
                     <SeldonFrameMark size={15} color={MKT.paper} accent={MKT.green} />
-                    SeldonFrame Marketplace
+                    Kynetic OS Marketplace
                   </div>
                   <div>
                     <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1.1 }}>{agent.name}</div>

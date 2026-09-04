@@ -92,6 +92,6 @@ export async function generateAgentRentalKeyAction(
 function buildEndpointUrl(slug: string): string {
   // Prefer the configured public app URL; fall back to the production host the
   // listing UI already advertises in its placeholder snippet.
-  const base = (process.env.NEXT_PUBLIC_APP_URL || "https://app.seldonframe.com").replace(/\/$/, "");
+  const base = (process.env.NEXT_PUBLIC_APP_URL || "https://app.kyneticai.com").replace(/\/$/, "");
   return `${base}/api/v1/agents/${slug}/mcp`;
 }

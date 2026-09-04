@@ -73,7 +73,7 @@ export default async function BrandingSettingsPage({
               className="mt-0.5 size-4 rounded border-input accent-primary"
             />
             <span className="space-y-1">
-              <span className="text-sm font-medium text-foreground">Remove “Powered by SeldonFrame” on public pages</span>
+              <span className="text-sm font-medium text-foreground">Remove “Powered by Kynetic OS” on public pages</span>
               <span className="block text-xs text-muted-foreground">
                 {settings.canHideBadge
                   ? "Enabled on your current plan."

@@ -52,9 +52,9 @@ Nothing here is exotic — it's the same shape of work as standing up any metere
 
 The **marketplace path** trades that plumbing for listing overhead. You publish once, and the marketplace handles discovery, key issuance, metering, and payouts.
 
-Disclosed plainly, since we build this product: SeldonFrame is one such marketplace. Publish an agent and it becomes rentable via MCP with **signed rental keys** the platform issues and can revoke — you don't build the auth layer yourself. ${AGENCY_PRICING_CLAIM}
+Disclosed plainly, since we build this product: Kynetic OS is one such marketplace. Publish an agent and it becomes rentable via MCP with **signed rental keys** the platform issues and can revoke — you don't build the auth layer yourself. ${AGENCY_PRICING_CLAIM}
 
-${BUILDER_PRICING_CLAIM} The first workspace is free, and [BYOK](/guides/what-is-byok-ai) (bring your own model-provider keys) means there's no markup on tokens baked into the base price. SeldonFrame only takes a **flat 2% GMV fee** when it is actually the sales channel that brought the buyer, and agency plans are 0% GMV; direct sales don't incur that marketplace fee.
+${BUILDER_PRICING_CLAIM} The first workspace is free, and [BYOK](/guides/what-is-byok-ai) (bring your own model-provider keys) means there's no markup on tokens baked into the base price. Kynetic OS only takes a **flat 2% GMV fee** when it is actually the sales channel that brought the buyer, and agency plans are 0% GMV; direct sales don't incur that marketplace fee.
 
 Neither path is objectively correct. If you want full control over pricing, terms, and the customer relationship, DIY is legitimate and not much harder than building any other metered API. If getting listed and getting paid matters more than owning every layer, starting from a [marketplace](/guides/what-is-an-mcp-marketplace) gets you there faster.`,
       callout: {
@@ -69,7 +69,7 @@ Neither path is objectively correct. If you want full control over pricing, term
           items: ["Full control of pricing & terms", "You build auth, billing, revocation", "Ongoing plumbing upkeep"],
         },
         right: {
-          heading: "Marketplace (e.g. SeldonFrame)",
+          heading: "Marketplace (e.g. Kynetic OS)",
           items: [
             "Publish once, listed for discovery",
             "Signed rental keys issued & revoked for you",

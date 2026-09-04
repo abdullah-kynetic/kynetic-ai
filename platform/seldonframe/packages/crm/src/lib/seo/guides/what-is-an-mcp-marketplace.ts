@@ -55,9 +55,9 @@ export const guide: Guide = {
       },
     },
     {
-      h2: "How SeldonFrame implements this",
+      h2: "How Kynetic OS implements this",
       body:
-        `Disclosed plainly: we build this product, so read this paragraph as the vendor case it partly is.\n\nSeldonFrame lets builders [publish agents to a marketplace](/guides/how-to-make-money-selling-ai-agents) and rent them out via MCP with signed rental keys. A buyer connects to a working agent — not a codebase they have to host — and can be cut off cleanly if a key needs revoking. Agents can also be deployed [white-label](/guides/white-label-ai-agents) under an agency's own brand.\n\nFor white-label client delivery, ${AGENCY_PRICING_CLAIM} The separate Builder plan is $29/mo for a business the operator owns and does not include client resale. The first workspace is free, *BYOK* covers model costs, and there is no separate marketplace toll on top of the applicable base price.`,
+        `Disclosed plainly: we build this product, so read this paragraph as the vendor case it partly is.\n\nKynetic OS lets builders [publish agents to a marketplace](/guides/how-to-make-money-selling-ai-agents) and rent them out via MCP with signed rental keys. A buyer connects to a working agent — not a codebase they have to host — and can be cut off cleanly if a key needs revoking. Agents can also be deployed [white-label](/guides/white-label-ai-agents) under an agency's own brand.\n\nFor white-label client delivery, ${AGENCY_PRICING_CLAIM} The separate Builder plan is $29/mo for a business the operator owns and does not include client resale. The first workspace is free, *BYOK* covers model costs, and there is no separate marketplace toll on top of the applicable base price.`,
     },
   ],
   faq: [

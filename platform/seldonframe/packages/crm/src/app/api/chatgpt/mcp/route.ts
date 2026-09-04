@@ -55,7 +55,7 @@ export async function OPTIONS() {
 export async function GET() {
   return NextResponse.json(
     {
-      name: "SeldonFrame",
+      name: "Kynetic OS",
       status: "ok",
       transport: "mcp/streamable-http",
       endpoint: "/api/chatgpt/mcp",

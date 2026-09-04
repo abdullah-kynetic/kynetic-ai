@@ -44,8 +44,8 @@ const FAQ = [
     a: "Because we won't invent facts about your business. We can't know your real hours, prices, guarantees, or license number — so we leave an <strong>obvious placeholder</strong> for you to fill in. That way every answer a customer reads is genuinely true, not a made-up specific.",
   },
   {
-    q: "How does this connect to a SeldonFrame AI agent?",
-    a: "A good AI front desk needs a <strong>knowledge base</strong> to answer from. This FAQ is exactly that. Import it into your SeldonFrame workspace as your agent's Knowledge, and it answers customers by phone, web chat, or text — grounded in your real answers, never inventing one.",
+    q: "How does this connect to a Kynetic OS AI agent?",
+    a: "A good AI front desk needs a <strong>knowledge base</strong> to answer from. This FAQ is exactly that. Import it into your Kynetic OS workspace as your agent's Knowledge, and it answers customers by phone, web chat, or text — grounded in your real answers, never inventing one.",
   },
 ];
 

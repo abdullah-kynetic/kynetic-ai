@@ -6,7 +6,7 @@ import { getCompetitorPricing, type CompetitorPricing } from "@/lib/seo/competit
 import { getCompetitor, sfPriceAnchor, type CompetitorAudience } from "@/lib/seo/alternative-pages";
 import { emphasizeMd } from "@/lib/seo/emphasize";
 
-const BASE = "https://www.seldonframe.com";
+const BASE = "https://www.kyneticai.com";
 
 export function renderCompetitorPricingMarkdown(slug: string): string {
   const p = getCompetitorPricing(slug);
@@ -19,13 +19,13 @@ export function renderCompetitorPricingMarkdown(slug: string): string {
   L.push("");
   L.push(`Last checked: ${p.verified}. HTML version: ${BASE}/${p.slug}-pricing`);
   L.push("");
-  L.push(`Reviewed by Maxime Houle, Founder, SeldonFrame — facts checked ${p.verified}.`);
+  L.push(`Reviewed by Maxime Houle, Founder, Kynetic OS — facts checked ${p.verified}.`);
   L.push("");
   L.push(`## The short version`);
   L.push("");
   L.push(`- **Starts at:** ${emphasizeMd(startsAt(p))}`);
   L.push(`- **What stacks on top:** ${emphasizeMd(p.stacks[0]?.detail ?? "no published add-ons")}`);
-  L.push(`- **SeldonFrame comparison:** ${emphasizeMd(`${sfPriceAnchor(c.audience)} — no meters`)}`);
+  L.push(`- **Kynetic OS comparison:** ${emphasizeMd(`${sfPriceAnchor(c.audience)} — no meters`)}`);
   if (p.freeTier) L.push(`- **Free tier:** ${emphasizeMd(p.freeTier)}`);
   L.push("");
   L.push(`## Plans`);
@@ -58,10 +58,10 @@ export function renderCompetitorPricingMarkdown(slug: string): string {
   L.push("");
   L.push(emphasizeMd(p.bottomLine));
   L.push("");
-  L.push(`## How this compares to SeldonFrame`);
+  L.push(`## How this compares to Kynetic OS`);
   L.push("");
   L.push(
-    `SeldonFrame is ${emphasizeMd(sfPriceAnchor(c.audience))}, with AI and telephony on your own keys at raw provider cost — no meters to track. See the full comparison: ${BASE}/compare/seldonframe-vs-${c.slug} and ${BASE}/alternative-to-${c.slug}.`,
+    `Kynetic OS is ${emphasizeMd(sfPriceAnchor(c.audience))}, with AI and telephony on your own keys at raw provider cost — no meters to track. See the full comparison: ${BASE}/compare/seldonframe-vs-${c.slug} and ${BASE}/alternative-to-${c.slug}.`,
   );
   L.push("");
   L.push(`## FAQ`);
@@ -100,7 +100,7 @@ function buildFaq(p: CompetitorPricing, name: string, audience: CompetitorAudien
     },
     {
       q: `What's the cheapest ${name} alternative?`,
-      a: `SeldonFrame: ${sfPriceAnchor(audience)}, with AI and telephony on your own keys at raw provider cost. ${BASE}/alternative-to-${p.slug}`,
+      a: `Kynetic OS: ${sfPriceAnchor(audience)}, with AI and telephony on your own keys at raw provider cost. ${BASE}/alternative-to-${p.slug}`,
     },
   ];
 }

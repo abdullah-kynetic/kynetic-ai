@@ -118,7 +118,7 @@ export default function A2p10dlcCheckerPage(): ReactElement {
             <Link href="/tools/ai-receptionist-cost-calculator" className="sf-link" style={{ color: MKT.green, fontWeight: 700 }}>
               AI receptionist cost calculator
             </Link>
-            . See how SeldonFrame compares on{" "}
+            . See how Kynetic OS compares on{" "}
             <Link href="/alternatives" className="sf-link" style={{ color: MKT.green, fontWeight: 700 }}>
               the alternatives page
             </Link>

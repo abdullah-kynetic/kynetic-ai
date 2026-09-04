@@ -10,7 +10,7 @@ import { MKT } from "@/components/marketplace/marketplace-data";
 import { BEST_CATEGORIES, BEST_PAGES, LAST_UPDATED, bestSlug, getBestAudience } from "@/lib/seo/best-pages";
 
 export const metadata: Metadata = {
-  title: "Best tools for local service businesses, ranked honestly — SeldonFrame",
+  title: "Best tools for local service businesses, ranked honestly — Kynetic OS",
   description:
     "Honest, ranked best-of lists for the CRMs, website builders, booking systems and AI receptionists local service businesses actually consider — pricing, strengths and the real catch for each.",
   alternates: { canonical: "/best" },

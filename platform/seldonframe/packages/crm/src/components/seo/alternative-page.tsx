@@ -84,9 +84,9 @@ export function AlternativePage({ competitor }: { competitor: Competitor }): Rea
   const softwareLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    name: "SeldonFrame",
+    name: "Kynetic OS",
     applicationCategory: "BusinessApplication",
-    description: `SeldonFrame — ${c.name} alternative for agencies & builders: AI receptionist, website, CRM and booking, at ${sfPriceAnchor(c.audience)}.`,
+    description: `Kynetic OS — ${c.name} alternative for agencies & builders: AI receptionist, website, CRM and booking, at ${sfPriceAnchor(c.audience)}.`,
     offers: {
       "@type": "Offer",
       name: c.audience === "agency" ? "Agency Starter" : "Builder",
@@ -94,7 +94,7 @@ export function AlternativePage({ competitor }: { competitor: Competitor }): Rea
       priceCurrency: "USD",
       description: sfPriceAnchor(c.audience),
     },
-    provider: { "@type": "Organization", name: "SeldonFrame", url: "https://seldonframe.com" },
+    provider: { "@type": "Organization", name: "Kynetic OS", url: "https://kyneticai.com" },
   };
   const articleJsonLd = articleLd({
     headline: h1,
@@ -152,7 +152,7 @@ export function AlternativePage({ competitor }: { competitor: Competitor }): Rea
 
         {/* ── WHAT YOU NEED TO KNOW ── */}
         <section style={{ padding: "38px 0 8px" }}>
-          <h2 style={H2}>{`${c.name} vs SeldonFrame: what you need to know`}</h2>
+          <h2 style={H2}>{`${c.name} vs Kynetic OS: what you need to know`}</h2>
           {c.intro.map((para, i) => (
             <p key={i} style={{ margin: "16px 0 0", fontSize: 16.5, lineHeight: 1.65, color: "rgba(34,29,23,0.78)", maxWidth: 760 }}>
               {emphasize(para)}
@@ -161,16 +161,16 @@ export function AlternativePage({ competitor }: { competitor: Competitor }): Rea
           <TldrBox
             items={[
               { icon: "💰", label: `${c.name} pricing`, text: c.them.pricingModel },
-              { icon: "💰", label: "SeldonFrame pricing", text: sfPriceAnchor(c.audience) },
+              { icon: "💰", label: "Kynetic OS pricing", text: sfPriceAnchor(c.audience) },
               { icon: "👍", label: `Pick ${c.name} if`, text: x.chooseThem[0] },
-              { icon: "🏆", label: "Pick SeldonFrame if", text: x.chooseSf[0] },
+              { icon: "🏆", label: "Pick Kynetic OS if", text: x.chooseSf[0] },
             ]}
           />
         </section>
 
         {/* ── COMPARISON TABLE ── */}
         <section style={{ padding: "38px 0 8px" }}>
-          <h2 style={H2}>{`SeldonFrame vs ${c.name}: features & pricing`}</h2>
+          <h2 style={H2}>{`Kynetic OS vs ${c.name}: features & pricing`}</h2>
           <p style={{ margin: "10px 0 20px", fontSize: 15.5, color: "rgba(34,29,23,0.6)" }}>
             A row-by-row breakdown of pricing, the AI receptionist, and the business system behind it.
           </p>
@@ -184,7 +184,7 @@ export function AlternativePage({ competitor }: { competitor: Competitor }): Rea
                     <span style={{ fontSize: 10.5, letterSpacing: "0.1em", textTransform: "uppercase", display: "block", marginBottom: 2 }}>
                       ★ Recommended
                     </span>
-                    SeldonFrame
+                    Kynetic OS
                   </th>
                 </tr>
               </thead>
@@ -214,10 +214,10 @@ export function AlternativePage({ competitor }: { competitor: Competitor }): Rea
 
         {/* ── PROS & CONS ── */}
         <section style={{ padding: "38px 0 8px" }}>
-          <h2 style={H2}>{`${c.name} vs SeldonFrame: pros & cons`}</h2>
+          <h2 style={H2}>{`${c.name} vs Kynetic OS: pros & cons`}</h2>
           <div className="sf-alt-cards" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 20 }}>
             <ProsConsCard title={c.name} pros={x.pros} cons={x.cons} />
-            <ProsConsCard title="SeldonFrame" pros={SF_PROS} cons={SF_CONS} highlight />
+            <ProsConsCard title="Kynetic OS" pros={SF_PROS} cons={SF_CONS} highlight />
           </div>
         </section>
 
@@ -239,10 +239,10 @@ export function AlternativePage({ competitor }: { competitor: Competitor }): Rea
 
         {/* ── WHO SHOULD USE WHICH ── */}
         <section style={{ padding: "38px 0 8px" }}>
-          <h2 style={H2}>{`Who should use ${c.name} vs SeldonFrame`}</h2>
+          <h2 style={H2}>{`Who should use ${c.name} vs Kynetic OS`}</h2>
           <div className="sf-alt-cards" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 20 }}>
             <WhoCard title={`${c.name} is the better choice if…`} items={x.chooseThem} />
-            <WhoCard title="SeldonFrame is the better choice if…" items={x.chooseSf} highlight />
+            <WhoCard title="Kynetic OS is the better choice if…" items={x.chooseSf} highlight />
           </div>
           <p
             style={{ margin: "20px 0 0", fontSize: 14.5, lineHeight: 1.6, color: "rgba(34,29,23,0.62)", background: MKT.ink05, borderRadius: 12, padding: "14px 18px", maxWidth: 760 }}
@@ -254,7 +254,7 @@ export function AlternativePage({ competitor }: { competitor: Competitor }): Rea
 
         {/* ── HOW TO SWITCH ── */}
         <section style={{ padding: "38px 0 8px" }}>
-          <h2 style={H2}>{`How to switch from ${c.name} to SeldonFrame`}</h2>
+          <h2 style={H2}>{`How to switch from ${c.name} to Kynetic OS`}</h2>
           <ol style={{ margin: "20px 0 0", padding: 0, listStyle: "none", maxWidth: 760 }}>
             {SWITCH_STEPS.map((step, i) => (
               <li key={step.title} style={{ display: "flex", gap: 16, marginBottom: 18 }}>
@@ -332,7 +332,7 @@ export function AlternativePage({ competitor }: { competitor: Competitor }): Rea
             See your client&apos;s AI front office before you pay anything
           </h2>
           <p style={{ margin: "10px auto 0", fontSize: 15.5, lineHeight: 1.6, color: "rgba(246,242,234,0.75)", maxWidth: 560 }}>
-            Paste a business&apos;s website and SeldonFrame builds the site, CRM, booking calendar and AI receptionist in about 3 minutes —
+            Paste a business&apos;s website and Kynetic OS builds the site, CRM, booking calendar and AI receptionist in about 3 minutes —
             free, before you sign up. Then it&apos;s{" "}
             {c.audience === "agency"
               ? "$99/mo flat for white-label agency plans (or $29/mo solo)."
@@ -375,7 +375,7 @@ function VersusCard({ name }: { name: string }): ReactElement {
         <Ellipse color={MKT.ink} />
         <span style={{ position: "relative", display: "inline-flex", alignItems: "center", gap: 8, fontWeight: 800, fontSize: 20, letterSpacing: "-0.01em" }}>
           <SeldonFrameMark size={22} />
-          SeldonFrame
+          Kynetic OS
         </span>
       </span>
     </div>

@@ -28,7 +28,7 @@ import { computeMarketplaceFeeCents } from "@/lib/billing/gmv";
 import type { PriceModel, OutcomeType } from "@/lib/marketplace/pricing-model";
 
 /**
- * SeldonFrame first-party free allowance: the number of rental calls a renter
+ * Kynetic OS first-party free allowance: the number of rental calls a renter
  * gets FREE per first-party listing per calendar month before the floor kicks
  * in. Exported so UI/copy never hardcodes "100".
  */
@@ -150,7 +150,7 @@ function meteredAmountCents(listing: RentalChargeListing): number {
 }
 
 /**
- * Decide whether a listing is a SeldonFrame FIRST-PARTY agent: its creator org
+ * Decide whether a listing is a Kynetic OS FIRST-PARTY agent: its creator org
  * is the configured SF house org. Returns false when SELDONFRAME_HOUSE_ORG_ID is
  * unset/blank — fail-safe, so SF never grants its free/floor lane to a builder
  * agent it can't prove it owns (those bill on the builder lane). Max must set

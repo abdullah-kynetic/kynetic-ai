@@ -45,7 +45,7 @@ export function composePricingFaq(p: CompetitorPricing, name: string, audience: 
     },
     {
       q: `What's the cheapest ${name} alternative?`,
-      a: `SeldonFrame: ${BUILDER_PRICING_CLAIM} ${AGENCY_PRICING_CLAIM} AI and telephony run on your own keys at raw provider cost. /alternative-to-${p.slug}`,
+      a: `Kynetic OS: ${BUILDER_PRICING_CLAIM} ${AGENCY_PRICING_CLAIM} AI and telephony run on your own keys at raw provider cost. /alternative-to-${p.slug}`,
     },
   ];
 }
@@ -121,7 +121,7 @@ export function CompetitorPricingPage({ slug }: { slug: string }): ReactElement 
             items={[
               { icon: "💰", label: "Starts at", text: startsAt },
               { icon: "📈", label: "What stacks on top", text: p.stacks[0]?.detail ?? "No published add-ons" },
-              { icon: "🪙", label: "SeldonFrame comparison", text: `${sfPriceAnchor(c.audience)} — no meters` },
+              { icon: "🪙", label: "Kynetic OS comparison", text: `${sfPriceAnchor(c.audience)} — no meters` },
             ]}
           />
         </section>
@@ -191,10 +191,10 @@ export function CompetitorPricingPage({ slug }: { slug: string }): ReactElement 
 
         {/* ── HOW THIS COMPARES TO SELDONFRAME ── */}
         <section style={{ padding: "34px 0 8px" }}>
-          <h2 style={H2}>How this compares to SeldonFrame</h2>
+          <h2 style={H2}>How this compares to Kynetic OS</h2>
           <p style={{ margin: "14px 0 0", fontSize: 15.5, lineHeight: 1.65, color: "rgba(34,29,23,0.78)", maxWidth: 760 }}>
             {emphasize(
-              `SeldonFrame is ${sfPriceAnchor(c.audience)}, with AI and telephony on your own keys at raw provider cost — the AI receptionist, website, CRM, and booking calendar all ship in, no meters to watch.`,
+              `Kynetic OS is ${sfPriceAnchor(c.audience)}, with AI and telephony on your own keys at raw provider cost — the AI receptionist, website, CRM, and booking calendar all ship in, no meters to watch.`,
             )}
           </p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 16 }}>
@@ -203,7 +203,7 @@ export function CompetitorPricingPage({ slug }: { slug: string }): ReactElement 
               className="sf-link"
               style={{ fontSize: 13.5, fontWeight: 600, color: MKT.green, border: `1px solid rgba(31, 43, 36,0.35)`, borderRadius: 999, padding: "7px 14px", textDecoration: "none", background: "rgba(31, 43, 36,0.06)" }}
             >
-              {`SeldonFrame vs ${c.name} — full comparison →`}
+              {`Kynetic OS vs ${c.name} — full comparison →`}
             </Link>
             <Link
               href={`/alternative-to-${c.slug}`}
@@ -246,9 +246,9 @@ export function CompetitorPricingPage({ slug }: { slug: string }): ReactElement 
         <section
           style={{ marginTop: 30, border: `1px solid ${MKT.ink10}`, borderRadius: 20, padding: "34px 32px", background: MKT.dark, color: MKT.paper, textAlign: "center" }}
         >
-          <h2 style={{ margin: 0, fontSize: 26, fontWeight: 800, letterSpacing: "-0.02em" }}>See what you&apos;d pay on SeldonFrame instead</h2>
+          <h2 style={{ margin: 0, fontSize: 26, fontWeight: 800, letterSpacing: "-0.02em" }}>See what you&apos;d pay on Kynetic OS instead</h2>
           <p style={{ margin: "10px auto 0", fontSize: 15.5, lineHeight: 1.6, color: "rgba(246,242,234,0.75)", maxWidth: 560 }}>
-            Paste a business&apos;s website and SeldonFrame builds the site, CRM, booking calendar and AI receptionist in about 3 minutes —
+            Paste a business&apos;s website and Kynetic OS builds the site, CRM, booking calendar and AI receptionist in about 3 minutes —
             free, before you sign up. Then it&apos;s {sfPriceAnchor(c.audience)}.
           </p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center", marginTop: 22 }}>

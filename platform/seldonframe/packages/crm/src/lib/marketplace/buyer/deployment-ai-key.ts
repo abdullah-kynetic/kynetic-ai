@@ -34,9 +34,9 @@ export type ResolveDeploymentAiKeyInput = {
   builderOpenAiKey?: string | null;
   /** The BUILDER org's Anthropic key, if set (already decrypted). */
   builderAnthropicKey?: string | null;
-  /** The SeldonFrame platform OpenAI key (process.env.OPENAI_API_KEY). */
+  /** The Kynetic OS platform OpenAI key (process.env.OPENAI_API_KEY). */
   platformOpenAiKey?: string | null;
-  /** The SeldonFrame platform Anthropic key (process.env.ANTHROPIC_API_KEY). */
+  /** The Kynetic OS platform Anthropic key (process.env.ANTHROPIC_API_KEY). */
   platformAnthropicKey?: string | null;
 };
 

@@ -62,11 +62,11 @@ const FAQ = [
   },
   {
     q: "How is this different from Calendly's free plan?",
-    a: "Calendly's free plan is listed as one event type per user, with no CRM behind it. SeldonFrame's free booking page supports multiple appointment types and comes with a CRM and intake form already connected — see the full field-by-field breakdown on the <a href=\"/alternatives\">alternatives hub</a>.",
+    a: "Calendly's free plan is listed as one event type per user, with no CRM behind it. Kynetic OS's free booking page supports multiple appointment types and comes with a CRM and intake form already connected — see the full field-by-field breakdown on the <a href=\"/alternatives\">alternatives hub</a>.",
   },
   {
     q: "Can I use my own domain for booking?",
-    a: "Your booking page starts on a free <code>&lt;yourbusiness&gt;.app.seldonframe.com</code> subdomain, and you can connect a custom domain you already own once you're ready.",
+    a: "Your booking page starts on a free <code>&lt;yourbusiness&gt;.app.kyneticai.com</code> subdomain, and you can connect a custom domain you already own once you're ready.",
   },
 ];
 
@@ -115,7 +115,7 @@ export default function FreeBookingPagePage(): ReactElement {
         <section style={{ padding: "40px 0 0" }}>
           <h2 style={{ margin: "0 0 14px", fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em" }}>What&apos;s included</h2>
           <ul style={{ margin: 0, paddingLeft: 20, fontSize: 15, lineHeight: 1.7, color: "rgba(34,29,23,0.72)" }}>
-            <li>A <strong>booking page</strong> on your own <code>&lt;yourbusiness&gt;.app.seldonframe.com</code> subdomain</li>
+            <li>A <strong>booking page</strong> on your own <code>&lt;yourbusiness&gt;.app.kyneticai.com</code> subdomain</li>
             <li>As many <strong>appointment types</strong> as you offer, each with its own duration and details</li>
             <li><strong>Email reminders and confirmations</strong>, included from the start — <strong>SMS reminders</strong> turn on once you connect a phone number</li>
             <li>An <strong>intake form</strong> that collects what you need before the appointment</li>
@@ -135,7 +135,7 @@ export default function FreeBookingPagePage(): ReactElement {
               <thead>
                 <tr style={{ borderBottom: `2px solid ${MKT.ink10}` }}>
                   <th style={{ textAlign: "left", padding: "10px 12px", fontWeight: 700 }}>Free plan</th>
-                  <th style={{ textAlign: "left", padding: "10px 12px", fontWeight: 700, color: MKT.green }}>SeldonFrame</th>
+                  <th style={{ textAlign: "left", padding: "10px 12px", fontWeight: 700, color: MKT.green }}>Kynetic OS</th>
                   <th style={{ textAlign: "left", padding: "10px 12px", fontWeight: 700 }}>Calendly free</th>
                   <th style={{ textAlign: "left", padding: "10px 12px", fontWeight: 700 }}>HubSpot Meetings free</th>
                 </tr>

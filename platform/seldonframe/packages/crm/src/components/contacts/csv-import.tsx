@@ -288,7 +288,7 @@ export function CsvImport({ stageOptions }: { stageOptions: string[] }) {
           <div className="rounded-lg border border-border overflow-hidden">
             <div className="grid grid-cols-2 gap-2 px-3 py-2 text-xs font-medium text-muted-foreground border-b border-border bg-muted/30">
               <span>Your column</span>
-              <span>SeldonFrame field</span>
+              <span>Kynetic OS field</span>
             </div>
             <div className="max-h-64 overflow-y-auto divide-y divide-border">
               {dataset.headers.map((header) => (

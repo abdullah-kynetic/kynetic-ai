@@ -109,7 +109,7 @@ export async function resolveRecurringPriceLive(
     } else {
       const meter = await stripe.billing.meters.create(
         {
-          display_name: `SeldonFrame agent usage — ${params.listingName}`.slice(0, 250),
+          display_name: `Kynetic OS agent usage — ${params.listingName}`.slice(0, 250),
           event_name: eventName,
           default_aggregation: { formula: "sum" },
         },
@@ -125,7 +125,7 @@ export async function resolveRecurringPriceLive(
       currency: "usd",
       unit_amount: params.unitAmountCents,
       lookup_key: lookupKey,
-      product_data: { name: `SeldonFrame Agent: ${params.listingName}` },
+      product_data: { name: `Kynetic OS Agent: ${params.listingName}` },
       recurring: {
         interval: params.interval,
         usage_type: params.usageType,

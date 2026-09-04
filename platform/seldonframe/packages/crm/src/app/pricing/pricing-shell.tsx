@@ -58,7 +58,7 @@ type Tier = {
 // sync if that copy changes.
 const PLAN: Tier = {
   id: "builder",
-  name: "SeldonFrame",
+  name: "Kynetic OS",
   price: "$29",
   cadence: "/ mo",
   tagline: "The whole platform — build it for one business you own and operate.",

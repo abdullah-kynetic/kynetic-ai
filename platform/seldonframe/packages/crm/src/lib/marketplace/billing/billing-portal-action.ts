@@ -36,7 +36,7 @@ export async function createMarketplaceBillingPortalAction(input: {
   const purchase = await getPurchase(purchaseId, orgId);
   if (!purchase) return { ok: false, reason: "not_found" };
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://app.seldonframe.com";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://app.kyneticai.com";
   const returnUrl = `${baseUrl}/marketplace/${purchase.slug}`;
 
   // The subscription is a DIRECT charge — the buyer's customer lives on the

@@ -793,7 +793,7 @@ export async function installAgentListingAction(
     throw new Error("Stripe is not configured.");
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://app.seldonframe.com";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://app.kyneticai.com";
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     success_url: `${baseUrl}/marketplace/${listing.slug}?purchased=true`,
@@ -805,7 +805,7 @@ export async function installAgentListingAction(
           currency: "usd",
           unit_amount: Math.round(price),
           product_data: {
-            name: `SeldonFrame Agent: ${listing.name}`,
+            name: `Kynetic OS Agent: ${listing.name}`,
             description: listing.description || undefined,
           },
         },
@@ -964,7 +964,7 @@ export async function purchaseSoulListingAction(formData: FormData) {
     throw new Error("Stripe is not configured.");
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://app.seldonframe.com";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://app.kyneticai.com";
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     success_url: `${baseUrl}/soul-marketplace/${listing.slug}/install?purchased=true`,
@@ -976,7 +976,7 @@ export async function purchaseSoulListingAction(formData: FormData) {
           currency: "usd",
           unit_amount: Math.round(price),
           product_data: {
-            name: `SeldonFrame Soul: ${listing.name}`,
+            name: `Kynetic OS Soul: ${listing.name}`,
             description: listing.description || undefined,
           },
         },
@@ -1142,7 +1142,7 @@ export async function purchaseMarketplaceBlockAction(formData: FormData) {
     throw new Error("Stripe is not configured.");
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://app.seldonframe.com";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://app.kyneticai.com";
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     success_url: `${baseUrl}/templates/${blockId}?purchased=true`,
@@ -1154,7 +1154,7 @@ export async function purchaseMarketplaceBlockAction(formData: FormData) {
           currency: (block.currency || "usd").toLowerCase(),
           unit_amount: Math.round(price * 100),
           product_data: {
-            name: `SeldonFrame Block: ${block.name}`,
+            name: `Kynetic OS Block: ${block.name}`,
             description: block.description,
           },
         },
@@ -1559,7 +1559,7 @@ export async function approveGeneratedBlockAction(formData: FormData) {
     .set({ generationStatus: "approved", updatedAt: new Date() })
     .where(eq(marketplaceBlocks.blockId, blockId));
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://app.seldonframe.com";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://app.kyneticai.com";
   await sendAdminReviewNotification({
     blockId,
     blockName: row.name,

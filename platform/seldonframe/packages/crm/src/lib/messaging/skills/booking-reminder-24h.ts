@@ -24,7 +24,7 @@ const BOOKING_REMINDER_24H_SKILL = `## When this fires
 - Sign off as {{businessName}}.
 
 ## Forbidden content
-- Never mention "Seldon" or "SeldonFrame".
+- Never mention "Seldon", "SeldonFrame", or "Kynetic OS".
 - No promo / upsell — this is a service reminder, not a marketing email.
 - Don't ask them to "confirm by replying yes" — the booking is already confirmed; replies should be optional.
 - Keep it under 200 words.

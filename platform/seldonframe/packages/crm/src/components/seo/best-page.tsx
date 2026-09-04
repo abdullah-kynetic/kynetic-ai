@@ -71,7 +71,7 @@ export { monthYearToIso };
  *  just name + honest one-line reason, safe for an AI answer engine to lift
  *  verbatim. Pure + exported for the Markdown twin to reuse. */
 export function composeQuickPicks(category: BestCategory, audience: BestAudience): string[] {
-  const lines = [`SeldonFrame — best overall for ${midSentence(audience.label)}`];
+  const lines = [`Kynetic OS — best overall for ${midSentence(audience.label)}`];
   for (const c of category.contenders) {
     const shortBestFor = c.bestFor.charAt(0).toLowerCase() + c.bestFor.slice(1);
     lines.push(`${c.name} — best for ${shortBestFor}`);
@@ -87,7 +87,7 @@ type DecisionLine = { name: string; chooseIf: string; skipIf: string };
 export function composeDecisionFramework(category: BestCategory, audience: BestAudience): DecisionLine[] {
   const lines: DecisionLine[] = [
     {
-      name: "SeldonFrame",
+      name: "Kynetic OS",
       chooseIf: `you want the whole front office — website, CRM, booking and an AI receptionist — for ${midSentence(audience.label)}`,
       skipIf: "you specifically need a dedicated funnel-builder, or you want a platform with a longer track record",
     },
@@ -127,8 +127,8 @@ export function BestPage({ slug }: { slug: string }): ReactElement {
       {
         "@type": "ListItem",
         position: 1,
-        name: "SeldonFrame",
-        url: `https://seldonframe.com/best/${slug}`,
+        name: "Kynetic OS",
+        url: `https://kyneticai.com/best/${slug}`,
       },
       ...category.contenders.map((c, i) => ({
         "@type": "ListItem",
@@ -142,7 +142,7 @@ export function BestPage({ slug }: { slug: string }): ReactElement {
     ...category.faq,
     {
       q: `What's the best ${midSentence(category.noun)} for ${midSentence(audience.label)}?`,
-      a: `Honestly, it depends on what's already missing. If leads are falling through the cracks between "someone reached out" and "someone followed up," SeldonFrame's combined AI receptionist + CRM + booking is built for exactly that gap. If the need is narrower — just a calendar link, just a CRM, just a form — one of the specialist tools above may be simpler for now.`,
+      a: `Honestly, it depends on what's already missing. If leads are falling through the cracks between "someone reached out" and "someone followed up," Kynetic OS's combined AI receptionist + CRM + booking is built for exactly that gap. If the need is narrower — just a calendar link, just a CRM, just a form — one of the specialist tools above may be simpler for now.`,
     },
   ];
   const faqLd = {
@@ -215,7 +215,7 @@ export function BestPage({ slug }: { slug: string }): ReactElement {
           {page.videoId && <LiteYoutube videoId={page.videoId} title={h1} />}
           <TldrBox
             items={[
-              { icon: "🏆", label: "Our pick", text: `SeldonFrame — the whole front office, ${sfPriceAnchor(BEST_PAGE_AUDIENCE)} (we build it, and we say below when the others win)` },
+              { icon: "🏆", label: "Our pick", text: `Kynetic OS — the whole front office, ${sfPriceAnchor(BEST_PAGE_AUDIENCE)} (we build it, and we say below when the others win)` },
               { icon: "💰", label: "Cheapest real option", text: composeCheapestOption(category) },
               { icon: "🔍", label: "How to choose", text: category.intentLine },
             ]}
@@ -245,7 +245,7 @@ export function BestPage({ slug }: { slug: string }): ReactElement {
           <h3 style={{ margin: 0, fontSize: 15, fontWeight: 800, letterSpacing: "-0.01em" }}>How we ranked these</h3>
           <ul style={{ margin: "10px 0 0", padding: "0 0 0 18px", fontSize: 13.5, lineHeight: 1.6, color: "rgba(34,29,23,0.68)" }}>
             <li>{`Pricing verified from each vendor's own public pricing page as of ${LAST_UPDATED}.`}</li>
-            <li>{`We build SeldonFrame and rank it #1 for the front-office job — the honest catch on every other pick is listed too, so you can disagree.`}</li>
+            <li>{`We build Kynetic OS and rank it #1 for the front-office job — the honest catch on every other pick is listed too, so you can disagree.`}</li>
             <li>{`Rankings weigh fit for ${midSentence(audience.label)} over raw feature count.`}</li>
             <li>No vendor paid for placement on this page.</li>
           </ul>
@@ -279,7 +279,7 @@ export function BestPage({ slug }: { slug: string }): ReactElement {
             >
               #1 · Best overall
             </span>
-            <h2 style={{ margin: "6px 0 0", fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em" }}>SeldonFrame</h2>
+            <h2 style={{ margin: "6px 0 0", fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em" }}>Kynetic OS</h2>
             <p style={{ margin: "10px 0 0", fontSize: 15.5, lineHeight: 1.65, color: "rgba(34,29,23,0.8)", maxWidth: 720 }}>{category.sfPitch}</p>
             <p style={{ margin: "10px 0 0", fontSize: 15, lineHeight: 1.6, color: "rgba(34,29,23,0.72)", maxWidth: 720 }}>
               {`For ${midSentence(audience.label)}, that means ${audience.exampleService} gets captured and booked automatically — whether the customer calls, texts or fills out a form.`}
@@ -338,7 +338,7 @@ export function BestPage({ slug }: { slug: string }): ReactElement {
               </thead>
               <tbody>
                 <tr>
-                  <td style={{ ...TD, background: MKT.green10, fontWeight: 800, color: MKT.green }}>SeldonFrame</td>
+                  <td style={{ ...TD, background: MKT.green10, fontWeight: 800, color: MKT.green }}>Kynetic OS</td>
                   <td style={{ ...TD, background: MKT.green10, color: "rgba(34,29,23,0.85)", fontWeight: 500 }}>{category.intentLine}</td>
                   <td style={{ ...TD, background: MKT.green10, color: "rgba(34,29,23,0.85)", fontWeight: 500 }}>$29/mo flat solo, or $99–$299/mo agency (0% GMV)</td>
                   <td style={{ ...TD, background: MKT.green10, color: "rgba(34,29,23,0.85)", fontWeight: 500 }}>Newer platform; not a dedicated funnel-builder</td>
@@ -362,7 +362,7 @@ export function BestPage({ slug }: { slug: string }): ReactElement {
             <h2 style={H2}>{`What about free ${midSentence(category.nounPlural)}?`}</h2>
             <p style={{ margin: "14px 0 0", fontSize: 15.5, lineHeight: 1.65, color: "rgba(34,29,23,0.78)", maxWidth: 760 }}>{category.freeAngle}</p>
             <p style={{ margin: "12px 0 0", fontSize: 15.5, lineHeight: 1.65, color: "rgba(34,29,23,0.78)", maxWidth: 760 }}>
-              SeldonFrame&apos;s honest free-tier answer: the first workspace is free forever, and the whole build — site, CRM, booking, AI receptionist —
+              Kynetic OS&apos;s honest free-tier answer: the first workspace is free forever, and the whole build — site, CRM, booking, AI receptionist —
               is free and testable before you ever enter a card. The free build <em>is</em> the trial.
             </p>
           </section>
@@ -424,7 +424,7 @@ export function BestPage({ slug }: { slug: string }): ReactElement {
                 className="sf-link"
                 style={{ fontSize: 13.5, fontWeight: 600, color: MKT.green, border: `1px solid ${MKT.ink10}`, borderRadius: 999, padding: "7px 14px", textDecoration: "none", background: "rgba(255,255,255,0.5)" }}
               >
-                {`SeldonFrame vs ${alternative.name}`}
+                {`Kynetic OS vs ${alternative.name}`}
               </Link>
             )}
             <Link
@@ -447,7 +447,7 @@ export function BestPage({ slug }: { slug: string }): ReactElement {
             {`See it working for your business before you pay anything`}
           </h2>
           <p style={{ margin: "10px auto 0", fontSize: 15.5, lineHeight: 1.6, color: "rgba(246,242,234,0.75)", maxWidth: 560 }}>
-            Paste your website (or describe your business) and SeldonFrame builds the site, CRM, booking calendar and AI receptionist in
+            Paste your website (or describe your business) and Kynetic OS builds the site, CRM, booking calendar and AI receptionist in
             about 3 minutes — free, before you sign up. Then it&apos;s $29/mo flat solo, or $99–$299/mo for agency white-label.
           </p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center", marginTop: 22 }}>

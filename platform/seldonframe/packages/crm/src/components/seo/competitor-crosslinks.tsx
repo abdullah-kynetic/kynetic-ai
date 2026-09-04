@@ -52,7 +52,7 @@ export function CompetitorCrossLinks({
   const candidates: { surface: CompetitorSurface; href: string; label: string }[] = [
     { surface: "alternative", href: `/alternative-to-${slug}`, label: `${c.name} switching guide` },
     { surface: "pricing", href: `/${slug}-pricing`, label: `${c.name} pricing breakdown` },
-    { surface: "compare", href: `/compare/seldonframe-vs-${slug}`, label: `SeldonFrame vs ${c.name}` },
+    { surface: "compare", href: `/compare/seldonframe-vs-${slug}`, label: `Kynetic OS vs ${c.name}` },
   ];
   const targets = candidates.filter(
     (t) => t.surface !== current && (t.surface !== "pricing" || hasCompetitorPricing(slug)),

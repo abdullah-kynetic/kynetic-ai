@@ -25,9 +25,9 @@ import { db } from "@/db";
 import { organizations, partnerAgencies } from "@/db/schema";
 import type { PartnerAgency } from "@/db/schema";
 
-const SF_DEFAULT_BRAND_NAME = "SeldonFrame";
-const SF_DEFAULT_SUPPORT_URL = "https://seldonframe.com/docs";
-const SF_DEFAULT_SUPPORT_EMAIL = "support@seldonframe.com";
+const SF_DEFAULT_BRAND_NAME = "Kynetic OS";
+const SF_DEFAULT_SUPPORT_URL = "https://kyneticai.com/docs";
+const SF_DEFAULT_SUPPORT_EMAIL = "support@kyneticai.com";
 
 // ─── public types ──────────────────────────────────────────────────────────
 

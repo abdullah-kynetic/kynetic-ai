@@ -18,13 +18,13 @@ export async function generateMetadata({ params }: RouteParams): Promise<Metadat
   try {
     resolved = getBestPage(slug);
   } catch {
-    return { title: "Not found — SeldonFrame" };
+    return { title: "Not found — Kynetic OS" };
   }
   const { category, audience } = resolved;
   const total = category.contenders.length + 1;
   const topNames = category.contenders.slice(0, 3).map((c) => c.name).join(", ");
   const title = `The ${total} Best ${category.nounPlural} for ${audience.label} (2026) — honest comparison`;
-  const description = `SeldonFrame vs ${topNames} and more: an honest, ranked comparison of the best ${category.nounPlural.toLowerCase()} for ${audience.label.toLowerCase()} — pricing, strengths and the real catch for each.`;
+  const description = `Kynetic OS vs ${topNames} and more: an honest, ranked comparison of the best ${category.nounPlural.toLowerCase()} for ${audience.label.toLowerCase()} — pricing, strengths and the real catch for each.`;
   const canonical = `/best/${slug}`;
   const ogUrl = buildOgUrl({ kind: "best", title: `Best ${category.nounPlural}`, aud: `for ${audience.label}`, n: total });
   return {

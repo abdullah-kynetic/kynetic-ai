@@ -88,7 +88,7 @@ import { resolveDesignModuleProps } from "@/components/clients/design-picker/res
 // sync so a claimed workspace's public links point at the right host in
 // every environment (prod vs preview).
 const WORKSPACE_BASE_DOMAIN =
-  process.env.WORKSPACE_BASE_DOMAIN?.trim() || "app.seldonframe.com";
+  process.env.WORKSPACE_BASE_DOMAIN?.trim() || "app.kyneticai.com";
 
 // 2026-07-04 — Task 7. Same /book/<org>/<slug> pattern the fresh-claimed
 // hero already builds inline (see the comment at its own publicBookingUrl
@@ -1404,7 +1404,7 @@ export default async function DashboardPage({
             </p>
           </div>
           <a
-            href="https://docs.seldonframe.com/mcp"
+            href="https://docs.kyneticai.com/mcp"
             target="_blank"
             rel="noopener noreferrer"
             className="shrink-0 text-xs font-medium text-primary hover:underline"
@@ -1442,7 +1442,7 @@ export default async function DashboardPage({
             <p className="text-xs text-muted-foreground">
               <Terminal className="inline size-3 mr-1" />
               For the best experience, use Seldon directly from Claude Code with our MCP + Skill.{" "}
-              <Link href="https://docs.seldonframe.com/mcp" className="underline" target="_blank">
+              <Link href="https://docs.kyneticai.com/mcp" className="underline" target="_blank">
                 Learn more
               </Link>
             </p>
@@ -1935,7 +1935,7 @@ export default async function DashboardPage({
       {contactRows.length === 0 ? (
         <section className="crm-card space-y-5">
           <div>
-            <h2 className="text-base sm:text-lg font-semibold">Bring your clients into SeldonFrame</h2>
+            <h2 className="text-base sm:text-lg font-semibold">Bring your clients into Kynetic OS</h2>
             <p className="text-sm text-muted-foreground">Import existing clients, sync from another CRM, or add one manually.</p>
           </div>
           <div className="flex flex-wrap gap-2">

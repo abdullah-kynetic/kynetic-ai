@@ -45,8 +45,8 @@ const FAQ: { q: string; a: string }[] = [
     a: "Some vendors (Salesforce Enterprise, Synthflow, Podium, and others) don't publish a self-serve price for that tier — you have to talk to sales. Rather than guess, we mark the point as quote-gated. Any third-party reported figure for those vendors is noted as \"reported\", never charted as a confirmed number.",
   },
   {
-    q: "How is SeldonFrame's price shown fairly against every other vendor?",
-    a: "SeldonFrame's shaded band always uses the tier closest to what each vendor implies: solo/DIY tools compare against Builder ($29/mo), a single managed workspace compares against Managed ($49/mo), and multi-client agency platforms (GoHighLevel, Vendasta, Stammer AI) compare against the Agency ladder ($99&ndash;$299/mo) &mdash; keyed to their own sub-account or client count. We never chart our cheapest tier against a competitor's most expensive one.",
+    q: "How is Kynetic OS's price shown fairly against every other vendor?",
+    a: "Kynetic OS's shaded band always uses the tier closest to what each vendor implies: solo/DIY tools compare against Builder ($29/mo), a single managed workspace compares against Managed ($49/mo), and multi-client agency platforms (GoHighLevel, Vendasta, Stammer AI) compare against the Agency ladder ($99&ndash;$299/mo) &mdash; keyed to their own sub-account or client count. We never chart our cheapest tier against a competitor's most expensive one.",
   },
   {
     q: "What business size does the chart use?",
@@ -118,7 +118,7 @@ export default function CrmPricingIndexPage(): ReactElement {
             recalculates live as you move the sliders.
           </p>
           <p style={{ margin: 0, fontSize: 15, lineHeight: 1.65, color: "rgba(34,29,23,0.72)" }}>
-            SeldonFrame's own comparison band uses the live tier ladder from{" "}
+            Kynetic OS's own comparison band uses the live tier ladder from{" "}
             <Link href="/pricing" className="sf-link" style={{ color: MKT.green, fontWeight: 700 }}>
               /pricing
             </Link>{" "}

@@ -7,7 +7,7 @@ import { AUTHOR } from "@/components/seo/author-byline";
 import type { BlogCallout } from "./blog/types";
 import { startsWithKindOfLike } from "./guide-inline";
 
-const BASE = "https://www.seldonframe.com";
+const BASE = "https://www.kyneticai.com";
 
 const CALLOUT_EMOJI: Record<BlogCallout["kind"], string> = {
   analogy: "💡",

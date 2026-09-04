@@ -2,27 +2,27 @@ import Link from "next/link";
 import { AGENCY_PLAN_FACTS, BUILDER_PRICING_CLAIM, HOSTED_AI_POLICY } from "@/lib/marketing/public-claims";
 
 export const metadata = {
-  title: "Terms of Service — SeldonFrame",
+  title: "Terms of Service — Kynetic OS",
 };
 
 export default function TermsPage() {
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
-      <h1 className="mb-2 text-3xl font-bold">Terms of Service — SeldonFrame</h1>
+      <h1 className="mb-2 text-3xl font-bold">Terms of Service — Kynetic OS</h1>
       <p className="text-sm text-muted-foreground">Last updated: June 2026</p>
 
       <section>
-        <h2 className="mb-4 mt-10 text-xl font-semibold">1. What is SeldonFrame</h2>
+        <h2 className="mb-4 mt-10 text-xl font-semibold">1. What is Kynetic OS</h2>
         <p className="text-base leading-relaxed text-muted-foreground">
-          SeldonFrame is a business identity operating system. It provides CRM, booking, landing pages, email, and
+          Kynetic OS is a business identity operating system. It provides CRM, booking, landing pages, email, and
           payment tools — all connected through a single business identity layer called the &quot;soul.&quot; You configure your
           soul once, and every feature adapts to your business automatically. If a feature you need doesn&apos;t exist,
           you can describe it and the AI-powered &quot;Seldon It&quot; feature will build it for you.
         </p>
-        <p className="mt-4 text-base leading-relaxed text-muted-foreground">SeldonFrame is available as:</p>
+        <p className="mt-4 text-base leading-relaxed text-muted-foreground">Kynetic OS is available as:</p>
         <ul className="mt-3 list-disc space-y-2 pl-6 text-base leading-relaxed text-muted-foreground">
           <li>A free, open-source self-hosted version</li>
-          <li>A managed cloud service at app.seldonframe.com</li>
+          <li>A managed cloud service at app.kyneticai.com</li>
         </ul>
       </section>
 
@@ -38,7 +38,7 @@ export default function TermsPage() {
       <section>
         <h2 className="mb-4 mt-10 text-xl font-semibold">3. Acceptable Use</h2>
         <ul className="list-disc space-y-3 pl-6 text-base leading-relaxed text-muted-foreground">
-          <li>Use SeldonFrame for lawful business purposes</li>
+          <li>Use Kynetic OS for lawful business purposes</li>
           <li>Do not use the platform to send spam or unsolicited communications</li>
           <li>Do not attempt to access other users&apos; data</li>
           <li>Do not reverse engineer or attack the service</li>
@@ -72,7 +72,7 @@ export default function TermsPage() {
         <h2 className="mb-4 mt-10 text-xl font-semibold">6. Seldon It (AI Features)</h2>
         <p className="text-base leading-relaxed text-muted-foreground">
           The Seldon It feature uses AI (Anthropic Claude) to generate custom software blocks based on your
-          description. Generated blocks run within your SeldonFrame instance. AI-generated code is provided as-is. You
+          description. Generated blocks run within your Kynetic OS instance. AI-generated code is provided as-is. You
           should review generated features before using them with real client data.
         </p>
       </section>
@@ -80,8 +80,8 @@ export default function TermsPage() {
       <section>
         <h2 className="mb-4 mt-10 text-xl font-semibold">7. Marketplace</h2>
         <p className="text-base leading-relaxed text-muted-foreground">
-          Pro users may list blocks, frameworks, themes, and soul packs on the SeldonFrame marketplace. Sellers keep
-          100% of sales revenue. SeldonFrame takes 0% commission. Sellers are responsible for the quality and accuracy
+          Pro users may list blocks, frameworks, themes, and soul packs on the Kynetic OS marketplace. Sellers keep
+          100% of sales revenue. Kynetic OS takes 0% commission. Sellers are responsible for the quality and accuracy
           of their listings.
         </p>
       </section>
@@ -90,25 +90,25 @@ export default function TermsPage() {
         <h2 className="mb-4 mt-10 text-xl font-semibold">8. Affiliate Program</h2>
         <p className="text-base leading-relaxed text-muted-foreground">
           Users may earn 30% recurring commission on subscriptions generated through their referral link. Commission is
-          paid monthly via Stripe Connect. SeldonFrame reserves the right to modify the affiliate program terms.
+          paid monthly via Stripe Connect. Kynetic OS reserves the right to modify the affiliate program terms.
         </p>
       </section>
 
       <section>
         <h2 className="mb-4 mt-10 text-xl font-semibold">9. Open Source License</h2>
         <p className="text-base leading-relaxed text-muted-foreground">
-          The SeldonFrame source code is available under the GNU Affero General Public License, version 3
-          (AGPL-3.0). Subject to that license, you may copy, modify, self-host, redistribute, and deploy SeldonFrame
+          The Kynetic OS source code is available under the GNU Affero General Public License, version 3
+          (AGPL-3.0). Subject to that license, you may copy, modify, self-host, redistribute, and deploy Kynetic OS
           for your own business or your clients&apos; businesses, including as a hosted service. If you modify the
           software and provide it to users over a network, the AGPL-3.0 source-availability obligations apply. These
-          Terms govern the SeldonFrame hosted service and do not narrow the rights granted by the open-source license.
+          Terms govern the Kynetic OS hosted service and do not narrow the rights granted by the open-source license.
         </p>
       </section>
 
       <section>
         <h2 className="mb-4 mt-10 text-xl font-semibold">10. Limitation of Liability</h2>
         <p className="text-base leading-relaxed text-muted-foreground">
-          SeldonFrame is provided &quot;as is.&quot; We do our best to keep the service reliable and secure, but we cannot
+          Kynetic OS is provided &quot;as is.&quot; We do our best to keep the service reliable and secure, but we cannot
           guarantee 100% uptime or error-free operation. We are not liable for any indirect, incidental, or
           consequential damages.
         </p>
@@ -142,7 +142,7 @@ export default function TermsPage() {
           </li>
           <li>
             <strong>Help:</strong> reply <strong>HELP</strong> for assistance, or email
-            support@seldonframe.com.
+            support@kyneticai.com.
           </li>
           <li>
             <strong>Message frequency varies</strong> based on your interactions with the business.
@@ -166,9 +166,9 @@ export default function TermsPage() {
       <section>
         <h2 className="mb-4 mt-10 text-xl font-semibold">13. Contact</h2>
         <p className="text-base leading-relaxed text-muted-foreground">
-          For questions: support@seldonframe.com
+          For questions: support@kyneticai.com
           <br />
-          SeldonFrame is operated by Max Thule.
+          Kynetic OS is operated by Max Thule.
         </p>
       </section>
 

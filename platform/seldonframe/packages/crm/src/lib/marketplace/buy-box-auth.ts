@@ -18,7 +18,7 @@
  *  stripped. */
 export function resolveAppOrigin(envUrl?: string | null): string {
   const raw = (envUrl ?? "").trim();
-  const base = raw.length > 0 ? raw : "https://app.seldonframe.com";
+  const base = raw.length > 0 ? raw : "https://app.kyneticai.com";
   return base.replace(/\/+$/, "");
 }
 

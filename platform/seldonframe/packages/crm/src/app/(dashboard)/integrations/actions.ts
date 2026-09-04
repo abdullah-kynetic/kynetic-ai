@@ -242,7 +242,7 @@ export async function connectMcpConnectorAction(input: {
     const client = await registerClient({
       metadata,
       redirectUri,
-      clientName: "SeldonFrame",
+      clientName: "Kynetic OS",
     });
 
     const { verifier, challenge } = generatePkcePair();

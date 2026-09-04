@@ -27,13 +27,13 @@ import {
 } from "@/components/marketplace/marketplace-data";
 
 export const metadata: Metadata = {
-  title: "Agent Marketplace — Hire an AI agent that works 24/7 | SeldonFrame",
+  title: "Agent Marketplace — Hire an AI agent that works 24/7 | Kynetic OS",
   description:
     "Vetted AI agents that answer calls, book jobs, chase reviews, and win back customers — built by operators who run businesses like yours. Install into your workspace in under a minute.",
   // canonical + the Markdown twin so DOM-parsing crawlers discover the `.md`.
   alternates: { canonical: "/marketplace", types: { "text/markdown": "/marketplace.md" } },
   openGraph: {
-    title: "Hire an agent. It works 24/7, for pennies. | SeldonFrame Marketplace",
+    title: "Hire an agent. It works 24/7, for pennies. | Kynetic OS Marketplace",
     description:
       "Vetted AI agents — receptionists, review-chasers, reactivation, quoting, support, social — built by real operators. Install or rent via MCP.",
     url: "/marketplace",
@@ -46,7 +46,7 @@ type BrowsePageProps = {
 };
 
 /**
- * The REAL "businesses on SeldonFrame" count — 1 workspace = 1 business.
+ * The REAL "businesses on Kynetic OS" count — 1 workspace = 1 business.
  *
  * Transparency over fabricated social proof: we count live workspace
  * `organizations` (non-archived, not a proposal-pitch preview shell). This is

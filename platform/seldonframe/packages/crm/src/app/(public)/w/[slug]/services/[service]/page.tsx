@@ -72,7 +72,7 @@ export default async function WorkspaceServicePage({ params }: PageProps) {
   // identical call pattern to the home page.
   const workspaceUrls = buildWorkspaceUrls(
     slug,
-    process.env.WORKSPACE_BASE_DOMAIN ?? "app.seldonframe.com",
+    process.env.WORKSPACE_BASE_DOMAIN ?? "app.kyneticai.com",
     r1.orgId,
   );
   const payload = rewriteR1Hrefs(r1.payload, {

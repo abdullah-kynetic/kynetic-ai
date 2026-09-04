@@ -37,7 +37,7 @@ export function composeVsFaq(a: Competitor, b: Competitor): AltFaqItem[] {
     },
     {
       q: "Is there an alternative to both?",
-      a: `Yes — SeldonFrame ships the AI receptionist plus the website, CRM and booking calendar it books into, at ${sfPriceAnchor(pairAudience(a.audience, b.audience))}. See how it compares: /alternatives.`,
+      a: `Yes — Kynetic OS ships the AI receptionist plus the website, CRM and booking calendar it books into, at ${sfPriceAnchor(pairAudience(a.audience, b.audience))}. See how it compares: /alternatives.`,
     },
     {
       q: `Can I switch from ${a.name} or ${b.name}?`,
@@ -109,7 +109,7 @@ export function VsPage({ pair, a, b }: { pair: VsPair; a: Competitor; b: Competi
               { icon: "💰", label: `${a.name} pricing`, text: a.them.pricingModel },
               { icon: "💰", label: `${b.name} pricing`, text: b.them.pricingModel },
               { icon: "🤝", label: "The real trade-off", text: pair.angle },
-              { icon: "🚪", label: "The third option", text: `SeldonFrame ships the whole front office — ${sfPriceAnchor(audience)} — see below` },
+              { icon: "🚪", label: "The third option", text: `Kynetic OS ships the whole front office — ${sfPriceAnchor(audience)} — see below` },
             ]}
           />
         </header>
@@ -134,7 +134,7 @@ export function VsPage({ pair, a, b }: { pair: VsPair; a: Competitor; b: Competi
                 ))}
               </ul>
               <Link href={`/alternative-to-${c.slug}`} className="sf-link" style={{ display: "inline-block", marginTop: 12, fontSize: 13.5, fontWeight: 700, color: MKT.green, textDecoration: "none" }}>
-                {`Full ${c.name} vs SeldonFrame breakdown →`}
+                {`Full ${c.name} vs Kynetic OS breakdown →`}
               </Link>
             </div>
           ))}
@@ -142,7 +142,7 @@ export function VsPage({ pair, a, b }: { pair: VsPair; a: Competitor; b: Competi
 
         {/* the 4-column table */}
         <section style={{ padding: "32px 0 8px" }}>
-          <h2 style={{ margin: 0, fontSize: 26, fontWeight: 800, letterSpacing: "-0.02em" }}>{`${a.name} vs ${b.name} vs SeldonFrame`}</h2>
+          <h2 style={{ margin: 0, fontSize: 26, fontWeight: 800, letterSpacing: "-0.02em" }}>{`${a.name} vs ${b.name} vs Kynetic OS`}</h2>
           <div style={{ overflowX: "auto", border: `1px solid ${MKT.ink10}`, borderRadius: 16, background: "rgba(255,255,255,0.55)", marginTop: 18 }}>
             <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 760, fontSize: 14 }}>
               <thead>
@@ -150,7 +150,7 @@ export function VsPage({ pair, a, b }: { pair: VsPair; a: Competitor; b: Competi
                   <th style={{ ...TH, width: "19%" }}>Features</th>
                   <th style={{ ...TH, width: "27%" }}>{a.name}</th>
                   <th style={{ ...TH, width: "27%" }}>{b.name}</th>
-                  <th style={{ ...TH, width: "27%", background: MKT.green10, color: MKT.green }}>SeldonFrame</th>
+                  <th style={{ ...TH, width: "27%", background: MKT.green10, color: MKT.green }}>Kynetic OS</th>
                 </tr>
               </thead>
               <tbody>
@@ -215,7 +215,7 @@ export function VsPage({ pair, a, b }: { pair: VsPair; a: Competitor; b: Competi
           </h2>
           <p style={{ margin: "10px 0 0", fontSize: 15.5, lineHeight: 1.65, color: "rgba(246,242,234,0.78)", maxWidth: 720 }}>
             Most people running this comparison actually need the outcome underneath both tools: calls and chats answered, leads
-            qualified, jobs booked into a real calendar and CRM, on a site the client owns. SeldonFrame ships that whole front
+            qualified, jobs booked into a real calendar and CRM, on a site the client owns. Kynetic OS ships that whole front
             office from one conversation — {sfPriceAnchor(audience)}, your own AI keys at raw cost.
           </p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 20 }}>

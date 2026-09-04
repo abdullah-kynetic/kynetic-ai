@@ -8,7 +8,7 @@ import { MarketplaceStyles } from "@/components/marketplace/marketplace-styles";
 import { MKT } from "@/components/marketplace/marketplace-data";
 
 export const metadata: Metadata = {
-  title: "Free tools for local service businesses — SeldonFrame",
+  title: "Free tools for local service businesses — Kynetic OS",
   description: "Free calculators and tools for service businesses and the agencies that serve them: missed-call cost, AI receptionist ROI, and more.",
   alternates: { canonical: "/tools" },
 };

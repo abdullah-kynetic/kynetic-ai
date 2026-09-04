@@ -39,7 +39,7 @@ export const guide: Guide = {
     },
     {
       h2: "The build, honestly, both paths",
-      body: "You can build this yourself with no product in the middle. You'll need a *webhook* off every lead source you want covered, an SMS and email sending account, a way to read the business's calendar for free-slot lookups, a write path into whatever CRM the business already uses, and your own guardrail logic to stop it from quoting prices or overpromising.\n\nEvery piece here is well-trodden — form webhooks, transactional SMS/email, calendar APIs — so nothing about it is exotic. The real cost is integration and maintenance: **every lead source is a separate connection to build and keep working** as forms change and APIs version.\n\nThe assembled path is what we build: SeldonFrame wires the agent, the CRM, and the booking calendar together from one conversation, so a new lead source is a connection you turn on rather than a webhook you write from scratch. Disclosure is due since we make that product — weigh this paragraph as the sales pitch it partly is.\n\nEither path produces the **same agent from the spec above**. The difference is how much of the wiring you do yourself versus start from already connected.",
+      body: "You can build this yourself with no product in the middle. You'll need a *webhook* off every lead source you want covered, an SMS and email sending account, a way to read the business's calendar for free-slot lookups, a write path into whatever CRM the business already uses, and your own guardrail logic to stop it from quoting prices or overpromising.\n\nEvery piece here is well-trodden — form webhooks, transactional SMS/email, calendar APIs — so nothing about it is exotic. The real cost is integration and maintenance: **every lead source is a separate connection to build and keep working** as forms change and APIs version.\n\nThe assembled path is what we build: Kynetic OS wires the agent, the CRM, and the booking calendar together from one conversation, so a new lead source is a connection you turn on rather than a webhook you write from scratch. Disclosure is due since we make that product — weigh this paragraph as the sales pitch it partly is.\n\nEither path produces the **same agent from the spec above**. The difference is how much of the wiring you do yourself versus start from already connected.",
       diagram: {
         type: "compare",
         title: "DIY vs. assembled",
@@ -53,7 +53,7 @@ export const guide: Guide = {
           ],
         },
         right: {
-          heading: "Assembled (SeldonFrame)",
+          heading: "Assembled (Kynetic OS)",
           items: [
             "Agent, CRM, and calendar already wired",
             "A new lead source is a connection you turn on",
@@ -100,7 +100,7 @@ export const guide: Guide = {
     },
     {
       q: "What does it actually cost to run, month to month?",
-      a: `The main variable cost is outbound SMS and, if you're using a paid model for the qualifying reply, LLM tokens — both small at typical small-business lead volumes. Twilio publishes outbound US SMS at $0.0083 per segment plus a modest carrier fee, and Anthropic's cheapest current model (Claude Haiku 4.5) runs $1 per million input tokens and $5 per million output tokens as of this writing — a single lead-qualification exchange is a few hundred tokens, so the per-lead cost is a fraction of a cent even before volume discounts. SeldonFrame is *BYOK*, so those provider costs are billed directly to whatever key you connect rather than marked up. ${AGENCY_PRICING_CLAIM} ${BUILDER_PRICING_CLAIM} The first workspace is free.`,
+      a: `The main variable cost is outbound SMS and, if you're using a paid model for the qualifying reply, LLM tokens — both small at typical small-business lead volumes. Twilio publishes outbound US SMS at $0.0083 per segment plus a modest carrier fee, and Anthropic's cheapest current model (Claude Haiku 4.5) runs $1 per million input tokens and $5 per million output tokens as of this writing — a single lead-qualification exchange is a few hundred tokens, so the per-lead cost is a fraction of a cent even before volume discounts. Kynetic OS is *BYOK*, so those provider costs are billed directly to whatever key you connect rather than marked up. ${AGENCY_PRICING_CLAIM} ${BUILDER_PRICING_CLAIM} The first workspace is free.`,
     },
   ],
   sources: [

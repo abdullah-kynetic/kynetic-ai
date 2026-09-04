@@ -196,7 +196,7 @@ export function GohighlevelCostCalculator(): ReactElement {
           { label: "AI Employee stack", value: `${money(breakdown.aiStack)}/mo` },
           { label: "Estimated usage", value: `${money(breakdown.usage)}/mo` },
         ],
-        footer: "built free at seldonframe.com/tools",
+        footer: "built free at kyneticai.com/tools",
       });
     }, 150);
     return () => {
@@ -369,7 +369,7 @@ export function GohighlevelCostCalculator(): ReactElement {
       </div>
 
       <p style={{ margin: "18px 0 0", fontSize: 14.5, fontWeight: 700, color: GREEN }}>
-        SeldonFrame for agencies: $99&ndash;$299/mo flat (white-label + client sub-accounts, 0% GMV) &mdash; solo builder tier $29/mo. Unlimited
+        Kynetic OS for agencies: $99&ndash;$299/mo flat (white-label + client sub-accounts, 0% GMV) &mdash; solo builder tier $29/mo. Unlimited
         workspaces either way — AI + telephony on your own keys at raw provider cost.
       </p>
 

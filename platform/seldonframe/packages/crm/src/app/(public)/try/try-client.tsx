@@ -503,7 +503,7 @@ function RevealPanel({ done, onStartOver }: { done: DoneData; onStartOver: () =>
           below the fold, so the operator saw the build finish with no
           visible next step without scrolling. */}
       <h1 className="mt-3 max-w-[24ch] text-balance font-sans text-[clamp(22px,2.8vw,32px)] font-[500] leading-[1.08] tracking-[-0.02em] text-[#221D17]">
-        {done.slug}.app.seldonframe.com is live
+        {done.slug}.app.kyneticai.com is live
       </h1>
       <p className="mx-auto mt-3 max-w-[58ch] text-pretty text-[15px] leading-[1.55] text-[#6E665A]">
         Your website and CRM are hosted and real. Try the chatbot below — it already knows your

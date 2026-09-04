@@ -192,14 +192,14 @@ export default async function StudioEarningsPage() {
         <h2 className="text-card-title text-foreground">
           Marketplace ·{" "}
           <span className="text-muted-foreground">
-            you keep 95% (SeldonFrame takes a {summary.feePercent}% fee on sales)
+            you keep 95% (Kynetic OS takes a {summary.feePercent}% fee on sales)
           </span>
         </h2>
         <div className="rounded-2xl border border-border bg-card p-6 shadow-(--shadow-xs)">
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
             <Stat label="Gross sales" value={formatCentsUsd(summary.grossCents)} />
             <Stat
-              label={`SeldonFrame fee (${summary.feePercent}%)`}
+              label={`Kynetic OS fee (${summary.feePercent}%)`}
               value={`− ${formatCentsUsd(summary.feeCents)}`}
               muted
             />

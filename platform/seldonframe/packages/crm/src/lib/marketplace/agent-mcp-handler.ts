@@ -99,7 +99,7 @@ export type AgentRentalRpcDeps = {
   /** Verify an X-PAYMENT against the requirement. Defaults (in the route) to
    *  devStubVerifier — which moves NO money. */
   settlementVerifier?: SettlementVerifier;
-  /** The SeldonFrame house org id (SELDONFRAME_HOUSE_ORG_ID). A listing whose
+  /** The Kynetic OS house org id (SELDONFRAME_HOUSE_ORG_ID). A listing whose
    *  creator IS this org is first-party (SF free/floor lane). Unset ⇒ no listing
    *  is first-party (every agent bills on the builder lane). */
   houseOrgId?: string;

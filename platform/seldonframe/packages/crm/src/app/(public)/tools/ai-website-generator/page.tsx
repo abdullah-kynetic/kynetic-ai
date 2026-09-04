@@ -55,7 +55,7 @@ const FAQ = [
   },
   {
     q: "Can I use my own domain?",
-    a: "Yes. Every workspace starts on a free <code>&lt;yourbusiness&gt;.app.seldonframe.com</code> subdomain, and you can connect a custom domain you already own once you're ready.",
+    a: "Yes. Every workspace starts on a free <code>&lt;yourbusiness&gt;.app.kyneticai.com</code> subdomain, and you can connect a custom domain you already own once you're ready.",
   },
   {
     q: "What if I already have a website?",
@@ -63,7 +63,7 @@ const FAQ = [
   },
   {
     q: "How is this different from Wix, Framer, or HubSpot's AI website builder?",
-    a: "Those tools are genuinely good at generating a page. SeldonFrame generates the page <strong>and</strong> wires up the machinery behind it in the same step: a booking calendar, an intake form, and a CRM that all talk to each other — so a visitor can go from landing page to booked appointment without you connecting anything extra.",
+    a: "Those tools are genuinely good at generating a page. Kynetic OS generates the page <strong>and</strong> wires up the machinery behind it in the same step: a booking calendar, an intake form, and a CRM that all talk to each other — so a visitor can go from landing page to booked appointment without you connecting anything extra.",
   },
   {
     q: "What happens to my site if I never pay?",
@@ -134,7 +134,7 @@ export default function AiWebsiteGeneratorPage(): ReactElement {
         </section>
 
         <section style={{ padding: "20px 0 0" }}>
-          <h2 style={{ margin: "0 0 14px", fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em" }}>AI website generators vs SeldonFrame</h2>
+          <h2 style={{ margin: "0 0 14px", fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em" }}>AI website generators vs Kynetic OS</h2>
           <p style={{ margin: "0 0 14px", fontSize: 15, lineHeight: 1.65, color: "rgba(34,29,23,0.72)" }}>
             Tools like Wix&apos;s AI site builder, Framer AI, and HubSpot&apos;s AI website generator are genuinely good at one
             job: turning a prompt into a page fast. That&apos;s real, and worth using if a page is all you need.
@@ -145,7 +145,7 @@ export default function AiWebsiteGeneratorPage(): ReactElement {
                 <tr style={{ borderBottom: `2px solid ${MKT.ink10}` }}>
                   <th style={{ textAlign: "left", padding: "10px 12px", fontWeight: 700 }}>What you need</th>
                   <th style={{ textAlign: "left", padding: "10px 12px", fontWeight: 700 }}>Typical AI website generator</th>
-                  <th style={{ textAlign: "left", padding: "10px 12px", fontWeight: 700, color: MKT.green }}>SeldonFrame</th>
+                  <th style={{ textAlign: "left", padding: "10px 12px", fontWeight: 700, color: MKT.green }}>Kynetic OS</th>
                 </tr>
               </thead>
               <tbody>
@@ -173,7 +173,7 @@ export default function AiWebsiteGeneratorPage(): ReactElement {
             </table>
           </div>
           <p style={{ margin: "14px 0 0", fontSize: 13.5, lineHeight: 1.6, color: "rgba(34,29,23,0.6)" }}>
-            The honest read: pick a plain AI website generator if a page is genuinely all you need. Pick SeldonFrame
+            The honest read: pick a plain AI website generator if a page is genuinely all you need. Pick Kynetic OS
             when you want the page and the booking/CRM machinery behind it built at the same time, so a lead can go
             from visit to booked appointment without you stitching tools together.
           </p>
@@ -202,7 +202,7 @@ export default function AiWebsiteGeneratorPage(): ReactElement {
             <Link href="/guides" className="sf-link" style={{ color: MKT.green, fontWeight: 700 }}>
               guides hub
             </Link>
-            , or see how SeldonFrame compares on the{" "}
+            , or see how Kynetic OS compares on the{" "}
             <Link href="/alternatives" className="sf-link" style={{ color: MKT.green, fontWeight: 700 }}>
               alternatives page
             </Link>

@@ -15,9 +15,9 @@ import { guidesInCluster } from "@/lib/seo/guides";
 import { ChatGptCtaButton } from "@/components/seo/chatgpt-cta";
 
 export const metadata: Metadata = {
-  title: "Sell AI Agents: Direct, White-Label, Marketplace, or MCP | SeldonFrame",
+  title: "Sell AI Agents: Direct, White-Label, Marketplace, or MCP | Kynetic OS",
   description:
-    "Four ways to sell AI agents you build: direct to local businesses, white-label as an agency, list on the marketplace, or rent via MCP. Build once with SeldonFrame.",
+    "Four ways to sell AI agents you build: direct to local businesses, white-label as an agency, list on the marketplace, or rent via MCP. Build once with Kynetic OS.",
   alternates: { canonical: "/sell" },
 };
 
@@ -50,7 +50,7 @@ const PATHS: Path[] = [
   {
     n: "03",
     title: "List it on the marketplace",
-    body: "Publish the agent you built to the SeldonFrame marketplace so other builders and businesses can find and install it. SeldonFrame takes a flat 5% marketplace fee on marketplace sales — direct sales through your own site/CRM aren't touched (a flat 2% GMV fee applies only on solo Builder/Managed plans when SeldonFrame is the sales channel; agency plans pay 0%).",
+    body: "Publish the agent you built to the Kynetic OS marketplace so other builders and businesses can find and install it. Kynetic OS takes a flat 5% marketplace fee on marketplace sales — direct sales through your own site/CRM aren't touched (a flat 2% GMV fee applies only on solo Builder/Managed plans when Kynetic OS is the sales channel; agency plans pay 0%).",
     links: [
       { href: "/marketplace/build", label: "Build to list" },
       { href: "/guides/best-ai-agent-marketplaces", label: "Best AI agent marketplaces" },
@@ -75,14 +75,14 @@ export default function SellHubPage(): ReactElement {
     "@type": "CollectionPage",
     name: "Sell AI Agents: Build Once, Sell It Four Ways",
     description: metadata.description,
-    url: "https://www.seldonframe.com/sell",
+    url: "https://www.kyneticai.com/sell",
   };
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.seldonframe.com" },
-      { "@type": "ListItem", position: 2, name: "Sell AI agents", item: "https://www.seldonframe.com/sell" },
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.kyneticai.com" },
+      { "@type": "ListItem", position: 2, name: "Sell AI agents", item: "https://www.kyneticai.com/sell" },
     ],
   };
   return (

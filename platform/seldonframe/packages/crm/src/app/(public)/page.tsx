@@ -59,18 +59,18 @@ import { resolveLandingMode } from "./landing-mode";
 import { POSITIONING_ONE_LINER } from "./home-copy";
 
 export const metadata: Metadata = {
-  title: "SeldonFrame — Sell AI front offices. Deploy them in minutes.",
+  title: "Kynetic OS — Sell AI front offices. Deploy them in minutes.",
   description: POSITIONING_ONE_LINER,
   openGraph: {
-    title: "SeldonFrame — Sell AI front offices. Deploy them in minutes.",
+    title: "Kynetic OS — Sell AI front offices. Deploy them in minutes.",
     description: POSITIONING_ONE_LINER,
     type: "website",
-    url: "https://seldonframe.com",
+    url: "https://kyneticai.com",
     images: [{ url: "/brand/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "SeldonFrame — Sell AI front offices. Deploy them in minutes.",
+    title: "Kynetic OS — Sell AI front offices. Deploy them in minutes.",
     description: POSITIONING_ONE_LINER,
     images: ["/brand/twitter-card.png"],
   },
@@ -103,15 +103,15 @@ export default async function PublicHomePage({
             "@graph": [
               {
                 "@type": "Organization",
-                "@id": "https://www.seldonframe.com/#org",
-                name: "SeldonFrame",
-                url: "https://www.seldonframe.com",
-                logo: "https://www.seldonframe.com/brand/og-image.png",
+                "@id": "https://www.kyneticai.com/#org",
+                name: "Kynetic OS",
+                url: "https://www.kyneticai.com",
+                logo: "https://www.kyneticai.com/brand/og-image.png",
                 description: POSITIONING_ONE_LINER,
                 founder: {
                   "@type": "Person",
                   name: "Maxime Houle",
-                  image: "https://www.seldonframe.com/brand/maxime-houle.png",
+                  image: "https://www.kyneticai.com/brand/maxime-houle.png",
                 },
                 sameAs: [
                   "https://x.com/seldonframe",
@@ -121,10 +121,10 @@ export default async function PublicHomePage({
               },
               {
                 "@type": "WebSite",
-                "@id": "https://www.seldonframe.com/#website",
-                name: "SeldonFrame",
-                url: "https://www.seldonframe.com",
-                publisher: { "@id": "https://www.seldonframe.com/#org" },
+                "@id": "https://www.kyneticai.com/#website",
+                name: "Kynetic OS",
+                url: "https://www.kyneticai.com",
+                publisher: { "@id": "https://www.kyneticai.com/#org" },
               },
             ],
           }),

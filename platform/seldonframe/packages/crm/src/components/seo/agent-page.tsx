@@ -81,7 +81,7 @@ export function AgentPage({ job, vertical }: AgentPageProps): ReactElement {
     "@type": "SoftwareApplication",
     name: vertical ? `${job.name} for ${vertical.plural}` : job.name,
     applicationCategory: "BusinessApplication",
-    operatingSystem: "SeldonFrame",
+    operatingSystem: "Kynetic OS",
     description: copy.metaDescription,
     offers: AGENCY_PLAN_FACTS.map((plan) => ({
       "@type": "Offer",
@@ -90,7 +90,7 @@ export function AgentPage({ job, vertical }: AgentPageProps): ReactElement {
       priceCurrency: "USD",
       description: plan.audience,
     })),
-    provider: { "@id": "https://www.seldonframe.com/#org" },
+    provider: { "@id": "https://www.kyneticai.com/#org" },
   };
   const faqLd = {
     "@context": "https://schema.org",
@@ -524,7 +524,7 @@ export function AgentPage({ job, vertical }: AgentPageProps): ReactElement {
             <SeldonFrameMark size={15} />
             See this agent on the{" "}
             <Link href={`/marketplace/${job.marketplaceSlug}`} style={{ color: MKT.green, fontWeight: 600, textDecoration: "none" }}>
-              SeldonFrame Marketplace
+              Kynetic OS Marketplace
             </Link>
             .
           </p>

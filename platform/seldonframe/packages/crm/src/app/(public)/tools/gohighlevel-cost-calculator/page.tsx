@@ -55,7 +55,7 @@ const FAQ = [
     a: "The plan base price stays flat, but the AI Employee add-on and usage costs multiply by every client sub-account you add — so the per-client cost of running the platform doesn't shrink as you grow, it stacks.",
   },
   {
-    q: "How does SeldonFrame's pricing compare?",
+    q: "How does Kynetic OS's pricing compare?",
     a: `${BUILDER_PRICING_CLAIM} ${AGENCY_PRICING_CLAIM} You connect your own AI provider and telephony account, so usage bills at raw provider cost with no markup.`,
   },
 ];
@@ -143,7 +143,7 @@ export default function GohighlevelCostCalculatorPage(): ReactElement {
             </Link>{" "}
             and{" "}
             <Link href="/compare/seldonframe-vs-gohighlevel" className="sf-link" style={{ color: MKT.green, fontWeight: 700 }}>
-              SeldonFrame vs GoHighLevel
+              Kynetic OS vs GoHighLevel
             </Link>
             . Zoom out: see the full market on one chart —{" "}
             <Link href="/charts/crm-pricing-index" className="sf-link" style={{ color: MKT.green, fontWeight: 700 }}>

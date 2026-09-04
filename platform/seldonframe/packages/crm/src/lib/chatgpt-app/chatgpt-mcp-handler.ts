@@ -138,7 +138,7 @@ export async function handleChatGptRpc(rawBody: string, deps: ChatGptMcpDeps): P
       return {
         status: 200,
         body: jsonRpcResult(id, {
-          ...buildInitializeResult({ agentName: "SeldonFrame" }),
+          ...buildInitializeResult({ agentName: "Kynetic OS" }),
           // This server ALSO speaks resources/list + resources/read (the two
           // widget resources) — advertise the capability. buildInitializeResult
           // is shared with the agent-marketplace rental endpoint (which does

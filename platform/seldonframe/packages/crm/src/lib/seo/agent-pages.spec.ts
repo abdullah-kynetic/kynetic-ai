@@ -241,7 +241,7 @@ test("Tier-1 composition uses the job's own h1 and a stat-backed intro", () => {
   const job = getJob("ai-receptionist");
   const copy = composePageCopy(job);
   assert.equal(copy.h1, job.h1);
-  assert.match(copy.title, /SeldonFrame/);
+  assert.match(copy.title, /Kynetic OS/);
   // The cited stat text is woven into the intro (GEO answer-shaping).
   assert.ok(copy.intro.includes(job.painStat.text), "Tier-1 intro should weave the cited stat");
   assert.ok(copy.metaDescription.length <= 160, "meta description should be ≤160 chars");

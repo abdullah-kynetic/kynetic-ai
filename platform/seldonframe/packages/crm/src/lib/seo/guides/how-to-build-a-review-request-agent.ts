@@ -46,7 +46,7 @@ The review link itself is free either way: Google builds it from a business's Pl
 
 The honest trade-off with DIY: the trigger wiring, the delay logic, the suppression list, and the **owner-routing lane** are four separate moving pieces to build and keep working across every client's CRM setup. Doable, but real ongoing maintenance — especially once you're running it for more than one client.
 
-The assembled path — full disclosure, this is our product — is SeldonFrame. The trigger, delay, follow-up, suppression, and owner-routing logic ship as **one pre-built agent** bound to the client's CRM and calendar, so you're configuring a template instead of building the pipeline from scratch. ${AGENCY_PRICING_CLAIM}
+The assembled path — full disclosure, this is our product — is Kynetic OS. The trigger, delay, follow-up, suppression, and owner-routing logic ship as **one pre-built agent** bound to the client's CRM and calendar, so you're configuring a template instead of building the pipeline from scratch. ${AGENCY_PRICING_CLAIM}
 
 ${BUILDER_PRICING_CLAIM} The first workspace is free, and you bring your own SMS/email keys (*BYOK*) so there's no markup on the sending itself.
 

@@ -112,7 +112,7 @@ export default async function SignupConnectAiPage({
       <ConnectAiForm next={next} />
 
       {/* 2026-06-22 — Magic first-run: the first workspace builds on
-          SeldonFrame's platform key, so this step is now OPTIONAL. The
+          Kynetic OS's platform key, so this step is now OPTIONAL. The
           "Skip — build it free →" action fires skipConnectAiAction (no key
           stored, marks the step skipped, redirects to ?next= =
           /clients/new). BYOK becomes the gate only at the unbounded-COGS
@@ -149,7 +149,7 @@ export default async function SignupConnectAiPage({
           <Link href="/terms" className="underline-offset-4 hover:underline">
             Terms of Service
           </Link>
-          <span className="ml-auto">&copy; 2026 SeldonFrame</span>
+          <span className="ml-auto">&copy; 2026 Kynetic AI</span>
         </div>
       </footer>
     </div>

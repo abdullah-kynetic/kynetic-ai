@@ -7,9 +7,9 @@ import type { Metadata } from "next";
 import { MarketingShell } from "../../marketing-shell";
 
 export const metadata: Metadata = {
-  title: "Quickstart — SeldonFrame",
+  title: "Quickstart — Kynetic OS",
   description:
-    "Install SeldonFrame once, then build and operate branded client front offices from Claude Code.",
+    "Install Kynetic OS once, then build and operate branded client front offices from Claude Code.",
 };
 
 const Section = ({
@@ -78,7 +78,7 @@ export default function QuickstartPage() {
             Install once. Ship your first client front office.
           </h1>
           <p className="text-[16px] text-[#a1a1aa] leading-[1.7]">
-            SeldonFrame plugs into Claude Code as an MCP server. After install, you give it a
+            Kynetic OS plugs into Claude Code as an MCP server. After install, you give it a
             client URL and Claude orchestrates workspace creation, block installs, branding,
             and customization — same flow whether you&apos;re in the
             Claude Code desktop app or the terminal.
@@ -123,7 +123,7 @@ export default function QuickstartPage() {
               <span className="text-[#a1a1aa] mt-[2px] shrink-0">·</span>
               <span>
                 <strong className="text-[#d4d4d8]">Node version:</strong> Codespaces default
-                images sometimes ship Node 16. SeldonFrame requires Node 18+. Run{" "}
+                images sometimes ship Node 16. Kynetic OS requires Node 18+. Run{" "}
                 <code className="font-mono text-[#F6F2EA]">nvm install 20 &amp;&amp; nvm use 20</code>{" "}
                 if{" "}
                 <code className="font-mono text-[#F6F2EA]">node --version</code> shows v16 or v17.
@@ -172,10 +172,10 @@ export default function QuickstartPage() {
               1
             </span>
             <h3 className="text-[16px] font-semibold mb-2 text-[#fafafa] relative z-10">
-              Add SeldonFrame to Claude Code
+              Add Kynetic OS to Claude Code
             </h3>
             <p className="text-[14px] text-[#a1a1aa] leading-[1.65] mb-5 relative z-10">
-              The MCP server exposes SeldonFrame&apos;s primitive surface inside Claude Code.
+              The MCP server exposes Kynetic OS&apos;s primitive surface inside Claude Code.
               Pick whichever path is comfortable — both register the same MCP and produce
               the same result.
             </p>
@@ -186,7 +186,7 @@ export default function QuickstartPage() {
                 recommended
                 title="Claude Code desktop app"
                 body="Open Claude Code (download from claude.ai/code if you don't have it), then type:"
-                code={`Add SeldonFrame to my tools`}
+                code={`Add Kynetic OS to my tools`}
                 caption="Claude Code reads this as a request to install an MCP server and runs the registration for you. No terminal required."
               />
               <InstallOption
@@ -217,10 +217,10 @@ export default function QuickstartPage() {
             number={3}
             title="Test, publish, and hand it off"
             body="Claude Code chains the right tool calls automatically: creates the workspace, installs an industry-matched vertical pack, configures booking availability, seeds the client's Soul from their website, and customizes the intake form. Run the agent evals, complete a test booking, publish the live URLs, and hand the client their branded portal. Build the first client workspace free; agency plans start at $99/mo and carry 0% GMV."
-            code={`https://your-business.app.seldonframe.com           ← public home
-https://your-business.app.seldonframe.com/book      ← booking
-https://your-business.app.seldonframe.com/intake    ← intake form
-https://app.seldonframe.com/switch-workspace?...    ← admin dashboard`}
+            code={`https://your-business.app.kyneticai.com           ← public home
+https://your-business.app.kyneticai.com/book      ← booking
+https://your-business.app.kyneticai.com/intake    ← intake form
+https://app.kyneticai.com/switch-workspace?...    ← admin dashboard`}
           />
         </section>
 

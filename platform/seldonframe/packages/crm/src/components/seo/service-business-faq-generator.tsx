@@ -480,7 +480,7 @@ export function ServiceBusinessFaqGenerator(): ReactElement {
         </div>
         <p style={{ margin: "0 0 14px", fontSize: 14, lineHeight: 1.6, color: "rgba(34,29,23,0.72)" }}>
           This same FAQ is exactly what an AI front desk needs to be grounded. Import it straight into
-          your SeldonFrame workspace as your agent&apos;s Knowledge, and it answers every customer
+          your Kynetic OS workspace as your agent&apos;s Knowledge, and it answers every customer
           question by phone, web chat, or text — using only your real answers, never made-up ones.
         </p>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
@@ -488,7 +488,7 @@ export function ServiceBusinessFaqGenerator(): ReactElement {
             Turn this into your AI agent&apos;s knowledge — free
           </a>
           <a
-            href="https://app.seldonframe.com/book/seldonframes-workspace-7798/default"
+            href="https://app.kyneticai.com/book/seldonframes-workspace-7798/default"
             style={{ border: `1.5px solid ${INK10}`, color: INK, background: "rgba(255,255,255,0.6)", padding: "12px 24px", borderRadius: 12, fontWeight: 700, fontSize: 15.5, textDecoration: "none" }}
           >
             Book a demo call

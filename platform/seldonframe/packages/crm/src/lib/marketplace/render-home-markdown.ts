@@ -21,7 +21,7 @@ import { POSITIONING_ONE_LINER } from "@/app/(public)/home-copy";
 
 /** Canonical public origin for absolute links (mirrors sitemap's siteBaseUrl
  *  default). A pasted `.md` always carries clickable, absolute URLs. */
-export const HOME_BASE_URL = "https://seldonframe.com";
+export const HOME_BASE_URL = "https://kyneticai.com";
 
 function trimBase(baseUrl: string): string {
   return baseUrl.replace(/\/+$/, "");
@@ -36,7 +36,7 @@ export function homeUrl(baseUrl: string = HOME_BASE_URL): string {
 const STEPS: ReadonlyArray<{ title: string; body: string }> = [
   {
     title: "Paste a URL — or describe the business.",
-    body: "Your existing website, or a quick description. SeldonFrame builds from either.",
+    body: "Your existing website, or a quick description. Kynetic OS builds from either.",
   },
   {
     title: "Watch it spin up in about 60 seconds.",
@@ -99,12 +99,12 @@ export function renderHomeMarkdown(baseUrl: string = HOME_BASE_URL): string {
   const base = homeUrl(baseUrl);
   const lines: string[] = [];
 
-  lines.push("# SeldonFrame — a whole client front office, live in 60 seconds");
+  lines.push("# Kynetic OS — a whole client front office, live in 60 seconds");
   lines.push("");
   lines.push(`> ${POSITIONING_ONE_LINER}`);
   lines.push("");
   lines.push(
-    "SeldonFrame is the platform agencies use to sell AI front offices (and operators use to run their own). Paste a client's website URL (or describe the business) and it builds a multi-page website, booking page, intake form, and CRM — wired together and ready for customers — then adds no-code AI agents that answer every call, request reviews, and handle DMs and email.",
+    "Kynetic OS is the platform agencies use to sell AI front offices (and operators use to run their own). Paste a client's website URL (or describe the business) and it builds a multi-page website, booking page, intake form, and CRM — wired together and ready for customers — then adds no-code AI agents that answer every call, request reviews, and handle DMs and email.",
   );
   lines.push("");
 
@@ -126,7 +126,7 @@ export function renderHomeMarkdown(baseUrl: string = HOME_BASE_URL): string {
   lines.push("## Pricing");
   lines.push("");
   lines.push(
-    "Build it free, then **$29/mo flat** for unlimited workspaces. Bring your own AI key (ChatGPT, Claude, or Gemini); SeldonFrame shows you how to connect it in about 30 seconds. Cancel anytime.",
+    "Build it free, then **$29/mo flat** for unlimited workspaces. Bring your own AI key (ChatGPT, Claude, or Gemini); Kynetic OS shows you how to connect it in about 30 seconds. Cancel anytime.",
   );
   lines.push("");
   for (const item of PROOF) {

@@ -57,7 +57,7 @@ const FAQ = [
   },
   {
     q: "How do I lower my AI phone agent's real cost per minute?",
-    a: "Bring your own AI provider and telephony keys where possible so you pay each provider at raw cost instead of a marked-up bundle, and choose a smaller/cheaper LLM for simple calls. See our honest <a href=\"/compare/seldonframe-vs-vapi\">SeldonFrame vs Vapi</a> comparison and the full <a href=\"/vapi-pricing\">Vapi pricing breakdown</a> for what a flat-rate, bring-your-own-keys alternative looks like.",
+    a: "Bring your own AI provider and telephony keys where possible so you pay each provider at raw cost instead of a marked-up bundle, and choose a smaller/cheaper LLM for simple calls. See our honest <a href=\"/compare/seldonframe-vs-vapi\">Kynetic OS vs Vapi</a> comparison and the full <a href=\"/vapi-pricing\">Vapi pricing breakdown</a> for what a flat-rate, bring-your-own-keys alternative looks like.",
   },
 ];
 
@@ -139,7 +139,7 @@ export default function VoiceAiCostCalculatorPage(): ReactElement {
             </Link>
             , and{" "}
             <Link href="/compare/seldonframe-vs-vapi" className="sf-link" style={{ color: MKT.green, fontWeight: 700 }}>
-              SeldonFrame vs Vapi
+              Kynetic OS vs Vapi
             </Link>
             . Zoom out: see the full market on one chart —{" "}
             <Link href="/charts/crm-pricing-index" className="sf-link" style={{ color: MKT.green, fontWeight: 700 }}>

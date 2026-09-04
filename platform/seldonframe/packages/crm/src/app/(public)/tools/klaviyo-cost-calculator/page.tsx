@@ -57,7 +57,7 @@ const FAQ = [
   },
   {
     q: "How do I lower my Klaviyo bill?",
-    a: "Regularly clean your list — suppress genuinely inactive profiles so they stop counting toward your active total, since that's the number Klaviyo bills on. Watch SMS volume separately, since it's metered on top. See our honest <a href=\"/compare/seldonframe-vs-klaviyo\">SeldonFrame vs Klaviyo</a> comparison and the full <a href=\"/klaviyo-pricing\">Klaviyo pricing breakdown</a> for what a flat-rate alternative looks like.",
+    a: "Regularly clean your list — suppress genuinely inactive profiles so they stop counting toward your active total, since that's the number Klaviyo bills on. Watch SMS volume separately, since it's metered on top. See our honest <a href=\"/compare/seldonframe-vs-klaviyo\">Kynetic OS vs Klaviyo</a> comparison and the full <a href=\"/klaviyo-pricing\">Klaviyo pricing breakdown</a> for what a flat-rate alternative looks like.",
   },
 ];
 
@@ -138,7 +138,7 @@ export default function KlaviyoCostCalculatorPage(): ReactElement {
             </Link>
             , and{" "}
             <Link href="/compare/seldonframe-vs-klaviyo" className="sf-link" style={{ color: MKT.green, fontWeight: 700 }}>
-              SeldonFrame vs Klaviyo
+              Kynetic OS vs Klaviyo
             </Link>
             . Zoom out: see the full market on one chart —{" "}
             <Link href="/charts/crm-pricing-index" className="sf-link" style={{ color: MKT.green, fontWeight: 700 }}>

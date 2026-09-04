@@ -39,7 +39,7 @@ import Link from "next/link";
 // Mirrors dashboard/page.tsx's WORKSPACE_BASE_DOMAIN — the public workspace
 // host used to build the SeldonChat live-preview iframe URL.
 const WORKSPACE_BASE_DOMAIN =
-  process.env.WORKSPACE_BASE_DOMAIN?.trim() || "app.seldonframe.com";
+  process.env.WORKSPACE_BASE_DOMAIN?.trim() || "app.kyneticai.com";
 
 /*
   Square UI class reference (source of truth):
@@ -308,7 +308,7 @@ export default async function DashboardLayout({
               blocks={blocks}
               canAccessSeldon={canAccessSeldon}
               hiddenBlocks={hiddenBlocks}
-              workspaceName={activeOrg?.name || "SeldonFrame"}
+              workspaceName={activeOrg?.name || "Kynetic OS"}
               // 2026-05-18 — workspace logo from theme.logoUrl. The
               // workspace SWITCHER tile shows the client's own per-
               // workspace logo (theme.logoUrl) — falling back to the
@@ -387,7 +387,7 @@ export default async function DashboardLayout({
                   userEmail={user?.email || ""}
                   avatarFallback={avatarFallback}
                   canAccessSeldon={canAccessSeldon}
-                  workspaceName={activeOrg?.name || "SeldonFrame"}
+                  workspaceName={activeOrg?.name || "Kynetic OS"}
                   activeWorkspaceId={orgId}
                   workspaceOptions={workspaceOptions.map((workspace) => ({
                     id: workspace.id,

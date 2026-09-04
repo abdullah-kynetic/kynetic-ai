@@ -153,7 +153,7 @@ export function NoShowCostCalculator(): ReactElement {
         headline: "No-shows are costing this business",
         bigNumber: `${money(lostMonthly)}/mo`,
         subline: `${noShowsPerMonth} no-shows/mo × ${money(apptValue)} avg appointment (${noShowRate}% no-show rate)`,
-        footer: "built free at seldonframe.com/tools",
+        footer: "built free at kyneticai.com/tools",
       });
     }, 150);
     return () => {
@@ -260,7 +260,7 @@ export function NoShowCostCalculator(): ReactElement {
           Cut no-shows — start free
         </a>
         <a
-          href="https://app.seldonframe.com/book/seldonframes-workspace-7798/default"
+          href="https://app.kyneticai.com/book/seldonframes-workspace-7798/default"
           style={{ border: `1.5px solid ${INK10}`, color: INK, padding: "12px 24px", borderRadius: 12, fontWeight: 700, fontSize: 15.5, textDecoration: "none", background: "rgba(255,255,255,0.5)" }}
         >
           Book a demo call

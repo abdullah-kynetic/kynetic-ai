@@ -41,8 +41,8 @@ export async function generateMetadata({ params }: RouteParams): Promise<Metadat
 
   const sfVs = resolveSfVs(pairSlug);
   if (sfVs) {
-    const title = `SeldonFrame vs ${sfVs.name}: Which Should You Choose? (${LAST_UPDATED})`;
-    const description = `SeldonFrame vs ${sfVs.name}, honestly compared: pricing, the AI receptionist, website, CRM & booking behind it, whitelabel and switching — including where ${sfVs.name} wins.`;
+    const title = `Kynetic OS vs ${sfVs.name}: Which Should You Choose? (${LAST_UPDATED})`;
+    const description = `Kynetic OS vs ${sfVs.name}, honestly compared: pricing, the AI receptionist, website, CRM & booking behind it, whitelabel and switching — including where ${sfVs.name} wins.`;
     const ogUrl = buildOgUrl({ kind: "sf-vs", slug: sfVs.slug, name: sfVs.name, price: shortPrice(sfVs.them.pricingModel) });
     return {
       title,
@@ -57,13 +57,13 @@ export async function generateMetadata({ params }: RouteParams): Promise<Metadat
   try {
     resolved = getVsPair(pairSlug);
   } catch {
-    return { title: "Comparison not found — SeldonFrame" };
+    return { title: "Comparison not found — Kynetic OS" };
   }
   // Folded third-party pair (indexation consolidation, 2026-07-17) — 301 to
   // the /alternatives hub; seldonframe-vs-* pairs never reach this branch.
   if (!isKeptVsPair(pairSlug)) permanentRedirect("/alternatives");
   const { a, b } = resolved;
-  const title = `${a.name} vs ${b.name}: What You Need to Know (${LAST_UPDATED}) — SeldonFrame`;
+  const title = `${a.name} vs ${b.name}: What You Need to Know (${LAST_UPDATED}) — Kynetic OS`;
   const description = `${a.name} vs ${b.name}, honestly compared: pricing, AI receptionist, whitelabel and the business system behind the agent — plus the both-worlds option.`;
   const ogUrl = buildOgUrl({ kind: "vs", a: a.name, b: b.name });
   return {

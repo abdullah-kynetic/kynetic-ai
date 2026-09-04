@@ -13,9 +13,9 @@ import { articlesNewestFirst } from "@/lib/seo/blog";
 import { AUTHOR } from "@/components/seo/author-byline";
 
 export const metadata: Metadata = {
-  title: "Blog — SeldonFrame",
+  title: "Blog — Kynetic OS",
   description:
-    "Notes on building SeldonFrame: MCP architecture, eval-gated agents, durable workflows, and dogfooding the platform on real businesses.",
+    "Notes on building Kynetic OS: MCP architecture, eval-gated agents, durable workflows, and dogfooding the platform on real businesses.",
 };
 
 type Post = {
@@ -30,11 +30,11 @@ type Post = {
 const HAND_CODED_POSTS: Post[] = [
   {
     slug: "why-mcp",
-    title: "Why we built SeldonFrame on MCP",
+    title: "Why we built Kynetic OS on MCP",
     lede:
       "Most AI startups wrap a single chatbot UI around an LLM. We took the opposite bet: expose the whole product as MCP tools and let Claude Code be the chrome. Here's why.",
     date: "May 7, 2026",
-    author: "SeldonFrame Team",
+    author: "Kynetic OS Team",
     status: "live",
   },
   {
@@ -43,16 +43,16 @@ const HAND_CODED_POSTS: Post[] = [
     lede:
       "A chatbot that hallucinates a price or claims it booked an appointment when it didn't isn't a bug — it's a real-money problem. The 8-scenario suite, the LLM-as-judge rubric, and the runtime regeneration that catches what the suite misses.",
     date: "Coming soon",
-    author: "SeldonFrame Team",
+    author: "Kynetic OS Team",
     status: "soon",
   },
   {
     slug: "byok-economics",
     title: "BYOK is not a feature, it's the deal",
     lede:
-      "Why SeldonFrame doesn't markup tokens, doesn't pool LLM access, and doesn't ration by tier. The economics work better when the customer owns the provider relationship.",
+      "Why Kynetic OS doesn't markup tokens, doesn't pool LLM access, and doesn't ration by tier. The economics work better when the customer owns the provider relationship.",
     date: "Coming soon",
-    author: "SeldonFrame Team",
+    author: "Kynetic OS Team",
     status: "soon",
   },
 ];
@@ -135,7 +135,7 @@ export default function BlogIndexPage(): ReactElement {
             Notes from the build
           </h1>
           <p style={{ margin: 0, fontSize: 17, color: "rgba(34,29,23,0.7)", lineHeight: 1.6, maxWidth: 660 }}>
-            How SeldonFrame is built, why we made the architecture choices we did, and what we learn from real founders shipping agents — plus original stories mined from the people actually doing it.
+            How Kynetic OS is built, why we made the architecture choices we did, and what we learn from real founders shipping agents — plus original stories mined from the people actually doing it.
           </p>
         </header>
 

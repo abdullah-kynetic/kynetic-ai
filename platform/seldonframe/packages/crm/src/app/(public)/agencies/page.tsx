@@ -16,13 +16,13 @@ import { MarketingAgencyOwnership } from "@/components/landing/marketing-agency-
 import { MarketingFooter } from "@/components/landing/marketing-footer";
 
 export const metadata: Metadata = {
-  title: "For agencies — SeldonFrame",
+  title: "For agencies — Kynetic OS",
   // Pricing-truth fix 2026-07-15: white-label client sub-accounts are the
   // agency tiers ($99/$199/$299), not the $29 Builder tier — the old
   // "unlimited client workspaces under your own brand for $29" claim
   // described the retired grandfathered agency tier.
   description:
-    "Sell AI front offices to local businesses with SeldonFrame. Deploy branded client workspaces, booking, CRM, intake, and agents from $99/mo with 0% GMV on agency plans.",
+    "Sell AI front offices to local businesses with Kynetic OS. Deploy branded client workspaces, booking, CRM, intake, and agents from $99/mo with 0% GMV on agency plans.",
 };
 
 export default function AgenciesPage() {

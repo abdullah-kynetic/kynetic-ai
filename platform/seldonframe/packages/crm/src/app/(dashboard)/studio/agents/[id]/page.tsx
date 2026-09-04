@@ -164,7 +164,7 @@ export default async function AgentTemplatePage({
   ]);
   const sellerListing = listingCtx.ok ? listingCtx.listing : null;
   const sellerConnect = listingCtx.ok ? listingCtx.connect : { ready: false, pending: false };
-  const builderName = orgRow[0]?.name ?? "A SeldonFrame builder";
+  const builderName = orgRow[0]?.name ?? "A Kynetic OS builder";
 
   // "Make it fit anybody" nudge (Sell stage, design item 5) — a cheap,
   // NEVER-blocking heuristic: does this template's persona script still

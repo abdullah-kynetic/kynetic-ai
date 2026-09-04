@@ -48,8 +48,8 @@ const RESOURCE_LINKS: readonly FooterLink[] = [
 ];
 
 const LEGAL_LINKS: readonly FooterLink[] = [
-  { label: "Privacy", href: "https://app.seldonframe.com/policy", external: true },
-  { label: "Terms", href: "https://app.seldonframe.com/terms", external: true },
+  { label: "Privacy", href: "https://app.kyneticai.com/policy", external: true },
+  { label: "Terms", href: "https://app.kyneticai.com/terms", external: true },
 ];
 
 function renderLinkList(links: readonly FooterLink[]) {
@@ -105,7 +105,7 @@ export function LandingFooter() {
 
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           <div className="col-span-2 md:col-span-1">
-            <span className="text-sm font-semibold text-zinc-100">SeldonFrame</span>
+            <span className="text-sm font-semibold text-zinc-100">Kynetic OS</span>
             <p className="mt-4 text-xs leading-relaxed text-zinc-500">
               © 2026 SeldonFrame.
               <br />

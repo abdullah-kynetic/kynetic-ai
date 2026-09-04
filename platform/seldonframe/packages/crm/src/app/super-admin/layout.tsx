@@ -10,7 +10,7 @@ import { requireSuperAdmin } from "@/lib/auth/super-admin";
 import { SuperAdminSidebar } from "./super-admin-sidebar";
 
 export const metadata = {
-  title: "Seldon Admin · SeldonFrame",
+  title: "Seldon Admin · Kynetic OS",
 };
 
 export default async function SuperAdminLayout({ children }: { children: React.ReactNode }) {

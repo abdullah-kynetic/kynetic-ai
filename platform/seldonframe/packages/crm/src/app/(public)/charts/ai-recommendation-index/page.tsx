@@ -55,12 +55,12 @@ const FAQ = [
     a: "Each engine returns a ranked list of up to 5 products per question. Rank 1 earns 5 points, rank 2 earns 4, down to rank 5 earning 1 point. A brand's total score is the sum of its points across every question and every engine it appeared in. Every scored point traces back to a specific question + rank — there's a raw-answer receipt for every number on this page.",
   },
   {
-    q: "Does SeldonFrame appear on this list?",
-    a: "Not in the July 2026 snapshot. SeldonFrame did not appear in any of Claude's 10 answers. We're publishing that fact as-is rather than nudging the questions or the scoring to include ourselves — the absence is the honest headline, and we build one of the tools these questions are about (see the disclosure below).",
+    q: "Does Kynetic OS appear on this list?",
+    a: "Not in the July 2026 snapshot. Kynetic OS did not appear in any of Claude's 10 answers. We're publishing that fact as-is rather than nudging the questions or the scoring to include ourselves — the absence is the honest headline, and we build one of the tools these questions are about (see the disclosure below).",
   },
   {
     q: "Why publish something that could make your own product look bad?",
-    a: "Because a rigged leaderboard is worthless to the people reading it, and because SeldonFrame's whole positioning is never-lies — grounded claims, no nudged evidence. If we're going to publish a \"what does AI actually recommend\" page, it has to be one we'd trust if a competitor published it about us.",
+    a: "Because a rigged leaderboard is worthless to the people reading it, and because Kynetic OS's whole positioning is never-lies — grounded claims, no nudged evidence. If we're going to publish a \"what does AI actually recommend\" page, it has to be one we'd trust if a competitor published it about us.",
   },
   {
     q: "How often is this updated?",
@@ -121,8 +121,8 @@ export default function AiRecommendationIndexPage(): ReactElement {
         <div style={{ marginTop: 24, display: "grid", gap: 12, maxWidth: 780 }}>
           <div style={{ border: `1px solid ${MKT.ink10}`, borderLeftWidth: 3, borderLeftColor: MKT.green, borderRadius: 12, padding: "14px 18px", background: "rgba(31, 43, 36,0.05)" }}>
             <p style={{ margin: 0, fontSize: 14.5, lineHeight: 1.6, color: "rgba(34,29,23,0.8)" }}>
-              <strong>Self-interest, disclosed:</strong> I build SeldonFrame, one of the tools these questions are
-              about. SeldonFrame did not appear in any of the 10 Claude answers in this snapshot — we're publishing
+              <strong>Self-interest, disclosed:</strong> I build Kynetic OS, one of the tools these questions are
+              about. Kynetic OS did not appear in any of the 10 Claude answers in this snapshot — we're publishing
               that absence as-is, not nudging it away.
             </p>
           </div>
@@ -217,7 +217,7 @@ export default function AiRecommendationIndexPage(): ReactElement {
             {top10.length > 0 ? `#1 this snapshot: ${top10[0].brand}` : "Build the front office AI actually recommends"}
           </h2>
           <p style={{ margin: "10px auto 0", fontSize: 15.5, lineHeight: 1.6, color: "rgba(246,242,234,0.75)", maxWidth: 560 }}>
-            SeldonFrame builds your CRM, booking calendar, intake form and AI receptionist in one conversation — free,
+            Kynetic OS builds your CRM, booking calendar, intake form and AI receptionist in one conversation — free,
             before you sign up.
           </p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center", marginTop: 22 }}>
@@ -225,7 +225,7 @@ export default function AiRecommendationIndexPage(): ReactElement {
               Start for free
             </a>
             <a
-              href="https://app.seldonframe.com/book/seldonframes-workspace-7798/default"
+              href="https://app.kyneticai.com/book/seldonframes-workspace-7798/default"
               style={{ border: "1.5px solid rgba(246,242,234,0.3)", color: MKT.paper, padding: "12px 24px", borderRadius: 12, fontWeight: 700, fontSize: 15.5, textDecoration: "none" }}
             >
               Book a demo call

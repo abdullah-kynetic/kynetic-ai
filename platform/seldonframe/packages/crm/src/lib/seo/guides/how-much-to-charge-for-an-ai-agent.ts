@@ -78,8 +78,8 @@ export const guide: Guide = {
       a: "Most builders don't itemize it — it's folded into the flat retainer, the same way an agency doesn't itemize the electricity a designer's laptop uses. Itemizing invites the client to negotiate the wrong number (your cost) instead of the right one (the value delivered). **The exception is a usage-based pricing model**, where cost pass-through is the explicit structure the client agreed to.",
     },
     {
-      q: "Does SeldonFrame set agent pricing for me?",
-      a: `No — SeldonFrame is the platform builders use to build and deploy the agent itself; what you charge your client is your call. **Disclosure:** ${BUILDER_PRICING_CLAIM} ${AGENCY_PRICING_CLAIM} *BYOK* keeps our own model costs at-cost, which is part of why the cost floor described above stays low. We only take a share — a flat 2% of GMV, and only on solo tiers like this one (0% on agency plans) — when SeldonFrame is the sales channel bringing the client in.`,
+      q: "Does Kynetic OS set agent pricing for me?",
+      a: `No — Kynetic OS is the platform builders use to build and deploy the agent itself; what you charge your client is your call. **Disclosure:** ${BUILDER_PRICING_CLAIM} ${AGENCY_PRICING_CLAIM} *BYOK* keeps our own model costs at-cost, which is part of why the cost floor described above stays low. We only take a share — a flat 2% of GMV, and only on solo tiers like this one (0% on agency plans) — when Kynetic OS is the sales channel bringing the client in.`,
     },
   ],
   sources: [

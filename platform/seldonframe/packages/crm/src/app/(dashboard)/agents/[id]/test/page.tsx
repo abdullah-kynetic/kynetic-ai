@@ -105,7 +105,7 @@ export default async function AgentTestPage({
     // path before they hit llm_credit_exhausted in front of a real prospect.
     diagnostics.push({
       level: "warn",
-      title: "Using SeldonFrame's included Anthropic quota",
+      title: "Using Kynetic OS's included Anthropic quota",
       message:
         "No BYOK key on this workspace — turns run on the included platform " +
         "key. If you hit llm_credit_exhausted, add your own Anthropic key in " +
@@ -130,7 +130,7 @@ export default async function AgentTestPage({
       body: keyStatus.mode === "byok"
         ? "Your Anthropic key is wired — every turn here bills to your account."
         : keyStatus.mode === "platform"
-          ? "Running on SeldonFrame's included quota for now. Plug in your own Anthropic key before serving real clients."
+          ? "Running on Kynetic OS's included quota for now. Plug in your own Anthropic key before serving real clients."
           : "No key configured. Without one the sandbox can't run turns.",
       done: keyStatus.mode === "byok",
       cta: keyStatus.mode === "byok"

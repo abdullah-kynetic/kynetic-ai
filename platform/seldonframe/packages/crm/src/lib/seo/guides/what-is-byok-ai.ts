@@ -81,9 +81,9 @@ export const guide: Guide = {
       },
     },
     {
-      h2: "Where SeldonFrame fits",
+      h2: "Where Kynetic OS fits",
       body:
-        `Disclosure up front: we build SeldonFrame, so read this paragraph as the sales pitch it partly is. BYOK is available on every tier. For agency delivery, ${AGENCY_PRICING_CLAIM} Builder is the separate $29/mo path for a business you own and operate yourself; it does not include client sub-accounts or white-label resale.\n\nEvery workspace runs on the operator's own model-provider key at provider rate, the same way telephony runs on BYO-Twilio at Twilio's rate rather than a marked-up per-minute fee. SeldonFrame only takes a cut when it is the sales channel bringing the buyer — a *GMV fee* that steps down from 5% to 2% with volume — not on the AI usage itself.\n\nThat is the trade this whole article describes, applied to one product: the platform gets paid for orchestration, the model provider gets paid for tokens, and nothing sits in between marking up the difference.`,
+        `Disclosure up front: we build Kynetic OS, so read this paragraph as the sales pitch it partly is. BYOK is available on every tier. For agency delivery, ${AGENCY_PRICING_CLAIM} Builder is the separate $29/mo path for a business you own and operate yourself; it does not include client sub-accounts or white-label resale.\n\nEvery workspace runs on the operator's own model-provider key at provider rate, the same way telephony runs on BYO-Twilio at Twilio's rate rather than a marked-up per-minute fee. Kynetic OS only takes a cut when it is the sales channel bringing the buyer — a *GMV fee* that steps down from 5% to 2% with volume — not on the AI usage itself.\n\nThat is the trade this whole article describes, applied to one product: the platform gets paid for orchestration, the model provider gets paid for tokens, and nothing sits in between marking up the difference.`,
     },
   ],
   faq: [

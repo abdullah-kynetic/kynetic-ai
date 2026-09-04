@@ -48,7 +48,7 @@ export function MarketingReplace() {
           </h2>
           <p className="mt-4 max-w-[54ch] text-[clamp(15.5px,1.9vw,18px)] leading-[1.55] text-[#6E665A]">
             Most agencies rent five tools, glue them with Zapier, and re-build the same
-            workspace every onboarding. SeldonFrame replaces the whole stack —
+            workspace every onboarding. Kynetic OS replaces the whole stack —
             at roughly 5× under GoHighLevel.
           </p>
         </div>
@@ -83,14 +83,14 @@ export function MarketingReplace() {
             </ul>
           </div>
 
-          {/* SeldonFrame — solid card */}
+          {/* Kynetic OS — solid card */}
           <div className="rounded-[18px] border border-[rgba(34,29,23,.08)] bg-[#FFFDFA] p-6 shadow-[0_1px_2px_rgba(34,29,23,.05),0_10px_30px_rgba(34,29,23,.07)]">
             <div className="mb-5 flex items-center gap-2.5">
               <span className="inline-flex size-7 items-center justify-center rounded-md bg-[rgba(31, 43, 36,.12)] text-[#1F2B24]">
                 <Check size={14} aria-hidden />
               </span>
               <h3 className="m-0 text-[15px] font-[600] tracking-[-0.015em] text-[#221D17]">
-                SeldonFrame
+                Kynetic OS
                 <small className="mt-0.5 block font-sans text-[11px] font-[500] uppercase tracking-[0.06em] text-[#9A9183]">
                   What replaces it
                 </small>

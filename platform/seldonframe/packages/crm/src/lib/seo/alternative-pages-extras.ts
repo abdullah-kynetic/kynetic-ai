@@ -9,9 +9,9 @@
 import { getCompetitor, type Competitor } from "@/lib/seo/alternative-pages";
 
 export const START_HREF = "/#hero-form";
-/** SeldonFrame-branded 15-min demo booking (bookings template row on the
+/** Kynetic OS-branded 15-min demo booking (bookings template row on the
  *  seldonframe workspace — see the booking_slug='default' template). */
-export const DEMO_HREF = "https://app.seldonframe.com/book/seldonframes-workspace-7798/default";
+export const DEMO_HREF = "https://app.kyneticai.com/book/seldonframes-workspace-7798/default";
 
 export type CompetitorExtras = {
   /** Competitor pros/cons for the two-card section (honest, sourced). */
@@ -19,13 +19,13 @@ export type CompetitorExtras = {
   cons: string[];
   /** "Who should use <them>" — 3 numbered reasons. */
   chooseThem: string[];
-  /** "Who should use SeldonFrame instead" — 4 numbered reasons. */
+  /** "Who should use Kynetic OS instead" — 4 numbered reasons. */
   chooseSf: string[];
   /** Competitor-specific line inside the how-to-switch steps. */
   switchNote: string;
 };
 
-/** SeldonFrame's own pros/cons — identical on every page, honest. */
+/** Kynetic OS's own pros/cons — identical on every page, honest. */
 export const SF_PROS: string[] = [
   "An AI receptionist that answers calls, SMS, and web chat — and books real jobs into a real calendar and CRM",
   "The whole front office included: multi-page website, CRM, booking, intake forms, review automation",
@@ -45,7 +45,7 @@ export const SF_CONS: string[] = [
 export const SWITCH_STEPS: { title: string; body: string }[] = [
   {
     title: "Build the replacement free (3 minutes)",
-    body: "Paste the business's website into seldonframe.com. SeldonFrame pulls out services, FAQs, and business facts and builds the workspace: site, CRM, booking calendar, intake, and the AI agent. No account needed until you claim it.",
+    body: "Paste the business's website into kyneticai.com. Kynetic OS pulls out services, FAQs, and business facts and builds the workspace: site, CRM, booking calendar, intake, and the AI agent. No account needed until you claim it.",
   },
   {
     title: "Bring what matters over",
@@ -61,7 +61,7 @@ export const SWITCH_STEPS: { title: string; body: string }[] = [
   },
   {
     title: "Run both in parallel for a week",
-    body: "Keep the old tool running while SeldonFrame answers the phones. Cancel it once the CRM shows the bookings landing — cancel-anytime on both sides means zero risk.",
+    body: "Keep the old tool running while Kynetic OS answers the phones. Cancel it once the CRM shows the bookings landing — cancel-anytime on both sides means zero risk.",
   },
 ];
 
@@ -91,7 +91,7 @@ export const EXTRAS: Record<string, CompetitorExtras> = {
       "You want whitelabel without the $497/mo gate",
     ],
     switchNote:
-      "Export your contacts from GoHighLevel (Contacts → Export CSV) and re-import them. Your Twilio number can point at SeldonFrame the moment you're ready to switch call handling.",
+      "Export your contacts from GoHighLevel (Contacts → Export CSV) and re-import them. Your Twilio number can point at Kynetic OS the moment you're ready to switch call handling.",
   },
   vapi: {
     pros: [
@@ -118,7 +118,7 @@ export const EXTRAS: Record<string, CompetitorExtras> = {
       "You need a whitelabel layer to hand to clients — Vapi has none",
     ],
     switchNote:
-      "Your prompts and call flows carry over directly: paste your Vapi assistant's system prompt into the agent's skill file, and point your Twilio number at SeldonFrame when you're ready.",
+      "Your prompts and call flows carry over directly: paste your Vapi assistant's system prompt into the agent's skill file, and point your Twilio number at Kynetic OS when you're ready.",
   },
   "retell-ai": {
     pros: [
@@ -145,7 +145,7 @@ export const EXTRAS: Record<string, CompetitorExtras> = {
       "You want costs that don't bill per minute per feature",
     ],
     switchNote:
-      "Bring your agent's system prompt and knowledge-base docs — they drop straight into the SeldonFrame agent's skill and knowledge. Your phone number re-points in one setting.",
+      "Bring your agent's system prompt and knowledge-base docs — they drop straight into the Kynetic OS agent's skill and knowledge. Your phone number re-points in one setting.",
   },
   synthflow: {
     pros: [
@@ -199,7 +199,7 @@ export const EXTRAS: Record<string, CompetitorExtras> = {
       "You want whitelabel without an enterprise contract",
     ],
     switchNote:
-      "Point SeldonFrame at the same website you trained Chatbase on. The agent grounds itself on the same content, and the site, CRM, and booking build alongside it.",
+      "Point Kynetic OS at the same website you trained Chatbase on. The agent grounds itself on the same content, and the site, CRM, and booking build alongside it.",
   },
   botpress: {
     pros: [
@@ -226,7 +226,7 @@ export const EXTRAS: Record<string, CompetitorExtras> = {
       "You want one flat bill instead of three separate ones",
     ],
     switchNote:
-      "Your knowledge bases and intents map onto the agent's knowledge and skills. Most Botpress front-office bots come down to SeldonFrame's built-in receptionist plus a few FAQ entries.",
+      "Your knowledge bases and intents map onto the agent's knowledge and skills. Most Botpress front-office bots come down to Kynetic OS's built-in receptionist plus a few FAQ entries.",
   },
   "stammer-ai": {
     pros: [
@@ -253,7 +253,7 @@ export const EXTRAS: Record<string, CompetitorExtras> = {
       "$99 flat vs $197 plus usage changes your per-client math",
     ],
     switchNote:
-      "Recreate each client agent from its prompt and FAQ (SeldonFrame builds most of it from the client's website), and re-point any embedded chat widgets to the new embed snippet.",
+      "Recreate each client agent from its prompt and FAQ (Kynetic OS builds most of it from the client's website), and re-point any embedded chat widgets to the new embed snippet.",
   },
   podium: {
     pros: [
@@ -361,7 +361,7 @@ export const EXTRAS: Record<string, CompetitorExtras> = {
       "You want per-client whitelabel deployment in one click",
     ],
     switchNote:
-      "Most front-office Voiceflow canvases come down to SeldonFrame's built-in receptionist skill. Copy any custom FAQ or knowledge blocks straight into the agent's knowledge.",
+      "Most front-office Voiceflow canvases come down to Kynetic OS's built-in receptionist skill. Copy any custom FAQ or knowledge blocks straight into the agent's knowledge.",
   },
   lindy: {
     pros: [
@@ -388,7 +388,7 @@ export const EXTRAS: Record<string, CompetitorExtras> = {
       "You want whitelabel client workspaces from day one",
     ],
     switchNote:
-      "Keep Lindy for your inbox if you like it. Bring the client-facing jobs — answering, qualifying, booking, review requests — to SeldonFrame, where they're actual products.",
+      "Keep Lindy for your inbox if you like it. Bring the client-facing jobs — answering, qualifying, booking, review requests — to Kynetic OS, where they're actual products.",
   },
   durable: {
     pros: [
@@ -415,7 +415,7 @@ export const EXTRAS: Record<string, CompetitorExtras> = {
       "You want the site grounded in the client's real services and reviews",
     ],
     switchNote:
-      "Paste in your Durable site's URL. SeldonFrame rebuilds the workspace from its content in about 3 minutes. Move the domain over once it looks right.",
+      "Paste in your Durable site's URL. Kynetic OS rebuilds the workspace from its content in about 3 minutes. Move the domain over once it looks right.",
   },
   "my-ai-front-desk": {
     pros: [
@@ -442,7 +442,7 @@ export const EXTRAS: Record<string, CompetitorExtras> = {
       "You want review automation and speed-to-lead on the same rails",
     ],
     switchNote:
-      "Re-point your business number to your Twilio plus SeldonFrame, and paste your greeting and FAQ into the agent's skill. The credit meter stays behind.",
+      "Re-point your business number to your Twilio plus Kynetic OS, and paste your greeting and FAQ into the agent's skill. The credit meter stays behind.",
   },
   "smith-ai": {
     pros: [
@@ -466,10 +466,10 @@ export const EXTRAS: Record<string, CompetitorExtras> = {
       "You want every call answered instantly, 24/7, for a flat fee",
       "You want calls to END in a booked job inside your own CRM",
       "Volume growth shouldn't grow the receptionist bill",
-      "You're an agency — you can resell SeldonFrame; you can't resell Smith.ai",
+      "You're an agency — you can resell Kynetic OS; you can't resell Smith.ai",
     ],
     switchNote:
-      "Run SeldonFrame as the first line — instant answer plus booking — and keep a human service for escalations if you need one. The agent takes structured messages and notifies you instantly either way.",
+      "Run Kynetic OS as the first line — instant answer plus booking — and keep a human service for escalations if you need one. The agent takes structured messages and notifies you instantly either way.",
   },
   activecampaign: {
     pros: [
@@ -496,7 +496,7 @@ export const EXTRAS: Record<string, CompetitorExtras> = {
       "You need whitelabel for agency resale, which ActiveCampaign doesn't offer",
     ],
     switchNote:
-      "Export your ActiveCampaign contacts to CSV and import them. Recreate your top nurture sequences as SeldonFrame's event-triggered follow-ups (new lead, missed call, completed booking).",
+      "Export your ActiveCampaign contacts to CSV and import them. Recreate your top nurture sequences as Kynetic OS's event-triggered follow-ups (new lead, missed call, completed booking).",
   },
   hubspot: {
     pros: [
@@ -523,7 +523,7 @@ export const EXTRAS: Record<string, CompetitorExtras> = {
       "You're an agency and need whitelabel client workspaces",
     ],
     switchNote:
-      "Export your HubSpot contacts and deals to CSV and import them. SeldonFrame's agent takes over answering and booking while your Breeze-generated content stays in place.",
+      "Export your HubSpot contacts and deals to CSV and import them. Kynetic OS's agent takes over answering and booking while your Breeze-generated content stays in place.",
   },
   clickfunnels: {
     pros: [
@@ -550,7 +550,7 @@ export const EXTRAS: Record<string, CompetitorExtras> = {
       "You're an agency needing whitelabel client delivery",
     ],
     switchNote:
-      "Keep any funnel pages that convert well, and point their booking and contact forms at your new SeldonFrame workspace so leads land in a CRM with an AI agent following up.",
+      "Keep any funnel pages that convert well, and point their booking and contact forms at your new Kynetic OS workspace so leads land in a CRM with an AI agent following up.",
   },
   keap: {
     pros: [
@@ -604,7 +604,7 @@ export const EXTRAS: Record<string, CompetitorExtras> = {
       "You want a CRM and calendar behind every lead that clicks through",
     ],
     switchNote:
-      "Point your social bio link at your new SeldonFrame website once it's live. The site includes its own service pages, booking, and contact options in place of the link list.",
+      "Point your social bio link at your new Kynetic OS website once it's live. The site includes its own service pages, booking, and contact options in place of the link list.",
   },
   kartra: {
     pros: [
@@ -631,7 +631,7 @@ export const EXTRAS: Record<string, CompetitorExtras> = {
       "You're an agency needing whitelabel client workspaces",
     ],
     switchNote:
-      "Export your Kartra contacts to CSV and import them. SeldonFrame's booking calendar replaces any client-scheduling workflows you'd built around Kartra's checkout pages.",
+      "Export your Kartra contacts to CSV and import them. Kynetic OS's booking calendar replaces any client-scheduling workflows you'd built around Kartra's checkout pages.",
   },
   sharpspring: {
     pros: [
@@ -658,7 +658,7 @@ export const EXTRAS: Record<string, CompetitorExtras> = {
       "You want the whole front office, not marketing automation alone",
     ],
     switchNote:
-      "Export your SharpSpring contacts to CSV and import them. Recreate any VisitorID-triggered workflows as SeldonFrame's event-triggered agent follow-ups where there's an equivalent.",
+      "Export your SharpSpring contacts to CSV and import them. Recreate any VisitorID-triggered workflows as Kynetic OS's event-triggered agent follow-ups where there's an equivalent.",
   },
   klaviyo: {
     pros: [
@@ -685,7 +685,7 @@ export const EXTRAS: Record<string, CompetitorExtras> = {
       "You want a website and booking calendar included, not assumed to exist elsewhere",
     ],
     switchNote:
-      "Klaviyo profiles don't map one-to-one to service-business contacts — start fresh by pasting your website into SeldonFrame, then import any existing customer list as a CSV.",
+      "Klaviyo profiles don't map one-to-one to service-business contacts — start fresh by pasting your website into Kynetic OS, then import any existing customer list as a CSV.",
   },
   zoho: {
     pros: [
@@ -712,7 +712,7 @@ export const EXTRAS: Record<string, CompetitorExtras> = {
       "You're an agency needing whitelabel client workspaces",
     ],
     switchNote:
-      "Export your Zoho CRM contacts to CSV and import them. SeldonFrame's workspace replaces the assembly of separate Zoho apps for site, booking, and receptionist functions.",
+      "Export your Zoho CRM contacts to CSV and import them. Kynetic OS's workspace replaces the assembly of separate Zoho apps for site, booking, and receptionist functions.",
   },
   salesforce: {
     pros: [
@@ -739,7 +739,7 @@ export const EXTRAS: Record<string, CompetitorExtras> = {
       "You're an agency needing whitelabel client workspaces",
     ],
     switchNote:
-      "Export your Salesforce contacts and opportunities to CSV and import them. SeldonFrame's built-in receptionist replaces the need for a custom Agentforce agent build.",
+      "Export your Salesforce contacts and opportunities to CSV and import them. Kynetic OS's built-in receptionist replaces the need for a custom Agentforce agent build.",
   },
   "claude-projects": {
     pros: [
@@ -767,7 +767,7 @@ export const EXTRAS: Record<string, CompetitorExtras> = {
       "You want the agent to EXECUTE — answer, qualify, book — not just draft text when you show up",
     ],
     switchNote:
-      "Paste each client's website — SeldonFrame builds what your Project brief described (the Soul is the standing brief; grounded FAQ/services are the tight docs) and auto-tests retrieval on every publish. Keep your personal Projects for your own thinking; move the client-facing work to a system the client can live in.",
+      "Paste each client's website — Kynetic OS builds what your Project brief described (the Soul is the standing brief; grounded FAQ/services are the tight docs) and auto-tests retrieval on every publish. Keep your personal Projects for your own thinking; move the client-facing work to a system the client can live in.",
   },
 };
 

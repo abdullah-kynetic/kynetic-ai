@@ -1,13 +1,13 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Privacy Policy — SeldonFrame",
+  title: "Privacy Policy — Kynetic OS",
 };
 
 export default function PrivacyPage() {
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
-      <h1 className="mb-2 text-3xl font-bold">Privacy Policy — SeldonFrame</h1>
+      <h1 className="mb-2 text-3xl font-bold">Privacy Policy — Kynetic OS</h1>
       <p className="text-sm text-muted-foreground">
         Effective date: July 2, 2026. If we materially change how we collect or use data, we
         will update the date above and post a summary of the change on this page — where a
@@ -17,12 +17,12 @@ export default function PrivacyPage() {
       <section>
         <h2 className="mb-4 mt-10 text-xl font-semibold">1. Introduction</h2>
         <p className="text-base leading-relaxed text-muted-foreground">
-          SeldonFrame (&quot;we,&quot; &quot;our,&quot; &quot;us&quot;) is a business identity operating system that helps service
+          Kynetic OS (&quot;we,&quot; &quot;our,&quot; &quot;us&quot;) is a business identity operating system that helps service
           professionals stand up a complete front office — website, booking, intake, CRM, and AI agents — in one
           conversation. This Privacy Policy explains, in plain language, what we collect, why, who we share it with,
-          how long we keep it, and what control you have over it. It covers the SeldonFrame product at
-          app.seldonframe.com and hosted workspace subdomains (&lsquo;*.app.seldonframe.com&rsquo;), and it also covers
-          SeldonFrame&apos;s tools when you use them through ChatGPT (see Section 8, which is written to match those
+          how long we keep it, and what control you have over it. It covers the Kynetic OS product at
+          app.kyneticai.com and hosted workspace subdomains (&lsquo;*.app.kyneticai.com&rsquo;), and it also covers
+          Kynetic OS&apos;s tools when you use them through ChatGPT (see Section 8, which is written to match those
           tools&apos; exact inputs and outputs).
         </p>
       </section>
@@ -83,14 +83,14 @@ export default function PrivacyPage() {
           <li><strong>Vercel</strong> — application hosting and serving your public workspace pages.</li>
           <li><strong>Neon (PostgreSQL)</strong> — our primary database, where workspace, contact, and business-record data is stored.</li>
           <li><strong>Anthropic and/or OpenAI</strong> — process the business details you provide (name, description, location, phone, website) to generate website copy and starter agent configuration for your workspace. These providers do not receive your client/contact records.</li>
-          <li><strong>Stripe</strong> — payment processing for paid SeldonFrame plans and marketplace purchases. We never receive or store your card number; Stripe handles that directly.</li>
+          <li><strong>Stripe</strong> — payment processing for paid Kynetic OS plans and marketplace purchases. We never receive or store your card number; Stripe handles that directly.</li>
           <li><strong>Twilio</strong> — sends SMS (e.g. booking confirmations, reminders) only for workspaces that enable text messaging.</li>
           <li><strong>Resend</strong> — sends transactional email (e.g. booking confirmations, magic-link sign-in, welcome messages).</li>
           <li><strong>Composio</strong> — only for workspaces that explicitly connect a third-party integration (e.g. a calendar), to broker that connection.</li>
         </ul>
         <p className="mt-3 text-base leading-relaxed text-muted-foreground">
           We only send each provider the minimum data it needs to do its job. We may also disclose data if required
-          by law, or to protect the rights, safety, or property of SeldonFrame or our users.
+          by law, or to protect the rights, safety, or property of Kynetic OS or our users.
         </p>
       </section>
 
@@ -142,9 +142,9 @@ export default function PrivacyPage() {
       </section>
 
       <section>
-        <h2 className="mb-4 mt-10 text-xl font-semibold">8. Using SeldonFrame Through ChatGPT</h2>
+        <h2 className="mb-4 mt-10 text-xl font-semibold">8. Using Kynetic OS Through ChatGPT</h2>
         <p className="text-base leading-relaxed text-muted-foreground">
-          SeldonFrame exposes three tools to ChatGPT (via the Model Context Protocol). No SeldonFrame account or API
+          Kynetic OS exposes three tools to ChatGPT (via the Model Context Protocol). No Kynetic OS account or API
           key is required to use them. This table lists exactly what each tool collects, what it returns, how that
           data is used, and how long it is kept:
         </p>
@@ -224,7 +224,7 @@ export default function PrivacyPage() {
         <p className="text-base leading-relaxed text-muted-foreground">
           When you opt in to text messaging — by submitting a form, checking a consent box, or texting us
           — you agree to receive recurring automated messages at the mobile number you provide. We collect
-          your mobile phone number and messaging consent so we (or the business operating on SeldonFrame)
+          your mobile phone number and messaging consent so we (or the business operating on Kynetic OS)
           can send you SMS such as booking confirmations, appointment reminders, missed-call follow-ups,
           and review requests.
         </p>
@@ -257,7 +257,7 @@ export default function PrivacyPage() {
       <section>
         <h2 className="mb-4 mt-10 text-xl font-semibold">11. Children&apos;s Privacy</h2>
         <p className="text-base leading-relaxed text-muted-foreground">
-          SeldonFrame is a general-audience business tool intended for users aged 13 and older, and is not directed
+          Kynetic OS is a general-audience business tool intended for users aged 13 and older, and is not directed
           to children under 13. We do not knowingly collect personal data from children under 13. If you believe a
           child has provided us with personal data, contact us at the address below and we will remove it.
         </p>
@@ -266,8 +266,8 @@ export default function PrivacyPage() {
       <section>
         <h2 className="mb-4 mt-10 text-xl font-semibold">12. Open Source</h2>
         <p className="text-base leading-relaxed text-muted-foreground">
-          SeldonFrame is open source. The source code is available at github.com/seldonframe/seldonframe. Self-hosted users
-          control their own data entirely — no data is sent to SeldonFrame servers.
+          Kynetic OS is open source. The source code is available at github.com/seldonframe/seldonframe. Self-hosted users
+          control their own data entirely — no data is sent to Kynetic OS servers.
         </p>
       </section>
 
@@ -275,12 +275,12 @@ export default function PrivacyPage() {
         <h2 className="mb-4 mt-10 text-xl font-semibold">13. Contact &amp; Support</h2>
         <p className="text-base leading-relaxed text-muted-foreground">
           For privacy questions, or to request access to, correction of, export of, or deletion of your data:{" "}
-          <a href="mailto:hello@seldonframe.com" className="underline-offset-4 hover:underline">
-            hello@seldonframe.com
+          <a href="mailto:hello@kyneticai.com" className="underline-offset-4 hover:underline">
+            hello@kyneticai.com
           </a>
           {" "}(general support is also reachable at{" "}
-          <a href="mailto:support@seldonframe.com" className="underline-offset-4 hover:underline">
-            support@seldonframe.com
+          <a href="mailto:support@kyneticai.com" className="underline-offset-4 hover:underline">
+            support@kyneticai.com
           </a>
           ).
         </p>

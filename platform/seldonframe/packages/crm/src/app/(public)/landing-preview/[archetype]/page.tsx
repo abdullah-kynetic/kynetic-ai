@@ -70,6 +70,6 @@ export default async function LandingPreviewPage({
 }
 
 export const metadata = {
-  title: "SeldonFrame Landing Preview",
+  title: "Kynetic OS Landing Preview",
   robots: "noindex",
 };

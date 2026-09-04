@@ -184,7 +184,7 @@ export async function createOneTimeAgentCheckout(
             currency: "usd",
             unit_amount: amountCents,
             product_data: {
-              name: `SeldonFrame Agent: ${listing.name}`,
+              name: `Kynetic OS Agent: ${listing.name}`,
               description: listing.description || undefined,
             },
           },

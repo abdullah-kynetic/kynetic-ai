@@ -91,7 +91,7 @@ export function OnboardingShell({ step, total, title, showLogo = true }: Onboard
         {showLogo ? (
           <Link
             href="/"
-            aria-label="SeldonFrame — home"
+            aria-label="Kynetic OS — home"
             className="inline-flex shrink-0 items-center gap-2 text-sm font-semibold leading-none tracking-tight text-foreground"
           >
             <svg width="18" height="18" viewBox="0 0 100 100" fill="none" aria-hidden>

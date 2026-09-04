@@ -165,7 +165,7 @@ export default function AiFrontOfficeChartPage(): ReactElement {
         <section style={{ marginTop: 30, border: `1px solid ${MKT.ink10}`, borderRadius: 20, padding: "34px 32px", background: MKT.dark, color: MKT.paper, textAlign: "center" }}>
           <h2 style={{ margin: 0, fontSize: 26, fontWeight: 800, letterSpacing: "-0.02em" }}>Building on the rising side of this chart</h2>
           <p style={{ margin: "10px auto 0", fontSize: 15.5, lineHeight: 1.6, color: "rgba(246,242,234,0.75)", maxWidth: 560 }}>
-            SeldonFrame is my bet on voice AI, MCP, and flat pricing all winning. Paste a business's website and it
+            Kynetic OS is my bet on voice AI, MCP, and flat pricing all winning. Paste a business's website and it
             builds the site, CRM, booking calendar and AI receptionist in about 3 minutes — free, before you sign up.
           </p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center", marginTop: 22 }}>
@@ -173,7 +173,7 @@ export default function AiFrontOfficeChartPage(): ReactElement {
               Start for free
             </a>
             <a
-              href="https://app.seldonframe.com/book/seldonframes-workspace-7798/default"
+              href="https://app.kyneticai.com/book/seldonframes-workspace-7798/default"
               style={{ border: "1.5px solid rgba(246,242,234,0.3)", color: MKT.paper, padding: "12px 24px", borderRadius: 12, fontWeight: 700, fontSize: 15.5, textDecoration: "none" }}
             >
               Book a demo call

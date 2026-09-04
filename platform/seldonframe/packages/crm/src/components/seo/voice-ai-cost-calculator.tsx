@@ -278,9 +278,9 @@ export function VoiceAiCostCalculator(): ReactElement {
         rows: [
           { label: "Real per-minute rate", value: `~${moneyPrecise(result.realPerMinute)}/min` },
           { label: "Total minutes/mo", value: result.totalMinutes.toLocaleString("en-US") },
-          { label: "SeldonFrame Builder (owned business)", value: `${money(SELDONFRAME_MONTHLY)}/mo` },
+          { label: "Kynetic OS Builder (owned business)", value: `${money(SELDONFRAME_MONTHLY)}/mo` },
         ],
-        footer: "built free at seldonframe.com/tools",
+        footer: "built free at kyneticai.com/tools",
       });
     }, 150);
     return () => {
@@ -432,7 +432,7 @@ export function VoiceAiCostCalculator(): ReactElement {
           so their per-component split here is an approximation for illustration.
         </p>
         <p style={{ margin: 0 }}>
-          <strong>SeldonFrame:</strong> {BUILDER_PRICING_CLAIM} {AGENCY_PRICING_CLAIM} You connect your own AI provider
+          <strong>Kynetic OS:</strong> {BUILDER_PRICING_CLAIM} {AGENCY_PRICING_CLAIM} You connect your own AI provider
           and Twilio keys at raw provider cost (typically a few cents per minute), instead of paying a per-minute markup
           on top of every component.
         </p>

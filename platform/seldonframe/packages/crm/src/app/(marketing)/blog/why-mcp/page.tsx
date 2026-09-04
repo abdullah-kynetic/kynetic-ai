@@ -6,9 +6,9 @@ import type { Metadata } from "next";
 import { MarketingShell } from "../../marketing-shell";
 
 export const metadata: Metadata = {
-  title: "Why we built SeldonFrame on MCP — Blog",
+  title: "Why we built Kynetic OS on MCP — Blog",
   description:
-    "Most AI startups wrap a chatbot UI around an LLM. SeldonFrame exposes the whole product as MCP tools and lets Claude Code be the chrome. Here's why.",
+    "Most AI startups wrap a chatbot UI around an LLM. Kynetic OS exposes the whole product as MCP tools and lets Claude Code be the chrome. Here's why.",
 };
 
 export default function Post() {
@@ -18,7 +18,7 @@ export default function Post() {
         <header className="mb-12">
           <p className="text-[12px] uppercase tracking-[0.12em] text-[#71717a] font-mono mb-3">May 7, 2026 · Architecture</p>
           <h1 className="text-[clamp(30px,4vw,46px)] font-bold tracking-[-0.035em] text-[#fafafa] mb-4 leading-[1.1]">
-            Why we built SeldonFrame on MCP
+            Why we built Kynetic OS on MCP
           </h1>
           <p className="text-[17px] text-[#a1a1aa] leading-[1.7]">
             Most AI startups wrap a chatbot UI around an LLM. We took the
@@ -64,7 +64,7 @@ export default function Post() {
 
           <h2>The bet: expose everything as tools</h2>
           <p>
-            SeldonFrame's product is a Business OS — CRM, public site,
+            Kynetic OS's product is a Business OS — CRM, public site,
             agents, automations. The competitor playbook would be to
             ship a beautiful React admin and call it a day. We did
             that, but we also did something else: we exposed the
@@ -99,7 +99,7 @@ export default function Post() {
           </p>
           <p>
             <strong>Two — the agent improves automatically.</strong>{" "}
-            When Claude Sonnet 4.5 ships, every SeldonFrame customer's
+            When Claude Sonnet 4.5 ships, every Kynetic OS customer's
             build experience gets better — without us shipping
             anything. The same is true for the runtime: agents in
             production that use better LLMs make better decisions,

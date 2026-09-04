@@ -303,14 +303,14 @@ export function BookingFrictionGrader(): ReactElement {
           Make booking one tap — start free
         </a>
         <a
-          href="https://app.seldonframe.com/book/seldonframes-workspace-7798/default"
+          href="https://app.kyneticai.com/book/seldonframes-workspace-7798/default"
           style={{ border: `1.5px solid ${INK10}`, color: INK, padding: "12px 24px", borderRadius: 12, fontWeight: 700, fontSize: 15.5, textDecoration: "none", background: "rgba(255,255,255,0.5)" }}
         >
           Book a demo call
         </a>
       </div>
       <p style={{ margin: "14px 0 0", fontSize: 13.5, fontWeight: 700, color: GREEN }}>
-        SeldonFrame gives you a one-tap booking link plus AI that answers and books after hours — so the leaks above stop
+        Kynetic OS gives you a one-tap booking link plus AI that answers and books after hours — so the leaks above stop
         costing you appointments.
       </p>
     </div>

@@ -22,39 +22,39 @@ type FaqEntry = {
 
 const FAQS: FaqEntry[] = [
   {
-    question: "How does SeldonFrame compare to GoHighLevel?",
+    question: "How does Kynetic OS compare to GoHighLevel?",
     answer:
-      "SeldonFrame is the open-source alternative to GoHighLevel. Both bundle CRM, booking, and chatbot for agencies serving local service businesses. The difference is deployment time and cost. GoHighLevel requires days to weeks of configuration per client and costs $97-$497/month per agency before white-label add-ons. SeldonFrame generates a pre-wired client stack from one Claude Code prompt in about 3 minutes, ships a free tier with no credit card, and is AGPL-3.0 if you want to self-host.",
+      "Kynetic OS is the open-source alternative to GoHighLevel. Both bundle CRM, booking, and chatbot for agencies serving local service businesses. The difference is deployment time and cost. GoHighLevel requires days to weeks of configuration per client and costs $97-$497/month per agency before white-label add-ons. Kynetic OS generates a pre-wired client stack from one Claude Code prompt in about 3 minutes, ships a free tier with no credit card, and is AGPL-3.0 if you want to self-host.",
   },
   {
     question: "How long does it take to deploy a client ops stack?",
     answer:
-      "Approximately 3 minutes from a single Claude Code prompt. The SeldonFrame MCP server generates the CRM with vertical-specific pipeline stages, a booking page wired to the client's hours and timezone, an intake form with vertical-specific fields, and an AI chatbot that books appointments against the real calendar. All four surfaces share one database and are pre-wired on generation. No Zapier, no webhooks to configure, no integration work.",
+      "Approximately 3 minutes from a single Claude Code prompt. The Kynetic OS MCP server generates the CRM with vertical-specific pipeline stages, a booking page wired to the client's hours and timezone, an intake form with vertical-specific fields, and an AI chatbot that books appointments against the real calendar. All four surfaces share one database and are pre-wired on generation. No Zapier, no webhooks to configure, no integration work.",
   },
   {
-    question: "Can I white-label SeldonFrame for my agency clients?",
+    question: "Can I white-label Kynetic OS for my agency clients?",
     answer:
-      "Yes. Each generated workspace runs on its own subdomain (client-slug.app.seldonframe.com) or a custom domain on the Growth and Scale tiers. Per-workspace branding includes logo, colors, hero copy, and the chatbot's voice — the client sees their own brand, not SeldonFrame's. Full agency-tier dashboard white-label (operator portal without SeldonFrame chrome) is on the Q3 2026 roadmap. Until then, agencies typically present the per-workspace surface to clients and manage the agency-side workflow themselves.",
+      "Yes. Each generated workspace runs on its own subdomain (client-slug.app.kyneticai.com) or a custom domain on the Growth and Scale tiers. Per-workspace branding includes logo, colors, hero copy, and the chatbot's voice — the client sees their own brand, not Kynetic OS's. Full agency-tier dashboard white-label (operator portal without Kynetic OS chrome) is on the Q3 2026 roadmap. Until then, agencies typically present the per-workspace surface to clients and manage the agency-side workflow themselves.",
   },
   {
-    question: "Is SeldonFrame really free for agencies?",
+    question: "Is Kynetic OS really free for agencies?",
     answer:
       `The free build flow lets you create and claim a first workspace before choosing a paid plan. ${BUILDER_PRICING_CLAIM} ${AGENCY_PRICING_CLAIM} ${HOSTED_AI_POLICY} Self-hosting is also available under AGPL-3.0.`,
   },
   {
-    question: "What can agencies charge clients using SeldonFrame?",
+    question: "What can agencies charge clients using Kynetic OS?",
     answer:
-      "Reddit and freelance-community data from May 2026 shows agencies typically charge $2,500-$7,000 setup plus $500-$1,500/month retainer for a CRM + booking + intake + chatbot stack built on GoHighLevel or a Webflow + Calendly + HubSpot + Zapier combination. Your cost to generate the equivalent on SeldonFrame is approximately 3 minutes of agency time plus a few cents of LLM tokens. The margin is yours; SeldonFrame doesn't take a cut of agency-to-client billing.",
+      "Reddit and freelance-community data from May 2026 shows agencies typically charge $2,500-$7,000 setup plus $500-$1,500/month retainer for a CRM + booking + intake + chatbot stack built on GoHighLevel or a Webflow + Calendly + HubSpot + Zapier combination. Your cost to generate the equivalent on Kynetic OS is approximately 3 minutes of agency time plus a few cents of LLM tokens. The margin is yours; Kynetic OS doesn't take a cut of agency-to-client billing.",
   },
   {
-    question: "What verticals does SeldonFrame support?",
+    question: "What verticals does Kynetic OS support?",
     answer:
-      "SeldonFrame ships 20+ vertical archetypes that change hero copy, intake fields, pipeline stages, and chatbot tone automatically. Trades use bold-urgency (HVAC, plumbers, electricians, roofers, locksmiths). Medical and legal use clinical-trust (dental practices, chiropractors, attorneys, accountants). Beauty verticals use cinematic-aspirational (medspas, salons). Creative verticals use editorial-warm (real estate agents, photographers). The MCP server detects the right archetype automatically from the client's business description.",
+      "Kynetic OS ships 20+ vertical archetypes that change hero copy, intake fields, pipeline stages, and chatbot tone automatically. Trades use bold-urgency (HVAC, plumbers, electricians, roofers, locksmiths). Medical and legal use clinical-trust (dental practices, chiropractors, attorneys, accountants). Beauty verticals use cinematic-aspirational (medspas, salons). Creative verticals use editorial-warm (real estate agents, photographers). The MCP server detects the right archetype automatically from the client's business description.",
   },
   {
-    question: "Do I need to know Claude Code to use SeldonFrame?",
+    question: "Do I need to know Claude Code to use Kynetic OS?",
     answer:
-      "Claude Code is the canonical agency interface — install the MCP with one command (claude mcp add seldonframe -- npx -y @seldonframe/mcp@latest), then describe the client in natural language. No integration code, no Zapier, no glue work. A web dashboard exists for non-Claude-Code users at app.seldonframe.com, but agencies that adopt the Claude Code workflow deploy 5-10x faster because structural changes that take 15 clicks in a dashboard happen in one sentence via MCP.",
+      "Claude Code is the canonical agency interface — install the MCP with one command (claude mcp add seldonframe -- npx -y @seldonframe/mcp@latest), then describe the client in natural language. No integration code, no Zapier, no glue work. A web dashboard exists for non-Claude-Code users at app.kyneticai.com, but agencies that adopt the Claude Code workflow deploy 5-10x faster because structural changes that take 15 clicks in a dashboard happen in one sentence via MCP.",
   },
 ];
 
@@ -85,7 +85,7 @@ export function MarketingFaq() {
         Frequently asked questions
       </h2>
       <p className="mt-3 text-center text-sm text-muted-foreground md:text-base">
-        What agencies and freelancers ask before installing SeldonFrame.
+        What agencies and freelancers ask before installing Kynetic OS.
       </p>
 
       <div className="mt-10 divide-y divide-border rounded-2xl border border-border bg-card/40">

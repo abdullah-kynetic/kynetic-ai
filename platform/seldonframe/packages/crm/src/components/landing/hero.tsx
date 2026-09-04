@@ -69,7 +69,7 @@ export function LandingHero() {
             className="mx-auto mt-5 max-w-xl text-pretty text-base text-zinc-400 md:text-lg lg:mx-0"
           >
             Paste a client&apos;s URL or describe their business in plain English.
-            SeldonFrame builds{" "}
+            Kynetic OS builds{" "}
             <span className="text-zinc-300">
               the CRM, booking page, intake form, and AI receptionist
             </span>{" "}
@@ -120,7 +120,7 @@ export function LandingHero() {
         >
           <img
             src="/marketing/workspace-head.png"
-            alt="A live SeldonFrame workspace — operator dashboard with CRM, bookings, and conversation tabs already wired up."
+            alt="A live Kynetic OS workspace — operator dashboard with CRM, bookings, and conversation tabs already wired up."
             className="w-full rounded-2xl border border-zinc-800 shadow-2xl shadow-black/40 ring-1 ring-white/[0.04]"
             loading="eager"
             fetchPriority="high"

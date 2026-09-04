@@ -199,7 +199,7 @@ export function buildVendorSeries(size: BusinessSize): VendorSeries[] {
   });
 }
 
-/** Compute the SeldonFrame comparison band for one vendor at a given size —
+/** Compute the Kynetic OS comparison band for one vendor at a given size —
  *  the stepped low/high straight from SF_TIER_PRICES via SF_TIER_MAP. Throws
  *  for a slug with no mapping (fail loud rather than silently draw nothing —
  *  every registry vendor must have a mapping, enforced by the spec test). */

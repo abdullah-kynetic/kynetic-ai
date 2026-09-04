@@ -122,7 +122,7 @@ export function AiRecoIndexLeaderboard() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
                   <span style={{ fontWeight: 600, fontSize: 15 }}>
                     #{i + 1} {row.brand}
-                    {row.brand === "SeldonFrame" ? (
+                    {row.brand === "Kynetic OS" ? (
                       <span
                         style={{
                           marginLeft: 8,

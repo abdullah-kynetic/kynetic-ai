@@ -82,7 +82,7 @@ export function BuyerShell({
       >
         <Link
           href="/"
-          aria-label="SeldonFrame — home"
+          aria-label="Kynetic OS — home"
           style={{
             display: "inline-flex",
             alignItems: "center",
@@ -93,7 +93,7 @@ export function BuyerShell({
         >
           <SeldonFrameMark size={23} />
           <span style={{ fontWeight: 600, fontSize: 15.5, letterSpacing: "-0.01em" }}>
-            SeldonFrame
+            Kynetic OS
           </span>
           {wordmarkSuffix ? (
             <span

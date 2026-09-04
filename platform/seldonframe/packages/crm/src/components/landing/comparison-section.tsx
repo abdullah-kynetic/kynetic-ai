@@ -5,7 +5,7 @@ export function LandingComparisonSection() {
     <section className="mx-auto max-w-5xl px-6 py-24 md:py-32">
       <div className="grid gap-8 md:grid-cols-2">
         <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-8 opacity-60">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Without SeldonFrame</span>
+          <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Without Kynetic OS</span>
           <div className="mt-8 space-y-4 text-sm text-zinc-500">
             <p>Five different logins</p>
             <p>Set up your brand in each one separately</p>
@@ -19,7 +19,7 @@ export function LandingComparisonSection() {
         </div>
 
         <div className="rounded-xl border border-zinc-800 border-l-2 border-l-[#1F2B24] bg-zinc-900 p-8">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">With SeldonFrame</span>
+          <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">With Kynetic OS</span>
           <div className="mt-8 space-y-4">
             {[
               "One login",

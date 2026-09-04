@@ -76,7 +76,7 @@ export function renderPlainEmailTemplate({
     : "";
 
   const poweredByBlock = showPoweredBy
-    ? `<div style="margin-top:16px;font-size:11px;color:#94a3b8;text-align:center;">Powered by SeldonFrame</div>`
+    ? `<div style="margin-top:16px;font-size:11px;color:#94a3b8;text-align:center;">Powered by Kynetic OS</div>`
     : "";
 
   // 2026-05-18 — color-scheme meta + style tag forces light rendering

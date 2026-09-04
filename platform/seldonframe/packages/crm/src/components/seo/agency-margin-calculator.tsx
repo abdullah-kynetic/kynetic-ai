@@ -74,13 +74,13 @@ export interface StackPreset {
 export const STACK_PRESETS: StackPreset[] = [
   { key: "ghlStyle", label: "GHL-style stack ~$150+", hint: "Base plan + AI Employee add-on + rebilled usage, stacked per client" },
   { key: "typicalSaas", label: "Typical SaaS stack ~$80", hint: "A typical multi-tool SaaS stack (CRM + scheduling + email) per client" },
-  { key: "seldonframe", label: "SeldonFrame stack ~$3–10", hint: "Flat plan ($29 builder, up to $299 agency) ÷ clients, plus raw BYOK usage — no per-client software fee" },
+  { key: "seldonframe", label: "Kynetic OS stack ~$3–10", hint: "Flat plan ($29 builder, up to $299 agency) ÷ clients, plus raw BYOK usage — no per-client software fee" },
 ];
 
 /**
  * Resolve a preset key to a slider value for a given client count. GHL-style
  * and typical-SaaS are flat per-client estimates (hedged, "~" in the label).
- * SeldonFrame's is genuinely a function of client count — flat $29 (builder) to $299 (agency)
+ * Kynetic OS's is genuinely a function of client count — flat $29 (builder) to $299 (agency)
  * divided across clients, plus a small raw-usage estimate — since that's the
  * actual pitch: the per-client software cost shrinks as an agency adds
  * clients, unlike a per-seat/per-sub-account competitor stack.
@@ -180,7 +180,7 @@ export function AgencyMarginCalculator(): ReactElement {
           { label: "Tool + labor cost", value: `${money(result.toolCost + result.laborCost)}/mo` },
           { label: "Profit", value: `${money(result.profit)}/mo` },
         ],
-        footer: "built free at seldonframe.com/tools",
+        footer: "built free at kyneticai.com/tools",
       });
     }, 150);
     return () => {
@@ -346,7 +346,7 @@ export function AgencyMarginCalculator(): ReactElement {
       <div style={{ marginTop: 22, fontSize: 12.5, color: "rgba(34,29,23,0.6)", lineHeight: 1.6 }}>
         <p style={{ margin: "0 0 6px" }}>
           <strong>Assumptions:</strong> revenue = retainer × clients. Cost = (tool-stack cost per client × clients) +
-          (hours per client × hourly rate × clients). The SeldonFrame preset assumes BYOK raw usage (you pay your own AI
+          (hours per client × hourly rate × clients). The Kynetic OS preset assumes BYOK raw usage (you pay your own AI
           and telephony provider directly, at cost) — it is not a published GoHighLevel or SaaS-competitor number.
         </p>
         <p style={{ margin: 0 }}>

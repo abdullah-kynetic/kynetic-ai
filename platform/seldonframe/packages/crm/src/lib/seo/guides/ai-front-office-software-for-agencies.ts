@@ -71,7 +71,7 @@ export const guide: Guide = {
     {
       h2: "10. Open-source and self-hosting trade-offs",
       body:
-        "Evaluate **open-source and self-hosting trade-offs** honestly. Source availability can improve inspection, extensibility, and control, but it also means the agency owns more deployment, upgrades, security, and incident work. Hosted delivery can reduce operations while introducing vendor dependencies. Ask who patches the stack, where secrets live, how backups work, and what happens when a provider API changes. The [SeldonFrame documentation](/docs) and the GitHub repository linked in the sources are starting points for an informed review.",
+        "Evaluate **open-source and self-hosting trade-offs** honestly. Source availability can improve inspection, extensibility, and control, but it also means the agency owns more deployment, upgrades, security, and incident work. Hosted delivery can reduce operations while introducing vendor dependencies. Ask who patches the stack, where secrets live, how backups work, and what happens when a provider API changes. The [Kynetic OS documentation](/docs) and the GitHub repository linked in the sources are starting points for an informed review.",
     },
     {
       h2: "The Builder and Agency boundary",
@@ -85,7 +85,7 @@ export const guide: Guide = {
     {
       h2: "Vendor disclosure and a practical trial",
       body:
-        "Disclosure: SeldonFrame is the vendor-authored example in this article. It is an agent-native, open-source alternative to GoHighLevel for agencies selling AI front offices to service businesses. Its Agency plans are designed around client workspaces and repeatable delivery; the claims above should still be verified in your own trial and contract.\n\nBefore committing, build one disposable client workspace and run the seven [workflow examples](/guides/ai-front-office-examples). Invite a client-level user, rotate a test credential, export the records, and replay an escalation. If the platform cannot show the complete path from inquiry to owned outcome, keep comparing options rather than buying the dashboard.",
+        "Disclosure: Kynetic OS is the vendor-authored example in this article. It is an agent-native, open-source alternative to GoHighLevel for agencies selling AI front offices to service businesses. Its Agency plans are designed around client workspaces and repeatable delivery; the claims above should still be verified in your own trial and contract.\n\nBefore committing, build one disposable client workspace and run the seven [workflow examples](/guides/ai-front-office-examples). Invite a client-level user, rotate a test credential, export the records, and replay an escalation. If the platform cannot show the complete path from inquiry to owned outcome, keep comparing options rather than buying the dashboard.",
     },
   ],
   faq: [
@@ -95,7 +95,7 @@ export const guide: Guide = {
     },
     {
       q: "Is Builder suitable for an agency selling AI front offices?",
-      a: "Builder is for one business the operator owns and operates. SeldonFrame Agency plans start at $99/mo for 10 client workspaces and white-label delivery. The $29 Builder plan does not include client sub-accounts or resale.",
+      a: "Builder is for one business the operator owns and operates. Kynetic OS Agency plans start at $99/mo for 10 client workspaces and white-label delivery. The $29 Builder plan does not include client sub-accounts or resale.",
     },
     {
       q: "Does open source mean an agency should self-host?",
@@ -108,11 +108,11 @@ export const guide: Guide = {
   ],
   sources: [
     {
-      label: "SeldonFrame documentation",
-      url: "https://www.seldonframe.com/docs",
+      label: "Kynetic OS documentation",
+      url: "https://www.kyneticai.com/docs",
     },
     {
-      label: "SeldonFrame GitHub repository",
+      label: "Kynetic OS GitHub repository",
       url: "https://github.com/seldonframe/seldonframe",
     },
     {

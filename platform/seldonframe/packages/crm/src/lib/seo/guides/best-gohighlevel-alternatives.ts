@@ -38,7 +38,7 @@ export const guide: Guide = {
     },
     {
       h2: "The 10 best alternatives, and who each is for",
-      body: `SeldonFrame is the **AI-first pick**, and the reason this list exists. For agencies, it gives each client a **whitelabel AI front office**: an AI receptionist across voice, chat, and SMS, plus a website, CRM, booking, reviews, a client portal, and a custom domain — all agency-branded and generated from one conversation in about three minutes. ${AGENCY_PRICING_CLAIM}
+      body: `Kynetic OS is the **AI-first pick**, and the reason this list exists. For agencies, it gives each client a **whitelabel AI front office**: an AI receptionist across voice, chat, and SMS, plus a website, CRM, booking, reviews, a client portal, and a custom domain — all agency-branded and generated from one conversation in about three minutes. ${AGENCY_PRICING_CLAIM}
 
 ${BUILDER_PRICING_CLAIM} Either way it runs on your own AI keys and Twilio (*BYOK*), so usage bills at raw provider cost, unlimited workspaces are included, the first workspace is free forever, and there's no trial gate.
 
@@ -63,11 +63,11 @@ Podium is reviews and messaging, focused on collecting reviews and running custo
 Softr builds client portals and simple apps on top of your data without code. Who it's for: teams that mainly need a branded portal or lightweight internal tool.`,
     },
     {
-      h2: "How SeldonFrame stacks up on the four criteria",
-      body: `Run SeldonFrame through the same four questions and it lands cleanly. Pricing model: **flat**, ${AGENCY_PRICING_CLAIM} ${BUILDER_PRICING_CLAIM} There's no per-location seat and no metered platform margin, because it runs on your own AI keys and Twilio, so calls and messages bill at raw provider cost.\n\nThat's a price you can quote a client and not flinch when they get busy.\n\nAI included: **yes**, and this is the core of the product rather than a bolt-on. The receptionist across voice, chat, and SMS is what you're buying, along with the website, CRM, booking, reviews, and portal around it.\n\nWhite-label: standard on every Agency-tier workspace, not gated behind a top tier the way GoHighLevel's $497 SaaS Mode is — from $99/mo, not $497/mo. Every client workspace on an Agency plan is agency-branded on a custom domain.\n\nLearning curve: a full workspace is generated from one conversation in about three minutes, so setup time is close to zero.\n\nThe honest framing is **value, not just the number**. The point isn't that Builder is small — it's that one booked job from an answered call usually covers the applicable tier; Agency economics stay flat as you add clients, while Builder remains an own-business tier.\n\nIf your business is local-service work, or an agency serving those clients, and you want AI answering and booking without an add-on bill that grows per account, SeldonFrame is built for exactly that shape. Match it against your four criteria and, for that use case, it's the strongest fit on the list. See the full head-to-head in [GoHighLevel vs. SeldonFrame](/guides/gohighlevel-vs-seldonframe).`,
+      h2: "How Kynetic OS stacks up on the four criteria",
+      body: `Run Kynetic OS through the same four questions and it lands cleanly. Pricing model: **flat**, ${AGENCY_PRICING_CLAIM} ${BUILDER_PRICING_CLAIM} There's no per-location seat and no metered platform margin, because it runs on your own AI keys and Twilio, so calls and messages bill at raw provider cost.\n\nThat's a price you can quote a client and not flinch when they get busy.\n\nAI included: **yes**, and this is the core of the product rather than a bolt-on. The receptionist across voice, chat, and SMS is what you're buying, along with the website, CRM, booking, reviews, and portal around it.\n\nWhite-label: standard on every Agency-tier workspace, not gated behind a top tier the way GoHighLevel's $497 SaaS Mode is — from $99/mo, not $497/mo. Every client workspace on an Agency plan is agency-branded on a custom domain.\n\nLearning curve: a full workspace is generated from one conversation in about three minutes, so setup time is close to zero.\n\nThe honest framing is **value, not just the number**. The point isn't that Builder is small — it's that one booked job from an answered call usually covers the applicable tier; Agency economics stay flat as you add clients, while Builder remains an own-business tier.\n\nIf your business is local-service work, or an agency serving those clients, and you want AI answering and booking without an add-on bill that grows per account, Kynetic OS is built for exactly that shape. Match it against your four criteria and, for that use case, it's the strongest fit on the list. See the full head-to-head in [GoHighLevel vs. Kynetic OS](/guides/gohighlevel-vs-seldonframe).`,
       diagram: {
         type: "compare",
-        title: "GoHighLevel vs. SeldonFrame on the four criteria",
+        title: "GoHighLevel vs. Kynetic OS on the four criteria",
         left: {
           heading: "GoHighLevel",
           items: [
@@ -78,7 +78,7 @@ Softr builds client portals and simple apps on top of your data without code. Wh
           ],
         },
         right: {
-          heading: "SeldonFrame",
+          heading: "Kynetic OS",
           items: [
             "AI included, not an add-on",
             "Agency $99-$299/mo flat (solo: $29/mo)",
@@ -90,7 +90,7 @@ Softr builds client portals and simple apps on top of your data without code. Wh
     },
     {
       h2: "When you should just stay on GoHighLevel",
-      body: "It would be dishonest to end without saying where GoHighLevel is simply the better choice. If your business is funnel-heavy, stay. The funnel builder is a genuine strength, and the template and snapshot library lets you spin up proven layouts fast.\n\nIf your growth engine is elaborate email and SMS automation, GoHighLevel's depth there is hard to beat. Rebuilding those flows elsewhere isn't worth it.\n\nThere's also the community and ecosystem. GoHighLevel has a large user base, a lot of shared snapshots, and a deep well of tutorials and consultants.\n\nIf you value being able to buy a done-for-you setup or ask a big community for help, that's real — a newer or narrower tool can't match it overnight. Agencies that have already invested weeks learning the platform, and built their whole delivery around it, have little reason to move.\n\nSo the decision isn't about which tool is best in the abstract. It's about which one fits how you work.\n\n**Funnel-heavy agency deep in automation and snapshots**: stay on GoHighLevel. **Local-service business or agency that wants AI answering and booking included** on flat, resellable pricing with near-zero setup: SeldonFrame.\n\nSomething in between — where you want budget breadth or a single specialty like email, reviews, or portals — pick the option above whose one strength matches your one need. The criteria, not the brand, should make the call.",
+      body: "It would be dishonest to end without saying where GoHighLevel is simply the better choice. If your business is funnel-heavy, stay. The funnel builder is a genuine strength, and the template and snapshot library lets you spin up proven layouts fast.\n\nIf your growth engine is elaborate email and SMS automation, GoHighLevel's depth there is hard to beat. Rebuilding those flows elsewhere isn't worth it.\n\nThere's also the community and ecosystem. GoHighLevel has a large user base, a lot of shared snapshots, and a deep well of tutorials and consultants.\n\nIf you value being able to buy a done-for-you setup or ask a big community for help, that's real — a newer or narrower tool can't match it overnight. Agencies that have already invested weeks learning the platform, and built their whole delivery around it, have little reason to move.\n\nSo the decision isn't about which tool is best in the abstract. It's about which one fits how you work.\n\n**Funnel-heavy agency deep in automation and snapshots**: stay on GoHighLevel. **Local-service business or agency that wants AI answering and booking included** on flat, resellable pricing with near-zero setup: Kynetic OS.\n\nSomething in between — where you want budget breadth or a single specialty like email, reviews, or portals — pick the option above whose one strength matches your one need. The criteria, not the brand, should make the call.",
       callout: {
         kind: "tip",
         text: "If you're already deep into snapshots and automations, the switching cost alone may outweigh what you'd save by moving.",
@@ -100,15 +100,15 @@ Softr builds client portals and simple apps on top of your data without code. Wh
   faq: [
     {
       q: "What is the best GoHighLevel alternative?",
-      a: `There is no single best; it depends on how you work. For agencies that want white-label, client sub-accounts, and an AI receptionist included on flat, resellable pricing, SeldonFrame is the strongest fit. ${AGENCY_PRICING_CLAIM} For solo operators, ${BUILDER_PRICING_CLAIM} For funnel-heavy marketers ClickFunnels, for email-driven automation ActiveCampaign, and for reselling a marketplace Vendasta may fit better.`,
+      a: `There is no single best; it depends on how you work. For agencies that want white-label, client sub-accounts, and an AI receptionist included on flat, resellable pricing, Kynetic OS is the strongest fit. ${AGENCY_PRICING_CLAIM} For solo operators, ${BUILDER_PRICING_CLAIM} For funnel-heavy marketers ClickFunnels, for email-driven automation ActiveCampaign, and for reselling a marketplace Vendasta may fit better.`,
     },
     {
       q: "Is there a free GoHighLevel alternative?",
-      a: `Some alternatives offer a free tier to start. HubSpot has a free CRM tier and Systeme.io is known for a generous free tier covering funnels and email. SeldonFrame does not have a free trial, but its first workspace is free forever and ${BUILDER_PRICING_CLAIM} Compare what each free tier actually includes before deciding.`,
+      a: `Some alternatives offer a free tier to start. HubSpot has a free CRM tier and Systeme.io is known for a generous free tier covering funnels and email. Kynetic OS does not have a free trial, but its first workspace is free forever and ${BUILDER_PRICING_CLAIM} Compare what each free tier actually includes before deciding.`,
     },
     {
       q: "What is the cheapest all-in-one with AI included?",
-      a: `SeldonFrame is built around AI being included rather than an add-on. ${AGENCY_PRICING_CLAIM} The AI receptionist spans voice, chat, and SMS with a website, CRM, booking, reviews, and a branded client portal for reselling to clients. ${BUILDER_PRICING_CLAIM} Either way it runs on your own AI keys and Twilio so usage bills at raw provider cost with no platform markup.`,
+      a: `Kynetic OS is built around AI being included rather than an add-on. ${AGENCY_PRICING_CLAIM} The AI receptionist spans voice, chat, and SMS with a website, CRM, booking, reviews, and a branded client portal for reselling to clients. ${BUILDER_PRICING_CLAIM} Either way it runs on your own AI keys and Twilio so usage bills at raw provider cost with no platform markup.`,
     },
   ],
   sources: [

@@ -57,7 +57,7 @@ export default async function OAuthAuthorizePage({
 
   return (
     <div>
-      <h1>{client.clientName ?? "An application"} wants to access your SeldonFrame workspace</h1>
+      <h1>{client.clientName ?? "An application"} wants to access your Kynetic OS workspace</h1>
       {/* MCP spec + Anthropic docs requirement: display the redirect URI hostname
           clearly, with an extra warning if it's loopback-only (design doc §1.1/§1.2). */}
       <p>You will be redirected to: <strong>{new URL(parsed.value.redirectUri).hostname}</strong></p>

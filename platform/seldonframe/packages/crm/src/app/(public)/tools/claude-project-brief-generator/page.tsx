@@ -36,7 +36,7 @@ const FAQ = [
   },
   {
     q: "Do I need one Claude Project per client?",
-    a: "Yes — one project per concern is the rule that keeps context clean, which means the setup and maintenance labor scales with your client count. That per-client labor is exactly what SeldonFrame automates: it generates the standing brief and grounded knowledge from the client's website, auto-tests retrieval, and attaches the website, CRM, booking and AI receptionist the brief can only describe.",
+    a: "Yes — one project per concern is the rule that keeps context clean, which means the setup and maintenance labor scales with your client count. That per-client labor is exactly what Kynetic OS automates: it generates the standing brief and grounded knowledge from the client's website, auto-tests retrieval, and attaches the website, CRM, booking and AI receptionist the brief can only describe.",
   },
 ];
 
@@ -77,7 +77,7 @@ export default function ClaudeProjectBriefGeneratorPage(): ReactElement {
             </details>
           ))}
           <p style={{ margin: "22px 0 0", fontSize: 14.5, lineHeight: 1.6, color: "rgba(34,29,23,0.65)" }}>
-            Related: <Link href="/alternative-to-claude-projects" className="sf-link" style={{ color: MKT.green, fontWeight: 700 }}>Claude Projects vs SeldonFrame for client work</Link>{" "}
+            Related: <Link href="/alternative-to-claude-projects" className="sf-link" style={{ color: MKT.green, fontWeight: 700 }}>Claude Projects vs Kynetic OS for client work</Link>{" "}
             — the honest comparison, or see <Link href="/alternatives" className="sf-link" style={{ color: MKT.green, fontWeight: 700 }}>all comparisons</Link>.
           </p>
         </section>

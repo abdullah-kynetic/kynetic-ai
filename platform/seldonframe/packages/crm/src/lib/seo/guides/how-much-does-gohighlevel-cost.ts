@@ -58,11 +58,11 @@ export const guide: Guide = {
     },
     {
       h2: "The flat-priced alternative — and when GoHighLevel is still worth it",
-      body: `SeldonFrame takes the opposite approach: ${BUILDER_PRICING_CLAIM} The first workspace is free forever, cancel anytime, and there is no trial gate — the free build, claim, and use flow *is* the trial, and a custom domain for your own workspace is included. ${AGENCY_PRICING_CLAIM}
+      body: `Kynetic OS takes the opposite approach: ${BUILDER_PRICING_CLAIM} The first workspace is free forever, cancel anytime, and there is no trial gate — the free build, claim, and use flow *is* the trial, and a custom domain for your own workspace is included. ${AGENCY_PRICING_CLAIM}
 
 The AI receptionist that GoHighLevel charges extra for is the product here, and it's included on every tier. So are the website, CRM, booking, and reviews; the client portal for reselling under your own brand is part of Agency Starter.
 
-The reason the price can stay flat is the mechanism underneath it. SeldonFrame runs on your own AI keys, such as Claude, ChatGPT, or Gemini, and your own Twilio account.
+The reason the price can stay flat is the mechanism underneath it. Kynetic OS runs on your own AI keys, such as Claude, ChatGPT, or Gemini, and your own Twilio account.
 
 That means AI and telephony run at **raw provider cost with no platform markup**. The per-location fees and resold minutes that inflate a GoHighLevel bill simply aren't there.
 
@@ -80,7 +80,7 @@ If your business is built on high-volume funnels and complex multi-step campaign
   faq: [
     {
       q: "Is the AI receptionist included in GoHighLevel's price?",
-      a: `No. GoHighLevel's *AI Employee* is an add-on billed on top of your base plan, reported at around $50 per month per location on the Growth option or around $97 per month per location on the Unlimited option, with a usage-based route reported near $0.02 to $0.05 per minute. Because it is charged **per location**, the cost repeats for every client account. By contrast, SeldonFrame includes the AI receptionist for every client sub-account at no extra per-location fee — ${AGENCY_PRICING_CLAIM} ${BUILDER_PRICING_CLAIM}`
+      a: `No. GoHighLevel's *AI Employee* is an add-on billed on top of your base plan, reported at around $50 per month per location on the Growth option or around $97 per month per location on the Unlimited option, with a usage-based route reported near $0.02 to $0.05 per minute. Because it is charged **per location**, the cost repeats for every client account. By contrast, Kynetic OS includes the AI receptionist for every client sub-account at no extra per-location fee — ${AGENCY_PRICING_CLAIM} ${BUILDER_PRICING_CLAIM}`
     },
     {
       q: "What does a 10-client agency really pay?",

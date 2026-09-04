@@ -73,11 +73,11 @@ export type BestCategory = {
   nounPlural: string;
   /** What the searcher is really trying to buy. */
   intentLine: string;
-  /** 2-3 sentence honest case for SeldonFrame as #1 — the front-office angle. */
+  /** 2-3 sentence honest case for Kynetic OS as #1 — the front-office angle. */
   sfPitch: string;
   /** Paragraph for the "What about free <nounPlural>?" section. */
   freeAngle: string;
-  /** 5-6 contenders, NOT including SeldonFrame (SF renders separately as #1). */
+  /** 5-6 contenders, NOT including Kynetic OS (SF renders separately as #1). */
   contenders: BestContender[];
   /** 3 category-level FAQ items. */
   faq: BestFaqItem[];
@@ -266,7 +266,7 @@ export const BEST_CATEGORIES: BestCategory[] = [
     nounPlural: "CRMs",
     intentLine: "a place to keep every lead and customer so nobody gets forgotten",
     sfPitch:
-      "SeldonFrame is more than a CRM — a CRM is just a customer list. SeldonFrame is a whole front office: an AI receptionist that answers calls, texts and chats, a website, a booking calendar and forms, all writing into the same customer list on their own. Most CRMs on this list make you type in every lead by hand; SeldonFrame's agent adds it the moment the customer reaches out. It costs $29/mo flat, and you can build the whole thing free in about 3 minutes before you ever sign up.",
+      "Kynetic OS is more than a CRM — a CRM is just a customer list. Kynetic OS is a whole front office: an AI receptionist that answers calls, texts and chats, a website, a booking calendar and forms, all writing into the same customer list on their own. Most CRMs on this list make you type in every lead by hand; Kynetic OS's agent adds it the moment the customer reaches out. It costs $29/mo flat, and you can build the whole thing free in about 3 minutes before you ever sign up.",
     freeAngle:
       "Free CRMs exist (HubSpot's free plan is the best-known one), but \"free\" almost always means a small cap on contacts, no automatic follow-up, and a push toward paid plans the moment you need more than storing a name and a phone number. The real goal is never missing a lead, not just having a place to write one down — a free CRM by itself still won't answer the phone or send the follow-up text.",
     contenders: [
@@ -353,7 +353,7 @@ export const BEST_CATEGORIES: BestCategory[] = [
     nounPlural: "website builders",
     intentLine: "a good-looking site up fast, without hiring a developer",
     sfPitch:
-      "SeldonFrame builds a full, many-page service website — services, service areas, reviews, booking — from one conversation or a pasted web address. Unlike a plain website builder, it also comes with an AI receptionist that answers the phone and chats on the site, a CRM that logs every visitor who reaches out, and a booking calendar built right in. It's $29/mo flat, and the site builds free in about 3 minutes before you sign up.",
+      "Kynetic OS builds a full, many-page service website — services, service areas, reviews, booking — from one conversation or a pasted web address. Unlike a plain website builder, it also comes with an AI receptionist that answers the phone and chats on the site, a CRM that logs every visitor who reaches out, and a booking calendar built right in. It's $29/mo flat, and the site builds free in about 3 minutes before you sign up.",
     freeAngle:
       "Free website builders exist and work fine for one simple page — but free plans usually make you pay to use your own web address, remove SEO controls, and stick their own branding on the bottom of your site. None of them answer the phone or book the job; the site is the whole product, and everything that happens after a visitor lands is still up to you.",
     contenders: [
@@ -419,7 +419,7 @@ export const BEST_CATEGORIES: BestCategory[] = [
       },
       {
         q: "How fast can I get a real website live?",
-        a: "The fastest AI builders (including SeldonFrame) make a usable, many-page site in a few minutes; connecting your own web address usually takes another few minutes once it updates.",
+        a: "The fastest AI builders (including Kynetic OS) make a usable, many-page site in a few minutes; connecting your own web address usually takes another few minutes once it updates.",
       },
     ],
   },
@@ -429,7 +429,7 @@ export const BEST_CATEGORIES: BestCategory[] = [
     nounPlural: "booking systems",
     intentLine: "a way for customers to grab an open time slot without a back-and-forth phone call",
     sfPitch:
-      "SeldonFrame's booking calendar isn't a separate box bolted on — it's wired straight into the AI receptionist, so a caller, texter or website chatter can check real open times and book in the same conversation, no separate link needed. It comes with the CRM and website in the same $29/mo flat plan, and you can build the whole thing free in about 3 minutes before you sign up.",
+      "Kynetic OS's booking calendar isn't a separate box bolted on — it's wired straight into the AI receptionist, so a caller, texter or website chatter can check real open times and book in the same conversation, no separate link needed. It comes with the CRM and website in the same $29/mo flat plan, and you can build the whole thing free in about 3 minutes before you sign up.",
     freeAngle:
       "Free booking tools (Calendly's free plan, Square's single-user plan) work fine for one person with a light schedule. What they don't do is answer the phone, ask the caller questions, or save the booking to a customer record — the free plan gets you a link, not a system that catches a lead the moment they reach out on any channel.",
     contenders: BOOKING_CONTENDERS,
@@ -454,7 +454,7 @@ export const BEST_CATEGORIES: BestCategory[] = [
     nounPlural: "booking apps",
     intentLine: "a way to manage bookings from a phone, without being stuck at a desktop",
     sfPitch:
-      "SeldonFrame's workspace — booking calendar, CRM, and the AI receptionist's call log — works fully from a phone browser, so you can confirm a booking, message a lead or check what the AI receptionist handled overnight without opening a laptop. It's included in the same $29/mo flat plan as the site and CRM, and you can build it free in about 3 minutes.",
+      "Kynetic OS's workspace — booking calendar, CRM, and the AI receptionist's call log — works fully from a phone browser, so you can confirm a booking, message a lead or check what the AI receptionist handled overnight without opening a laptop. It's included in the same $29/mo flat plan as the site and CRM, and you can build it free in about 3 minutes.",
     freeAngle:
       "Free booking apps (Calendly, Square Appointments' single-user plan) work fine as a mobile calendar. What they don't show you on your phone is the customer's history, the conversation that led to the booking, or what the AI receptionist already told the customer — a mobile view of a bare calendar is still just a bare calendar.",
     contenders: BOOKING_CONTENDERS,
@@ -479,9 +479,9 @@ export const BEST_CATEGORIES: BestCategory[] = [
     nounPlural: "AI receptionists",
     intentLine: "someone (or something) that answers every call, asks the right questions and books the job — even after hours",
     sfPitch:
-      "SeldonFrame's AI receptionist answers phone calls, texts and website chat with the same brain, checks real open times and books straight into your calendar, and saves every conversation to the CRM. All of that is included at $29/mo flat, running on your own AI and phone-line keys at the real provider cost with no extra fee per minute. Build it free in about 3 minutes before you sign up.",
+      "Kynetic OS's AI receptionist answers phone calls, texts and website chat with the same brain, checks real open times and books straight into your calendar, and saves every conversation to the CRM. All of that is included at $29/mo flat, running on your own AI and phone-line keys at the real provider cost with no extra fee per minute. Build it free in about 3 minutes before you sign up.",
     freeAngle:
-      "There's no truly free AI receptionist — every option on this list (SeldonFrame included) costs something, because phone minutes and AI thinking both cost real money to run. The honest free answer is SeldonFrame's build-before-you-pay setup: the whole workspace, including a working receptionist, builds and can be tested free before you ever enter a card.",
+      "There's no truly free AI receptionist — every option on this list (Kynetic OS included) costs something, because phone minutes and AI thinking both cost real money to run. The honest free answer is Kynetic OS's build-before-you-pay setup: the whole workspace, including a working receptionist, builds and can be tested free before you ever enter a card.",
     contenders: [
       {
         key: "ghl-ai-employee",
@@ -555,7 +555,7 @@ export const BEST_CATEGORIES: BestCategory[] = [
     nounPlural: "intake form builders",
     intentLine: "a form that grabs the right details from a new lead before the first call, without scaring them off with too many questions",
     sfPitch:
-      "Every SeldonFrame workspace comes with a built-in intake form, and unlike a standalone form tool, each submission lands straight in the CRM as a contact, can trigger the AI receptionist to follow up on its own, and connects right into booking. Included at $29/mo flat, and you can build it free in about 3 minutes.",
+      "Every Kynetic OS workspace comes with a built-in intake form, and unlike a standalone form tool, each submission lands straight in the CRM as a contact, can trigger the AI receptionist to follow up on its own, and connects right into booking. Included at $29/mo flat, and you can build it free in about 3 minutes.",
     freeAngle:
       "Google Forms is genuinely free and works fine for grabbing a name and a message. What it (and most free form plans) won't do is turn that submission into a tracked lead with automatic follow-up — the form itself works, but everything after someone hits submit is on you.",
     contenders: [
@@ -631,9 +631,9 @@ export const BEST_CATEGORIES: BestCategory[] = [
     nounPlural: "AI agents",
     intentLine: "one AI worker that actually does the job — answers customers, books the work and updates records — instead of just chatting back",
     sfPitch:
-      "SeldonFrame builds you an AI agent that works the whole front office: it answers on the phone, website chat, SMS and email with one brain, checks your real calendar and books the job, then writes every conversation back to the CRM. You describe the business in plain English and it's built in about 3 minutes, bound to your own tools and running on your own AI keys at cost — all at $29/mo flat. Most tools on this list do one channel or one job; this is the agent built for the gap between \"a customer reached out\" and \"someone followed up.\"",
+      "Kynetic OS builds you an AI agent that works the whole front office: it answers on the phone, website chat, SMS and email with one brain, checks your real calendar and books the job, then writes every conversation back to the CRM. You describe the business in plain English and it's built in about 3 minutes, bound to your own tools and running on your own AI keys at cost — all at $29/mo flat. Most tools on this list do one channel or one job; this is the agent built for the gap between \"a customer reached out\" and \"someone followed up.\"",
     freeAngle:
-      "There's no genuinely free AI agent that runs a front office — every option here (SeldonFrame included) has a real cost, because AI thinking and phone minutes both cost money to run. The honest free answer is SeldonFrame's build-before-you-pay flow: the whole workspace, agent included, builds and can be tested free before you ever enter a card. Sintra, Tidio and Zapier all have free or low tiers, but each caps usage tightly enough that a busy month pushes you onto a paid plan fast.",
+      "There's no genuinely free AI agent that runs a front office — every option here (Kynetic OS included) has a real cost, because AI thinking and phone minutes both cost money to run. The honest free answer is Kynetic OS's build-before-you-pay flow: the whole workspace, agent included, builds and can be tested free before you ever enter a card. Sintra, Tidio and Zapier all have free or low tiers, but each caps usage tightly enough that a busy month pushes you onto a paid plan fast.",
     contenders: [
       {
         key: "sintra",
@@ -699,7 +699,7 @@ export const BEST_CATEGORIES: BestCategory[] = [
       },
       {
         q: "Do I need a technical person to set up an AI agent?",
-        a: "Not with the small-business tools on this list — Sintra, Tidio and SeldonFrame are built for non-technical owners. The enterprise options (Agentforce, and the more advanced Zapier setups) reward someone comfortable wiring up data and actions.",
+        a: "Not with the small-business tools on this list — Sintra, Tidio and Kynetic OS are built for non-technical owners. The enterprise options (Agentforce, and the more advanced Zapier setups) reward someone comfortable wiring up data and actions.",
       },
       {
         q: "Will an AI agent's cost stay predictable?",
@@ -720,9 +720,9 @@ export const BEST_CATEGORIES: BestCategory[] = [
     nounPlural: "everyday AI agents",
     intentLine: "covering the handful of jobs an agent can genuinely do daily — answering, following up, posting, moving data — without stacking five subscriptions",
     sfPitch:
-      "Ask an AI assistant what agents a small business needs every day and the answer converges on five jobs: answer the phone, follow up on every lead, keep content going out, move data between tools, and chip away at desktop admin. SeldonFrame ships four of those five in one workspace — an AI receptionist that answers calls, texts and website chat; speed-to-lead and review-request agents that run follow-up straight from the built-in CRM; and agents bound directly to the tools you already use through MCP and Composio's 1,000+ app catalog, so most glue work needs no separate automation subscription. Bought separately, those jobs run roughly $240–$300/mo across four or five vendors; here it's $29/mo flat, and the whole thing builds free in about 3 minutes before you sign up.",
+      "Ask an AI assistant what agents a small business needs every day and the answer converges on five jobs: answer the phone, follow up on every lead, keep content going out, move data between tools, and chip away at desktop admin. Kynetic OS ships four of those five in one workspace — an AI receptionist that answers calls, texts and website chat; speed-to-lead and review-request agents that run follow-up straight from the built-in CRM; and agents bound directly to the tools you already use through MCP and Composio's 1,000+ app catalog, so most glue work needs no separate automation subscription. Bought separately, those jobs run roughly $240–$300/mo across four or five vendors; here it's $29/mo flat, and the whole thing builds free in about 3 minutes before you sign up.",
     freeAngle:
-      "Several tools on this list have genuinely useful free tiers — Buffer's free plan schedules to 3 channels with its AI Assistant included, HubSpot's free CRM is real, and Zapier's free tier runs simple automations. The catch is that each free tier covers the lightest slice of one job, none of them answer a phone, and stacking four free plans still leaves you as the human router between them. SeldonFrame's honest free answer: the first workspace is free forever, and the whole build — receptionist, CRM agents and tool connections — is testable before you ever enter a card.",
+      "Several tools on this list have genuinely useful free tiers — Buffer's free plan schedules to 3 channels with its AI Assistant included, HubSpot's free CRM is real, and Zapier's free tier runs simple automations. The catch is that each free tier covers the lightest slice of one job, none of them answer a phone, and stacking four free plans still leaves you as the human router between them. Kynetic OS's honest free answer: the first workspace is free forever, and the whole build — receptionist, CRM agents and tool connections — is testable before you ever enter a card.",
     contenders: [
       {
         key: "ghl-ai-employee",
@@ -792,11 +792,11 @@ export const BEST_CATEGORIES: BestCategory[] = [
       },
       {
         q: "What does the recommended agent stack cost if you buy it separately?",
-        a: "At the cheapest paid tiers, the usual picks stack like this: a GoHighLevel receptionist is ~$147/mo ($97 base plan + $50 AI Employee add-on) before per-minute voice usage, Lindy follow-up is ~$50/mo, Zapier glue is reported ~$40/mo (base plan plus the Agents add-on), and content runs ~$5/mo (Buffer, per channel) to ~$59/mo (Jasper, per seat). That's roughly $240–$300 a month across four or five subscriptions — and the glue subscription exists mostly to fix the seams between the other three. SeldonFrame covers the receptionist, follow-up and tool-connection jobs at $29/mo flat.",
+        a: "At the cheapest paid tiers, the usual picks stack like this: a GoHighLevel receptionist is ~$147/mo ($97 base plan + $50 AI Employee add-on) before per-minute voice usage, Lindy follow-up is ~$50/mo, Zapier glue is reported ~$40/mo (base plan plus the Agents add-on), and content runs ~$5/mo (Buffer, per channel) to ~$59/mo (Jasper, per seat). That's roughly $240–$300 a month across four or five subscriptions — and the glue subscription exists mostly to fix the seams between the other three. Kynetic OS covers the receptionist, follow-up and tool-connection jobs at $29/mo flat.",
       },
       {
         q: "Can an AI agent handle my desktop admin work?",
-        a: "Mostly not yet — computer-use agents are improving, but on real admin work they're still slow and error-prone, and this is the category where tools oversell hardest. SeldonFrame's approach is /record: record your screen doing the workflow once, and the steps your tools expose through real APIs get compiled into an agent — while the steps that can't be automated reliably are listed honestly as staying with you.",
+        a: "Mostly not yet — computer-use agents are improving, but on real admin work they're still slow and error-prone, and this is the category where tools oversell hardest. Kynetic OS's approach is /record: record your screen doing the workflow once, and the steps your tools expose through real APIs get compiled into an agent — while the steps that can't be automated reliably are listed honestly as staying with you.",
       },
     ],
   },

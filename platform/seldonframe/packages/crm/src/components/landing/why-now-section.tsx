@@ -11,7 +11,7 @@ export function LandingWhyNowSection() {
         </div>
         <div>
           <p className="leading-relaxed text-zinc-400">
-            Every other tool added AI as a feature. SeldonFrame was built around it. The soul isn&apos;t a feature. It&apos;s
+            Every other tool added AI as a feature. Kynetic OS was built around it. The soul isn&apos;t a feature. It&apos;s
             the core.
           </p>
         </div>

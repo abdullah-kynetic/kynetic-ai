@@ -70,7 +70,7 @@ export function MarketingProofStrip() {
             className="h-8 w-8"
           />
           <p className="text-[12.5px] leading-[1.4] text-[#6E665A]">
-            Built by the SeldonFrame founder
+            Built by the Kynetic OS founder
           </p>
         </div>
       </div>

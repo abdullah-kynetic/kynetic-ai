@@ -297,7 +297,7 @@ function SingleFlatCard() {
             </span>
 
             <h3 id="pricing-plan-name" className="text-[17px] font-[600] text-[var(--lp-ink)]">
-              SeldonFrame
+              Kynetic OS
             </h3>
             <p className="mt-1.5 text-[13.5px] leading-[1.5] text-[var(--lp-muted)]">
               Everything you need to build and run a front office for a business you own

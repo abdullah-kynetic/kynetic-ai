@@ -9,7 +9,7 @@ import { MarketplaceStyles } from "@/components/marketplace/marketplace-styles";
 import { MKT } from "@/components/marketplace/marketplace-data";
 
 export const metadata: Metadata = {
-  title: "Charts — live, interactive data on AI front offices for local business — SeldonFrame",
+  title: "Charts — live, interactive data on AI front offices for local business — Kynetic OS",
   description:
     "Interactive, re-verified data pages on CRM pricing, AI front-office trends, missed-revenue decay and which software AI engines actually recommend.",
   alternates: { canonical: "/charts" },
@@ -53,7 +53,7 @@ export default function ChartsHubPage(): ReactElement {
           Interactive data on AI front offices for local business
         </h1>
         <p style={{ margin: "14px 0 0", fontSize: 17, lineHeight: 1.55, color: "rgba(34,29,23,0.7)", maxWidth: 660 }}>
-          Real data, re-verified on a schedule, presented honestly — including where SeldonFrame doesn't win. Pick a
+          Real data, re-verified on a schedule, presented honestly — including where Kynetic OS doesn't win. Pick a
           chart below.
         </p>
 

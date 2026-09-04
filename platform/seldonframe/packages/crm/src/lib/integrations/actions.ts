@@ -114,7 +114,7 @@ export async function getIntegrationSettings(): Promise<IntegrationViewModel | n
       connected: Boolean(integrations.resend?.connected),
       apiKeyHint: resendKey ? "••••••••" : "",
       fromEmail: integrations.resend?.fromEmail ?? "",
-      fromName: integrations.resend?.fromName ?? "SeldonFrame",
+      fromName: integrations.resend?.fromName ?? "Kynetic OS",
     },
     newsletter: {
       provider: activeProvider,
@@ -280,7 +280,7 @@ export async function disconnectIntegration(orgId: string, service: string) {
     integrations.resend = {
       apiKey: "",
       fromEmail: "",
-      fromName: integrations.resend?.fromName || "SeldonFrame",
+      fromName: integrations.resend?.fromName || "Kynetic OS",
       connected: false,
     };
   }
@@ -561,7 +561,7 @@ export async function testResendConnectionAction(formData: FormData) {
   const rawApiKey = String(formData.get("apiKey") ?? "").trim();
   const apiKey = rawApiKey || tryDecrypt(integrations.resend?.apiKey);
   const fromEmail = String(formData.get("fromEmail") ?? integrations.resend?.fromEmail ?? "").trim();
-  const fromName = String(formData.get("fromName") ?? integrations.resend?.fromName ?? "SeldonFrame").trim();
+  const fromName = String(formData.get("fromName") ?? integrations.resend?.fromName ?? "Kynetic OS").trim();
 
   if (!apiKey) {
     redirect("/settings/integrations?resendTest=0");

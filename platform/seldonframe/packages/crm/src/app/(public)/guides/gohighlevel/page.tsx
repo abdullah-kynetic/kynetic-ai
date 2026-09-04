@@ -14,10 +14,10 @@ import {
   resolvedGohighlevelGroups,
 } from "@/lib/seo/gohighlevel-discovery";
 
-const BASE_URL = "https://www.seldonframe.com";
+const BASE_URL = "https://www.kyneticai.com";
 
 export const metadata: Metadata = {
-  title: `${GOHIGHLEVEL_COLLECTION_TITLE} — SeldonFrame`,
+  title: `${GOHIGHLEVEL_COLLECTION_TITLE} — Kynetic OS`,
   description: GOHIGHLEVEL_COLLECTION_DESCRIPTION,
   alternates: {
     canonical: GOHIGHLEVEL_COLLECTION_PATH,
@@ -152,9 +152,9 @@ export default function GohighlevelGuidesPage(): ReactElement {
             background: "rgba(255,255,255,0.48)",
           }}
         >
-          <strong style={{ display: "block", fontSize: 15 }}>Where SeldonFrame fits — and where it does not</strong>
+          <strong style={{ display: "block", fontSize: 15 }}>Where Kynetic OS fits — and where it does not</strong>
           <p style={{ margin: "7px 0 0", fontSize: 14.5, lineHeight: 1.65, color: "rgba(34,29,23,0.72)" }}>
-            SeldonFrame is designed for agencies that want a focused AI front office for local-service clients, clearer workspace ownership, and a simpler operating model. It is not a drop-in replacement for every HighLevel funnel, campaign, snapshot, or ecosystem workflow. These guides make that boundary explicit.
+            Kynetic OS is designed for agencies that want a focused AI front office for local-service clients, clearer workspace ownership, and a simpler operating model. It is not a drop-in replacement for every HighLevel funnel, campaign, snapshot, or ecosystem workflow. These guides make that boundary explicit.
           </p>
         </aside>
 
@@ -208,7 +208,7 @@ export default function GohighlevelGuidesPage(): ReactElement {
           </p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
             <Link href="/alternative-to-gohighlevel" className="sf-link" style={{ padding: "11px 18px", borderRadius: 10, background: MKT.paper, color: MKT.green, fontWeight: 750, textDecoration: "none" }}>
-              Compare SeldonFrame and GoHighLevel
+              Compare Kynetic OS and GoHighLevel
             </Link>
             <Link href="/tools/gohighlevel-cost-calculator" className="sf-link" style={{ padding: "10px 18px", borderRadius: 10, border: "1px solid rgba(246,242,234,0.28)", color: MKT.paper, fontWeight: 750, textDecoration: "none" }}>
               Calculate GoHighLevel cost

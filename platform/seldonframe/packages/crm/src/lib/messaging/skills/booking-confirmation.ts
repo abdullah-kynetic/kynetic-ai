@@ -18,7 +18,7 @@ A customer just booked an appointment with {{businessName}}. They expect an emai
 - Sign off as {{businessName}}. Include the business phone number if it's set so the customer can reach a real person.
 
 ## Forbidden content
-- Never mention "Seldon", "SeldonFrame", or any platform branding.
+- Never mention "Seldon", "SeldonFrame", "Kynetic OS", or any platform branding.
 - Never invent a price not present in the booking metadata.
 - Never include a discount code or promo offer unless one is provided in the booking metadata.
 - Don't ask the customer to reply to confirm — the booking is already confirmed.

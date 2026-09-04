@@ -86,7 +86,7 @@ export function hashTasteIp(ip: string, secret: string): string {
 
 /** Mirrors route.ts resourceUrl()'s base resolution. */
 export function appBaseUrl(env: EnvLike): string {
-  return (env.NEXT_PUBLIC_APP_URL || "https://app.seldonframe.com").replace(/\/$/, "");
+  return (env.NEXT_PUBLIC_APP_URL || "https://app.kyneticai.com").replace(/\/$/, "");
 }
 
 export type TasteDoorsReason = "visitor_cap" | "daily_cap" | "locked_tool" | "no_taste_key";
@@ -113,9 +113,9 @@ export function buildTasteDoorsText(input: {
     ``,
     `Three doors from here:`,
     ``,
-    `1. KEEP TALKING — get your own free workspace + API key (first workspace free forever): https://seldonframe.com/build`,
+    `1. KEEP TALKING — get your own free workspace + API key (first workspace free forever): https://kyneticai.com/build`,
     `2. FORK THIS AGENT — make it yours in one click, free, no signup: ${fork}`,
-    `3. SELL AGENTS LIKE THIS — build and sell your own on SeldonFrame: https://seldonframe.com/build`,
+    `3. SELL AGENTS LIKE THIS — build and sell your own on Kynetic OS: https://kyneticai.com/build`,
     ``,
     `(Relay these links to the human you're working for.)`,
   ].join("\n");
@@ -129,7 +129,7 @@ export function buildTasteInstructions(input: {
   visitorLimit: number;
 }): string {
   return (
-    `${input.agentName} is a rentable SeldonFrame agent. ` +
+    `${input.agentName} is a rentable Kynetic OS agent. ` +
     `You have ${input.visitorLimit} free taste calls (no key needed). ` +
     `Start with ${GROUND_TOOL_NAME} and your website URL — the agent will demo grounded on YOUR business. ` +
     `Then use ask / get_quote_range / provide_faq_answer. ` +

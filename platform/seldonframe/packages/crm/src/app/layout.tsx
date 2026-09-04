@@ -45,8 +45,8 @@ const newsreader = Newsreader({
 // README). The legacy /logo.svg path is kept on disk for now (not
 // removed in this commit) but no longer referenced from layout meta.
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.seldonframe.com"),
-  title: "SeldonFrame — Sell AI front offices. Deploy them in minutes.",
+  metadataBase: new URL("https://www.kyneticai.com"),
+  title: "Kynetic OS — Sell AI front offices. Deploy them in minutes.",
   description:
     "The agent-native, open-source alternative to GoHighLevel for agencies selling AI front offices to local businesses. Deploy branded client workspaces, booking, CRM, intake, and agents from one repeatable delivery loop.",
   manifest: "/brand/manifest.webmanifest",
@@ -60,14 +60,14 @@ export const metadata: Metadata = {
     apple: [{ url: "/brand/favicon-180.png", sizes: "180x180" }],
   },
   openGraph: {
-    title: "SeldonFrame — Sell AI front offices. Deploy them in minutes.",
+    title: "Kynetic OS — Sell AI front offices. Deploy them in minutes.",
     description:
       "The agent-native, open-source alternative to GoHighLevel for agencies selling AI front offices to local businesses.",
     images: [{ url: "/brand/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "SeldonFrame — Sell AI front offices. Deploy them in minutes.",
+    title: "Kynetic OS — Sell AI front offices. Deploy them in minutes.",
     description:
       "Deploy branded client workspaces, booking, CRM, intake, and agents from one repeatable agency delivery loop.",
     images: ["/brand/twitter-card.png"],

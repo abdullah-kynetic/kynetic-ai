@@ -113,7 +113,7 @@ function agentRequiresNumber(view: BuyerAgentView): boolean {
 export function buildOpenAiVoiceSeed(
   orgId: string,
   orgVoice: { projectId: string } | null,
-  appUrl: string = process.env.NEXT_PUBLIC_APP_URL ?? "https://app.seldonframe.com",
+  appUrl: string = process.env.NEXT_PUBLIC_APP_URL ?? "https://app.kyneticai.com",
 ): OpenAiVoiceSeedView {
   return {
     connected: orgVoice !== null,

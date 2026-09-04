@@ -317,7 +317,7 @@ function ProductionNote(): ReactElement {
       <strong>This is a strong starting template, not a finished agent.</strong> A real phone
       agent also needs grounding in your actual services and prices, enforced read-back
       confirmation, and guardrails so it never invents an answer or over-promises. That layer is
-      exactly what SeldonFrame adds on top of a script like this.
+      exactly what Kynetic OS adds on top of a script like this.
     </div>
   );
 }
@@ -503,7 +503,7 @@ export function AiReceptionistScriptGenerator(): ReactElement {
           Deploy this agent free
         </a>
         <a
-          href="https://app.seldonframe.com/book/seldonframes-workspace-7798/default"
+          href="https://app.kyneticai.com/book/seldonframes-workspace-7798/default"
           style={{ border: `1.5px solid ${INK10}`, color: INK, background: "rgba(255,255,255,0.6)", padding: "12px 24px", borderRadius: 12, fontWeight: 700, fontSize: 15.5, textDecoration: "none" }}
         >
           Book a demo call

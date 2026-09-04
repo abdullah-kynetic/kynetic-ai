@@ -12,7 +12,7 @@ const stripe = new Stripe(stripeSecretKey, {
 
 async function seed() {
   const product = await stripe.products.create({
-    name: "SeldonFrame",
+    name: "Kynetic OS",
     description: "The operating system for your business",
   });
 

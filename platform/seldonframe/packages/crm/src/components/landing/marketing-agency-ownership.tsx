@@ -48,7 +48,7 @@ export function MarketingAgencyOwnership() {
               </em>
             </h2>
             <p className="mt-4 max-w-[54ch] text-[15.5px] leading-[1.55] text-[rgba(34,29,23,.72)]">
-              SeldonFrame is open source (AGPL-3.0) — run it on our cloud or self-host it yourself.
+              Kynetic OS is open source (AGPL-3.0) — run it on our cloud or self-host it yourself.
               Every client site, agent, CRM record, and piece of content your agency builds exports
               any time: contacts and deals as JSON, agents as portable configs, sites as their own
               hosted pages. There&rsquo;s no claim step, no export request, no waiting on us. A public
@@ -96,7 +96,7 @@ export function MarketingAgencyOwnership() {
                     &nbsp;
                   </th>
                   <th scope="col" className="px-5 py-4 font-[600] text-[#221D17]">
-                    SeldonFrame Agency Starter
+                    Kynetic OS Agency Starter
                   </th>
                   <th scope="col" className="px-5 py-4 font-[600] text-[#221D17]">
                     GoHighLevel

@@ -244,7 +244,7 @@ export function WebsiteGrader({ ungatedBuildEnabled }: { ungatedBuildEnabled: bo
               {state.result.score < 80 ? "Scored under 80?" : "Solid score — want it built even better?"}
             </h2>
             <p style={{ margin: "0 0 18px", fontSize: 14.5, lineHeight: 1.6, color: "rgba(34,29,23,0.72)", maxWidth: 620 }}>
-              SeldonFrame builds you a site that passes all 10 checks — click-to-call, online booking, a lead form,
+              Kynetic OS builds you a site that passes all 10 checks — click-to-call, online booking, a lead form,
               schema markup, and a fast mobile-first layout — in about 3 minutes.
             </p>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>

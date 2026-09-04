@@ -30,7 +30,7 @@
 // themselves. Most customers don't know the URL — invite drop-off
 // was high and unattributable. Magic-link is one click in their inbox.
 
-const DEFAULT_FROM = "SeldonFrame <welcome@seldonframe.com>";
+const DEFAULT_FROM = "Kynetic OS <welcome@send.kyneticai.com>";
 const SANDBOX_FROM_PATTERN = /@resend\.dev>?$/i;
 
 export interface PortalInviteMagicLinkEmailRequest {
@@ -72,7 +72,7 @@ export function pickFromAddress(
   if (configured && SANDBOX_FROM_PATTERN.test(configured)) {
     return DEFAULT_FROM;
   }
-  if (configured && !/seldonframe\.com>?$/i.test(configured)) {
+  if (configured && !/kyneticai\.com>?$/i.test(configured)) {
     return DEFAULT_FROM;
   }
   return configured || DEFAULT_FROM;
@@ -137,10 +137,10 @@ function renderFooter(req: PortalInviteMagicLinkEmailRequest): string {
     const safeBrand = escapeHtml(req.brandName);
     const supportUrl = req.supportUrl
       ? escapeHtml(req.supportUrl)
-      : "https://seldonframe.com";
+      : "https://kyneticai.com";
     return `<p style="margin:16px 0 0;color:#999;font-size:12px;">${safeWorkspace} on ${safeBrand} &middot; <a href="${supportUrl}" style="color:#666;">${escapeHtml(req.supportUrl ?? "")}</a></p>`;
   }
-  return `<p style="margin:16px 0 0;color:#999;font-size:12px;">${safeWorkspace} on SeldonFrame &middot; <a href="https://seldonframe.com" style="color:#666;">seldonframe.com</a></p>`;
+  return `<p style="margin:16px 0 0;color:#999;font-size:12px;">${safeWorkspace} on Kynetic OS &middot; <a href="https://kyneticai.com" style="color:#666;">kyneticai.com</a></p>`;
 }
 
 export function renderPortalInviteMagicLinkEmailText(
@@ -148,7 +148,7 @@ export function renderPortalInviteMagicLinkEmailText(
 ): string {
   const platformLine = req.brandName
     ? `— ${req.workspaceName} on ${req.brandName}`
-    : `— ${req.workspaceName} on SeldonFrame`;
+    : `— ${req.workspaceName} on Kynetic OS`;
   const greeting = req.firstName ? `Hi ${req.firstName},` : "Hi there,";
   return [
     `You're invited to ${req.workspaceName}'s client portal`,

@@ -70,7 +70,7 @@ export function brandingToManifestOptions(input: {
   const scope = `/portal/${input.orgSlug}/`;
   const name = input.branding.is_white_label
     ? input.branding.brand_name
-    : "SeldonFrame";
+    : "Kynetic OS";
   const themeColor =
     input.branding.is_white_label && input.branding.primary_color
       ? input.branding.primary_color

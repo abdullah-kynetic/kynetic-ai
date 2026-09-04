@@ -149,7 +149,7 @@ export function PricingIndexChart(): ReactElement {
       </div>
 
       <p style={{ margin: "0 0 14px", fontSize: 13, lineHeight: 1.55, color: INK50, maxWidth: 620 }}>
-        SeldonFrame's shaded band (<strong style={{ color: GREEN }}>${sfLow}–${sfHigh}/mo</strong>) always shows the
+        Kynetic OS's shaded band (<strong style={{ color: GREEN }}>${sfLow}–${sfHigh}/mo</strong>) always shows the
         tier closest to what each visible vendor implies — a solo tool compares against Builder ($29), an agency
         reseller compares against the Agency ladder ($99–$299). We never chart our cheapest tier against a vendor's
         most expensive.
@@ -180,7 +180,7 @@ export function PricingIndexChart(): ReactElement {
           <line x1={PAD_L} x2={CHART_W - PAD_R} y1={yToPx(sfLow)} y2={yToPx(sfLow)} stroke={GREEN} strokeDasharray="4 3" strokeWidth={1.5} opacity={0.6} />
           <line x1={PAD_L} x2={CHART_W - PAD_R} y1={yToPx(sfHigh)} y2={yToPx(sfHigh)} stroke={GREEN} strokeDasharray="4 3" strokeWidth={1.5} opacity={0.6} />
           <text x={CHART_W - PAD_R} y={yToPx(sfHigh) - 6} textAnchor="end" fontSize={11} fontWeight={700} fill={GREEN}>
-            SeldonFrame ${sfLow}–${sfHigh}/mo
+            Kynetic OS ${sfLow}–${sfHigh}/mo
           </text>
 
           {/* vendor points */}

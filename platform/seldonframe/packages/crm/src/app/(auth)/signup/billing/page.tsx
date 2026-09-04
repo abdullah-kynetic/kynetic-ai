@@ -151,7 +151,7 @@ export default async function SignupBillingPage({
           <Link href="/terms" className="underline-offset-4 hover:underline">
             Terms of Service
           </Link>
-          <span className="ml-auto">&copy; 2026 SeldonFrame</span>
+          <span className="ml-auto">&copy; 2026 Kynetic AI</span>
         </div>
       </footer>
     </div>

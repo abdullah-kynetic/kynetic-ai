@@ -10,7 +10,7 @@ import { GOHIGHLEVEL_COLLECTION_PATH } from "@/lib/seo/gohighlevel-discovery";
 import { populatedClusters } from "@/lib/seo/guides";
 
 export const metadata: Metadata = {
-  title: "Guides for local service businesses — SeldonFrame",
+  title: "Guides for local service businesses — Kynetic OS",
   description: "Practical, honestly-sourced guides on lead response, no-shows, AI receptionists, online booking and getting your business found by AI — each paired with a free tool.",
   alternates: { canonical: "/guides" },
 };

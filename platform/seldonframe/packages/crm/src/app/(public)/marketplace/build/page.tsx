@@ -23,20 +23,20 @@ import { MarketplaceIcon, type MarketplaceIconName } from "@/components/marketpl
 import { MKT } from "@/components/marketplace/marketplace-data";
 
 export const metadata: Metadata = {
-  title: "Build & sell agents on SeldonFrame — keep 95%, we never clone you",
+  title: "Build & sell agents on Kynetic OS — keep 95%, we never clone you",
   description:
-    "Build an AI agent in Studio, list it on the marketplace, and keep 95% of every sale or rental. SeldonFrame builds only the generic, commodity agents — we will not build vertical-specialized agents that compete with you. The niche is yours.",
+    "Build an AI agent in Studio, list it on the marketplace, and keep 95% of every sale or rental. Kynetic OS builds only the generic, commodity agents — we will not build vertical-specialized agents that compete with you. The niche is yours.",
   alternates: { canonical: "/marketplace/build" },
   openGraph: {
-    title: "Build & sell agents on SeldonFrame — the niche is yours",
+    title: "Build & sell agents on Kynetic OS — the niche is yours",
     description:
-      "Keep 95%. Set your own price. We never clone you. SeldonFrame stays in the commodity head; the vertical long tail is your domain.",
+      "Keep 95%. Set your own price. We never clone you. Kynetic OS stays in the commodity head; the vertical long tail is your domain.",
     url: "/marketplace/build",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Build & sell agents on SeldonFrame — keep 95%",
+    title: "Build & sell agents on Kynetic OS — keep 95%",
     description:
       "We build the generic agents as a free-tier floor and will not compete with you on niche, vertical agents. You keep 95%; we never clone you.",
   },
@@ -103,16 +103,16 @@ export default function MarketplaceBuildPage(): ReactElement {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: "Build & sell agents on SeldonFrame",
+    name: "Build & sell agents on Kynetic OS",
     description:
-      "Build an AI agent in Studio, list it on the SeldonFrame marketplace, and keep 95% of every sale or rental. SeldonFrame builds only generic, commodity agents and will not build vertical-specialized agents that compete with builders.",
-    url: "https://app.seldonframe.com/marketplace/build",
+      "Build an AI agent in Studio, list it on the Kynetic OS marketplace, and keep 95% of every sale or rental. Kynetic OS builds only generic, commodity agents and will not build vertical-specialized agents that compete with builders.",
+    url: "https://app.kyneticai.com/marketplace/build",
     mainEntity: {
       "@type": "Offer",
-      name: "SeldonFrame builder revenue share",
+      name: "Kynetic OS builder revenue share",
       description:
-        "Builders keep 95% of every agent sale or rental. SeldonFrame charges a 5% fee only when an agent sells or is rented — no listing fee.",
-      seller: { "@type": "Organization", name: "SeldonFrame" },
+        "Builders keep 95% of every agent sale or rental. Kynetic OS charges a 5% fee only when an agent sells or is rented — no listing fee.",
+      seller: { "@type": "Organization", name: "Kynetic OS" },
       priceSpecification: {
         "@type": "PriceSpecification",
         description: "5% marketplace fee, charged only on a completed sale or rental. Builder keeps 95%.",
@@ -168,7 +168,7 @@ export default function MarketplaceBuildPage(): ReactElement {
           </div>
           <h1 className="sf-build-h1" style={{ margin: 0, fontSize: 46, fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.04 }}>
             Build & sell agents on{" "}
-            <span style={{ fontFamily: MKT.fontSerif, fontStyle: "italic", fontWeight: 500 }}>SeldonFrame</span>.
+            <span style={{ fontFamily: MKT.fontSerif, fontStyle: "italic", fontWeight: 500 }}>Kynetic OS</span>.
           </h1>
           <p style={{ margin: "18px 0 0", fontSize: 19, lineHeight: 1.5, color: "rgba(34,29,23,0.66)" }}>
             Build an agent in Studio, list it on the marketplace, and keep 95% of every sale. We build the generic
@@ -244,7 +244,7 @@ export default function MarketplaceBuildPage(): ReactElement {
             Our commitment to builders
           </div>
           <p style={{ margin: 0, fontSize: 21, lineHeight: 1.5, fontWeight: 500, maxWidth: 760 }}>
-            SeldonFrame builds the generic, commodity agents — the AI receptionist, the review-requester, the booking
+            Kynetic OS builds the generic, commodity agents — the AI receptionist, the review-requester, the booking
             concierge — and offers them as a{" "}
             <span style={{ fontFamily: MKT.fontSerif, fontStyle: "italic" }}>free-tier floor</span> so every business
             starts with a working default.

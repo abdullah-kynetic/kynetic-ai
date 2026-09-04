@@ -62,7 +62,7 @@ import { resolveDesignModuleProps } from "@/components/clients/design-picker/res
 export const dynamic = "force-dynamic";
 
 const WORKSPACE_BASE_DOMAIN =
-  process.env.WORKSPACE_BASE_DOMAIN?.trim() || "app.seldonframe.com";
+  process.env.WORKSPACE_BASE_DOMAIN?.trim() || "app.kyneticai.com";
 
 type ReadyPageProps = {
   params: Promise<{ slug: string }>;
@@ -318,7 +318,7 @@ export default async function WorkspaceReadyPage({ params, searchParams }: Ready
       label: "Customer portal",
       title: "What your client's customers see",
       description:
-        "Branded login + portal where the SMB's end-customers (homeowner, patient, client) track their appointments, messages, and documents — no SeldonFrame branding shown.",
+        "Branded login + portal where the SMB's end-customers (homeowner, patient, client) track their appointments, messages, and documents — no Kynetic OS branding shown.",
       publicHref: publicCustomerPortalUrl,
       publicLabel: "View customer portal →",
       adminHref: sw("/contacts"),

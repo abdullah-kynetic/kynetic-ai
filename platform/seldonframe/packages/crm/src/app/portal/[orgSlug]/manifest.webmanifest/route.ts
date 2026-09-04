@@ -45,7 +45,7 @@ export async function GET(
     ? await getEffectiveBrandingForWorkspace(org.id)
     : {
         is_white_label: false,
-        brand_name: "SeldonFrame",
+        brand_name: "Kynetic OS",
         logo_url: null,
         primary_color: null,
         accent_color: null,

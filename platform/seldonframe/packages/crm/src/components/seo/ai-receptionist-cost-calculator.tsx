@@ -79,7 +79,7 @@ export function AiReceptionistCostCalculator(): ReactElement {
     { label: "Human receptionist", value: humanCost, tone: RED },
     { label: "Answering service", value: answeringServiceCost, tone: AMBER },
     { label: "Per-minute AI service", value: aiPerMinuteCost, tone: AMBER },
-    { label: "SeldonFrame (flat)", value: SELDONFRAME_FLAT, tone: GREEN },
+    { label: "Kynetic OS (flat)", value: SELDONFRAME_FLAT, tone: GREEN },
   ];
   const maxValue = Math.max(...bars.map((b) => b.value), 1);
   const cheapest = bars.reduce((a, b) => (b.value < a.value ? b : a), bars[0]);
@@ -108,9 +108,9 @@ export function AiReceptionistCostCalculator(): ReactElement {
         rows: [
           { label: "Human receptionist", value: `${money(humanCost)}/mo` },
           { label: "Answering service", value: `${money(answeringServiceCost)}/mo` },
-          { label: "SeldonFrame", value: `${money(SELDONFRAME_FLAT)}/mo flat` },
+          { label: "Kynetic OS", value: `${money(SELDONFRAME_FLAT)}/mo flat` },
         ],
-        footer: "built free at seldonframe.com/tools",
+        footer: "built free at kyneticai.com/tools",
       });
     }, 150);
     return () => {
@@ -264,7 +264,7 @@ export function AiReceptionistCostCalculator(): ReactElement {
           160 hours (one full-time month).
         </p>
         <p style={{ margin: 0 }}>
-          <strong>SeldonFrame</strong>: {BUILDER_PRICING_CLAIM} {AGENCY_PRICING_CLAIM} You connect your own Twilio and AI
+          <strong>Kynetic OS</strong>: {BUILDER_PRICING_CLAIM} {AGENCY_PRICING_CLAIM} You connect your own Twilio and AI
           provider keys at raw provider cost, typically a few cents per minute, instead of paying a per-call or per-minute
           markup.
         </p>

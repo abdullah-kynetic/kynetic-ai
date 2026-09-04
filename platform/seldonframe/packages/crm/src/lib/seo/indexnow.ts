@@ -8,7 +8,7 @@
 
 const INDEXNOW_KEY = "a2b72d9f355e42a0ba8bb2f0574344cb";
 const INDEXNOW_ENDPOINT = "https://api.indexnow.org/IndexNow";
-const HOST = "www.seldonframe.com";
+const HOST = "www.kyneticai.com";
 /** Protocol cap is 10,000 URLs per request; stay comfortably under it. */
 const CHUNK_SIZE = 5000;
 

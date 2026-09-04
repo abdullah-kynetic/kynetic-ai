@@ -264,9 +264,9 @@ export function HubspotPricingCalculator(): ReactElement {
         rows: [
           { label: "Monthly platform cost", value: `${money(result.monthlyCost)}/mo` },
           { label: "One-time onboarding", value: money(result.onboardingFee) },
-          { label: "SeldonFrame", value: `${money(SELDONFRAME_MONTHLY)}/mo flat` },
+          { label: "Kynetic OS", value: `${money(SELDONFRAME_MONTHLY)}/mo flat` },
         ],
-        footer: "built free at seldonframe.com/tools",
+        footer: "built free at kyneticai.com/tools",
       });
     }, 150);
     return () => {
@@ -389,7 +389,7 @@ export function HubspotPricingCalculator(): ReactElement {
           calculator.
         </p>
         <p style={{ margin: 0 }}>
-          <strong>SeldonFrame:</strong> {BUILDER_PRICING_CLAIM} {AGENCY_PRICING_CLAIM} The Builder platform price is
+          <strong>Kynetic OS:</strong> {BUILDER_PRICING_CLAIM} {AGENCY_PRICING_CLAIM} The Builder platform price is
           {" "}{money(SELDONFRAME_YEARLY)}/yr. Different product scope (Seldon is a full front office — site, booking,
           CRM, AI agent — not a marketing-automation suite), so this isn't a feature-for-feature swap, but it's what a
           comparable flat-rate alternative costs.
@@ -398,7 +398,7 @@ export function HubspotPricingCalculator(): ReactElement {
 
       {yearlyVsSf > 0 && (
         <p style={{ margin: "16px 0 0", fontSize: 14.5, fontWeight: 700, color: AMBER }}>
-          That's ~{money(yearlyVsSf)}/yr more than SeldonFrame's flat {money(SELDONFRAME_YEARLY)}/yr.
+          That's ~{money(yearlyVsSf)}/yr more than Kynetic OS's flat {money(SELDONFRAME_YEARLY)}/yr.
         </p>
       )}
 

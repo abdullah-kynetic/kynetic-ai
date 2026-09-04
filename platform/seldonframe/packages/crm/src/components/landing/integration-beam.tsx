@@ -59,7 +59,7 @@ export function IntegrationBeam() {
       ref={containerRef}
       className="relative flex min-h-[220px] w-full items-center justify-between overflow-hidden rounded-[10px] border border-[rgba(34,29,23,.08)] bg-[#F6F2EA] px-6 py-8"
     >
-      {/* Center: SeldonFrame node (the source of truth) */}
+      {/* Center: Kynetic OS node (the source of truth) */}
       <div className="relative z-10 flex flex-col items-center gap-1.5">
         <div
           ref={centerRef}
@@ -69,7 +69,7 @@ export function IntegrationBeam() {
           {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset */}
           <img src="/brand/seldonframe-icon-white.svg" alt="" width={24} height={24} className="block" />
         </div>
-        <span className="text-[11px] font-[600] text-[#221D17]">SeldonFrame</span>
+        <span className="text-[11px] font-[600] text-[#221D17]">Kynetic OS</span>
       </div>
 
       {/* Outward: real integration targets, arranged in a column so each beam

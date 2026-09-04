@@ -54,7 +54,7 @@ const FAQ = [
     a: "Yes. If tool cost plus labor cost per client exceeds the retainer, every client you add makes you poorer, not richer. This calculator flags that case explicitly and shows the margin percentage instead of a (negative) profit number.",
   },
   {
-    q: "How does SeldonFrame change the math?",
+    q: "How does Kynetic OS change the math?",
     a: `${AGENCY_PRICING_CLAIM} ${BUILDER_PRICING_CLAIM} Agency platform cost is the relevant resale input; Builder is for one business you operate, not a client roster. BYOK usage is raw (you pay your AI and telephony provider directly, at cost), so model your per-client margin against the Agency tier rather than amortizing Builder across clients.`,
   },
 ];
@@ -129,7 +129,7 @@ export default function AgencyMarginCalculatorPage(): ReactElement {
             </Link>{" "}
             and{" "}
             <Link href="/compare/seldonframe-vs-gohighlevel" className="sf-link" style={{ color: MKT.green, fontWeight: 700 }}>
-              SeldonFrame vs GoHighLevel
+              Kynetic OS vs GoHighLevel
             </Link>
             .
           </p>

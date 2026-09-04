@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: RouteParams): Promise<Metadat
   try {
     job = getJob(jobSlug);
   } catch {
-    return { title: "Agent not found — SeldonFrame" };
+    return { title: "Agent not found — Kynetic OS" };
   }
   const copy = composePageCopy(job);
   const canonical = `/ai-agents/${job.slug}`;

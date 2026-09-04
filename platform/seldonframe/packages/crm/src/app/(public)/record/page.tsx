@@ -36,17 +36,17 @@ function isTierLadderOn(env: { SF_TIER_LADDER?: string | undefined }): boolean {
 }
 
 export const metadata: Metadata = {
-  title: "Turn a screen recording into a working AI agent — SeldonFrame",
+  title: "Turn a screen recording into a working AI agent — Kynetic OS",
   description:
     "Screen-record yourself doing the job once. Seldon watches, asks about what it didn't understand, and compiles a working agent — free to try, no signup.",
   robots: { index: true, follow: true },
-  alternates: { canonical: "https://app.seldonframe.com/record" },
+  alternates: { canonical: "https://app.kyneticai.com/record" },
   openGraph: {
-    title: "Turn a screen recording into a working AI agent — SeldonFrame",
+    title: "Turn a screen recording into a working AI agent — Kynetic OS",
     description:
       "Show Seldon how you work. It builds the agent — compiled from your real workflow, testable before you switch it on.",
     type: "website",
-    url: "https://app.seldonframe.com/record",
+    url: "https://app.kyneticai.com/record",
     images: [{ url: "/brand/og-image.png", width: 1200, height: 630 }],
   },
 };

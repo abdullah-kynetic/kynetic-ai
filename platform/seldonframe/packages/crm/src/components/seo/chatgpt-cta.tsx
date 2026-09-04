@@ -62,7 +62,7 @@ export function ChatGptCtaCard({ dark }: ChatGptCtaProps): ReactElement {
           color: dark ? "rgba(246,242,234,0.7)" : "rgba(34,29,23,0.7)",
         }}
       >
-        SeldonFrame is in the ChatGPT plugin directory. Describe your business in a chat and get a live website,
+        Kynetic OS is in the ChatGPT plugin directory. Describe your business in a chat and get a live website,
         booking page, CRM, and AI chatbot — free, no signup.
       </p>
       <a

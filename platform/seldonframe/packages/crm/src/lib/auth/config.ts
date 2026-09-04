@@ -77,7 +77,7 @@ function renderSeldonFrameSignInEmail({
   const bg = "#f6f7f9";
   const muted = "#6b7280";
 
-  const subject = "Your SeldonFrame sign-in link";
+  const subject = "Your Kynetic OS sign-in link";
 
   const html = `<!doctype html>
 <html lang="en">
@@ -98,19 +98,19 @@ function renderSeldonFrameSignInEmail({
                    Inline SVG with explicit width + viewBox renders correctly across
                    Gmail web/mobile + Apple Mail + Outlook. The wordmark text is part
                    of the SVG, not an external font, so no font-loading issues. -->
-              <svg xmlns="http://www.w3.org/2000/svg" width="220" height="36" viewBox="0 0 240 40" style="display:inline-block;max-width:220px;height:36px;" role="img" aria-label="SeldonFrame">
+              <svg xmlns="http://www.w3.org/2000/svg" width="220" height="36" viewBox="0 0 240 40" style="display:inline-block;max-width:220px;height:36px;" role="img" aria-label="Kynetic OS">
                 <g fill="none">
                   <!-- Mark: square outline + dot, matching brand/seldonframe-wordmark.svg -->
                   <rect x="6" y="8" width="24" height="24" rx="3" stroke="${primary}" stroke-width="2" />
                   <circle cx="32" cy="8" r="3" fill="${primary}" />
                 </g>
-                <text x="44" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif" font-size="20" font-weight="600" fill="${ink}" letter-spacing="-0.5">SeldonFrame</text>
+                <text x="44" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif" font-size="20" font-weight="600" fill="${ink}" letter-spacing="-0.5">Kynetic OS</text>
               </svg>
             </td>
           </tr>
           <tr>
             <td style="padding:8px 32px 0 32px;text-align:center;">
-              <h1 style="margin:0;font-size:24px;line-height:1.3;font-weight:600;color:${ink};letter-spacing:-0.01em;">Sign in to SeldonFrame</h1>
+              <h1 style="margin:0;font-size:24px;line-height:1.3;font-weight:600;color:${ink};letter-spacing:-0.01em;">Sign in to Kynetic OS</h1>
               <p style="margin:12px 0 0 0;font-size:15px;line-height:1.5;color:${muted};">
                 Click the button below to sign in. This link is valid for 15 minutes and works once.
               </p>
@@ -119,7 +119,7 @@ function renderSeldonFrameSignInEmail({
           <tr>
             <td style="padding:28px 32px 8px 32px;text-align:center;">
               <a href="${url}" style="display:inline-block;background:${primary};color:#ffffff;text-decoration:none;font-weight:600;font-size:15px;padding:14px 32px;border-radius:10px;line-height:1;">
-                Sign in to SeldonFrame
+                Sign in to Kynetic OS
               </a>
             </td>
           </tr>
@@ -137,7 +137,7 @@ function renderSeldonFrameSignInEmail({
             <td style="padding:24px 32px 32px 32px;border-top:1px solid #f1f3f5;margin-top:24px;text-align:center;">
               <p style="margin:24px 0 0 0;font-size:12px;line-height:1.5;color:${muted};">
                 If you didn't request this email, you can safely ignore it.<br />
-                Questions? Reply to this email or visit <a href="${baseUrl.replace("app.", "")}" style="color:${primary};text-decoration:underline;">seldonframe.com</a>.
+                Questions? Reply to this email or visit <a href="${baseUrl.replace("app.", "")}" style="color:${primary};text-decoration:underline;">kyneticai.com</a>.
               </p>
               <p style="margin:16px 0 0 0;font-size:11px;color:${muted};">
                 The open-source Business OS your agency builds for clients in 60 seconds.
@@ -151,7 +151,7 @@ function renderSeldonFrameSignInEmail({
 </body>
 </html>`;
 
-  const text = `Sign in to SeldonFrame
+  const text = `Sign in to Kynetic OS
 
 Click this link to sign in (valid for 15 minutes, single use):
 
@@ -159,8 +159,8 @@ ${url}
 
 If you didn't request this email, you can safely ignore it.
 
-— The SeldonFrame team
-seldonframe.com`;
+— The Kynetic OS team
+kyneticai.com`;
 
   return { subject, html, text };
 }
@@ -177,7 +177,7 @@ if (resendApiKey) {
       // trust on the very first touchpoint.
       async sendVerificationRequest({ identifier, url, provider }) {
         const baseUrl = (
-          process.env.NEXTAUTH_URL?.trim() || "https://app.seldonframe.com"
+          process.env.NEXTAUTH_URL?.trim() || "https://app.kyneticai.com"
         ).replace(/\/+$/, "");
         const { subject, html, text } = renderSeldonFrameSignInEmail({ url, baseUrl });
 

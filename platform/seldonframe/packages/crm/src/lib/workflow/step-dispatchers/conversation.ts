@@ -279,7 +279,7 @@ ${extractFields}
 Until the criteria are met, respond CONVERSATIONALLY (one short ${step.channel.toUpperCase()}-friendly message, under 320 characters). Ask one specific follow-up question at a time. Do not emit the <exit> block until you have ALL required fields and the criteria are clearly met.
 ${toolsHint}${forbiddenBlock}
 Critical:
-- Never mention "Seldon" or "SeldonFrame".
+- Never mention "Seldon", "SeldonFrame", or "Kynetic OS".
 - Sound like a real person from the business — friendly, concise, no corporate-speak.
 - Use the customer's first name (${runtimeVars["contact.firstName"] || "the contact"}) when you know it. Refer to the business as "${runtimeVars.businessName || "us"}".
 - Never emit literal {{placeholder}} tokens in your reply — always say the actual name / business / phone.

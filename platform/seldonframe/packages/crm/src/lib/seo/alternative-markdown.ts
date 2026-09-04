@@ -17,7 +17,7 @@ import {
 import { getExtras, SF_PROS, SF_CONS, SWITCH_STEPS, DEMO_HREF, type VsPair } from "@/lib/seo/alternative-pages-extras";
 import { emphasizeMd } from "@/lib/seo/emphasize";
 
-const BASE = "https://www.seldonframe.com";
+const BASE = "https://www.kyneticai.com";
 
 export function renderAlternativeMarkdown(c: Competitor): string {
   const x = getExtras(c.slug);
@@ -30,16 +30,16 @@ export function renderAlternativeMarkdown(c: Competitor): string {
   L.push("");
   L.push(`Last updated: ${LAST_UPDATED}. HTML version: ${BASE}/alternative-to-${c.slug}`);
   L.push("");
-  L.push(`Reviewed by Maxime Houle, Founder, SeldonFrame — facts checked ${LAST_UPDATED}.`);
+  L.push(`Reviewed by Maxime Houle, Founder, Kynetic OS — facts checked ${LAST_UPDATED}.`);
   L.push("");
   L.push(`## The short version`);
   L.push("");
   L.push(`- **${c.name} pricing:** ${emphasizeMd(c.them.pricingModel)}`);
-  L.push(`- **SeldonFrame pricing:** ${emphasizeMd(sfPriceAnchor(c.audience))}`);
+  L.push(`- **Kynetic OS pricing:** ${emphasizeMd(sfPriceAnchor(c.audience))}`);
   L.push(`- **Pick ${c.name} if:** ${emphasizeMd(x.chooseThem[0])}`);
-  L.push(`- **Pick SeldonFrame if:** ${emphasizeMd(x.chooseSf[0])}`);
+  L.push(`- **Pick Kynetic OS if:** ${emphasizeMd(x.chooseSf[0])}`);
   L.push("");
-  L.push(`## ${c.name} vs SeldonFrame: what you need to know`);
+  L.push(`## ${c.name} vs Kynetic OS: what you need to know`);
   L.push("");
   for (const p of c.intro) {
     L.push(p);
@@ -47,7 +47,7 @@ export function renderAlternativeMarkdown(c: Competitor): string {
   }
   L.push(`## Features & pricing comparison`);
   L.push("");
-  L.push(`| Feature | ${c.name} | SeldonFrame |`);
+  L.push(`| Feature | ${c.name} | Kynetic OS |`);
   L.push("|---|---|---|");
   for (const row of COMPARISON_LABELS) {
     L.push(`| ${row.label} | ${emphasizeMd(c.them[row.key])} | ${emphasizeMd(SF_COLUMN[row.key])} |`);
@@ -62,7 +62,7 @@ export function renderAlternativeMarkdown(c: Competitor): string {
   for (const p of x.pros) L.push(`- **Pro:** ${p}`);
   for (const p of x.cons) L.push(`- **Con:** ${p}`);
   L.push("");
-  L.push(`### SeldonFrame`);
+  L.push(`### Kynetic OS`);
   L.push("");
   for (const p of SF_PROS) L.push(`- **Pro:** ${p}`);
   for (const p of SF_CONS) L.push(`- **Con:** ${p}`);
@@ -71,17 +71,17 @@ export function renderAlternativeMarkdown(c: Competitor): string {
   L.push("");
   for (const r of c.switchReasons) L.push(`- **${r.title}** — ${r.body}`);
   L.push("");
-  L.push(`## Who should use ${c.name} vs SeldonFrame`);
+  L.push(`## Who should use ${c.name} vs Kynetic OS`);
   L.push("");
   L.push(`Choose ${c.name} if:`);
   x.chooseThem.forEach((item, i) => L.push(`${i + 1}. ${item}`));
   L.push("");
-  L.push(`Choose SeldonFrame if:`);
+  L.push(`Choose Kynetic OS if:`);
   x.chooseSf.forEach((item, i) => L.push(`${i + 1}. ${item}`));
   L.push("");
   L.push(`To be fair: ${c.whenTheyWin}`);
   L.push("");
-  L.push(`## How to switch from ${c.name} to SeldonFrame`);
+  L.push(`## How to switch from ${c.name} to Kynetic OS`);
   L.push("");
   SWITCH_STEPS.forEach((step, i) => {
     L.push(`${i + 1}. **${step.title}** — ${i === 1 ? x.switchNote : step.body}`);
@@ -113,14 +113,14 @@ export function renderVsMarkdown(pair: VsPair, a: Competitor, b: Competitor): st
   L.push("");
   L.push(`HTML version: ${BASE}/compare/${pair.a}-vs-${pair.b}`);
   L.push("");
-  L.push(`Reviewed by Maxime Houle, Founder, SeldonFrame — facts checked ${LAST_UPDATED}.`);
+  L.push(`Reviewed by Maxime Houle, Founder, Kynetic OS — facts checked ${LAST_UPDATED}.`);
   L.push("");
   L.push(`## The short version`);
   L.push("");
   L.push(`- **${a.name} pricing:** ${emphasizeMd(a.them.pricingModel)}`);
   L.push(`- **${b.name} pricing:** ${emphasizeMd(b.them.pricingModel)}`);
   L.push(`- **The real trade-off:** ${emphasizeMd(pair.angle)}`);
-  L.push(`- **The third option:** ${emphasizeMd(`SeldonFrame ships the whole front office — ${sfPriceAnchor(audience)} — see below`)}`);
+  L.push(`- **The third option:** ${emphasizeMd(`Kynetic OS ships the whole front office — ${sfPriceAnchor(audience)} — see below`)}`);
   L.push("");
   for (const c of [a, b]) {
     L.push(`## ${c.name}`);
@@ -136,7 +136,7 @@ export function renderVsMarkdown(pair: VsPair, a: Competitor, b: Competitor): st
   }
   L.push(`## Side-by-side`);
   L.push("");
-  L.push(`| Feature | ${a.name} | ${b.name} | SeldonFrame |`);
+  L.push(`| Feature | ${a.name} | ${b.name} | Kynetic OS |`);
   L.push("|---|---|---|---|");
   for (const row of COMPARISON_LABELS) {
     L.push(`| ${row.label} | ${emphasizeMd(a.them[row.key])} | ${emphasizeMd(b.them[row.key])} | ${emphasizeMd(SF_COLUMN[row.key])} |`);
@@ -147,7 +147,7 @@ export function renderVsMarkdown(pair: VsPair, a: Competitor, b: Competitor): st
   L.push(`## If you need what BOTH do`);
   L.push("");
   L.push(
-    `Most people comparing ${a.name} and ${b.name} actually need the outcome underneath both: calls and chats answered, leads qualified, jobs booked into a real calendar and CRM, on a site the client owns. SeldonFrame ships that whole front office from one conversation — ${sfPriceAnchor(audience)}, bring-your-own AI keys.`,
+    `Most people comparing ${a.name} and ${b.name} actually need the outcome underneath both: calls and chats answered, leads qualified, jobs booked into a real calendar and CRM, on a site the client owns. Kynetic OS ships that whole front office from one conversation — ${sfPriceAnchor(audience)}, bring-your-own AI keys.`,
   );
   L.push("");
   L.push(`- Honest deep-dives: ${BASE}/alternative-to-${a.slug} and ${BASE}/alternative-to-${b.slug}`);

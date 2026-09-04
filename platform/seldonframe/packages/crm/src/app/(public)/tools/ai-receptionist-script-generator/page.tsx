@@ -37,7 +37,7 @@ export const metadata: Metadata = {
 const FAQ = [
   {
     q: "Is this script ready to put on a live phone line as-is?",
-    a: "Treat it as a strong <strong>starting template</strong>, not a finished agent. A production receptionist also needs to be grounded in your real services and prices, forced to read details back for confirmation, and wrapped in guardrails so it never invents an answer or over-promises. That reliability layer is exactly what SeldonFrame adds — the script is the skeleton, not the whole thing.",
+    a: "Treat it as a strong <strong>starting template</strong>, not a finished agent. A production receptionist also needs to be grounded in your real services and prices, forced to read details back for confirmation, and wrapped in guardrails so it never invents an answer or over-promises. That reliability layer is exactly what Kynetic OS adds — the script is the skeleton, not the whole thing.",
   },
   {
     q: "Does this tool use AI to write the script?",
@@ -45,7 +45,7 @@ const FAQ = [
   },
   {
     q: "How do I turn this script into a real AI receptionist?",
-    a: "Deploy it as an actual agent on a phone number or web chat. In SeldonFrame you point the agent at your booking calendar and CRM, ground it in your services, and it answers calls 24/7 — booking, capturing leads, and texting back after hours. You can <strong>build your first workspace free</strong> and paste this script straight in as the starting point.",
+    a: "Deploy it as an actual agent on a phone number or web chat. In Kynetic OS you point the agent at your booking calendar and CRM, ground it in your services, and it answers calls 24/7 — booking, capturing leads, and texting back after hours. You can <strong>build your first workspace free</strong> and paste this script straight in as the starting point.",
   },
 ];
 
@@ -96,7 +96,7 @@ export default function AiReceptionistScriptGeneratorPage(): ReactElement {
             receptionist. On a live line it needs to be <strong>grounded</strong> in your real
             services and prices, made to <strong>read details back</strong> before it commits to
             anything, and fenced with <strong>guardrails</strong> so it never guesses or
-            over-promises. SeldonFrame adds that reliability layer — and connects the agent to your
+            over-promises. Kynetic OS adds that reliability layer — and connects the agent to your
             calendar and CRM so a booking on the call becomes a real appointment.
           </p>
         </section>

@@ -74,9 +74,9 @@ export const guide: Guide = {
       },
     },
     {
-      h2: "Where SeldonFrame fits (disclosed)",
+      h2: "Where Kynetic OS fits (disclosed)",
       body:
-        "Disclosure: SeldonFrame is the vendor behind the product example in this section. SeldonFrame is an agent-native, open-source alternative to GoHighLevel for agencies selling AI front offices to service businesses. It gives an agency a workspace to configure the website, CRM, booking, intake, and agent together, then repeat the delivery for client workspaces.\n\nA platform is optional. You can assemble the same workflow from a phone provider, CRM, calendar, and messaging tools, or self-host the pieces yourself. Evaluate ownership, export, permissions, handoff quality, and operating cost before choosing. Read the [SeldonFrame docs](/docs), [pricing](/pricing), and the GitHub repository listed in the sources below alongside the independent criteria in the [agency software checklist](/guides/ai-front-office-software-for-agencies).",
+        "Disclosure: Kynetic OS is the vendor behind the product example in this section. Kynetic OS is an agent-native, open-source alternative to GoHighLevel for agencies selling AI front offices to service businesses. It gives an agency a workspace to configure the website, CRM, booking, intake, and agent together, then repeat the delivery for client workspaces.\n\nA platform is optional. You can assemble the same workflow from a phone provider, CRM, calendar, and messaging tools, or self-host the pieces yourself. Evaluate ownership, export, permissions, handoff quality, and operating cost before choosing. Read the [Kynetic OS docs](/docs), [pricing](/pricing), and the GitHub repository listed in the sources below alongside the independent criteria in the [agency software checklist](/guides/ai-front-office-software-for-agencies).",
     },
   ],
   faq: [
@@ -95,11 +95,11 @@ export const guide: Guide = {
   ],
   sources: [
     {
-      label: "SeldonFrame documentation",
-      url: "https://www.seldonframe.com/docs",
+      label: "Kynetic OS documentation",
+      url: "https://www.kyneticai.com/docs",
     },
     {
-      label: "SeldonFrame GitHub repository",
+      label: "Kynetic OS GitHub repository",
       url: "https://github.com/seldonframe/seldonframe",
     },
   ],

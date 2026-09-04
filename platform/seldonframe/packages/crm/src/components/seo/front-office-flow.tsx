@@ -30,12 +30,12 @@ export function FrontOfficeFlow({
   const ariaLabel = competitorName
     ? `Diagram: the old way glues together separate tools like ${OLD_WAY_BOXES.join(
         ", ",
-      )}, and leads fall through the gaps between them (${competitorName} typically covers one or two). The SeldonFrame way connects the whole flow: ${NEW_WAY_STEPS.map(
+      )}, and leads fall through the gaps between them (${competitorName} typically covers one or two). The Kynetic OS way connects the whole flow: ${NEW_WAY_STEPS.map(
         (s) => s.label,
       ).join(" leads to ")}.`
     : `Diagram: the old way glues together separate tools like ${OLD_WAY_BOXES.join(
         ", ",
-      )}, and leads fall through the gaps between them. The SeldonFrame way connects the whole flow: ${NEW_WAY_STEPS.map(
+      )}, and leads fall through the gaps between them. The Kynetic OS way connects the whole flow: ${NEW_WAY_STEPS.map(
         (s) => s.label,
       ).join(" leads to ")}.`;
 
@@ -83,7 +83,7 @@ export function FrontOfficeFlow({
             background: MKT.green10,
           }}
         >
-          <h3 style={{ margin: 0, fontSize: 15.5, fontWeight: 800, color: MKT.green }}>The SeldonFrame way: one connected flow</h3>
+          <h3 style={{ margin: 0, fontSize: 15.5, fontWeight: 800, color: MKT.green }}>The Kynetic OS way: one connected flow</h3>
           <div className="sf-flow-chain" style={{ display: "flex", flexDirection: "column", gap: 0, marginTop: 16 }}>
             {NEW_WAY_STEPS.map((step, i) => (
               <div key={step.label} className="sf-flow-step-wrap">

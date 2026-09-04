@@ -103,7 +103,7 @@ export default async function SignupPage({
     <div className="space-y-6">
       <div className="space-y-4">
         <div className="text-center">
-          <h1 className="text-section-title text-foreground">Welcome to SeldonFrame</h1>
+          <h1 className="text-section-title text-foreground">Welcome to Kynetic OS</h1>
           <p className="mt-1 text-label text-[hsl(var(--color-text-secondary))]">
             Your website, booking, CRM, and AI receptionist — live in minutes.
           </p>
@@ -128,7 +128,7 @@ export default async function SignupPage({
           <Link href="/terms" className="underline-offset-4 hover:underline">
             Terms of Service
           </Link>
-          <span className="ml-auto">&copy; 2026 SeldonFrame</span>
+          <span className="ml-auto">&copy; 2026 Kynetic AI</span>
         </div>
       </footer>
     </div>

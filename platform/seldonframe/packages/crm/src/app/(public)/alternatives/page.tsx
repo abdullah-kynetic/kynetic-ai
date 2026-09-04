@@ -10,9 +10,9 @@ import { COMPETITORS, LAST_UPDATED, getCompetitor } from "@/lib/seo/alternative-
 import { VS_PAIRS, vsSlug, isKeptVsPair } from "@/lib/seo/alternative-pages-extras";
 
 export const metadata: Metadata = {
-  title: "SeldonFrame vs the alternatives — honest comparisons for agencies & builders",
+  title: "Kynetic OS vs the alternatives — honest comparisons for agencies & builders",
   description:
-    "How SeldonFrame compares to GoHighLevel, HubSpot, ActiveCampaign, ClickFunnels, Vapi, Podium and more — Builder is $29/mo for one business you operate; Agency plans start at $99/mo for client delivery.",
+    "How Kynetic OS compares to GoHighLevel, HubSpot, ActiveCampaign, ClickFunnels, Vapi, Podium and more — Builder is $29/mo for one business you operate; Agency plans start at $99/mo for client delivery.",
   alternates: { canonical: "/alternatives" },
 };
 
@@ -34,7 +34,7 @@ export default function AlternativesHubPage(): ReactElement {
           Compare · updated {LAST_UPDATED}
         </div>
         <h1 style={{ margin: 0, fontSize: 40, fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.08, maxWidth: 720 }}>
-          How SeldonFrame compares
+          How Kynetic OS compares
         </h1>
         <p style={{ margin: "14px 0 0", fontSize: 17, lineHeight: 1.55, color: "rgba(34,29,23,0.7)", maxWidth: 660 }}>
           Honest, row-by-row comparisons against the platforms agencies and builders evaluate most — pricing, the AI
@@ -42,7 +42,7 @@ export default function AlternativesHubPage(): ReactElement {
         </p>
         <p style={{ margin: "12px 0 0", fontSize: 14.5, lineHeight: 1.6, color: "rgba(34,29,23,0.65)", maxWidth: 660 }}>
           Pricing boundary: Builder is $29/mo for one business you own and operate. Managed is $49/mo on
-          SeldonFrame&apos;s keys. Client sub-accounts, white-label delivery, and agency resale start at $99/mo on
+          Kynetic OS&apos;s keys. Client sub-accounts, white-label delivery, and agency resale start at $99/mo on
           Agency Starter.
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 14, marginTop: 32 }}>
@@ -70,7 +70,7 @@ export default function AlternativesHubPage(): ReactElement {
           ))}
         </div>
 
-        <h2 style={{ margin: "44px 0 0", fontSize: 26, fontWeight: 800, letterSpacing: "-0.02em" }}>SeldonFrame head-to-head</h2>
+        <h2 style={{ margin: "44px 0 0", fontSize: 26, fontWeight: 800, letterSpacing: "-0.02em" }}>Kynetic OS head-to-head</h2>
         <p style={{ margin: "10px 0 0", fontSize: 15, lineHeight: 1.55, color: "rgba(34,29,23,0.65)", maxWidth: 640 }}>
           The direct comparisons — pricing, the AI receptionist, the front office behind it, and where each tool honestly wins.
         </p>
@@ -82,7 +82,7 @@ export default function AlternativesHubPage(): ReactElement {
               className="sf-link"
               style={{ fontSize: 13.5, fontWeight: 600, color: "rgba(34,29,23,0.7)", border: `1px solid ${MKT.ink10}`, borderRadius: 999, padding: "7px 14px", textDecoration: "none", background: "rgba(255,255,255,0.5)" }}
             >
-              {`SeldonFrame vs ${c.name}`}
+              {`Kynetic OS vs ${c.name}`}
             </Link>
           ))}
         </div>

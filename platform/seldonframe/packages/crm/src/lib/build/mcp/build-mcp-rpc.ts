@@ -69,7 +69,7 @@ export function buildBuildInitializeResult(): Record<string, unknown> {
   return {
     protocolVersion: "2025-06-18",
     capabilities: { tools: {} },
-    serverInfo: { name: "SeldonFrame", version: "1.0.0" },
+    serverInfo: { name: "Kynetic OS", version: "1.0.0" },
     instructions: BUILD_SERVER_INSTRUCTIONS,
   };
 }

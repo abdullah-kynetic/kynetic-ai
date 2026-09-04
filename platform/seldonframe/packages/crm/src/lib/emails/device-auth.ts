@@ -7,7 +7,7 @@
 // Uses the same Resend setup as the welcome email — verified
 // welcome@seldonframe.com sender.
 
-const DEFAULT_FROM = "SeldonFrame <welcome@seldonframe.com>";
+const DEFAULT_FROM = "Kynetic OS <welcome@send.kyneticai.com>";
 const SANDBOX_FROM_PATTERN = /@resend\.dev>?$/i;
 
 export interface DeviceAuthEmailRequest {
@@ -39,7 +39,7 @@ export function pickFromAddress(
   if (configured && SANDBOX_FROM_PATTERN.test(configured)) {
     return DEFAULT_FROM;
   }
-  if (configured && !/seldonframe\.com>?$/i.test(configured)) {
+  if (configured && !/kyneticai\.com>?$/i.test(configured)) {
     return DEFAULT_FROM;
   }
   return configured || DEFAULT_FROM;
@@ -84,7 +84,7 @@ export function renderDeviceAuthEmailHtml(req: DeviceAuthEmailRequest): string {
 <table role="presentation" cellpadding="0" cellspacing="0" width="560" style="max-width:560px;background:#ffffff;border:1px solid #e5e5e1;border-radius:12px;padding:32px;">
 <tr><td>
 <h1 style="margin:0 0 16px;font-size:22px;font-weight:600;letter-spacing:-0.01em;">Authorize a new device for ${safeWorkspace}</h1>
-<p style="margin:0 0 12px;color:#444;">A request was made to connect <strong>${safeDevice}</strong> to your <strong>${safeWorkspace}</strong> workspace on SeldonFrame.</p>
+<p style="margin:0 0 12px;color:#444;">A request was made to connect <strong>${safeDevice}</strong> to your <strong>${safeWorkspace}</strong> workspace on Kynetic OS.</p>
 <p style="margin:0 0 24px;color:#444;">If this was you, click the button below to authorize. The link expires in ${expiresIn}.</p>
 <p style="margin:0 0 24px;text-align:center;">
   <a href="${safeUrl}" style="display:inline-block;background:#0e7490;color:#ffffff;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:600;">Authorize ${safeDevice}</a>
@@ -93,7 +93,7 @@ export function renderDeviceAuthEmailHtml(req: DeviceAuthEmailRequest): string {
 <p style="margin:24px 0 0;color:#999;font-size:12px;">If the button doesn't work, paste this URL into your browser:<br /><span style="word-break:break-all;">${safeUrl}</span></p>
 </td></tr>
 </table>
-<p style="margin:16px 0 0;color:#999;font-size:12px;">SeldonFrame · <a href="https://seldonframe.com" style="color:#666;">seldonframe.com</a></p>
+<p style="margin:16px 0 0;color:#999;font-size:12px;">Kynetic OS · <a href="https://kyneticai.com" style="color:#666;">kyneticai.com</a></p>
 </td></tr>
 </table>
 </body>
@@ -104,7 +104,7 @@ export function renderDeviceAuthEmailText(req: DeviceAuthEmailRequest): string {
   return [
     `Authorize a new device for ${req.workspaceName}`,
     "",
-    `A request was made to connect "${req.deviceLabel}" to your ${req.workspaceName} workspace on SeldonFrame.`,
+    `A request was made to connect "${req.deviceLabel}" to your ${req.workspaceName} workspace on Kynetic OS.`,
     "",
     `If this was you, open this URL to authorize:`,
     req.approvalUrl,
@@ -113,7 +113,7 @@ export function renderDeviceAuthEmailText(req: DeviceAuthEmailRequest): string {
     "",
     `Didn't make this request? You can safely ignore this email — without your click, nothing happens.`,
     "",
-    `— SeldonFrame · seldonframe.com`,
+    `— Kynetic OS · kyneticai.com`,
   ].join("\n");
 }
 

@@ -53,8 +53,8 @@ function SeldonFrameMark({ className = "" }: { className?: string }) {
 }
 
 export function PoweredByBadge({
-  href = "https://seldonframe.com",
-  label = "Powered by SeldonFrame",
+  href = "https://kyneticai.com",
+  label = "Powered by Kynetic OS",
   removeBranding = false,
   variant = "light",
 }: {
@@ -87,7 +87,7 @@ export function PoweredByBadge({
           className="text-sm font-semibold tracking-tight"
           style={{ color: wordmarkColor, letterSpacing: "-0.01em" }}
         >
-          SeldonFrame
+          Kynetic OS
         </span>
       </span>
     </a>
