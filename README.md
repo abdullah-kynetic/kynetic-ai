@@ -2,7 +2,7 @@
 
 ## Platform
 
-- [`platform/seldonframe/packages/crm`](platform/seldonframe/packages/crm) — Kynetic CRM. Leads, pipeline, and analytics. Live on Vercel, Postgres via Neon.
+- [`platform/crm`](platform/crm) — Kynetic CRM. Leads, pipeline, and analytics. Live on Vercel, Postgres via Neon.
 
 ## Automations
 
