@@ -1,2 +1,5 @@
-export { metadata } from "./(public)/page";
-export { default } from "./(public)/page";
+import { redirect } from "next/navigation";
+
+export default function Home() {
+  redirect("/leads");
+}

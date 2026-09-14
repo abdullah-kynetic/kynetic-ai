@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "seldonframe": {
-      "command": "npx",
-      "args": ["-y", "@seldonframe/mcp@latest"]
-    }
-  }
-}
