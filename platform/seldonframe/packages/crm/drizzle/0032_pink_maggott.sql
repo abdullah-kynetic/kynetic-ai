@@ -1,1 +1,0 @@
-ALTER TABLE "deployments" ADD COLUMN "booking_policy" jsonb;

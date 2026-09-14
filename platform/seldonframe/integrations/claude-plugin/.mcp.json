@@ -1,6 +1,0 @@
-{
-  "seldonframe": {
-    "command": "npx",
-    "args": ["-y", "@seldonframe/mcp"]
-  }
-}
