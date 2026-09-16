@@ -1,6 +1,6 @@
-import DashboardView from "@/components/views/DashboardView";
+import { redirect } from "next/navigation";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  return <DashboardView clientId={Number(id)} />;
+  redirect(`/clients/${id}/calls`);
 }
