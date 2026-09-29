@@ -1,10 +1,29 @@
 # Emily Restoration Speed to Lead — build handoff
 
-_Last updated 2026-09-28. Resume here: "continue the Emily build"._
+_Last updated 2026-09-29. Resume here: "continue the Emily build"._
 
 Emily is the build copy of the frozen Nora receptionist for Kynetic Restoration.
 One agent handles both inbound (receptionist) and, later, outbound Speed to Lead calls.
 Outbound was deliberately left out of the name. See `KYNETIC_CONTEXT.md` for rules.
+
+## Picking this up (any agent)
+
+Access needed:
+- **GitHub**: this repo. The work lives on PR #2 until it's merged.
+- **Retell API key**, as `RETELL_API_KEY` in the environment or in `.env`.
+- **n8n**: `https://abdullah-kyneticai.app.n8n.cloud` (API or MCP).
+- **Twenty CRM**: holds the handoff notes, and it's the CRM Emily's workflow is moving to.
+
+Not needed for the next steps: the Cal.com key (it lives inside Emily's Retell tools), Notion, Tavily, Firecrawl, Apify.
+
+Read `KYNETIC_CONTEXT.md` first. Rules: ask Abdullah before any change to n8n, Retell, Twenty or Notion; never change agent tools beyond what's approved; never touch Nora.
+
+## Live state (verified 2026-09-29)
+
+- Emily's name is correct.
+- Her greeting still says "Nora".
+- Her 4 tools and post-call webhook still point at **Nora's** workflow.
+- Steps 1 and 2 below have NOT been applied yet.
 
 ## IDs
 
@@ -57,3 +76,26 @@ Base: `https://abdullah-kyneticai.app.n8n.cloud/webhook/`
    outbound call → log call. Log form-submit → ring time per lead (the "<30s" case-study metric).
    Needs: Retell Header Auth credential in n8n; Twilio verification status + test phone number.
 5. Later: archive the unused "Speed to Lead Outbound Demo" leftovers, with approval.
+
+## Claude Code cloud environment (in progress, 2026-09-29)
+
+- Environment "github" on claude.ai/code. Allowed domains include `api.retellai.com`; still to add: `abdullah-kyneticai.app.n8n.cloud`, `api.cal.com`.
+- **Keys go in "API credentials", not "Environment variables".** The environment variables box is visible to anyone using the environment; API credentials let sessions call an API without seeing the key.
+- **Open issue:** `tools/retell.py` exits if `RETELL_API_KEY` isn't set. Under API credentials the session never sees the key, so the script must send requests without its own auth header. Update it once the "Add credential" form shows how the key is injected.
+- The Retell MCP needs Deno, which isn't installed on Abdullah's Mac; that's why `tools/retell.py` exists.
+
+## Abdullah's to-dos
+
+- Merge PR #2.
+- Revoke the old Cal.com key starting `cal_live_f64` (in this repo's git history since Aug 23; the current key is a different one).
+- Finish the cloud environment: add the Retell credential and the two domains.
+- For Speed to Lead: a Retell Header Auth credential in n8n; Twilio verification status and a test phone number.
+- Recommended, needs approval: a header-auth secret on the n8n webhooks. They have no auth today, so keep this repo private.
+
+## Twenty handoff note
+
+The Twenty note "READ FIRST — Session Handoff (Sep 28, 2026)" (`1ac34eca-ae05-4f47-ab6d-4e78d0799000`) is behind this file. The Sep 29 update couldn't be written because the Twenty connector failed that session (reads and writes both errored). Next session with a working Twenty connection: copy this file's status into that note.
+
+## Claude Code permission checker
+
+Claude Code's auto-mode permission checker blocked the Retell writes and the PR merge on Sep 28 and 29. Hand Abdullah the exact command instead of retrying.
