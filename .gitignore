@@ -1,2 +1,11 @@
 .env
 .env.local
+.env.*
+!.env.example
+credentials.json
+token.json
+.tmp/
+node_modules/
+*.vsix
+.DS_Store
+.claude/settings.local.json
