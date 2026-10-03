@@ -25,15 +25,8 @@ When given a task, scan the **Trigger Signals** column for each skill. If a task
 | **Web & Design** | |
 | [frontend-design](#frontend-design) | Create distinctive, production-grade frontend interfaces |
 | [web-artifacts-builder](#web-artifacts-builder) | Build elaborate HTML artifacts using React + Tailwind + shadcn/ui |
-| **Documents** | |
-| [pdf](#pdf) | Read, extract, create, merge, split, and manipulate PDFs |
-| [xlsx](#xlsx) | Create, read, edit, and analyze Excel spreadsheets |
-| [pptx](#pptx) | Create, edit, and analyze PowerPoint presentations |
 | **Research & Knowledge** | |
 | [deep-research](#deep-research) | Multi-source research with citation tracking and structured report generation |
-| **Developer Methodology** | |
-| [superpowers](#superpowers) | Software development methodology — TDD, debugging, planning, parallel agents |
-| [task-master](#task-master) | AI-driven task management — parse PRDs, track dependencies, manage workstreams |
 
 ---
 
@@ -242,57 +235,6 @@ When given a task, scan the **Trigger Signals** column for each skill. If a task
 
 ---
 
-## pdf
-
-**What it does:** Reads, extracts, creates, merges, splits, and manipulates PDF files using Python libraries (pypdf, pdfplumber, reportlab) and CLI tools (qpdf, pdftk, pdftotext).
-
-**When to call it:**
-- Extracting text or tables from a PDF
-- Creating a new PDF programmatically
-- Merging or splitting PDF documents
-- Rotating pages, watermarking, encrypting/decrypting PDFs
-- Running OCR on a scanned PDF
-- Filling PDF form fields
-
-**Key libraries:** `pypdf` (merge/split), `pdfplumber` (text/table extraction), `reportlab` (create from scratch).
-
-**Critical rule:** Never use Unicode subscript/superscript in ReportLab — use `<sub>`/`<super>` XML tags.
-
-**Works alongside:** `pptx` (PDF output from slides)
-
----
-
-## xlsx
-
-**What it does:** Creates, reads, edits, and analyzes Excel spreadsheets with professional formatting and formula integrity. Uses `openpyxl` for formula-heavy work, `pandas` for analysis.
-
-**When to call it:**
-- Any task where a spreadsheet is the primary input or output
-- Building financial models, reports, or data tables
-- Editing formulas, formatting, or data in .xlsx/.csv files
-
-**Critical rule:** Always use Excel formulas, never hardcode calculated values. Run `scripts/recalc.py` after saving.
-
-**Works alongside:** Standalone document operation.
-
----
-
-## pptx
-
-**What it does:** Creates, edits, and analyzes PowerPoint presentations. Uses `markitdown` for text extraction, `PptxGenJS` for creation, and unpack/edit/repack for editing existing files.
-
-**When to call it:**
-- Creating a presentation deck from scratch or from a brief
-- Editing slides in an existing .pptx file
-- Extracting content from a presentation
-- Generating slides from data or templates
-
-**Design rules:** 60–70% color dominance, vary layouts, every slide needs visual elements, left-align body text.
-
-**Works alongside:** `pdf` (final PDF output).
-
----
-
 ## deep-research
 
 **What it does:** Conducts multi-source research with citation tracking and produces comprehensive, structured reports (executive summary, 4–8 cited findings, bibliography). Selects from Quick/Standard/Deep/Ultradeep modes based on complexity.
@@ -306,41 +248,6 @@ When given a task, scan the **Trigger Signals** column for each skill. If a task
 **Quality standards:** 10+ sources, 3+ per claim, all statements cited, no fabricated references, 80%+ prose.
 
 **Works alongside:** `tavily-mcp` (web search), `firecrawl` (page extraction), `context7` (technical docs)
-
----
-
-## superpowers
-
-**What it does:** Complete software development methodology — 15 sub-skills covering TDD, systematic debugging, planning/execution, parallel agents, code review, git worktrees, and branch management.
-
-**When to call it:**
-- Starting any non-trivial implementation task (`writing-plans` + `executing-plans`)
-- Writing tests before code (`test-driven-development`)
-- Debugging a hard issue (`systematic-debugging`)
-- Running work in parallel across agents (`dispatching-parallel-agents`)
-- Preparing a PR or finishing a branch (`finishing-a-development-branch`)
-
-**Install:** `/plugin install superpowers@claude-plugins-official`
-
-**Works alongside:** All other skills — superpowers is a methodology layer.
-
----
-
-## task-master
-
-**What it does:** AI-driven task management system. Parses PRDs into structured tasks with dependencies, supports research mode, tags/workstreams, and loop automation for hands-off development.
-
-**When to call it:**
-- Breaking a PRD into a structured task backlog
-- Managing development tasks with dependencies across a project
-- Tracking progress across multiple features or workstreams
-- Using `claude mcp add taskmaster-ai` or `task-master-ai` CLI
-
-**Auth:** Requires an AI provider API key (Anthropic API key works if using Claude Code).
-
-**Install:** `claude mcp add taskmaster-ai` (MCP) or `npm install -g task-master-ai` (CLI).
-
-**Works alongside:** `superpowers` (`writing-plans`, `executing-plans`), `deep-research` (research-mode tasks).
 
 ---
 
@@ -358,14 +265,6 @@ When given a task, scan the **Trigger Signals** column for each skill. If a task
 | Webhook-triggered workflow | `n8n-workflow-patterns` + `n8n-expression-syntax` + `n8n-mcp-tools-expert` |
 | AI agent workflow | `n8n-workflow-patterns` + `n8n-mcp-tools-expert` + `n8n-node-configuration` |
 | Debug a broken workflow | `n8n-validation-expert` + `n8n-expression-syntax` |
-| Read/extract text from a PDF | `pdf` |
-| Create a new PDF | `pdf` |
-| Work with Excel/spreadsheets | `xlsx` |
-| Create or edit a presentation | `pptx` |
 | Build a Claude.ai HTML artifact | `web-artifacts-builder` + `frontend-design` |
 | Frontend UI with strong aesthetics | `frontend-design` |
 | Deep research with cited report | `deep-research` |
-| Plan + execute a big feature | `superpowers` + `task-master` |
-| Break a PRD into tasks | `task-master` |
-| TDD, debugging, code review | `superpowers` |
-| Run parallel agents on a project | `superpowers` (`dispatching-parallel-agents`) |

@@ -90,24 +90,6 @@ At the start of every conversation, read `Claude Skills/skills-breakdown.md` and
 
 **Business-specific skills** (Kynetic AI) are in `Claude Skills/_kynetic/`. These are the primary skills for client delivery work — always check them first when the task is client-facing.
 
-**claude-mem skills** are available in `Claude Skills/claude-mem/`. The memory-dependent ones (`/mem-search`, `/knowledge-agent`, `/timeline-report`) require the claude-mem system to be installed and running. The methodology skills (`/make-plan`, `/do`, `/pathfinder`, `/smart-explore`, `/learn-codebase`) work in any session without it.
-
-## Default Methodology (Token-Efficient)
-
-Follow the claude-mem methodology as the default approach for all work:
-
-1. **Before touching any file:** Use `/smart-explore` (`smart_search` → `smart_outline` → `smart_unfold`). Never read a full file when a structural outline will do. This is the single biggest token saver.
-
-2. **Before any non-trivial implementation:** Run `/make-plan`. Phase 0 (documentation discovery) is mandatory — never write code based on assumed APIs. Compile an "Allowed APIs" reference first.
-
-3. **During implementation:** Run `/do`. Deploy subagents per phase, verify before advancing, never commit before verification passes.
-
-4. **On an unfamiliar codebase or project:** Run `/learn-codebase` first, then `/pathfinder` to map architecture before planning anything.
-
-**Use `task-master` only when** managing multiple clients or workstreams simultaneously and you need a persistent task backlog with dependencies tracked across sessions. It is not the default planning tool — `/make-plan` is.
-
-**Use `superpowers` only when** the methodology layer is needed for TDD, git worktree workflows, or parallel agent dispatch — not for general planning.
-
 ---
 
 ## Kynetic context (read first)
