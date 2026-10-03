@@ -250,3 +250,21 @@ When given a task, scan the **Trigger Signals** column for each skill. If a task
 **Works alongside:** `tavily-mcp` (web search), `firecrawl` (page extraction), `context7` (technical docs)
 
 ---
+
+## Quick Lookup: Task → Skills
+
+| Task | Skills to invoke |
+|------|-----------------|
+| Build a new n8n workflow | `n8n-workflow-patterns` + `n8n-mcp-tools-expert` |
+| Configure a specific node | `n8n-node-configuration` + `n8n-mcp-tools-expert` |
+| Fix a validation error | `n8n-validation-expert` + `n8n-mcp-tools-expert` |
+| Write `{{ }}` in a field | `n8n-expression-syntax` |
+| Write code in a Code node (JS) | `n8n-code-javascript` |
+| Write code in a Code node (Python) | `n8n-code-python` |
+| Full workflow build end-to-end | All 7 n8n skills |
+| Webhook-triggered workflow | `n8n-workflow-patterns` + `n8n-expression-syntax` + `n8n-mcp-tools-expert` |
+| AI agent workflow | `n8n-workflow-patterns` + `n8n-mcp-tools-expert` + `n8n-node-configuration` |
+| Debug a broken workflow | `n8n-validation-expert` + `n8n-expression-syntax` |
+| Build a Claude.ai HTML artifact | `web-artifacts-builder` + `frontend-design` |
+| Frontend UI with strong aesthetics | `frontend-design` |
+| Deep research with cited report | `deep-research` |
