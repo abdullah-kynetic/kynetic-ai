@@ -1,0 +1,45 @@
+{
+  "agent_id": "agent_affef8dcb6880fd592cbe9432f",
+  "channel": "voice",
+  "last_modification_timestamp": 1790646060646,
+  "agent_name": "Emily Restoration Speed to Lead",
+  "response_engine": {
+    "version": 0,
+    "llm_id": "llm_b520d8a6b9bf754f19285a8a6185",
+    "type": "retell-llm"
+  },
+  "webhook_url": "https://abdullah-kyneticai.app.n8n.cloud/webhook/596d4180-8295-497c-84f9-4481ed0ab8d3",
+  "language": "en-US",
+  "data_storage_setting": "everything",
+  "contact_memory_config": {
+    "enable_update": false,
+    "enable_read": true
+  },
+  "opt_in_signed_url": false,
+  "version": 0,
+  "assigned_tags": [],
+  "is_published": false,
+  "post_call_analysis_model": "gpt-4.1-mini",
+  "pii_config": {
+    "categories": [],
+    "mode": "post_call"
+  },
+  "post_call_analysis_data": [
+    {
+      "name": "support_type",
+      "type": "enum",
+      "choices": [
+        "book_appointment",
+        "emergency",
+        "inquiry"
+      ],
+      "description": "The type that the user asks for support."
+    }
+  ],
+  "voice_id": "11labs-Cimo",
+  "enable_backchannel": true,
+  "max_call_duration_ms": 3600000,
+  "interruption_sensitivity": 0.9,
+  "allow_user_dtmf": true,
+  "user_dtmf_options": {}
+}

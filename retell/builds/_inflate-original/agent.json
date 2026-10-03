@@ -1,0 +1,41 @@
+{
+  "agent_id": "agent_4c34644a04c74e27253e80167b",
+  "channel": "voice",
+  "last_modification_timestamp": 1788897391754,
+  "agent_name": "N8N / Retell / Twillio / Trade Receptionist",
+  "response_engine": {
+    "version": 0,
+    "type": "retell-llm",
+    "llm_id": "llm_d19efe92627f50e48657788b9ff5"
+  },
+  "webhook_url": "https://inflate.app.n8n.cloud/webhook/596d4180-8295-497c-84f9-4481ed0ab8d3",
+  "language": "en-US",
+  "data_storage_setting": "everything",
+  "opt_in_signed_url": false,
+  "version": 0,
+  "assigned_tags": [],
+  "is_published": false,
+  "post_call_analysis_model": "gpt-4.1-mini",
+  "pii_config": {
+    "categories": [],
+    "mode": "post_call"
+  },
+  "post_call_analysis_data": [
+    {
+      "choices": [
+        "book_appointment",
+        "emergency",
+        "inquiry"
+      ],
+      "description": "The type that the user asks for support.",
+      "name": "support_type",
+      "type": "enum"
+    }
+  ],
+  "voice_id": "11labs-Cimo",
+  "enable_backchannel": true,
+  "max_call_duration_ms": 3600000,
+  "interruption_sensitivity": 0.9,
+  "allow_user_dtmf": true,
+  "user_dtmf_options": {}
+}

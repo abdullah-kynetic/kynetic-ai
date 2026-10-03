@@ -46,13 +46,13 @@
         "name": "check_availability_cal",
         "description": "When users ask for availability, check the calendar and provide available slots.",
         "event_type_id": 3036292,
-        "cal_api_key": "cal_live_f64fb461d53cb4fc65e503c133942ccd",
+        "cal_api_key": "${CAL_API_KEY}",
         "type": "check_availability_cal",
         "timezone": "Australia/Sydney"
       },
       {
         "event_type_id": 3036292,
-        "cal_api_key": "cal_live_f64fb461d53cb4fc65e503c133942ccd",
+        "cal_api_key": "${CAL_API_KEY}",
         "cal_fields": [
           {
             "name": "name",
