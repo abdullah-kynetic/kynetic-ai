@@ -1,5 +1,15 @@
 # Agent Instructions
 
+## Read first (every session)
+
+- `docs/progress.md` (where we are)
+- `docs/decisions.md` (what is already decided, do not reopen)
+- `docs/known-issues.md` (gotchas, do not "fix" these)
+- `KYNETIC_CONTEXT.md` (rules, IDs, frozen Nora vs Emily)
+
+Twenty is the system of record. These docs mirror it; if they disagree, Twenty wins.
+At the end of a session, update the three docs files.
+
 You're working inside the **WAT framework** (Workflows, Agents, Tools). This architecture separates concerns so that probabilistic AI handles reasoning while deterministic code handles execution. That separation is what makes this system reliable.
 
 ## The WAT Architecture
