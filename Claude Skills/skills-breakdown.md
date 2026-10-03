@@ -23,22 +23,14 @@ When given a task, scan the **Trigger Signals** column for each skill. If a task
 | [n8n-code-javascript](#n8n-code-javascript) | Write JavaScript inside n8n Code nodes |
 | [n8n-code-python](#n8n-code-python) | Write Python inside n8n Code nodes |
 | **Web & Design** | |
-| [website-cloner](#website-cloner) | Pixel-perfect reverse-engineer and clone any website into a Next.js codebase |
-| [website-builder](#website-builder) | Build and deploy a branded landing page to Netlify from a brief |
 | [frontend-design](#frontend-design) | Create distinctive, production-grade frontend interfaces |
 | [web-artifacts-builder](#web-artifacts-builder) | Build elaborate HTML artifacts using React + Tailwind + shadcn/ui |
-| [canvas-design](#canvas-design) | Create museum-quality visual art as PNG or PDF |
 | **Documents** | |
 | [pdf](#pdf) | Read, extract, create, merge, split, and manipulate PDFs |
 | [xlsx](#xlsx) | Create, read, edit, and analyze Excel spreadsheets |
 | [pptx](#pptx) | Create, edit, and analyze PowerPoint presentations |
 | **Research & Knowledge** | |
 | [deep-research](#deep-research) | Multi-source research with citation tracking and structured report generation |
-| [graphify](#graphify) | Transform files into interactive knowledge graphs |
-| [obsidian-skills](#obsidian-skills) | Work with Obsidian vaults, Flavored Markdown, Bases, JSON Canvas |
-| **Marketing & SEO** | |
-| [marketing-skills](#marketing-skills) | 40+ marketing skills — CRO, copy, SEO, ads, analytics, growth |
-| [claude-seo](#claude-seo) | Comprehensive SEO audits across technical, content, schema, AI search, local |
 | **Developer Methodology** | |
 | [superpowers](#superpowers) | Software development methodology — TDD, debugging, planning, parallel agents |
 | [task-master](#task-master) | AI-driven task management — parse PRDs, track dependencies, manage workstreams |
@@ -216,70 +208,6 @@ When given a task, scan the **Trigger Signals** column for each skill. If a task
 
 ---
 
-## website-cloner
-
-**What it does:** Reverse-engineers any live website into a pixel-perfect Next.js codebase. Uses browser automation (Chrome/Playwright MCP) to extract exact computed CSS, real content, downloaded assets, and all interaction behaviors — then dispatches parallel builder agents per section while you continue extracting. Outputs a fully compiled Next.js 16 + React 19 + shadcn/ui + Tailwind v4 project.
-
-**When to call it:**
-- "Clone this website", "rebuild this page", "make a copy of this site"
-- Reverse-engineer a competitor or reference site
-- Need a pixel-perfect replica of any URL as a working codebase
-- Phrases: "clone", "replicate", "copy", "reverse-engineer", "rebuild from scratch"
-
-**The 5-phase pipeline:**
-1. **Reconnaissance** — screenshots at 1440px + 390px, global token extraction (fonts, colors, favicons), mandatory interaction sweep (scroll/click/hover/responsive), page topology map
-2. **Foundation** — update fonts + globals.css with real tokens, TypeScript types, SVG icons as React components, download all assets
-3. **Component Spec & Dispatch** — per section: extract exact CSS via `getComputedStyle()`, write spec file to `docs/research/components/`, dispatch builder agents in worktrees in parallel
-4. **Page Assembly** — wire all sections in `page.tsx`, implement page-level scroll/animation behaviors
-5. **Visual QA Diff** — side-by-side screenshots at desktop + mobile, test all interactions
-
-**Critical rules it enforces:**
-- Identify scroll-driven vs. click-driven interaction model BEFORE building (#1 most expensive mistake)
-- Every component gets a spec file BEFORE any builder is dispatched
-- CSS values from `getComputedStyle()` only — never estimated or approximated
-- Builder prompts capped at ~150 lines; anything larger gets split
-- `npm run build` must pass at every merge
-
-**Requires:** Browser automation MCP (Chrome MCP, Playwright MCP, or Browserbase MCP). The Next.js scaffold from the template repo must exist in the project.
-
-**Template repo:** `https://github.com/JCodesMore/ai-website-cloner-template` — clone this first, then run the skill.
-
-**Works alongside:** `frontend-design` (design direction for customizations), `canvas-design` (visual assets), `make-plan` (plan complex multi-page clones first).
-
----
-
-## website-builder
-
-**What it does:** Builds a cinematic, production-ready landing page by modifying a proven React + Vite + Tailwind v3 + GSAP template, then deploys it live to Netlify and returns the URL. Customizes color tokens, fonts, copy, and images — does NOT rewrite from scratch.
-
-**When to call it:**
-- Creating a landing page or client website
-- Deploying a web page live with a real URL
-- Given a brand name, description, or aesthetic direction and asked to build a site
-- Someone asks for a "website", "landing page", "client site", or "web page"
-
-**Inputs it needs:**
-- Brand name
-- Core thesis (one sentence what it is)
-- Vibe/aesthetic (e.g. "dark techy", "clinical luxury", "minimalist")
-- Conversion goal / CTA (default: book a call)
-
-**Tech stack (fixed, do not change):**
-- React 19 + Vite 7
-- Tailwind CSS v3 (NOT v4)
-- GSAP 3 with ScrollTrigger
-- Lucide React icons
-
-**Template location:** `website-template/` in the workspace root.
-
-**Process:** Copy template → customize colors/fonts/copy/images → `npm run build` → `npx netlify-cli deploy --prod --dir=dist --create-site <name>` → return live URL.
-
-**What it will NOT do:** Rewrite components from scratch, switch to Tailwind v4, remove the interactive micro-UIs (DiagnosticShuffler, TelemetryTypewriter, AdaptiveRegimen), or change structural layout.
-
-**Works alongside:** `frontend-design` (design direction), `canvas-design` (visual assets), `marketing-skills` (copy optimization).
-
----
-
 ## frontend-design
 
 **What it does:** Creates distinctive, production-grade frontend interfaces that avoid generic AI aesthetics. Focuses on intentional typography, cohesive color, strategic animation, and spatial composition.
@@ -294,7 +222,7 @@ When given a task, scan the **Trigger Signals** column for each skill. If a task
 
 **Avoid:** Inter font as default, purple gradients, uniform border-radius, predictable centered layouts.
 
-**Works alongside:** `web-artifacts-builder` (artifacts), `website-builder` (Netlify deploy), `canvas-design` (visual art direction).
+**Works alongside:** `web-artifacts-builder` (artifacts)
 
 ---
 
@@ -310,22 +238,7 @@ When given a task, scan the **Trigger Signals** column for each skill. If a task
 
 **Workflow:** `scripts/init-artifact.sh` → develop in `src/` → `scripts/bundle-artifact.sh` → single HTML → display.
 
-**Works alongside:** `frontend-design` (design direction), `website-builder` (when deploy to Netlify instead of artifact).
-
----
-
-## canvas-design
-
-**What it does:** Creates museum-quality visual art — posters, artwork, graphics — as PNG or PDF. Two-phase process: design philosophy first, then visual expression. Outputs are ~90% visual, ~10% text.
-
-**When to call it:**
-- Creating a poster, visual artwork, or graphic design
-- Generating a branded visual asset (PNG or PDF)
-- Asked for a "design", "visual", "poster", "artwork", or "graphic"
-
-**Process:** Phase 1: write 4–6 paragraph aesthetic manifesto. Phase 2: create visual artifact embodying the philosophy.
-
-**Works alongside:** `pptx` (presentation visual language), `frontend-design` (UI translation).
+**Works alongside:** `frontend-design` (design direction)
 
 ---
 
@@ -345,7 +258,7 @@ When given a task, scan the **Trigger Signals** column for each skill. If a task
 
 **Critical rule:** Never use Unicode subscript/superscript in ReportLab — use `<sub>`/`<super>` XML tags.
 
-**Works alongside:** `pptx` (PDF output from slides), `canvas-design` (PDF output from designs).
+**Works alongside:** `pptx` (PDF output from slides)
 
 ---
 
@@ -376,7 +289,7 @@ When given a task, scan the **Trigger Signals** column for each skill. If a task
 
 **Design rules:** 60–70% color dominance, vary layouts, every slide needs visual elements, left-align body text.
 
-**Works alongside:** `canvas-design` (visual direction), `pdf` (final PDF output).
+**Works alongside:** `pdf` (final PDF output).
 
 ---
 
@@ -392,73 +305,7 @@ When given a task, scan the **Trigger Signals** column for each skill. If a task
 
 **Quality standards:** 10+ sources, 3+ per claim, all statements cited, no fabricated references, 80%+ prose.
 
-**Works alongside:** `tavily-mcp` (web search), `firecrawl` (page extraction), `context7` (technical docs), `obsidian-skills` (save to vault).
-
----
-
-## graphify
-
-**What it does:** Transforms unstructured files (code, PDFs, markdown, images) into interactive knowledge graphs. Extracts concepts and relationships, produces an HTML graph explorer + persistent JSON + structured report.
-
-**When to call it:**
-- Mapping relationships across a large codebase or document corpus
-- Understanding connections between concepts in research or docs
-- Asked to "map", "graph", or "visualize relationships" across files
-- Reducing token usage through graph-based context (claimed 71.5x reduction)
-
-**Install:** `pip install graphifyy`
-
-**Works alongside:** `deep-research` (graph knowledge from research), `codebase-memory-mcp` (alternative for pure code).
-
----
-
-## obsidian-skills
-
-**What it does:** Full Obsidian ecosystem support — 5 sub-skills covering Obsidian Flavored Markdown (wikilinks, embeds, callouts, properties), Bases views, JSON Canvas boards, CLI vault interaction, and clean web page extraction with Defuddle.
-
-**When to call it:**
-- Creating or editing notes in an Obsidian vault
-- Using wikilinks, callouts, YAML frontmatter, or Mermaid diagrams
-- Building Bases views or JSON Canvas boards
-- Extracting clean markdown from a web page for Obsidian
-
-**Key rule:** Use wikilinks for vault-internal notes (auto-rename tracking), standard Markdown links for external URLs.
-
-**Works alongside:** `deep-research` (research → Obsidian notes pipeline).
-
----
-
-## marketing-skills
-
-**What it does:** 40+ specialized marketing skills across CRO, content/copy, SEO, paid ads, analytics, retention, growth, strategy, sales, and lead generation.
-
-**When to call it:**
-- Writing or optimizing landing page copy
-- Creating email sequences, cold outreach, or social content
-- SEO audits, programmatic SEO, or AI search optimization
-- Setting up analytics, A/B tests, or ad campaigns
-- Developing launch strategy, pricing, or content strategy
-
-**Install:** `npx skills add coreyhaines31/marketingskills` or `/plugin marketplace add coreyhaines31/marketingskills`
-
-**Works alongside:** `claude-seo` (deeper technical SEO), `website-builder` (deploy optimized page), `frontend-design` (implement UI changes).
-
----
-
-## claude-seo
-
-**What it does:** Universal SEO skill with 19+ sub-skills covering technical SEO, Core Web Vitals, schema markup, E-E-A-T, AI search (GEO), local SEO, competitor analysis, and Google API integrations. Generates PDF/HTML reports.
-
-**When to call it:**
-- Full SEO audit on any website
-- Checking Core Web Vitals or schema markup
-- Optimizing for AI Overviews, ChatGPT, or Perplexity
-- Google Business Profile audits or local SEO
-- Building competitor comparison pages or programmatic SEO
-
-**Extensions available:** DataForSEO, Firecrawl, Banana integrations.
-
-**Works alongside:** `marketing-skills` (broader marketing strategy), `firecrawl` (page content extraction), `website-builder` (implement fixes).
+**Works alongside:** `tavily-mcp` (web search), `firecrawl` (page extraction), `context7` (technical docs)
 
 ---
 
@@ -508,8 +355,6 @@ When given a task, scan the **Trigger Signals** column for each skill. If a task
 | Write code in a Code node (JS) | `n8n-code-javascript` |
 | Write code in a Code node (Python) | `n8n-code-python` |
 | Full workflow build end-to-end | All 7 n8n skills |
-| Clone / reverse-engineer a website | `website-cloner` |
-| Build and deploy a website | `website-builder` |
 | Webhook-triggered workflow | `n8n-workflow-patterns` + `n8n-expression-syntax` + `n8n-mcp-tools-expert` |
 | AI agent workflow | `n8n-workflow-patterns` + `n8n-mcp-tools-expert` + `n8n-node-configuration` |
 | Debug a broken workflow | `n8n-validation-expert` + `n8n-expression-syntax` |
@@ -518,14 +363,8 @@ When given a task, scan the **Trigger Signals** column for each skill. If a task
 | Work with Excel/spreadsheets | `xlsx` |
 | Create or edit a presentation | `pptx` |
 | Build a Claude.ai HTML artifact | `web-artifacts-builder` + `frontend-design` |
-| Design visual art or poster | `canvas-design` |
 | Frontend UI with strong aesthetics | `frontend-design` |
 | Deep research with cited report | `deep-research` |
-| Map relationships across files | `graphify` |
-| Work in an Obsidian vault | `obsidian-skills` |
-| Marketing copy or CRO | `marketing-skills` |
-| SEO audit or optimization | `claude-seo` + `marketing-skills` |
-| Optimize for AI search (GEO) | `claude-seo` |
 | Plan + execute a big feature | `superpowers` + `task-master` |
 | Break a PRD into tasks | `task-master` |
 | TDD, debugging, code review | `superpowers` |
