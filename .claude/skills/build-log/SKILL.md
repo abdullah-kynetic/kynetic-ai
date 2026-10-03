@@ -1,6 +1,6 @@
 ---
 name: build-log
-description: Run at the end of any Claude Code or Cowork session that changed something in kynetic-ai (built, deployed, debugged, or decided anything). Captures the session into a permanent, portfolio-grade engineering record — a dated entry in BUILD_LOG.md (GitHub, the receipts) plus a prompt to log the same summary to Notion (the narrative). Use when the user says "wrap up," "log this," "document what we did," or at the natural end of a work session on this project.
+description: Run at the end of any Claude Code or Cowork session that changed something in kynetic-ai (built, deployed, debugged, or decided anything). Captures the session into a permanent, portfolio-grade engineering record — a dated entry in BUILD_LOG.md (GitHub, the receipts), updates to the docs/ memory files (progress, decisions, known issues), plus a prompt to log the same summary to Notion (the narrative). Use when the user says "wrap up," "log this," "document what we did," or at the natural end of a work session on this project.
 ---
 
 # Build Log
@@ -58,17 +58,34 @@ real reasoning.
    record of real debugging is more valuable for a portfolio than a fake
    streak of clean wins.
 
-3. **Commit and push** `BUILD_LOG.md` on its own (don't bundle it into an
-   unrelated code commit) with a plain message like `Log session: <one-line
-   summary>`.
+3. **Update the three memory docs** in `docs/` so the next session starts with
+   the right context. They mirror Twenty (the system of record); if a doc and
+   Twenty disagree, Twenty wins. Only record what actually happened this
+   session:
+   - `docs/progress.md`: add a dated entry under **Log**, then refresh
+     **Current phase**, **Done**, **In progress**, **Next** and **Blockers**
+     to match the real state.
+   - `docs/decisions.md`: add one entry (next `D-NNN`, with Status, Date, Why,
+     Replaced) for each new decision. Never edit or reopen an existing
+     decision; if one is superseded, add a new entry that says what it
+     replaced.
+   - `docs/known-issues.md`: add new bugs, gotchas and workarounds (next
+     `KI-NNN`). Move fixed items to **Resolved** with the fix. Do not delete
+     them.
+   If nothing changed for a file, leave it alone and say so.
 
-4. **Prompt for the Notion side** — after the GitHub entry is committed, tell
+4. **Commit and push** `BUILD_LOG.md` on its own (don't bundle it into an
+   unrelated code commit) with a plain message like `Log session: <one-line
+   summary>`. Commit the `docs/` updates as a separate commit, `Update docs:
+   <one-line summary>`.
+
+5. **Prompt for the Notion side** — after the GitHub entry is committed, tell
    Abdullah the entry is ready and ask if he wants it also logged to Notion
    (invoke the `session-close` skill if this session's harness has it
    available) — that's where the narrative/portfolio-facing version lives.
    Don't skip this step silently; the whole point is both halves get done.
 
-5. **If this is the end of a session** (not just a mid-session checkpoint),
+6. **If this is the end of a session** (not just a mid-session checkpoint),
    also offer the `session-handoff` skill so the next session picks up cold
    without re-deriving context.
 
