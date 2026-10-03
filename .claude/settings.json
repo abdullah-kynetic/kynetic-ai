@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python tools/retell.py *)",
+      "Bash(python3 tools/retell.py *)"
+    ]
+  }
+}
