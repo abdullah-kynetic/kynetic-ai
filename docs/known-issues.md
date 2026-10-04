@@ -3,10 +3,6 @@
 Mirror of open problems tracked in Twenty. If this disagrees with Twenty, Twenty wins.
 
 ## Open
-### KI-001: Leaked Cal.com key in git history (high)
-A key starting cal_live_f64 was committed Aug 23. It came from the Inflate AI reference files. The current file on main no longer holds it, but history does.
-Fix: revoke it in Cal.com (task 1.1).
-
 ### KI-002: TCPA emergency branch opt-out gap (high)
 Emergency calls and urgent notifications may reach someone who opted out.
 Fix: counsel sign-off (task 1.4). Also feeds the agreement rewrite (task 4.7, 4.8).
@@ -28,3 +24,5 @@ Fix: add a header-auth secret (task 3.6). Keep this repo private until then.
 - The Retell MCP needs Deno and is often unavailable. Use tools/retell.py.
 
 ## Resolved
+### KI-001: Leaked Cal.com key in git history (was high)
+A key starting cal_live_f64 was committed Aug 23, carried in from the Inflate AI reference files. Confirmed Oct 4, 2026 it was a live key on Abdullah's own Cal.com account (abdullah@kyneticai.com). Deleted in Cal.com and replaced with a new key, entered into Emily's two Retell Cal tools (check_availability_cal, book_appointment_cal on llm_b520d8a6b9bf754f19285a8a6185), event type 7025524 (Water Damage Assessment). Confirmed both tools show the new key and validate. The old key value stays in git history; it is dead in Cal.com so that no longer matters.
