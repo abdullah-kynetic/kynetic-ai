@@ -33,5 +33,8 @@ Phase 1 (decisions and cleanup), then Phase 3 (demo and delivery engine). Lane B
 - build-log skill updated to also refresh the docs/ files at session end.
 - Resolved KI-001: confirmed the leaked Cal.com key was live on Abdullah's own account, rotated it, updated Emily's two Cal tools (check_availability_cal, book_appointment_cal), confirmed both validate against event type 7025524.
 
+### 2026-10-05 (session 2)
+- 3.2 started, plan only. Read-only pull of Emily workflow 0PwP1tUf4478lNbf and the Twenty object fields. Drafted retell/builds/emily-speed-to-lead/PLAN-3.2-notion-to-twenty.md. Found 14 Notion nodes, not 13. Waiting on Abdullah's approval and 4 decisions (job status "New", contact dedupe, post-call branch, job lookup response shape). No changes made to n8n, Retell or Twenty.
+
 ### 2026-10-05
 - 1.2 closed: checked retell/builds/_inflate-original/agent.json, confirmed Emily's current voice (11labs-Cimo) is the same one Inflate's original build used, not an unexamined default. Decided to keep it rather than spend time picking a new one. See D-008.
