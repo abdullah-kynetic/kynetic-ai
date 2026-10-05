@@ -37,3 +37,8 @@ Replaced: Notion.
 ## D-007: Hard rules
 Status: decided
 Why: No AI placed cold calls, no cold SMS at scale, no ringless voicemail drops, consent wording on any form that triggers a callback.
+
+## D-008: Emily's voice is 11labs-Cimo
+Status: decided
+Date: 2026-10-05
+Why: It's what Emily already had, inherited from the Inflate AI reference build (confirmed in retell/builds/_inflate-original/agent.json). Capability matters more than voice for this build; voice is a 30-second swap per client later if needed. Keeping it unblocks publishing now instead of spending time picking a new one.
