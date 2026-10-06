@@ -25,7 +25,7 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The 
 ## Next (active focus)
 - 3.5 Build the outbound speed-to-lead n8n workflow as a separate Retell agent (D-010). See ACTIVE BUILD PLAN note Section 6.
 - 3.6 Compliance for the outbound workflow: SMS opt-out, Contact relation, webhook auth (KI-005).
-- Still need Abdullah's confirmation on Decisions 2 and 3 (n8n webhook pattern; outbound qualification gate scope) before writing the outbound workflow — see ACTIVE BUILD PLAN note Sections 4-5.
+- Still need Abdullah's confirmation on Decisions 2 and 3 (n8n webhook pattern; outbound qualification gate scope) before writing the outbound workflow — see ACTIVE BUILD PLAN note Sections 4-5. Answered so far: D-011 (disclose AI and recording), D-012 (v1 voicemail hang-up and retry, cadence, model/voice, transfer deferred).
 - 1.3 Twilio A2P registration for +16692660586 (manual, unrelated to this redo).
 - 1.4 TCPA emergency branch opt-out gap, counsel sign-off (manual, unrelated to this redo).
 
@@ -47,4 +47,5 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The 
 
 ### 2026-10-06
 - Imported SOURCE TEMPLATE 05 (Facebook Ad Form) into n8n unchanged as `KYQIVtxwDcXVKmk3` (inactive) so Abdullah can test the baseline before we edit it. Retell side deferred until after the n8n edits.
+- Audited the imported template node by node and compared it with all 9 saved transcripts and templates 01-06. Logged D-011 and D-012 in docs and in Twenty.
 - D-010: resolved the one-agent-vs-two-agents question from the ACTIVE BUILD PLAN note as two separate Retell agents. Inbound (Emily) paused — near-done, left alone until a client demo needs it. Outbound speed-to-lead is now the sole active build target. Updated the ACTIVE BUILD PLAN note and docs/progress.md, docs/decisions.md to match.

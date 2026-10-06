@@ -55,3 +55,20 @@ Date: 2026-10-06
 Why: n8n forks into separate workflows regardless of agent count, so one shared agent doesn't save the hard work; cloning a Retell agent template is a one-time cost, not recurring; two separate, nameable agents match Abdullah's cold-call pitch/demo motion and let him sell/demo inbound and outbound as distinct capabilities. Resolves OPEN DECISION 1 from the Twenty note "ACTIVE BUILD PLAN: Emily Rebuild + Speed-to-Lead Outbound."
 Scope: Inbound (Emily) build is paused — considered near-done, touched again only to customize for a client-specific demo. Outbound (speed-to-lead) is the sole active build target. Correction (2026-10-06): the outbound agent is not built from a merged inbound+outbound prompt — that was a wrong assumption. Abdullah's "VOICE AGENT PROMPT" upload is SOURCE TEMPLATE 05 (Twenty), an already outbound-only prompt (SolarShift) paired with a matching Facebook Ad Form n8n JSON, built for this exact speed-to-lead use case. That pair is the primary starting draft for the new outbound agent/workflow, adapted to Twenty/Cal.com and run through the SOURCE TEMPLATE 06 house style.
 Replaced: D-005's parenthetical "(one agent for inbound and outbound)" description of Emily, and the open/unconfirmed status of Decision 1 in the ACTIVE BUILD PLAN note.
+
+## D-011: Outbound agent discloses it is an AI and that the call may be recorded
+Status: decided
+Date: 2026-10-06
+Why: Source review of 14 saved sources: 4 disclose, 3 do not, SOURCE TEMPLATE 05 says "Never mention AI", the rest are silent. Only SOURCE TRANSCRIPT 03 argues for disclosure. No source gives conversion data or a legal basis. Fits D-007 (consent wording).
+Opening line: "Hi, is this {{first_name}}? This is [Name], an AI assistant calling from [Company] about the form you just submitted. This call may be recorded. Is now an okay time?"
+Consequence: remove "Never mention AI" from the adapted prompt, never deny being an AI if asked, store consent text, timestamp and source in Twenty with each lead. Current federal and state disclosure rules are unverified; counsel to confirm (task 1.4).
+
+## D-012: Outbound v1 call handling
+Status: decided
+Date: 2026-10-06
+Why: Keeps v1 small and testable using patterns confirmed across the source review.
+- Voicemail: hang up, log "voicemail", retry. Leaving a message is TBD for a later version.
+- Retry cadence: first call within about 60s of submit, then 5 min, 1 hour, next day, max 4 attempts, via a scheduled sweeper over Twenty.
+- Model and voice: gpt-4.1 with 11labs-Cimo (D-008), revisit after test calls.
+- Human transfer: deferred past v1 (an added tool and prompt change, not a rebuild).
+- Results arrive by Retell webhook filtered to the final analyzed event (no polling). Outcome from Retell native post-call analysis. Twenty record ID passed in call metadata.
