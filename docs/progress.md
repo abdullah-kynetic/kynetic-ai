@@ -2,6 +2,9 @@
 
 Mirror of the Twenty roadmap ("Roadmap: all phases"). If this disagrees with Twenty, Twenty wins.
 
+## Current plan
+Plan 1 only: the outbound speed to lead agent, gate of 5 paying clients before Plan 2 (D-013). Task titles in Twenty carry [P1]/[P2]; Emily inbound and all upsell systems are [P2].
+
 ## Current phase
 Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The whole voice-agent build is being redone from scratch (D-009); see Twenty note "ACTIVE BUILD PLAN: Emily Rebuild + Speed-to-Lead Outbound" for the full synthesis.
 
@@ -44,7 +47,7 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The 
 - D-009: full voice-agent build declared redone from scratch after reviewing 9 YouTube transcripts and 6 build artifacts. Saved all 15 as SOURCE TRANSCRIPT/SOURCE TEMPLATE notes in Twenty and wrote the synthesis into "ACTIVE BUILD PLAN: Emily Rebuild + Speed-to-Lead Outbound."
 
 ### 2026-10-06 (audit session)
-- Read-only audit of Twenty (50 tasks, 66 notes, 0 opportunities). Synced D-011 and D-012 into docs/decisions.md. Found Twenty task statuses stale: 1.1 and 1.2 still TODO though done, 3.5 not marked IN_PROGRESS. No Twenty writes made.
+- Read-only audit of Twenty (50 tasks, 66 notes, 0 opportunities). Synced D-011 and D-012 into docs/decisions.md. Found Twenty task statuses stale: 1.1 and 1.2 still TODO though done, 3.5 not marked IN_PROGRESS. Then recorded D-013 (two plans) in Twenty: new BUSINESS MODEL: Two Plans and D-013 notes, banners on Package Menu, Offer Definition, MASTER PLAN and Lane B handoff, [P1]/[P2] prefixes on 41 of 50 tasks, 1.1 and 1.2 marked DONE. Left unlabeled pending Abdullah: 1.3, 3.7, 5.5 to 5.8, standard pricing, prospect follow up automation, remaining Claude skills.
 
 ### 2026-10-06
 - D-010: resolved the one-agent-vs-two-agents question from the ACTIVE BUILD PLAN note as two separate Retell agents. Inbound (Emily) paused — near-done, left alone until a client demo needs it. Outbound speed-to-lead is now the sole active build target. Updated the ACTIVE BUILD PLAN note and docs/progress.md, docs/decisions.md to match.

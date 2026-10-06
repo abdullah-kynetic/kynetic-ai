@@ -56,6 +56,15 @@ Why: n8n forks into separate workflows regardless of agent count, so one shared 
 Scope: Inbound (Emily) build is paused — considered near-done, touched again only to customize for a client-specific demo. Outbound (speed-to-lead) is the sole active build target. Correction (2026-10-06): the outbound agent is not built from a merged inbound+outbound prompt — that was a wrong assumption. Abdullah's "VOICE AGENT PROMPT" upload is SOURCE TEMPLATE 05 (Twenty), an already outbound-only prompt (SolarShift) paired with a matching Facebook Ad Form n8n JSON, built for this exact speed-to-lead use case. That pair is the primary starting draft for the new outbound agent/workflow, adapted to Twenty/Cal.com and run through the SOURCE TEMPLATE 06 house style.
 Replaced: D-005's parenthetical "(one agent for inbound and outbound)" description of Emily, and the open/unconfirmed status of Decision 1 in the ACTIVE BUILD PLAN note.
 
+## D-013: Two plans. Plan 1 is the outbound agent only; five paying clients before Plan 2
+Status: decided
+Date: 2026-10-06
+Why: The outbound pitch gets us in front of qualified owners and makes money fastest. The full system is what we follow through on once we have credibility.
+Plan 1: sell only the outbound speed to lead agent to owners already running Meta ads, $1,500 setup + $997/mo. Gate: 5 paying clients (setup paid, on the monthly plan; also Quentin's partnership terms finalize at 5). Plan 2 (Revenue Recovery System): Reputation Engine, Inbound AI Receptionist (Emily), Lead Recovery and Nurture. After the gate, either stay on Plan 1 and sell the three as upsells to the same clients (if Plan 1 scales well) or reassess and bring Plan 2 forward as its own pitch. Plan 2 pricing is undecided.
+Naming: "speed to lead" only means the outbound agent. Inbound is the Inbound AI Receptionist.
+Consequence: Twenty task titles carry [P1]/[P2]. The Phase 7 demo gate uses the outbound demo. Package Menu and Offer Definition are Plan 2 reference only. If the fork is decided before client 5, Plan 1 onboarding should leave room for upsells.
+See: Twenty note "BUSINESS MODEL: Two Plans".
+
 ## D-011: Outbound agent discloses it is an AI and that the call may be recorded
 Status: decided
 Date: 2026-10-06
