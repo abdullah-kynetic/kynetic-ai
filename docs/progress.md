@@ -14,6 +14,8 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The 
 ## In progress
 - None active. Next session should start building the outbound workflow per Section 6 of the ACTIVE BUILD PLAN note.
 
+- 3.5 (test step): SOURCE TEMPLATE 05 imported into n8n as-is, workflow "n8n Facebook Ad Form" (`KYQIVtxwDcXVKmk3`), inactive. Still Vapi + Google Sheets + Azure, not yet adapted to Retell/Twenty. Do not activate. Google Sheets nodes auto-attached the "Kynetic AI Google Sheets" credential but still point at the original author's sheet ID. Place Call, Fetch Call Details1 and the Azure model have no credential. Retell agent not created yet.
+
 ## Paused (D-010, Oct 6, 2026 — inbound is near-done, left alone until a client demo needs it)
 - 3.1 Repoint Emily's 4 tool webhooks and post-call webhook, greeting says Emily. Approved, URL only.
 - 3.2 Swap Emily's 13 Notion nodes for Twenty nodes. Needs approval of the node-by-node plan.
@@ -44,4 +46,5 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The 
 - D-009: full voice-agent build declared redone from scratch after reviewing 9 YouTube transcripts and 6 build artifacts. Saved all 15 as SOURCE TRANSCRIPT/SOURCE TEMPLATE notes in Twenty and wrote the synthesis into "ACTIVE BUILD PLAN: Emily Rebuild + Speed-to-Lead Outbound."
 
 ### 2026-10-06
+- Imported SOURCE TEMPLATE 05 (Facebook Ad Form) into n8n unchanged as `KYQIVtxwDcXVKmk3` (inactive) so Abdullah can test the baseline before we edit it. Retell side deferred until after the n8n edits.
 - D-010: resolved the one-agent-vs-two-agents question from the ACTIVE BUILD PLAN note as two separate Retell agents. Inbound (Emily) paused — near-done, left alone until a client demo needs it. Outbound speed-to-lead is now the sole active build target. Updated the ACTIVE BUILD PLAN note and docs/progress.md, docs/decisions.md to match.
