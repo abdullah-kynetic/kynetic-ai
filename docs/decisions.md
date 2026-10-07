@@ -65,6 +65,13 @@ Naming: "speed to lead" only means the outbound agent. Inbound is the Inbound AI
 Consequence: Twenty task titles carry [P1]/[P2]. The Phase 7 demo gate uses the outbound demo. Package Menu and Offer Definition are Plan 2 reference only. If the fork is decided before client 5, Plan 1 onboarding should leave room for upsells.
 See: Twenty note "BUSINESS MODEL: Two Plans".
 
+## D-014: Outbound v1 architecture
+Status: decided
+Date: 2026-10-07
+Why: Keeps v1 to three endpoints and one secret per authenticated endpoint; matches D-012.
+(1) Lead entry is an n8n form for now (stands in for the Meta lead form), with consent wording and checkbox; consent text, timestamp and source stored in Twenty. (2) Three endpoints: the n8n intake form (public), one tools endpoint with an `action` router for Cal.com check availability and book, and one post call endpoint filtered to `event == call_analyzed`. Tools and post call endpoints get header auth (KI-005). (3) Light pre call gate: E.164 phone check, no re-call of the same phone within 24 hours of a new submission (scheduled retries not blocked), consent check; owner qualification stays upstream (D-002). (4) Opt out logging tool waits for 3.6. (5) Correction: Source Template 05 has no action router or tool webhooks (form trigger, Vapi call, 30s polling, analyzer, Sheets); the router is our own design.
+Needs approval before building: adding Cal.com tools to the new outbound Retell agent.
+
 ## D-011: Outbound agent discloses it is an AI and that the call may be recorded
 Status: decided
 Date: 2026-10-06
