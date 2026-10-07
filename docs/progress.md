@@ -24,7 +24,7 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The 
 - 3.4 Test 3 call paths. Blocked on 3.3 and 1.3.
 
 ## Next (active focus)
-- 3.5 Build the outbound speed-to-lead n8n workflow as a separate Retell agent (D-010). See ACTIVE BUILD PLAN note Section 6.
+- 3.5 (IN PROGRESS, prep only) Build the outbound speed-to-lead n8n workflow as a separate Retell agent (D-010, D-014). Next 10 steps: Twenty note "PLAN 1: NEXT 10 STEPS (Oct 7, 2026)". Waiting on Abdullah: PROMPT.md review, prerequisites, then approvals for Twenty fields, Retell agent, n8n workflow.
 - 3.6 Compliance for the outbound workflow: SMS opt-out, Contact relation, webhook auth (KI-005).
 - Still need Abdullah's confirmation on Decisions 2 and 3 (n8n webhook pattern; outbound qualification gate scope) before writing the outbound workflow — see ACTIVE BUILD PLAN note Sections 4-5.
 - 1.3 Twilio A2P registration for +16692660586 (manual, unrelated to this redo).
