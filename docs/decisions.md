@@ -65,6 +65,12 @@ Naming: "speed to lead" only means the outbound agent. Inbound is the Inbound AI
 Consequence: Twenty task titles carry [P1]/[P2]. The Phase 7 demo gate uses the outbound demo. Package Menu and Offer Definition are Plan 2 reference only. If the fork is decided before client 5, Plan 1 onboarding should leave room for upsells.
 See: Twenty note "BUSINESS MODEL: Two Plans".
 
+## D-016: Demo is built on AM-1 Roofing's profile (option B)
+Status: decided
+Date: 2026-10-08
+Why: Abdullah's method is to copy a real, well-run business from far away, build the demo from it, pitch it, then rename. Kynetic Roofing now uses AM-1 Roofing Inc's (Bend, Oregon) services, hours, service area and process; timezone is America/Los_Angeles. Name: "Kynetic Roofing" (Abdullah also wrote "KyneticAI Roofing"; spoken name to be confirmed, it is the company_name variable).
+Guardrails: AM-1's license, CertainTeed status, ratings, phone, email and address are not copied onto the demo; they live on a separate AM-1 prospect record in Twenty. Unverified items (Meta ads, free estimate, financing, Facebook page, rating) are never stated as facts in a pitch. Owner gate (D-002) not yet checked; no calls to AM-1 until it is.
+
 ## D-015: Plan 1 demo niche and names
 Status: decided
 Date: 2026-10-07

@@ -47,7 +47,7 @@ Run `python tools/retell.py create-outbound` to see the dry run (reads `agent.co
 - No call is placed until Abdullah approves a test.
 
 ## Cal.com (done Oct 8)
-Event type "Roof Inspection", ID 7404470, 30 minutes, location = attendee address, https://cal.com/abdullah-kyneticai/roof-inspection. Uses the account default schedule (America/Los_Angeles); confirm available hours. The new agent's Cal tools use event type 7404470 and timezone America/Chicago. The Cal API key lives in the cloud environment variable CAL_API_KEY (verified working, not the old leaked key); it is never printed or committed.
+Event type "Roof Inspection", ID 7404470, 30 minutes, location = attendee address, https://cal.com/abdullah-kyneticai/roof-inspection. Uses the account default schedule (America/Los_Angeles), which now matches the Bend, Oregon demo (D-016); confirm available hours. The new agent's Cal tools use event type 7404470 and timezone America/Los_Angeles. The Cal API key lives in the cloud environment variable CAL_API_KEY (verified working, not the old leaked key); it is never printed or committed.
 
 ## Prerequisites from Abdullah
 1. A Retell Header Auth credential in n8n (the Retell API key, entered by Abdullah).

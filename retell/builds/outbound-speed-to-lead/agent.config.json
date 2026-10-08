@@ -11,13 +11,13 @@
       "service_type": "roof inspection",
       "lead_source": "web form",
       "owns_property": "yes",
-      "issue_type": "hail damage",
+      "issue_type": "a leak",
       "timeline": "within 2 weeks"
     }
   },
   "cal": {
     "event_type_id": 7404470,
-    "timezone": "America/Chicago"
+    "timezone": "America/Los_Angeles"
   },
   "agent": {
     "agent_name": "Outbound Speed to Lead (Kynetic Roofing demo)",
