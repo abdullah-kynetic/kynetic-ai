@@ -33,6 +33,6 @@ Stored with the lead: the exact wording shown, the timestamp, the form version, 
 - We cannot create this in Meta from here (needs the client's Ads Manager access). Task: when a client signs, set up the form from this spec and point the Meta webhook or Zapier style trigger at the n8n workflow.
 
 ## n8n form specifics
-- Form title: "Get a free roof inspection | Summit Ridge Roofing" (demo). Response text: "Thanks. Our AI assistant will call you in about a minute."
+- Form title: "Get a free roof inspection | Kynetic Roofing" (demo). Response text: "Thanks. Our AI assistant will call you in about a minute."
 - Test mode: use your own phone number only. Never enter a number you do not own.
 - The workflow validates the phone (E.164, US), checks the 24 hour duplicate rule for new submissions, and requires the consent checkbox before placing any call. Anything failing the gate is written to Twenty with a status and not dialed (D-014).

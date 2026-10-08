@@ -68,8 +68,8 @@ See: Twenty note "BUSINESS MODEL: Two Plans".
 ## D-015: Plan 1 demo niche and names
 Status: decided
 Date: 2026-10-07
-Why: Roofing only for the first build. Demo business is Summit Ridge Roofing (fictional), agent Alex. Kynetic Restoration (Demo) stays with Plan 2. Roofing is high ticket, urgent, owner operated and runs on Meta lead ads; the Dallas Muse test found 25 real advertisers. Solar waits for counsel (1.4) and has different qualifiers. Kitchen and bath is the second niche to test (2.3). This is judgment, to be checked against Ad Library counts in task 2.1.
-Consequence: PROMPT.md is filled in for Summit Ridge Roofing; a Cal.com event type for a roof inspection is needed.
+Why: Roofing only for the first build. Demo business is Kynetic Roofing (renamed Oct 8, 2026 from Summit Ridge Roofing; used everywhere in Retell, n8n and Twenty), agent Alex. Kynetic Restoration (Demo) stays with Plan 2. Roofing is high ticket, urgent, owner operated and runs on Meta lead ads; the Dallas Muse test found 25 real advertisers. Solar waits for counsel (1.4) and has different qualifiers. Kitchen and bath is the second niche to test (2.3). This is judgment, to be checked against Ad Library counts in task 2.1.
+Consequence: PROMPT.md is filled in for Kynetic Roofing; a Cal.com event type for a roof inspection is needed.
 
 ## D-014: Outbound v1 architecture
 Status: decided

@@ -1,6 +1,6 @@
 # Demo business: model business and our demo skin
 
-Prepared Oct 8, 2026. Approach: model a real, well-run local roofer so the demo feels real, but do not clone it. We use public facts (services, materials, area type, warranty style, review themes), not copied website text, logos, photos or a street address. The demo identity is fictional (D-015).
+Prepared Oct 8, 2026. Approach: model a real, well-run local roofer so the demo feels real, but do not clone it. We use public facts (services, materials, area type, warranty style, review themes), not copied website text, logos, photos or a street address. The demo identity is our own demo brand, Kynetic Roofing (D-015, renamed Oct 8, 2026).
 
 ## Model business: AM-1 Roofing, Bend, Oregon (Central Oregon)
 Facts below come from search result summaries. The source sites are blocked from this environment, so I could not open them. Verify before using any of it in a pitch.
@@ -21,12 +21,12 @@ Other Central Oregon roofers seen (not chosen): Deschutes Roofing (family and ve
 3. **Never impersonate.** The demo agent introduces itself as calling for the demo company. On a pitch call to a real business, the agent says it is Kynetic AI's demo and may use the prospect's public details only after the owner has agreed to the demo call. No calls to anyone but a tester or the consenting owner (D-007).
 4. **Time zone.** The model business is in Pacific time. The generic demo skin uses Central (Dallas test market). A prospect skin needs its own timezone variable.
 
-## Demo skin: Summit Ridge Roofing (fictional, D-015)
+## Demo skin: Kynetic Roofing (our demo brand, D-015)
 Used for the generic pitch and all testing. Replace these facts per client.
 
 | Field | Value |
 |---|---|
-| Company | Summit Ridge Roofing (fictional; check no real business uses the name before any public use) |
+| Company | Kynetic Roofing (our own demo brand; renamed from Summit Ridge Roofing on Oct 8, 2026) |
 | Agent | Alex, an AI assistant |
 | Market | Dallas Fort Worth, Texas (America/Chicago) |
 | Services | Residential roof repair, replacement, storm and hail damage inspection |
@@ -37,7 +37,7 @@ Used for the generic pitch and all testing. Replace these facts per client.
 | Calendar | Cal.com "Roof Inspection", event type 7404470, attendee address |
 | Lead sources | Meta lead form (stand in: n8n form) |
 
-A "Kynetic AI Roofing" rename for the sales pitch is just a change of `company_name` (and the agent greeting); the prompt does not need rewriting.
+A prospect-specific version for a pitch only changes the `company_name` variable (and the greeting); the prompt does not need rewriting. The demo brand everywhere (Retell, n8n, Twenty) is Kynetic Roofing.
 
 ## What we borrowed from the model
 Services and materials mix, warranty framing (manufacturer backed), the trust signals that matter to homeowners (long operating history, local, licensed), and the free assessment offer. Nothing copied word for word.

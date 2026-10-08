@@ -6,7 +6,7 @@
     "begin_message": "Hi, is this {{first_name}}? This is {{agent_name}}, an AI assistant calling from {{company_name}} about the form you just submitted. This call may be recorded. Is now an okay time?",
     "default_dynamic_variables": {
       "first_name": "Sarah",
-      "company_name": "Summit Ridge Roofing",
+      "company_name": "Kynetic Roofing",
       "agent_name": "Alex",
       "service_type": "roof inspection",
       "lead_source": "web form",
@@ -20,7 +20,7 @@
     "timezone": "America/Chicago"
   },
   "agent": {
-    "agent_name": "Outbound Speed to Lead (Summit Ridge Roofing demo)",
+    "agent_name": "Outbound Speed to Lead (Kynetic Roofing demo)",
     "voice_id": "11labs-Cimo",
     "language": "en-US",
     "voice_speed": 1.1,

@@ -19,7 +19,7 @@ E. Sweeper (every few minutes): find leads with outcome in (no_answer, voicemail
 F. Failures (call create error, Twenty write error) send an alert email.
 
 ## Twenty data (DONE Oct 8, 2026)
-The fields below were created in Twenty on Oct 8 (additive only). endCustomer: leadSource, consentText, consentAt, formSubmittedAt, firstRingAt, leadStatus, attemptCount, nextAttemptAt, lastOutcome, ownsProperty, issueType, timeline, callOptOut, callOptOutDate. customerInteraction: outcome, callbackTime (text), bookedSlot (text). Demo client account "Summit Ridge Roofing (Demo)" created (id 56b85831-d0fd-4f0a-a9b7-e96956278bb8). Original proposal text kept below for reference.
+The fields below were created in Twenty on Oct 8 (additive only). endCustomer: leadSource, consentText, consentAt, formSubmittedAt, firstRingAt, leadStatus, attemptCount, nextAttemptAt, lastOutcome, ownsProperty, issueType, timeline, callOptOut, callOptOutDate. customerInteraction: outcome, callbackTime (text), bookedSlot (text). Demo client account "Kynetic Roofing (Demo)" created (id 56b85831-d0fd-4f0a-a9b7-e96956278bb8). Original proposal text kept below for reference.
 
 ### Original proposal
 Existing and reusable:
