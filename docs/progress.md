@@ -46,6 +46,9 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The 
 - 1.2 closed: checked retell/builds/_inflate-original/agent.json, confirmed Emily's current voice (11labs-Cimo) is the same one Inflate's original build used, not an unexamined default. Decided to keep it rather than spend time picking a new one. See D-008.
 - D-009: full voice-agent build declared redone from scratch after reviewing 9 YouTube transcripts and 6 build artifacts. Saved all 15 as SOURCE TRANSCRIPT/SOURCE TEMPLATE notes in Twenty and wrote the synthesis into "ACTIVE BUILD PLAN: Emily Rebuild + Speed-to-Lead Outbound."
 
+### 2026-10-08
+- Wrote the counsel outreach email (docs/counsel-email.md) and marked it done. Task 1.4 set to IN_PROGRESS, not done: it needs counsel's sign-off. Reordered Step 2: Twilio trunk, n8n Retell credential and test phone moved to the end because dialogue testing needs no phone number. Still open: Cal.com Roof Inspection event type ID and Retell identity verification check.
+
 ### 2026-10-07
 - Decided D-014 (n8n form, two endpoints, light gate), corrected after finding Emily's Cal tools are native Retell tools. Labeled the last 9 tasks [P1]. Drafted retell/PROMPTING_STYLE.md, retell/builds/outbound-speed-to-lead/PROMPT.md and BUILD_PLAN.md.
 
