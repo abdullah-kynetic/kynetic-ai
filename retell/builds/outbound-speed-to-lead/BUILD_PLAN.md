@@ -40,6 +40,9 @@ Also add the Retell select values the workflow writes (for example Interaction T
 - Needs a Retell Header Auth credential in n8n (see Prerequisites) and the existing "Twenty account" credential `41C04qbmnbi0GI2P`.
 - No call is placed until Abdullah approves a test.
 
+## Cal.com (done Oct 8)
+Event type "Roof Inspection", ID 7404470, 30 minutes, location = attendee address, https://cal.com/abdullah-kyneticai/roof-inspection. Uses the account default schedule (America/Los_Angeles); confirm available hours. The new agent's Cal tools use event type 7404470 and timezone America/Chicago. The Cal API key lives in the cloud environment variable CAL_API_KEY (verified working, not the old leaked key); it is never printed or committed.
+
 ## Prerequisites from Abdullah
 1. A Retell Header Auth credential in n8n (the Retell API key, entered by Abdullah).
 2. The outbound caller ID number: a Retell or Twilio number that can place calls (+16692660586 has an A2P problem for SMS only; voice status to confirm).

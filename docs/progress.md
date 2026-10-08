@@ -47,6 +47,7 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The 
 - D-009: full voice-agent build declared redone from scratch after reviewing 9 YouTube transcripts and 6 build artifacts. Saved all 15 as SOURCE TRANSCRIPT/SOURCE TEMPLATE notes in Twenty and wrote the synthesis into "ACTIVE BUILD PLAN: Emily Rebuild + Speed-to-Lead Outbound."
 
 ### 2026-10-08
+- Cal.com Roof Inspection event type created through the API: ID 7404470, 30 min, attendee address. CAL_API_KEY in the cloud environment verified working (HTTP 200, not the old leaked key). Remaining Step 2: Retell identity verification check.
 - Wrote the counsel outreach email (docs/counsel-email.md) and marked it done. Task 1.4 set to IN_PROGRESS, not done: it needs counsel's sign-off. Reordered Step 2: Twilio trunk, n8n Retell credential and test phone moved to the end because dialogue testing needs no phone number. Still open: Cal.com Roof Inspection event type ID and Retell identity verification check.
 
 ### 2026-10-07
