@@ -1,6 +1,6 @@
 # n8n mapping: Source Template 05 -> our stack
 
-**Status (Oct 8, 2026): mapping only, nothing applied.** The imported template `KYQIVtxwDcXVKmk3` ("n8n Facebook Ad Form", inactive) still has its original Google Sheets, Vapi and Azure nodes. The table below is the plan for the NEW workflow "Outbound Speed to Lead", which is not built yet.
+**Status (Oct 8, 2026): applied in a NEW workflow.** "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`, inactive, never run) implements this mapping on Twenty + Retell + Gmail. The imported template `KYQIVtxwDcXVKmk3` is untouched. Deviations from the table: the post call webhook uses an unguessable path instead of header auth (Retell signs with x-retell-signature; revisit in 3.6/KI-005); the duplicate check runs before the lead is created, and a rejected submission is logged with leadStatus DISQUALIFIED. Unverified until a test run: Twenty REST filter syntax in "Check Recent Duplicate" and "Find Leads Due for Retry", and whether the Twenty create node returns `id` at the top level.
 
 Audit of every node in SOURCE TEMPLATE 05 ("n8n Facebook Ad Form", the SolarShift pipeline on Vapi) and what each becomes in our outbound workflow. Credentials and IDs in the template belong to its author and must not be carried over.
 

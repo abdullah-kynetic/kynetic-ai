@@ -24,7 +24,8 @@ Fix: add a header-auth secret (task 3.6). Keep this repo private until then.
 - The Retell MCP needs Deno and is often unavailable. Use tools/retell.py.
 
 - Twenty refuses the same website domain on two companies. The Kynetic Roofing (Demo) company has no website field set because AM-1 Roofing Inc already uses am1roofing.com; the website lives in the profile note.
-- The n8n workflow "n8n Facebook Ad Form" (`KYQIVtxwDcXVKmk3`) is SOURCE TEMPLATE 05 imported as-is (Google Sheets, Vapi, Azure). Do not activate it and do not run it; the real outbound workflow is a separate, new build.
+- The n8n workflow "n8n Facebook Ad Form" (`KYQIVtxwDcXVKmk3`) is SOURCE TEMPLATE 05 imported as-is (Google Sheets, Vapi, Azure). Do not activate it and do not run it. The real outbound workflow is "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`), built Oct 8, inactive and never run: it has two placeholders (Retell agent ID, caller ID) and needs the "Retell API (outbound)" credential before any test.
+- The Retell post call webhook in n8n has no auth (unguessable path only) because Retell signs requests instead of sending a custom header. Part of KI-005.
 - The Kynetic Roofing (Demo) company record carries the real AM-1 office phone (D-016 amended). Never dial it from the demo or any test.
 
 ## Resolved
