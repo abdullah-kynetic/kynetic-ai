@@ -18,7 +18,10 @@ D. Post call webhook: filter `call_analyzed`, read the Retell post call analysis
 E. Sweeper (every few minutes): find leads with outcome in (no_answer, voicemail) and `nextAttemptAt <= now` and attempts < 4; call again at 5 minutes, 1 hour, next day (D-012). Respect allowed calling hours.
 F. Failures (call create error, Twenty write error) send an alert email.
 
-## Twenty data (APPROVAL: metadata changes)
+## Twenty data (DONE Oct 8, 2026)
+The fields below were created in Twenty on Oct 8 (additive only). endCustomer: leadSource, consentText, consentAt, formSubmittedAt, firstRingAt, leadStatus, attemptCount, nextAttemptAt, lastOutcome, ownsProperty, issueType, timeline, callOptOut, callOptOutDate. customerInteraction: outcome, callbackTime (text), bookedSlot (text). Demo client account "Summit Ridge Roofing (Demo)" created (id 56b85831-d0fd-4f0a-a9b7-e96956278bb8). Original proposal text kept below for reference.
+
+### Original proposal
 Existing and reusable:
 - `endCustomer` (phones, emails, smsOptOut, smsOptOutDate, lastContact, clientAccount relation) is the lead record.
 - `customerInteraction` (interactionType includes Speed to Lead, retellCallId, summary, occurredAt, channel, endCustomer and clientAccount relations) logs each call.
@@ -29,7 +32,10 @@ Gaps to add (proposed fields):
 - On customerInteraction: `outcome` (select, same values), `callbackTime` (date time), `bookedSlot` (date time).
 Also add the Retell select values the workflow writes (for example Interaction Type already has Speed to Lead).
 
-## Retell agent (APPROVAL: new agent, LLM and tool set)
+## Retell agent (dry run ready; apply was blocked by the permission checker)
+Run `python tools/retell.py create-outbound` to see the dry run (reads `agent.config.json` and `PROMPT.md`). To create it, Abdullah runs `python tools/retell.py create-outbound --apply` himself or adds a permission rule for it. It makes a NEW unpublished agent and LLM and attaches no phone number.
+
+### Original proposal
 - New agent and LLM named "Outbound Speed to Lead", created with `tools/retell.py` (dry run first, then `--apply` after approval).
 - Prompt: `retell/builds/outbound-speed-to-lead/PROMPT.md`, per `retell/PROMPTING_STYLE.md`.
 - Tools: native `check_availability_cal`, `book_appointment_cal` (event type for the demo niche, not Emily's 7025524 Water Damage Assessment) and `end_call`. Each add needs approval of that specific change. The Cal.com key must be entered by Abdullah or injected without being printed.

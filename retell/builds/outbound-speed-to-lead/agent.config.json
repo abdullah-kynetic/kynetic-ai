@@ -1,0 +1,63 @@
+{
+  "_comment": "Config for `python tools/retell.py create-outbound`. The prompt is read from PROMPT.md (first fenced block). The Cal.com API key comes from the CAL_API_KEY environment variable and is never written to this file.",
+  "llm": {
+    "model": "gpt-4.1",
+    "start_speaker": "agent",
+    "begin_message": "Hi, is this {{first_name}}? This is {{agent_name}}, an AI assistant calling from {{company_name}} about the form you just submitted. This call may be recorded. Is now an okay time?",
+    "default_dynamic_variables": {
+      "first_name": "Sarah",
+      "company_name": "Summit Ridge Roofing",
+      "agent_name": "Alex",
+      "service_type": "roof inspection",
+      "lead_source": "web form",
+      "owns_property": "yes",
+      "issue_type": "hail damage",
+      "timeline": "within 2 weeks"
+    }
+  },
+  "cal": {
+    "event_type_id": 7404470,
+    "timezone": "America/Chicago"
+  },
+  "agent": {
+    "agent_name": "Outbound Speed to Lead (Summit Ridge Roofing demo)",
+    "voice_id": "11labs-Cimo",
+    "language": "en-US",
+    "voice_speed": 1.1,
+    "responsiveness": 1.0,
+    "interruption_sensitivity": 0.8,
+    "enable_backchannel": true,
+    "backchannel_frequency": 0.8,
+    "backchannel_words": ["mm-hmm", "uh-huh"],
+    "normalize_for_speech": true,
+    "denoising_mode": "noise-and-background-speech-cancellation",
+    "end_call_after_silence_ms": 60000,
+    "max_call_duration_ms": 600000,
+    "data_storage_setting": "everything",
+    "voicemail_option": {"action": {"type": "hangup"}},
+    "post_call_analysis_model": "gpt-4.1",
+    "post_call_analysis_data": [
+      {
+        "type": "enum",
+        "name": "outcome",
+        "description": "How the call ended. booked = an inspection was booked. callback_requested = the lead asked to be called back at another time. not_interested = the lead declined. disqualified = the lead does not own the property or is otherwise not a fit. wrong_number = wrong person or number, or asked not to be called again. no_answer = nobody spoke. voicemail = reached voicemail.",
+        "choices": ["booked", "callback_requested", "not_interested", "disqualified", "wrong_number", "no_answer", "voicemail"]
+      },
+      {
+        "type": "string",
+        "name": "callback_time",
+        "description": "If the lead asked for a callback, the day and time they gave. Otherwise empty."
+      },
+      {
+        "type": "string",
+        "name": "booked_slot",
+        "description": "If an inspection was booked, the date and time. Otherwise empty."
+      },
+      {
+        "type": "string",
+        "name": "notes",
+        "description": "One or two short sentences: the lead's roof issue, timeline, and anything the team should know."
+      }
+    ]
+  }
+}
