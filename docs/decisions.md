@@ -65,11 +65,12 @@ Naming: "speed to lead" only means the outbound agent. Inbound is the Inbound AI
 Consequence: Twenty task titles carry [P1]/[P2]. The Phase 7 demo gate uses the outbound demo. Package Menu and Offer Definition are Plan 2 reference only. If the fork is decided before client 5, Plan 1 onboarding should leave room for upsells.
 See: Twenty note "BUSINESS MODEL: Two Plans".
 
-## D-016: Demo is built on AM-1 Roofing's profile (option B)
-Status: decided
+## D-016: Demo is built on AM-1 Roofing's profile (option B), everything copied, only the name changes
+Status: decided (amended 2026-10-08, later)
 Date: 2026-10-08
-Why: Abdullah's method is to copy a real, well-run business from far away, build the demo from it, pitch it, then rename. Kynetic Roofing now uses AM-1 Roofing Inc's (Bend, Oregon) services, hours, service area and process; timezone is America/Los_Angeles. Name: "Kynetic Roofing" (Abdullah also wrote "KyneticAI Roofing"; spoken name to be confirmed, it is the company_name variable).
-Guardrails: AM-1's license, CertainTeed status, ratings, phone, email and address are not copied onto the demo; they live on a separate AM-1 prospect record in Twenty. Unverified items (Meta ads, free estimate, financing, Facebook page, rating) are never stated as facts in a pitch. Owner gate (D-002) not yet checked; no calls to AM-1 until it is.
+Why: Abdullah's method is to copy a real, well-run business, build the demo from it, pitch it, then rename. AM-1 Roofing Inc (Bend, Oregon) is a close friend's company he expects to demo for and possibly sign, so the demo and the eventual client build use the same data. Spoken name is "Kynetic Roofing" (confirmed Oct 8; "KyneticAI Roofing" is not used). Timezone America/Los_Angeles.
+Amendment: the original guardrail that kept AM-1's phone, email, address, license, ratings and certifications off the demo is withdrawn. The Kynetic Roofing (Demo) company record in Twenty now carries phone (541) 388-3621, address 52 SE 9th St Bend OR 97702 and rating 4.6 from 88. The Twenty note "BUSINESS PROFILE: Kynetic Roofing (Demo)" holds the rest (website, emails, owners, CCB license, certifications). The website field stays empty on the demo company because Twenty blocks one domain on two companies. The company record and the client account are both kept: the client account is what leads and calls link to.
+Guardrails that remain: no dials to the AM-1 office number and no call to AM-1 without the owner's OK (owner gate D-002 not formally checked); unverified items (Meta ads, free estimate, financing, Facebook page, exact rating) are never stated as facts; Alex's warranty line stays generic unless Abdullah changes it; test calls only to numbers the tester owns, with consent.
 
 ## D-015: Plan 1 demo niche and names
 Status: decided

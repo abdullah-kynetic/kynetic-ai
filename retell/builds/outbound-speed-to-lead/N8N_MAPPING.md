@@ -1,5 +1,7 @@
 # n8n mapping: Source Template 05 -> our stack
 
+**Status (Oct 8, 2026): mapping only, nothing applied.** The imported template `KYQIVtxwDcXVKmk3` ("n8n Facebook Ad Form", inactive) still has its original Google Sheets, Vapi and Azure nodes. The table below is the plan for the NEW workflow "Outbound Speed to Lead", which is not built yet.
+
 Audit of every node in SOURCE TEMPLATE 05 ("n8n Facebook Ad Form", the SolarShift pipeline on Vapi) and what each becomes in our outbound workflow. Credentials and IDs in the template belong to its author and must not be carried over.
 
 ## Our stack

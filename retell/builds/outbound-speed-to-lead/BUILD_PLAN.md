@@ -2,6 +2,12 @@
 
 Status: PROPOSAL. Nothing below has been applied. Every item marked APPROVAL needs a yes from Abdullah before it is done (KYNETIC_CONTEXT.md rules 1 and 2). Decisions behind this plan: D-010, D-011, D-012, D-013, D-014.
 
+## Current state (Oct 8, 2026)
+- Retell agent: not created. Abdullah runs `python tools/retell.py create-outbound --apply` (the permission checker blocks Claude). Retell identity verification for outbound calls: not yet checked by Abdullah. It blocks only the phone test, not agent creation or the web-call test.
+- n8n: the new workflow "Outbound Speed to Lead" is NOT built. The only related workflow is "n8n Facebook Ad Form" (`KYQIVtxwDcXVKmk3`), SOURCE TEMPLATE 05 imported as-is on Oct 6, inactive and unchanged: still Google Sheets (credential "Kynetic AI Google Sheets"), Vapi (author's assistant and phone IDs) and Azure OpenAI. None of the swaps in N8N_MAPPING.md have been applied to it. The plan is to build a fresh workflow, not to edit the template, which stays as reference.
+- Demo data: the demo carries the real business's details (D-016 amended); see demo-business/PROFILE.md.
+- Nothing has been dialed.
+
 ## Architecture (two n8n endpoints)
 1. **Intake form** (n8n Form Trigger, public by design). Fields: full name, phone, [niche qualifier fields], consent checkbox with the D-011 wording.
 2. **Post call webhook** (n8n Webhook, header auth per KI-005). Retell sends it every call event; the workflow filters on `event == call_analyzed`.

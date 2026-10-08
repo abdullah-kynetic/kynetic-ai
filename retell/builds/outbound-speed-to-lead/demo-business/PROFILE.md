@@ -1,8 +1,8 @@
 # Demo business: Kynetic Roofing, built on AM-1 Roofing's profile
 
-Updated Oct 8, 2026 (D-016). Abdullah chose option B: the demo business is **Kynetic Roofing**, built on the real profile of AM-1 Roofing Inc (Bend, Oregon). Everything operational is the same as AM-1 except the name. Contact details, reviews and credentials belong to AM-1 and stay on AM-1's own record in Twenty; they are not copied onto Kynetic Roofing.
+Updated Oct 8, 2026 (D-016, amended later the same day). Abdullah chose option B: the demo business is **Kynetic Roofing**, built on the real profile of AM-1 Roofing Inc (Bend, Oregon), a close friend's company he expects to demo for and possibly sign. **Everything is copied; only the name changes.** Spoken name "Kynetic Roofing" is confirmed. The earlier rule that kept AM-1's contact details, license, ratings and certifications off the demo is withdrawn (see "Amendment" below). The full profile also lives in the Twenty note "BUSINESS PROFILE: Kynetic Roofing (Demo)" (attached to the company and the client account).
 
-Research sources: two independent LLM research runs with live web access (Abdullah ran them), merged below, plus my earlier search-summary pass. Where they disagreed it says so. Contact details (address, phone, emails) live in the Twenty records, not in this file.
+Research sources: two independent LLM research runs with live web access (Abdullah ran them), merged below, plus my earlier search-summary pass. Where they disagreed it says so. Contact details (address, phone, emails) are on the Twenty records and in the Twenty profile note.
 
 ## Merged findings: AM-1 Roofing Inc
 
@@ -43,10 +43,15 @@ Research sources: two independent LLM research runs with live web access (Abdull
 | Calendar | Cal.com "Roof Inspection", event type 7404470, attendee address, Pacific time |
 | Lead source | n8n web form standing in for the Meta lead form (FORM_SPEC.md) |
 
-### Deliberate differences from "everything the same"
-1. **Credentials, license, reviews and ratings are not copied.** Kynetic Roofing is a demo brand, so claiming AM-1's CertainTeed status, CCB license or review score would be false. In a pitch to AM-1 specifically, the prospect version can quote their own warranty language back to them.
-2. **No AM-1 phone, email, street address or domain on the Kynetic Roofing record.** Those sit on the separate "AM-1 Roofing Inc" prospect record so nobody dials the prospect by mistake.
-3. **Free inspection** is the offer under test, not a claim that AM-1 offers one.
+### Amendment (Oct 8, 2026, later): copy everything
+Abdullah decided to copy the real business's information onto the demo so it reads as a real business with only the name changed. It is a close friend's company and he expects to demo for it and possibly sign it, so the data would be needed anyway. Now on the Kynetic Roofing (Demo) company record in Twenty: phone (541) 388-3621, address 52 SE 9th St, Bend OR 97702, Google rating 4.6 from 88 reviews. In the Twenty profile note: website, emails, owners, start year, CCB license, CertainTeed and GAF certifications, warranty wording. The website field is empty on the demo company because Twenty refuses the same domain on two companies.
+
+### Guardrails that remain
+1. **Alex's spoken warranty line stays generic** ("manufacturer warranties available on qualifying installs") unless Abdullah says to name the CertainTeed warranty.
+2. **Never dial the AM-1 office number** from the demo or any test. Any call to AM-1 needs the owner's OK first. The owner gate (D-002) is not formally checked; Abdullah knows the owner personally.
+3. **Unverified items are never stated as fact** in a pitch: Meta lead ads, free estimate, financing, Facebook page, exact rating (4.5 to 4.9 from 80 to 99; 4.6 from 88 is stored).
+4. **Free inspection** is the offer under test, not a claim that AM-1 offers one.
+5. Test calls go only to numbers the tester owns, with consent.
 
 ## Cautions
 - Rating, Facebook page and free-estimate status are unverified or conflicting. Check on Google and Facebook before using in any pitch.

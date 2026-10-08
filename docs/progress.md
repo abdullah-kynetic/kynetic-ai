@@ -24,7 +24,7 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The 
 - 3.4 Test 3 call paths. Blocked on 3.3 and 1.3.
 
 ## Next (active focus)
-- 3.5 (IN PROGRESS, prep only) Build the outbound speed-to-lead n8n workflow as a separate Retell agent (D-010, D-014). Next 10 steps: Twenty note "PLAN 1: NEXT 10 STEPS (Oct 7, 2026)". Waiting on Abdullah: PROMPT.md review, prerequisites, then approvals for Twenty fields, Retell agent, n8n workflow.
+- 3.5 (IN PROGRESS, prep only; Retell agent and n8n workflow not created, see 2026-10-08 session 3) Build the outbound speed-to-lead n8n workflow as a separate Retell agent (D-010, D-014). Next 10 steps: Twenty note "PLAN 1: NEXT 10 STEPS (Oct 7, 2026)". Waiting on Abdullah: PROMPT.md review, prerequisites, then approvals for Twenty fields, Retell agent, n8n workflow.
 - 3.6 Compliance for the outbound workflow: SMS opt-out, Contact relation, webhook auth (KI-005).
 - Still need Abdullah's confirmation on Decisions 2 and 3 (n8n webhook pattern; outbound qualification gate scope) before writing the outbound workflow — see ACTIVE BUILD PLAN note Sections 4-5.
 - 1.3 Twilio A2P registration for +16692660586 (manual, unrelated to this redo).
@@ -34,6 +34,12 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The 
 - None currently. RETELL_API_KEY confirmed available in this session; reads and the Cal key update both went through.
 
 ## Log
+### 2026-10-08 (session 3: confirmations and demo data)
+- Spoken name confirmed: "Kynetic Roofing". Retell identity verification for outbound: Abdullah has NOT checked it yet (blocker for the phone test only). Retell agent and n8n workflow still not created; nothing dialed. n8n checked read-only: only the imported template `KYQIVtxwDcXVKmk3` exists, unchanged (still Google Sheets/Vapi/Azure); the new Twenty/Retell workflow is not built.
+- Twenty audit: one demo roofing business (Kynetic Roofing (Demo) as company plus client account), AM-1 Roofing Inc as a separate prospect record, no stray "KyneticAI Roofing" or "Summit Ridge" records or text. Kept both the company and the client account (the workflow links leads to the client account).
+- D-016 amended: copy everything from AM-1 onto the demo, only the name changes (close friend's business). Company record now has phone, address, rating 4.6 from 88; new Twenty note "BUSINESS PROFILE: Kynetic Roofing (Demo)" (id 2079cce2-1c48-44f1-b47e-934effff5034) attached to the company and client account. Website field left empty (Twenty blocks a duplicate domain). D-016 and DEMO BRIEFING rewritten in Twenty; repo PROFILE.md, BUILD_PLAN.md, N8N_MAPPING.md and decisions.md updated.
+- Next: Abdullah checks Retell verification, runs `create-outbound --apply`, creates the n8n credential "Retell API (outbound)". Then Claude builds the n8n workflow inactive and web-call tests Alex.
+
 ### 2026-10-03
 - Read the Oct 1 plan notes and roadmap. Merged PR #2. Added the Retell permission rule. Started docs setup.
 
