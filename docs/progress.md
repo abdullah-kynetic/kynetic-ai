@@ -34,6 +34,13 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The 
 - None currently. RETELL_API_KEY confirmed available in this session; reads and the Cal key update both went through.
 
 ## Log
+### 2026-10-09 (session 3b: walkthrough, Vapi side experiment, knowledge base)
+- Wrote docs/plan1-walkthrough.md (also a Twenty note): we are in stage 1; first signature is several stages away; slow parts are counsel, the owner list and the sales kit.
+- Retell outbound identity verification = KYC via Persona; still unchecked by Abdullah; blocks real outbound calls only.
+- Vapi side experiment (not a pivot): VAPI_BUILDER_PROMPT.md written; Abdullah pasted it into Vapi's AI builder and it built an assistant that is close to spec. Not yet reviewed by Claude: the session started before VAPI_API_KEY and the api.vapi.ai allow-listing were added, so it needs a new session. Retell stays the main build.
+- Merged two research runs into demo-business/knowledge-base/kynetic-roofing-kb.md + MERGE_REPORT.md (license 108796 listed as "the website lists", not state-board verified; "inspection is free" is the demo offer, not an AM-1 claim).
+- Next session: read-only review of the Vapi assistant, upload the KB, web-call test. Retell track waits on Abdullah (KYC, create-outbound --apply, n8n credential).
+
 ### 2026-10-08 (session 3: confirmations and demo data)
 - Spoken name confirmed: "Kynetic Roofing". Retell identity verification for outbound: Abdullah has NOT checked it yet (blocker for the phone test only). Retell agent and n8n workflow still not created; nothing dialed. n8n checked read-only: only the imported template `KYQIVtxwDcXVKmk3` exists, unchanged (still Google Sheets/Vapi/Azure); the new Twenty/Retell workflow is not built.
 - Twenty audit: one demo roofing business (Kynetic Roofing (Demo) as company plus client account), AM-1 Roofing Inc as a separate prospect record, no stray "KyneticAI Roofing" or "Summit Ridge" records or text. Kept both the company and the client account (the workflow links leads to the client account).
