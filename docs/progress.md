@@ -34,6 +34,8 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The 
 - None currently. RETELL_API_KEY confirmed available in this session; reads and the Cal key update both went through.
 
 ## Log
+### 2026-10-09 (session 3d: Vapi build to test-ready)
+- Vapi side experiment finished up to testing: prompt v2 fixes live (assistant v11), new inactive n8n workflow "Outbound Speed to Lead (Vapi)" (`zeuXYovHQ4u75heS`, 27 nodes), Vapi server URL pointed at it (v12), pinned dry runs passed, Twenty select options verified. Retell workflow untouched and stays the backup; no platform decision made. Nothing dialed, no phone number attached. Remaining manual steps (n8n credentials, Vapi server secret, phone number later) in docs/outbound-s2l-demo/known-issues.md.
 ### 2026-10-09 (session 3c: read-only Vapi review)
 - VAPI_API_KEY visible in the session and works (GET only, nothing edited, no calls). Reviewed assistant 8e51e8d6 ("Outbound Speed to Lead (Kynetic Roofing", name cut off). System prompt, first message, gpt-4.1, silence 60s, max 600s, denoising, recording, voicemail hang-up tool, end_call and the 4-field structured output all match spec. Gaps: no check_availability/book_appointment tools (prompt references them), no server URL for end-of-call report, voice is 11labs "sarah" at 1.05 (spec Cimo, faster), no backchannel, {{now}} not in America/Los_Angeles, name truncated. KB not yet uploaded (Vapi has only the old Knowlton orthodontics file). Retell stays main. Fix list given to Abdullah in chat.
 

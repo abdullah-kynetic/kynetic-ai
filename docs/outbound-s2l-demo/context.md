@@ -18,6 +18,11 @@ Plan 1 outbound speed-to-lead agent "Alex" for the demo client Kynetic Roofing (
 - KB file: `417035c4-7802-4b63-a859-791ddef5d76e` (`kynetic-roofing-kb.txt`; Vapi fails to process `.md`)
 - Not ours, do not touch: "Dentist Receptionist (Knowlton)", "New Assistant", the Knowlton orthodontics KB file and its tools.
 
+## Vapi n8n workflow (not secrets)
+- n8n workflow "Outbound Speed to Lead (Vapi)" `zeuXYovHQ4u75heS` (inactive). Webhook path `outbound-vapi-eoc-5b8e1d90c3a7` (production URL `https://abdullah-kyneticai.app.n8n.cloud/webhook/outbound-vapi-eoc-5b8e1d90c3a7`), header auth.
+- Vapi assistant is currently at version v12 (prompt v2 file `vapi-prompt-v2.txt`, server URL set, no secret).
+- Retell workflow `m2YJwZ1l8DTzyEkw` is the untouched backup.
+
 ## Other IDs
 - Cal.com event type 7404470 "Roof Inspection", 30 min, attendee address, America/Los_Angeles
 - n8n workflow "Outbound Speed to Lead" `m2YJwZ1l8DTzyEkw` (inactive, never run); template `KYQIVtxwDcXVKmk3` untouched

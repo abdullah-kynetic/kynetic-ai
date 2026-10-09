@@ -9,6 +9,13 @@ Build-specific. Global issues live in `docs/known-issues.md`; Twenty wins.
 4. Test variables: resolved. Talk dropdown > Variables sets per-call values (Oct 9).
 5. KB lookup adds delay mid-call; judge in testing.
 
+## Open: before the Vapi workflow can be switched on (Oct 9)
+1. n8n credentials missing: "Vapi API (outbound)" (Header Auth, `Authorization: Bearer <Vapi key>`) must be created and attached to nodes "Place Vapi Call" and "Place Vapi Retry Call"; "Vapi webhook secret" (Header Auth, header `x-vapi-secret`) must be created and attached to "Vapi End-of-Call Webhook". n8n auto-attached an unrelated existing credential "Header Auth account" (header `Authorization`) to the webhook; replace it.
+2. Same secret string must be set as the Vapi assistant server secret (dashboard, or API `server.secret`). Until then Vapi sends the report without the header and n8n will reject it once the workflow is active.
+3. `phoneNumberId` is a placeholder in "Call Settings" and "Retry Call Settings". Web tests need no number; real dials do.
+4. Unverified until a real run: Twenty REST filter syntax in "Check Recent Duplicate" and "Find Leads Due for Retry"; whether the Twenty create node returns `id` at top level; where Vapi's end-of-call-report puts metadata (the code falls back to assistantOverrides.variableValues, which the call object does echo); `analysis` is empty because Vapi's summary plan is off, the summary field falls back to notes.
+5. Vapi tool filler ("Give me a moment.") may repeat; fix is an empty messages list on the two Cal tools if it does.
+
 ## Open: known gaps
 - Voice is a placeholder ("sarah", not Cimo). Backchannel words and frequency cannot be set on Vapi.
 - No server URL: the after-call report goes nowhere until n8n is adapted (only matters if Vapi wins).

@@ -25,6 +25,14 @@ Resolved Oct 9 (session 3d): option 1. The dashboard Talk dropdown has a Variabl
 - OK: date math (Mon Oct 12, -07:00), address reached Cal.com (as "somewhereElse" location text), after-call fields correct.
 - Prompt audit against the Inflate receptionist prompt: restructured to Role, Context, Task, Example Conversations (with * tool markers), Guardrails, Rules to Follow (last). Fillers "sparingly" (Abdullah, Oct 9). Draft `retell/builds/outbound-speed-to-lead/vapi-prompt-v2.txt`; live v1 saved as `vapi-prompt-v1-live.txt`. Applied to Vapi Oct 9 with approval (assistant version v9 -> v10); re-read confirmed only the system prompt changed.
 
+## Session 3d (Oct 9, 2026): Vapi build brought to test-ready
+- Prompt v2 fixes applied to Vapi (assistant v10 to v11): Vapi-safe "hold on" rule, phone line and silence rule removed, examples 2, 5, 8 written out in full. Live prompt equals `retell/builds/outbound-speed-to-lead/vapi-prompt-v2.txt`.
+- n8n: new workflow "Outbound Speed to Lead (Vapi)" `zeuXYovHQ4u75heS`, 27 nodes, INACTIVE, built from the Retell workflow (code copy: `retell/builds/outbound-speed-to-lead/n8n-vapi-workflow.ts`). Retell workflow `m2YJwZ1l8DTzyEkw` untouched. Changes: Vapi create-call body (assistantOverrides.variableValues plus twenty_id and attempt), header-auth end-of-call webhook, Vapi payload normalization, first-call calling-hours gate (outside 9:00 to 20:00 Pacific the lead is queued for the sweeper).
+- Vapi assistant v11 to v12: server URL set to the new workflow's production webhook, serverMessages = end-of-call-report only. No server secret yet.
+- Dry runs (pinned, no Twenty writes, no calls): booked payload, voicemail with empty structured output, and a non-final status-update message all behaved correctly. Real Vapi call object confirmed: assistantOverrides.variableValues is echoed, structuredOutputs is an object keyed by id, summary sits at call.summary.
+- Twenty read-only check: every select value the workflow writes exists (leadStatus, lastOutcome, interaction outcome, ownsProperty, issueType, timeline, leadSource, SPEED_TO_LEAD, VOICE).
+- Not done (needs Abdullah, cannot be done from here): create the two n8n credentials, attach them, set the Vapi server secret, add a phone number later. See known-issues.
+
 ## Next
 - Phase B: Abdullah runs 8 web-call scenarios (books, not interested, callback, robot, renter, wrong number, silence, company question). Then cancel the test booking (needs a yes).
 - Phase C: grade transcripts, tool calls and after-call fields; side-by-side with a Retell web test once that agent exists (needs approval).
