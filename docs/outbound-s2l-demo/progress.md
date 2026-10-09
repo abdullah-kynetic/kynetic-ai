@@ -14,8 +14,11 @@ Vapi side experiment in progress, one approved step at a time. Retell remains th
 6. Voice speed 1.1, backchannel on. Voice kept as ElevenLabs "sarah" (Cimo is Retell-hosted and has no known ElevenLabs ID).
 7. Renamed to "Outbound Speed to Lead - Kynetic Demo".
 
+## Step 6 result (variables)
+Vapi takes call variables only per call (`assistantOverrides.variableValues`); assistants cannot store defaults. Whether the dashboard Talk button has a variables box is unknown. A Claude-app test page is not possible (the page sandbox blocks the microphone and live-call connections). Options: (1) Abdullah checks the Talk screen for a Variables box; (2) temporary test values written into the first message and prompt, reverted after testing (pre-edit prompt must be saved first); (3) a small page on Abdullah's Vercel account with the Vapi web SDK (needs his public Vapi key). The Liquid date format in the prompt is valid per Vapi's spec.
+
 ## Next
-- Step 6: find where Vapi takes test values for first_name, company_name, agent_name, service_type, lead_source, owns_property, issue_type, timeline.
+- Step 6 decision: pick option 1, 2 or 3 above (nothing changed yet).
 - Phase B: Abdullah runs 8 web-call scenarios (books, not interested, callback, robot, renter, wrong number, silence, company question). Then cancel the test booking (needs a yes).
 - Phase C: grade transcripts, tool calls and after-call fields; side-by-side with a Retell web test once that agent exists (needs approval).
 - Phase D only if Vapi wins: n8n call body and webhook, Vapi server URL, phone number, compliance.
