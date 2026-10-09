@@ -23,7 +23,7 @@ Resolved Oct 9 (session 3d): option 1. The dashboard Talk dropdown has a Variabl
 - FAIL: Alex never ran check_availability and invented "Monday 10 AM or Tuesday 1 PM" (Tuesday 1 PM is outside free hours). Monday 10 AM happened to be free, so book_appointment succeeded. Likely cause: Example 1 in the prompt showed slots offered with no tool step.
 - Booking 26679066 went to abdullah@gmail.com (likely not Abdullah's). Cancelled with approval, verified cancelled in Cal.com.
 - OK: date math (Mon Oct 12, -07:00), address reached Cal.com (as "somewhereElse" location text), after-call fields correct.
-- Prompt audit against the Inflate receptionist prompt: restructured to Role, Context, Task, Example Conversations (with * tool markers), Guardrails, Rules to Follow (last). Fillers "sparingly" (Abdullah, Oct 9). Draft `retell/builds/outbound-speed-to-lead/vapi-prompt-v2.txt`; live v1 saved as `vapi-prompt-v1-live.txt`. Not yet applied to Vapi.
+- Prompt audit against the Inflate receptionist prompt: restructured to Role, Context, Task, Example Conversations (with * tool markers), Guardrails, Rules to Follow (last). Fillers "sparingly" (Abdullah, Oct 9). Draft `retell/builds/outbound-speed-to-lead/vapi-prompt-v2.txt`; live v1 saved as `vapi-prompt-v1-live.txt`. Applied to Vapi Oct 9 with approval (assistant version v9 -> v10); re-read confirmed only the system prompt changed.
 
 ## Next
 - Phase B: Abdullah runs 8 web-call scenarios (books, not interested, callback, robot, renter, wrong number, silence, company question). Then cancel the test booking (needs a yes).
