@@ -17,8 +17,9 @@ Vapi side experiment in progress, one approved step at a time. Retell remains th
 ## Step 6 result (variables)
 Vapi takes call variables only per call (`assistantOverrides.variableValues`); assistants cannot store defaults. Whether the dashboard Talk button has a variables box is unknown. A Claude-app test page is not possible (the page sandbox blocks the microphone and live-call connections). Options: (1) Abdullah checks the Talk screen for a Variables box; (2) temporary test values written into the first message and prompt, reverted after testing (pre-edit prompt must be saved first); (3) a small page on Abdullah's Vercel account with the Vapi web SDK (needs his public Vapi key). The Liquid date format in the prompt is valid per Vapi's spec.
 
+Resolved Oct 9 (session 3d): option 1. The dashboard Talk dropdown has a Variables panel (per-call values). Abdullah entered first_name, agent_name=Alex, company_name=Kynetic Roofing, issue_type=roof leak, owns_property=yes, timeline=as soon as possible. No Vapi change. The prompt only uses those six; service_type and lead_source are not referenced anywhere in the prompt or first message.
+
 ## Next
-- Step 6 decision: pick option 1, 2 or 3 above (nothing changed yet).
 - Phase B: Abdullah runs 8 web-call scenarios (books, not interested, callback, robot, renter, wrong number, silence, company question). Then cancel the test booking (needs a yes).
 - Phase C: grade transcripts, tool calls and after-call fields; side-by-side with a Retell web test once that agent exists (needs approval).
 - Phase D only if Vapi wins: n8n call body and webhook, Vapi server URL, phone number, compliance.

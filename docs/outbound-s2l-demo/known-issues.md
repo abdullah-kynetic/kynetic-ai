@@ -6,7 +6,7 @@ Build-specific. Global issues live in `docs/known-issues.md`; Twenty wins.
 1. Slots lookup: the `check_availability` tool sends its dates in the request body, but Cal.com's slots endpoint reads them from the web address. Vapi may not translate. If Alex finds no slots, this is why.
 2. Booking address: `book_appointment` sends the property address as a plain `location` string. Cal.com may need a different format for an attendee-address event.
 3. Date line: the prompt uses a Liquid date format for America/Los_Angeles. If Alex states a wrong date, this is why.
-4. Test variables: unknown whether Vapi's web test takes values for the call variables (Step 6). Otherwise the first message could say the variable names aloud.
+4. Test variables: resolved. Talk dropdown > Variables sets per-call values (Oct 9).
 5. KB lookup adds delay mid-call; judge in testing.
 
 ## Open: known gaps
