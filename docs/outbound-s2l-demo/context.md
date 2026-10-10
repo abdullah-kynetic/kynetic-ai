@@ -23,6 +23,10 @@ Plan 1 outbound speed-to-lead agent "Alex" for the demo client Kynetic Roofing (
 - Vapi assistant is currently at version v12 (prompt v2 file `vapi-prompt-v2.txt`, server URL set, no secret).
 - Retell workflow `m2YJwZ1l8DTzyEkw` is the untouched backup.
 
+## Original vs copy (Oct 10)
+- ORIGINAL `8e51e8d6-a34e-4443-ab1f-a004d72dd73d` has company name (Kynetic Roofing) and agent name (Alex) hardcoded in the prompt and first message (v14). Still variables: first_name, owns_property, issue_type, timeline. Repo copy of the hardcoded prompt: `retell/builds/outbound-speed-to-lead/vapi-prompt-v2-kynetic-hardcoded.txt`.
+- COPY `c418f6e2-1748-455b-83a3-fee0679dd041` "Outbound Speed to Lead - Kynetic  (Copy)" keeps all variables (the reusable template; matches `vapi-prompt-v2.txt`). Do not edit it unless asked.
+
 ## Other IDs
 - Cal.com event type 7404470 "Roof Inspection", 30 min, attendee address, America/Los_Angeles
 - n8n workflow "Outbound Speed to Lead" `m2YJwZ1l8DTzyEkw` (inactive, never run); template `KYQIVtxwDcXVKmk3` untouched
