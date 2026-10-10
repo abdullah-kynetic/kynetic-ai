@@ -201,14 +201,12 @@ const callSettings = node({
       assignments: {
         assignments: [
           { id: 'cs-assistant', name: 'assistantId', value: vapiAssistantId, type: 'string' },
-          { id: 'cs-phone', name: 'phoneNumberId', value: placeholder('Vapi phone number ID (add after testing)'), type: 'string' },
-          { id: 'cs-company', name: 'companyName', value: 'Kynetic Roofing', type: 'string' },
-          { id: 'cs-agentname', name: 'agentName', value: 'Alex', type: 'string' }
+          { id: 'cs-phone', name: 'phoneNumberId', value: placeholder('Vapi phone number ID (add after testing)'), type: 'string' }
         ]
       }
     }
   },
-  output: [{ id: 'lead-id-123', assistantId: vapiAssistantId, phoneNumberId: 'phone-id', companyName: 'Kynetic Roofing', agentName: 'Alex' }]
+  output: [{ id: 'lead-id-123', assistantId: vapiAssistantId, phoneNumberId: 'phone-id' }]
 });
 
 const alertCallFailed = node({
@@ -244,7 +242,7 @@ const placeCall = node({
       sendBody: true,
       contentType: 'json',
       specifyBody: 'json',
-      jsonBody: expr('{{ JSON.stringify({ assistantId: $json.assistantId, phoneNumberId: $json.phoneNumberId, customer: { number: $("Normalize Lead").item.json.phoneE164, name: $("Normalize Lead").item.json.firstName }, assistantOverrides: { variableValues: { first_name: $("Normalize Lead").item.json.firstName, company_name: $json.companyName, agent_name: $json.agentName, service_type: "roof inspection", lead_source: "web form", owns_property: $("Normalize Lead").item.json.ownsSpoken, issue_type: $("Normalize Lead").item.json.issueSpoken, timeline: $("Normalize Lead").item.json.timelineSpoken, twenty_id: $json.id, attempt: 1 }, metadata: { twenty_id: $json.id, attempt: 1 } } }) }}'),
+      jsonBody: expr('{{ JSON.stringify({ assistantId: $json.assistantId, phoneNumberId: $json.phoneNumberId, customer: { number: $("Normalize Lead").item.json.phoneE164, name: $("Normalize Lead").item.json.firstName }, assistantOverrides: { variableValues: { first_name: $("Normalize Lead").item.json.firstName, service_type: "roof inspection", lead_source: "web form", owns_property: $("Normalize Lead").item.json.ownsSpoken, issue_type: $("Normalize Lead").item.json.issueSpoken, timeline: $("Normalize Lead").item.json.timelineSpoken, twenty_id: $json.id, attempt: 1 }, metadata: { twenty_id: $json.id, attempt: 1 } } }) }}'),
       options: {}
     },
     credentials: { httpHeaderAuth: newCredential('Vapi API (outbound)') }
@@ -481,7 +479,7 @@ const placeRetry = node({
       sendBody: true,
       contentType: 'json',
       specifyBody: 'json',
-      jsonBody: expr('{{ JSON.stringify({ assistantId: $json.assistantId, phoneNumberId: $json.phoneNumberId, customer: { number: "+1" + $json.phones.primaryPhoneNumber, name: ($json.name || "there").split(" ")[0] }, assistantOverrides: { variableValues: { first_name: ($json.name || "there").split(" ")[0], company_name: "Kynetic Roofing", agent_name: "Alex", service_type: "roof inspection", lead_source: "web form", owns_property: $json.ownsProperty === "NO" ? "no" : "yes", issue_type: ({ LEAK: "a leak", STORM_OR_HAIL: "storm or hail damage", REPLACEMENT_QUOTE: "a replacement quote", JUST_LOOKING: "just looking" })[$json.issueType] ?? "a roof issue", timeline: ({ ASAP: "as soon as possible", TWO_WEEKS: "within 2 weeks", THREE_MONTHS: "within 3 months", EXPLORING: "just exploring" })[$json.timeline] ?? "soon", twenty_id: $json.id, attempt: ($json.attemptCount ?? 0) + 1 }, metadata: { twenty_id: $json.id, attempt: ($json.attemptCount ?? 0) + 1 } } }) }}'),
+      jsonBody: expr('{{ JSON.stringify({ assistantId: $json.assistantId, phoneNumberId: $json.phoneNumberId, customer: { number: "+1" + $json.phones.primaryPhoneNumber, name: ($json.name || "there").split(" ")[0] }, assistantOverrides: { variableValues: { first_name: ($json.name || "there").split(" ")[0], service_type: "roof inspection", lead_source: "web form", owns_property: $json.ownsProperty === "NO" ? "no" : "yes", issue_type: ({ LEAK: "a leak", STORM_OR_HAIL: "storm or hail damage", REPLACEMENT_QUOTE: "a replacement quote", JUST_LOOKING: "just looking" })[$json.issueType] ?? "a roof issue", timeline: ({ ASAP: "as soon as possible", TWO_WEEKS: "within 2 weeks", THREE_MONTHS: "within 3 months", EXPLORING: "just exploring" })[$json.timeline] ?? "soon", twenty_id: $json.id, attempt: ($json.attemptCount ?? 0) + 1 }, metadata: { twenty_id: $json.id, attempt: ($json.attemptCount ?? 0) + 1 } } }) }}'),
       options: {}
     },
     credentials: { httpHeaderAuth: newCredential('Vapi API (outbound)') }

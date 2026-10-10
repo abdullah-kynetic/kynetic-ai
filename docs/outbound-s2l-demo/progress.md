@@ -33,6 +33,11 @@ Resolved Oct 9 (session 3d): option 1. The dashboard Talk dropdown has a Variabl
 - Twenty read-only check: every select value the workflow writes exists (leadStatus, lastOutcome, interaction outcome, ownsProperty, issueType, timeline, leadSource, SPEED_TO_LEAD, VOICE).
 - Not done (needs Abdullah, cannot be done from here): create the two n8n credentials, attach them, set the Vapi server secret, add a phone number later. See known-issues.
 
+## Oct 10: hardcoded names, n8n connection fixes
+- Original Vapi assistant `8e51e8d6` now has company name (Kynetic Roofing) and agent name (Alex) hardcoded (v14); the copy `c418f6e2` keeps all variables. n8n no longer sends company_name/agent_name (removed from Call Settings and both call bodies) and was republished. service_type and lead_source are still sent (unused by the prompt).
+- n8n draft fixes: Call Settings node restored, "Vapi API (outbound)" attached to both call nodes, "Vapi webhook secret" on the webhook; published version now matches the draft. Vapi sends the `x-vapi-secret` header (custom header on the assistant).
+- Still open: first real web-call report not yet seen in n8n Executions (connection test pending).
+
 ## Next
 - Phase B: Abdullah runs 8 web-call scenarios (books, not interested, callback, robot, renter, wrong number, silence, company question). Then cancel the test booking (needs a yes).
 - Phase C: grade transcripts, tool calls and after-call fields; side-by-side with a Retell web test once that agent exists (needs approval).
