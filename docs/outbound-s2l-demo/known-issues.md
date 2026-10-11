@@ -18,6 +18,9 @@ The n8n workflow `zeuXYovHQ4u75heS` was published Oct 9. It cannot place a call 
 5. Vapi tool filler ("Give me a moment.") may repeat; fix is an empty messages list on the two Cal tools if it does.
 
 ## Notes (Oct 11)
+- STALE DASHBOARD TAB: pressing Talk sends the config loaded in the browser tab as overrides (prompt, first message, server). A tab opened before an API edit overrides the saved assistant (Oct 11 call 01a12c0a used a pre-v14 copy: blank names, placeholders). Hard refresh the assistant page before every test, and confirm the version.
+- Calendar webhook (Path 4) has NO header auth: Vapi's tool request was rejected by n8n header auth ("Authorization data is wrong!") although the same secret works by curl. The unguessable path (vapi-calendar-lookup-8c41f6a2d93b) is the secret; it only returns open times. Revisit with a Vapi credential (credentialId on the tool) if stricter auth is needed. The report webhook keeps header auth (works via server headers).
+- Vapi chat API (POST /chat) needs a payment method on the Vapi account (402); it cannot be used for scripted text tests until a card is added.
 - n8n credential for Cal.com is "Cal.com Vapi" (Bearer Auth). Both Header Auth and Bearer Auth work; with Bearer, paste only the key (no "Bearer " prefix).
 - The workflow now has 33 nodes (4 paths). Any edit republishes all paths.
 - The two Vapi assistants may share tool IDs; check before editing a tool for one assistant only.
