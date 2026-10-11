@@ -38,6 +38,13 @@ Resolved Oct 9 (session 3d): option 1. The dashboard Talk dropdown has a Variabl
 - n8n draft fixes: Call Settings node restored, "Vapi API (outbound)" attached to both call nodes, "Vapi webhook secret" on the webhook; published version now matches the draft. Vapi sends the `x-vapi-secret` header (custom header on the assistant).
 - Still open: first real web-call report not yet seen in n8n Executions (connection test pending).
 
+## Oct 11: calendar lookup fixed (Path 4), Vapi to n8n connection proven
+- Connection test: a web call reached n8n (execution 1423) and the report was read correctly (outcome, callback time, notes). Secret header matched.
+- Bug found: Vapi's apiRequest tool cannot send query parameters, so the old GET to Cal.com /v2/slots failed ("usernames property is wrong"). Alex fell back to a callback (as designed).
+- Fix: new Path 4 inside the main workflow (6 nodes): "Calendar Lookup Webhook" (header auth, Vapi webhook secret) -> "Calendar Window" (today to +14 days, Los Angeles) -> "Get Cal.com Slots" (credential "Cal.com Vapi", Bearer Auth) -> "Format Slots" (exact day, else nearest days, with spoken text and exact start) -> "Respond With Slots". Production path `/webhook/vapi-calendar-lookup-8c41f6a2d93b`. Tested live: 0.8 to 1 s (2.7 s cold), exact / earliest / nearest all correct.
+- Vapi: check_availability now POSTs to that webhook (body: optional preferred_date, time_of_day; header x-vapi-secret; Cal.com key removed from that tool). Both calendar tools got one spoken line ("One moment while I check." / "Booking that now."). Alex prompt v15 reads match/slots/note and offers nearest times when a day is full.
+- Still to test by Abdullah: free chat test (calendar offers, Wednesday afternoon, full day), then the full booking call. Booking tool (book_appointment, direct Cal.com POST) unchanged.
+
 ## Next
 - Phase B: Abdullah runs 8 web-call scenarios (books, not interested, callback, robot, renter, wrong number, silence, company question). Then cancel the test booking (needs a yes).
 - Phase C: grade transcripts, tool calls and after-call fields; side-by-side with a Retell web test once that agent exists (needs approval).

@@ -3,7 +3,7 @@
 Build-specific. Global issues live in `docs/known-issues.md`; Twenty wins.
 
 ## Open: to verify in the Phase B test
-1. Slots lookup: the `check_availability` tool sends its dates in the request body, but Cal.com's slots endpoint reads them from the web address. Vapi may not translate. If Alex finds no slots, this is why.
+1. Slots lookup: RESOLVED in design Oct 11. Vapi's apiRequest tool cannot send query parameters (Cal.com error "usernames property is wrong"), so check_availability now goes through n8n Path 4. Needs confirmation in the chat test.
 2. Booking address: `book_appointment` sends the property address as a plain `location` string. Cal.com may need a different format for an attendee-address event.
 3. Date line: the prompt uses a Liquid date format for America/Los_Angeles. If Alex states a wrong date, this is why.
 4. Test variables: resolved. Talk dropdown > Variables sets per-call values (Oct 9).
@@ -16,6 +16,11 @@ The n8n workflow `zeuXYovHQ4u75heS` was published Oct 9. It cannot place a call 
 3. `phoneNumberId` is a placeholder in "Call Settings" and "Retry Call Settings". Web tests need no number; real dials do.
 4. Unverified until a real run: Twenty REST filter syntax in "Check Recent Duplicate" and "Find Leads Due for Retry"; whether the Twenty create node returns `id` at top level; where Vapi's end-of-call-report puts metadata (the code falls back to assistantOverrides.variableValues, which the call object does echo); `analysis` is empty because Vapi's summary plan is off, the summary field falls back to notes.
 5. Vapi tool filler ("Give me a moment.") may repeat; fix is an empty messages list on the two Cal tools if it does.
+
+## Notes (Oct 11)
+- n8n credential for Cal.com is "Cal.com Vapi" (Bearer Auth). Both Header Auth and Bearer Auth work; with Bearer, paste only the key (no "Bearer " prefix).
+- The workflow now has 33 nodes (4 paths). Any edit republishes all paths.
+- The two Vapi assistants may share tool IDs; check before editing a tool for one assistant only.
 
 ## Open: known gaps
 - Voice is a placeholder ("sarah", not Cimo). Backchannel words and frequency cannot be set on Vapi.
