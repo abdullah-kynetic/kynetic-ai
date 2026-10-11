@@ -1,0 +1,76 @@
+{
+ "id": "83c896b2-4188-432d-a7f8-f369aefa4853",
+ "createdAt": "2026-10-09T17:34:51.141Z",
+ "updatedAt": "2026-10-11T17:27:13.416Z",
+ "type": "apiRequest",
+ "function": {
+  "name": "book_appointment",
+  "description": "Books the roof inspection. Needs the lead's name, email, the property address, and the exact start time of the slot exactly as returned by check_availability. Always use the specific date and time."
+ },
+ "messages": [
+  {
+   "type": "request-start",
+   "content": "Booking that now."
+  }
+ ],
+ "orgId": "4bbf7d5f-c01f-4da7-bdcb-9eacae902e30",
+ "name": "book_appointment",
+ "url": "https://api.cal.com/v2/bookings",
+ "method": "POST",
+ "headers": {
+  "type": "object",
+  "properties": {
+   "Authorization": "REDACTED",
+   "cal-api-version": {
+    "type": "string",
+    "value": "2024-08-13"
+   }
+  }
+ },
+ "body": {
+  "type": "object",
+  "required": [
+   "start",
+   "attendee",
+   "location"
+  ],
+  "properties": {
+   "start": {
+    "description": "Exact start time of the chosen slot, copied exactly from check_availability (ISO 8601).",
+    "type": "string"
+   },
+   "attendee": {
+    "type": "object",
+    "required": [
+     "name",
+     "email",
+     "timeZone"
+    ],
+    "properties": {
+     "name": {
+      "description": "The lead's name.",
+      "type": "string"
+     },
+     "email": {
+      "description": "The lead's email address.",
+      "type": "string"
+     },
+     "timeZone": {
+      "type": "string",
+      "value": "America/Los_Angeles"
+     }
+    }
+   },
+   "location": {
+    "description": "The property address for the inspection.",
+    "type": "string"
+   },
+   "eventTypeId": {
+    "type": "number",
+    "value": 7404470
+   }
+  }
+ },
+ "timeoutSeconds": 20,
+ "latestVersion": "v2"
+}

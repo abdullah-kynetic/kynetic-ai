@@ -35,3 +35,6 @@ The n8n workflow `zeuXYovHQ4u75heS` was published Oct 9. It cannot place a call 
 - Vapi assistant names max 40 characters. Vapi Files fails on `.md`; use `.txt`.
 - Cal.com key lives inside the two Vapi tools. Redact before exporting any Vapi tool JSON to git. Rotate the key and update both tools together.
 - Session permission checker blocked Vapi calls once in Auto mode (Oct 9). Use Accept edits mode or a permission rule if it recurs.
+- Oct 11 test findings (fixes in vapi-prompt-v3-DRAFT.txt, not applied): Alex follows speech-change requests, accepts out-of-hours callbacks, repeats the closing line without end_call, says he has no name, and does not treat tool error text as a failure.
+- Chat testing needs a card on file (chat API 402). Cost per message unconfirmed; set a spending limit first.
+- `n8n-vapi-workflow.ts` is outdated (no Path 4, old auth). n8n is the source of truth.

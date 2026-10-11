@@ -1,0 +1,47 @@
+{
+ "id": "2f9ca3ca-0ba1-40c4-8212-d10edcfbddf7",
+ "createdAt": "2026-10-09T17:34:40.352Z",
+ "updatedAt": "2026-10-11T17:27:13.102Z",
+ "type": "apiRequest",
+ "function": {
+  "name": "check_availability",
+  "description": "Finds open roof inspection times. Call it with no inputs for the earliest openings. If the lead named a day, pass preferred_date (YYYY-MM-DD) and, if they said morning or afternoon, time_of_day. Returns match, slots (each with spoken text and exact start) and a note. Only offer times it returns."
+ },
+ "messages": [
+  {
+   "type": "request-start",
+   "content": "One moment while I check."
+  }
+ ],
+ "orgId": "4bbf7d5f-c01f-4da7-bdcb-9eacae902e30",
+ "name": "check_availability",
+ "url": "https://abdullah-kyneticai.app.n8n.cloud/webhook/vapi-calendar-lookup-8c41f6a2d93b",
+ "method": "POST",
+ "headers": {
+  "type": "object",
+  "properties": {
+   "x-vapi-secret": "REDACTED"
+  }
+ },
+ "body": {
+  "type": "object",
+  "required": [],
+  "properties": {
+   "time_of_day": {
+    "description": "Optional. morning or afternoon if the lead said so, otherwise any.",
+    "type": "string",
+    "enum": [
+     "morning",
+     "afternoon",
+     "any"
+    ]
+   },
+   "preferred_date": {
+    "description": "Optional. The day the lead asked for, as YYYY-MM-DD, worked out from today's date. Leave out if the lead did not name a day.",
+    "type": "string"
+   }
+  }
+ },
+ "timeoutSeconds": 20,
+ "latestVersion": "v2"
+}

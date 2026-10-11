@@ -1,0 +1,22 @@
+{
+ "id": "9f77aa02-d43f-452d-9ac5-0fce5414c9cf",
+ "createdAt": "2026-10-09T03:34:49.017Z",
+ "updatedAt": "2026-10-09T03:34:49.017Z",
+ "type": "query",
+ "function": {
+  "name": "roofing_company_facts"
+ },
+ "orgId": "4bbf7d5f-c01f-4da7-bdcb-9eacae902e30",
+ "knowledgeBases": [
+  {
+   "name": "roofing_company_facts",
+   "provider": "google",
+   "model": "gemini-2.0-flash",
+   "description": "Facts about the roofing company: services, materials, service area, hours, warranties, how the inspection works. Search when the caller asks something about the company that is not already in your instructions.",
+   "fileIds": [
+    "417035c4-7802-4b63-a859-791ddef5d76e"
+   ]
+  }
+ ],
+ "latestVersion": "v1"
+}

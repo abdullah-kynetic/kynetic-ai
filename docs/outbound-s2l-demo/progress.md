@@ -52,3 +52,9 @@ Resolved Oct 9 (session 3d): option 1. The dashboard Talk dropdown has a Variabl
 
 ## Waiting on Abdullah
 Retell KYC check, `create-outbound --apply`, n8n credential "Retell API (outbound)", the web-call tests, and any platform decision.
+
+## Oct 11 (late): test call failed on prompt behavior; wrap-up
+- Failed test traced to a stale dashboard tab (blank name and company) plus real prompt gaps: obeyed "start every reply with alphabet", accepted a 4 AM callback, repeated closing line without end_call, claimed no name on file, treated tool errors as data.
+- Wrote `retell/builds/outbound-speed-to-lead/vapi-prompt-v3-DRAFT.txt` (step 7 hours, no-speech-change guardrail, rules 17a to 17c). NOT applied to Vapi.
+- Redacted Vapi exports and Path 4 code saved under `retell/builds/outbound-speed-to-lead/exports/`.
+- See `HANDOFF.md` for the next-chat starting point.

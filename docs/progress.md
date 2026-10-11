@@ -82,3 +82,6 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The 
 
 ### 2026-10-06
 - D-010: resolved the one-agent-vs-two-agents question from the ACTIVE BUILD PLAN note as two separate Retell agents. Inbound (Emily) paused — near-done, left alone until a client demo needs it. Outbound speed-to-lead is now the sole active build target. Updated the ACTIVE BUILD PLAN note and docs/progress.md, docs/decisions.md to match.
+
+### 2026-10-11 (Vapi side experiment wrap-up)
+- Vapi + n8n plumbing live (4 paths, calendar lookup proven). Conversation quality failed an Oct 11 test; v3 prompt draft written, not applied. Retell remains main and backup. Starting point: docs/outbound-s2l-demo/HANDOFF.md.

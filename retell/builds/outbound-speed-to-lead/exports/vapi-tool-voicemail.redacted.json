@@ -1,0 +1,19 @@
+{
+ "beepDetectionEnabled": true,
+ "id": "61bbb70b-6110-44d3-926e-4e2be6ea100b",
+ "createdAt": "2026-10-09T00:44:29.779Z",
+ "updatedAt": "2026-10-09T00:44:29.779Z",
+ "type": "voicemail",
+ "function": {
+  "name": "hang_up_on_voicemail",
+  "strict": true,
+  "description": "Invoke once when the call reaches voicemail, an answering machine greeting, or an automated voicemail system. End silently without leaving a message.",
+  "parameters": {
+   "type": "object",
+   "properties": {},
+   "required": []
+  }
+ },
+ "orgId": "4bbf7d5f-c01f-4da7-bdcb-9eacae902e30",
+ "latestVersion": "v1"
+}
