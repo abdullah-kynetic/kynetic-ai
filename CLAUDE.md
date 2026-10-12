@@ -92,6 +92,15 @@ At the start of every conversation, read `Claude Skills/skills-breakdown.md` and
 
 ---
 
+## Resume phrases (one-line pickups)
+
+If the user says "look into Twenty and GitHub, continuing on phase three" (or similar, e.g. "pick up Vapi where we left off"):
+1. Fetch and check out branch `claude/charming-mayer-r934wd` (the Vapi side experiment lives there until merged).
+2. Read `docs/outbound-s2l-demo/HANDOFF.md` first, then `docs/progress.md`, `docs/decisions.md`, `docs/known-issues.md`, `KYNETIC_CONTEXT.md`.
+3. In Twenty, search notes for "Vapi side experiment: status handoff" (client account `56b85831-d0fd-4f0a-a9b7-e96956278bb8`). Twenty wins if it disagrees with the repo.
+4. Phase 3 = prompt hardening: apply `retell/builds/outbound-speed-to-lead/vapi-prompt-v3-DRAFT.txt` (tell the user, one Vapi write, re-read), then run the test script with a hard-refreshed tab and Variables set.
+5. Rules: never dial, never touch Retell or Nora, never print keys, tell the user each Vapi change. Then continue the HANDOFF "Next steps" without asking for a recap.
+
 ## Kynetic context (read first)
 
 Read `KYNETIC_CONTEXT.md` at the start of every session: approval rules, the frozen Nora
