@@ -81,7 +81,7 @@ Consequence: PROMPT.md is filled in for Kynetic Roofing; a Cal.com event type fo
 ## D-014: Outbound v1 architecture
 Status: decided
 Date: 2026-10-07
-Why: Keeps v1 to three endpoints and one secret per authenticated endpoint; matches D-012.
+Why: Keeps v1 to two endpoints and one secret (the post call endpoint); matches D-012.
 (1) Lead entry is an n8n form for now (stands in for the Meta lead form), with consent wording and checkbox; consent text, timestamp and source stored in Twenty. (2) Two n8n endpoints: the n8n intake form (public) and one post call endpoint filtered to `event == call_analyzed` with header auth (KI-005). Corrected Oct 7: check_availability_cal and book_appointment_cal are native Retell tools that call Cal.com directly (see the Emily snapshot llm.json), so no tools endpoint or action router is needed in v1; it is only needed later for a custom tool such as opt out logging or human transfer. (3) Light pre call gate: E.164 phone check, no re-call of the same phone within 24 hours of a new submission (scheduled retries not blocked), consent check; owner qualification stays upstream (D-002). (4) Opt out logging tool waits for 3.6. (5) Correction: Source Template 05 has no action router or tool webhooks (form trigger, Vapi call, 30s polling, analyzer, Sheets); the router is our own design.
 Needs approval before building: adding Cal.com tools to the new outbound Retell agent.
 

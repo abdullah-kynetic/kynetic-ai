@@ -46,6 +46,15 @@ travel to cloud sessions, so the rules that matter live here. Keep this current.
 Details and next steps: `retell/builds/emily-speed-to-lead/HANDOFF.md`.
 Original build IDs (Cal event, Twilio/Notion creds, config): `retell/builds/kynetic-restoration/build-ids.md`.
 
+## Outbound speed-to-lead (Plan 1 build, task 3.5)
+
+- Demo: Kynetic Roofing, agent Alex (D-015, D-016). Build files: `retell/builds/outbound-speed-to-lead/`.
+- n8n workflow "Outbound Speed to Lead" `m2YJwZ1l8DTzyEkw` (inactive, never run). The imported
+  template `KYQIVtxwDcXVKmk3` is unchanged: do not activate or run it.
+- Retell outbound agent: NOT created yet. Create with `python tools/retell.py create-outbound`
+  (dry run; `--apply` only with Abdullah's yes). Cal.com Roof Inspection event type 7404470.
+- Never dial the AM-1 office number on the demo company record.
+
 ## Twenty
 
 - n8n credential "Twenty account" `41C04qbmnbi0GI2P`, node `@blackswampai/n8n-nodes-twentycrm`.

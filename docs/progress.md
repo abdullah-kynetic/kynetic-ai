@@ -13,9 +13,12 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The 
 - PRs #3-#7 merged: docs memory files, Retell permission rule, repo cleanup (two rounds), build-log docs step.
 - 1.1 Cal.com key rotated and confirmed on Emily's two Cal tools (event type 7025524). See docs/known-issues.md KI-001.
 - 1.2 Emily's voice kept as 11labs-Cimo. See docs/decisions.md D-008.
+- Decisions D-009 to D-016 made (rebuild, two agents, AI disclosure, call handling, two plans, architecture, demo niche, demo on AM-1 profile).
+- Twenty fields for the outbound lead flow added (14 on endCustomer, 3 on customerInteraction). Cal.com Roof Inspection event type 7404470 created.
+- n8n workflow "Outbound Speed to Lead" built, validated, inactive.
 
 ## In progress
-- None active. Next session should start building the outbound workflow per Section 6 of the ACTIVE BUILD PLAN note.
+- 3.5 outbound build (prep done; blocked on Abdullah, see Blockers). n8n "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`) is built, inactive, never run. The outbound Retell agent does not exist yet. Nothing has been dialed.
 
 ## Paused (D-010, Oct 6, 2026 — inbound is near-done, left alone until a client demo needs it)
 - 3.1 Repoint Emily's 4 tool webhooks and post-call webhook, greeting says Emily. Approved, URL only.
@@ -26,14 +29,25 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The 
 ## Next (active focus)
 - 3.5 (IN PROGRESS, prep only; Retell agent and n8n workflow not created, see 2026-10-08 session 3) Build the outbound speed-to-lead n8n workflow as a separate Retell agent (D-010, D-014). Next 10 steps: Twenty note "PLAN 1: NEXT 10 STEPS (Oct 7, 2026)". Waiting on Abdullah: PROMPT.md review, prerequisites, then approvals for Twenty fields, Retell agent, n8n workflow.
 - 3.6 Compliance for the outbound workflow: SMS opt-out, Contact relation, webhook auth (KI-005).
-- Still need Abdullah's confirmation on Decisions 2 and 3 (n8n webhook pattern; outbound qualification gate scope) before writing the outbound workflow — see ACTIVE BUILD PLAN note Sections 4-5.
+- Decisions 2 and 3 are resolved in D-014 (n8n form, two endpoints, light pre call gate). Nothing left to confirm there.
 - 1.3 Twilio A2P registration for +16692660586 (manual, unrelated to this redo).
 - 1.4 TCPA emergency branch opt-out gap, counsel sign-off (manual, unrelated to this redo).
 
 ## Blockers
-- None currently. RETELL_API_KEY confirmed available in this session; reads and the Cal key update both went through.
+All on Abdullah, for 3.5:
+1. Check Retell identity verification for outbound (KYC via Persona). Blocks the phone test only.
+2. Run `python tools/retell.py create-outbound --apply` and give Claude the agent ID.
+3. Create the n8n Header Auth credential "Retell API (outbound)" and attach it to Place Retell Call and Place Retry Call.
+4. Confirm the caller ID (+16692660586 must not be Nora's live line).
+Then: fill the two placeholders (agent ID, caller ID) in Call Settings and Retry Call Settings, set the post call webhook URL on the agent, web-call test Alex, phone test last.
+Also open: counsel reply (1.4); post call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-10-12 (resume: Twenty + GitHub check, branch merge, docs catch-up)
+- Read-only check of Twenty, GitHub, n8n and Retell. Twenty 3.5 is IN_PROGRESS. n8n workflow `m2YJwZ1l8DTzyEkw` confirmed built, inactive, two placeholders unfilled. Retell still has only Emily and Nora; the outbound agent is not created. Nothing dialed.
+- The Oct 7-9 outbound prep sat on branch claude/inspiring-wozniak-95ayri with no PR. Opened PR #11 to bring it into main (diff scanned for secrets, create-outbound dry run checked). This docs fix is a follow-up PR targeting that branch.
+- Docs fixes: In progress, Next and Blockers sections brought in line with Twenty; D-014 endpoint count corrected to two; KYNETIC_CONTEXT lists the outbound workflow and create-outbound.
+
 ### 2026-10-09 (session 3b: walkthrough, Vapi side experiment, knowledge base)
 - Wrote docs/plan1-walkthrough.md (also a Twenty note): we are in stage 1; first signature is several stages away; slow parts are counsel, the owner list and the sales kit.
 - Retell outbound identity verification = KYC via Persona; still unchecked by Abdullah; blocks real outbound calls only.
