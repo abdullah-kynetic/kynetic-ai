@@ -1,6 +1,8 @@
 # Vapi builder prompt: Outbound Speed to Lead (Kynetic Roofing demo)
 
-A quick side experiment (Oct 9, 2026), not a pivot. Paste the block under "PROMPT FOR VAPI'S BUILDER" into Vapi's assistant builder. It mirrors `PROMPT.md` and `agent.config.json` (the Retell build) so the two can be compared. Nothing here is applied anywhere. Retell stays the main build.
+**Parked (D-018, 2026-10-13).** Retell is the platform. Vapi workflows were renamed and deactivated. This file is reference only. Do not paste it into a builder and do not build on it.
+
+Written Oct 9, 2026 as a side experiment. It mirrors `retell/builds/outbound-speed-to-lead/PROMPT.md` and `retell/builds/outbound-speed-to-lead/agent.config.json`. Nothing here was adopted.
 
 Differences to expect on Vapi:
 - Variables are passed per call in the API request as `assistantOverrides.variableValues`, not under Retell's `retell_llm_dynamic_variables`. The n8n workflow would need a different HTTP node body if Vapi were adopted.

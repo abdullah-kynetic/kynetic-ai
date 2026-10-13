@@ -3,19 +3,23 @@
 Mirror of the Twenty roadmap ("Roadmap: all phases"). If this disagrees with Twenty, Twenty wins.
 
 ## Current plan
-Plan 1 only: the outbound speed to lead agent, gate of 5 paying clients before Plan 2 (D-013). Task titles in Twenty carry [P1]/[P2]; Emily inbound and all upsell systems are [P2].
+Plan 1 only: the outbound speed-to-lead agent at the D-017 price (first 3 clients $4,675, clients 4 and up $8,500, three Stripe invoices at 50/25/25). Gate of 5 paying clients before Plan 2 (D-013). Task titles in Twenty carry [P1]/[P2]; Emily inbound and all upsell systems are [P2].
 
 ## Current phase
-Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The whole voice-agent build is being redone from scratch (D-009); see Twenty note "ACTIVE BUILD PLAN: Emily Rebuild + Speed-to-Lead Outbound" for the full synthesis.
+Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Retell is the platform and Vapi is parked (D-018). Active files: `retell/builds/outbound-speed-to-lead/`.
 
 ## Done
 - PR #2 merged: Emily handoff, tools/retell.py, KYNETIC_CONTEXT.md.
 - PRs #3-#7 merged: docs memory files, Retell permission rule, repo cleanup (two rounds), build-log docs step.
+- PR #11 merged: outbound speed-to-lead prep (prompt, config, specs, Kynetic Roofing demo).
 - 1.1 Cal.com key rotated and confirmed on Emily's two Cal tools (event type 7025524). See docs/known-issues.md KI-001.
 - 1.2 Emily's voice kept as 11labs-Cimo. See docs/decisions.md D-008.
+- Decisions D-009 through D-018 are in docs/decisions.md. D-017 is the signed-off price. D-018 parks Vapi and records the two Retell workspaces.
+- Twenty fields for the outbound lead flow added (14 on endCustomer, 3 on customerInteraction). Cal.com Roof Inspection event type 7404470 created.
+- n8n workflow "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`) built and left inactive. It is now 27 nodes.
 
 ## In progress
-- None active. Next session should start building the outbound workflow per Section 6 of the ACTIVE BUILD PLAN note.
+- 3.5 outbound build. Prep is in the repo. The workflow is inactive and has never run. The outbound Retell agent does not exist yet (it will be created in the abdullahblitz workspace). Nothing has been dialed. Blocked on Abdullah; see Blockers.
 
 ## Paused (D-010, Oct 6, 2026 — inbound is near-done, left alone until a client demo needs it)
 - 3.1 Repoint Emily's 4 tool webhooks and post-call webhook, greeting says Emily. Approved, URL only.
@@ -24,28 +28,44 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The 
 - 3.4 Test 3 call paths. Blocked on 3.3 and 1.3.
 
 ## Next (active focus)
-- 3.5 (IN PROGRESS, prep only; Retell agent and n8n workflow not created, see 2026-10-08 session 3) Build the outbound speed-to-lead n8n workflow as a separate Retell agent (D-010, D-014). Next 10 steps: Twenty note "PLAN 1: NEXT 10 STEPS (Oct 7, 2026)". Waiting on Abdullah: PROMPT.md review, prerequisites, then approvals for Twenty fields, Retell agent, n8n workflow.
+- 3.5 Finish the outbound agent. Decisions 2 and 3 are resolved in D-014 (n8n form, two endpoints, light pre-call gate). Nothing left to confirm there. The n8n workflow exists (27 nodes, inactive). What is left is the Retell agent, the credential, and a test. See Blockers.
 - 3.6 Compliance for the outbound workflow: SMS opt-out, Contact relation, webhook auth (KI-005).
-- Still need Abdullah's confirmation on Decisions 2 and 3 (n8n webhook pattern; outbound qualification gate scope) before writing the outbound workflow — see ACTIVE BUILD PLAN note Sections 4-5.
-- 1.3 Twilio A2P registration for +16692660586 (manual, unrelated to this redo).
-- 1.4 TCPA emergency branch opt-out gap, counsel sign-off (manual, unrelated to this redo).
+- 1.3 Twilio A2P registration for +16692660586 (manual). Voice goes first (D-004).
+- 1.4 TCPA emergency branch opt-out gap, counsel sign-off (manual). Counsel email is drafted in docs/counsel-email.md.
+- Outreach target, once the launch gate is actually met: 75 manual owner dials a day starting Oct 15 (Q4 plan). Task 7.1 still has open prerequisites. Abdullah's stated aim was to have the build and the gate items done by Oct 14.
 
 ## Blockers
-- None currently. RETELL_API_KEY confirmed available in this session; reads and the Cal key update both went through.
+All on Abdullah, for 3.5:
+1. Check Retell identity verification for outbound (KYC via Persona). Blocks the phone test only.
+2. Run `python tools/retell.py create-outbound --apply` in the abdullahblitz workspace and record the agent ID.
+3. Create the n8n Header Auth credential "Retell API (outbound)" and attach it to Place Retell Call and Place Retry Call.
+4. Confirm the caller ID (+16692660586 must not be Nora's live line).
+Then: fill the two placeholders (agent ID, caller ID) in Call Settings and Retry Call Settings, set the post-call webhook URL on the agent, web-call test Alex, phone test last.
+Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-10-13 (repo cleanup, docs caught up with Twenty)
+- Removed the dead `platform/crm` mock (SeldonFrame / Vercel era; Twenty is the CRM, D-006). Moved `BUILD_LOG.md`, `automations/lead-scrape`, and `automations/retell-trade-receptionist` to `archive/`. Removed empty skill folders and the duplicate `Claude Skills/_kynetic` copy. Skills that stay live are in `.claude/skills/`.
+- Parked Vapi (D-018): `VAPI_BUILDER_PROMPT.md` moved to `archive/vapi/`. Vapi workflows were renamed and deactivated.
+- Folded the still-valid part of PR #12: D-014 is two endpoints and one secret, and progress no longer says "None active" or that Decisions 2 and 3 are open.
+- Docs now run through D-018. D-017 is the price Quentin signed off: first 3 clients $4,675, clients 4 and up $8,500, three Stripe invoices at 50/25/25. `m2YJwZ1l8DTzyEkw` is 27 nodes (calling-hours gate and a fallback normalize step). Two Retell workspaces: abdullahblitz (new builds, Alex) and kyneticai (Nora and Emily).
+- Context files consolidated to `KYNETIC_CONTEXT.md` plus `CLAUDE.md`. `AGENTS.md` points at `CLAUDE.md`. Kynetic Restoration (Demo) and Nora's files were not edited.
+
+### 2026-10-12 (docs catch-up that PR #12 had started)
+- Read-only check had found Twenty task 3.5 IN_PROGRESS, `m2YJwZ1l8DTzyEkw` built and inactive, and no outbound Retell agent. PR #11 later landed the Oct 7-9 prep on main. The Oct 12 doc sync (two-endpoint correction, progress, context) is included in the Oct 13 cleanup because PR #12 conflicted after the squash merge.
+
 ### 2026-10-09 (session 3b: walkthrough, Vapi side experiment, knowledge base)
 - Wrote docs/plan1-walkthrough.md (also a Twenty note): we are in stage 1; first signature is several stages away; slow parts are counsel, the owner list and the sales kit.
 - Retell outbound identity verification = KYC via Persona; still unchecked by Abdullah; blocks real outbound calls only.
-- Vapi side experiment (not a pivot): VAPI_BUILDER_PROMPT.md written; Abdullah pasted it into Vapi's AI builder and it built an assistant that is close to spec. Not yet reviewed by Claude: the session started before VAPI_API_KEY and the api.vapi.ai allow-listing were added, so it needs a new session. Retell stays the main build.
+- Vapi side experiment, later parked by D-018: VAPI_BUILDER_PROMPT.md written (now `archive/vapi/`). Abdullah pasted it into Vapi's AI builder. The workflows from that experiment were renamed and deactivated. Retell is the platform.
 - Merged two research runs into demo-business/knowledge-base/kynetic-roofing-kb.md + MERGE_REPORT.md (license 108796 listed as "the website lists", not state-board verified; "inspection is free" is the demo offer, not an AM-1 claim).
-- Next session: read-only review of the Vapi assistant, upload the KB, web-call test. Retell track waits on Abdullah (KYC, create-outbound --apply, n8n credential).
+- At the time, the next session was a Vapi review. That experiment was later parked (D-018). The Retell track still waits on Abdullah (KYC, create-outbound --apply, n8n credential).
 
 ### 2026-10-08 (session 3: confirmations and demo data)
 - Spoken name confirmed: "Kynetic Roofing". Retell identity verification for outbound: Abdullah has NOT checked it yet (blocker for the phone test only). Retell agent and n8n workflow still not created; nothing dialed. n8n checked read-only: only the imported template `KYQIVtxwDcXVKmk3` exists, unchanged (still Google Sheets/Vapi/Azure); the new Twenty/Retell workflow is not built.
 - Twenty audit: one demo roofing business (Kynetic Roofing (Demo) as company plus client account), AM-1 Roofing Inc as a separate prospect record, no stray "KyneticAI Roofing" or "Summit Ridge" records or text. Kept both the company and the client account (the workflow links leads to the client account).
 - D-016 amended: copy everything from AM-1 onto the demo, only the name changes (close friend's business). Company record now has phone, address, rating 4.6 from 88; new Twenty note "BUSINESS PROFILE: Kynetic Roofing (Demo)" (id 2079cce2-1c48-44f1-b47e-934effff5034) attached to the company and client account. Website field left empty (Twenty blocks a duplicate domain). D-016 and DEMO BRIEFING rewritten in Twenty; repo PROFILE.md, BUILD_PLAN.md, N8N_MAPPING.md and decisions.md updated.
-- n8n: built the new workflow "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`), 25 nodes, validated, INACTIVE, never executed. Template `KYQIVtxwDcXVKmk3` left untouched. Needs the Retell credential and two placeholders (agent ID, caller ID) before any test.
+- n8n: built the new workflow "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`), then 25 nodes, validated, INACTIVE, never executed. Template `KYQIVtxwDcXVKmk3` left untouched. Needs the Retell credential and two placeholders (agent ID, caller ID) before any test. Oct 12 brought it to 27 nodes (calling-hours gate and a fallback normalize step); see the 2026-10-13 log.
 - Next: Abdullah checks Retell verification, runs `create-outbound --apply`, creates the n8n credential "Retell API (outbound)". Then Claude builds the n8n workflow inactive and web-call tests Alex.
 
 ### 2026-10-03

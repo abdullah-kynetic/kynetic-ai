@@ -3,10 +3,11 @@
 Mirror of the Twenty decision notes. If this disagrees with Twenty, Twenty wins. Do not reopen these without asking.
 
 ## D-001: Price is $1,500 setup + $997/mo
-Status: decided
+Status: superseded by D-017 (2026-10-13). Do not quote this price.
 Date: 2026-10-01
 Why: Replaces the $750 founding setup. Guarantee terms are still not set.
 Replaced: $750 setup + $997/mo.
+Superseded by: D-017 (first 3 clients $4,675, clients 4 and up $8,500, three Stripe invoices at 50/25/25).
 
 ## D-002: Owner gate
 Status: decided
@@ -57,10 +58,10 @@ Scope: Inbound (Emily) build is paused — considered near-done, touched again o
 Replaced: D-005's parenthetical "(one agent for inbound and outbound)" description of Emily, and the open/unconfirmed status of Decision 1 in the ACTIVE BUILD PLAN note.
 
 ## D-013: Two plans. Plan 1 is the outbound agent only; five paying clients before Plan 2
-Status: decided
+Status: decided. The price in this entry is superseded by D-017.
 Date: 2026-10-06
 Why: The outbound pitch gets us in front of qualified owners and makes money fastest. The full system is what we follow through on once we have credibility.
-Plan 1: sell only the outbound speed to lead agent to owners already running Meta ads, $1,500 setup + $997/mo. Gate: 5 paying clients (setup paid, on the monthly plan; also Quentin's partnership terms finalize at 5). Plan 2 (Revenue Recovery System): Reputation Engine, Inbound AI Receptionist (Emily), Lead Recovery and Nurture. After the gate, either stay on Plan 1 and sell the three as upsells to the same clients (if Plan 1 scales well) or reassess and bring Plan 2 forward as its own pitch. Plan 2 pricing is undecided.
+Plan 1: sell only the outbound speed to lead agent to owners already running Meta ads. Price is D-017, which replaces the $1,500 setup + $997/mo figure this decision originally used. Gate: 5 paying clients (Quentin's partnership terms still finalize at 5). Plan 2 (Revenue Recovery System): Reputation Engine, Inbound AI Receptionist (Emily), Lead Recovery and Nurture. After the gate, either stay on Plan 1 and sell the three as upsells to the same clients (if Plan 1 scales well) or reassess and bring Plan 2 forward as its own pitch. Plan 2 pricing is undecided.
 Naming: "speed to lead" only means the outbound agent. Inbound is the Inbound AI Receptionist.
 Consequence: Twenty task titles carry [P1]/[P2]. The Phase 7 demo gate uses the outbound demo. Package Menu and Offer Definition are Plan 2 reference only. If the fork is decided before client 5, Plan 1 onboarding should leave room for upsells.
 See: Twenty note "BUSINESS MODEL: Two Plans".
@@ -81,7 +82,7 @@ Consequence: PROMPT.md is filled in for Kynetic Roofing; a Cal.com event type fo
 ## D-014: Outbound v1 architecture
 Status: decided
 Date: 2026-10-07
-Why: Keeps v1 to three endpoints and one secret per authenticated endpoint; matches D-012.
+Why: Keeps v1 to two endpoints and one secret (the post call endpoint); matches D-012.
 (1) Lead entry is an n8n form for now (stands in for the Meta lead form), with consent wording and checkbox; consent text, timestamp and source stored in Twenty. (2) Two n8n endpoints: the n8n intake form (public) and one post call endpoint filtered to `event == call_analyzed` with header auth (KI-005). Corrected Oct 7: check_availability_cal and book_appointment_cal are native Retell tools that call Cal.com directly (see the Emily snapshot llm.json), so no tools endpoint or action router is needed in v1; it is only needed later for a custom tool such as opt out logging or human transfer. (3) Light pre call gate: E.164 phone check, no re-call of the same phone within 24 hours of a new submission (scheduled retries not blocked), consent check; owner qualification stays upstream (D-002). (4) Opt out logging tool waits for 3.6. (5) Correction: Source Template 05 has no action router or tool webhooks (form trigger, Vapi call, 30s polling, analyzer, Sheets); the router is our own design.
 Needs approval before building: adding Cal.com tools to the new outbound Retell agent.
 
@@ -95,3 +96,16 @@ Consequence: Drop "Never mention AI" from the SolarShift prompt. Never deny bein
 Status: decided
 Date: 2026-10-06
 Why: Keeps v1 small and testable. (1) Hang up on voicemail, log as voicemail, retry; leaving a voicemail is TBD. (2) First call within about 60 seconds of form submit, retries at 5 min, 1 hour, next day, max 4 attempts, run by a scheduled sweeper over Twenty. (3) gpt-4.1 + 11labs-Cimo, revisit after test calls. (4) Human transfer deferred past v1. (5) Retell webhook filtered to the final analyzed event replaces the polling loop; structured outcome from Retell native post-call analysis; Twenty record ID passed in call metadata.
+
+## D-017: Plan 1 price is $4,675 for the first 3 clients and $8,500 after that
+Status: decided. Quentin signed off.
+Date: 2026-10-13
+Why: Final price for the outbound speed-to-lead package. The first 3 clients pay $4,675. Clients 4 and up pay $8,500. Each client is billed as three Stripe invoices: 50% at the start, 25% when the system is built and sent for testing, and 25% at completion. Not a monthly subscription.
+Replaced: D-001, and the price line originally in D-013.
+Scope: Plan 1 only. Plan 2 pricing is still undecided. The 5-client gate in D-013 still stands.
+
+## D-018: Retell is the platform; Vapi is parked. Two Retell workspaces
+Status: decided
+Date: 2026-10-13
+Why: New voice work stays on Retell. The Vapi side experiment is parked. Its workflows were renamed and deactivated. The builder prompt is in `archive/vapi/` and is not a build spec.
+Workspaces: `abdullahblitz` is for new builds, including the Alex outbound agent. `kyneticai` is the older workspace and holds Nora and Emily. Nora stays frozen.
