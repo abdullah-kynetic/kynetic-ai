@@ -15,6 +15,17 @@ travel to cloud sessions, so the rules that matter live here. Keep this current.
    logging in Notion. Old Notion leads (Outreach DB) are stale; don't migrate them.
 4. **The frozen original is never modified** (see below). All new work goes on the copies.
 
+## Two plans (D-013, 2026-10-06)
+
+- **Plan 1, foot in the door:** only the outbound speed to lead agent, sold to owners already
+  running Meta ads, $1,500 setup + $997/mo. This is the only thing built and sold for now.
+- **Gate:** 5 paying Plan 1 clients (setup paid, on the monthly plan).
+- **Plan 2, Revenue Recovery System:** Reputation Engine, Inbound AI Receptionist (Emily),
+  Lead Recovery and Nurture. After the gate: sell as upsells to Plan 1 clients if Plan 1 is
+  scaling, otherwise reassess and pitch it as its own package. Pricing undecided.
+- "Speed to lead" always means the outbound agent. Twenty task titles carry [P1] / [P2].
+  Full detail: Twenty note "BUSINESS MODEL: Two Plans".
+
 ## Business state (2026-09-28)
 
 - No active clients. Kynetic runs on its own AI and is the case study; prefer builds

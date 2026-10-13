@@ -2,6 +2,9 @@
 
 Mirror of the Twenty roadmap ("Roadmap: all phases"). If this disagrees with Twenty, Twenty wins.
 
+## Current plan
+Plan 1 only: the outbound speed to lead agent, gate of 5 paying clients before Plan 2 (D-013). Task titles in Twenty carry [P1]/[P2]; Emily inbound and all upsell systems are [P2].
+
 ## Current phase
 Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The whole voice-agent build is being redone from scratch (D-009); see Twenty note "ACTIVE BUILD PLAN: Emily Rebuild + Speed-to-Lead Outbound" for the full synthesis.
 
@@ -21,7 +24,7 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The 
 - 3.4 Test 3 call paths. Blocked on 3.3 and 1.3.
 
 ## Next (active focus)
-- 3.5 Build the outbound speed-to-lead n8n workflow as a separate Retell agent (D-010). See ACTIVE BUILD PLAN note Section 6.
+- 3.5 (IN PROGRESS, prep only; Retell agent and n8n workflow not created, see 2026-10-08 session 3) Build the outbound speed-to-lead n8n workflow as a separate Retell agent (D-010, D-014). Next 10 steps: Twenty note "PLAN 1: NEXT 10 STEPS (Oct 7, 2026)". Waiting on Abdullah: PROMPT.md review, prerequisites, then approvals for Twenty fields, Retell agent, n8n workflow.
 - 3.6 Compliance for the outbound workflow: SMS opt-out, Contact relation, webhook auth (KI-005).
 - Still need Abdullah's confirmation on Decisions 2 and 3 (n8n webhook pattern; outbound qualification gate scope) before writing the outbound workflow — see ACTIVE BUILD PLAN note Sections 4-5.
 - 1.3 Twilio A2P registration for +16692660586 (manual, unrelated to this redo).
@@ -31,6 +34,20 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The 
 - None currently. RETELL_API_KEY confirmed available in this session; reads and the Cal key update both went through.
 
 ## Log
+### 2026-10-09 (session 3b: walkthrough, Vapi side experiment, knowledge base)
+- Wrote docs/plan1-walkthrough.md (also a Twenty note): we are in stage 1; first signature is several stages away; slow parts are counsel, the owner list and the sales kit.
+- Retell outbound identity verification = KYC via Persona; still unchecked by Abdullah; blocks real outbound calls only.
+- Vapi side experiment (not a pivot): VAPI_BUILDER_PROMPT.md written; Abdullah pasted it into Vapi's AI builder and it built an assistant that is close to spec. Not yet reviewed by Claude: the session started before VAPI_API_KEY and the api.vapi.ai allow-listing were added, so it needs a new session. Retell stays the main build.
+- Merged two research runs into demo-business/knowledge-base/kynetic-roofing-kb.md + MERGE_REPORT.md (license 108796 listed as "the website lists", not state-board verified; "inspection is free" is the demo offer, not an AM-1 claim).
+- Next session: read-only review of the Vapi assistant, upload the KB, web-call test. Retell track waits on Abdullah (KYC, create-outbound --apply, n8n credential).
+
+### 2026-10-08 (session 3: confirmations and demo data)
+- Spoken name confirmed: "Kynetic Roofing". Retell identity verification for outbound: Abdullah has NOT checked it yet (blocker for the phone test only). Retell agent and n8n workflow still not created; nothing dialed. n8n checked read-only: only the imported template `KYQIVtxwDcXVKmk3` exists, unchanged (still Google Sheets/Vapi/Azure); the new Twenty/Retell workflow is not built.
+- Twenty audit: one demo roofing business (Kynetic Roofing (Demo) as company plus client account), AM-1 Roofing Inc as a separate prospect record, no stray "KyneticAI Roofing" or "Summit Ridge" records or text. Kept both the company and the client account (the workflow links leads to the client account).
+- D-016 amended: copy everything from AM-1 onto the demo, only the name changes (close friend's business). Company record now has phone, address, rating 4.6 from 88; new Twenty note "BUSINESS PROFILE: Kynetic Roofing (Demo)" (id 2079cce2-1c48-44f1-b47e-934effff5034) attached to the company and client account. Website field left empty (Twenty blocks a duplicate domain). D-016 and DEMO BRIEFING rewritten in Twenty; repo PROFILE.md, BUILD_PLAN.md, N8N_MAPPING.md and decisions.md updated.
+- n8n: built the new workflow "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`), 25 nodes, validated, INACTIVE, never executed. Template `KYQIVtxwDcXVKmk3` left untouched. Needs the Retell credential and two placeholders (agent ID, caller ID) before any test.
+- Next: Abdullah checks Retell verification, runs `create-outbound --apply`, creates the n8n credential "Retell API (outbound)". Then Claude builds the n8n workflow inactive and web-call tests Alex.
+
 ### 2026-10-03
 - Read the Oct 1 plan notes and roadmap. Merged PR #2. Added the Retell permission rule. Started docs setup.
 
@@ -42,6 +59,21 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The 
 ### 2026-10-05
 - 1.2 closed: checked retell/builds/_inflate-original/agent.json, confirmed Emily's current voice (11labs-Cimo) is the same one Inflate's original build used, not an unexamined default. Decided to keep it rather than spend time picking a new one. See D-008.
 - D-009: full voice-agent build declared redone from scratch after reviewing 9 YouTube transcripts and 6 build artifacts. Saved all 15 as SOURCE TRANSCRIPT/SOURCE TEMPLATE notes in Twenty and wrote the synthesis into "ACTIVE BUILD PLAN: Emily Rebuild + Speed-to-Lead Outbound."
+
+### 2026-10-08 (later: D-016)
+- Chose option B: Kynetic Roofing is built on AM-1 Roofing Inc's (Bend, OR) real profile. Merged two external LLM research runs into demo-business/PROFILE.md (confidence levels, conflicts). PROMPT.md facts, Cal timezone (America/Los_Angeles) and BUILD_PLAN updated. Twenty: new prospect record "AM-1 Roofing Inc" (contact data lives only there), demo company updated, D-016 note, DEMO BRIEFING rewritten. Open: confirm spoken name ("Kynetic Roofing" vs "KyneticAI Roofing"); AM-1 owner gate unchecked, no calls to AM-1; rating, Facebook, Meta ads, free estimate unverified. Retell and n8n still on hold.
+
+### 2026-10-08
+- Demo business renamed to **Kynetic Roofing** everywhere (was Summit Ridge Roofing; D-015 amended). Repo prompt/config/specs, Cal.com event description, and in Twenty the company, client account, D-015, demo briefing note and task 3.5 all updated. Created the demo company in `companies` (it had only been in client_accounts) and linked the briefing note to both. Retell agent creation is ON HOLD until Abdullah checks Retell; n8n workflow not built.
+- Demo build prep: model business research (retell/builds/outbound-speed-to-lead/demo-business/PROFILE.md, AM-1 Roofing as the model, Kynetic Roofing stays the fictional skin), FORM_SPEC.md, N8N_MAPPING.md (Template 05 -> Twenty/Retell/OpenRouter abdublitz), prompt v1.1 (business facts, property address, form answers), agent.config.json, and `tools/retell.py create-outbound` (dry run works). Retell create was BLOCKED by the permission checker; Abdullah must run it. Twenty: 14 endCustomer fields, 3 customerInteraction fields, client account Kynetic Roofing (Demo). n8n workflow not built yet (needs agent ID and Retell credential).
+- Cal.com Roof Inspection event type created through the API: ID 7404470, 30 min, attendee address. CAL_API_KEY in the cloud environment verified working (HTTP 200, not the old leaked key). Remaining Step 2: Retell identity verification check.
+- Wrote the counsel outreach email (docs/counsel-email.md) and marked it done. Task 1.4 set to IN_PROGRESS, not done: it needs counsel's sign-off. Reordered Step 2: Twilio trunk, n8n Retell credential and test phone moved to the end because dialogue testing needs no phone number. Still open: Cal.com Roof Inspection event type ID and Retell identity verification check.
+
+### 2026-10-07
+- Decided D-014 (n8n form, two endpoints, light gate), corrected after finding Emily's Cal tools are native Retell tools. Labeled the last 9 tasks [P1]. Drafted retell/PROMPTING_STYLE.md, retell/builds/outbound-speed-to-lead/PROMPT.md and BUILD_PLAN.md.
+
+### 2026-10-06 (audit session)
+- Read-only audit of Twenty (50 tasks, 66 notes, 0 opportunities). Synced D-011 and D-012 into docs/decisions.md. Found Twenty task statuses stale: 1.1 and 1.2 still TODO though done, 3.5 not marked IN_PROGRESS. Then recorded D-013 (two plans) in Twenty: new BUSINESS MODEL: Two Plans and D-013 notes, banners on Package Menu, Offer Definition, MASTER PLAN and Lane B handoff, [P1]/[P2] prefixes on 41 of 50 tasks, 1.1 and 1.2 marked DONE. Left unlabeled pending Abdullah: 1.3, 3.7, 5.5 to 5.8, standard pricing, prospect follow up automation, remaining Claude skills.
 
 ### 2026-10-06
 - D-010: resolved the one-agent-vs-two-agents question from the ACTIVE BUILD PLAN note as two separate Retell agents. Inbound (Emily) paused — near-done, left alone until a client demo needs it. Outbound speed-to-lead is now the sole active build target. Updated the ACTIVE BUILD PLAN note and docs/progress.md, docs/decisions.md to match.
