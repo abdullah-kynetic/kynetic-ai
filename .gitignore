@@ -6,6 +6,8 @@ credentials.json
 token.json
 .tmp/
 node_modules/
+__pycache__/
+*.pyc
 *.vsix
 .DS_Store
 .claude/settings.local.json
