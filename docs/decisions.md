@@ -3,7 +3,7 @@
 Mirror of the Twenty decision notes. If this disagrees with Twenty, Twenty wins. Do not reopen these without asking.
 
 ## D-001: Price is $1,500 setup + $997/mo
-Status: decided
+Status: superseded by D-011
 Date: 2026-10-01
 Why: Replaces the $750 founding setup. Guarantee terms are still not set.
 Replaced: $750 setup + $997/mo.
@@ -55,3 +55,10 @@ Date: 2026-10-06
 Why: n8n forks into separate workflows regardless of agent count, so one shared agent doesn't save the hard work; cloning a Retell agent template is a one-time cost, not recurring; two separate, nameable agents match Abdullah's cold-call pitch/demo motion and let him sell/demo inbound and outbound as distinct capabilities. Resolves OPEN DECISION 1 from the Twenty note "ACTIVE BUILD PLAN: Emily Rebuild + Speed-to-Lead Outbound."
 Scope: Inbound (Emily) build is paused — considered near-done, touched again only to customize for a client-specific demo. Outbound (speed-to-lead) is the sole active build target. Correction (2026-10-06): the outbound agent is not built from a merged inbound+outbound prompt — that was a wrong assumption. Abdullah's "VOICE AGENT PROMPT" upload is SOURCE TEMPLATE 05 (Twenty), an already outbound-only prompt (SolarShift) paired with a matching Facebook Ad Form n8n JSON, built for this exact speed-to-lead use case. That pair is the primary starting draft for the new outbound agent/workflow, adapted to Twenty/Cal.com and run through the SOURCE TEMPLATE 06 house style.
 Replaced: D-005's parenthetical "(one agent for inbound and outbound)" description of Emily, and the open/unconfirmed status of Decision 1 in the ACTIVE BUILD PLAN note.
+
+## D-011: Outbound speed-to-lead sold as 3-month packages, 15% off, milestone billing
+Status: decided by Abdullah; business partner sign-off pending
+Date: 2026-10-13
+Why: Goal is $30K by Dec 31, 2026. First 3 clients: $4,675 package (list $2.5K setup + $1K/mo x 3 = $5,500). Clients 4+: $8,500 package (list $4K setup + $2K/mo x 3 = $10,000). Payment split 50% at start, 25% when built and sent for testing, 25% at completion (assumed to mean build go-live; confirm). Needs 5 clients ($31,025), aim for 6. Full math in docs/revenue-plan-q4-2026.md.
+Replaced: D-001 ($1,500 setup + $997/mo).
+Scope: outbound speed-to-lead agent only. Funnel rates in the plan are assumptions to be replaced with real data after about 500 dials.

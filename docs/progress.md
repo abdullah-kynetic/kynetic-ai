@@ -21,6 +21,7 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The 
 - 3.4 Test 3 call paths. Blocked on 3.3 and 1.3.
 
 ## Next (active focus)
+- Cold outreach: 75 dials/day Oct 14 to Nov 20, checkpoint after ~500 dials (~Oct 23). Plan in docs/revenue-plan-q4-2026.md (D-011).
 - 3.5 Build the outbound speed-to-lead n8n workflow as a separate Retell agent (D-010). See ACTIVE BUILD PLAN note Section 6.
 - 3.6 Compliance for the outbound workflow: SMS opt-out, Contact relation, webhook auth (KI-005).
 - Still need Abdullah's confirmation on Decisions 2 and 3 (n8n webhook pattern; outbound qualification gate scope) before writing the outbound workflow — see ACTIVE BUILD PLAN note Sections 4-5.
@@ -45,3 +46,6 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. The 
 
 ### 2026-10-06
 - D-010: resolved the one-agent-vs-two-agents question from the ACTIVE BUILD PLAN note as two separate Retell agents. Inbound (Emily) paused — near-done, left alone until a client demo needs it. Outbound speed-to-lead is now the sole active build target. Updated the ACTIVE BUILD PLAN note and docs/progress.md, docs/decisions.md to match.
+
+### 2026-10-13
+- D-011: new pricing and payment structure for the outbound speed-to-lead agent (3-month packages, 15% off, 50/25/25 milestones), replacing D-001. Wrote docs/revenue-plan-q4-2026.md with the $30K-by-Dec-31 funnel math and daily dial targets. Partner sign-off pending; "completion" milestone meaning to confirm.
