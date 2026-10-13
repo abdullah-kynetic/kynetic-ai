@@ -1,6 +1,6 @@
 # Revenue plan: $30K by Dec 31, 2026 (outbound speed-to-lead only)
 
-Written 2026-10-13. Funnel rates are industry-typical assumptions, not Kynetic data. Replace them with real numbers after the first ~500 dials (around Oct 23) and re-run. Pricing is Abdullah's decision (D-011); partner sign-off is pending. If this disagrees with Twenty, Twenty wins.
+Written 2026-10-13. Funnel rates are industry-typical assumptions, not Kynetic data. Replace them with real numbers after the first ~500 dials (around Oct 23) and re-run. Pricing is Abdullah's decision (D-017); partner sign-off is pending. If this disagrees with Twenty, Twenty wins.
 
 ## Pricing: 3-month outbound agent package, 15% off list
 
@@ -61,6 +61,8 @@ Assumes calls are held one week after booking.
 | Nov 27 | stop dialing | 36 | 25 | 5.1 | about $31,000 |
 
 ## Checkpoints and risks
+
+- **Launch gate conflict:** MASTER PLAN Phase 7 and D-003 say no dialing until the build is done and the gate clears. This plan starts dialing Oct 14. The MASTER PLAN's Phase 8 also says 100 to 150 dials a day. Abdullah to decide.
 
 - **Oct 23 checkpoint:** after about 500 dials, expect 10 calls booked. Under 6 means the conservative case. Raise dials or fix the pitch.
 - **Thanksgiving:** the 5th close lands in Thanksgiving week. Dial hard in weeks 1 and 2, and start builds while still closing.

@@ -3,7 +3,7 @@
 Mirror of the Twenty decision notes. If this disagrees with Twenty, Twenty wins. Do not reopen these without asking.
 
 ## D-001: Price is $1,500 setup + $997/mo
-Status: superseded by D-011
+Status: superseded by D-017 (pricing; see also D-013 in Twenty)
 Date: 2026-10-01
 Why: Replaces the $750 founding setup. Guarantee terms are still not set.
 Replaced: $750 setup + $997/mo.
@@ -56,9 +56,11 @@ Why: n8n forks into separate workflows regardless of agent count, so one shared 
 Scope: Inbound (Emily) build is paused — considered near-done, touched again only to customize for a client-specific demo. Outbound (speed-to-lead) is the sole active build target. Correction (2026-10-06): the outbound agent is not built from a merged inbound+outbound prompt — that was a wrong assumption. Abdullah's "VOICE AGENT PROMPT" upload is SOURCE TEMPLATE 05 (Twenty), an already outbound-only prompt (SolarShift) paired with a matching Facebook Ad Form n8n JSON, built for this exact speed-to-lead use case. That pair is the primary starting draft for the new outbound agent/workflow, adapted to Twenty/Cal.com and run through the SOURCE TEMPLATE 06 house style.
 Replaced: D-005's parenthetical "(one agent for inbound and outbound)" description of Emily, and the open/unconfirmed status of Decision 1 in the ACTIVE BUILD PLAN note.
 
-## D-011: Outbound speed-to-lead sold as 3-month packages, 15% off, milestone billing
+## D-017: Outbound speed-to-lead sold as 3-month packages, 15% off, milestone billing
 Status: decided by Abdullah; business partner sign-off pending
 Date: 2026-10-13
 Why: Goal is $30K by Dec 31, 2026. First 3 clients: $4,675 package (list $2.5K setup + $1K/mo x 3 = $5,500). Clients 4+: $8,500 package (list $4K setup + $2K/mo x 3 = $10,000). Payment split 50% at start, 25% when built and sent for testing, 25% at completion (assumed to mean build go-live; confirm). Needs 5 clients ($31,025), aim for 6. Full math in docs/revenue-plan-q4-2026.md.
 Replaced: D-001 ($1,500 setup + $997/mo).
 Scope: outbound speed-to-lead agent only. Funnel rates in the plan are assumptions to be replaced with real data after about 500 dials.
+Open conflict: D-003 and the MASTER PLAN Phase 7 launch gate (Twenty) say no dialing until the build is done. The revenue plan starts dialing Oct 14. Abdullah to decide which gives.
+Note: this mirror is stale. Twenty already has D-011 to D-016 (AI disclosure, call handling, two plans, outbound architecture, Kynetic Roofing demo). D-017 is the next free number in Twenty.
