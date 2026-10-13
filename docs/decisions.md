@@ -62,5 +62,5 @@ Date: 2026-10-13
 Why: Goal is $30K by Dec 31, 2026. First 3 clients: $4,675 package (list $2.5K setup + $1K/mo x 3 = $5,500). Clients 4+: $8,500 package (list $4K setup + $2K/mo x 3 = $10,000). Payment split 50% at start, 25% when built and sent for testing, 25% at completion (assumed to mean build go-live; confirm). Needs 5 clients ($31,025), aim for 6. Full math in docs/revenue-plan-q4-2026.md.
 Replaced: D-001 ($1,500 setup + $997/mo).
 Scope: outbound speed-to-lead agent only. Funnel rates in the plan are assumptions to be replaced with real data after about 500 dials.
-Open conflict: D-003 and the MASTER PLAN Phase 7 launch gate (Twenty) say no dialing until the build is done. The revenue plan starts dialing Oct 14. Abdullah to decide which gives.
+Update 2026-10-13: billed in Stripe as three invoices per client. Abdullah says the build and all Phase 7 launch gate items will be done by Oct 14, so dialing starts Oct 15. This resolves the earlier conflict with D-003 and the Phase 7 gate. Not confirmed: Quentin's sign-off, meaning of "completion", guarantee terms, agreement/lawyer review, lead pool size, who dials, build time per client.
 Note: this mirror is stale. Twenty already has D-011 to D-016 (AI disclosure, call handling, two plans, outbound architecture, Kynetic Roofing demo). D-017 is the next free number in Twenty.

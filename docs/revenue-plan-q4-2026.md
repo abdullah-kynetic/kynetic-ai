@@ -2,6 +2,11 @@
 
 Written 2026-10-13. Funnel rates are industry-typical assumptions, not Kynetic data. Replace them with real numbers after the first ~500 dials (around Oct 23) and re-run. Pricing is Abdullah's decision (D-017); partner sign-off is pending. If this disagrees with Twenty, Twenty wins.
 
+## Status as of Oct 13
+- Abdullah says the build and every Phase 7 launch gate item will be done by **Oct 14**. Dialing starts **Oct 15**. This resolves the earlier conflict with D-003 and the Phase 7 gate. Task 7.1 still verifies it.
+- Items not confirmed or with no information are listed in the last section.
+
+
 ## Pricing: 3-month outbound agent package, 15% off list
 
 | | List (3 months) | Package | 50% at start | 25% built + sent for testing | 25% at completion |
@@ -10,6 +15,10 @@ Written 2026-10-13. Funnel rates are industry-typical assumptions, not Kynetic d
 | Clients 4+ ($4K setup + $2K/mo) | $10,000 | **$8,500** | $4,250 | $2,125 | $2,125 |
 
 Open question: "completion" is assumed to mean build go-live. If it means the end of the 3 months, the last 25% lands in 2027 and about 7 clients are needed for $30K cash in 2026.
+
+## Stripe
+
+Billed as **multiple invoices**, three per client, one per milestone (not a subscription). Invoice 1 at signing, invoice 2 when the system is built and sent for testing, invoice 3 at completion. Collection depends on Abdullah triggering invoices 2 and 3 on time.
 
 ## Clients needed
 
@@ -36,36 +45,46 @@ If the $8,500 tier closes at 15% and the first three at 20%, the base case rises
 
 ## Daily dialing target
 
-Dialing window Oct 14 to Nov 20, about 28 working days.
+Dialing window **Oct 15 to Nov 20**, about 27 working days.
 
 | Scenario | Dials per day |
 |---|---|
-| Conservative | about 113 |
-| **Base** | **about 65** |
-| Optimistic | about 30 |
+| Conservative | about 118 |
+| **Base** | **about 67** |
+| Optimistic | about 31 |
 
 Target **75 per day** (base plus buffer, enough for 6 clients). About 2 hours of dialing plus roughly one sales call a day once bookings start. If only signed contracts (not cash) are needed by Dec 31, about 40 per day is enough.
 
-## Cumulative schedule at 65 dials per day (base case)
+## Cumulative schedule at 67 dials per day (base case)
 
 Assumes calls are held one week after booking.
 
 | Week ending | Dials | Booked | Held | Closed | Contract value signed |
 |---|---|---|---|---|---|
-| Oct 16 | 195 | 4 | 0 | 0 | $0 |
-| Oct 23 | 520 | 10 | 3 | 0.5 | about $2,300 |
-| Oct 30 | 845 | 17 | 7 | 1.5 | about $7,000 |
-| Nov 6 | 1,170 | 23 | 12 | 2.4 | about $11,500 |
-| Nov 13 | 1,495 | 30 | 16 | 3.3 | $14,025 (3 clients) |
-| Nov 20 | 1,820 | 36 | 21 | 4.2 | about $22,500 |
+| Oct 16 | 134 | 3 | 0 | 0 | $0 |
+| Oct 23 | 469 | 9 | 2 | 0.4 | about $1,900 |
+| Oct 30 | 804 | 16 | 7 | 1.3 | about $6,000 |
+| Nov 6 | 1,139 | 23 | 11 | 2.3 | about $10,800 |
+| Nov 13 | 1,474 | 30 | 16 | 3.2 | $14,025 (3 clients) |
+| Nov 20 | 1,809 | 36 | 21 | 4.1 | about $22,500 |
 | Nov 27 | stop dialing | 36 | 25 | 5.1 | about $31,000 |
 
 ## Checkpoints and risks
 
-- **Launch gate conflict:** MASTER PLAN Phase 7 and D-003 say no dialing until the build is done and the gate clears. This plan starts dialing Oct 14. The MASTER PLAN's Phase 8 also says 100 to 150 dials a day. Abdullah to decide.
-
-- **Oct 23 checkpoint:** after about 500 dials, expect 10 calls booked. Under 6 means the conservative case. Raise dials or fix the pitch.
-- **Thanksgiving:** the 5th close lands in Thanksgiving week. Dial hard in weeks 1 and 2, and start builds while still closing.
-- **Hard rules:** D-007 means dials are placed by hand. D-002's owner gate may push pickup below 15%, so build a lead pool of about 3,000 numbers.
+- **About Oct 23 to 26:** after about 500 dials, expect 10 calls booked. Under 6 means the conservative case. Raise dials or fix the pitch.
+- **Thanksgiving:** the 5th close lands in Thanksgiving week. Start builds while still closing.
+- **Dial volume:** MASTER PLAN Phase 8 says 100 to 150 dials a day. This plan uses 75.
+- **Hard rules:** D-007 means dials are placed by hand. D-002's owner gate may push pickup below 15%.
 - **Capacity:** D-003 says never sign faster than a client can be set up. Milestone billing means build work is fronted.
 - **Voice vs SMS:** D-004 still applies. Voice goes live day 1, SMS when A2P approves (2 to 3 weeks).
+
+## Not confirmed or no information
+
+- Quentin's sign-off on the pricing and the payment split. Not confirmed.
+- What "completion" means. Assumed build go-live. Not confirmed. If it means the end of the 3 months, the last 25% lands in 2027 and about 7 clients are needed for $30K cash in 2026.
+- Results guarantee terms. Not set (Twenty task 4.4).
+- Agreement wording for the milestones and the lawyer review (task 4.7). Status unknown.
+- Size of the lead pool. The plan needs about 3,000 owner-gated numbers. Current size unknown.
+- Who dials and the split between Abdullah and Quentin. Unknown.
+- Build time per client and how many clients can be set up in one week. Unknown until the dry run time is recorded.
+- All funnel rates are assumptions until real dialing data exists.
