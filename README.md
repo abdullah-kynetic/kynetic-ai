@@ -1,18 +1,23 @@
 # kynetic-ai
 
-## Platform
+Working repo for Kynetic AI. Twenty CRM is the system of record. This repo mirrors it: agent rules, the Plan 1 outbound build, and the decision log. If a doc disagrees with Twenty, Twenty wins.
 
-- [`platform/crm`](platform/crm) — Kynetic CRM. Leads, pipeline, and analytics. Live on Vercel, Postgres via Neon.
+## Layout
 
-## Automations
+| Path | What it is |
+|---|---|
+| `KYNETIC_CONTEXT.md` | Rules, IDs, D-017 pricing, the two Retell workspaces |
+| `CLAUDE.md` | Agent instructions. `AGENTS.md` points here |
+| `docs/` | `progress.md`, `decisions.md` (D-001 through D-018), `known-issues.md`, counsel notes |
+| `retell/builds/outbound-speed-to-lead/` | Plan 1: Alex, the Kynetic Roofing demo, the n8n mapping |
+| `retell/PROMPTING_STYLE.md` | House style for Retell prompts |
+| `tools/retell.py` | Retell API client. Dry-run unless `--apply` |
+| `retell/builds/emily-speed-to-lead/` | Plan 2 Emily build, paused |
+| `retell/builds/kynetic-restoration/` | Kynetic Restoration (Demo). Leave it alone |
+| `.claude/skills/` | `brand-profile`, `retell-builder`, `build-log` |
+| `Claude Skills/` | Other skill notes, including `skills-breakdown.md` |
+| `archive/` | Parked Vapi prompt, the old lead-scrape flow, the old trade-receptionist export, the SeldonFrame build log |
 
-- [`automations/lead-scrape`](automations/lead-scrape) — Kynetic Lead Scrape (n8n + Modal + Notion). Sources leads from Google Maps across the target niches, dedupes, classifies Franchise/Independent, writes to the Outreach DB. See that folder's README for architecture and fix log.
+Secrets stay in `.env` (see `.env.example`) or in the cloud environment. Never commit them.
 
-## Voice agents & operations
-
-- [`retell/builds`](retell/builds) — Retell agent builds and snapshots. Active: [Emily Restoration Speed to Lead](retell/builds/emily-speed-to-lead/HANDOFF.md).
-- [`tools/retell.py`](tools/retell.py) — Retell API tool (no Deno), dry-run by default.
-- [`KYNETIC_CONTEXT.md`](KYNETIC_CONTEXT.md) — rules, IDs and business state for Claude sessions.
-- [`Claude Skills`](Claude%20Skills) — skill library; Kynetic skills also in `.claude/skills/`.
-
-Secrets never go in the repo: copy `.env.example` to `.env` locally, or set them as environment variables in Claude Code cloud.
+Nora (`agent_4c34644a04c74e27253e80167b`, n8n `2PFWFqBM0wabADk6`) is frozen. New Retell builds go in the `abdullahblitz` workspace. Nora and Emily stay in `kyneticai`.

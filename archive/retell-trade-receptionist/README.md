@@ -5,9 +5,9 @@ Saved as inspiration/reference for Kynetic's Pillar 5 (AI Voice Receptionist) de
 - `Retell Voice Agent - n8n.json` — original, unmodified n8n workflow export: webhooks for job creation, emergency logging, inquiry logging, job lookup, and post-call analysis, writing to Google Sheets and notifying via Twilio/Gmail.
 - `Retell Voice Agent - retell.json` — original, unmodified Retell voice agent config: system prompt, example conversations, guardrails, and tool definitions (Cal.com booking, call transfer, and the n8n webhook tools above).
 
-## ⚠️ Contains a live secret
+## Cal.com key
 
-`Retell Voice Agent - retell.json` includes a live Cal.com API key (`cal_live_...`) in plaintext, kept as-is at Abdullah's request to preserve the original file exactly. Treat this key as compromised for Kynetic's own use — do not use it against Kynetic's Cal.com account, and Inflate AI should be considered to have this key exposed in this repo's git history.
+The export's Cal fields use the `${CAL_API_KEY}` placeholder. A `cal_live_` key from this line of work was committed in git history and rotated (KI-001). Do not treat anything in this folder as a live credential.
 
 ## Before reusing
 

@@ -1,6 +1,10 @@
 # Claude Skills Breakdown
 
-Reference guide for all available skills. Use this file to determine which skills are needed for any given task.
+Reference guide for skill notes in this repo. Use this file to determine which skills are needed for any given task.
+
+Kynetic delivery skills (`brand-profile`, `retell-builder`, `build-log`) live only in `.claude/skills/`. The duplicate copy under `Claude Skills/_kynetic/` was removed.
+
+Empty `.gitkeep` skill folders (`n8n-code-python`, `n8n-expression-syntax`, `n8n-mcp-tools-expert`, `n8n-node-configuration`, `n8n-validation-expert`, `n8n-workflow-patterns`, `web-artifacts-builder`) were removed. The writeups below are the reference for those topics. Skills that still have their own files: `n8n-code-javascript`, `frontend-design`, `deep-research`, `brand-profile-generator`, `demo-profile-generator`.
 
 ---
 
