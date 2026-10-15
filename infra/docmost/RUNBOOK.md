@@ -21,7 +21,7 @@ Goal: Docmost runs on the OVH VPS next to Twenty as the client-facing portal. A 
 ## Sequence (one ask per message)
 1. **Ask:** the subdomain, with its DNS A record already pointing to 40.160.150.91. If he has no preference, propose `docs.kyneticai.com` in that same single ask.
 2. **Ask:** paste and run the installer, then send back the output. Build the paste block as:
-   `sudo bash -s <domain> <<'KYNETIC_EOF'` + the full contents of `install.sh` + `KYNETIC_EOF`.
+   `cat > /tmp/docmost-install.sh <<'KYNETIC_EOF'` + the full contents of `install.sh` + `KYNETIC_EOF` + a final line `sudo bash /tmp/docmost-install.sh <domain>` (write the file first; don't pipe the script to `bash -s`).
    The installer stops on its own if RAM is under 2 GB available or disk is under 15 GB free, and makes no changes in that case. If it stops for that reason, tell him in one line and offer one option: a bigger VPS plan.
    It writes /opt/docmost (compose + `.env` 600), `docmost.service`, a Caddy block (validated, rolled back on failure), the nightly local backup at 02:20 with 14-day retention, and runs a restore test.
 3. **Ask:** open https://<domain>, create the admin account and workspace "Kynetic AI", then create a space named "Client Template" and import `client-template.zip` into it. Send the file with SendUserFile. If Docmost import rejects the zip, have him import the six `.md` files instead.

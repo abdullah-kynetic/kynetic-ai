@@ -28,7 +28,7 @@ if ss -ltn | grep -q '127.0.0.1:3010 ' && ! docker ps --format '{{.Names}}' | gr
 fi
 systemctl is-active --quiet caddy || die "Caddy is not running as a systemd service."
 [ -f "$CADDYFILE" ] || die "$CADDYFILE not found."
-resolved=$(getent ahostsv4 "$DOMAIN" | awk 'NR==1{print $1}')
+resolved=$(getent ahostsv4 "$DOMAIN" 2>/dev/null | awk 'NR==1{print $1}' || true)
 [ "$resolved" = "$VPS_IP" ] || die "$DOMAIN resolves to '${resolved:-nothing}', not $VPS_IP. Fix the DNS A record first."
 
 say "Files in $DIR"
