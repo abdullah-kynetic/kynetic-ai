@@ -3,7 +3,7 @@
   "llm": {
     "model": "gpt-4.1",
     "start_speaker": "agent",
-    "begin_message": "Hi, is this {{first_name}}? This is {{agent_name}}, an AI assistant calling from {{company_name}} about the form you just submitted. This call may be recorded. Is now an okay time?",
+    "begin_message": "Hi, is this {{first_name}}?",
     "default_dynamic_variables": {
       "first_name": "Sarah",
       "company_name": "Kynetic Roofing",

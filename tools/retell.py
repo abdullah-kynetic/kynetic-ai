@@ -15,6 +15,7 @@ Usage:
   python tools/retell.py snapshot <agent_id> <out_dir>
   python tools/retell.py rename-agent <agent_id> "<name>" [--apply]
   python tools/retell.py set-begin-message <llm_id> "<text>" [--apply]
+  python tools/retell.py set-prompt <llm_id> [PROMPT.md] [--apply]
   python tools/retell.py set-agent-webhook <agent_id> <url> [--apply]
   python tools/retell.py repoint-tools <llm_id> <old_url_or_id>=<new_url_or_id> ... [--apply]
   python tools/retell.py create-outbound [config.json] [--apply]
@@ -184,6 +185,23 @@ def create_outbound(config_path, apply):
     print(f"\nCreated LLM {llm['llm_id']} and agent {agent['agent_id']} (unpublished, no phone number).")
 
 
+def set_prompt(llm_id, prompt_md, apply):
+    """Update ONLY general_prompt and begin_message from the repo build files. Tools are never sent."""
+    import difflib
+    live = call("GET", f"/get-retell-llm/{llm_id}")
+    config = json.loads((OUTBOUND_DIR / "agent.config.json").read_text())
+    body = {"general_prompt": read_prompt(prompt_md), "begin_message": config["llm"]["begin_message"]}
+    print("".join(difflib.unified_diff((live.get("general_prompt") or "").splitlines(True),
+                                       body["general_prompt"].splitlines(True), "live", "PROMPT.md")))
+    print(f"begin_message:\n  live: {live.get('begin_message')}\n  new:  {body['begin_message']}\n")
+    write("PATCH", f"/update-retell-llm/{llm_id}", {k: ("<prompt, see diff>" if k == "general_prompt" else v) for k, v in body.items()}, False)
+    if apply:
+        res = call("PATCH", f"/update-retell-llm/{llm_id}", body)
+        assert res.get("general_prompt") == body["general_prompt"], "prompt did not round trip"
+        assert res.get("general_tools") == live.get("general_tools"), "tools changed unexpectedly"
+        print("APPLIED. Tools unchanged; prompt and begin_message read back OK.")
+
+
 def main():
     args = [a for a in sys.argv[1:] if a != "--apply"]
     apply = "--apply" in sys.argv
@@ -207,6 +225,8 @@ def main():
         write("PATCH", f"/update-agent/{rest[0]}", {"agent_name": rest[1]}, apply)
     elif cmd == "set-begin-message":
         write("PATCH", f"/update-retell-llm/{rest[0]}", {"begin_message": rest[1]}, apply)
+    elif cmd == "set-prompt":
+        set_prompt(rest[0], rest[1] if len(rest) > 1 else OUTBOUND_DIR / "PROMPT.md", apply)
     elif cmd == "set-agent-webhook":
         write("PATCH", f"/update-agent/{rest[0]}", {"webhook_url": rest[1]}, apply)
     elif cmd == "repoint-tools":
