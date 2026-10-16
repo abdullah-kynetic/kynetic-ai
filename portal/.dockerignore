@@ -1,0 +1,24 @@
+# Keep the build context small and secret-free.
+node_modules
+.next
+.next*
+.data
+.dev-db.log
+.env
+.env*
+!.env.example
+*.tsbuildinfo
+coverage
+test-results
+playwright-report
+.vitest*
+.git
+.gitignore
+.DS_Store
+npm-debug.log*
+# Local-only dev helpers (embedded Postgres) never go into the image.
+scripts/dev-db.mts
+scripts/pg-embedded.mts
+# Deploy tooling isn't needed inside the image (except the entrypoint).
+deploy/*
+!deploy/docker-entrypoint.sh
