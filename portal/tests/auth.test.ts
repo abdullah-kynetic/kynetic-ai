@@ -75,6 +75,12 @@ describe("admin MFA", () => {
     const { res, body } = await c.text(`/admin/clients/${fx.B}/users`);
     expect(res.status).toBe(200);
     expect(body).toContain("client-b@example.com");
+    // Regression: the clients list must show real per-client counts (an unqualified correlated subquery once showed all zeros).
+    const list = (await c.text("/admin")).body.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+    const m = /Test Client A Plan 1 active (\d+) (\d+) (\d+) (\d+)/.exec(list);
+    expect(m, "client A row").toBeTruthy();
+    const [, users, docs, leads, bookings] = m!.map(Number);
+    expect(users).toBeGreaterThan(0); expect(docs).toBeGreaterThan(0); expect(leads).toBeGreaterThan(0); expect(bookings).toBeGreaterThan(0);
   }, 90_000);
 });
 

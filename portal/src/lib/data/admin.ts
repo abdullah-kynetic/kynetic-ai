@@ -8,16 +8,20 @@ import { loadResults } from "./results";
 
 /* Admin reads. Callers must have passed requireAdmin() (role + MFA). Runs in admin scope. */
 
+// In a single-table select Drizzle renders `${clients.id}` unqualified ("id"), which inside a correlated
+// subquery silently binds to the subquery's own table. Always qualify explicitly.
+const CLIENT_ID = sql.raw('"clients"."id"');
+
 export async function listClients(s: AdminSession) {
   return withScope(adminScope(s), async (tx) => {
     const since = new Date(Date.now() - 30 * 86400_000).toISOString().slice(0, 10);
     return tx.select({
       id: clients.id, name: clients.name, slug: clients.slug, status: clients.status, planName: clients.planName, createdAt: clients.createdAt,
-      users: sql<number>`(select count(*)::int from ${users} u where u.client_id = ${clients.id})`,
-      docs: sql<number>`(select count(*)::int from ${documents} d where d.client_id = ${clients.id})`,
-      leads30: sql<number>`(select coalesce(sum(r.leads),0)::int from ${dailyResults} r where r.client_id = ${clients.id} and r.date >= ${since})`,
-      bookings30: sql<number>`(select coalesce(sum(r.bookings),0)::int from ${dailyResults} r where r.client_id = ${clients.id} and r.date >= ${since})`,
-      lastResult: sql<string | null>`(select max(r.date)::text from ${dailyResults} r where r.client_id = ${clients.id})`,
+      users: sql<number>`(select count(*)::int from ${users} u where u.client_id = ${CLIENT_ID})`,
+      docs: sql<number>`(select count(*)::int from ${documents} d where d.client_id = ${CLIENT_ID})`,
+      leads30: sql<number>`(select coalesce(sum(r.leads),0)::int from ${dailyResults} r where r.client_id = ${CLIENT_ID} and r.date >= ${since})`,
+      bookings30: sql<number>`(select coalesce(sum(r.bookings),0)::int from ${dailyResults} r where r.client_id = ${CLIENT_ID} and r.date >= ${since})`,
+      lastResult: sql<string | null>`(select max(r.date)::text from ${dailyResults} r where r.client_id = ${CLIENT_ID})`,
     }).from(clients).orderBy(asc(clients.name));
   });
 }
