@@ -191,6 +191,11 @@ def set_prompt(llm_id, prompt_md, apply):
     live = call("GET", f"/get-retell-llm/{llm_id}")
     config = json.loads((OUTBOUND_DIR / "agent.config.json").read_text())
     body = {"general_prompt": read_prompt(prompt_md), "begin_message": config["llm"]["begin_message"]}
+    defaults = dict(live.get("default_dynamic_variables") or {})
+    for k, v in (config["llm"].get("default_dynamic_variables") or {}).items():
+        defaults.setdefault(k, v)  # add missing keys only; never overwrite live values
+    if defaults != (live.get("default_dynamic_variables") or {}):
+        body["default_dynamic_variables"] = defaults
     print("".join(difflib.unified_diff((live.get("general_prompt") or "").splitlines(True),
                                        body["general_prompt"].splitlines(True), "live", "PROMPT.md")))
     print(f"begin_message:\n  live: {live.get('begin_message')}\n  new:  {body['begin_message']}\n")
@@ -199,7 +204,7 @@ def set_prompt(llm_id, prompt_md, apply):
         res = call("PATCH", f"/update-retell-llm/{llm_id}", body)
         assert res.get("general_prompt") == body["general_prompt"], "prompt did not round trip"
         assert res.get("general_tools") == live.get("general_tools"), "tools changed unexpectedly"
-        print("APPLIED. Tools unchanged; prompt and begin_message read back OK.")
+        print("APPLIED. Tools unchanged; prompt, begin_message and default variables read back OK.")
 
 
 def main():
