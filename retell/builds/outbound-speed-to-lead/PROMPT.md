@@ -1,8 +1,10 @@
-# Outbound speed to lead agent: prompt v1.2 (Kynetic Roofing demo)
+# Outbound speed to lead agent: prompt v1.2.1 (Kynetic Roofing demo)
 
 DRAFT for review. Not applied to Retell. Filled in for the demo client Kynetic Roofing (our demo brand, roofing only, agent Alex, D-015; renamed from Summit Ridge Roofing on Oct 8, 2026). Adapted from SOURCE TEMPLATE 05 (SolarShift) and written to `retell/PROMPTING_STYLE.md`. Changes from the template: AI disclosure per D-011 (the "never mention AI" line is dropped), niche specifics are bracketed so the same prompt serves any client, booking uses the native Cal.com tools, voicemail is handled by the agent setting (D-012), no human transfer in v1.
 
 **v1.2 (Oct 15, 2026), from the first live test call (call_4bfbca5c12d7f5e7f1f2ba04a6a):** one question per turn (the name check is now its own turn, the AI and recording disclosure follows in Step 2); the email is collected, read back and confirmed in separate turns; new "Reading Back Slowly" section (one character at a time, ' ... ' between characters, no spaces in the address); the booking tool line is only "One sec, booking that now." so the agent never says "you're all set" before the booking succeeds; tool errors are fixed on the one failed field, never guessed. `{{email}}` is optional: when the form collects it (FORM_SPEC), the agent reads it back instead of asking for it.
+
+**v1.2.1 (Oct 16, 2026), Alex Lab only:** adds rule 16 (treat unclear words as transcription errors; borrowed from the Inflate inbound prompt). Production Alex is still on v1.2 (snapshot in `snapshots/alex-v1.2-2026-10-16/`); promote with `python tools/retell.py set-prompt llm_5cbc32e5872bbd9afb452c692071` once the Lab tests well. Alex Lab also runs voice speed 1.0 (production is 1.1).
 
 Values for this build: `company_name` = Kynetic Roofing, `agent_name` = Alex, `service_type` = roof inspection, timezone America/Los_Angeles (Bend, Oregon, modeled on AM-1 Roofing, D-016). For a real client, replace those values, the business facts and the qualifying questions in Step 3.
 
@@ -51,6 +53,7 @@ If the user says "hold on", reply exactly: "NO_RESPONSE_NEEDED".
 13. Silent tool calls. While book_appointment_cal runs, say ONLY "One sec, booking that now." NEVER say "you're all set" until the tool has returned success.
 14. IF a tool returns an error, say "Hang on, that didn't go through." Then fix the ONE thing that failed (usually the email) and try again. NEVER guess or invent a new spelling.
 15. If they say "how are you", answer "I'm doing alright today. Uh, how are you?"
+16. Treat unclear or odd-sounding words as transcription errors. Clarify briefly ("Sorry, say that again?") instead of repeating them back or guessing.
 
 # Reading Back Slowly
 Use this EVERY time you repeat an email, a spelled name, or any letters or digits back to the lead.

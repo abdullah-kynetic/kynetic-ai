@@ -16,6 +16,7 @@ Usage:
   python tools/retell.py rename-agent <agent_id> "<name>" [--apply]
   python tools/retell.py set-begin-message <llm_id> "<text>" [--apply]
   python tools/retell.py set-prompt <llm_id> [PROMPT.md] [--apply]
+  python tools/retell.py set-voice-speed <agent_id> <speed> [--apply]
   python tools/retell.py set-agent-webhook <agent_id> <url> [--apply]
   python tools/retell.py repoint-tools <llm_id> <old_url_or_id>=<new_url_or_id> ... [--apply]
   python tools/retell.py create-outbound [config.json] [--apply]
@@ -232,6 +233,8 @@ def main():
         write("PATCH", f"/update-retell-llm/{rest[0]}", {"begin_message": rest[1]}, apply)
     elif cmd == "set-prompt":
         set_prompt(rest[0], rest[1] if len(rest) > 1 else OUTBOUND_DIR / "PROMPT.md", apply)
+    elif cmd == "set-voice-speed":
+        write("PATCH", f"/update-agent/{rest[0]}", {"voice_speed": float(rest[1])}, apply)
     elif cmd == "set-agent-webhook":
         write("PATCH", f"/update-agent/{rest[0]}", {"webhook_url": rest[1]}, apply)
     elif cmd == "repoint-tools":

@@ -24,7 +24,7 @@
     "agent_name": "Alex Lab",
     "voice_id": "11labs-Cimo",
     "language": "en-US",
-    "voice_speed": 1.1,
+    "voice_speed": 1.0,
     "responsiveness": 1.0,
     "interruption_sensitivity": 0.8,
     "enable_backchannel": true,
