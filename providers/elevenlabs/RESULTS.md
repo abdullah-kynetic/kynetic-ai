@@ -3,12 +3,23 @@
 Persona and scorecard: `providers/TEST_PLAN.md`. Control: Retell Alex Lab.
 
 ## Verification of unverified PROMPT.md items
-Status 2026-10-16: not yet verified. The cloud session cannot reach elevenlabs.io or cal.com (DNS failure on WebFetch, HTTP 403 on Firecrawl), so nothing below is confirmed from docs. To be settled in the dashboard / first live calls.
+Status 2026-10-16: docs sites (elevenlabs.io) are still blocked from the cloud session (proxy 403), so nothing is confirmed from docs. `api.elevenlabs.io` and `api.cal.com` work. Cal.com slots confirmed live; the rest settles on test calls.
 | Item | Status | How to settle |
 |---|---|---|
 | One-second pause tag (`<break time="1.0s" />`) | Unverified | Put the tag in a test readback; listen for a real pause. Keep " ... " if not honored by the chosen voice model. |
 | Current-time variable name (`{{system__time}}`) | Unverified | Open the agent's dynamic variables list in the dashboard and copy the exact system variable name. |
-| Cal.com v2 request shapes (slots, bookings, `cal-api-version` header, body fields) | Unverified | Test each server tool in the dashboard against event type 7404470; record the working headers and body here. |
+| Cal.com v2 request shapes (slots, bookings, `cal-api-version` header, body fields) | Slots VERIFIED: GET /v2/slots?eventTypeId=7404470&start&end&timeZone with `cal-api-version: 2024-09-04` returns 200 and slots (Mon-Fri, 9:30-16:00 PT seen). Bookings UNVERIFIED (not called, would make a real booking); `/v2/event-types/7404470` returned 404 with 2024-09-04. | Test each server tool in the dashboard against event type 7404470; record the working headers and body here. |
+
+## Agent change log (agent_9301m52zy185e609f8vyws4r1r7q "Roofing Assistant", only agent in account)
+2026-10-16, via API. Cause of run 0: the agent had a workflow with an `override_agent` node whose additional prompt said "Bend Roofing Solutions" with fillers, on top of the builder default prompt.
+1. Replaced system prompt with the PROMPT.md block (verified byte-identical on read-back).
+2. First message set to `Hi, is this {{first_name}}?` (was a long opener with "um").
+3. Dynamic variable defaults set (first_name, company_name, agent_name, service_type, owns_property, issue_type, timeline, email blank). TTS speed 1.0.
+4. Workflow reset to the start node only (removed the two override_agent nodes and edge).
+5. Voicemail detection added with empty message (hang up, no message).
+6. Post-call data fields replaced with outcome, callback_time, booked_slot, notes (old lead_name, inspection_booked, etc. removed).
+7. Created workspace secret `cal_api_key` (Cal.com key as Bearer; not in config or repo). Created webhook tools check_availability (`tool_6901m533bpdsfxbrcnkf4yc981qs`, GET /v2/slots, 2024-09-04) and book_appointment (`tool_5801m533bqkpejm85hkxnfv66eve`, POST /v2/bookings, 2024-08-13; address sent in bookingFieldsResponses.notes; a browser User-Agent is set). Attached both to the agent. end_call was already on.
+Left as found: LLM `deepseek-v41-flash` temp 0, voice 1SM7GgM6IMuvQlz2BwM3, model eleven_v3_conversational, language_detection tool on, turn_v3. Record these in the cost write-up; consider testing a stronger LLM if conversation quality is weak.
 
 ## Runs
 | Run | Date | Round (voice email / prefilled) | Stacked-question turns / total turns | Waited for answers? | Email exact? | Readback 1-5 | False "all set"? | Booked? | Delay median / worst | Notes |

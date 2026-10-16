@@ -3,20 +3,15 @@
 ## Context
 Voice-provider bake-off for Alex (outbound speed-to-lead, Kynetic Roofing demo). Retell is the current platform (D-018); Bland and ElevenLabs are being tested against the Retell control "Alex Lab". This is a bake-off, not a decision. Shared rules, persona and scorecard: `providers/TEST_PLAN.md`. Branch: `claude/provider-test-elevenlabs`.
 
-## State
-- ElevenLabs agent exists in Abdullah's dashboard, but a pre-config test (RESULTS.md run 0) showed it was running the builder's default prompt, not `PROMPT.md`. Needs fixing first.
-- `PROMPT.md` now has the no-filler variant (no um/uh). Retell control still uses fillers; note it in the write-up.
-- Abdullah allowed `api.elevenlabs.io` and `api.cal.com` in the environment network settings and added `ELEVENLABS_API_KEY`. It was not visible in the session that was open at the time (variables load at session start). `CAL_API_KEY` is present.
-- Abdullah wants Claude to make the agent edits via the API, one agent only, logging each change in RESULTS.md.
-- Three PROMPT.md items still unverified (pause tag, time variable name, Cal.com v2 shapes). Docs sites were unreachable before the network change; retry now.
+## State (2026-10-16, later)
+- Steps 1 to 4 done via API; full change log in RESULTS.md. Agent `agent_9301m52zy185e609f8vyws4r1r7q` now runs PROMPT.md (the earlier failure was a workflow override node, now removed). Tools check_availability and book_appointment created and attached; Cal.com slots call verified, booking call not yet exercised (real booking).
+- Docs sites remain blocked, so pause tag and `{{system__time}}` are unverified; `{{system__time}}` is accepted by the API but not confirmed to resolve. Check the first transcript.
+- Open question for Abdullah: LLM is `deepseek-v41-flash`, left as found. Say if a different one should be used.
 
 ## Next steps
-1. Check `ELEVENLABS_API_KEY` is set. If not, stop and tell Abdullah.
-2. Read the agent config via API; diff against PROMPT.md (prompt, first message `Hi, is this {{first_name}}?`, dynamic variables, voice speed 1.0).
-3. Fix mismatches, enable end call, voicemail hang-up with no message, post-call data fields.
-4. Create check_availability and book_appointment server tools (Cal.com event type 7404470, America/Los_Angeles); test availability read-only first.
-5. Abdullah runs test calls; Claude pulls transcripts, timings and cost, scores them, fills RESULTS.md and the README checklist.
-6. Cancel test bookings only after asking Abdullah.
+1. Abdullah runs test call 1 (voice-email round); Claude pulls transcript, timing, cost via `GET /v1/convai/conversations`, scores it, fills RESULTS.md.
+2. First booking confirms the book_appointment body shape; fix if Cal.com rejects it.
+3. Continue rounds per README. Cancel test bookings only after asking Abdullah.
 
 ## Hard rules
 No changes to Retell, n8n, Twenty, production Alex (agent_71e3cfc8384aa38a910a506b53), Nora, Emily, or Kynetic Restoration (Demo). Commit only under providers/elevenlabs/ plus shared notes in providers/TEST_PLAN.md. Never commit keys. Message Abdullah only with a result or one needed input.
