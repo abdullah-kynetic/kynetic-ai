@@ -1,0 +1,78 @@
+{
+  "agent_id": "agent_71e3cfc8384aa38a910a506b53",
+  "channel": "voice",
+  "last_modification_timestamp": 1792089028270,
+  "agent_name": "Alex",
+  "response_engine": {
+    "type": "retell-llm",
+    "llm_id": "llm_5cbc32e5872bbd9afb452c692071",
+    "version": 0
+  },
+  "webhook_url": "https://abdullah-kyneticai.app.n8n.cloud/webhook/outbound-speed-to-lead-postcall-7f3a9c21d84e",
+  "language": "en-US",
+  "data_storage_setting": "everything",
+  "contact_memory_config": {
+    "enable_update": false,
+    "enable_read": true
+  },
+  "opt_in_signed_url": false,
+  "end_call_after_silence_ms": 60000,
+  "version": 0,
+  "assigned_tags": [],
+  "is_published": false,
+  "post_call_analysis_model": "gpt-4.1",
+  "pii_config": {
+    "mode": "post_call",
+    "categories": []
+  },
+  "post_call_analysis_data": [
+    {
+      "description": "How the call ended. booked = an inspection was booked. callback_requested = the lead asked to be called back at another time. not_interested = the lead declined. disqualified = the lead does not own the property or is otherwise not a fit. wrong_number = wrong person or number, or asked not to be called again. no_answer = nobody spoke. voicemail = reached voicemail.",
+      "name": "outcome",
+      "choices": [
+        "booked",
+        "callback_requested",
+        "not_interested",
+        "disqualified",
+        "wrong_number",
+        "no_answer",
+        "voicemail"
+      ],
+      "type": "enum"
+    },
+    {
+      "description": "If the lead asked for a callback, the day and time they gave. Otherwise empty.",
+      "type": "string",
+      "name": "callback_time"
+    },
+    {
+      "description": "If an inspection was booked, the date and time. Otherwise empty.",
+      "name": "booked_slot",
+      "type": "string"
+    },
+    {
+      "name": "notes",
+      "description": "One or two short sentences: the lead's roof issue, timeline, and anything the team should know.",
+      "type": "string"
+    }
+  ],
+  "voice_id": "11labs-Cimo",
+  "voice_speed": 1.1,
+  "enable_backchannel": true,
+  "backchannel_frequency": 0.8,
+  "backchannel_words": [
+    "mm-hmm",
+    "uh-huh"
+  ],
+  "max_call_duration_ms": 600000,
+  "interruption_sensitivity": 0.8,
+  "responsiveness": 1,
+  "voicemail_option": {
+    "action": {
+      "type": "hangup"
+    }
+  },
+  "allow_user_dtmf": true,
+  "user_dtmf_options": {},
+  "denoising_mode": "noise-and-background-speech-cancellation"
+}
