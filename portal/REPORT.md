@@ -32,21 +32,32 @@ The Caddy route is already in place; once the record resolves, Caddy issues the 
 
 ## 4. Test results
 
-`npm test` ran against a fresh Postgres and the real production build: **7 files, 51 tests, all passing** (run before deploy).
+`npm test` ran against a fresh Postgres and the real production build: **8 files, 56 tests, all passing**, plus lint and typecheck clean.
 
 | Suite | What it covers |
 |---|---|
 | `isolation/pages-and-files` | Client A on every client page: no B names/ids/emails and no member lists. `/admin*` → 404 for a client. Anonymous → login redirect. Files: no sig / forged sig / valid sig minted for A on B's doc / other user's sig / expired / malformed ids → all 404; own file returns the exact bytes. Upload with `clientId=B` lands in A (verified in DB). |
 | `isolation/ingest-api` | missing, garbage, tampered and revoked keys → 401; A's key + B's `client_id` → 400 with B unchanged; A and B keys write only their own rows; validation; HMAC good/bad. |
-| `isolation/server-actions` | Fires every admin server action as a client at B's ids; asserts B's DB state is unchanged and nothing leaks. **Limit:** these calls use a simplified request encoding, so a failure could come from the encoding rather than the auth check. The auth guarantee comes from the next suite. |
+| `isolation/server-actions` | Real admin server actions fired over HTTP with React's own request encoding. First proves each payload is valid and works when an admin sends it, then sends the same payloads as client A at B's ids and as anonymous: every one is refused with a 404, and B's data is unchanged. |
 | `static-guards` | Every admin action calls `requireAdmin()` first; every admin/client page enforces its guard; client data functions take no clientId; no `dangerouslySetInnerHTML`. |
 | `rls` | As `portal_app`: no context → 0 rows in all 12 tables; client A sees only A (and only its own user row); writes to B rejected; no privilege escalation; ingest scope limited to its client; junk role strings get nothing. |
 | `auth` | wrong/unknown user same error; lockout; disabled user; IP rate limit; MFA required / wrong / right / replayed code; admin without MFA locked out of admin; magic link single use, expiry, type confusion; session killed by `session_version` bump or disabling. |
+| `enumeration-and-limits` | Magic-link and password-reset requests answer identically for known and unknown emails (token only issued for the known one); uploads over 25 MB → 413; missing file → 400. |
 | `headers` | CSP with nonce, HSTS, X-Frame-Options, nosniff, Referrer-Policy, no X-Powered-By, session cookie HttpOnly + SameSite=Lax, no open redirect. |
 
-`npm audit --omit=dev`: **0 vulnerabilities**. A weak placeholder test ("magic request responds identically") only checks the DB, not the response text; the enumeration-safe behaviour is in code (`requestMagicLink`) but isn't covered by a real assertion yet.
+`npm audit --omit=dev`: **0 vulnerabilities**. 
 
-**Not tested on the live server:** I didn't sign in through https (DNS isn't up). On the VPS I checked health, headers, the `/admin` → `/login` redirect, roles (`portal_app` not super, no bypassrls), seed (2 clients, 60 result rows) and a backup dump.
+### In-depth checks (2026-10-16, after DNS went live)
+
+- **Live https probe against production** (client A and B logged in over https with the real seeded passwords): all 37 checks passed. Each client sees only its own 7 pages; `/admin*` is 404 for both; A's signed file URL fails for B (404) and for anonymous (401); A's signature reused on B's document ids → 404; unsigned B ids → 404; an upload with `clientId=B` stays in A and B never sees it; ingest without or with a bad key → 401; session cookie uses the `__Secure-` prefix. My probe upload was removed afterwards.
+- **TLS and network:** Let's Encrypt certificate (expires 2027-01-14), http → https 308, HSTS, CSP with nonce, frame/sniff/referrer/permissions headers. From outside only ports 22, 80, 443 are open; 3020, 5432 and 3000 are closed. Response time is about 0.15–0.25 s (the slow first load was certificate issuance).
+- **Rate limits can't be bypassed by spoofing `X-Forwarded-For`:** 140 requests with rotating spoofed headers still hit the 120/min limit (20 got 429).
+- **Server:** RLS enabled and forced on all 12 tables; both DB roles are non-super and non-BYPASSRLS; `.env`, seed and invite files are chmod 600; app runs as uid 1001, not root; no errors in the app log; Twenty and BookStack unaffected.
+- **Mutation checks:** I deliberately removed an admin guard and reverted the SQL fix; the suite failed in both cases, so the tests really catch those faults. This also found that my first server-action test was vacuous (it would have passed even if the guard were missing). That test was rewritten as above.
+- **Bug fixed during review:** the admin client list showed 0 users/docs/leads for every client (an unqualified column in a correlated subquery). Fixed, redeployed, regression test added.
+- `npm audit --omit=dev` (what ships): 0 vulnerabilities. `npm audit` including dev tooling: 9 findings, all in `eslint-config-next`, `drizzle-kit` and their dependencies (build/dev only, never in the image).
+
+**Not covered:** a browser-level end-to-end test (Playwright) and a full restore drill of a backup into a spare database. I did not run `/security-review`; it needs a git working directory and this session isn't in one.
 
 ## 5. RAM next to Twenty (VPS, 7.7 GB total)
 
@@ -69,10 +80,11 @@ Host: 2.8 GB used, 4.9 GB available. Twenty, BookStack and their Caddy routes we
 - DNS and live https sign-in not verified yet (above).
 - Quentin's admin account not created (email unknown).
 - Twenty read-only pull (optional in the brief) not built. The `twenty_company_id` field exists on clients.
-- Backups sit on the same VPS; no off-box copy yet.
+- Backups sit on the same VPS; no off-box copy yet. They now include a copy of `/opt/portal/.env`, because the DB is useless for admin MFA without `ENCRYPTION_KEY`. Keep your own copy of `.env` in a password manager.
 - Admin MFA recovery is manual (SQL).
 - No email notifications to clients on new documents or milestone changes.
-- Several of the early test cases are black-box over HTTP; there's no browser-level (Playwright) test.
+- No browser-level (Playwright) test. Upload validation trusts the browser-declared file type (allow-list, nosniff and a sandboxed response header limit the risk) and does no magic-byte or virus scan.
+- Minor: `TRACE` requests to the API return 500 instead of 405; the `rate_limits` table is never purged (tiny); with no `RESEND_API_KEY`, magic/reset/invite links appear in the container log; CSP allows inline styles (needed by the charts).
 - The three sub-agents I'd launched in parallel were stopped before finishing, so the UI, tests, infra and docs were all written directly by me in this session. Nothing from the agents' partial work was kept except the UI primitives in `src/components/ui` and the Dockerfile, both reviewed.
 - Twenty, n8n, Retell, SSH, UFW and fail2ban were not touched. The only change outside `/opt/portal` is the appended `portal.kyneticai.com` block in `/etc/caddy/Caddyfile` (backup alongside it), plus `/etc/cron.d/portal-backup` and `/usr/local/sbin/portal-backup.sh`.
 

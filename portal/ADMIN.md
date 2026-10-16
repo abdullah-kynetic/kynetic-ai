@@ -42,7 +42,7 @@ sudo docker exec -i portal-portal-db-1 pg_restore -U postgres -d portal --clean 
 sudo docker compose start portal-app
 ```
 
-Uploads: `sudo tar -xzf /var/backups/portal/uploads/uploads-*.tar.gz -C /opt/portal` (then `sudo chown -R 1001:1001 /opt/portal/uploads`). Backups are on the same server; copy them off-box (for example to R2) before relying on them for disaster recovery.
+Uploads: `sudo tar -xzf /var/backups/portal/uploads/uploads-*.tar.gz -C /opt/portal` (then `sudo chown -R 1001:1001 /opt/portal/uploads`). Each run also copies `/opt/portal/.env` to `/var/backups/portal/env/` (the DB is unusable for admin MFA without `ENCRYPTION_KEY`). Backups are on the same server; copy them off-box (for example to R2) before relying on them for disaster recovery.
 
 ## Where secrets live
 

@@ -63,6 +63,7 @@ export default async function setup() {
       (await tx`insert into users (email, name, role, client_id, password_hash, totp_secret_enc, totp_enabled, disabled_at)
         values (${email}, ${email}, ${role}, ${clientId}, ${pw}, ${extra.totpEnc ?? null}, ${!!extra.totpEnc}, ${extra.disabled ? new Date() : null}) returning id`)[0].id as string;
     const adminId = await mk("admin-mfa@example.com", "admin", null, { totpEnc: enc(adminTotp, key) });
+    await mk("admin-mfa2@example.com", "admin", null, { totpEnc: enc(adminTotp, key) }); // calibration admin (own TOTP replay counter)
     const adminNoMfaId = await mk("admin-nomfa@example.com", "admin", null);
     const aUser2 = await mk("client-a2@example.com", "client", A);
     const disabledId = await mk("disabled@example.com", "client", A, { disabled: true });
@@ -92,7 +93,7 @@ export default async function setup() {
     server.stdout?.on("data", (d) => logs.push(String(d)));
     server.stderr?.on("data", (d) => logs.push(String(d)));
     await writeFile(path.join(ROOT, ".data/test-server.log"), "");
-    server.stdout?.on("data", (d) => void writeFile(path.join(ROOT, ".data/test-server.log"), logs.join(""))); // best-effort
+    server.stdout?.on("data", () => void writeFile(path.join(ROOT, ".data/test-server.log"), logs.join(""))); // best-effort
     for (let i = 0; i < 60; i++) {
       try { if ((await fetch(`http://localhost:${PORT}/api/health`)).ok) break; } catch { /* not up yet */ }
       await new Promise((r) => setTimeout(r, 1000));

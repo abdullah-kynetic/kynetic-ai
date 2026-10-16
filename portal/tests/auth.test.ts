@@ -1,7 +1,7 @@
-import { beforeAll, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { createHash, randomBytes } from "node:crypto";
 import postgres from "postgres";
-import { Client, asAdmin, base, fx, loginAs, owner, totpNow } from "./helpers";
+import { Client, asAdmin, fx, loginAs, owner, totpNow } from "./helpers";
 
 const sha = (s: string) => createHash("sha256").update(s).digest("hex");
 const sys = <T>(sql: postgres.Sql, fn: (tx: postgres.TransactionSql) => Promise<T>) => sql.begin(async (tx) => { await tx`select set_config('app.role','system',true)`; return fn(tx); }) as Promise<T>;
@@ -114,16 +114,6 @@ describe("magic link, reset and invite tokens", () => {
     expect((await new Client().text(`/reset?token=${token}`)).body).toContain("Choose a new password");
     expect((await new Client().text(`/invite?token=${token}`)).body).toContain("Invite expired"); // wrong type
     expect((await new Client().text(`/auth/magic?token=${token}`)).body).toContain("Link expired");
-  });
-
-  it("magic request responds identically for known and unknown emails", async () => {
-    const hit = (email: string) => fetch(`${base}/login/magic`, { method: "GET" }).then(() => email);
-    await hit("x");
-    // The action itself is exercised in the UI; here we assert user-enumeration safety at the data layer:
-    const sql = owner();
-    const before = await sys(sql, (tx) => tx`select count(*)::int n from auth_tokens`);
-    await sql.end();
-    expect(before[0].n).toBeGreaterThanOrEqual(0);
   });
 });
 
