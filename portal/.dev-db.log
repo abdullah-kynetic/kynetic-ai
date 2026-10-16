@@ -1,0 +1,3 @@
+[dev-db] ready
+  DATABASE_OWNER_URL=postgres://portal_owner:owner_local@127.0.0.1:5433/portal
+  DATABASE_URL=postgres://portal_app:app_local@127.0.0.1:5433/portal
