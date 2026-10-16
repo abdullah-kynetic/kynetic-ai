@@ -13,6 +13,7 @@ Status 2026-10-16: not yet verified. The cloud session cannot reach elevenlabs.i
 ## Runs
 | Run | Date | Round (voice email / prefilled) | Stacked-question turns / total turns | Waited for answers? | Email exact? | Readback 1-5 | False "all set"? | Booked? | Delay median / worst | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|
+| 0 (invalid) | 2026-10-16 | voice, dashboard test | n/a | n/a | n/a | n/a | Yes (said booked, no tool exists) | No real booking | not captured | Not running PROMPT.md: wrong opener, invented company name ("Bend Roofing Solutions"), no name check, no AI/recording disclosure, no qualifying questions, stacked questions, invented slots, asked for phone number, no email step, fillers present. Excluded from totals. |
 | 1 | | | | | | | | | | |
 
 ## Edge cases
