@@ -53,6 +53,7 @@ Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3
 - Read-only n8n check: `m2YJwZ1l8DTzyEkw` is active with 38 nodes and the Alex agent ID set. The earlier 37 and 27 counts were stale. Nothing in n8n was changed. See KI-009.
 - Alex prompt v1.2.3 is on `claude/alex-demo-live-test` (a247264), not merged or published.
 - Portal open gaps and the dev-password check recorded as KI-006 to KI-008.
+- Portal tests: `vitest run` passes 8 files / 56 tests (expected 51; the suite has grown since). Run from a copy of `portal/` as a non-root user because embedded Postgres refuses to start as root.
 - `.env.example`: removed the Notion and Apify names, added `TWENTY_API_KEY` and `TWENTY_BASE_URL` (names inferred, not read from n8n or the connector).
 
 ### 2026-10-15 (Twenty moved to self-hosted)
