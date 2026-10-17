@@ -123,23 +123,29 @@ If a caller insists on speaking to a person, who does the agent transfer to?
 Owner email address (where monthly reports are sent):
 Retainer start date (MM/DD/YYYY):
 Twilio phone number assigned to this client (enter after provisioning):
-Notion client page URL (enter after creating their Notion page):
+Twenty client account URL (enter after creating the client_accounts record in Twenty):
 ```
 
 ---
 
-**Note on Section 5:** The Twilio number and Notion page URL will not exist at
+**Note on Section 5:** The Twilio number and Twenty client account URL will not exist at
 intake — they're created during onboarding setup. Leave blank at intake and fill
 in before running Skills 7, 8, and 10 for the first time.
 
 ### Source B — GBP Scrape Data
 
-Pulled via Apify before running this skill. See `/references/gbp-scrape-guide.md`
-for exact actor configuration and field extraction instructions.
+Supplied as a `raw-data.json` for the client (GBP listing fields, reviews, photos,
+map-pack position), pulled from the GBP URL in Section 1 of the intake form.
 
-Run both actors against the GBP URL from Section 1 of the intake form. Total cost
-per client: ~$0.01. Do not run Skill 1 without this data — it sets the baseline
-metrics that every downstream skill and monthly report measures against.
+> **OPEN (flagged 2026-10-17):** this skill used to pull the data with Apify actors via
+> `tools/gbp_scrape.py` and `references/gbp-scrape-guide.md`. Neither file is in this
+> repo and `APIFY_API_TOKEN` was removed from `.env.example`. Until a GBP data source
+> is chosen, Abdullah supplies the `raw-data.json` (or the equivalent fields by hand).
+> Neither file appears in this repo's git history. The removed `archive/lead-scrape`
+> flow is a different tool (recoverable via tag `archive/pre-reorg-2026-10-17`).
+
+Do not run Skill 1 without this data — it sets the baseline metrics that every
+downstream skill and monthly report measures against.
 
 ```
 GBP SCRAPE DATA:
@@ -1257,7 +1263,7 @@ The full JSON structure (paste this as the frontmatter of the Brand Profile .md 
 
   "client": {
     "email": "",
-    "notion_page_url": "",
+    "twenty_client_account_url": "",
     "retainer_start_date": ""
   }
 }
@@ -1266,7 +1272,7 @@ The full JSON structure (paste this as the frontmatter of the Brand Profile .md 
 **Field completion rules:**
 - All string fields: empty string `""` is not acceptable in a completed Brand Profile.
   Every field must have a real value or the note `"pending-setup"` for the 3 admin
-  fields (sms_from_number, notion_page_url) that are provisioned after intake.
+  fields (sms_from_number, twenty_client_account_url) that are provisioned after intake.
 - Array fields: must have at least one item. An empty `[]` means the field was skipped.
 - `map_pack_visible` and `current_description_exists`: boolean, no quotes.
 - `retainer_start_date`: ISO format — `"YYYY-MM-DD"`.
