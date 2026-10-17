@@ -22,6 +22,12 @@ Plan 1 files to keep current: `retell/builds/outbound-speed-to-lead/`, `tools/re
 
 Secrets live in `.env` or the cloud environment. Never commit them.
 
+## Commits
+
+Every commit must credit Abdullah's GitHub account `abdullah-kynetic`. Author and committer are `abdullah-kynetic <abdullah@kyneticai.com>`, never `Claude <noreply@anthropic.com>` and never a gmail address (that links to a different GitHub account). `.claude/settings.json` sets this through the `GIT_AUTHOR_*` and `GIT_COMMITTER_*` env vars. Before the first commit, check with `git var GIT_AUTHOR_IDENT`. If it is wrong, run `git config user.name abdullah-kynetic && git config user.email abdullah@kyneticai.com`. A `Co-Authored-By: Claude` trailer is fine.
+
+Keep commits small and separate. Merge PRs with a merge commit (`gh pr merge --merge`), never squash. Do not rewrite history on `main`.
+
 ## Skills
 
 At the start of a conversation, read `Claude Skills/skills-breakdown.md` and scan the Trigger Signals. Kynetic delivery skills are in `.claude/skills/` (`brand-profile`, `retell-builder`, `build-log`).
