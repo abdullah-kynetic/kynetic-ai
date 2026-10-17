@@ -17,12 +17,14 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Rete
 - Decisions D-009 through D-018 are in docs/decisions.md. D-017 is the signed-off price. D-018 parks Vapi and records the two Retell workspaces.
 - Twenty fields for the outbound lead flow added (14 on endCustomer, 3 on customerInteraction). Cal.com Roof Inspection event type 7404470 created.
 - n8n workflow "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`) built. Read-only check on 2026-10-17: it is active and has 38 nodes (3 sticky notes and 2 disabled draft-SMS nodes included). See KI-009.
+- 2026-10-15 end-to-end smoke test of "Outbound Speed to Lead" (found in Twenty on 2026-10-17): one test lead (Abdullah) submitted the form at 19:36 UTC, the Alex call was placed (`secondsToFirstRing` 13.8), the lead ended `BOOKED`, and the call was logged as a `SPEED_TO_LEAD` interaction. It is the only lead on record.
 - PR #14 merged: documented the move to self-hosted Twenty at https://crm.kyneticai.com.
 - PR #15 merged: client portal at https://portal.kyneticai.com (code in `portal/`, deployed on the OVH VPS). DNS A record not set; no real client data until the must-fixes are done. See the Portal section of KYNETIC_CONTEXT.md and KI-006 to KI-008.
 - PR #16 merged: Claude sessions commit as `abdullah-kynetic` (`.claude/settings.json`, CLAUDE.md).
 
 ## In progress
 - 3.5 outbound build. Prep is in the repo. On 2026-10-17 a read-only check found `m2YJwZ1l8DTzyEkw` active with the Alex agent ID (`agent_71e3cfc8384aa38a910a506b53`) set in Call Settings and Retry Call Settings and the "Retell API (outbound)" credential attached. Go-live has not been approved; Abdullah to confirm (KI-009). Alex prompt v1.2.3 is on branch `claude/alex-demo-live-test`, not merged or published. Blocked on Abdullah; see Blockers.
+- Voice provider bake-off (Retell vs Bland vs ElevenLabs) for Alex. **Testing, no decision: Retell stays (D-018) unless a challenger clearly wins on the shared scorecard.** Control is Retell Alex Lab. ElevenLabs is furthest along; Bland has a test track and no results yet. Both live on unmerged branches (`claude/provider-test-elevenlabs`, `claude/provider-test-bland`), not on main. Current state, agent IDs and rules: the "Voice provider bake-off" section of KYNETIC_CONTEXT.md; running log: `providers/elevenlabs/RESULTS.md` on the branch and the Twenty note "VOICE PROVIDER BAKE-OFF". Twenty has no task for it yet.
 
 ## Paused (D-010, Oct 6, 2026 — inbound is near-done, left alone until a client demo needs it)
 - 3.1 Repoint Emily's 4 tool webhooks and post-call webhook, greeting says Emily. Approved, URL only.
@@ -38,7 +40,7 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Rete
 - Outreach target, once the launch gate is actually met: 75 manual owner dials a day (Q4 plan). Task 7.1 still has open prerequisites.
 
 ## Blockers
-Updated 2026-10-17 after a read-only check of n8n. Confirm against Twenty task 3.5.
+Updated 2026-10-17 after a read-only check of n8n. Confirm against Twenty task 3.5. The Oct 15 end-to-end call (see Done) suggests items 2 and 3 below are already cleared; Abdullah to confirm.
 All on Abdullah, for 3.5:
 1. Confirm the go-live state of `m2YJwZ1l8DTzyEkw`. It is active with the Alex ID set (KI-009). Approve it as live or have it deactivated.
 2. Check Retell identity verification for outbound (KYC via Persona). Blocks the real phone test only.
@@ -47,6 +49,11 @@ Then: confirm the post-call webhook URL is set on the agent, web-call test Alex,
 Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-10-17 (status check across n8n, Twenty and GitHub)
+- Read-only check. n8n `m2YJwZ1l8DTzyEkw`: active, 561 executions, the latest 20 all successful on the 5-minute retry sweeper. Twenty: exactly one lead and one interaction on record, from the Oct 15 smoke test (now in Done). That closes the "smoke test still open" line in the 2026-10-15 entry.
+- The voice provider bake-off was tracked only in a Twenty note (last edited Oct 16) and on the unmerged provider branches. Added it to In progress here and to KYNETIC_CONTEXT.md so a session that reads only the four context files knows it exists.
+- From Abdullah's Oct 17 summary (not yet logged on the branch): the ElevenLabs agent now runs the real Alex prompt; a Cal.com test event 7520336 (phone required) exists but the tools still point at 7404470; a text-confirmation change is planned and depends on A2P (KI-003).
+
 ### 2026-10-17 (repo reorganized around the four context files)
 - Branch `chore/repo-reorg`. Legacy material removed from main (`archive/`, the duplicate `Claude Skills/brand-profile-generator`, generic `deep-research` and `frontend-design`); recoverable via tag `archive/pre-reorg-2026-10-17` (97bb382). No separate archive repo (D-019).
 - `Claude Skills/` folded into `.claude/skills/`. `CLAUDE.md` now opens with the four-file session protocol. `portal/REPORT.md` became `portal/docs/build-report-2026-10-16.md`.
