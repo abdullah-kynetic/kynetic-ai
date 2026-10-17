@@ -65,13 +65,16 @@ Kynetic Restoration (Demo) build IDs: `retell/builds/kynetic-restoration/build-i
 
 ## Twenty
 
+- **Self-hosted since 2026-10-15:** Twenty v2.46.0 at https://crm.kyneticai.com (OVH VPS, Docker in `/opt/twenty`, systemd unit `twenty.service`). MCP connector: https://crm.kyneticai.com/mcp. Nightly backup at 2:00 AM to `/var/backups/twenty` (14 days), plus age-encrypted copies in R2 bucket `kynetic-twenty-backups` (30 days).
+- Twenty Cloud is the untouched rollback copy until about 2026-10-29. Do not write to it.
+- API keys are rate-limited to 100 requests per 60 seconds. Never use REST DELETE on either instance; soft-delete in the UI only.
 - n8n credential "Twenty account" `41C04qbmnbi0GI2P`, node `@blackswampai/n8n-nodes-twentycrm`.
-- Custom objects: client_accounts, client_jobs, end_customers, customer_interactions, call_logs, scrape_runs. Opportunity stages: DISCOVERY → AUDIT_BOOKED → DEMO_DELIVERED → PROPOSAL_SENT → NEGOTIATING → CLOSED_WON/LOST.
-- Dashboards: Sales `04de9b47-7a2a-44c1-9e70-9d29fe4b5882`, Business `914d3a2d-0fc1-40d6-ab87-50ea91e578e4`.
+- Custom objects: client_accounts, client_jobs, end_customers, customer_interactions, call_logs, invoices, expenses. Opportunity stages: DEMO_BOOKED → DEMO_HELD / NO_SHOW → PROPOSAL_SENT → CLOSED_WON/LOST.
+- Dashboard: "Plan 1: $30K by Dec 31" `acda0613-2565-47f6-bb4c-9072b45a6d4c`, with tabs "Sales funnel" and "Clients & Cash".
 - Other workflows: Emily `0PwP1tUf4478lNbf` (paused), Client Config Lookup `05HI35dhaWXweO5i`. Lead Scrape `3orAiCNLOCJ7xglI` is legacy and stays off. Nora `2PFWFqBM0wabADk6` is frozen.
 
 ## Access
 
 - Retell: `python tools/retell.py …` (needs `RETELL_API_KEY`). Writes are dry-run unless `--apply`.
-- n8n (`https://abdullah-kyneticai.app.n8n.cloud`) and Twenty: connected accounts. Notion is legacy.
+- n8n (`https://abdullah-kyneticai.app.n8n.cloud`) and Twenty (self-hosted, `https://crm.kyneticai.com`): connected accounts. Notion is legacy.
 - Secrets: `.env` locally (gitignored), environment variables in cloud. See `.env.example`. Never commit them.

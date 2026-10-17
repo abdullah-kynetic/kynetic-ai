@@ -16,7 +16,7 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Rete
 - 1.2 Emily's voice kept as 11labs-Cimo. See docs/decisions.md D-008.
 - Decisions D-009 through D-018 are in docs/decisions.md. D-017 is the signed-off price. D-018 parks Vapi and records the two Retell workspaces.
 - Twenty fields for the outbound lead flow added (14 on endCustomer, 3 on customerInteraction). Cal.com Roof Inspection event type 7404470 created.
-- n8n workflow "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`) built and left inactive. It is now 27 nodes.
+- n8n workflow "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`) built and left inactive. It is now 37 nodes.
 
 ## In progress
 - 3.5 outbound build. Prep is in the repo. The workflow is inactive and has never run. The outbound Retell agent does not exist yet (it will be created in the abdullahblitz workspace). Nothing has been dialed. Blocked on Abdullah; see Blockers.
@@ -44,6 +44,13 @@ Then: fill the two placeholders (agent ID, caller ID) in Call Settings and Retry
 Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-10-15 (Twenty moved to self-hosted)
+- Twenty moved from Twenty Cloud to self-hosted v2.46.0 at https://crm.kyneticai.com. All 171 records (original ids), the custom schema, the Plan 1 dashboard and 20 saved views were copied and checked field by field.
+- n8n credential "Twenty account" (`41C04qbmnbi0GI2P`) and the claude.ai Twenty connector now point at the self-hosted instance. Retell never called Twenty directly.
+- Twenty Cloud stays untouched as the rollback copy until about 2026-10-29. Then: revoke its 3 API keys and decide whether to keep or cancel the workspace.
+- KYNETIC_CONTEXT.md updated: self-hosted host, dashboard id and tabs, current custom objects (scrape_runs gone; invoices and expenses listed), current opportunity stages.
+- Smoke test still open: the first real lead through "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`) should create the endCustomer record in self-hosted Twenty.
+
 ### 2026-10-13 (repo cleanup, docs caught up with Twenty)
 - Removed the dead `platform/crm` mock (SeldonFrame / Vercel era; Twenty is the CRM, D-006). Moved `BUILD_LOG.md`, `automations/lead-scrape`, and `automations/retell-trade-receptionist` to `archive/`. Removed empty skill folders and the duplicate `Claude Skills/_kynetic` copy. Skills that stay live are in `.claude/skills/`.
 - Parked Vapi (D-018): `VAPI_BUILDER_PROMPT.md` moved to `archive/vapi/`. Vapi workflows were renamed and deactivated.
