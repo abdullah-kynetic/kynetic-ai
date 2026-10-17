@@ -81,7 +81,7 @@ Agents edit disjoint folders; I review and integrate each.
 2. UI (client + admin) + upload/download + ingest.
 3. Tests green (isolation suite is a deploy gate: `npm run test` must pass inside the Docker build pipeline step before `up`).
 4. Infra on VPS: `/opt/portal`, compose up, Caddy block, backups cron.
-5. Docs, REPORT.md, push branch `portal`.
+5. Docs, build report (`docs/build-report-2026-10-16.md`), push branch `portal`.
 
 ## 8. Test plan
 

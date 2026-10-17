@@ -1,3 +1,8 @@
+---
+name: n8n-code-javascript
+description: Write JavaScript inside n8n Code nodes. Use when writing or debugging a Code node, choosing run-once-for-all vs each-item mode, reading webhook data ($json.body), using $helpers.httpRequest or DateTime, or fixing the return format. Supporting notes are in this folder (DATA_ACCESS, COMMON_PATTERNS, ERROR_PATTERNS, BUILTIN_FUNCTIONS).
+---
+
 # n8n Code JavaScript
 
 Expert guidance for writing JavaScript code in n8n Code nodes.
