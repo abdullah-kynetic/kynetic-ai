@@ -46,3 +46,6 @@ next-env.d.ts
 !.env.example
 .next*
 *.log
+
+# local Claude Code settings
+.claude/settings.local.json
