@@ -1,6 +1,6 @@
 # Kynetic AI — Working Context
 
-Durable context for agent sessions. Twenty is the system of record. If this file disagrees with Twenty, Twenty wins.
+Durable context for agent sessions. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Rules (non-negotiable)
 

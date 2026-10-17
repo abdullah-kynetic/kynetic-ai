@@ -1,6 +1,6 @@
 # Known issues
 
-Mirror of open problems tracked in Twenty. If this disagrees with Twenty, Twenty wins.
+Mirror of open problems tracked in Twenty. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Open
 ### KI-002: TCPA emergency branch opt-out gap (high)

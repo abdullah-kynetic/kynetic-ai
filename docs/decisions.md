@@ -1,6 +1,6 @@
 # Decisions
 
-Mirror of the Twenty decision notes. If this disagrees with Twenty, Twenty wins. Do not reopen these without asking.
+Mirror of the Twenty decision notes. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one. Do not reopen these without asking.
 
 ## D-001: Price is $1,500 setup + $997/mo
 Status: superseded by D-017 (2026-10-13). Do not quote this price.

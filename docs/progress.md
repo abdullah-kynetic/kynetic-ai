@@ -1,6 +1,6 @@
 # Progress
 
-Mirror of the Twenty roadmap ("Roadmap: all phases"). If this disagrees with Twenty, Twenty wins.
+Mirror of the Twenty roadmap ("Roadmap: all phases"). Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Current plan
 Plan 1 only: the outbound speed-to-lead agent at the D-017 price (first 3 clients $4,675, clients 4 and up $8,500, three Stripe invoices at 50/25/25). Gate of 5 paying clients before Plan 2 (D-013). Task titles in Twenty carry [P1]/[P2]; Emily inbound and all upsell systems are [P2].
