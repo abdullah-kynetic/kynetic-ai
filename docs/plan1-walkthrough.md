@@ -1,5 +1,7 @@
 # Plan 1 walkthrough: top to bottom (Oct 8, 2026)
 
+> **Point-in-time snapshot (2026-10-08).** Task counts, node counts and dates below are as of that day and are not kept current. For current state read `docs/progress.md`.
+
 Plain-language map of everything between today and the first signed client. Mirrors the Twenty note "PLAN 1 WALKTHROUGH: top to bottom" and the 33 [P1] tasks. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 Plan 1 = the outbound speed-to-lead agent only, sold to roofing owners already running Meta ads. Price is D-017 (Quentin signed off): the first 3 clients pay $4,675 and clients 4 and up pay $8,500, billed as three Stripe invoices at 50/25/25. That replaces D-001. Gate to Plan 2 is 5 paying clients (D-013). D-003: build everything first, switch outreach on once.
