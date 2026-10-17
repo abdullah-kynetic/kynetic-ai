@@ -21,6 +21,12 @@ Status 2026-10-16: docs sites (elevenlabs.io) are still blocked from the cloud s
 7. Created workspace secret `cal_api_key` (Cal.com key as Bearer; not in config or repo). Created webhook tools check_availability (`tool_6901m533bpdsfxbrcnkf4yc981qs`, GET /v2/slots, 2024-09-04) and book_appointment (`tool_5801m533bqkpejm85hkxnfv66eve`, POST /v2/bookings, 2024-08-13; address sent in bookingFieldsResponses.notes; a browser User-Agent is set). Attached both to the agent. end_call was already on.
 Left as found: LLM `deepseek-v41-flash` temp 0, voice 1SM7GgM6IMuvQlz2BwM3, model eleven_v3_conversational, language_detection tool on, turn_v3. Record these in the cost write-up; consider testing a stronger LLM if conversation quality is weak.
 
+## Cal.com change log
+2026-10-17, via API (v2, `cal-api-version: 2024-06-14`). Original event type 7404470 untouched (Retell and Bland still use it).
+- Created event type **7520336** "Roof Inspection (ElevenLabs test)", slug `roof-inspection-elevenlabs-test`, https://cal.com/abdullah-kyneticai/roof-inspection-elevenlabs-test. Same settings as 7404470 (30 min, attendeeAddress location, 120 min notice, default schedule) except booking questions: phone (`attendeePhoneNumber`) required, email optional.
+- Verified: slots for 2026-10-19 and 2026-10-20 match the original (9 and 7). A real booking is not yet tested.
+- Not yet done: ElevenLabs tools still point at 7404470 and send an email. Next: repoint them to 7520336, send `attendee.phoneNumber`, update the prompt for text confirmation.
+
 ## Runs
 | Run | Date | Round (voice email / prefilled) | Stacked-question turns / total turns | Waited for answers? | Email exact? | Readback 1-5 | False "all set"? | Booked? | Delay median / worst | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|
