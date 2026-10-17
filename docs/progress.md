@@ -1,6 +1,6 @@
 # Progress
 
-Mirror of the Twenty roadmap ("Roadmap: all phases"). If this disagrees with Twenty, Twenty wins.
+Mirror of the Twenty roadmap ("Roadmap: all phases"). Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Current plan
 Plan 1 only: the outbound speed-to-lead agent at the D-017 price (first 3 clients $4,675, clients 4 and up $8,500, three Stripe invoices at 50/25/25). Gate of 5 paying clients before Plan 2 (D-013). Task titles in Twenty carry [P1]/[P2]; Emily inbound and all upsell systems are [P2].
@@ -16,10 +16,13 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Rete
 - 1.2 Emily's voice kept as 11labs-Cimo. See docs/decisions.md D-008.
 - Decisions D-009 through D-018 are in docs/decisions.md. D-017 is the signed-off price. D-018 parks Vapi and records the two Retell workspaces.
 - Twenty fields for the outbound lead flow added (14 on endCustomer, 3 on customerInteraction). Cal.com Roof Inspection event type 7404470 created.
-- n8n workflow "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`) built and left inactive. It is now 37 nodes.
+- n8n workflow "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`) built. Read-only check on 2026-10-17: it is active and has 38 nodes (3 sticky notes and 2 disabled draft-SMS nodes included). See KI-009.
+- PR #14 merged: documented the move to self-hosted Twenty at https://crm.kyneticai.com.
+- PR #15 merged: client portal at https://portal.kyneticai.com (code in `portal/`, deployed on the OVH VPS). DNS A record not set; no real client data until the must-fixes are done. See the Portal section of KYNETIC_CONTEXT.md and KI-006 to KI-008.
+- PR #16 merged: Claude sessions commit as `abdullah-kynetic` (`.claude/settings.json`, CLAUDE.md).
 
 ## In progress
-- 3.5 outbound build. Prep is in the repo. The workflow is inactive and has never run. The outbound Retell agent does not exist yet (it will be created in the abdullahblitz workspace). Nothing has been dialed. Blocked on Abdullah; see Blockers.
+- 3.5 outbound build. Prep is in the repo. On 2026-10-17 a read-only check found `m2YJwZ1l8DTzyEkw` active with the Alex agent ID (`agent_71e3cfc8384aa38a910a506b53`) set in Call Settings and Retry Call Settings and the "Retell API (outbound)" credential attached. Go-live has not been approved; Abdullah to confirm (KI-009). Alex prompt v1.2.3 is on branch `claude/alex-demo-live-test`, not merged or published. Blocked on Abdullah; see Blockers.
 
 ## Paused (D-010, Oct 6, 2026 — inbound is near-done, left alone until a client demo needs it)
 - 3.1 Repoint Emily's 4 tool webhooks and post-call webhook, greeting says Emily. Approved, URL only.
@@ -28,22 +31,31 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Rete
 - 3.4 Test 3 call paths. Blocked on 3.3 and 1.3.
 
 ## Next (active focus)
-- 3.5 Finish the outbound agent. Decisions 2 and 3 are resolved in D-014 (n8n form, two endpoints, light pre-call gate). Nothing left to confirm there. The n8n workflow exists (27 nodes, inactive). What is left is the Retell agent, the credential, and a test. See Blockers.
+- 3.5 Finish the outbound agent. Decisions 2 and 3 are resolved in D-014 (n8n form, two endpoints, light pre-call gate). Nothing left to confirm there. The n8n workflow exists (38 nodes, active as of the Oct 17 read; see KI-009). What is left is confirming go-live, the KYC check, and a test. See Blockers.
 - 3.6 Compliance for the outbound workflow: SMS opt-out, Contact relation, webhook auth (KI-005).
 - 1.3 Twilio A2P registration for +16692660586 (manual). Voice goes first (D-004).
 - 1.4 TCPA emergency branch opt-out gap, counsel sign-off (manual). Counsel email is drafted in docs/counsel-email.md.
-- Outreach target, once the launch gate is actually met: 75 manual owner dials a day starting Oct 15 (Q4 plan). Task 7.1 still has open prerequisites. Abdullah's stated aim was to have the build and the gate items done by Oct 14.
+- Outreach target, once the launch gate is actually met: 75 manual owner dials a day (Q4 plan). Task 7.1 still has open prerequisites.
 
 ## Blockers
+Updated 2026-10-17 after a read-only check of n8n. Confirm against Twenty task 3.5.
 All on Abdullah, for 3.5:
-1. Check Retell identity verification for outbound (KYC via Persona). Blocks the phone test only.
-2. Run `python tools/retell.py create-outbound --apply` in the abdullahblitz workspace and record the agent ID.
-3. Create the n8n Header Auth credential "Retell API (outbound)" and attach it to Place Retell Call and Place Retry Call.
-4. Confirm the caller ID (+16692660586 must not be Nora's live line).
-Then: fill the two placeholders (agent ID, caller ID) in Call Settings and Retry Call Settings, set the post-call webhook URL on the agent, web-call test Alex, phone test last.
+1. Confirm the go-live state of `m2YJwZ1l8DTzyEkw`. It is active with the Alex ID set (KI-009). Approve it as live or have it deactivated.
+2. Check Retell identity verification for outbound (KYC via Persona). Blocks the real phone test only.
+3. Confirm the caller ID (+16692660586 must not be Nora's live line).
+Then: confirm the post-call webhook URL is set on the agent, web-call test Alex, phone test last.
 Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-10-17 (repo reorganized around the four context files)
+- Branch `chore/repo-reorg`. Legacy material removed from main (`archive/`, the duplicate `Claude Skills/brand-profile-generator`, generic `deep-research` and `frontend-design`); recoverable via tag `archive/pre-reorg-2026-10-17` (97bb382). No separate archive repo (D-019).
+- `Claude Skills/` folded into `.claude/skills/`. `CLAUDE.md` now opens with the four-file session protocol. `portal/REPORT.md` became `portal/docs/build-report-2026-10-16.md`.
+- Read-only n8n check: `m2YJwZ1l8DTzyEkw` is active with 38 nodes and the Alex agent ID set. The earlier 37 and 27 counts were stale. Nothing in n8n was changed. See KI-009.
+- Alex prompt v1.2.3 is on `claude/alex-demo-live-test` (a247264), not merged or published.
+- Portal open gaps and the dev-password check recorded as KI-006 to KI-008.
+- Portal tests: `vitest run` passes 8 files / 56 tests (expected 51; the suite has grown since). Run from a copy of `portal/` as a non-root user because embedded Postgres refuses to start as root.
+- `.env.example`: removed the Notion and Apify names, added `TWENTY_API_KEY` and `TWENTY_BASE_URL` (names inferred, not read from n8n or the connector).
+
 ### 2026-10-15 (Twenty moved to self-hosted)
 - Twenty moved from Twenty Cloud to self-hosted v2.46.0 at https://crm.kyneticai.com. All 171 records (original ids), the custom schema, the Plan 1 dashboard and 20 saved views were copied and checked field by field.
 - n8n credential "Twenty account" (`41C04qbmnbi0GI2P`) and the claude.ai Twenty connector now point at the self-hosted instance. Retell never called Twenty directly.

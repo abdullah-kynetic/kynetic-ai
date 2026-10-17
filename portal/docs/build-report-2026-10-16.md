@@ -1,3 +1,5 @@
+> **Point-in-time report (2026-10-16).** Written when the portal was first built and deployed. It is not kept current. The portal's open gaps are tracked in `docs/known-issues.md` (KI-006 to KI-008). Server and ops detail: `portal/ADMIN.md`, `portal/N8N.md`.
+
 # Portal build report
 
 **URL:** https://portal.kyneticai.com. Built and running on the VPS, but **DNS isn't set yet** (see below).

@@ -1,203 +1,42 @@
-# Skill: Retell Voice Agent Builder
-
-**Layer:** Agent (WAT Layer 2 — coordination)
-**Workflow:** `workflows/retell-voice-agent-builder.md`
-**Tool:** `tools/retell_builder.py`
-
+---
+name: retell-builder
+description: Build or update a Kynetic Retell voice agent (Plan 1 outbound speed-to-lead) with tools/retell.py. Use for "build a voice agent", "set up Retell", "create or change the Alex outbound agent", or preparing a voice agent for a new client. Writes are dry-run first; --apply only after Abdullah approves that specific change.
 ---
 
-## Trigger Signals
+# Retell Voice Agent Builder
 
-Invoke this skill when you see any of:
-- "build a voice agent for [business]"
-- "demo request" + any business name or niche
-- "set up retell" / "create receptionist" / "configure the AI agent"
-- "new client" + voice/phone/receptionist context
-- Brand profile exists at `clients/[slug]/brand-profile.md` and has `voice_agent_config` fields populated
+Layer: build. The current build is Plan 1, the outbound speed-to-lead agent (Alex, Kynetic Roofing demo). Rules, IDs and the two Retell workspaces are in `KYNETIC_CONTEXT.md`; read it first.
 
----
+## Hard rules
 
-## Inputs to Collect
+- Tell Abdullah the exact change and wait for a yes before any Retell, n8n or Twenty change. Dry-run output is how you show it.
+- Never add, remove, rename, disable or change parameters of an agent tool without approval of that specific change. A tool that looks wrong gets a recommendation, not a fix.
+- Nora is frozen. Do not edit Kynetic Restoration (Demo). New builds go in the `abdullahblitz` workspace; Nora and Emily stay in `kyneticai`.
+- Claude never configures n8n for a build. It produces what n8n needs (see `N8N_MAPPING.md`) and Abdullah wires it.
 
-Before running anything, confirm you have these. Ask in one message — do not ask field by field.
+## Files
 
-**Required:**
-- Business name
-- Niche / what they do
-- Phone number for emergency transfers (the owner/dispatcher's cell)
-- Timezone (city is fine — infer IANA format)
-- Business notification email
-- n8n instance URL (`https://[name].app.n8n.cloud`)
-- Google Sheet ID (must have Job, Emergency, Inquiry tabs already created)
+| File | Use |
+|---|---|
+| `tools/retell.py` | The only Retell client. Dry-run unless `--apply` |
+| `retell/PROMPTING_STYLE.md` | House style for prompts |
+| `retell/builds/outbound-speed-to-lead/PROMPT.md` | The Alex prompt (source of truth) |
+| `retell/builds/outbound-speed-to-lead/agent.config.json` | Agent and LLM config used by `create-outbound` |
+| `retell/builds/outbound-speed-to-lead/FORM_SPEC.md`, `N8N_MAPPING.md`, `BUILD_PLAN.md` | Intake form, n8n wiring, plan |
+| `retell/builds/outbound-speed-to-lead/demo-business/` | Demo business profile and knowledge base |
 
-**Optional (have fallbacks):**
-- Cal.com API key + event type ID → if missing, remove scheduling tools
-- AI receptionist name → default: Emily
-- Sheet GIDs for Emergency and Inquiry tabs → if not provided, note that client must manually fix sheet references in n8n after import
+## Steps
 
-**If brand-profile.md exists for this client:** read it first. The following fields map directly to inputs:
-- `phone` → `transfer_number`
-- `timezone` → `timezone`
-- `services` → used to build services section in prompt
-- `niche` → used for classifier lookup
-- `email` → `notification_email`
+1. **Inputs.** Business name, niche, owner/transfer phone, timezone, Cal.com event type, agent name. If a brand profile exists for the client (see the `brand-profile` skill), read it first. Ask for missing items in one message.
+2. **Prompt.** Start from `PROMPT.md` and `PROMPTING_STYLE.md`. For a new client, work in a sibling folder `retell/builds/<client-slug>/` copied from the outbound folder (the per-client template, task 3.7, is not built yet). Do not put another client's facts into the Kynetic Roofing demo files. Keep the D-011 AI and recording disclosure in the opener.
+3. **Dry run.** `python tools/retell.py create-outbound <config.json>` prints the LLM and agent it would create. Show Abdullah the output.
+4. **Apply.** Only after a yes: rerun with `--apply`, then record the new agent ID and LLM ID in `KYNETIC_CONTEXT.md` and `docs/progress.md`.
+5. **Verify.** `python tools/retell.py get-agent <agent_id>` and `get-llm <llm_id>`. Keep a copy with `snapshot <agent_id> <out_dir>`.
+6. **Hand off to n8n.** Give Abdullah the agent ID, the post-call webhook path and any placeholders from `N8N_MAPPING.md`. `set-agent-webhook <agent_id> <url> [--apply]` sets the agent's post-call URL once he supplies it.
+7. **Test order.** Web call first, a test submission second, a real phone call last (outbound identity verification via Persona must be done first).
 
----
+## Error handling
 
-## Execution Steps
-
-### Step 1 — Classify
-Read `retell/templates/business-classifier.md`.
-Output one of:
-- `DIRECT MATCH` — proceed as-is
-- `ADAPTED MATCH: [niche]` — list the specific changes needed from the classifier
-
-Tell the user the match result before proceeding. Give them a chance to correct if the classification is wrong.
-
-### Step 2 — Generate Prompt
-Build the `general_prompt` string using the base prompt from `retell/templates/base-agent-template.json`.
-
-Substitute:
-- Business name in the Role section and all greetings
-- Timezone in the `{{current_time_TIMEZONE}}` Retell variable (use IANA format, e.g. `America/Chicago`)
-- Services: write a concise 3–5 item list of what the business actually does
-- Emergency keywords: niche-specific phrases a caller would use in a real emergency
-- Example conversations: rewrite all 3 examples using the client's actual service types
-
-For **adapted match** niches: apply the structural changes from the classifier before writing the prompt. Do not leave plumbing/HVAC references if this is a dental practice.
-
-### Step 3 — Build Variable Map
-Assemble the complete JSON variable map:
-
-```json
-{
-  "BUSINESS_NAME": "...",
-  "AGENT_FIRST_NAME": "Emily",
-  "TIMEZONE": "America/Chicago",
-  "TRANSFER_NUMBER": "+1...",
-  "CAL_API_KEY": "cal_live_...",
-  "CAL_EVENT_TYPE_ID": 12345,
-  "N8N_EMERGENCY_URL": "placeholder",
-  "N8N_INQUIRY_URL": "placeholder",
-  "N8N_JOB_URL": "placeholder",
-  "N8N_GETJOBS_URL": "placeholder",
-  "N8N_POSTCALL_URL": "placeholder",
-  "GENERAL_PROMPT": "...",
-  "BEGIN_MESSAGE": "Hi, this is Emily from [Business], how can we help you today?",
-  "GOOGLE_SHEET_ID": "...",
-  "SHEET_GID_EMERGENCY": 11699001,
-  "SHEET_GID_INQUIRY": 1470146104,
-  "NOTIFICATION_EMAIL": "...",
-  "n8n_instance_url": "https://..."
-}
-```
-
-Note: `N8N_*_URL` values start as "placeholder" — they are replaced by `retell_builder.py` after the n8n workflow is imported and live webhook URLs are retrieved.
-
-### Step 4 — Execute via Tool
-
-Run the build using the Retell MCP and n8n MCP directly in sequence. `retell_builder.py` contains the orchestration logic and prints `__RETELL_MCP_EXEC__` and `__N8N_IMPORT__` signals — execute those steps using the respective MCP tools.
-
-**Retell LLM creation** — use `mcp__retell-ai__execute`:
-```typescript
-async function run(client) {
-  const llm = await client.llm.create({ ...llm_payload });
-  return { llm_id: llm.llm_id };
-}
-```
-
-**Retell Agent creation** — use `mcp__retell-ai__execute`:
-```typescript
-async function run(client) {
-  const agent = await client.agent.create({ ...agent_payload });
-  return { agent_id: agent.agent_id };
-}
-```
-
-**n8n workflow import** — use `mcp__claude_ai_n8n__create_workflow_from_code` with the rendered `base-n8n-template.json` content as the workflow definition.
-
-**Retrieve webhook URLs** — the 5 webhook path UUIDs are fixed in the template. Production URLs follow the pattern `{n8n_instance_url}/webhook/{path_uuid}`. Resolve all 5 immediately after import.
-
-**Update Retell LLM tools** — use `mcp__retell-ai__execute` to patch the LLM with the real URLs:
-```typescript
-async function run(client) {
-  await client.llm.update("llm_xxx", { general_tools: [...updated_tools] });
-  return { ok: true };
-}
-```
-
-**Update Retell Agent webhook_url** — use `mcp__retell-ai__execute`:
-```typescript
-async function run(client) {
-  await client.agent.update("agent_xxx", { webhook_url: "https://...post_call_analysis_url" });
-  return { ok: true };
-}
-```
-
-### Step 5 — Verify
-After all MCP calls succeed, run one verification:
-
-```typescript
-async function run(client) {
-  const llm = await client.llm.retrieve("llm_xxx");
-  const tools = llm.general_tools.filter(t => t.url);
-  return tools.map(t => ({ name: t.name, url: t.url }));
-}
-```
-
-Confirm every `url` field points to the client's n8n instance, not `inflate.app.n8n.cloud`.
-
-### Step 6 — Deliver Summary
-Output the summary card specified in `workflows/retell-voice-agent-builder.md` Step 5. Include all IDs, URLs, and the client's next steps.
-
----
-
-## Error Handling
-
-**Retell API shape changed:** Run `mcp__retell-ai__search_docs` with query "llm create" or "agent create" to get current field names before retrying.
-
-**n8n credentials not connected:** Import succeeds but the workflow won't run until credentials are linked. Note this in the summary — it is not a blocker for creating the Retell agent.
-
-**No Cal.com key:** Remove `check_availability_cal`, `book_appointment_cal` from the tools array before creating the LLM. Update the prompt's booking section to say the team will call back to confirm time. Keep `create_job_details` and `get_jobs` — job logging still works without Cal.com.
-
-**No transfer number:** Remove `transfer_call` from tools. Update emergency section to log-and-notify only.
-
-**Client doesn't have n8n yet:** Block. Note that n8n is required for the webhook automation layer. Offer to document what the client needs to set up, but do not build the Retell agent with dead webhook URLs.
-
----
-
-## Output to Client Folder
-
-After a successful build, save a record to the client's folder:
-
-```
-clients/[business-slug]/voice-agent.md
-```
-
-Content:
-```markdown
-# Voice Agent: [Business Name]
-
-Built: [date]
-Niche: [niche]
-Match type: direct / adapted
-
-## IDs
-- Retell Agent ID: agent_xxx
-- Retell LLM ID: llm_xxx
-- n8n Workflow ID: xxx
-
-## Webhooks
-- Job creation: https://...
-- Emergency: https://...
-- Inquiry: https://...
-- Job lookup: https://...
-- Post-call analysis: https://...
-
-## Next Steps
-- [ ] Link phone number in Retell dashboard
-- [ ] Add knowledge base (services, pricing, locations)
-- [ ] Connect n8n credentials (Google Sheets, Gmail, Twilio, Gemini)
-- [ ] Activate n8n workflow
-- [ ] Test with a live call
-```
+- API shape changed or a call fails: read the HTTP error `tools/retell.py` prints, then check the Retell docs for the current field names before retrying.
+- Missing Cal.com key or event type: do not strip the Cal tools; ask Abdullah. Cal tools are native Retell tools (D-014).
+- The Retell MCP is optional: it runs through npx but needs Deno. Prefer `tools/retell.py`.

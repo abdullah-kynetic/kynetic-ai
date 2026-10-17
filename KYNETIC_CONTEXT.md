@@ -1,6 +1,6 @@
 # Kynetic AI — Working Context
 
-Durable context for agent sessions. Twenty is the system of record. If this file disagrees with Twenty, Twenty wins.
+Durable context for agent sessions. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Rules (non-negotiable)
 
@@ -30,7 +30,7 @@ This replaces $1,500 setup + $997/mo (D-001).
 
 ## Voice platform (D-018)
 
-Retell is the platform. Vapi is parked. Vapi workflows were renamed and deactivated. The old builder prompt is in `archive/vapi/`.
+Retell is the platform. Vapi is parked. Vapi workflows were renamed and deactivated. The old builder prompt was removed from main (recoverable via tag `archive/pre-reorg-2026-10-17`, D-019).
 
 Two Retell workspaces:
 
@@ -43,8 +43,8 @@ Two Retell workspaces:
 |---|---|---|---|
 | Workspace | kyneticai | kyneticai | abdullahblitz |
 | Name | Nora Restoration AI Receptionist | Emily Restoration Speed to Lead | Alex (Kynetic Roofing demo) |
-| Retell agent | `agent_4c34644a04c74e27253e80167b` | `agent_affef8dcb6880fd592cbe9432f` | Not created yet |
-| Retell LLM | `llm_d19efe92627f50e48657788b9ff5` | `llm_b520d8a6b9bf754f19285a8a6185` | — |
+| Retell agent | `agent_4c34644a04c74e27253e80167b` | `agent_affef8dcb6880fd592cbe9432f` | `agent_71e3cfc8384aa38a910a506b53` (ID set in the live n8n workflow, read 2026-10-17) |
+| Retell LLM | `llm_d19efe92627f50e48657788b9ff5` | `llm_b520d8a6b9bf754f19285a8a6185` | `llm_5cbc32e5872bbd9afb452c692071` |
 | n8n workflow | `2PFWFqBM0wabADk6` (live, Notion) | `0PwP1tUf4478lNbf` (inactive) | `m2YJwZ1l8DTzyEkw` |
 
 Emily details: `retell/builds/emily-speed-to-lead/HANDOFF.md`.
@@ -53,7 +53,7 @@ Kynetic Restoration (Demo) build IDs: `retell/builds/kynetic-restoration/build-i
 ## Outbound speed-to-lead (Plan 1, task 3.5)
 
 - Demo: Kynetic Roofing, agent Alex (D-015, D-016). Build files: `retell/builds/outbound-speed-to-lead/`. Prompt style: `retell/PROMPTING_STYLE.md`.
-- n8n workflow "Outbound Speed to Lead" `m2YJwZ1l8DTzyEkw` is **27 nodes**, inactive, never run. Oct 12 added a calling-hours gate and a fallback normalize step. It still needs the Retell agent ID, the caller ID, and the "Retell API (outbound)" credential before any test.
+- n8n workflow "Outbound Speed to Lead" `m2YJwZ1l8DTzyEkw` is **38 nodes** (3 sticky notes and 2 disabled draft-SMS nodes included) and was found **active** on 2026-10-17 with the Alex agent ID set and the "Retell API (outbound)" credential attached. Go-live is not yet approved; Abdullah to confirm (KI-009). Alex prompt v1.2.3 is on branch `claude/alex-demo-live-test`, not merged or published.
 - The imported template `KYQIVtxwDcXVKmk3` is unchanged (Google Sheets / Vapi / Azure). Do not activate or run it.
 - Create the Retell agent with `python tools/retell.py create-outbound` (dry run; `--apply` only with Abdullah's yes). Cal.com Roof Inspection event type `7404470`.
 - Never dial the AM-1 office number on the demo company record.
@@ -72,6 +72,13 @@ Kynetic Restoration (Demo) build IDs: `retell/builds/kynetic-restoration/build-i
 - Custom objects: client_accounts, client_jobs, end_customers, customer_interactions, call_logs, invoices, expenses. Opportunity stages: DEMO_BOOKED → DEMO_HELD / NO_SHOW → PROPOSAL_SENT → CLOSED_WON/LOST.
 - Dashboard: "Plan 1: $30K by Dec 31" `acda0613-2565-47f6-bb4c-9072b45a6d4c`, with tabs "Sales funnel" and "Clients & Cash".
 - Other workflows: Emily `0PwP1tUf4478lNbf` (paused), Client Config Lookup `05HI35dhaWXweO5i`. Lead Scrape `3orAiCNLOCJ7xglI` is legacy and stays off. Nora `2PFWFqBM0wabADk6` is frozen.
+
+## Portal
+
+- Client portal: https://portal.kyneticai.com (Next.js app in `portal/`). The DNS A record is not set yet.
+- Runs on the OVH VPS in `/opt/portal`; the app listens on `127.0.0.1:3020` behind Caddy. Nightly backup at 02:30.
+- Ops docs: `portal/ADMIN.md` (admin and server) and `portal/N8N.md` (ingest API). Build report: `portal/docs/build-report-2026-10-16.md` (point-in-time).
+- No real client data until the must-fixes are done (KI-006, KI-008).
 
 ## Access
 

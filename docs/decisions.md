@@ -1,6 +1,6 @@
 # Decisions
 
-Mirror of the Twenty decision notes. If this disagrees with Twenty, Twenty wins. Do not reopen these without asking.
+Mirror of the Twenty decision notes. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one. Do not reopen these without asking.
 
 ## D-001: Price is $1,500 setup + $997/mo
 Status: superseded by D-017 (2026-10-13). Do not quote this price.
@@ -109,3 +109,10 @@ Status: decided
 Date: 2026-10-13
 Why: New voice work stays on Retell. The Vapi side experiment is parked. Its workflows were renamed and deactivated. The builder prompt is in `archive/vapi/` and is not a build spec.
 Workspaces: `abdullahblitz` is for new builds, including the Alex outbound agent. `kyneticai` is the older workspace and holds Nora and Emily. Nora stays frozen.
+Note (2026-10-17): the builder prompt named above was removed from main; see D-019.
+
+## D-019: Legacy material removed from main; recoverable via tag
+Status: decided
+Date: 2026-10-17
+Why: Main holds only current Kynetic AI material, organized around the four context files. Legacy material was removed from main, not moved to another repo. Recoverable via tag `archive/pre-reorg-2026-10-17`. No separate archive repo.
+Removed: `archive/` (Vapi prompt, lead-scrape flow, trade-receptionist export, SeldonFrame BUILD_LOG), the duplicate `Claude Skills/brand-profile-generator`, and the generic `deep-research` and `frontend-design` skills.

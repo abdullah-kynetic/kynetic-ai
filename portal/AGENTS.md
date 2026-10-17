@@ -1,3 +1,5 @@
+Repo-wide rules, the session protocol and the commit identity are in the root `CLAUDE.md`. Read it first.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 ## This is NOT the Next.js you know

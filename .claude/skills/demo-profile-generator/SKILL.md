@@ -19,8 +19,12 @@ description: >
 ## Purpose
 
 This skill generates a complete Brand Profile for a prospect before any client contact has
-been made. It reads the `raw-data.json` file produced by `tools/gbp_scrape.py` and infers
+been made. It reads a `raw-data.json` file (originally produced by `tools/gbp_scrape.py`, now missing) and infers
 every field a full onboarding would collect — without asking anything.
+
+> **OPEN (flagged 2026-10-17):** `tools/gbp_scrape.py` does not exist in this repo (and
+> neither does a `clients/` folder). Until a GBP data source is chosen, Abdullah supplies
+> `raw-data.json` in the shape described below; the skill itself only reads that file.
 
 The output is a complete `brand-profile.md` that every downstream skill can consume without
 modification. The only difference from a full onboarding profile is the Demo Mode Notice
@@ -457,7 +461,7 @@ Use this exact structure:
 
   "client": {
     "email": "pending-setup",
-    "notion_page_url": "pending-setup",
+    "twenty_client_account_url": "pending-setup",
     "retainer_start_date": "pending-setup"
   }
 }
@@ -699,7 +703,7 @@ No client contact has occurred. The following fields require confirmation after 
 **Requires provisioning before downstream skills run:**
 - [ ] Voice agent name and configuration
 - [ ] Twilio SMS number
-- [ ] Notion client page URL
+- [ ] Twenty client account URL
 - [ ] Owner email for report delivery
 - [ ] Retainer start date
 
