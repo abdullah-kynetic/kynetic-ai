@@ -1,5 +1,5 @@
 ---
-name: brand-profile-generator
+name: brand-profile
 description: >
   Kynetic AI — Skill 1: Brand Profile Generator.
   The foundational skill. Runs once per client at onboarding. Takes intake form answers

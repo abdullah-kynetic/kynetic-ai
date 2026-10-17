@@ -44,7 +44,7 @@ Two Retell workspaces:
 | Workspace | kyneticai | kyneticai | abdullahblitz |
 | Name | Nora Restoration AI Receptionist | Emily Restoration Speed to Lead | Alex (Kynetic Roofing demo) |
 | Retell agent | `agent_4c34644a04c74e27253e80167b` | `agent_affef8dcb6880fd592cbe9432f` | `agent_71e3cfc8384aa38a910a506b53` (ID set in the live n8n workflow, read 2026-10-17) |
-| Retell LLM | `llm_d19efe92627f50e48657788b9ff5` | `llm_b520d8a6b9bf754f19285a8a6185` | — |
+| Retell LLM | `llm_d19efe92627f50e48657788b9ff5` | `llm_b520d8a6b9bf754f19285a8a6185` | `llm_5cbc32e5872bbd9afb452c692071` |
 | n8n workflow | `2PFWFqBM0wabADk6` (live, Notion) | `0PwP1tUf4478lNbf` (inactive) | `m2YJwZ1l8DTzyEkw` |
 
 Emily details: `retell/builds/emily-speed-to-lead/HANDOFF.md`.
