@@ -37,7 +37,7 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Rete
 - 3.6 Compliance for the outbound workflow: SMS opt-out, Contact relation, webhook auth (KI-005).
 - 1.3 Twilio A2P registration for +16692660586 (manual). Voice goes first (D-004).
 - 1.4 TCPA emergency branch opt-out gap, counsel sign-off (manual). Counsel email is drafted in docs/counsel-email.md.
-- Outreach target, once the launch gate is actually met: 75 manual owner dials a day (Q4 plan). Start moved to Tuesday Oct 20, and it could be moved up to Monday Oct 19 (Twenty task updated Oct 17). The 75-a-day math and the Oct 23 checkpoint were written for an Oct 15 start and have not been recomputed. Task 7.1 still has open prerequisites.
+- Outreach target, once the launch gate is actually met: 75 manual owner dials a day (Q4 plan). Start moved to Tuesday Oct 20, and it could be moved up to Monday Oct 19 (Twenty updated Oct 17). With 24 working days to Nov 20, 75 a day only just covers the base case for 5 clients (about 90 a day for 6); the plan and the checkpoint (now about Oct 28) were recomputed in the Twenty note "Q4 Revenue Plan". Task 7.1 still has open prerequisites.
 
 ## Blockers
 Updated 2026-10-17 after a read-only check of n8n. Confirm against Twenty task 3.5. The Oct 15 end-to-end call (see Done) suggests items 2 and 3 below are already cleared; Abdullah to confirm.
@@ -46,13 +46,15 @@ All on Abdullah, for 3.5:
 2. Check Retell identity verification for outbound (KYC via Persona). Blocks the real phone test only.
 3. Confirm the caller ID (+16692660586 must not be Nora's live line).
 Then: confirm the post-call webhook URL is set on the agent, web-call test Alex, phone test last.
-Also open: the retry cadence, attempt limit and calling window as built differ from D-012 (90 s fast retry, +10 and +60 minutes, max 3 attempts, 8:00 to 21:00 lead-local, versus 5 minutes, 1 hour, next day, max 4); Abdullah to confirm which is intended. Counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
+Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
 ### 2026-10-17 (status check across n8n, Twenty and GitHub)
 - Read-only check. n8n `m2YJwZ1l8DTzyEkw`: active, 561 executions, the latest 20 all successful on the 5-minute retry sweeper. Twenty: exactly one lead and one interaction on record, from the Oct 15 smoke test (now in Done). That closes the "smoke test still open" line in the 2026-10-15 entry.
 - The voice provider bake-off was tracked only in a Twenty note (last edited Oct 16) and on the unmerged provider branches. Added it to In progress here and to KYNETIC_CONTEXT.md so a session that reads only the four context files knows it exists.
 - Twenty updated to match: the bake-off note rewritten, a new task 3.9 for the bake-off, task 3.5 status refreshed (the Oct 8 text kept as history), and the dialing task moved to Tuesday Oct 20 with a note that it could move up to Monday Oct 19.
+- Decided (D-020): the retry cadence and calling window stay as built. The Twenty D-012 note is annotated and a Twenty D-020 note was added.
+- Dialing start moved to Tue Oct 20 across Twenty: the Start dialing task, the checkpoint (now Oct 28), the Quentin confirmation (now Oct 19), the 7.1/4.5/4.6 task notes, START HERE, READ FIRST, D-003 and D-017 update lines, and the Q4 Revenue Plan (math recomputed).
 - `retell/builds/outbound-speed-to-lead/BUILD_PLAN.md` brought up to date (Current state rewritten; the original plan kept and marked historical).
 - From Abdullah's Oct 17 summary (not yet logged on the branch): the ElevenLabs agent now runs the real Alex prompt; a Cal.com test event 7520336 (phone required) exists but the tools still point at 7404470; a text-confirmation change is planned and depends on A2P (KI-003).
 

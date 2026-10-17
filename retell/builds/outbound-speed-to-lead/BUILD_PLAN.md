@@ -8,9 +8,9 @@ Read-only check of Retell, n8n and Twenty on Oct 17. The Oct 8 to Oct 12 text th
 - **n8n: built and ACTIVE.** "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`) has 38 nodes (3 sticky notes and 2 disabled draft-SMS nodes included). The "Retell API (outbound)" credential is attached, and the agent ID and caller ID (+16692660586) are set in "Call Settings" and "Retry Call Settings". It had 561 executions on Oct 17, the latest 20 all successful on the 5-minute sweeper. **Go-live is not yet approved (KI-009); Abdullah to confirm.** The workflow's own description and sticky notes still say INACTIVE and "fill the placeholders"; that text is stale.
 - **Paths as built:**
   1. Form, normalize, 24-hour duplicate check, light gate, create the Twenty lead, resolve the lead's time zone (ZIP, then area code), calling-hours gate **8:00 to 21:00 in the lead's local time**, Retell call, mark calling. Outside the window the lead is queued for the local morning.
-  2. Retell post-call webhook (`call_analyzed` only): the call is fetched back from Retell, normalized, logged as a `SPEED_TO_LEAD` interaction, and the lead is updated. After a no-answer or voicemail on attempt 1 there is a 90 second fast retry.
-  3. Sweeper every 5 minutes: leads with `NO_ANSWER`, `nextAttemptAt` due and fewer than 3 attempts, inside the lead's calling window. Retry spacing is +10 minutes after attempt 1 and +60 minutes after attempt 2.
-- **Differs from D-012 and from the Flow section below.** D-012 says retries at 5 minutes, 1 hour and next day, max 4 attempts, and the plan below says a 9:00 to 20:00 Pacific window. As built it is 90 seconds, 10 minutes, 60 minutes, max 3 attempts, 8:00 to 21:00 lead-local. Abdullah to confirm which is intended.
+  2. Retell post-call webhook (`call_analyzed` only): the call is fetched back from Retell, normalized, logged as a `SPEED_TO_LEAD` interaction, and the lead is updated. After a no-answer or voicemail on attempt 1 there is a 90 second fast retry (attempt 2).
+  3. Sweeper every 5 minutes: leads with `NO_ANSWER`, `nextAttemptAt` due and fewer than 3 attempts, inside the lead's calling window. If the fast retry does not run, the sweeper retries attempt 2 at +10 minutes. A no-answer on attempt 2 schedules attempt 3 at +60 minutes.
+- **Retry cadence and calling window: decided as built (D-020, Oct 17).** This replaces D-012 item 2 (5 minutes, 1 hour, next day, max 4 attempts) and the 9:00 to 20:00 Pacific window in the Flow section below.
 - **Tested:** one end-to-end run on Oct 15 (one test lead, called 13.8 seconds after submit, booked, logged in Twenty). **Not yet tested:** the retry path (the only lead booked on the first call) and the duplicate-check filter (no duplicate submission was made).
 - **Still open:** the post-call webhook has no header auth (KI-005, task 3.6); counsel sign-off (1.4); confirming +16692660586 is not Nora's live line is not recorded as done.
 - Demo data: the demo carries the real business's details (D-016 amended); see demo-business/PROFILE.md.
@@ -25,7 +25,7 @@ A **retry sweeper** is a scheduled n8n trigger, not a webhook.
 This is a new workflow and a new Retell agent. It shares no nodes or logic with Emily (D-010). Emily and Nora are untouched.
 
 ## Flow
-Original plan. The retry cadence, attempt limit and calling window as built differ; see Current state.
+Original plan. The retry cadence, attempt limit and calling window as built replace step E and the window below (D-020); see Current state.
 A. Form submit: normalize the phone to E.164 (Code node, pattern from Source Template 05), check consent, run the light gate (24 hour duplicate window, new submissions only).
 B. Create or find the lead in Twenty, store consent text, timestamp, source, and `formSubmittedAt`.
 C. If the gate passes: Retell create-phone-call (HTTP), with `retell_llm_dynamic_variables` (first_name, company_name, agent_name, service_type, lead_source) and metadata `{twenty_id}`. Store `firstRingAt` to track submit to ring time.

@@ -93,7 +93,7 @@ Why: Of 14 reviewed sources, 4 disclose, 3 do not, none give conversion data or 
 Consequence: Drop "Never mention AI" from the SolarShift prompt. Never deny being an AI. Counsel to confirm current AI-voice disclosure rules (task 1.4).
 
 ## D-012: Outbound v1 call handling
-Status: decided
+Status: decided. Item 2 (retry cadence) superseded by D-020 (2026-10-17); the rest stands.
 Date: 2026-10-06
 Why: Keeps v1 small and testable. (1) Hang up on voicemail, log as voicemail, retry; leaving a voicemail is TBD. (2) First call within about 60 seconds of form submit, retries at 5 min, 1 hour, next day, max 4 attempts, run by a scheduled sweeper over Twenty. (3) gpt-4.1 + 11labs-Cimo, revisit after test calls. (4) Human transfer deferred past v1. (5) Retell webhook filtered to the final analyzed event replaces the polling loop; structured outcome from Retell native post-call analysis; Twenty record ID passed in call metadata.
 
@@ -116,3 +116,10 @@ Status: decided
 Date: 2026-10-17
 Why: Main holds only current Kynetic AI material, organized around the four context files. Legacy material was removed from main, not moved to another repo. Recoverable via tag `archive/pre-reorg-2026-10-17`. No separate archive repo.
 Removed: `archive/` (Vapi prompt, lead-scrape flow, trade-receptionist export, SeldonFrame BUILD_LOG), the duplicate `Claude Skills/brand-profile-generator`, and the generic `deep-research` and `frontend-design` skills.
+
+## D-020: Outbound retry cadence and calling window are as built
+Status: decided
+Date: 2026-10-17
+Why: Abdullah chose the behavior the n8n workflow "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`) already has over the D-012 retry plan. Attempt 1 goes out on form submit. After a no-answer or voicemail on attempt 1, a fast retry runs about 90 seconds later; if it does not run, the 5-minute sweeper picks the lead up at +10 minutes. After a no-answer or voicemail on attempt 2, the next try is about 60 minutes later. Maximum 3 attempts. Calls only inside 8:00 to 21:00 in the lead's local time (time zone from ZIP, then area code); outside the window the lead is queued for the local morning.
+Replaced: D-012 item 2 (retries at 5 minutes, 1 hour and next day, maximum 4 attempts) and the 9:00 to 20:00 Pacific window in BUILD_PLAN.md. The rest of D-012 stands.
+Note: the first attempt was tested end to end on Oct 15. The retry path has not run yet.
