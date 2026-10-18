@@ -23,7 +23,7 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Rete
 - PR #16 merged: Claude sessions commit as `abdullah-kynetic` (`.claude/settings.json`, CLAUDE.md).
 
 ## In progress
-- 3.5 outbound build. Prep is in the repo. On 2026-10-17 a read-only check found `m2YJwZ1l8DTzyEkw` active with the Alex agent ID (`agent_71e3cfc8384aa38a910a506b53`) set in Call Settings and Retry Call Settings and the "Retell API (outbound)" credential attached. Go-live has not been approved; Abdullah to confirm (KI-009). Alex prompt v1.2.3 is on branch `claude/alex-demo-live-test`, not merged or published. Blocked on Abdullah; see Blockers.
+- 3.5 outbound build. Prep is in the repo. On 2026-10-17 a read-only check found `m2YJwZ1l8DTzyEkw` active with the Alex agent ID (`agent_71e3cfc8384aa38a910a506b53`) set in Call Settings and Retry Call Settings and the "Retell API (outbound)" credential attached. Go-live approved by Abdullah on 2026-10-18 (KI-009). Alex prompt v1.2.3 is on branch `claude/alex-demo-live-test`, not merged or published. Blocked on Abdullah; see Blockers.
 - Voice provider bake-off (Retell vs Bland vs ElevenLabs) for Alex. **Testing, no decision: Retell stays (D-018) unless a challenger clearly wins on the shared scorecard.** Control is Retell Alex Lab. ElevenLabs is furthest along; Bland has a test track and no results yet. Both live on unmerged branches (`claude/provider-test-elevenlabs`, `claude/provider-test-bland`), not on main. Current state, agent IDs and rules: the "Voice provider bake-off" section of KYNETIC_CONTEXT.md; running log: `providers/elevenlabs/RESULTS.md` on the branch and the Twenty note "VOICE PROVIDER BAKE-OFF". Twenty has no task for it yet.
 
 ## Paused (D-010, Oct 6, 2026 — inbound is near-done, left alone until a client demo needs it)
@@ -40,9 +40,9 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Rete
 - Outreach target, once the launch gate is actually met: 75 manual owner dials a day (Q4 plan). Start moved to Tuesday Oct 20, and it could be moved up to Monday Oct 19 (Twenty updated Oct 17). With 24 working days to Nov 20, 75 a day only just covers the base case for 5 clients (about 90 a day for 6); the plan and the checkpoint (now about Oct 28) were recomputed in the Twenty note "Q4 Revenue Plan". Task 7.1 still has open prerequisites.
 
 ## Blockers
-Updated 2026-10-17 after a read-only check of n8n. Confirm against Twenty task 3.5. The Oct 15 end-to-end call (see Done) suggests items 2 and 3 below are already cleared; Abdullah to confirm.
+Updated 2026-10-18 (go-live approved); earlier read-only check of n8n 2026-10-17. Confirm against Twenty task 3.5. The Oct 15 end-to-end call (see Done) suggests items 2 and 3 below are already cleared; Abdullah to confirm.
 All on Abdullah, for 3.5:
-1. Confirm the go-live state of `m2YJwZ1l8DTzyEkw`. It is active with the Alex ID set (KI-009). Approve it as live or have it deactivated.
+1. ~~Confirm the go-live state of `m2YJwZ1l8DTzyEkw`~~ Approved live by Abdullah on 2026-10-18 (KI-009 resolved). Nothing changed in n8n.
 2. Check Retell identity verification for outbound (KYC via Persona). Blocks the real phone test only.
 3. Confirm the caller ID (+16692660586 must not be Nora's live line).
 Then: confirm the post-call webhook URL is set on the agent, web-call test Alex, phone test last.
