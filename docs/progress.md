@@ -39,6 +39,8 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Rete
 - 1.4 TCPA emergency branch opt-out gap, counsel sign-off (manual). Counsel email is drafted in docs/counsel-email.md.
 - Outreach target, once the launch gate is actually met: 75 manual owner dials a day (Q4 plan). Start moved to Tuesday Oct 20, and it could be moved up to Monday Oct 19 (Twenty updated Oct 17). With 24 working days to Nov 20, 75 a day only just covers the base case for 5 clients (about 90 a day for 6); the plan and the checkpoint (now about Oct 28) were recomputed in the Twenty note "Q4 Revenue Plan". Task 7.1 still has open prerequisites.
 
+- Self-hosting n8n on the VPS: planning only (see the 2026-10-18 log entry). Step 1 is a read-only export and size check of the cloud workflows; step 2 is a written plan. No n8n change without Abdullah's yes on that specific change.
+
 ## Blockers
 Updated 2026-10-18 (go-live approved); earlier read-only check of n8n 2026-10-17. Confirm against Twenty task 3.5. The Oct 15 end-to-end call (see Done) suggests items 2 and 3 below are already cleared; Abdullah to confirm.
 All on Abdullah, for 3.5:
@@ -49,6 +51,14 @@ Then: confirm the post-call webhook URL is set on the agent, web-call test Alex,
 Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-10-18 (portal login changes, Google on, VPS cleanup, n8n self-hosting decision)
+- PRs #21-#25 merged as merge commits. #21 fixed the stale DNS/Resend statements (KI-006, context). #22 recorded D-022 (single deploy path is server-side `portal-deploy`; the `bob-box-ovh-vps` key keeps full root; KI-010 closed). #23 recorded Abdullah's approval of "Outbound Speed to Lead" staying live (KI-009 closed; no n8n change). #24 added the two-step admin login and "Remember this device for 30 days" (admin only, signed cookie, skips only the authenticator code; revoked by a password change or authenticator re-enrolment). #25 signs a new user straight in after accepting an invite; password resets still end at the sign-in page; a new admin must set up an authenticator before any admin page.
+- Deployed with `portal-deploy`: `7cd69cc` (#24) and `bdc4afe` (#25), both "deploy OK", `/api/health` ok.
+- Google sign-in is ON for invited clients (OAuth client created by Abdullah; the id and secret were set on the VPS through `/opt/portal/set-secrets.sh`, whose server copy was out of date and was replaced from main). Admins stay on password + authenticator by design (D-021).
+- VPS cleanup (Abdullah approved): Bookstack and Docmost (two earlier portal trials) removed with their data, plus the 6.6 GB build cache. Disk went from 19 GB to 9.8 GB used of 72 GB (14%); memory about 4.7 GB available; load near zero. Portal, portal DB and the four Twenty containers stayed healthy. Unused leftovers not removed: `postgres:18`, `redis:8`, `hello-world`.
+- Decision in progress: Abdullah wants to start self-hosting n8n on the OVH VPS to avoid n8n cloud execution limits and cost. Planning only. No migration has been done and no n8n change is approved. Rough sizing: about 1.5-2 GB at first, 2-3 GB after months (execution history is the only thing that grows; prune it); about 0.3-1 GB of memory. Risks to plan for: off-server backups, the lead-form and Retell post-call webhook URLs, credentials, HTTPS, and everything sitting on one server.
+- Abdullah's to-do: generate admin recovery codes, run the invite, forgot-password and Google tests with the two test addresses, and the client A/B isolation test (KI-006).
+
 ### 2026-10-17 (portal: invite-only sign-in hardening, Google sign-in, admin user tools)
 - Branch `portal-auth-phase1` (separate worktree; opened as a PR, not deployed). Built: breached-password screen on invite/reset/change; admin one-time recovery codes (new `recovery_codes` table with RLS, migration 0002); security notice emails (password changed, MFA on, recovery code used, email changed); Users tab actions (cancel invite, send reset link, change email, remove user) plus invite-expiry display; invite-only Google sign-in for clients, off until `AUTH_GOOGLE_ID`/`AUTH_GOOGLE_SECRET` are set (D-021).
 - Portal tests: `vitest run` is 13 files / 84 tests, all passing; lint and typecheck clean; `npm audit --omit=dev` 0 findings.
