@@ -44,7 +44,7 @@ Every one of these is written to the activity log on the admin home page.
 
 Admins sign in with password + a 6-digit authenticator code. Google sign-in is for **client** users only; admins stay on password + authenticator so MFA can't be skipped.
 
-**Recovery codes.** When you turn on two-factor you are shown 10 one-time recovery codes. Save them (password manager). If your authenticator is lost, type a recovery code into the "Authenticator or recovery code" box at sign-in instead of the 6 digits. Each works once, using one emails you and is logged. Account page → **Recovery codes** shows how many are left and generates a new set (asks for your password; old codes stop working).
+**Recovery codes.** When you turn on two-factor you are shown 10 one-time recovery codes. Save them (password manager). If your authenticator is lost, type a recovery code into the "Authenticator or recovery code" box at sign-in instead of the 6 digits. Each works once. Using one emails you and is logged. Account page → **Recovery codes** shows how many are left and generates a new set (asks for your password; old codes stop working).
 
 **Turning on Google sign-in (optional, free):**
 1. console.cloud.google.com → create/select a project → **APIs & Services → OAuth consent screen**: choose External, app name "Kynetic Portal", your support email, no extra scopes (email/profile/openid only).
