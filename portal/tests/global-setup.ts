@@ -64,6 +64,7 @@ export default async function setup() {
         values (${email}, ${email}, ${role}, ${clientId}, ${pw}, ${extra.totpEnc ?? null}, ${!!extra.totpEnc}, ${extra.disabled ? new Date() : null}) returning id`)[0].id as string;
     const adminId = await mk("admin-mfa@example.com", "admin", null, { totpEnc: enc(adminTotp, key) });
     await mk("admin-mfa2@example.com", "admin", null, { totpEnc: enc(adminTotp, key) }); // calibration admin (own TOTP replay counter)
+    await mk("admin-mfa3@example.com", "admin", null, { totpEnc: enc(adminTotp, key) }); // for the admin-tools tests
     const adminRecId = await mk("admin-rec@example.com", "admin", null, { totpEnc: enc(adminTotp, key) });
     const recoveryCodes = ["abcde-fghjk", "mnpqr-stuvw", "xyz23-45678"];
     for (const c of recoveryCodes) await tx`insert into recovery_codes (user_id, code_hash) values (${adminRecId}, ${createHash("sha256").update(c.replace(/[^a-z0-9]/g, "")).digest("hex")})`;

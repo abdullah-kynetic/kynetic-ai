@@ -39,6 +39,10 @@ const payloads = (client: string, user: string, doc: string): Record<string, Rec
   deleteItem: { clientId: client, id: doc, kind: "contact" },
   inviteUser: { clientId: client, email: "evil@example.com" },
   setUserDisabled: { clientId: client, userId: user, disable: "true" },
+  cancelInvite: { clientId: client, userId: user },
+  sendResetLink: { clientId: client, userId: user },
+  changeUserEmail: { clientId: client, userId: user, email: "evil2@example.com" },
+  removeUser: { clientId: client, userId: user },
   createIngestKey: { clientId: client, label: "evil" },
   revokeIngestKey: { clientId: client, keyId: doc },
 });
@@ -58,7 +62,7 @@ describe("admin server actions", () => {
     scratch = rows[0].id as string;
   });
 
-  it("found the admin action ids in the build", () => { expect(Object.keys(ids).length).toBeGreaterThan(9); });
+  it("found the admin action ids in the build", () => { expect(Object.keys(ids).length).toBeGreaterThan(14); });
 
   it("calibration: every payload is VALID when an admin sends it", async () => {
     for (const [name, fields] of Object.entries(payloads(scratch, randomUUID(), randomUUID()))) {
@@ -77,7 +81,7 @@ describe("admin server actions", () => {
       contacts: (await tx`select count(*)::int n from contacts where client_id = ${fx.B}`)[0].n,
       scope: (await tx`select count(*)::int n from scope_items where client_id = ${fx.B}`)[0].n,
       milestones: (await tx`select count(*)::int n from milestones where client_id = ${fx.B}`)[0].n,
-      users: (await tx`select count(*)::int n, count(disabled_at)::int d from users where client_id = ${fx.B}`)[0],
+      users: (await tx`select count(*)::int n, count(disabled_at)::int d, string_agg(email, ',' order by email) emails from users where client_id = ${fx.B}`)[0],
       keys: (await tx`select count(*)::int n from ingest_keys where client_id = ${fx.B}`)[0].n,
       docs: (await tx`select count(*)::int n from documents where client_id = ${fx.B}`)[0].n,
       profile: (await tx`select legal_name from business_profiles where client_id = ${fx.B}`)[0].legal_name as string,
