@@ -141,6 +141,14 @@ export const authTokens = pgTable("auth_tokens", {
   createdAt: createdAt(),
 });
 
+export const recoveryCodes = pgTable("recovery_codes", {
+  id: id(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  codeHash: text("code_hash").notNull(),
+  usedAt: timestamp("used_at", { withTimezone: true }),
+  createdAt: createdAt(),
+}, (t) => [index("recovery_codes_user_idx").on(t.userId)]);
+
 export const rateLimits = pgTable("rate_limits", {
   key: text("key").primaryKey(),
   windowStart: timestamp("window_start", { withTimezone: true }).notNull(),
