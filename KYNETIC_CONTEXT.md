@@ -92,7 +92,7 @@ Retell stays the platform (D-018) unless another provider clearly wins. Only a w
 
 ## Portal
 
-- Client portal: https://portal.kyneticai.com (Next.js app in `portal/`). The DNS A record is not set yet.
+- Client portal: https://portal.kyneticai.com (Next.js app in `portal/`). The DNS A record is set (resolves to 40.160.150.91, `/api/health` ok as of 2026-10-17) and Resend email works. Remaining go-live gaps are in KI-006.
 - Runs on the OVH VPS in `/opt/portal`; the app listens on `127.0.0.1:3020` behind Caddy. Nightly backup at 02:30.
 - Ops docs: `portal/ADMIN.md` (admin and server) and `portal/N8N.md` (ingest API). Build report: `portal/docs/build-report-2026-10-16.md` (point-in-time).
 - No real client data until the must-fixes are done (KI-006, KI-008).

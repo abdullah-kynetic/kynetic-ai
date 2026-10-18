@@ -20,10 +20,10 @@ Fix: add a header-auth secret on the outbound workflow (task 3.6). Do not modify
 
 ### KI-006: Portal go-live gaps (high)
 The client portal (portal.kyneticai.com) must not hold real client data until these are closed:
-- `RESEND_API_KEY` is unset, so login tokens go to the logs instead of email.
+- ~~`RESEND_API_KEY` is unset~~ Closed 2026-10-17: the key is set on the VPS and a real reset email was delivered.
 - The DB superuser and owner passwords sit in the app container environment.
 - No off-server backups and no restore test (nightly 02:30 backup stays on the VPS).
-- The portal DNS A record is not set.
+- ~~The portal DNS A record is not set~~ Closed 2026-10-17: portal.kyneticai.com resolves to 40.160.150.91 and `/api/health` answers ok.
 - The manual client A/B isolation test has not been run.
 
 ### KI-007: Portal low-severity items (low)
