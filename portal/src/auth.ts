@@ -10,9 +10,9 @@ class PortalAuthError extends CredentialsSignin {
 const passwordInput = z.object({
   email: z.string().trim().toLowerCase().email().max(254),
   password: z.string().min(1).max(256),
-  totp: z.string().max(10).optional().default(""),
+  totp: z.string().max(40).optional().default(""),
 });
-const magicInput = z.object({ token: z.string().min(10).max(100), totp: z.string().max(10).optional().default("") });
+const magicInput = z.object({ token: z.string().min(10).max(100), totp: z.string().max(40).optional().default("") });
 
 const SESSION_MAX_AGE = 60 * 60 * 24 * 3; // 3 days (admins are capped at 12h in getSession)
 

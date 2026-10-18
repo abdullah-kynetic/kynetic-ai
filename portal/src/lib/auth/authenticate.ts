@@ -7,6 +7,9 @@ import { verifyPassword } from "./password";
 import { checkTotp } from "./totp";
 import { decrypt } from "../crypto";
 import { consumeToken, peekToken } from "./tokens";
+import { consumeRecoveryCode, looksLikeRecoveryCode, remainingRecoveryCodes } from "./recovery";
+import { emails, sendEmail } from "../email";
+import { audit } from "../audit";
 
 export type AuthResult = { ok: true; userId: string; sessionVersion: number } | { ok: false; code: string };
 type User = typeof users.$inferSelect;
@@ -37,11 +40,19 @@ async function recordSuccess(u: User, totpStep: number | null) {
 const isLocked = (u: User) => !!u.lockedUntil && u.lockedUntil > new Date();
 const needsTotp = (u: User) => u.role === "admin" && u.totpEnabled && !!u.totpSecretEnc;
 
-/** Returns the matched TOTP step, "missing" or "invalid". */
-async function verifySecondFactor(u: User, code: string): Promise<number | "missing" | "invalid"> {
-  if (!code) return "missing";
+/** Returns the matched TOTP step, "recovery" (a one-time recovery code was burned), "missing" or "invalid". */
+async function verifySecondFactor(u: User, code: string): Promise<number | "recovery" | "missing" | "invalid"> {
+  if (!code.trim()) return "missing";
+  if (looksLikeRecoveryCode(code)) return (await consumeRecoveryCode(u.id, code)) ? "recovery" : "invalid";
   const step = await checkTotp(decrypt(u.totpSecretEnc!), code, u.totpLastStep ?? null);
   return step === null ? "invalid" : step;
+}
+
+/** A recovery code was used to sign in: leave an audit trail and tell the user. */
+async function afterRecoveryUse(u: User) {
+  const left = await remainingRecoveryCodes(u.id);
+  await withScope({ role: "system" }, (tx) => audit(tx, { actorUserId: u.id, action: "admin.recovery_code_used", meta: { remaining: left } }));
+  await sendEmail({ to: u.email, ...emails.recoveryUsed(left) }).catch(() => {});
 }
 
 export async function authenticatePassword(input: { email: string; password: string; totp: string }, headers: Headers): Promise<AuthResult> {
@@ -59,7 +70,7 @@ export async function authenticatePassword(input: { email: string; password: str
     const r = await verifySecondFactor(u, input.totp);
     if (r === "missing") return { ok: false, code: "mfa_required" };
     if (r === "invalid") { await recordFailure(u); return { ok: false, code: "invalid_totp" }; }
-    step = r;
+    if (r === "recovery") await afterRecoveryUse(u); else step = r;
   }
   await recordSuccess(u, step);
   return { ok: true, userId: u.id, sessionVersion: u.sessionVersion };
@@ -77,7 +88,7 @@ export async function authenticateMagic(input: { token: string; totp: string }, 
     const r = await verifySecondFactor(u, input.totp);
     if (r === "missing") return { ok: false, code: "mfa_required" };
     if (r === "invalid") { await recordFailure(u); return { ok: false, code: "invalid_totp" }; }
-    step = r;
+    if (r === "recovery") await afterRecoveryUse(u); else step = r;
   }
   const consumedBy = await consumeToken(input.token, "magic");
   if (consumedBy !== u.id) return { ok: false, code: "invalid_link" };
