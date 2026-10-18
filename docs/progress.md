@@ -49,6 +49,13 @@ Then: confirm the post-call webhook URL is set on the agent, web-call test Alex,
 Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-10-17 (portal: invite-only sign-in hardening, Google sign-in, admin user tools)
+- Branch `portal-auth-phase1` (separate worktree; opened as a PR, not deployed). Built: breached-password screen on invite/reset/change; admin one-time recovery codes (new `recovery_codes` table with RLS, migration 0002); security notice emails (password changed, MFA on, recovery code used, email changed); Users tab actions (cancel invite, send reset link, change email, remove user) plus invite-expiry display; invite-only Google sign-in for clients, off until `AUTH_GOOGLE_ID`/`AUTH_GOOGLE_SECRET` are set (D-021).
+- Portal tests: `vitest run` is 13 files / 84 tests, all passing; lint and typecheck clean; `npm audit --omit=dev` 0 findings.
+- Read-only facts checked on 2026-10-17: `portal.kyneticai.com` resolves to 40.160.150.91 and `/api/health` answers ok (so the DNS A record IS set); Resend and R2 keys are set on the VPS and a live upload and a real reset email both worked; `/usr/local/sbin/portal-deploy` and `portal-deploy-entry` are installed (identical to PR #19), a `deploy` user exists with a forced-command key labelled `github-actions-portal-deploy`, and the ubuntu account also has a `bob-box-ovh-vps` key (see KI-010).
+- MISMATCH TO FIX (not changed here): KYNETIC_CONTEXT.md Portal section and KI-006 still say the DNS record is not set and Resend is unset. Both are wrong today. Waiting on Abdullah's yes (handoff Part C).
+- Admin email on the live portal changed to abdullah@kyneticai.com (database update, same password and authenticator).
+
 ### 2026-10-17 (status check across n8n, Twenty and GitHub)
 - Read-only check. n8n `m2YJwZ1l8DTzyEkw`: active, 561 executions, the latest 20 all successful on the 5-minute retry sweeper. Twenty: exactly one lead and one interaction on record, from the Oct 15 smoke test (now in Done). That closes the "smoke test still open" line in the 2026-10-15 entry.
 - The voice provider bake-off was tracked only in a Twenty note (last edited Oct 16) and on the unmerged provider branches. Added it to In progress here and to KYNETIC_CONTEXT.md so a session that reads only the four context files knows it exists.
