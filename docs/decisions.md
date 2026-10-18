@@ -130,3 +130,9 @@ Date: 2026-10-17
 Why: Abdullah wants only people he invites to be able to sign in, with no public sign-up. Industry practice (OWASP authentication and forgot-password cheat sheets, NIST SP 800-63B) is closed registration with single-use expiring invite tokens, generic responses that don't reveal who has an account, length-based password rules with a breached-password screen and no composition or rotation rules, and MFA with a recovery path for privileged users.
 Decided: Accounts are created only by an admin invite; the invitee sets their own password. Google sign-in is allowed only for a client user that already exists and has a verified matching Google email; it never creates accounts. Admins stay on password + TOTP (+ recovery codes) because an OAuth round trip cannot ask for TOTP.
 
+
+## D-022: The single portal deploy path is server-side `portal-deploy`; the `bob-box-ovh-vps` key keeps full root
+Status: decided
+Date: 2026-10-18
+Why: Abdullah said he is fine with the `bob-box-ovh-vps` key keeping full root on the VPS (KI-010) and left the choice of deploy path to Claude. `portal-deploy` is the one with a health check and automatic rollback, only deploys commits on `main`, and is already what the restricted `deploy` key and the GitHub Action run.
+Decided: Portal deploys go through `/usr/local/sbin/portal-deploy` (via the restricted `deploy` key). `portal/deploy/deploy.sh` is not used for routine deploys, because both overwrite `/opt/portal/src`. The `bob-box-ovh-vps` key keeps full administrator access.
