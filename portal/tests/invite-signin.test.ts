@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import postgres from "postgres";
-import { Client, asAdmin, base, fx, owner } from "./helpers";
+import { Client, asAdmin, fx, owner } from "./helpers";
 
 const sha = (s: string) => createHash("sha256").update(s).digest("hex");
 const rand = () => randomBytes(4).toString("hex");
