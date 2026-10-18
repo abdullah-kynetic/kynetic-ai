@@ -15,7 +15,7 @@ KEY_DIR=/etc/portal-deploy
 REPO_URL=git@github.com:abdullah-kynetic/kynetic-ai.git
 LOG=/var/log/portal-deploy.log
 BACKUP_DIR=/var/backups/portal/env
-ALLOWED_KEYS="RESEND_API_KEY EMAIL_FROM R2_ACCOUNT_ID R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_BUCKET"
+ALLOWED_KEYS="RESEND_API_KEY EMAIL_FROM R2_ACCOUNT_ID R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_BUCKET AUTH_GOOGLE_ID AUTH_GOOGLE_SECRET"
 HEALTH_URL=http://127.0.0.1:3020/api/health
 
 log() { echo "[portal-deploy] $*"; echo "$(date -Is) $*" >> "$LOG"; }
