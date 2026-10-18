@@ -21,7 +21,7 @@ Admin → **New client** → name, status, plan, included minutes (default 1,200
 There is no sign-up page. An account exists only because an admin created it, and every route except sign-in, reset and invite requires a session. A stranger who types an email gets the same generic answer as a real user, so nothing leaks about who has access.
 
 1. You invite someone (below). They get a one-time link valid for 7 days.
-2. They open it, enter their name, and choose their own password (12+ characters; passwords found in known data breaches are refused).
+2. They open it, enter their name, and choose their own password (12+ characters; passwords found in known data breaches are refused). They are then signed in automatically (a new admin lands on the authenticator setup page first, then the recovery codes, then the admin area). Password resets are different: they always end at the sign-in page.
 3. After that they sign in with email + password, an emailed sign-in link, or, once Google is switched on, "Continue with Google".
 4. "Forgot password?" on the sign-in page emails a 30-minute reset link and signs out their other devices. They get an email whenever their password changes.
 
