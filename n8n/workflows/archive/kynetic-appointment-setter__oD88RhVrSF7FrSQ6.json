@@ -1,0 +1,537 @@
+{
+  "active": false,
+  "connections": {
+    "Booking Webhook": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Client Config Lookup",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Client Config Lookup": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Client Found?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Client Found?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Find Contact By Phone",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Respond No Client Match",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Contact Exists?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Use Existing Contact",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Create Contact",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Create Contact": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Use New Contact",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Create Job (Booked)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Send Confirmation SMS",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Find Contact By Phone": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Contact Exists?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Merge Contact Result": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create Job (Booked)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Send Confirmation SMS": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond OK",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Use Existing Contact": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Merge Contact Result",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Use New Contact": {
+      "main": [
+        [
+          {
+            "index": 1,
+            "node": "Merge Contact Result",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "oD88RhVrSF7FrSQ6",
+  "name": "Kynetic — Appointment Setter",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "fe2c6e90-0d66-430d-990a-ad432793c3b7",
+      "name": "Booking Webhook",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {},
+        "path": "appointment-setter",
+        "responseMode": "lastNode"
+      },
+      "position": [
+        0,
+        192
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "fca53976-4619-488e-ab23-560bf4479655"
+    },
+    {
+      "id": "3fa7f3db-4ade-43fe-b093-23a62a5d2752",
+      "name": "Client Config Lookup",
+      "parameters": {
+        "mode": "once",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "05HI35dhaWXweO5i"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "phone_number": "={{ $json.body.dialed_number }}"
+          }
+        }
+      },
+      "position": [
+        224,
+        192
+      ],
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3
+    },
+    {
+      "id": "41486444-1def-43fa-8c8c-ef9311c549dd",
+      "name": "Client Found?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.found }}",
+              "operator": {
+                "operation": "true",
+                "type": "boolean"
+              },
+              "rightValue": true
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          }
+        }
+      },
+      "position": [
+        448,
+        192
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3
+    },
+    {
+      "alwaysOutputData": true,
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "3e053879-e991-498c-b945-8140e7e5b5fb",
+      "name": "Find Contact By Phone",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "ab554e24-f46f-47fe-aab1-3d121823e0a8"
+        },
+        "filterType": "manual",
+        "filters": {
+          "conditions": [
+            {
+              "condition": "equals",
+              "key": "Phone|phone_number",
+              "phoneNumberValue": "={{ $(\"Booking Webhook\").item.json.body.contact_phone }}"
+            }
+          ]
+        },
+        "matchType": "allFilters",
+        "operation": "getAll",
+        "parameters": {
+          "databaseId": {
+            "value": "ab554e24-f46f-47fe-aab1-3d121823e0a8"
+          }
+        },
+        "resource": "databasePage",
+        "returnAll": true,
+        "simple": true
+      },
+      "position": [
+        672,
+        96
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "8448966a-c6bd-4af5-97ce-1fa05a08a347",
+      "name": "Contact Exists?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.id }}",
+              "operator": {
+                "operation": "exists",
+                "type": "string"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          }
+        }
+      },
+      "position": [
+        896,
+        96
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3
+    },
+    {
+      "id": "71f8f136-da54-45a7-a1bc-766f11f2a316",
+      "name": "Use Existing Contact",
+      "parameters": {
+        "jsCode": "return [{ json: { contact_id: $input.first().json.id, contact_created: false } }];",
+        "language": "javaScript",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1344,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "0e76e284-2a80-4441-9351-8db6a4ac714e",
+      "name": "Merge Contact Result",
+      "parameters": {
+        "mode": "append"
+      },
+      "position": [
+        1568,
+        96
+      ],
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "16373d26-392c-49c1-adb0-3b39453ab60f",
+      "name": "Create Contact",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "ab554e24-f46f-47fe-aab1-3d121823e0a8"
+        },
+        "operation": "create",
+        "parameters": {
+          "databaseId": {
+            "value": "ab554e24-f46f-47fe-aab1-3d121823e0a8"
+          }
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Name|title",
+              "title": "={{ $(\"Booking Webhook\").item.json.body.contact_name || $(\"Booking Webhook\").item.json.body.contact_phone }}",
+              "type": "title"
+            },
+            {
+              "key": "Phone|phone_number",
+              "phoneValue": "={{ $(\"Booking Webhook\").item.json.body.contact_phone }}",
+              "type": "phone_number"
+            },
+            {
+              "date": "={{ $now.toISO() }}",
+              "includeTime": true,
+              "key": "Last Contact|date",
+              "type": "date"
+            },
+            {
+              "key": "Client|relation",
+              "relationValue": [
+                "={{ $(\"Client Config Lookup\").item.json.client_id }}"
+              ],
+              "type": "relation"
+            }
+          ]
+        },
+        "resource": "databasePage",
+        "simple": true
+      },
+      "position": [
+        1120,
+        192
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "fa9f5fa8-5fe7-4cca-aa22-1e55215fcd7c",
+      "name": "Use New Contact",
+      "parameters": {
+        "jsCode": "return [{ json: { contact_id: $input.first().json.id, contact_created: true } }];",
+        "language": "javaScript",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1344,
+        192
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "08703813-3714-4ed6-94a1-2690438ac5e4",
+      "name": "Respond No Client Match",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"status\": \"error\", \"error\": \"no client matched dialed_number\" } }}"
+      },
+      "position": [
+        672,
+        288
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "0a4066d4-d933-449f-b46c-636805931364",
+      "name": "Create Job (Booked)",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "29a4af8d-cbd0-4fd9-abfb-4d3c1edc6b94"
+        },
+        "operation": "create",
+        "parameters": {
+          "databaseId": {
+            "value": "29a4af8d-cbd0-4fd9-abfb-4d3c1edc6b94"
+          }
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Job|title",
+              "title": "={{ $(\"Booking Webhook\").item.json.body.service_type }} — {{ $(\"Booking Webhook\").item.json.body.contact_name || $(\"Booking Webhook\").item.json.body.contact_phone }}",
+              "type": "title"
+            },
+            {
+              "key": "Status|select",
+              "selectValue": "Booked",
+              "type": "select"
+            },
+            {
+              "key": "Service Type|rich_text",
+              "richText": false,
+              "textContent": "={{ $(\"Booking Webhook\").item.json.body.service_type }}",
+              "type": "rich_text"
+            },
+            {
+              "key": "Location|rich_text",
+              "richText": false,
+              "textContent": "={{ $(\"Booking Webhook\").item.json.body.location }}",
+              "type": "rich_text"
+            },
+            {
+              "key": "Location Type|select",
+              "selectValue": "={{ $(\"Booking Webhook\").item.json.body.location_type || \"Residential\" }}",
+              "type": "select"
+            },
+            {
+              "key": "Preferred Time|rich_text",
+              "richText": false,
+              "textContent": "={{ $(\"Booking Webhook\").item.json.body.preferred_time }}",
+              "type": "rich_text"
+            },
+            {
+              "key": "Phone|phone_number",
+              "phoneValue": "={{ $(\"Booking Webhook\").item.json.body.contact_phone }}",
+              "type": "phone_number"
+            },
+            {
+              "key": "Client|relation",
+              "relationValue": [
+                "={{ $(\"Client Config Lookup\").item.json.client_id }}"
+              ],
+              "type": "relation"
+            },
+            {
+              "key": "Contact|relation",
+              "relationValue": [
+                "={{ $json.contact_id }}"
+              ],
+              "type": "relation"
+            }
+          ]
+        },
+        "resource": "databasePage",
+        "simple": true
+      },
+      "position": [
+        1792,
+        96
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "twilioApi": {
+          "id": "aoIjAKkkoPR85aOq",
+          "name": "Twilio account"
+        }
+      },
+      "id": "a786762c-ac39-41fb-b077-381e44581c02",
+      "name": "Send Confirmation SMS",
+      "parameters": {
+        "from": "={{ $(\"Client Config Lookup\").item.json.assigned_twilio_number }}",
+        "message": "={{ $(\"Client Config Lookup\").item.json.voice_agent_name }} here — you are booked for {{ $(\"Booking Webhook\").item.json.body.service_type }} on {{ $(\"Booking Webhook\").item.json.body.preferred_time }} at {{ $(\"Booking Webhook\").item.json.body.location }}. Reply if you need to reschedule!",
+        "operation": "send",
+        "resource": "sms",
+        "to": "={{ $(\"Booking Webhook\").item.json.body.contact_phone }}"
+      },
+      "position": [
+        2016,
+        96
+      ],
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1
+    },
+    {
+      "id": "ca035eb9-5071-4bd4-84ce-4b71bf962b01",
+      "name": "Respond OK",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"status\": \"booked\", \"job_created\": true } }}"
+      },
+      "position": [
+        2240,
+        96
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "executionOrder": "v1"
+  }
+}

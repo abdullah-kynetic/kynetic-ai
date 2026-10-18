@@ -1,0 +1,342 @@
+{
+  "active": true,
+  "connections": {
+    "Load Call List": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Match Business",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Match Business": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Row Found?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Normalize Entry": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Email Payment Link",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Load Call List",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Row Found?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Mark Link Sent",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Add New Business Row",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Send Link Form": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Normalize Entry",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "AANCbsZrmEqiiTpa",
+  "name": "Porchlight Card: Send Payment Link",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "fcabf2fe-eeeb-42b0-94e5-ff34f06ae7df",
+      "name": "Send Link Form",
+      "parameters": {
+        "formDescription": "Use this while you are on the phone. It emails the $300 Stripe link to the owner and marks the business Link sent in the 75063 Call List.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Business name",
+              "fieldType": "text",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Owner first name",
+              "fieldType": "text",
+              "requiredField": false
+            },
+            {
+              "fieldLabel": "Owner email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Category they are claiming",
+              "fieldType": "text",
+              "placeholder": "plumber, dentist, etc.",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Call notes",
+              "fieldType": "textarea",
+              "requiredField": false
+            }
+          ]
+        },
+        "formTitle": "Porchlight Card: send payment link",
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "Send the link",
+          "path": "porchlight-send-link",
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "Sent. The payment link is on its way and the Call List is updated.",
+              "respondWith": "text"
+            }
+          }
+        },
+        "responseMode": "onReceived"
+      },
+      "position": [
+        0,
+        300
+      ],
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "webhookId": "c7628f40-6c1a-45f6-91cc-72c48262541d"
+    },
+    {
+      "id": "6530cb9b-5127-45ba-bf32-177b2cfc6d8f",
+      "name": "Normalize Entry",
+      "parameters": {
+        "jsCode": "const j = $input.first().json;\nconst businessName = String(j['Business name'] || '').trim();\nreturn [{ json: {\n  businessName: businessName,\n  nameKey: businessName.toLowerCase().replace(/[^a-z0-9]/g, ''),\n  firstName: String(j['Owner first name'] || '').trim() || 'there',\n  email: String(j['Owner email'] || '').trim().toLowerCase(),\n  category: String(j['Category they are claiming'] || '').trim(),\n  notes: String(j['Call notes'] || '').trim(),\n  today: new Date().toISOString().slice(0, 10)\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        220,
+        300
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dil4wMogas9aOWKP",
+          "name": "Abdullah Kynetic account"
+        }
+      },
+      "id": "776b49d3-2f12-4088-81e7-ea6f50ce6531",
+      "name": "Email Payment Link",
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "emailType": "html",
+        "message": "=<p>Hi {{ $json.firstName }},</p><p>Great talking with you. Here is the link to lock in the <b>{{ $json.category }}</b> spot on the Porchlight Card, Irving 75063 Edition:</p><p><a href=\"https://buy.stripe.com/00wfZidVXgrF8Qw8tq6sw00\">https://buy.stripe.com/00wfZidVXgrF8Qw8tq6sw00</a></p><p>It is $300 one time. That covers design, printing, and mailing to about 2,500 homes. You will be the only {{ $json.category }} on the card.</p><p>Spots go first come, first served, so the category is yours as soon as payment goes through. After that we will send a short form for your logo and offer.</p><p>Questions? Call or text 908-477-9409.</p><p>Abdullah<br>Kynetic Marketing</p>",
+        "operation": "send",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Kynetic Marketing"
+        },
+        "resource": "message",
+        "sendTo": "={{ $json.email }}",
+        "subject": "=Your Porchlight Card spot, {{ $json.businessName }}"
+      },
+      "position": [
+        440,
+        520
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "webhookId": "2cca6844-1fcf-4772-946e-d99d156af194"
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "executeOnce": true,
+      "id": "737aae52-ec2f-4e04-96a0-c53ea9168392",
+      "name": "Load Call List",
+      "parameters": {
+        "authentication": "oAuth2",
+        "dataSourceId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "88854a57-5dbf-4070-99b6-733626d40c51"
+        },
+        "filterType": "none",
+        "operation": "getAll",
+        "resource": "databasePage",
+        "returnAll": true,
+        "simple": true
+      },
+      "position": [
+        440,
+        300
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 3
+    },
+    {
+      "id": "77ac9310-1236-40f4-9d92-a0d43be45634",
+      "name": "Match Business",
+      "parameters": {
+        "jsCode": "const inp = $('Normalize Entry').first().json;\nconst rows = $input.all().map(function (i) { return i.json; });\nconst norm = function (s) { return String(s || '').toLowerCase().replace(/[^a-z0-9]/g, ''); };\nlet match = null;\nfor (const r of rows) { if (norm(r.name) === inp.nameKey) { match = r; break; } }\nif (!match) for (const r of rows) {\n  const n = norm(r.name);\n  if (n && n.length >= 5 && inp.nameKey.length >= 5 && (n.indexOf(inp.nameKey) >= 0 || inp.nameKey.indexOf(n) >= 0)) { match = r; break; }\n}\nconst prior = match ? String(match.property_call_notes || '') : '';\nconst line = inp.today + ': link sent to ' + inp.email + ' for ' + inp.category + (inp.notes ? '. ' + inp.notes : '');\nconst notes = (prior ? prior + '\\n' : '') + line;\nconst props = {\n  'Sale Stage': { select: { name: 'Link sent' } },\n  'Customer Email': { email: inp.email || null },\n  'Last Call Date': { date: { start: inp.today } },\n  'Call Notes': { rich_text: [{ text: { content: notes.slice(-1900) } }] }\n};\nconst createProps = Object.assign({}, props, { 'Business Name': { title: [{ text: { content: inp.businessName } }] } });\nreturn [{ json: {\n  found: !!match,\n  pageId: match ? match.id : '',\n  updateBody: { properties: props },\n  createBody: { parent: { database_id: '5db44cc8-35d1-451e-bb69-2cd2ab6ffc3e' }, properties: createProps }\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        660,
+        300
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "82f17823-7332-4e0d-bd7c-57bd170fdcae",
+      "name": "Row Found?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.found }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        }
+      },
+      "position": [
+        880,
+        300
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "83df7a87-b25b-4c48-bb41-de0563720416",
+      "name": "Mark Link Sent",
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "authentication": "predefinedCredentialType",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            }
+          ]
+        },
+        "jsonBody": "={{ JSON.stringify($json.updateBody) }}",
+        "method": "PATCH",
+        "nodeCredentialType": "notionOAuth2Api",
+        "sendBody": true,
+        "sendHeaders": true,
+        "specifyBody": "json",
+        "url": "=https://api.notion.com/v1/pages/{{ $json.pageId }}"
+      },
+      "position": [
+        1100,
+        200
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "619054bb-b6a7-4f77-8d31-3399d4cfc86e",
+      "name": "Add New Business Row",
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "authentication": "predefinedCredentialType",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            }
+          ]
+        },
+        "jsonBody": "={{ JSON.stringify($json.createBody) }}",
+        "method": "POST",
+        "nodeCredentialType": "notionOAuth2Api",
+        "sendBody": true,
+        "sendHeaders": true,
+        "specifyBody": "json",
+        "url": "https://api.notion.com/v1/pages"
+      },
+      "position": [
+        1100,
+        400
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "fe054bee-39d2-42eb-b81f-2d43dfff2648",
+      "name": "Sticky Note f64296c4",
+      "parameters": {
+        "color": 6,
+        "content": "## Porchlight Card: Send Payment Link\nOpen this form on your phone during calls. It emails the owner the $300 Stripe link from Kynetic Marketing and marks the business Link sent in the 75063 Call List, with a dated note.",
+        "height": 160,
+        "width": 520
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,652 @@
+{
+  "active": false,
+  "connections": {
+    "Audience Router": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Set Director Context",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Set Volunteer Context",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Set Admin Context",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Set Unknown Context",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Claude Sonnet 4.6": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "Seekers Youth AI Agent",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Log Error to Notion",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Extract Message Fields": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Audience Router",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Set Admin Context": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Seekers Youth AI Agent",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Set Director Context": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Seekers Youth AI Agent",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Set Unknown Context": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Seekers Youth AI Agent",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Set Volunteer Context": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Seekers Youth AI Agent",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "index": 0,
+            "node": "Seekers Youth AI Agent",
+            "type": "ai_memory"
+          }
+        ]
+      ]
+    },
+    "Tool — KB Lookup": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "Seekers Youth AI Agent",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "Tool — Log Attendance": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "Seekers Youth AI Agent",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "Tool — Send WhatsApp Reply": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "Seekers Youth AI Agent",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Extract Message Fields",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "pC1whqZ7DNfTTQkF",
+  "name": "Seekers Youth — WhatsApp AI Agent",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "node-whatsapp-trigger",
+      "name": "WhatsApp Trigger",
+      "parameters": {
+        "updates": [
+          "messages"
+        ]
+      },
+      "position": [
+        240,
+        300
+      ],
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "webhookId": "5fa60dd9-bfaf-48d2-aad7-6f83c90abd75"
+    },
+    {
+      "id": "node-extract-fields",
+      "name": "Extract Message Fields",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "message_text",
+              "type": "string",
+              "value": "={{ $json.entry[0].changes[0].value.messages[0].text.body }}"
+            },
+            {
+              "id": "a2",
+              "name": "sender_phone",
+              "type": "string",
+              "value": "={{ $json.entry[0].changes[0].value.messages[0].from }}"
+            },
+            {
+              "id": "a3",
+              "name": "phone_number_id",
+              "type": "string",
+              "value": "={{ $json.entry[0].changes[0].value.metadata.phone_number_id }}"
+            },
+            {
+              "id": "a4",
+              "name": "message_type",
+              "type": "string",
+              "value": "={{ $json.entry[0].changes[0].value.messages[0].type }}"
+            },
+            {
+              "id": "a5",
+              "name": "timestamp",
+              "type": "string",
+              "value": "={{ $json.entry[0].changes[0].value.messages[0].timestamp }}"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "mode": "manual"
+      },
+      "position": [
+        460,
+        300
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "node-audience-router",
+      "name": "Audience Router",
+      "parameters": {
+        "mode": "rules",
+        "options": {
+          "allMatchingOutputs": false,
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "unknown"
+        },
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.phone_number_id }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "DIRECTOR_GROUP_PHONE_NUMBER_ID"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "director",
+              "renameOutput": true
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.phone_number_id }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "VOLUNTEER_GROUP_PHONE_NUMBER_ID"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "volunteer",
+              "renameOutput": true
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.sender_phone }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "ADMIN_PHONE_NUMBER"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "admin",
+              "renameOutput": true
+            }
+          ]
+        }
+      },
+      "position": [
+        680,
+        300
+      ],
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "node-set-director",
+      "name": "Set Director Context",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d1",
+              "name": "audience",
+              "type": "string",
+              "value": "director"
+            },
+            {
+              "id": "d2",
+              "name": "session_id",
+              "type": "string",
+              "value": "={{ $json.sender_phone }}"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "mode": "manual"
+      },
+      "position": [
+        900,
+        160
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "node-set-volunteer",
+      "name": "Set Volunteer Context",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "v1",
+              "name": "audience",
+              "type": "string",
+              "value": "volunteer"
+            },
+            {
+              "id": "v2",
+              "name": "session_id",
+              "type": "string",
+              "value": "={{ $json.sender_phone }}"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "mode": "manual"
+      },
+      "position": [
+        900,
+        300
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "node-set-admin",
+      "name": "Set Admin Context",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "adm1",
+              "name": "audience",
+              "type": "string",
+              "value": "admin"
+            },
+            {
+              "id": "adm2",
+              "name": "session_id",
+              "type": "string",
+              "value": "={{ $json.sender_phone }}"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "mode": "manual"
+      },
+      "position": [
+        900,
+        440
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "node-set-unknown",
+      "name": "Set Unknown Context",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "u1",
+              "name": "audience",
+              "type": "string",
+              "value": "unknown"
+            },
+            {
+              "id": "u2",
+              "name": "session_id",
+              "type": "string",
+              "value": "={{ $json.sender_phone }}"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "mode": "manual"
+      },
+      "position": [
+        900,
+        580
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "node-ai-agent",
+      "name": "Seekers Youth AI Agent",
+      "parameters": {
+        "options": {
+          "maxIterations": 10,
+          "returnIntermediateSteps": false,
+          "systemMessage": "You are the Seekers Youth OS Assistant — an AI agent managing operations for a nonprofit Islamic youth program running across multiple satellite mosque locations.\n\nAudience: {{ $json.audience }}\nSender phone: {{ $json.sender_phone }}\n\nDecide what to do based on the message and call the correct tool:\n\n1. ATTENDANCE INTAKE — message contains numbers, kids, youth, session name, satellite, 'showed up', 'attended', or any incident report → call log_attendance tool. Confirm: 'Got it. Logged [X] attendees for [program]. JazakAllah khair.'\n\n2. QUESTION/FAQ — message contains ?, what, how, when, where, can, should, is there → call kb_lookup tool. Return the answer warmly, tailored to the audience.\n\n3. EXPENSE/REIMBURSEMENT — message contains receipt, reimburse, expense, spent, paid, amount → call log_expense tool. Confirm: 'Expense logged and sent to admin for approval. JazakAllah khair.'\n\n4. APPROVAL RESPONSE — message contains APPROVE- or REJECT- followed by an ID → call process_approval tool.\n\n5. CURRICULUM REQUEST — message contains plan, curriculum, session idea, activities, program plan → call build_curriculum tool. Return a plan summary.\n\n6. REPORT REQUEST — audience is admin AND message asks for report, summary, stats, board report, monthly → call generate_report tool.\n\n7. UNKNOWN — reply: 'Salaam! I did not quite catch that. I can help with attendance logging, questions, expenses, curriculum planning, or reports. What do you need?'\n\nAlways use the send_whatsapp_reply tool as your final step to deliver your response to {{ $json.sender_phone }}. Never finish without sending a reply."
+        },
+        "promptType": "define",
+        "text": "={{ $json.message_text }}"
+      },
+      "position": [
+        1160,
+        360
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1
+    },
+    {
+      "id": "node-claude-llm",
+      "name": "Claude Sonnet 4.6",
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "cachedResultName": "Claude Sonnet 4.6",
+          "mode": "list",
+          "value": "claude-sonnet-4-6"
+        },
+        "options": {
+          "maxTokensToSample": 4096,
+          "temperature": 0.3
+        }
+      },
+      "position": [
+        1000,
+        560
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.5
+    },
+    {
+      "id": "node-memory",
+      "name": "Simple Memory",
+      "parameters": {
+        "contextWindowLength": 10,
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.session_id }}"
+      },
+      "position": [
+        1160,
+        560
+      ],
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4
+    },
+    {
+      "id": "node-tool-kb-lookup",
+      "name": "Tool — KB Lookup",
+      "parameters": {
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "KNOWLEDGE_BASE_DB_ID_HERE"
+        },
+        "description": "Use this to answer questions from directors or volunteers. Search the Seekers Youth knowledge base. Input: the topic or question keyword.",
+        "filterType": "none",
+        "limit": 5,
+        "operation": "getAll",
+        "resource": "databasePage",
+        "returnAll": false,
+        "simple": true
+      },
+      "position": [
+        1320,
+        560
+      ],
+      "type": "n8n-nodes-base.notionTool",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "node-tool-log-attendance",
+      "name": "Tool — Log Attendance",
+      "parameters": {
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "PROGRAM_LOG_DB2_ID_HERE"
+        },
+        "description": "Use this to log attendance when a director reports a session. Extract: program_name, attendance_count (number), satellite location, and any notes or incidents.",
+        "operation": "create",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Attendance|number",
+              "numberValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('attendance_count', 'Number of attendees present', 'number') }}",
+              "type": "number"
+            },
+            {
+              "key": "Satellite|select",
+              "selectValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('satellite', 'Which satellite location', 'string') }}",
+              "type": "select"
+            },
+            {
+              "key": "Director Phone|phone_number",
+              "phoneValue": "={{ $json.sender_phone }}",
+              "type": "phone_number"
+            },
+            {
+              "key": "Notes|rich_text",
+              "richText": false,
+              "textContent": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('notes', 'Any additional notes or incidents from the session', 'string') }}",
+              "type": "rich_text"
+            }
+          ]
+        },
+        "resource": "databasePage",
+        "simple": true,
+        "title": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('program_name', 'The name of the program or session', 'string') }}"
+      },
+      "position": [
+        1480,
+        560
+      ],
+      "type": "n8n-nodes-base.notionTool",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "node-tool-whatsapp-reply",
+      "name": "Tool — Send WhatsApp Reply",
+      "parameters": {
+        "description": "Always use this as your final step to deliver your response. Input: recipient_phone (use the sender_phone from context), reply_message (your complete response text).",
+        "messageType": "text",
+        "operation": "send",
+        "phoneNumberId": "YOUR_WHATSAPP_PHONE_NUMBER_ID",
+        "recipientPhoneNumber": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('recipient_phone', 'The phone number to send the reply to', 'string') }}",
+        "resource": "message",
+        "textBody": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('reply_message', 'The message to send back to the user', 'string') }}"
+      },
+      "position": [
+        1640,
+        560
+      ],
+      "type": "n8n-nodes-base.whatsAppTool",
+      "typeVersion": 1.1,
+      "webhookId": "a81d65f6-e77b-4dc6-adca-0796242bfbd7"
+    },
+    {
+      "id": "node-error-trigger",
+      "name": "Error Trigger",
+      "parameters": {},
+      "position": [
+        240,
+        600
+      ],
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1
+    },
+    {
+      "id": "node-error-log",
+      "name": "Log Error to Notion",
+      "parameters": {
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "SYSTEM_HEALTH_LOG_DB_ID_HERE"
+        },
+        "operation": "create",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Status|select",
+              "selectValue": "Failure",
+              "type": "select"
+            },
+            {
+              "key": "Workflow|rich_text",
+              "richText": false,
+              "textContent": "Seekers Youth WhatsApp AI Agent",
+              "type": "rich_text"
+            },
+            {
+              "key": "Error|rich_text",
+              "richText": false,
+              "textContent": "={{ $json.execution.error.message }}",
+              "type": "rich_text"
+            }
+          ]
+        },
+        "resource": "databasePage",
+        "simple": true,
+        "title": "={{ 'Error — ' + $now.toISO() }}"
+      },
+      "position": [
+        460,
+        600
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    }
+  ],
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true
+  }
+}

@@ -1,0 +1,1619 @@
+{
+  "active": true,
+  "connections": {
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Send a message",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Send an SMS/MMS/WhatsApp message",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Send an SMS message",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "AI Agent3": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Send a message1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Create Call - Emergency": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent2",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Create Call - Inquiry": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Create Call - Job Creation": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Create Contact - Emergency": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create Call - Emergency",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Create Contact - Inquiry": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create Call - Inquiry",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Create Contact - Job Creation": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create Job",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Create Emergency Call (Tool)": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent4",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "Create Inquiry Call (Tool)": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent4",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "Create Job": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create Call - Job Creation",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Emergency Calls by Phone (Tool)": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent4",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "Get Inquiry Calls by Phone (Tool)": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent4",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "Get Jobs by Phone (Notion)": {
+      "main": [
+        []
+      ]
+    },
+    "Get Jobs by Phone (Tool)": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent4",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent1",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent2",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent3",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent4",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent4",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Job Creation": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create Contact - Job Creation",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Job Query by Phone": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Jobs by Phone (Notion)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Log Emergency": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create Contact - Emergency",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Log Inquiry": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create Contact - Inquiry",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Post-call Analysis": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "If",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Send an SMS message": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent3",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent1",
+            "type": "ai_outputParser"
+          }
+        ]
+      ]
+    },
+    "Update Job (Tool)": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent4",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "2PFWFqBM0wabADk6",
+  "name": "Nora Restoration AI Receptionist",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "76736228-011c-42a7-bb6f-2da5fca3ee44",
+      "name": "Log Emergency",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {},
+        "path": "e5563a13-1323-4109-ae88-5e87b8d48d3c"
+      },
+      "position": [
+        144,
+        1904
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "webhookId": "e5563a13-1323-4109-ae88-5e87b8d48d3c"
+    },
+    {
+      "id": "44c131a3-f9c8-4443-b9e8-8999a47e5f1e",
+      "name": "Job Creation",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {},
+        "path": "9dfc3c1d-9d99-4041-9cae-3a60cc86652d"
+      },
+      "position": [
+        144,
+        576
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "webhookId": "9dfc3c1d-9d99-4041-9cae-3a60cc86652d"
+    },
+    {
+      "id": "3498414a-a53b-47f6-aa0d-1689867a6086",
+      "name": "Log Inquiry",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {},
+        "path": "56d89e8d-66c3-42bb-ae33-2c78e5d10caa"
+      },
+      "position": [
+        144,
+        1216
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "webhookId": "56d89e8d-66c3-42bb-ae33-2c78e5d10caa"
+    },
+    {
+      "id": "92ce87a2-f5ee-49ff-bcde-6926dc67fb82",
+      "name": "Job Query by Phone",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {},
+        "path": "881e3b34-7867-473a-a819-bc56c662a3af",
+        "responseMode": "lastNode"
+      },
+      "position": [
+        80,
+        96
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "webhookId": "881e3b34-7867-473a-a819-bc56c662a3af"
+    },
+    {
+      "credentials": {
+        "twilioApi": {
+          "id": "aoIjAKkkoPR85aOq",
+          "name": "Twilio account"
+        }
+      },
+      "id": "3f17872d-4707-486a-a171-69a34746b881",
+      "name": "Send an SMS/MMS/WhatsApp message",
+      "parameters": {
+        "from": "+16692660586",
+        "message": "={{ $json.output.message }}",
+        "options": {},
+        "to": "={{ $json.output.phone_number }}"
+      },
+      "position": [
+        1376,
+        576
+      ],
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dil4wMogas9aOWKP",
+          "name": "Abdullah Kynetic account"
+        }
+      },
+      "id": "13077f00-8113-4e71-b1aa-a66092bf3429",
+      "name": "Send a message",
+      "parameters": {
+        "message": "={{ $json.output }}",
+        "options": {},
+        "sendTo": "abdullah@kyneticai.com",
+        "subject": "[Kynetic Restoration] New inquiry"
+      },
+      "position": [
+        1152,
+        1216
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "webhookId": "036e7c1e-11ac-4635-a8a2-1a5614bbd821"
+    },
+    {
+      "id": "350e2ad6-6e48-47a1-a061-d2a03ea094f8",
+      "name": "AI Agent",
+      "parameters": {
+        "options": {
+          "systemMessage": "You are the operations assistant for Kynetic Restoration, a water damage restoration company in Austin, Texas. Write a clear, professional internal notification email to the team about a new inbound inquiry that the AI receptionist could not fully resolve. This is internal, never customer-facing. Factual and concise. Include a short 'Recommended next step' line."
+        },
+        "promptType": "define",
+        "text": "=Define the wrap-up HTML email content with styles, without any leading sentences. Make sure that the response is in a valid HTML format, start with <!DOCTYPE html>, without any wrapper (e.g. ``` or ```html).\n\nFull name: {{ $('Log Inquiry').item.json.body.name }}\nPhone number: {{ $('Log Inquiry').item.json.body.phone_number }}\nLocation: {{ $('Log Inquiry').item.json.body.location }}\nInquiry: {{ $('Log Inquiry').item.json.body.inquiry_details }}"
+      },
+      "position": [
+        816,
+        1216
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2
+    },
+    {
+      "id": "51ac6610-40e7-491c-a4b7-432df35bbed3",
+      "name": "AI Agent1",
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are the AI receptionist for Kynetic Restoration, a water damage restoration company in Austin, Texas. Write a warm, professional SMS confirming the customer's on-site assessment appointment. Keep it under 320 characters. Mention the service and the booked time. No emojis. Do not include a greeting line or sign-off beyond the company name."
+        },
+        "promptType": "define",
+        "text": "=Define the SMS message to wrap up the appointment, make sure to return the content of the message only, don't return the leading sentence.\n\nFull name: {{ $('Job Creation').item.json.body.name }}\nPhone number: {{ $('Job Creation').item.json.body.phone_number }}\nLocation: {{ $('Job Creation').item.json.body.location }}\nBooked time: {{ $('Job Creation').item.json.body.preferred_time }}\nService type: {{ $('Job Creation').item.json.body.service_type }}\nAppointment booked? or booked link: {{ $('Job Creation').item.json.body.appointment_booked }}"
+      },
+      "position": [
+        1040,
+        576
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2
+    },
+    {
+      "id": "bbf36ec2-73e9-4a4e-8e20-b9348937d783",
+      "name": "Sticky Note",
+      "parameters": {
+        "color": 2,
+        "content": "## Get Jobs by phone number\nUse to find appointments before booking another one",
+        "height": 300,
+        "width": 520
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "eff1076f-d91b-4920-a373-23ab3f460adc",
+      "name": "Structured Output Parser",
+      "parameters": {
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"phone_number\": {\n\t\t\t\"type\": \"string\",\n            \"description\": \"Convert phone number with AU prefix, e.g. +61480089451\"\n\t\t},\n\t\t\"message\": {\n\t\t\t\"type\": \"string\",\n            \"description\": \"The SMS message\"\n\t\t}\n\t},\n    \"required\": [ \"phone_number\", \"message\" ]\n}",
+        "schemaType": "manual"
+      },
+      "position": [
+        1200,
+        800
+      ],
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3
+    },
+    {
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dil4wMogas9aOWKP",
+          "name": "Abdullah Kynetic account"
+        }
+      },
+      "id": "0398df62-95f3-4279-b952-b8cd3fd9f1f3",
+      "name": "Send a message1",
+      "parameters": {
+        "message": "={{ $json.output }}",
+        "options": {},
+        "sendTo": "abdullah@kyneticai.com",
+        "subject": "[Kynetic Restoration] EMERGENCY"
+      },
+      "position": [
+        1792,
+        1904
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "webhookId": "036e7c1e-11ac-4635-a8a2-1a5614bbd821"
+    },
+    {
+      "id": "4a15230d-0e9a-48f0-8c71-fb1c0bcab190",
+      "name": "AI Agent2",
+      "parameters": {
+        "options": {
+          "systemMessage": "You are the AI receptionist for Kynetic Restoration, a water damage restoration company in Austin, Texas, responding to an EMERGENCY call. Write a short, calm, reassuring SMS confirming the emergency was received and that the team is on it. Prioritize urgency and reassurance over sales language. No emojis."
+        },
+        "promptType": "define",
+        "text": "=Define the SMS message for an emergency report, make sure to return the content of the message only, don't return the leading sentence.\n\nFull name: {{ $('Log Emergency').item.json.body.name }}\nPhone number: {{ $('Log Emergency').item.json.body.phone_number }}\nLocation: {{ $('Log Emergency').item.json.body.location }}\nEmergency details: {{ $('Log Emergency').item.json.body.emergency_details }}"
+      },
+      "position": [
+        816,
+        1904
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2
+    },
+    {
+      "id": "682ca8b4-36a2-40cc-924a-83f127035705",
+      "name": "AI Agent3",
+      "parameters": {
+        "options": {
+          "systemMessage": "You are the operations assistant for Kynetic Restoration. Write an urgent internal HTML email alerting the team to a new emergency case that needs dispatch right away. Professional, concise, scannable at a glance."
+        },
+        "promptType": "define",
+        "text": "=Define the HTML email content with styles, without any leading sentences for that message. Make sure that the response is in a valid HTML format, start with <!DOCTYPE html>, without any wrapper (e.g. ``` or ```html)\n\nFull name: {{ $('Log Emergency').item.json.body.name }}\nPhone number: {{ $('Log Emergency').item.json.body.phone_number }}\nLocation: {{ $('Log Emergency').item.json.body.location }}\nEmergency details: {{ $('Log Emergency').item.json.body.emergency_details }}"
+      },
+      "position": [
+        1440,
+        1904
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2
+    },
+    {
+      "id": "be79b1a5-4493-4e55-88f6-fe0ecfd84507",
+      "name": "AI Agent4",
+      "parameters": {
+        "options": {
+          "systemMessage": "You are the post-call reconciliation agent for Kynetic Restoration's AI voice receptionist. You run once after every call ends, as a safety net. You never speak to customers. Your only job is to read the call transcript, check it against the caller's existing Notion records using your Get tools, and fix anything that should have been logged live but was not or was logged incompletely. Always call the matching Get tool before any Create or Update, matched by phone number, to avoid creating duplicate records."
+        },
+        "promptType": "define",
+        "text": "=Analyze the conversation to identify any failed tools , calling functions with missing fields or the conversation ending suddenly; we need to retry them here. Possible cases:\n- Failed to create a job\n- Created a job with a missing booking link for \"Appointment booked\", with format \"https://app.cal.com/booking/${booking_uid}\"\n- Failed to create an inquiry (For example some inquiries about the services or anything else, but hangs up, we want to capture this to try contact them again)\n- Failed to create an emergency case\n\nNote: Always get the list of records first, before making any updates to prevent duplication.\n\nNote: If someone inquries about our services and seems interested, but nothing happends, we NEED to log this as an inquiry for the team, this is busines CRITICAL.\n\nTranscript with tool callings:\n```\n{{ $json.body.call.transcript_with_tool_calls.map(item => `role: ${item.role}, content: ${item.content || JSON.stringify(item)}`).join('\\n') }}\n```"
+      },
+      "position": [
+        880,
+        2608
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "twilioApi": {
+          "id": "aoIjAKkkoPR85aOq",
+          "name": "Twilio account"
+        }
+      },
+      "id": "f3308f9b-716c-420f-a514-80c8acdc6bef",
+      "name": "Send an SMS message",
+      "parameters": {
+        "from": "+16692660586",
+        "message": "={{ $json.output }}",
+        "options": {},
+        "to": "={{ $('Log Emergency').item.json.body.phone_number }}"
+      },
+      "position": [
+        1200,
+        1904
+      ],
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1
+    },
+    {
+      "id": "aa8b9511-9657-4fe4-a0fc-ada44d55edb8",
+      "name": "Post-call Analysis",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {},
+        "path": "596d4180-8295-497c-84f9-4481ed0ab8d3"
+      },
+      "position": [
+        144,
+        2608
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "webhookId": "596d4180-8295-497c-84f9-4481ed0ab8d3"
+    },
+    {
+      "id": "0af314d3-e77b-4e94-baf8-d8d4ea3d28f7",
+      "name": "If",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "1450777b-94c8-4081-bd89-5d2c28e77957",
+              "leftValue": "={{ $json.body.event }}",
+              "operator": {
+                "name": "filter.operator.equals",
+                "operation": "equals",
+                "type": "string"
+              },
+              "rightValue": "call_analyzed"
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        368,
+        2608
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "5af6b01f-62d4-42dc-b787-efe881942a0c",
+      "name": "Get Jobs by Phone (Notion)",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "cachedResultName": "Jobs",
+          "mode": "id",
+          "value": "29a4af8d-cbd0-4fd9-abfb-4d3c1edc6b94"
+        },
+        "filterType": "manual",
+        "filters": {
+          "conditions": [
+            {
+              "condition": "equals",
+              "key": "Phone|phone_number",
+              "phoneNumberValue": "={{ $json.body.phone_number }}",
+              "type": "phone_number"
+            }
+          ]
+        },
+        "matchType": "allFilters",
+        "operation": "getAll",
+        "options": {},
+        "resource": "databasePage",
+        "returnAll": true
+      },
+      "position": [
+        304,
+        96
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "0e540871-07c3-4770-a2ca-7bb754701c58",
+      "name": "Create Contact - Job Creation",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "cachedResultName": "Contacts",
+          "mode": "id",
+          "value": "ab554e24-f46f-47fe-aab1-3d121823e0a8"
+        },
+        "options": {},
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Name|title",
+              "title": "={{ $('Job Creation').item.json.body.name || 'Unknown Caller' }}"
+            },
+            {
+              "key": "Phone|phone_number",
+              "phoneValue": "={{ $('Job Creation').item.json.body.phone_number }}"
+            },
+            {
+              "emailValue": "={{ $('Job Creation').item.json.body.email || null }}",
+              "key": "Email|email"
+            },
+            {
+              "key": "Notes|rich_text",
+              "textContent": "Auto-created from a booking call via the Kynetic Restoration voice receptionist."
+            },
+            {
+              "date": "={{ $now.toISO() }}",
+              "key": "Last Contact|date"
+            },
+            {
+              "key": "Client|relation",
+              "relationValue": [
+                "3d6de1f1-a268-818b-a345-f245d3e768e6"
+              ]
+            }
+          ]
+        },
+        "resource": "databasePage"
+      },
+      "position": [
+        368,
+        576
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "607c5218-39d5-481c-a657-da024938688a",
+      "name": "Create Job",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "cachedResultName": "Jobs",
+          "mode": "id",
+          "value": "29a4af8d-cbd0-4fd9-abfb-4d3c1edc6b94"
+        },
+        "options": {},
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Job|title",
+              "title": "={{ ($('Job Creation').item.json.body.name || 'Unknown') + ' - ' + ($('Job Creation').item.json.body.service_type || 'Water Damage') }}"
+            },
+            {
+              "key": "Status|select",
+              "selectValue": "={{ $('Job Creation').item.json.body.appointment_booked ? 'Booked' : 'New' }}"
+            },
+            {
+              "key": "Service Type|rich_text",
+              "textContent": "={{ $('Job Creation').item.json.body.service_type }}"
+            },
+            {
+              "key": "Location|rich_text",
+              "textContent": "={{ $('Job Creation').item.json.body.location }}"
+            },
+            {
+              "key": "Location Type|select",
+              "selectValue": "={{ ($('Job Creation').item.json.body.location_type || 'Residential') }}"
+            },
+            {
+              "key": "Preferred Time|rich_text",
+              "textContent": "={{ $('Job Creation').item.json.body.preferred_time }}"
+            },
+            {
+              "key": "Phone|phone_number",
+              "phoneValue": "={{ $('Job Creation').item.json.body.phone_number }}"
+            },
+            {
+              "key": "Booking URL|url",
+              "urlValue": "={{ (typeof $('Job Creation').item.json.body.appointment_booked === 'string' && $('Job Creation').item.json.body.appointment_booked.startsWith('http')) ? $('Job Creation').item.json.body.appointment_booked : null }}"
+            },
+            {
+              "key": "Client|relation",
+              "relationValue": [
+                "3d6de1f1-a268-818b-a345-f245d3e768e6"
+              ]
+            },
+            {
+              "key": "Contact|relation",
+              "relationValue": [
+                "={{ $json.id }}"
+              ]
+            }
+          ]
+        },
+        "resource": "databasePage"
+      },
+      "position": [
+        592,
+        576
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "00436483-cf04-4e72-8ec0-87f0aae59c58",
+      "name": "Create Call - Job Creation",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "cachedResultName": "Calls",
+          "mode": "id",
+          "value": "3f2ad560-8a67-42c9-b9bc-ab348d8de6fb"
+        },
+        "options": {},
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Call|title",
+              "title": "={{ 'Job Booking - ' + ($('Job Creation').item.json.body.name || 'Unknown') + ' - ' + $('Job Creation').item.json.body.phone_number }}"
+            },
+            {
+              "key": "Call Type|select",
+              "selectValue": "Job Booking"
+            },
+            {
+              "key": "Status|select",
+              "selectValue": "Logged"
+            },
+            {
+              "key": "Phone|phone_number",
+              "phoneValue": "={{ $('Job Creation').item.json.body.phone_number }}"
+            },
+            {
+              "key": "Details|rich_text",
+              "textContent": "={{ 'Service: ' + ($('Job Creation').item.json.body.service_type || '') + ' | Location: ' + ($('Job Creation').item.json.body.location || '') + ' | Preferred: ' + ($('Job Creation').item.json.body.preferred_time || '') }}"
+            },
+            {
+              "key": "Retell Call ID|rich_text",
+              "textContent": "={{ $('Job Creation').item.json.body.call?.call_id || $('Job Creation').item.json.body.call_id || '' }}"
+            },
+            {
+              "key": "Client|relation",
+              "relationValue": [
+                "3d6de1f1-a268-818b-a345-f245d3e768e6"
+              ]
+            },
+            {
+              "key": "Contact|relation",
+              "relationValue": [
+                "={{ $('Create Contact - Job Creation').item.json.id }}"
+              ]
+            }
+          ]
+        },
+        "resource": "databasePage"
+      },
+      "position": [
+        816,
+        576
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "a6c8d494-fe0d-46c3-ac00-dea1f4bdce5c",
+      "name": "Create Contact - Inquiry",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "cachedResultName": "Contacts",
+          "mode": "id",
+          "value": "ab554e24-f46f-47fe-aab1-3d121823e0a8"
+        },
+        "options": {},
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Name|title",
+              "title": "={{ $('Log Inquiry').item.json.body.name || 'Unknown Caller' }}"
+            },
+            {
+              "key": "Phone|phone_number",
+              "phoneValue": "={{ $('Log Inquiry').item.json.body.phone_number }}"
+            },
+            {
+              "emailValue": "={{ $('Log Inquiry').item.json.body.email || null }}",
+              "key": "Email|email"
+            },
+            {
+              "key": "Notes|rich_text",
+              "textContent": "Auto-created from an inquiry call via the Kynetic Restoration voice receptionist."
+            },
+            {
+              "date": "={{ $now.toISO() }}",
+              "key": "Last Contact|date"
+            },
+            {
+              "key": "Client|relation",
+              "relationValue": [
+                "3d6de1f1-a268-818b-a345-f245d3e768e6"
+              ]
+            }
+          ]
+        },
+        "resource": "databasePage"
+      },
+      "position": [
+        368,
+        1216
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "74d855da-e6d3-42a1-be1e-13d8c5b547b7",
+      "name": "Create Call - Inquiry",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "cachedResultName": "Calls",
+          "mode": "id",
+          "value": "3f2ad560-8a67-42c9-b9bc-ab348d8de6fb"
+        },
+        "options": {},
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Call|title",
+              "title": "={{ 'Inquiry - ' + ($('Log Inquiry').item.json.body.name || 'Unknown') + ' - ' + $('Log Inquiry').item.json.body.phone_number }}"
+            },
+            {
+              "key": "Call Type|select",
+              "selectValue": "Inquiry"
+            },
+            {
+              "key": "Status|select",
+              "selectValue": "Logged"
+            },
+            {
+              "key": "Phone|phone_number",
+              "phoneValue": "={{ $('Log Inquiry').item.json.body.phone_number }}"
+            },
+            {
+              "key": "Details|rich_text",
+              "textContent": "={{ $('Log Inquiry').item.json.body.inquiry_details }}"
+            },
+            {
+              "key": "Retell Call ID|rich_text",
+              "textContent": "={{ $('Log Inquiry').item.json.body.call?.call_id || $('Log Inquiry').item.json.body.call_id || '' }}"
+            },
+            {
+              "key": "Client|relation",
+              "relationValue": [
+                "3d6de1f1-a268-818b-a345-f245d3e768e6"
+              ]
+            },
+            {
+              "key": "Contact|relation",
+              "relationValue": [
+                "={{ $('Create Contact - Inquiry').item.json.id }}"
+              ]
+            }
+          ]
+        },
+        "resource": "databasePage"
+      },
+      "position": [
+        592,
+        1216
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "1b61782c-fb0b-4d14-8d8b-7fbf4f826021",
+      "name": "Create Contact - Emergency",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "cachedResultName": "Contacts",
+          "mode": "id",
+          "value": "ab554e24-f46f-47fe-aab1-3d121823e0a8"
+        },
+        "options": {},
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Name|title",
+              "title": "={{ $('Log Emergency').item.json.body.name || 'Unknown Caller' }}"
+            },
+            {
+              "key": "Phone|phone_number",
+              "phoneValue": "={{ $('Log Emergency').item.json.body.phone_number }}"
+            },
+            {
+              "key": "Notes|rich_text",
+              "textContent": "Auto-created from an EMERGENCY call via the Kynetic Restoration voice receptionist."
+            },
+            {
+              "date": "={{ $now.toISO() }}",
+              "key": "Last Contact|date"
+            },
+            {
+              "key": "Client|relation",
+              "relationValue": [
+                "3d6de1f1-a268-818b-a345-f245d3e768e6"
+              ]
+            }
+          ]
+        },
+        "resource": "databasePage"
+      },
+      "position": [
+        368,
+        1904
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "e4ab4d9b-50b0-45b0-bf6a-040e16b206d0",
+      "name": "Create Call - Emergency",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "cachedResultName": "Calls",
+          "mode": "id",
+          "value": "3f2ad560-8a67-42c9-b9bc-ab348d8de6fb"
+        },
+        "options": {},
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Call|title",
+              "title": "={{ 'EMERGENCY - ' + ($('Log Emergency').item.json.body.name || 'Unknown') + ' - ' + $('Log Emergency').item.json.body.phone_number }}"
+            },
+            {
+              "key": "Call Type|select",
+              "selectValue": "Emergency"
+            },
+            {
+              "key": "Status|select",
+              "selectValue": "Logged"
+            },
+            {
+              "key": "Phone|phone_number",
+              "phoneValue": "={{ $('Log Emergency').item.json.body.phone_number }}"
+            },
+            {
+              "key": "Details|rich_text",
+              "textContent": "={{ $('Log Emergency').item.json.body.emergency_details }}"
+            },
+            {
+              "key": "Retell Call ID|rich_text",
+              "textContent": "={{ $('Log Emergency').item.json.body.call?.call_id || $('Log Emergency').item.json.body.call_id || '' }}"
+            },
+            {
+              "key": "Client|relation",
+              "relationValue": [
+                "3d6de1f1-a268-818b-a345-f245d3e768e6"
+              ]
+            },
+            {
+              "key": "Contact|relation",
+              "relationValue": [
+                "={{ $('Create Contact - Emergency').item.json.id }}"
+              ]
+            }
+          ]
+        },
+        "resource": "databasePage"
+      },
+      "position": [
+        592,
+        1904
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "googlePalmApi": {
+          "__aiGatewayManaged": true,
+          "id": null,
+          "name": "Gateway credits"
+        }
+      },
+      "id": "37c45a92-39ac-45f5-b3e5-05b94f4bf360",
+      "name": "Google Gemini Chat Model",
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "position": [
+        816,
+        1440
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "googlePalmApi": {
+          "__aiGatewayManaged": true,
+          "id": null,
+          "name": "Gateway credits"
+        }
+      },
+      "id": "a32f5feb-0a20-47b0-ab36-ee21d6b5bf1d",
+      "name": "Google Gemini Chat Model1",
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "position": [
+        960,
+        800
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "googlePalmApi": {
+          "__aiGatewayManaged": true,
+          "id": null,
+          "name": "Gateway credits"
+        }
+      },
+      "id": "f6bf54a7-15e4-45f5-9c12-6a29a73b916f",
+      "name": "Google Gemini Chat Model2",
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "position": [
+        816,
+        2128
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "googlePalmApi": {
+          "__aiGatewayManaged": true,
+          "id": null,
+          "name": "Gateway credits"
+        }
+      },
+      "id": "04ae1d8f-5e2f-47eb-8ef4-bd5c56d5c008",
+      "name": "Google Gemini Chat Model3",
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "position": [
+        1440,
+        2128
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "googlePalmApi": {
+          "__aiGatewayManaged": true,
+          "id": null,
+          "name": "Gateway credits"
+        }
+      },
+      "id": "3bf32488-9f2b-48f4-926b-e799ff2fb91a",
+      "name": "Google Gemini Chat Model4",
+      "parameters": {
+        "options": {}
+      },
+      "position": [
+        672,
+        2816
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1
+    },
+    {
+      "id": "1f7ce8ab-d72d-4d5c-831a-fcd8b12c4fef",
+      "name": "Sticky Note3",
+      "parameters": {
+        "color": 2,
+        "content": "## Create a new job\nCreate Contact → Create Job → Create Call, then draft and send an SMS confirming the appointment.",
+        "height": 540,
+        "width": 1700
+      },
+      "position": [
+        0,
+        416
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "43cc0770-ebce-4aac-bc22-a02c78d99cd8",
+      "name": "Sticky Note2",
+      "parameters": {
+        "color": 2,
+        "content": "## Log the inquiry\nCreate Contact → Create Call, then draft and send an email to the business.",
+        "height": 540,
+        "width": 1450
+      },
+      "position": [
+        0,
+        1088
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "4592845d-8993-4b0a-a5a4-c43ac1017375",
+      "name": "Sticky Note1",
+      "parameters": {
+        "color": 2,
+        "content": "## Log the emergency case\nCreate Contact → Create Call, then draft and send an SMS to the caller and an email to the business.",
+        "height": 540,
+        "width": 2050
+      },
+      "position": [
+        0,
+        1760
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "369ec532-ac70-4db6-a9fa-6cddd4a8d6ea",
+      "name": "Sticky Note4",
+      "parameters": {
+        "color": 2,
+        "content": "## Post-call analysis (DISABLED)\nAnalyze the transcript to catch anything that failed to log. Pending rebuild on Notion - currently disabled.",
+        "height": 500,
+        "width": 1150
+      },
+      "position": [
+        0,
+        2464
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "b542e52e-f915-46d0-a3d3-491591ca7b44",
+      "name": "Get Jobs by Phone (Tool)",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "cachedResultName": "Jobs",
+          "mode": "id",
+          "value": "29a4af8d-cbd0-4fd9-abfb-4d3c1edc6b94"
+        },
+        "filterType": "manual",
+        "filters": {
+          "conditions": [
+            {
+              "condition": "equals",
+              "key": "Phone|phone_number",
+              "phoneNumberValue": "={{ $fromAI('phone_number', 'Caller phone number in E.164 format', 'string') }}",
+              "type": "phone_number"
+            }
+          ]
+        },
+        "matchType": "allFilters",
+        "operation": "getAll",
+        "options": {},
+        "resource": "databasePage",
+        "returnAll": true
+      },
+      "position": [
+        400,
+        2960
+      ],
+      "type": "n8n-nodes-base.notionTool",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "e5a974aa-9264-4f5f-abb5-d50f235c14c7",
+      "name": "Get Emergency Calls by Phone (Tool)",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "cachedResultName": "Calls",
+          "mode": "id",
+          "value": "3f2ad560-8a67-42c9-b9bc-ab348d8de6fb"
+        },
+        "filterType": "manual",
+        "filters": {
+          "conditions": [
+            {
+              "condition": "equals",
+              "key": "Phone|phone_number",
+              "phoneNumberValue": "={{ $fromAI('phone_number', 'Caller phone number in E.164 format', 'string') }}",
+              "type": "phone_number"
+            },
+            {
+              "condition": "equals",
+              "key": "Call Type|select",
+              "selectValue": "Emergency",
+              "type": "select"
+            }
+          ]
+        },
+        "matchType": "allFilters",
+        "operation": "getAll",
+        "options": {},
+        "resource": "databasePage",
+        "returnAll": true
+      },
+      "position": [
+        656,
+        2960
+      ],
+      "type": "n8n-nodes-base.notionTool",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "bd1d53ed-55aa-4768-bb39-182b73f00766",
+      "name": "Get Inquiry Calls by Phone (Tool)",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "cachedResultName": "Calls",
+          "mode": "id",
+          "value": "3f2ad560-8a67-42c9-b9bc-ab348d8de6fb"
+        },
+        "filterType": "manual",
+        "filters": {
+          "conditions": [
+            {
+              "condition": "equals",
+              "key": "Phone|phone_number",
+              "phoneNumberValue": "={{ $fromAI('phone_number', 'Caller phone number in E.164 format', 'string') }}",
+              "type": "phone_number"
+            },
+            {
+              "condition": "equals",
+              "key": "Call Type|select",
+              "selectValue": "Inquiry",
+              "type": "select"
+            }
+          ]
+        },
+        "matchType": "allFilters",
+        "operation": "getAll",
+        "options": {},
+        "resource": "databasePage",
+        "returnAll": true
+      },
+      "position": [
+        912,
+        2960
+      ],
+      "type": "n8n-nodes-base.notionTool",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "07d592f2-8ff7-47d2-94e2-1aff09ae7e36",
+      "name": "Update Job (Tool)",
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "options": {},
+        "pageId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $fromAI('job_page_id', 'Notion page ID of the job to update, from Get Jobs by Phone', 'string') }}"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Booking URL|url",
+              "urlValue": "={{ $fromAI('booking_url', 'Cal.com booking URL, format https://app.cal.com/booking/{booking_uid}', 'string') }}"
+            },
+            {
+              "key": "Status|select",
+              "selectValue": "={{ $fromAI('status', 'Job status: New or Booked', 'string') }}"
+            }
+          ]
+        },
+        "resource": "databasePage"
+      },
+      "position": [
+        400,
+        3152
+      ],
+      "type": "n8n-nodes-base.notionTool",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "e8fe1176-ba25-40d7-9bde-90914a517d46",
+      "name": "Create Emergency Call (Tool)",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "cachedResultName": "Calls",
+          "mode": "id",
+          "value": "3f2ad560-8a67-42c9-b9bc-ab348d8de6fb"
+        },
+        "options": {},
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Call|title",
+              "title": "={{ $fromAI('title', 'Call record title, e.g. EMERGENCY - Name - Phone', 'string') }}"
+            },
+            {
+              "key": "Call Type|select",
+              "selectValue": "Emergency"
+            },
+            {
+              "key": "Status|select",
+              "selectValue": "Logged"
+            },
+            {
+              "key": "Phone|phone_number",
+              "phoneValue": "={{ $fromAI('phone_number', 'Caller phone number', 'string') }}"
+            },
+            {
+              "key": "Details|rich_text",
+              "textContent": "={{ $fromAI('details', 'Emergency details from the transcript', 'string') }}"
+            },
+            {
+              "key": "Retell Call ID|rich_text",
+              "textContent": "={{ $fromAI('retell_call_id', 'Retell call_id from the payload', 'string') }}"
+            },
+            {
+              "key": "Client|relation",
+              "relationValue": [
+                "3d6de1f1-a268-818b-a345-f245d3e768e6"
+              ]
+            }
+          ]
+        },
+        "resource": "databasePage"
+      },
+      "position": [
+        656,
+        3152
+      ],
+      "type": "n8n-nodes-base.notionTool",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "5b89940d-9e60-4f6c-9d9d-81103999d248",
+      "name": "Create Inquiry Call (Tool)",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "cachedResultName": "Calls",
+          "mode": "id",
+          "value": "3f2ad560-8a67-42c9-b9bc-ab348d8de6fb"
+        },
+        "options": {},
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Call|title",
+              "title": "={{ $fromAI('title', 'Call record title, e.g. Inquiry - Name - Phone', 'string') }}"
+            },
+            {
+              "key": "Call Type|select",
+              "selectValue": "Inquiry"
+            },
+            {
+              "key": "Status|select",
+              "selectValue": "Logged"
+            },
+            {
+              "key": "Phone|phone_number",
+              "phoneValue": "={{ $fromAI('phone_number', 'Caller phone number', 'string') }}"
+            },
+            {
+              "key": "Details|rich_text",
+              "textContent": "={{ $fromAI('details', 'Inquiry details from the transcript', 'string') }}"
+            },
+            {
+              "key": "Retell Call ID|rich_text",
+              "textContent": "={{ $fromAI('retell_call_id', 'Retell call_id from the payload', 'string') }}"
+            },
+            {
+              "key": "Client|relation",
+              "relationValue": [
+                "3d6de1f1-a268-818b-a345-f245d3e768e6"
+              ]
+            }
+          ]
+        },
+        "resource": "databasePage"
+      },
+      "position": [
+        912,
+        3152
+      ],
+      "type": "n8n-nodes-base.notionTool",
+      "typeVersion": 2.2
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "binaryMode": "separate",
+    "executionOrder": "v1"
+  }
+}

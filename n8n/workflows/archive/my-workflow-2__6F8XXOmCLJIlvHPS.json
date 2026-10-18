@@ -1,0 +1,54 @@
+{
+  "active": false,
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Code",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "6F8XXOmCLJIlvHPS",
+  "name": "My workflow 2",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "3b60e41c-47dd-44e3-9198-95ca39c41890",
+      "name": "Webhook",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {},
+        "path": "63f93b9e-ca6e-4707-9a0b-ed401ddcf2d7"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "63f93b9e-ca6e-4707-9a0b-ed401ddcf2d7"
+    },
+    {
+      "id": "1eabfe64-4d12-40b2-b88f-0434a06a65d2",
+      "name": "Code",
+      "parameters": {
+        "language": "python",
+        "pythonCode": "# Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor item in _input.all():\n  item.json.myNewField = 1\nreturn _input.all()"
+      },
+      "position": [
+        208,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    }
+  ],
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

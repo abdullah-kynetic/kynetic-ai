@@ -1,0 +1,257 @@
+{
+  "active": false,
+  "connections": {
+    "Get Contact Client": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Send Reactivation SMS",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Stale Contacts": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Loop Contacts",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Loop Contacts": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond OK",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Get Contact Client",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Reactivation Batch Trigger": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Stale Contacts",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Send Reactivation SMS": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Update Last Contact",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Update Last Contact": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Loop Contacts",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "El2ku9XRVIwrbMBQ",
+  "name": "Kynetic — Reactivation Sender",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "50724553-9754-4ae5-bd90-5b7bf19af2d0",
+      "name": "Reactivation Batch Trigger",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {},
+        "path": "reactivation-sender",
+        "responseMode": "lastNode"
+      },
+      "position": [
+        0,
+        192
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "6c8b2526-738e-44c1-9a80-cc816a4d70e9"
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "1cb0310c-f68d-44dd-ab4c-1937797ea8c5",
+      "name": "Get Stale Contacts",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "ab554e24-f46f-47fe-aab1-3d121823e0a8"
+        },
+        "filterType": "manual",
+        "filters": {
+          "conditions": [
+            {
+              "condition": "before",
+              "date": "={{ $json.body.cutoff_iso }}",
+              "key": "Last Contact|date"
+            }
+          ]
+        },
+        "matchType": "allFilters",
+        "operation": "getAll",
+        "resource": "databasePage",
+        "returnAll": true,
+        "simple": true
+      },
+      "position": [
+        224,
+        192
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "3ec99412-7ac0-4998-924f-106e0aa6c1aa",
+      "name": "Respond OK",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"status\": \"reactivation_batch_done\" } }}"
+      },
+      "position": [
+        672,
+        0
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "6f543fa4-e064-41fb-8420-786ab3777516",
+      "name": "Get Contact Client",
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "get",
+        "pageId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.property_client[0] }}"
+        },
+        "resource": "databasePage",
+        "simple": true
+      },
+      "position": [
+        672,
+        192
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "twilioApi": {
+          "id": "aoIjAKkkoPR85aOq",
+          "name": "Twilio account"
+        }
+      },
+      "id": "bc07da10-0623-499b-ac49-2b460b27baeb",
+      "name": "Send Reactivation SMS",
+      "parameters": {
+        "from": "={{ $json.property_assigned_twilio_number }}",
+        "message": "=Hi {{ $(\"Loop Contacts\").item.json.property_name }}, it has been a while! {{ $json.property_voice_agent_name }} here from {{ $json.property_client_name }} — if you ever need {{ $json.property_niche }} help again, we would love to hear from you. Reply STOP to opt out.",
+        "operation": "send",
+        "resource": "sms",
+        "to": "={{ $(\"Loop Contacts\").item.json.property_phone }}"
+      },
+      "position": [
+        896,
+        192
+      ],
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "b3007e57-a361-4688-b889-8b50f726c772",
+      "name": "Update Last Contact",
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "pageId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $(\"Loop Contacts\").item.json.id }}"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "date": "={{ $now.toISO() }}",
+              "includeTime": true,
+              "key": "Last Contact|date",
+              "type": "date"
+            }
+          ]
+        },
+        "resource": "databasePage",
+        "simple": true
+      },
+      "position": [
+        1120,
+        272
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "c01d4119-4fb9-4a4e-8180-d1bbc1545251",
+      "name": "Loop Contacts",
+      "parameters": {
+        "batchSize": 1
+      },
+      "position": [
+        448,
+        192
+      ],
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "executionOrder": "v1"
+  }
+}

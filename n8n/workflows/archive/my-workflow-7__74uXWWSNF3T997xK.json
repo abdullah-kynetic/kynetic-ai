@@ -1,0 +1,592 @@
+{
+  "active": false,
+  "connections": {
+    "Code": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create a record",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Run an Actor and get dataset",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Edit Fields",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Run an Actor and get dataset": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Code",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "74uXWWSNF3T997xK",
+  "name": "My workflow 7",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "edd18615-d08c-47dd-9d48-35ae505105a0",
+      "name": "On form submission",
+      "parameters": {
+        "formDescription": "Enter search details to scrape job postings from Indeed",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "title",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "location",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "limit",
+              "fieldType": "number",
+              "requiredField": true
+            }
+          ]
+        },
+        "formTitle": "Kynetic AI Lead Scraper Form",
+        "options": {
+          "buttonLabel": "Submit"
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "webhookId": "1fca7c8e-b7d0-4592-a1f5-a550ce601dcb"
+    },
+    {
+      "id": "f5267fa9-a0be-47b5-8fd1-710b5289d988",
+      "name": "Edit Fields",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cd929a5d-3206-4ba2-bf57-d948b146daa9",
+              "name": "title",
+              "type": "string",
+              "value": "={{ $json.title }}"
+            },
+            {
+              "id": "b8e54dc1-e75d-48b5-a62f-2c14ee29aff5",
+              "name": "location",
+              "type": "string",
+              "value": "={{ $json.location }}"
+            },
+            {
+              "id": "c0f87269-b085-46ad-a550-e2738d8f9d54",
+              "name": "limit",
+              "type": "number",
+              "value": "={{ $json.limit }}"
+            },
+            {
+              "id": "cac78854-98ea-4f4f-a876-b2d7b9def679",
+              "name": "country",
+              "type": "string",
+              "value": "us"
+            },
+            {
+              "id": "7aacc19a-debc-4748-af26-eb519138d339",
+              "name": "datePosted",
+              "type": "string",
+              "value": "7"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        224,
+        0
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "credentials": {
+        "apifyOAuth2Api": {
+          "id": "AX15KhJluEUmmjDz",
+          "name": "KyneticAI"
+        }
+      },
+      "id": "e49b8623-f5d9-4572-9a9f-653f331f5bbd",
+      "name": "Run an Actor and get dataset",
+      "parameters": {
+        "actorId": {
+          "__rl": true,
+          "cachedResultName": "💡 Indeed Jobs Scraper (valig/indeed-jobs-scraper)",
+          "cachedResultUrl": "https://console.apify.com/actors/TrtlecxAsNRbKl1na/input",
+          "mode": "list",
+          "value": "TrtlecxAsNRbKl1na"
+        },
+        "authentication": "apifyOAuth2Api",
+        "build": "latest",
+        "customBody": "={\"country\": \"{{ $json.country }}\",\n\"title\": \"{{ $json.title }}\",\n\"location\": \"{{ $json.location }}\",\n\"limit\": {{ $json.limit }},\n\"datePosted\": \"{{ $json.datePosted }}\"}",
+        "operation": "Run actor and get dataset"
+      },
+      "position": [
+        448,
+        0
+      ],
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1
+    },
+    {
+      "id": "aa171eb0-79d1-4ccb-affa-900501ac7808",
+      "name": "Code",
+      "parameters": {
+        "jsCode": "// Extract and format all available structured data\nconst items = [];\n\nfor (const item of $input.all()) {\n  const data = item.json;\n  \n  // Skip if missing critical data\n  if (!data.employer || !data.title) continue;\n  \n  // Extract location\n  const city = data.location?.city || '';\n  const state = data.location?.admin1Code || '';\n  const location = `${city}, ${state}`.trim().replace(/^,|,$/g, '') || 'Location unknown';\n  \n  // Extract salary\n  let salary = 'Not specified';\n  if (data.baseSalary) {\n    const min = data.baseSalary.min || '';\n    const max = data.baseSalary.max || '';\n    const unit = data.baseSalary.unitOfWork || 'HOUR';\n    if (min && max) {\n      salary = `$${min}-${max}/${unit.toLowerCase()}`;\n    } else if (min) {\n      salary = `$${min}/${unit.toLowerCase()}`;\n    }\n  }\n  \n  // Extract job type\n  let jobType = 'Not specified';\n  if (data.jobTypes && Object.keys(data.jobTypes).length > 0) {\n    jobType = Object.values(data.jobTypes)[0];\n  }\n  \n  // Extract benefits (format as bullet list)\n  let benefits = 'Not listed';\n  if (data.benefits && Object.keys(data.benefits).length > 0) {\n    const benefitsList = Object.values(data.benefits);\n    benefits = benefitsList.join('\\n• ');\n    benefits = '• ' + benefits;\n  }\n  \n  // Extract key attributes (top 10)\n  let keyAttributes = '';\n  if (data.attributes && Object.keys(data.attributes).length > 0) {\n    const attrList = Object.values(data.attributes).slice(0, 10);\n    keyAttributes = attrList.join(', ');\n  }\n  \n  // Determine industry from multiple sources\n  const industry = determineIndustry(data);\n  \n  // Calculate priority score\n  const priorityScore = calculatePriority(data, industry, jobType);\n  \n  // Format date posted\n  let datePosted = '';\n  if (data.datePublished) {\n    const date = new Date(data.datePublished);\n    datePosted = date.toISOString().split('T')[0];\n  }\n  \n  // Build comprehensive notes\n  const notes = buildNotes(data, salary, jobType, benefits);\n  \n  // Company URLs\n  const companyPageUrl = data.employer?.companyPageUrl || '';\n  const jobUrl = data.url || data.jobUrl || '';\n  \n  items.push({\n    json: {\n      businessName: data.employer.name || 'Unknown Company',\n      jobTitle: data.title || 'Unknown Position',\n      industry: industry,\n      location: location,\n      postalCode: data.location?.postalCode || '',\n      streetAddress: data.location?.streetAddress || '',\n      salary: salary,\n      jobType: jobType,\n      benefits: benefits,\n      jobUrl: jobUrl,\n      companyPageUrl: companyPageUrl,\n      datePosted: datePosted,\n      keyAttributes: keyAttributes,\n      source: 'Indeed',\n      status: 'New Lead',\n      priorityScore: priorityScore,\n      notes: notes\n    }\n  });\n}\n\nfunction determineIndustry(data) {\n  if (data.occupations) {\n    const occString = JSON.stringify(data.occupations).toLowerCase();\n    if (occString.includes('dental')) return 'Dental';\n    if (occString.includes('medical receptionist')) return 'Medical';\n    if (occString.includes('patient access')) return 'Medical';\n    if (occString.includes('healthcare')) return 'Medical';\n  }\n  \n  const companyName = (data.employer?.name || '').toLowerCase();\n  if (companyName.includes('dental')) return 'Dental';\n  if (companyName.includes('plastic surgery')) return 'Med Spa';\n  if (companyName.includes('med spa') || companyName.includes('medspa')) return 'Med Spa';\n  if (companyName.includes('urgent care')) return 'Medical';\n  if (companyName.includes('clinic')) return 'Medical';\n  if (companyName.includes('medical')) return 'Medical';\n  if (companyName.includes('restaurant')) return 'Restaurant';\n  if (companyName.includes('law')) return 'Law Firm';\n  if (companyName.includes('gym') || companyName.includes('fitness')) return 'Gym';\n  if (companyName.includes('salon') || companyName.includes('spa')) return 'Salon';\n  \n  const title = (data.title || '').toLowerCase();\n  if (title.includes('dental')) return 'Dental';\n  if (title.includes('medical')) return 'Medical';\n  \n  return 'Other';\n}\n\nfunction calculatePriority(data, industry, jobType) {\n  let score = 5;\n  \n  if (industry === 'Dental') score += 3;\n  if (industry === 'Med Spa') score += 3;\n  if (industry === 'Medical') score += 2;\n  if (industry === 'Law Firm') score += 1;\n  \n  if (data.datePublished) {\n    const postDate = new Date(data.datePublished);\n    const now = new Date();\n    const hoursSince = (now - postDate) / (1000 * 60 * 60);\n    if (hoursSince < 24) score += 2;\n    else if (hoursSince < 72) score += 1;\n  }\n  \n  if (jobType === 'Full-time') score += 1;\n  \n  if (data.baseSalary && data.baseSalary.min >= 20) score += 1;\n  \n  return Math.min(score, 10);\n}\n\nfunction buildNotes(data, salary, jobType, benefits) {\n  const companyName = data.employer?.name || 'Company';\n  const title = data.title || 'Position';\n  \n  let notes = `${title} at ${companyName}\\n\\n`;\n  notes += `💰 Salary: ${salary}\\n`;\n  notes += `⏰ Type: ${jobType}\\n\\n`;\n  \n  if (benefits !== 'Not listed') {\n    notes += `Benefits:\\n${benefits}\\n\\n`;\n  }\n  \n  if (data.description && data.description.text) {\n    const preview = data.description.text.substring(0, 400).trim();\n    notes += `Description:\\n${preview}...\\n\\n`;\n  }\n  \n  if (data.employer?.companyPageUrl) {\n    notes += `Indeed Company Page: ${data.employer.companyPageUrl}\\n`;\n  }\n  \n  return notes;\n}\n\nreturn items;"
+      },
+      "position": [
+        672,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "42NPabkwD3emZANE",
+          "name": "Airtable Personal Access Token account"
+        }
+      },
+      "id": "b8afdff0-2911-43bf-a134-d1d85443a660",
+      "name": "Create a record",
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "cachedResultName": "Kynetic AI CRM",
+          "cachedResultUrl": "https://airtable.com/appuhmlv9AzZrRbBV",
+          "mode": "list",
+          "value": "appuhmlv9AzZrRbBV"
+        },
+        "columns": {
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Business Name",
+              "id": "Business Name",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Notes",
+              "id": "Notes",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Status",
+              "id": "Status",
+              "options": [
+                {
+                  "name": "New Lead",
+                  "value": "New Lead"
+                },
+                {
+                  "name": "Called",
+                  "value": "Called"
+                },
+                {
+                  "name": "Demo Requested",
+                  "value": "Demo Requested"
+                },
+                {
+                  "name": "Demo Sent",
+                  "value": "Demo Sent"
+                },
+                {
+                  "name": "Call Booked",
+                  "value": "Call Booked"
+                },
+                {
+                  "name": "Closed",
+                  "value": "Closed"
+                },
+                {
+                  "name": "Dead",
+                  "value": "Dead"
+                }
+              ],
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "options"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Phone",
+              "id": "Phone",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Industry",
+              "id": "Industry",
+              "options": [
+                {
+                  "name": "Dental",
+                  "value": "Dental"
+                },
+                {
+                  "name": "Med Spa",
+                  "value": "Med Spa"
+                },
+                {
+                  "name": "Restaurant",
+                  "value": "Restaurant"
+                },
+                {
+                  "name": "Law Firm",
+                  "value": "Law Firm"
+                },
+                {
+                  "name": "Gym",
+                  "value": "Gym"
+                },
+                {
+                  "name": "Salon",
+                  "value": "Salon"
+                },
+                {
+                  "name": "Real Estate",
+                  "value": "Real Estate"
+                },
+                {
+                  "name": "Auto Repair",
+                  "value": "Auto Repair"
+                },
+                {
+                  "name": "Medical",
+                  "value": "Medical"
+                },
+                {
+                  "name": "Veterinary",
+                  "value": "Veterinary"
+                },
+                {
+                  "name": "Other",
+                  "value": "Other"
+                }
+              ],
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "options"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Location",
+              "id": "Location",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Job Posting URL",
+              "id": "Job Posting URL",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Source",
+              "id": "Source",
+              "options": [
+                {
+                  "name": "Indeed",
+                  "value": "Indeed"
+                },
+                {
+                  "name": "ZipRecruiter",
+                  "value": "ZipRecruiter"
+                },
+                {
+                  "name": "Referral",
+                  "value": "Referral"
+                },
+                {
+                  "name": "Inbound",
+                  "value": "Inbound"
+                },
+                {
+                  "name": "Manual",
+                  "value": "Manual"
+                }
+              ],
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "options"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Priority Score",
+              "id": "Priority Score",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "number"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Last Contacted",
+              "id": "Last Contacted",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "dateTime"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Next Action",
+              "id": "Next Action",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Date Added",
+              "id": "Date Added",
+              "readOnly": true,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Job Title",
+              "id": "Job Title",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Postal Code",
+              "id": "Postal Code",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Street Address",
+              "id": "Street Address",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Salary",
+              "id": "Salary",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Job Type",
+              "id": "Job Type",
+              "options": [
+                {
+                  "name": "Full-time",
+                  "value": "Full-time"
+                },
+                {
+                  "name": "Part-time",
+                  "value": "Part-time"
+                },
+                {
+                  "name": "Contract",
+                  "value": "Contract"
+                },
+                {
+                  "name": "Not specified",
+                  "value": "Not specified"
+                }
+              ],
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "options"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Benefits",
+              "id": "Benefits",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Key Attributes",
+              "id": "Key Attributes",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Company Page URL",
+              "id": "Company Page URL",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Date Posted",
+              "id": "Date Posted",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "dateTime"
+            }
+          ],
+          "value": {
+            "Benefits": "={{ $json.benefits }}",
+            "Business Name": "={{ $json.businessName }}",
+            "Company Page URL": "={{ $json.companyPageUrl }}",
+            "Date Posted": "={{ $json.datePosted }}",
+            "Industry": "={{ $json.industry }}",
+            "Job Posting URL": "={{ $json.jobUrl }}",
+            "Job Title": "={{ $json.jobTitle }}",
+            "Job Type": "=Full-time",
+            "Key Attributes": "={{ $json.keyAttributes }}",
+            "Location": "={{ $json.location }}",
+            "Next Action": "=",
+            "Notes": "={{ $json.notes }}",
+            "Postal Code": "={{ $json.postalCode }}",
+            "Priority Score": "={{ $json.priorityScore }}",
+            "Salary": "={{ $json.salary }}",
+            "Source": "={{ $json.source }}",
+            "Status": "={{ $json.status }}",
+            "Street Address": "={{ $json.streetAddress }}"
+          }
+        },
+        "operation": "create",
+        "options": {
+          "typecast": true
+        },
+        "table": {
+          "__rl": true,
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/appuhmlv9AzZrRbBV/tblHN0KSCATW5oEH4",
+          "mode": "list",
+          "value": "tblHN0KSCATW5oEH4"
+        }
+      },
+      "position": [
+        896,
+        0
+      ],
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1
+    }
+  ],
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

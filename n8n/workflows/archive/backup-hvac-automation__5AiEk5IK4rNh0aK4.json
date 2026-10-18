@@ -1,0 +1,510 @@
+{
+  "active": false,
+  "connections": {
+    "Latest Tool Call ID": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Parameter Extraction",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Oliver": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond to Vapi",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "Oliver",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Parameter Extraction": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Oliver",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "bookAppointment": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "Oliver",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "checkAvailability": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "Oliver",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "databaseFAQ": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "Oliver",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "newLead": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "Oliver",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "5AiEk5IK4rNh0aK4",
+  "name": "backup hvac automation",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "mkRROm01AAPHp2CU",
+          "name": "Kynetic AI Abdullah Cal"
+        }
+      },
+      "id": "6e107d47-9240-456b-bbbf-e9afd7c53bc8",
+      "name": "checkAvailability",
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "cachedResultName": "abdullah@kyneticai.com",
+          "mode": "list",
+          "value": "abdullah@kyneticai.com"
+        },
+        "operation": "getAll",
+        "options": {},
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Before', ``, 'string') }}",
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('After', ``, 'string') }}"
+      },
+      "position": [
+        1856,
+        656
+      ],
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "4a4ff72f-0671-469a-b61c-7473450f1a80",
+      "name": "databaseFAQ",
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "cachedResultName": "FAQ Database - DEMO",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AeAUZUJuUZnbki960UUNlAOrvGnvxLuAsnjVWt0C6AI/edit?usp=drivesdk",
+          "mode": "list",
+          "value": "1AeAUZUJuUZnbki960UUNlAOrvGnvxLuAsnjVWt0C6AI"
+        },
+        "options": {},
+        "sheetName": {
+          "__rl": true,
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AeAUZUJuUZnbki960UUNlAOrvGnvxLuAsnjVWt0C6AI/edit#gid=0",
+          "mode": "list",
+          "value": "gid=0"
+        }
+      },
+      "position": [
+        2000,
+        656
+      ],
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6
+    },
+    {
+      "id": "edcb178f-633a-4df7-9613-b2366dc05410",
+      "name": "Respond to Vapi",
+      "parameters": {
+        "options": {},
+        "respondWith": "json",
+        "responseBody": "={\n  \"results\": [\n    {\n      \"toolCallId\": \"{{ $('Latest Tool Call ID').item.json.latestToolCallId }}\",\n      \"result\": \"{{ $json.output }}\"\n    }\n  ]\n}"
+      },
+      "position": [
+        2432,
+        432
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "859fcd34-162c-4923-a8a7-fdf3393a4671",
+      "name": "newLead",
+      "parameters": {
+        "columns": {
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Name",
+              "id": "Name",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Phone",
+              "id": "Phone",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Email (If Any)",
+              "id": "Email (If Any)",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Service Interest",
+              "id": "Service Interest",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Urgency Level",
+              "id": "Urgency Level",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Address",
+              "id": "Address",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "Address": "={{ $fromAI('customerAddress') }}",
+            "Name": "={{ $fromAI('customerName') }}",
+            "Phone": "={{ $fromAI('customerPhone') }}",
+            "Service Interest": "={{ $fromAI('serviceType') }}",
+            "Urgency Level": "={{ $fromAI('urgencyLevel') }}"
+          }
+        },
+        "documentId": {
+          "__rl": true,
+          "cachedResultName": "AI Voice Receptionist - DEMO",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_0Z2Zcfe8TGCreEDDj40fw1-uRe9PfIwVjfAMghGN30/edit?usp=drivesdk",
+          "mode": "list",
+          "value": "1_0Z2Zcfe8TGCreEDDj40fw1-uRe9PfIwVjfAMghGN30"
+        },
+        "operation": "append",
+        "options": {},
+        "sheetName": {
+          "__rl": true,
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_0Z2Zcfe8TGCreEDDj40fw1-uRe9PfIwVjfAMghGN30/edit#gid=0",
+          "mode": "list",
+          "value": "gid=0"
+        }
+      },
+      "position": [
+        2112,
+        656
+      ],
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "df18cf76-1c0b-44db-bc5e-260ce4381793",
+      "name": "End of Call Report",
+      "parameters": {
+        "columns": {
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "customerNumber"
+          ],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "customerNumber",
+              "id": "customerNumber",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "name",
+              "id": "name",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "inquiryType",
+              "id": "inquiryType",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "success",
+              "id": "success",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "summary",
+              "id": "summary",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "transcript",
+              "id": "transcript",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "endedReason",
+              "id": "endedReason",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "calledAt",
+              "id": "calledAt",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "calledAt": "={{ $json.body.message.startedAt }}",
+            "customerNumber": "={{ $('retell input').item.json.body.message.customer.number }}",
+            "endedReason": "={{ $json.body.message.endedReason }}",
+            "inquiryType": "={{ $json.body.message.analysis.structuredData.inquiryType }}",
+            "name": "={{ $json.body.message.analysis.structuredData.name }}",
+            "success": "={{ $json.body.message.analysis.successEvaluation }}",
+            "summary": "={{ $json.body.message.analysis.summary }}",
+            "transcript": "={{ $json.body.message.artifact.transcript }}"
+          }
+        },
+        "documentId": {
+          "__rl": true,
+          "cachedResultName": "AI Voice Receptionist Leads - DEMO",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_0Z2Zcfe8TGCreEDDj40fw1-uRe9PfIwVjfAMghGN30/edit?usp=drivesdk",
+          "mode": "list",
+          "value": "1_0Z2Zcfe8TGCreEDDj40fw1-uRe9PfIwVjfAMghGN30"
+        },
+        "operation": "appendOrUpdate",
+        "options": {},
+        "sheetName": {
+          "__rl": true,
+          "cachedResultName": "End of Call Reports",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_0Z2Zcfe8TGCreEDDj40fw1-uRe9PfIwVjfAMghGN30/edit#gid=1625688687",
+          "mode": "list",
+          "value": 1625688687
+        }
+      },
+      "position": [
+        1312,
+        640
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6
+    },
+    {
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "mkRROm01AAPHp2CU",
+          "name": "Kynetic AI Abdullah Cal"
+        }
+      },
+      "id": "c046bb20-6a3e-4b1f-a254-9fbb8e0d880d",
+      "name": "bookAppointment",
+      "parameters": {
+        "additionalFields": {
+          "attendees": [],
+          "description": "={{ $fromAI('description') }}",
+          "location": "={{ $fromAI('formattedAddress') }}",
+          "summary": "={{ $fromAI('title') }}"
+        },
+        "calendar": {
+          "__rl": true,
+          "cachedResultName": "abdullah@kyneticai.com",
+          "mode": "list",
+          "value": "abdullah@kyneticai.com"
+        },
+        "end": "={{$fromAI('endTime')}}",
+        "start": "={{$fromAI('startTime')}}"
+      },
+      "position": [
+        2240,
+        656
+      ],
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3
+    },
+    {
+      "id": "e6e715e3-958c-4948-8ab3-ea6aaff3fe65",
+      "name": "Oliver",
+      "parameters": {
+        "options": {
+          "systemMessage": "=## Role\n\nYou are Oliver, the backend assistant for Arctic Breeze Heating & Cooling.  \nYour role is to process validated tool calls issued by the Vapi voice agent.  \nYou are responsible for verifying input, executing tools correctly, and returning structured output.  \nYou do not speak or engage with users directly.\n\n---\n\n## Tool Handling Rules\n\n### 1. checkAvailability\n\n- Only run this tool when both a day and a time are provided.\n- This tool retrieves the times that are booked, which also tells you what times are not booked (available)\n- Valid appointment hours are from 8:00 AM to 4:00 PM.\n- Do not suggest times. Only check what was asked.\n- Return:\n  - `available: true` if the slot is open\n  - `available: false` if the slot is taken\n\n---\n\n### 2. bookAppointment\n\nOnly book if all of the following are true:\n\n- The requested time has been confirmed as available.\n- Information is provided:\n  - Customer name\n  - Phone number\n  - Email address (optional)\n  - Full service address\n  - Service type\n  - Urgency\n- Figure out the start and end times of the appointment based on the preferred time and the duration of its type, using ISO 8601 format with offsets\n    - Offset of -4:00 for Daylight Savings time\n    - Offset of -5:00 for other times\n\n## Additional rules:\n- Do not book on weekends unless they are emergencies\n- Do not book over an existing event.\n\n### Appointment durations:\n\n- Emergency Repair: 90 minutes\n- Routine Repair: 60 minutes\n- Tune-Up: 45 minutes\n- Installation Consult: 60 minutes\n- Air Quality Consult: 45 minutes\n- ComfortCare Enrollment: 30 minutes\n\n    - If booking succeeds, return confirmation details.  \n    - If booking fails, fallback to `newLead`.\n\n---\n\n### 3. newLead\n\nUse this tool to capture customer lead information **as soon as** the following fields are available:\n\n- Name  \n- Phone  \n- Email  \n- Address  \n\nThis tool should be triggered immediately when these details are collected — even if no appointment is requested or booking is successful.\n\nUse cases include:\n\n- Caller provides info but is not yet ready to book\n- Caller has questions only (e.g., FAQ)\n- Caller completes a booking (log their info anyway)\n- A fallback is needed (e.g., booking fails or tool error occurs)\n\nAlways include any notes if provided (e.g., requested callback time, reason for delay).\n\n---\n\n### 4. databaseFAQ\n\nUse for answering business-related factual questions including:\n\n- Financing\n- Pricing\n- Discounts\n- Memberships\n- Hours\n- Areas served\n- Services\n- Brands\n\n### Guidelines:\n\n- Do not paraphrase answers.\n- Return exactly what the tool provides.\n- If no answer is found a fallback message.\n\n### Output format\n- Always output your action in a short statement\n\nExample: 'checkCalendar' tool used -> \"I can see that [REQUESTED TIME] is available. Would you like me to book it?\"\n\n\n\n## Current time\n\nToday is {{ $now.format('cccc') }} and the time is {{ $now.format('yyyy-MM-dd HH:mm') }}.\n\n\n"
+        },
+        "promptType": "define",
+        "text": "=Use the below information to classify and perform a correct action. Keep in mind that depending on the action, varying variables will be present. Some fields may be blank.\n\n### Tool(s) used:\n\n{{ $json.allToolNames }}\n\n### Available Information:\n\n{{ $json.allParameters }}\n"
+      },
+      "position": [
+        1904,
+        432
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2
+    },
+    {
+      "id": "7b905236-0b91-458e-9881-e5d1d15bb25b",
+      "name": "Latest Tool Call ID",
+      "parameters": {
+        "jsCode": "// n8n Code Node - Latest ToolCallId Extractor\n// Ultra-efficient extraction of the latest toolCallId from webhook payload\n\ntry {\n  // Direct access to toolCalls array from webhook\n  const toolCalls = $('retell input').first().json.body.message.toolCalls;\n  \n  // Fast validation and extraction\n  if (!Array.isArray(toolCalls) || toolCalls.length === 0) {\n    return [{\n      json: {\n        latestToolCallId: null,\n        error: 'No toolCalls found or empty array',\n        totalToolCalls: 0,\n        extractedAt: new Date().toISOString()\n      }\n    }];\n  }\n  \n  // Get the latest (last) toolCall - most efficient approach\n  const latestIndex = toolCalls.length - 1;\n  const latestToolCall = toolCalls[latestIndex];\n  \n  // Extract the ID with validation\n  const latestToolCallId = latestToolCall?.id || null;\n  \n  if (!latestToolCallId) {\n    return [{\n      json: {\n        latestToolCallId: null,\n        error: `ToolCall at index ${latestIndex} missing id property`,\n        totalToolCalls: toolCalls.length,\n        latestIndex: latestIndex,\n        extractedAt: new Date().toISOString()\n      }\n    }];\n  }\n  \n  // Success - return the latest toolCallId\n  return [{\n    json: {\n      latestToolCallId: latestToolCallId,\n      latestIndex: latestIndex,\n      totalToolCalls: toolCalls.length,\n      extractedAt: new Date().toISOString()\n    }\n  }];\n  \n} catch (error) {\n  // Error handling\n  return [{\n    json: {\n      latestToolCallId: null,\n      error: `Extraction failed: ${error.message}`,\n      totalToolCalls: 0,\n      extractedAt: new Date().toISOString()\n    }\n  }];\n}"
+      },
+      "position": [
+        1312,
+        432
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "25764ab3-83b3-4705-89a4-14f7cdc7ba76",
+      "name": "Parameter Extraction",
+      "parameters": {
+        "jsCode": "// n8n Code Node: Fast Parameter Extractor - Parameters and Tool Names\n\nconst webhookData = $('retell input').first().json;\nconst parameterPairs = [];\nconst toolNames = [];\n\ntry {\n  const toolCallList = webhookData?.body?.message?.toolCallList;\n  \n  if (toolCallList && Array.isArray(toolCallList)) {\n    toolCallList.forEach((toolCall, index) => {\n      if (toolCall?.function) {\n        // Collect tool name\n        if (toolCall.function.name) {\n          toolNames.push(toolCall.function.name);\n        }\n        \n        // Collect parameters\n        if (toolCall.function.arguments) {\n          Object.entries(toolCall.function.arguments).forEach(([key, value]) => {\n            parameterPairs.push(`${key}: ${value}`);\n          });\n        }\n      }\n    });\n  }\n  \n  const allParameters = parameterPairs.join(', ');\n  const allToolNames = toolNames.join(', ');\n  \n  return [{ json: { allParameters, allToolNames } }];\n  \n} catch (error) {\n  return [{ json: { allParameters: `error: ${error.message}`, allToolNames: '' } }];\n}"
+      },
+      "position": [
+        1536,
+        432
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "openRouterApi": {
+          "id": "j1QuXeG7ZrLyJEDj",
+          "name": "OpenRouter account"
+        }
+      },
+      "id": "f9c3d31d-2aa9-4920-a488-a2726349ec06",
+      "name": "OpenRouter Chat Model",
+      "parameters": {
+        "model": "google/gemma-3-27b-it:free",
+        "options": {}
+      },
+      "position": [
+        1712,
+        656
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1
+    }
+  ],
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

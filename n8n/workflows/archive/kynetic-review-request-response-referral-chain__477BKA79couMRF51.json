@@ -1,0 +1,442 @@
+{
+  "active": false,
+  "connections": {
+    "Client Config Lookup (RR)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Client Found? (RR)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Client Config Lookup (RV)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Draft Canned Response",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Client Config Lookup (Ref)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Send Referral Ask SMS",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Client Found? (RR)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Job",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Respond RR No Client",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Draft Canned Response": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond RV Draft",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Job": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Send Review Request SMS",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Referral Chain Webhook": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Client Config Lookup (Ref)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Review Request Webhook": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Client Config Lookup (RR)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Review Response Webhook": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Client Config Lookup (RV)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Send Referral Ask SMS": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond Referral OK",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Send Review Request SMS": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond RR OK",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "477BKA79couMRF51",
+  "name": "Kynetic — Review Request + Response + Referral Chain",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "26870823-0699-4a73-83b8-932c320490ce",
+      "name": "Review Request Webhook",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {},
+        "path": "review-request",
+        "responseMode": "lastNode"
+      },
+      "position": [
+        0,
+        96
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "03fa983b-18b9-4a57-b61a-01b01b0deba5"
+    },
+    {
+      "id": "63748532-ac0c-47ee-9d3e-ba5d1d2d8aba",
+      "name": "Client Config Lookup (RR)",
+      "parameters": {
+        "mode": "once",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "05HI35dhaWXweO5i"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "phone_number": "={{ $json.body.dialed_number }}"
+          }
+        }
+      },
+      "position": [
+        224,
+        96
+      ],
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3
+    },
+    {
+      "id": "9c2d2699-9fdc-474b-aecc-41e78c28fc97",
+      "name": "Client Found? (RR)",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.found }}",
+              "operator": {
+                "operation": "true",
+                "type": "boolean"
+              },
+              "rightValue": true
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          }
+        }
+      },
+      "position": [
+        448,
+        96
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "f6ee1a29-5077-48d7-bd97-660514b4fb2a",
+      "name": "Get Job",
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "get",
+        "pageId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $(\"Review Request Webhook\").item.json.body.job_id }}"
+        },
+        "resource": "databasePage",
+        "simple": true
+      },
+      "position": [
+        672,
+        0
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "twilioApi": {
+          "id": "aoIjAKkkoPR85aOq",
+          "name": "Twilio account"
+        }
+      },
+      "id": "1151c17c-5ac0-46a9-8d66-eb085d8b031c",
+      "name": "Send Review Request SMS",
+      "parameters": {
+        "from": "={{ $(\"Client Config Lookup (RR)\").item.json.assigned_twilio_number }}",
+        "message": "=Thanks for choosing {{ $(\"Client Config Lookup (RR)\").item.json.client_name }}! If you have a minute, a review would mean a lot: {{ $(\"Client Config Lookup (RR)\").item.json.brand_profile_url || (\"https://search.google.com/local/writereview?placeid=\" + $(\"Client Config Lookup (RR)\").item.json.gbp_place_id) }} — {{ $(\"Client Config Lookup (RR)\").item.json.voice_agent_name }}",
+        "operation": "send",
+        "resource": "sms",
+        "to": "={{ $json.property_phone }}"
+      },
+      "position": [
+        896,
+        0
+      ],
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1
+    },
+    {
+      "id": "75731006-c4bc-4100-8bd8-82923a8b4f1b",
+      "name": "Respond RR OK",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"status\": \"review_request_sent\" } }}"
+      },
+      "position": [
+        1120,
+        0
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5
+    },
+    {
+      "id": "a929b506-a2d4-4882-99c0-1728f18980a7",
+      "name": "Respond RR No Client",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"status\": \"error\", \"error\": \"no client matched\" } }}"
+      },
+      "position": [
+        672,
+        192
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5
+    },
+    {
+      "id": "3e1d94f2-0aa4-4655-b425-149071e90044",
+      "name": "Review Response Webhook",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {},
+        "path": "review-response",
+        "responseMode": "lastNode"
+      },
+      "position": [
+        0,
+        416
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "b770df41-1eee-4de7-b523-4e927dcef29c"
+    },
+    {
+      "id": "c26a1e8a-eb33-44ac-a9ca-d16e68296543",
+      "name": "Client Config Lookup (RV)",
+      "parameters": {
+        "mode": "once",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "05HI35dhaWXweO5i"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "phone_number": "={{ $json.body.dialed_number }}"
+          }
+        }
+      },
+      "position": [
+        224,
+        416
+      ],
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3
+    },
+    {
+      "id": "13a8025f-fa2c-4f00-8bd1-f9f3631ddcba",
+      "name": "Draft Canned Response",
+      "parameters": {
+        "jsCode": "const rating = $('Review Response Webhook').first().json.body.rating || 0;\nconst client = $('Client Config Lookup (RV)').first().json;\nlet draft;\nif (rating >= 4) {\n  draft = `Thank you so much for the kind words! We're thrilled you had a great experience with ${client.client_name}. ${client.voice_agent_name} and the team appreciate it!`;\n} else {\n  draft = `Thank you for your feedback. We're sorry your experience with ${client.client_name} didn't meet expectations — please reach out so we can make it right.`;\n}\nreturn [{ json: { draft_response: draft, rating, is_positive: rating >= 4 } }];",
+        "language": "javaScript",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        448,
+        416
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "fae1dd78-56c2-4cc8-86e2-89dd19ab4387",
+      "name": "Respond RV Draft",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"status\": \"draft_generated\", \"draft_response\": $json.draft_response, \"note\": \"STUB: no GBP API publish wired — draft only, needs manual post or GBP API credential\" } }}"
+      },
+      "position": [
+        672,
+        416
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5
+    },
+    {
+      "id": "dc08aa1d-d65b-4ac9-87e1-6a7a9a7b58cf",
+      "name": "Referral Chain Webhook",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {},
+        "path": "referral-chain",
+        "responseMode": "lastNode"
+      },
+      "position": [
+        0,
+        640
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "17380515-3608-48a1-ab9e-4ee1666b3fdc"
+    },
+    {
+      "id": "daa87f72-8512-463b-bb27-b444f97f2a81",
+      "name": "Client Config Lookup (Ref)",
+      "parameters": {
+        "mode": "once",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "05HI35dhaWXweO5i"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "phone_number": "={{ $json.body.dialed_number }}"
+          }
+        }
+      },
+      "position": [
+        224,
+        640
+      ],
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3
+    },
+    {
+      "credentials": {
+        "twilioApi": {
+          "id": "aoIjAKkkoPR85aOq",
+          "name": "Twilio account"
+        }
+      },
+      "id": "a51bb9d4-3568-4d54-9aaa-5a8e396a2eb1",
+      "name": "Send Referral Ask SMS",
+      "parameters": {
+        "from": "={{ $(\"Client Config Lookup (Ref)\").item.json.assigned_twilio_number }}",
+        "message": "=Glad we could help! Know someone who needs {{ $(\"Client Config Lookup (Ref)\").item.json.niche }} help? Send them our way — {{ $(\"Client Config Lookup (Ref)\").item.json.voice_agent_name }} at {{ $(\"Client Config Lookup (Ref)\").item.json.client_name }} would love to assist them too.",
+        "operation": "send",
+        "resource": "sms",
+        "to": "={{ $(\"Referral Chain Webhook\").item.json.body.contact_phone }}"
+      },
+      "position": [
+        448,
+        640
+      ],
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1
+    },
+    {
+      "id": "6bd5cb44-25be-4aa4-a5fd-c6d68691365b",
+      "name": "Respond Referral OK",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"status\": \"referral_ask_sent\" } }}"
+      },
+      "position": [
+        672,
+        640
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "executionOrder": "v1"
+  }
+}

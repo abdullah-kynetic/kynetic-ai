@@ -1,0 +1,559 @@
+{
+  "active": false,
+  "connections": {
+    "Call Modal Scrape API": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Check Scrape Success",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Check Scrape Success": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Mark Scrape Query Complete",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Mark Scrape Query Failed",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Create Scrape Query Row": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Call Modal Scrape API",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Extract Fields from Form": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create Scrape Query Row",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Mark Scrape Query Complete": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Append Results to Scrape Query Page",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Mark Scrape Query Failed": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Append Error to Scrape Query Page",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Scrape Form": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Extract Fields from Form",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "3orAiCNLOCJ7xglI",
+  "name": "Kynetic — Lead Scrape (Apify → Notion Outreach)",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "881ba272-e344-416c-827c-21a4e9c68dfd",
+      "name": "Scrape Form",
+      "parameters": {
+        "formDescription": "Submit a Google Maps scrape job. Results populate the Outreach database automatically.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Niche",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Restoration"
+                  },
+                  {
+                    "option": "roofing contractor"
+                  },
+                  {
+                    "option": "foundation repair service"
+                  },
+                  {
+                    "option": "tree service"
+                  },
+                  {
+                    "option": "swimming pool contractor"
+                  },
+                  {
+                    "option": "septic system service"
+                  },
+                  {
+                    "option": "land clearing service"
+                  },
+                  {
+                    "option": "commercial painting contractor"
+                  }
+                ]
+              },
+              "fieldType": "dropdown",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Location",
+              "placeholder": "e.g. Dallas, TX",
+              "requiredField": true
+            },
+            {
+              "defaultValue": "25",
+              "fieldLabel": "Max Places",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Website Filter",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "All Places"
+                  },
+                  {
+                    "option": "With Website"
+                  },
+                  {
+                    "option": "Without Website"
+                  }
+                ]
+              },
+              "fieldType": "dropdown",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Skip Closed",
+              "fieldOptions": {
+                "values": [
+                  {}
+                ]
+              },
+              "fieldType": "checkbox"
+            }
+          ]
+        },
+        "formTitle": "Kynetic AI — Scrape Leads",
+        "options": {}
+      },
+      "position": [
+        272,
+        128
+      ],
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "webhookId": "8fd96c2e-6faf-498f-ba9f-fe8e283d53a9"
+    },
+    {
+      "id": "9a1772f3-9d53-42f8-80b6-7a5f9651ccd7",
+      "name": "Extract Fields from Form",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "niche",
+              "name": "niche",
+              "type": "string",
+              "value": "={{ $json['Niche'] || null }}"
+            },
+            {
+              "id": "location",
+              "name": "location",
+              "type": "string",
+              "value": "={{ $json['Location'] || null }}"
+            },
+            {
+              "id": "max_places",
+              "name": "max_places",
+              "type": "number",
+              "value": "={{ Number($json['Max Places']) || 25 }}"
+            },
+            {
+              "id": "website_filter_label",
+              "name": "website_filter_label",
+              "type": "string",
+              "value": "={{ $json['Website Filter'] || 'All Places' }}"
+            },
+            {
+              "id": "website_filter",
+              "name": "website_filter",
+              "type": "string",
+              "value": "={{ $json['Website Filter'] === 'With Website' ? 'withWebsite' : $json['Website Filter'] === 'Without Website' ? 'withoutWebsite' : 'allPlaces' }}"
+            },
+            {
+              "id": "skip_closed",
+              "name": "skip_closed",
+              "type": "boolean",
+              "value": "={{ $json['Skip Closed'] === true || $json['Skip Closed'] === 'on' || $json['Skip Closed'] === 'true' }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        480,
+        128
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "2afd6ad4-f3d2-44a6-8813-3a177a04661b",
+      "name": "Create Scrape Query Row",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "cachedResultName": "📋 Scrape Queries",
+          "cachedResultUrl": "https://app.notion.com/p/df6ef747ac1248b59a50d791b349e75c",
+          "mode": "list",
+          "value": "df6ef747-ac12-48b5-9a50-d791b349e75c"
+        },
+        "options": {},
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Status|select",
+              "selectValue": "Running",
+              "type": "select"
+            },
+            {
+              "key": "Location|rich_text",
+              "textContent": "={{ $json.location }}",
+              "type": "rich_text"
+            },
+            {
+              "key": "Max Places|number",
+              "numberValue": "={{ $json.max_places }}",
+              "type": "number"
+            },
+            {
+              "key": "Website Filter|select",
+              "selectValue": "={{ $json.website_filter_label }}",
+              "type": "select"
+            },
+            {
+              "checkboxValue": "={{ $json.skip_closed }}",
+              "key": "Skip Closed|checkbox",
+              "type": "checkbox"
+            },
+            {
+              "date": "={{ new Date().toISOString().split('T')[0] }}",
+              "key": "Run Date|date",
+              "type": "date"
+            },
+            {
+              "key": "Niche|select",
+              "selectValue": "={{ $json.niche }}",
+              "type": "select"
+            }
+          ]
+        },
+        "resource": "databasePage",
+        "title": "={{ $json.niche + ' — ' + $json.location }}"
+      },
+      "position": [
+        704,
+        128
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "eq498KfHgSxtVu0O",
+          "name": "Header Auth account 2"
+        }
+      },
+      "id": "73616c2b-ec75-42dd-90b2-8e1f9eedf545",
+      "name": "Call Modal Scrape API",
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "niche",
+              "value": "={{ $('Extract Fields from Form').first().json.niche }}"
+            },
+            {
+              "name": "location",
+              "value": "={{ $('Extract Fields from Form').first().json.location }}"
+            },
+            {
+              "name": "max_places",
+              "value": "={{ $('Extract Fields from Form').first().json.max_places }}"
+            },
+            {
+              "name": "website_filter",
+              "value": "={{ $('Extract Fields from Form').first().json.website_filter }}"
+            },
+            {
+              "name": "skip_closed",
+              "value": "={{ $('Extract Fields from Form').first().json.skip_closed }}"
+            }
+          ]
+        },
+        "genericAuthType": "httpHeaderAuth",
+        "method": "POST",
+        "options": {
+          "timeout": 1300000
+        },
+        "sendBody": true,
+        "url": "https://abdullah-33790--kynetic-agency-os-api-scrape-leads.modal.run"
+      },
+      "position": [
+        928,
+        128
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4
+    },
+    {
+      "id": "d79a7361-5221-4720-becb-57c6fe376b93",
+      "name": "Check Scrape Success",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "check-leads",
+              "leftValue": "={{ $json.leads_added }}",
+              "operator": {
+                "operation": "exists",
+                "singleValue": true,
+                "type": "number"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        1152,
+        128
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "executeOnce": true,
+      "id": "36ef40b1-0dcc-463d-8b75-ae0753c79da8",
+      "name": "Mark Scrape Query Complete",
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "options": {},
+        "pageId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Create Scrape Query Row').first().json.id }}"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Status|select",
+              "selectValue": "Complete",
+              "type": "select"
+            },
+            {
+              "key": "Leads Added|number",
+              "numberValue": "={{ $json.leads_added }}",
+              "type": "number"
+            },
+            {
+              "key": "Leads Skipped|number",
+              "numberValue": "={{ $json.leads_skipped }}",
+              "type": "number"
+            },
+            {
+              "key": "Total Found|number",
+              "numberValue": "={{ $json.total_found }}",
+              "type": "number"
+            },
+            {
+              "date": "={{ new Date().toISOString().split('T')[0] }}",
+              "key": "Run Date|date",
+              "type": "date"
+            },
+            {
+              "key": "Notes|rich_text",
+              "textContent": "={{ $json.leads_failed > 0 ? '⚠️ ' + $json.leads_failed + ' lead(s) failed to write to Outreach — check Modal logs' : '' }}",
+              "type": "rich_text"
+            }
+          ]
+        },
+        "resource": "databasePage"
+      },
+      "position": [
+        1376,
+        0
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "executeOnce": true,
+      "id": "fb694910-5505-4de5-a544-bd369edb9d94",
+      "name": "Append Results to Scrape Query Page",
+      "parameters": {
+        "authentication": "oAuth2",
+        "blockId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Create Scrape Query Row').first().json.id }}"
+        },
+        "blockUi": {
+          "blockValues": [
+            {
+              "textContent": "={{ '✅ Scrape complete — ' + $json.property_leads_added + ' leads added, ' + $json.property_leads_skipped + ' skipped (' + $json.property_total_found + ' total found).' }}"
+            }
+          ]
+        },
+        "resource": "block"
+      },
+      "position": [
+        1600,
+        0
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "d20ec072-4c4d-4ef9-97ae-85fdb96e7483",
+      "name": "Mark Scrape Query Failed",
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "options": {},
+        "pageId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Create Scrape Query Row').first().json.id }}"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Status|select",
+              "selectValue": "Failed",
+              "type": "select"
+            }
+          ]
+        },
+        "resource": "databasePage"
+      },
+      "position": [
+        1376,
+        320
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "1d1fba82-e6e4-4a0b-a8ec-13f58ef9b4c4",
+      "name": "Append Error to Scrape Query Page",
+      "parameters": {
+        "authentication": "oAuth2",
+        "blockId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Create Scrape Query Row').first().json.id }}"
+        },
+        "blockUi": {
+          "blockValues": [
+            {
+              "textContent": "={{ '❌ Scrape failed — ' + ($json.error?.message || $json.message || 'Unknown error') + ' (' + new Date().toISOString() + ')' }}"
+            }
+          ]
+        },
+        "resource": "block"
+      },
+      "position": [
+        1600,
+        320
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "binaryMode": "separate",
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,662 @@
+{
+  "active": true,
+  "connections": {
+    "Append to Google Sheets": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond Log",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Cancel Booking": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond Cancel",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Create Cal.com Booking": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond Book",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Extract Log Fields": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Append to Google Sheets",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Extract Post Call Data": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Log Post Call to Sheets",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Bookings for Cancel": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Cancel Booking",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Bookings for Reschedule": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Reschedule Booking",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Map Stylist to Event Type": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create Cal.com Booking",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Reschedule Booking": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond Reschedule",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "book_appointment": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Map Stylist to Event Type",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "cancel_appointment": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Bookings for Cancel",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "log_to_sheets": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Extract Log Fields",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "post_call_analysis": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Extract Post Call Data",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "reschedule_appointment": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Bookings for Reschedule",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "F2zM6M7bCqLZnfP3",
+  "name": "Great Clips AI Receptionist",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "61f7b649-d5e1-4516-8f57-b5525cd417db",
+      "name": "book_appointment",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "gc-book-appointment",
+        "responseMode": "responseNode"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "8ce6306d-c105-4b09-bc53-a702ef0983d6"
+    },
+    {
+      "id": "27f77303-54da-448f-a229-4cb0ff307037",
+      "name": "Map Stylist to Event Type",
+      "parameters": {
+        "jsCode": "const b = $input.first().json.body;\nconst map = { Sarah: 5899666, Marcus: 5899667, Jessica: 5899668 };\nconst eventTypeId = map[b.stylist] || 5899666;\nreturn [{ json: { eventTypeId, start: b.start_time, stylist: b.stylist, service: b.service_type, attendee: { name: b.name, email: b.email || 'placeholder@example.com', timeZone: 'America/New_York', phoneNumber: b.phone_number } } }];"
+      },
+      "position": [
+        224,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "23b6a547-4566-4782-9659-95e7c738a2f2",
+      "name": "Create Cal.com Booking",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "contentType": "json",
+        "genericAuthType": "httpBearerAuth",
+        "jsonBody": "={{ { eventTypeId: $json.eventTypeId, start: $json.start, attendee: $json.attendee, metadata: { stylist: $json.stylist, service: $json.service } } }}",
+        "method": "POST",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "https://api.cal.com/v2/bookings"
+      },
+      "position": [
+        448,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4
+    },
+    {
+      "id": "e3bdc0e6-1c7b-42b3-a07f-fca7ac84a688",
+      "name": "Respond Book",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, bookingUid: $json.data && $json.data.uid, message: 'Appointment booked successfully' } }}"
+      },
+      "position": [
+        672,
+        0
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5
+    },
+    {
+      "id": "ae82d3f2-a17a-49df-a804-e151e400c97f",
+      "name": "cancel_appointment",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "gc-cancel-appointment",
+        "responseMode": "responseNode"
+      },
+      "position": [
+        0,
+        224
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "a5eb5312-7ae6-4f5f-855d-93590dc0834b"
+    },
+    {
+      "id": "c2f5c454-c5f5-49ea-b980-e3a6b9e919ef",
+      "name": "Get Bookings for Cancel",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "method": "GET",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        },
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "attendeePhone",
+              "value": "={{ $json.body.phone_number }}"
+            },
+            {
+              "name": "status",
+              "value": "upcoming"
+            }
+          ]
+        },
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "url": "https://api.cal.com/v2/bookings"
+      },
+      "position": [
+        224,
+        224
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4
+    },
+    {
+      "id": "fad7d735-e68c-47c2-a6bf-475022a34aec",
+      "name": "Cancel Booking",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "contentType": "json",
+        "genericAuthType": "httpBearerAuth",
+        "jsonBody": {
+          "cancellationReason": "Cancelled by caller via AI receptionist"
+        },
+        "method": "POST",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "={{ 'https://api.cal.com/v2/bookings/' + ($json.data && $json.data.bookings && $json.data.bookings[0] ? $json.data.bookings[0].uid : 'not-found') + '/cancel' }}"
+      },
+      "position": [
+        448,
+        224
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4
+    },
+    {
+      "id": "03b53a8c-c9fc-4a36-bc80-052837605abf",
+      "name": "Respond Cancel",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, message: 'Appointment cancelled' } }}"
+      },
+      "position": [
+        672,
+        224
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5
+    },
+    {
+      "id": "52d2ae50-cb83-4144-9c08-f261427a7984",
+      "name": "reschedule_appointment",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "gc-reschedule-appointment",
+        "responseMode": "responseNode"
+      },
+      "position": [
+        0,
+        448
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "11c703d6-756a-4c53-abb6-f3b6054edafc"
+    },
+    {
+      "id": "06600b53-bbe1-4a1d-be78-b352daeaf9e5",
+      "name": "Get Bookings for Reschedule",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "method": "GET",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        },
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "attendeePhone",
+              "value": "={{ $json.body.phone_number }}"
+            },
+            {
+              "name": "status",
+              "value": "upcoming"
+            }
+          ]
+        },
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "url": "https://api.cal.com/v2/bookings"
+      },
+      "position": [
+        224,
+        448
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4
+    },
+    {
+      "id": "543fa464-a8c0-4af6-928c-4b28e976cd61",
+      "name": "Reschedule Booking",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "contentType": "json",
+        "genericAuthType": "httpBearerAuth",
+        "jsonBody": "={{ { start: $('reschedule_appointment').first().json.body.new_start_time } }}",
+        "method": "POST",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "={{ 'https://api.cal.com/v2/bookings/' + ($json.data && $json.data.bookings && $json.data.bookings[0] ? $json.data.bookings[0].uid : 'not-found') + '/reschedule' }}"
+      },
+      "position": [
+        448,
+        448
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4
+    },
+    {
+      "id": "e978f5b9-1f28-4b9a-8868-597f53a477a3",
+      "name": "Respond Reschedule",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, message: 'Appointment rescheduled' } }}"
+      },
+      "position": [
+        672,
+        448
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5
+    },
+    {
+      "id": "8103fd38-2792-4ed5-84af-114cd42dbb6b",
+      "name": "log_to_sheets",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "gc-log-to-sheets",
+        "responseMode": "responseNode"
+      },
+      "position": [
+        0,
+        672
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "3512c532-fd96-42f3-abd5-f6f9163390e3"
+    },
+    {
+      "id": "5988b47d-7b55-443c-b176-b8c3406e6dbf",
+      "name": "Extract Log Fields",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f1",
+              "name": "Caller Name",
+              "type": "string",
+              "value": "={{ $json.body.caller_name }}"
+            },
+            {
+              "id": "f2",
+              "name": "Phone Number",
+              "type": "string",
+              "value": "={{ $json.body.phone_number }}"
+            },
+            {
+              "id": "f3",
+              "name": "Service Requested",
+              "type": "string",
+              "value": "={{ $json.body.service_requested }}"
+            },
+            {
+              "id": "f4",
+              "name": "Stylist Preference",
+              "type": "string",
+              "value": "={{ $json.body.stylist_preference }}"
+            },
+            {
+              "id": "f5",
+              "name": "Appointment Date/Time",
+              "type": "string",
+              "value": "={{ $json.body.appointment_datetime }}"
+            },
+            {
+              "id": "f6",
+              "name": "Call Outcome",
+              "type": "string",
+              "value": "={{ $json.body.call_outcome }}"
+            },
+            {
+              "id": "f7",
+              "name": "Notes",
+              "type": "string",
+              "value": "={{ $json.body.notes }}"
+            },
+            {
+              "id": "f8",
+              "name": "Timestamp",
+              "type": "string",
+              "value": "={{ $now.toISO() }}"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "mode": "manual"
+      },
+      "position": [
+        224,
+        672
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "c5ae38b9-ced3-495d-b0bd-d2ae68734ef4",
+      "name": "Append to Google Sheets",
+      "parameters": {
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": null
+        },
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1S9boeEdv74gOMNIDwmpYkVE5q2e9c6NNUtSi5OXQMII"
+        },
+        "operation": "append",
+        "resource": "sheet",
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sheet1"
+        }
+      },
+      "position": [
+        448,
+        672
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7
+    },
+    {
+      "id": "c11ce01f-852b-41ea-9043-32f75c4caf5b",
+      "name": "Respond Log",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true } }}"
+      },
+      "position": [
+        672,
+        672
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5
+    },
+    {
+      "id": "e6de160d-ad9e-4757-8e4c-b17e7dfa4388",
+      "name": "post_call_analysis",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "gc-post-call-analysis",
+        "responseMode": "onReceived"
+      },
+      "position": [
+        0,
+        896
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "9d0d83f1-ebfb-4b9d-a057-f16793e7f2df"
+    },
+    {
+      "id": "1e02c86c-c9f8-4254-adb6-c44fa20b9fc8",
+      "name": "Extract Post Call Data",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "pc1",
+              "name": "Call ID",
+              "type": "string",
+              "value": "={{ $json.body.call_id }}"
+            },
+            {
+              "id": "pc2",
+              "name": "Agent ID",
+              "type": "string",
+              "value": "={{ $json.body.agent_id }}"
+            },
+            {
+              "id": "pc3",
+              "name": "Duration (s)",
+              "type": "string",
+              "value": "={{ $json.body.duration_ms ? Math.round($json.body.duration_ms / 1000) : '' }}"
+            },
+            {
+              "id": "pc4",
+              "name": "Call Outcome",
+              "type": "string",
+              "value": "={{ $json.body.call_analysis && $json.body.call_analysis.support_type }}"
+            },
+            {
+              "id": "pc5",
+              "name": "Transcript",
+              "type": "string",
+              "value": "={{ $json.body.transcript }}"
+            },
+            {
+              "id": "pc6",
+              "name": "Timestamp",
+              "type": "string",
+              "value": "={{ $now.toISO() }}"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "mode": "manual"
+      },
+      "position": [
+        224,
+        896
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "fd71e29e-1b75-47ce-bc77-ab7eab3e19c2",
+      "name": "Log Post Call to Sheets",
+      "parameters": {
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": null
+        },
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1S9boeEdv74gOMNIDwmpYkVE5q2e9c6NNUtSi5OXQMII"
+        },
+        "operation": "append",
+        "resource": "sheet",
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Post-Call Log"
+        }
+      },
+      "position": [
+        448,
+        896
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "executionOrder": "v1"
+  }
+}
