@@ -42,7 +42,7 @@ export default async function setup() {
 
   const pg = await startLocalPg({ dir: path.join(ROOT, ".data/pg-test"), port: PG_PORT, fresh: true });
   pgStop = pg.stop;
-  const baseEnv = { ...process.env, ...env, DATABASE_URL: pg.appUrl, DATABASE_OWNER_URL: pg.ownerUrl, APP_URL: `http://localhost:${PORT}`, AUTH_URL: `http://localhost:${PORT}`, NEXT_DIST_DIR: ".next-test", SEED_CLIENT_PASSWORD: PW, NODE_ENV: "production" } as NodeJS.ProcessEnv;
+  const baseEnv = { ...process.env, ...env, DATABASE_URL: pg.appUrl, DATABASE_OWNER_URL: pg.ownerUrl, APP_URL: `http://localhost:${PORT}`, AUTH_URL: `http://localhost:${PORT}`, NEXT_DIST_DIR: ".next-test", SEED_CLIENT_PASSWORD: PW, NODE_ENV: "production", PWNED_CHECK: "off" } as NodeJS.ProcessEnv;
   const run = (cmd: string, args: string[]) => {
     const r = spawnSync(cmd, args, { cwd: ROOT, env: baseEnv, stdio: "inherit" });
     if (r.status !== 0) throw new Error(`${cmd} ${args.join(" ")} failed`);

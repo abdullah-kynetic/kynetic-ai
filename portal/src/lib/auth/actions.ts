@@ -14,7 +14,7 @@ import { encrypt, decrypt } from "../crypto";
 import { audit } from "../audit";
 import { consumeToken, issueToken } from "./tokens";
 import { findByEmail } from "./authenticate";
-import { hashPassword, passwordProblem, verifyPassword } from "./password";
+import { hashPassword, newPasswordProblem, verifyPassword } from "./password";
 import { newTotpSecret, totpUri, checkTotp } from "./totp";
 import { getSession, requireUser } from "./session";
 
@@ -91,7 +91,7 @@ async function setPasswordWithToken(fd: FormData, type: "reset" | "invite"): Pro
   const token = String(fd.get("token") ?? "");
   const pw = String(fd.get("password") ?? "");
   if (pw !== String(fd.get("confirm") ?? "")) return { error: "Passwords don't match." };
-  const problem = passwordProblem(pw);
+  const problem = await newPasswordProblem(pw);
   if (problem) return { error: problem };
   const name = String(fd.get("name") ?? "").trim().slice(0, 120);
   const userId = await consumeToken(token, type);
@@ -131,7 +131,7 @@ export async function changePassword(_: FormState, fd: FormData): Promise<FormSt
   const current = String(fd.get("current") ?? "");
   const pw = String(fd.get("password") ?? "");
   if (pw !== String(fd.get("confirm") ?? "")) return { error: "Passwords don't match." };
-  const problem = passwordProblem(pw);
+  const problem = await newPasswordProblem(pw);
   if (problem) return { error: problem };
   const u = await findByEmail(s.email);
   if (!u || !(await verifyPassword(u.passwordHash, current))) return { error: "Current password is incorrect." };
