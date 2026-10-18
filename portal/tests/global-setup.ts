@@ -42,7 +42,7 @@ export default async function setup() {
 
   const pg = await startLocalPg({ dir: path.join(ROOT, ".data/pg-test"), port: PG_PORT, fresh: true });
   pgStop = pg.stop;
-  const baseEnv = { ...process.env, ...env, DATABASE_URL: pg.appUrl, DATABASE_OWNER_URL: pg.ownerUrl, APP_URL: `http://localhost:${PORT}`, AUTH_URL: `http://localhost:${PORT}`, NEXT_DIST_DIR: ".next-test", SEED_CLIENT_PASSWORD: PW, NODE_ENV: "production" } as NodeJS.ProcessEnv;
+  const baseEnv = { ...process.env, ...env, DATABASE_URL: pg.appUrl, DATABASE_OWNER_URL: pg.ownerUrl, APP_URL: `http://localhost:${PORT}`, AUTH_URL: `http://localhost:${PORT}`, NEXT_DIST_DIR: ".next-test", SEED_CLIENT_PASSWORD: PW, NODE_ENV: "production", PWNED_CHECK: "off" } as NodeJS.ProcessEnv;
   const run = (cmd: string, args: string[]) => {
     const r = spawnSync(cmd, args, { cwd: ROOT, env: baseEnv, stdio: "inherit" });
     if (r.status !== 0) throw new Error(`${cmd} ${args.join(" ")} failed`);
@@ -64,6 +64,10 @@ export default async function setup() {
         values (${email}, ${email}, ${role}, ${clientId}, ${pw}, ${extra.totpEnc ?? null}, ${!!extra.totpEnc}, ${extra.disabled ? new Date() : null}) returning id`)[0].id as string;
     const adminId = await mk("admin-mfa@example.com", "admin", null, { totpEnc: enc(adminTotp, key) });
     await mk("admin-mfa2@example.com", "admin", null, { totpEnc: enc(adminTotp, key) }); // calibration admin (own TOTP replay counter)
+    await mk("admin-mfa3@example.com", "admin", null, { totpEnc: enc(adminTotp, key) }); // for the admin-tools tests
+    const adminRecId = await mk("admin-rec@example.com", "admin", null, { totpEnc: enc(adminTotp, key) });
+    const recoveryCodes = ["abcde-fghjk", "mnpqr-stuvw", "xyz23-45678"];
+    for (const c of recoveryCodes) await tx`insert into recovery_codes (user_id, code_hash) values (${adminRecId}, ${createHash("sha256").update(c.replace(/[^a-z0-9]/g, "")).digest("hex")})`;
     const adminNoMfaId = await mk("admin-nomfa@example.com", "admin", null);
     const aUser2 = await mk("client-a2@example.com", "client", A);
     const disabledId = await mk("disabled@example.com", "client", A, { disabled: true });
@@ -76,7 +80,7 @@ export default async function setup() {
       await tx`insert into ingest_keys (client_id, prefix, key_hash, label, revoked_at) values (${c}, ${k.prefix}, ${createHash("sha256").update(k.raw).digest("hex")}, ${k.n}, ${revoked ? new Date() : null})`;
     }
     return {
-      A, B, adminId, adminNoMfaId, aUser2, disabledId, clientUserA: await uid("client-a@example.com"), clientUserB: await uid("client-b@example.com"),
+      A, B, adminId, adminRecId, recoveryCodes, adminNoMfaId, aUser2, disabledId, clientUserA: await uid("client-a@example.com"), clientUserB: await uid("client-b@example.com"),
       docsA: await docs(A), docsB: await docs(B), contactsB: await ids("contacts", B), milestonesB: await ids("milestones", B), scopeB: await ids("scope_items", B),
       keyA: ka.raw, keyB: kb.raw, keyRevoked: kr.raw,
     };

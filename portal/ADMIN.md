@@ -10,15 +10,47 @@ sudo docker exec portal-portal-app-1 node /app/scripts/create-admin.mjs someone@
 sudo docker exec portal-portal-app-1 cat /tmp/invite.txt; sudo docker exec portal-portal-app-1 rm /tmp/invite.txt
 ```
 
-Open the printed link (valid 7 days), choose a password (12+ characters), sign in, and you'll be sent to `/mfa/setup` to scan the QR code with an authenticator app. Admin pages stay locked until MFA is enabled. Re-running the command for the same email issues a fresh invite (use it for a lost password). A lost authenticator needs a manual DB reset: set `totp_enabled=false, totp_secret_enc=null` for that user.
+Open the printed link (valid 7 days), choose a password (12+ characters), sign in, and you'll be sent to `/mfa/setup` to scan the QR code with an authenticator app. Admin pages stay locked until MFA is enabled. Re-running the command for the same email issues a fresh invite (use it for a lost password). If you lose both the authenticator and the recovery codes, the last resort is a manual DB reset: set `totp_enabled=false, totp_secret_enc=null` for that user and delete their rows in `recovery_codes`.
 
 ## Add a client
 
 Admin → **New client** → name, status, plan, included minutes (default 1,200). A kickoff → build → testing → go-live timeline is created automatically. Fill in the other tabs: **Profile**, **Contacts**, **Scope**, **Timeline**.
 
+## How people get in (invite-only)
+
+There is no sign-up page. An account exists only because an admin created it, and every route except sign-in, reset and invite requires a session. A stranger who types an email gets the same generic answer as a real user, so nothing leaks about who has access.
+
+1. You invite someone (below). They get a one-time link valid for 7 days.
+2. They open it, enter their name, and choose their own password (12+ characters; passwords found in known data breaches are refused).
+3. After that they sign in with email + password, an emailed sign-in link, or, once Google is switched on, "Continue with Google".
+4. "Forgot password?" on the sign-in page emails a 30-minute reset link and signs out their other devices. They get an email whenever their password changes.
+
 ## Invite a client user
 
-Client → **Users** → email (+ optional name) → **Send invite**. The invitee gets a link (valid 7 days) to set a password. Until `RESEND_API_KEY` is set, the email is only logged: run `sudo docker logs portal-portal-app-1 | grep -A3 "email:stub"` and send the link yourself. **Resend invite** reissues it. **Disable** signs the user out immediately.
+Client → **Users** → email (+ optional name) → **Send invite**. The row shows when the link expires. The invitee gets a link (valid 7 days) to set a password. Until `RESEND_API_KEY` is set, the email is only logged: run `sudo docker logs portal-portal-app-1 | grep -A3 "email:stub"` and send the link yourself. Per-user buttons on the Users tab:
+
+| Button | What it does |
+|---|---|
+| Resend invite | Issues a fresh invite link (for users who haven't set a password yet) |
+| Cancel invite | Deletes a pending user and kills the link (refused if they already have a password) |
+| Send reset link | Emails a password-reset link to someone who already has a password. You never see or set their password |
+| Change email | Moves their login to a new address, signs them out everywhere, and emails the old address |
+| Disable / Enable | Blocks sign-in and ends their sessions immediately |
+| Remove | Permanently deletes the user (documents they uploaded stay with the client) |
+
+Every one of these is written to the activity log on the admin home page.
+
+## Admin sign-in, recovery codes and Google
+
+Admins sign in with password + a 6-digit authenticator code. Google sign-in is for **client** users only; admins stay on password + authenticator so MFA can't be skipped.
+
+**Recovery codes.** When you turn on two-factor you are shown 10 one-time recovery codes. Save them (password manager). If your authenticator is lost, type a recovery code into the "Authenticator or recovery code" box at sign-in instead of the 6 digits. Each works once. Using one emails you and is logged. Account page → **Recovery codes** shows how many are left and generates a new set (asks for your password; old codes stop working).
+
+**Turning on Google sign-in (optional, free):**
+1. console.cloud.google.com → create/select a project → **APIs & Services → OAuth consent screen**: choose External, app name "Kynetic Portal", your support email, no extra scopes (email/profile/openid only).
+2. **APIs & Services → Credentials → Create credentials → OAuth client ID → Web application**. Add the authorized redirect URI `https://portal.kyneticai.com/api/auth/callback/google`.
+3. Copy the Client ID and Client secret. On your Mac run `ssh -t ubuntu@40.160.150.91 /opt/portal/set-secrets.sh`, press Enter through the Resend/R2 prompts, and paste the two Google values at the Google prompts.
+4. The "Continue with Google" button then appears on the sign-in page. It only lets in an invited client whose Google email is verified and matches an existing account. Anyone else sees "That Google account hasn't been invited". Nobody is ever auto-created.
 
 ## Upload a document
 

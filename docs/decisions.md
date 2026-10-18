@@ -123,3 +123,10 @@ Date: 2026-10-17
 Why: Abdullah chose the behavior the n8n workflow "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`) already has over the D-012 retry plan. Attempt 1 goes out on form submit. After a no-answer or voicemail on attempt 1, a fast retry runs about 90 seconds later; if it does not run, the 5-minute sweeper picks the lead up at +10 minutes. After a no-answer or voicemail on attempt 2, the next try is about 60 minutes later. Maximum 3 attempts. Calls only inside 8:00 to 21:00 in the lead's local time (time zone from ZIP, then area code); outside the window the lead is queued for the local morning.
 Replaced: D-012 item 2 (retries at 5 minutes, 1 hour and next day, maximum 4 attempts) and the 9:00 to 20:00 Pacific window in BUILD_PLAN.md. The rest of D-012 stands.
 Note: the first attempt was tested end to end on Oct 15. The retry path has not run yet.
+
+## D-021: Portal access is invite-only; Google sign-in is for clients only
+Status: decided
+Date: 2026-10-17
+Why: Abdullah wants only people he invites to be able to sign in, with no public sign-up. Industry practice (OWASP authentication and forgot-password cheat sheets, NIST SP 800-63B) is closed registration with single-use expiring invite tokens, generic responses that don't reveal who has an account, length-based password rules with a breached-password screen and no composition or rotation rules, and MFA with a recovery path for privileged users.
+Decided: Accounts are created only by an admin invite; the invitee sets their own password. Google sign-in is allowed only for a client user that already exists and has a verified matching Google email; it never creates accounts. Admins stay on password + TOTP (+ recovery codes) because an OAuth round trip cannot ask for TOTP.
+

@@ -1,7 +1,7 @@
 "use server";
 import { AuthError } from "next-auth";
 import { eq } from "drizzle-orm";
-import { redirect, unstable_rethrow } from "next/navigation";
+import { unstable_rethrow } from "next/navigation";
 import { z } from "zod";
 import QRCode from "qrcode";
 import { signIn, signOut } from "@/auth";
@@ -14,11 +14,13 @@ import { encrypt, decrypt } from "../crypto";
 import { audit } from "../audit";
 import { consumeToken, issueToken } from "./tokens";
 import { findByEmail } from "./authenticate";
-import { hashPassword, passwordProblem, verifyPassword } from "./password";
+import { hashPassword, newPasswordProblem, verifyPassword } from "./password";
 import { newTotpSecret, totpUri, checkTotp } from "./totp";
+import { generateRecoveryCodes } from "./recovery";
+import { googleEnabled } from "./google";
 import { getSession, requireUser } from "./session";
 
-export type FormState = { error?: string; code?: string; ok?: boolean; message?: string } | undefined;
+export type FormState = { error?: string; code?: string; ok?: boolean; message?: string; codes?: string[] } | undefined;
 
 const MESSAGES: Record<string, string> = {
   invalid: "Incorrect email or password.",
@@ -48,6 +50,12 @@ export async function loginWithPassword(_: FormState, fd: FormData): Promise<For
       redirectTo: safeNext(fd.get("next")),
     });
   } catch (e) { return authFailure(e); }
+}
+
+/** Starts Google sign-in. Access is still limited to invited accounts (see signIn callback in src/auth.ts). */
+export async function signInWithGoogle(): Promise<void> {
+  if (!googleEnabled()) return;
+  await signIn("google", { redirectTo: "/" });
 }
 
 export async function loginWithMagic(_: FormState, fd: FormData): Promise<FormState> {
@@ -91,20 +99,23 @@ async function setPasswordWithToken(fd: FormData, type: "reset" | "invite"): Pro
   const token = String(fd.get("token") ?? "");
   const pw = String(fd.get("password") ?? "");
   if (pw !== String(fd.get("confirm") ?? "")) return { error: "Passwords don't match." };
-  const problem = passwordProblem(pw);
+  const problem = await newPasswordProblem(pw);
   if (problem) return { error: problem };
   const name = String(fd.get("name") ?? "").trim().slice(0, 120);
   const userId = await consumeToken(token, type);
   if (!userId) return { error: MESSAGES.invalid_link };
   const passwordHash = await hashPassword(pw);
+  let notifyEmail: string | null = null;
   await withScope({ role: "system" }, async (tx) => {
-    const [u] = await tx.select({ sv: users.sessionVersion, clientId: users.clientId }).from(users).where(eq(users.id, userId));
+    const [u] = await tx.select({ sv: users.sessionVersion, clientId: users.clientId, email: users.email }).from(users).where(eq(users.id, userId));
+    notifyEmail = u?.email ?? null;
     await tx.update(users).set({
       passwordHash, failedLogins: 0, lockedUntil: null, sessionVersion: (u?.sv ?? 1) + 1,
       ...(type === "invite" && name ? { name } : {}),
     }).where(eq(users.id, userId));
     await audit(tx, { actorUserId: userId, clientId: u?.clientId, action: type === "invite" ? "user.invite_accepted" : "user.password_reset" });
   });
+  if (type === "reset" && notifyEmail) await sendEmail({ to: notifyEmail, ...emails.passwordChanged() }).catch(() => {});
   return { ok: true, message: type === "invite" ? "Account ready — sign in with your new password." : "Password updated — sign in with your new password." };
 }
 
@@ -131,12 +142,13 @@ export async function changePassword(_: FormState, fd: FormData): Promise<FormSt
   const current = String(fd.get("current") ?? "");
   const pw = String(fd.get("password") ?? "");
   if (pw !== String(fd.get("confirm") ?? "")) return { error: "Passwords don't match." };
-  const problem = passwordProblem(pw);
+  const problem = await newPasswordProblem(pw);
   if (problem) return { error: problem };
   const u = await findByEmail(s.email);
   if (!u || !(await verifyPassword(u.passwordHash, current))) return { error: "Current password is incorrect." };
   const passwordHash = await hashPassword(pw);
   await withScope({ role: "system" }, (tx) => tx.update(users).set({ passwordHash, sessionVersion: u.sessionVersion + 1 }).where(eq(users.id, u.id)));
+  await sendEmail({ to: u.email, ...emails.passwordChanged() }).catch(() => {});
   await signOut({ redirectTo: "/login?changed=1" });
   return { ok: true };
 }
@@ -165,5 +177,20 @@ export async function confirmTotpEnrolment(_: FormState, fd: FormData): Promise<
     await tx.update(users).set({ totpEnabled: true, totpLastStep: step }).where(eq(users.id, u.id));
     await audit(tx, { actorUserId: u.id, action: "admin.mfa_enrolled" });
   });
-  redirect("/admin");
+  const codes = await generateRecoveryCodes(u.id);
+  await sendEmail({ to: u.email, ...emails.mfaEnrolled() }).catch(() => {});
+  return { ok: true, codes };
+}
+
+/** Admin-only: replace all recovery codes. Re-checks the password because this is a sensitive action. */
+export async function regenerateRecoveryCodes(_: FormState, fd: FormData): Promise<FormState> {
+  const s = await getSession();
+  if (!s || s.role !== "admin" || !s.totpEnabled) return { error: "Not available." };
+  if (!(await hit(`recovery:user:${s.userId}`, 5, 15 * 60))) return { error: MESSAGES.rate_limited };
+  const u = await findByEmail(s.email);
+  if (!u || !(await verifyPassword(u.passwordHash, String(fd.get("password") ?? "")))) return { error: "Password is incorrect." };
+  const codes = await generateRecoveryCodes(u.id);
+  await withScope({ role: "system" }, (tx) => audit(tx, { actorUserId: u.id, action: "admin.recovery_codes_regenerated" }));
+  await sendEmail({ to: u.email, ...emails.recoveryRegenerated() }).catch(() => {});
+  return { ok: true, codes };
 }

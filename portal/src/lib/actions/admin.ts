@@ -217,6 +217,83 @@ export async function setUserDisabled(_: ActionState, fd: FormData): Promise<Act
   return { ok: true, message: disable === "true" ? "User disabled and signed out." : "User re-enabled." };
 }
 
+const userRef = z.object({ clientId: uuid, userId: uuid });
+
+/** Cancel an invite that was never accepted: removes the placeholder user and kills its link. */
+export async function cancelInvite(_: ActionState, fd: FormData): Promise<ActionState> {
+  const s = await requireAdmin();
+  const p = userRef.safeParse(obj(fd));
+  if (!p.success) return fail(p.error);
+  const { clientId, userId } = p.data;
+  const removed = await withScope(adminScope(s), async (tx) => {
+    const rows = await tx.delete(users)
+      .where(and(eq(users.id, userId), eq(users.clientId, clientId), eq(users.role, "client"), isNull(users.passwordHash)))
+      .returning({ email: users.email });
+    if (rows.length) await audit(tx, { actorUserId: s.userId, clientId, action: "user.invite_cancelled", meta: { email: rows[0].email } });
+    return rows.length;
+  });
+  back(clientId);
+  return removed ? { ok: true, message: "Invite cancelled." } : { error: "That user has already set a password. Disable them instead." };
+}
+
+/** Email an existing user a password-reset link (they choose the new password; admins never see it). */
+export async function sendResetLink(_: ActionState, fd: FormData): Promise<ActionState> {
+  const s = await requireAdmin();
+  const p = userRef.safeParse(obj(fd));
+  if (!p.success) return fail(p.error);
+  const { clientId, userId } = p.data;
+  const target = await withScope(adminScope(s), async (tx) => {
+    const [u] = await tx.select({ email: users.email, hasPw: sql<boolean>`${users.passwordHash} is not null` }).from(users)
+      .where(and(eq(users.id, userId), eq(users.clientId, clientId), eq(users.role, "client")));
+    if (u) await audit(tx, { actorUserId: s.userId, clientId, action: "user.reset_link_sent", meta: { email: u.email } });
+    return u ?? null;
+  });
+  if (!target) return { error: "User not found." };
+  if (!target.hasPw) return { error: "This user hasn't accepted their invite yet. Use Resend invite." };
+  const token = await issueToken(userId, "reset");
+  await sendEmail({ to: target.email, ...emails.reset(`${env.appUrl}/reset?token=${token}`) });
+  return { ok: true, message: env.resendApiKey ? `Reset link sent to ${target.email}.` : `Reset link created for ${target.email} (email stub: link is in the server log).` };
+}
+
+const emailChangeInput = z.object({ clientId: uuid, userId: uuid, email: z.string().trim().toLowerCase().email("Invalid email.").max(254) });
+
+/** Change a client user's sign-in email. Signs them out everywhere and warns the old address. */
+export async function changeUserEmail(_: ActionState, fd: FormData): Promise<ActionState> {
+  const s = await requireAdmin();
+  const p = emailChangeInput.safeParse(obj(fd));
+  if (!p.success) return fail(p.error);
+  const { clientId, userId, email } = p.data;
+  const res = await withScope(adminScope(s), async (tx) => {
+    const [taken] = await tx.select({ id: users.id }).from(users).where(sql`lower(${users.email}) = ${email} and ${users.id} <> ${userId}`);
+    if (taken) return { error: "That email already belongs to another account." } as const;
+    const [old] = await tx.select({ email: users.email }).from(users)
+      .where(and(eq(users.id, userId), eq(users.clientId, clientId), eq(users.role, "client")));
+    if (!old) return { error: "User not found." } as const;
+    await tx.update(users).set({ email, sessionVersion: sql`${users.sessionVersion} + 1` }).where(eq(users.id, userId));
+    await audit(tx, { actorUserId: s.userId, clientId, action: "user.email_changed", meta: { from: old.email, to: email } });
+    return { oldEmail: old.email } as const;
+  });
+  if ("error" in res) return { error: res.error };
+  if (res.oldEmail.toLowerCase() !== email) await sendEmail({ to: res.oldEmail, ...emails.emailChanged(email) }).catch(() => {});
+  back(clientId);
+  return { ok: true, message: `Email changed to ${email}. They've been signed out.` };
+}
+
+/** Permanently remove a client user (their uploaded documents stay with the client). */
+export async function removeUser(_: ActionState, fd: FormData): Promise<ActionState> {
+  const s = await requireAdmin();
+  const p = userRef.safeParse(obj(fd));
+  if (!p.success) return fail(p.error);
+  const { clientId, userId } = p.data;
+  const n = await withScope(adminScope(s), async (tx) => {
+    const rows = await tx.delete(users).where(and(eq(users.id, userId), eq(users.clientId, clientId), eq(users.role, "client"))).returning({ email: users.email });
+    if (rows.length) await audit(tx, { actorUserId: s.userId, clientId, action: "user.removed", meta: { email: rows[0].email } });
+    return rows.length;
+  });
+  back(clientId);
+  return n ? { ok: true, message: "User removed." } : { error: "User not found." };
+}
+
 // ---- Ingest keys --------------------------------------------------------------------------------
 
 /** Creates a key and returns the raw secret ONCE (only its sha256 is stored). */

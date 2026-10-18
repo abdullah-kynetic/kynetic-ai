@@ -3,7 +3,7 @@ import { appRole, fx } from "./helpers";
 
 const sql = appRole();
 afterAll(() => sql.end());
-const TABLES = ["clients", "business_profiles", "contacts", "scope_items", "milestones", "documents", "daily_results", "ingest_keys", "users", "auth_tokens", "rate_limits", "audit_log"];
+const TABLES = ["clients", "business_profiles", "contacts", "scope_items", "milestones", "documents", "daily_results", "ingest_keys", "users", "auth_tokens", "rate_limits", "audit_log", "recovery_codes"];
 const as = <T>(ctx: { role: string; clientId?: string; userId?: string }, fn: (tx: typeof sql) => Promise<T>) =>
   sql.begin(async (tx) => {
     await tx`select set_config('app.role', ${ctx.role}, true), set_config('app.client_id', ${ctx.clientId ?? ""}, true), set_config('app.user_id', ${ctx.userId ?? ""}, true)`;
@@ -31,7 +31,7 @@ describe("RLS as the runtime role", () => {
     }
     expect((await as(ctx, (tx) => tx`select id from clients`)).map((r) => r.id)).toEqual([fx.A]);
     expect((await as(ctx, (tx) => tx`select id from users`)).map((r) => r.id)).toEqual([fx.clientUserA]); // no member list
-    for (const t of ["ingest_keys", "auth_tokens", "rate_limits"]) expect((await as(ctx, (tx) => tx.unsafe(`select count(*)::int n from ${t}`)))[0].n, t).toBe(0);
+    for (const t of ["ingest_keys", "auth_tokens", "rate_limits", "recovery_codes"]) expect((await as(ctx, (tx) => tx.unsafe(`select count(*)::int n from ${t}`)))[0].n, t).toBe(0);
   });
 
   it("client context cannot write tenant tables (own or B's)", async () => {

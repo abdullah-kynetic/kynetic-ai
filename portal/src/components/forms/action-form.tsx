@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-type State = { ok?: boolean; error?: string; message?: string; code?: string; secret?: string } | undefined;
+type State = { ok?: boolean; error?: string; message?: string; code?: string; secret?: string; codes?: string[] } | undefined;
 type Action = (prev: State, fd: FormData) => Promise<State>;
 
 /** Server-action form with inline error, toast on success, optional reset. */
