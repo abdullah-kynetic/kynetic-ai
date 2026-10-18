@@ -35,6 +35,9 @@ The client portal (portal.kyneticai.com) must not hold real client data until th
 ### KI-008: Check the portal does not reuse the dev Postgres password (medium)
 Confirm `/opt/portal/.env` does not reuse the dev Postgres password hard-coded in `portal/scripts/pg-embedded.mts`. Not yet checked; the VPS is out of scope for repo work.
 
+### KI-010: Who and what can change the portal server (medium)
+Found read-only on 2026-10-17. Two keys have full administrator access to the VPS (which also holds Twenty and its backups): Abdullah's Mac, and one labelled `bob-box-ovh-vps` (believed to be Abdullah's Grok bot). A restricted `deploy` key (forced command, deploys only commits on `main`, rolls back on failure) was added the same evening. There are now two ways to deploy: the bot path (`portal-deploy`) and `portal/deploy/deploy.sh`; each overwrites `/opt/portal/src`, so use one. Decide whether the bot should keep full root, and which deploy path is the one.
+
 ### KI-009: Outbound workflow found active with Alex ID set; go-live not approved (medium)
 Workflow `m2YJwZ1l8DTzyEkw` was found active on Oct 17 (read-only check, 38 nodes) with the Alex agent ID set and the Retell credential attached. Go-live not yet approved; Abdullah to confirm. Docs previously said inactive and never run. The public form and the post-call webhook are live while it is active. Do not change n8n without a yes on that specific change.
 
