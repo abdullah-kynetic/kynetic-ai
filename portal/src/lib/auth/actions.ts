@@ -111,7 +111,7 @@ export async function requestPasswordReset(_: FormState, fd: FormData): Promise<
 }
 
 /** Shared by password reset and invite acceptance. Bumps session_version so other sessions die. */
-async function setPasswordWithToken(fd: FormData, type: "reset" | "invite"): Promise<FormState> {
+async function setPasswordWithToken(fd: FormData, type: "reset" | "invite"): Promise<NonNullable<FormState> & { email?: string }> {
   if (!(await hit(`settoken:ip:${await clientIp()}`, 20, 15 * 60))) return { error: MESSAGES.rate_limited };
   const token = String(fd.get("token") ?? "");
   const pw = String(fd.get("password") ?? "");
@@ -133,11 +133,29 @@ async function setPasswordWithToken(fd: FormData, type: "reset" | "invite"): Pro
     await audit(tx, { actorUserId: userId, clientId: u?.clientId, action: type === "invite" ? "user.invite_accepted" : "user.password_reset" });
   });
   if (type === "reset" && notifyEmail) await sendEmail({ to: notifyEmail, ...emails.passwordChanged() }).catch(() => {});
-  return { ok: true, message: type === "invite" ? "Account ready — sign in with your new password." : "Password updated — sign in with your new password." };
+  return { ok: true, email: notifyEmail ?? undefined, message: type === "invite" ? "Account ready — sign in with your new password." : "Password updated — sign in with your new password." };
 }
 
-export async function resetPassword(_: FormState, fd: FormData) { return setPasswordWithToken(fd, "reset"); }
-export async function acceptInvite(_: FormState, fd: FormData) { return setPasswordWithToken(fd, "invite"); }
+export async function resetPassword(_: FormState, fd: FormData): Promise<FormState> {
+  const r = await setPasswordWithToken(fd, "reset"); // resets always end at the sign-in page
+  return { ok: r.ok, error: r.error, message: r.message };
+}
+
+/**
+ * Invite acceptance signs the new user straight in with the password they just chose (no "All set" screen).
+ * New admins have no authenticator yet, so they land on /mfa/setup. If the account already has one (a re-issued
+ * invite), the sign-in is refused for the missing code and we fall back to the normal sign-in page.
+ */
+export async function acceptInvite(_: FormState, fd: FormData): Promise<FormState> {
+  const { email, ...state } = await setPasswordWithToken(fd, "invite");
+  if (!state.ok || !email) return state;
+  try {
+    await signIn("password", { email, password: fd.get("password"), totp: "", redirectTo: "/" });
+  } catch (e) {
+    unstable_rethrow(e); // the success redirect
+  }
+  return state;
+}
 
 export async function logout(): Promise<void> {
   await signOut({ redirectTo: "/login" });
