@@ -57,6 +57,23 @@ Kynetic Restoration (Demo) build IDs: `retell/builds/kynetic-restoration/build-i
 - The imported template `KYQIVtxwDcXVKmk3` is unchanged (Google Sheets / Vapi / Azure). Do not activate or run it.
 - Create the Retell agent with `python tools/retell.py create-outbound` (dry run; `--apply` only with Abdullah's yes). Cal.com Roof Inspection event type `7404470`.
 - Never dial the AM-1 office number on the demo company record.
+- A real end-to-end test ran on 2026-10-15 (one test lead, called, booked, logged in Twenty). Details in docs/progress.md.
+
+## Voice provider bake-off (testing, no decision)
+
+Retell stays the platform (D-018) unless another provider clearly wins. Only a winner gets wired into n8n. No changes to production Alex (`agent_71e3cfc8384aa38a910a506b53`), n8n, Twenty workflows, Nora, Emily or Kynetic Restoration (Demo) as part of the test.
+
+| Provider | Agent | Branch | State (Oct 17) |
+|---|---|---|---|
+| Retell Alex Lab (control) | `agent_423ae0cb2803cba2891b376d44` | `claude/alex-demo-live-test` (config: `retell/builds/outbound-speed-to-lead/agent.lab.config.json`) | Control for the scorecard |
+| ElevenLabs | `agent_9301m52zy185e609f8vyws4r1r7q` ("Roofing Assistant") | `claude/provider-test-elevenlabs` | Agent runs the real Alex prompt; Cal.com tools attached; slots call verified; no booking made yet |
+| Bland | not recorded here | `claude/provider-test-bland` | Test track set up, no results |
+
+- Scorecard and persona: `providers/TEST_PLAN.md` (on the branches, not yet on main). The challenger must beat Alex Lab on one-question-per-turn, waiting for answers, email accuracy, false success and booking success without losing more than 25 percent on cost or delay. A tie keeps Retell.
+- Cal.com: production event type `7404470` (Retell, Bland). ElevenLabs test event type `7520336` (same availability, phone required, email optional). The ElevenLabs tools still point at 7404470 until switched. Test bookings are real; cancel them only after Abdullah says so.
+- Planned (Abdullah's Oct 17 summary): confirm by text instead of email, with a stub `send_confirmation_sms` tool. Real delivery waits on A2P registration (KI-003). It needs an edit to the shared scorecard, which needs Abdullah's OK.
+- Open question: the ElevenLabs agent's LLM is `deepseek-v41-flash`, left as found, while Retell Alex runs gpt-4.1 (D-012). Abdullah to say if it should change, so the comparison is like for like.
+- Where the detail lives: `providers/elevenlabs/RESULTS.md` and `HANDOFF.md` on the ElevenLabs branch, and the Twenty note "VOICE PROVIDER BAKE-OFF: Retell vs Bland vs ElevenLabs". Twenty is canonical; flag any mismatch.
 
 ## Business state
 
