@@ -5,7 +5,7 @@ import postgres from "postgres";
 import { generate } from "otplib";
 
 export type Fixtures = {
-  A: string; B: string; adminId: string; adminNoMfaId: string; aUser2: string; disabledId: string; clientUserA: string; clientUserB: string;
+  A: string; B: string; adminId: string; adminRecId: string; recoveryCodes: string[]; adminNoMfaId: string; aUser2: string; disabledId: string; clientUserA: string; clientUserB: string;
   docsA: { id: string; storage_key: string }[]; docsB: { id: string; storage_key: string }[];
   contactsB: string[]; milestonesB: string[]; scopeB: string[]; keyA: string; keyB: string; keyRevoked: string;
   adminTotp: string; pw: string; base: string; env: { FILE_SIGNING_SECRET: string; UPLOAD_DIR: string; ENCRYPTION_KEY: string }; dbOwner: string; dbApp: string;
