@@ -1,0 +1,263 @@
+{
+  "active": false,
+  "connections": {
+    "Client Config Lookup": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Log Reply Call",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Draft First-Pass Reply": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Send AI Reply SMS",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Log Reply Call": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Draft First-Pass Reply",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "OpenRouter Model": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "Draft First-Pass Reply",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Reactivation Reply Webhook": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Client Config Lookup",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Send AI Reply SMS": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond OK",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "qMB6WUFHf5y7HPel",
+  "name": "Kynetic — Reactivation Reply Handler",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "a0de4a45-6da9-4cef-ab3b-211a021e6b97",
+      "name": "Reactivation Reply Webhook",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {},
+        "path": "reactivation-reply",
+        "responseMode": "lastNode"
+      },
+      "position": [
+        0,
+        112
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "613b6628-67a1-4380-a038-9a453aa36a57"
+    },
+    {
+      "id": "ab172ee2-250f-4962-b458-3fd8832b098d",
+      "name": "Client Config Lookup",
+      "parameters": {
+        "mode": "once",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "05HI35dhaWXweO5i"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "phone_number": "={{ $json.body.To }}"
+          }
+        }
+      },
+      "position": [
+        224,
+        112
+      ],
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "5bf66856-4947-491c-854e-9d148fb17e8a",
+      "name": "Log Reply Call",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "3f2ad560-8a67-42c9-b9bc-ab348d8de6fb"
+        },
+        "operation": "create",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Call|title",
+              "title": "=SMS Reply — {{ $(\"Reactivation Reply Webhook\").item.json.body.From }}",
+              "type": "title"
+            },
+            {
+              "key": "Call Type|select",
+              "selectValue": "General",
+              "type": "select"
+            },
+            {
+              "key": "Status|select",
+              "selectValue": "Logged",
+              "type": "select"
+            },
+            {
+              "key": "Phone|phone_number",
+              "phoneValue": "={{ $(\"Reactivation Reply Webhook\").item.json.body.From }}",
+              "type": "phone_number"
+            },
+            {
+              "key": "Details|rich_text",
+              "richText": false,
+              "textContent": "={{ $(\"Reactivation Reply Webhook\").item.json.body.Body }}",
+              "type": "rich_text"
+            },
+            {
+              "key": "Client|relation",
+              "relationValue": [
+                "={{ $(\"Client Config Lookup\").item.json.client_id }}"
+              ],
+              "type": "relation"
+            }
+          ]
+        },
+        "resource": "databasePage",
+        "simple": true
+      },
+      "position": [
+        448,
+        112
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "f81b56cc-48d6-463c-b834-e21ee16e317e",
+      "name": "Draft First-Pass Reply",
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are {{ $(\"Client Config Lookup\").item.json.voice_agent_name }}, the friendly SMS receptionist for {{ $(\"Client Config Lookup\").item.json.client_name }}, a {{ $(\"Client Config Lookup\").item.json.niche }} business. Keep replies short, helpful, and human. Never invent pricing or availability you do not know."
+        },
+        "promptType": "define",
+        "text": "=A customer replied to our re-engagement text. Their message: \"{{ $(\"Reactivation Reply Webhook\").item.json.body.Body }}\". Write a short, warm, on-brand SMS reply (under 300 characters, no markdown) as the receptionist for a {{ $(\"Client Config Lookup\").item.json.niche }} business."
+      },
+      "position": [
+        672,
+        112
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1
+    },
+    {
+      "credentials": {
+        "openRouterApi": {
+          "id": "Ako6xpEJL9nEZJ2j",
+          "name": "n8n openrouter"
+        }
+      },
+      "id": "b0e91b87-6ef9-4675-9c7d-c6a2de58671f",
+      "name": "OpenRouter Model",
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.6",
+        "options": {
+          "maxTokens": 200,
+          "temperature": 0.6
+        }
+      },
+      "position": [
+        752,
+        336
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "twilioApi": {
+          "id": "aoIjAKkkoPR85aOq",
+          "name": "Twilio account"
+        }
+      },
+      "id": "8bdd4d11-c858-48e9-909f-ce934cc84b82",
+      "name": "Send AI Reply SMS",
+      "parameters": {
+        "from": "={{ $(\"Client Config Lookup\").item.json.assigned_twilio_number }}",
+        "message": "={{ $json.output }}",
+        "operation": "send",
+        "resource": "sms",
+        "to": "={{ $(\"Reactivation Reply Webhook\").item.json.body.From }}"
+      },
+      "position": [
+        1024,
+        112
+      ],
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1
+    },
+    {
+      "id": "1627f0c3-fb85-4d55-ace5-efec9783e471",
+      "name": "Respond OK",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"status\": \"reply_handled\" } }}"
+      },
+      "position": [
+        1248,
+        112
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "executionOrder": "v1"
+  }
+}

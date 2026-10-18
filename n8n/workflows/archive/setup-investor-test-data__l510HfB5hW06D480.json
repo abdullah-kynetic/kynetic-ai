@@ -1,0 +1,484 @@
+{
+  "active": false,
+  "connections": {
+    "Batch 1 Rows": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Append Batch 1 Rows",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Batch 2 Rows": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Append Batch 2 Rows",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Batch 3 Rows": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Append Batch 3 Rows",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Create Batch 1 Sheet": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Batch 1 Rows",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Create Batch 2 Sheet": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Batch 2 Rows",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Create Batch 3 Sheet": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Batch 3 Rows",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Start Setup": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create Batch 1 Sheet",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Create Batch 2 Sheet",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Create Batch 3 Sheet",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Create Master Output Sheet",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "l510HfB5hW06D480",
+  "name": "Setup - Investor Test Data",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "9305842e-d071-438e-a6aa-9f75445b3e92",
+      "name": "Start Setup",
+      "parameters": {},
+      "position": [
+        0,
+        288
+      ],
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "29bda538-0804-4782-a0fb-8f6a568accd7",
+      "name": "Create Batch 1 Sheet",
+      "parameters": {
+        "options": {},
+        "resource": "spreadsheet",
+        "title": "Investor Batch 1 - Custodian A"
+      },
+      "position": [
+        224,
+        0
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7
+    },
+    {
+      "id": "069a26cb-ae1b-40b0-8296-8ec08db47a2b",
+      "name": "Batch 1 Rows",
+      "parameters": {
+        "jsCode": "return [\n  { json: { \"Investor Name\": \"John Carter\", \"Account Number\": \"ACC-1001\", \"Investment Amount\": 50000, \"Transaction Type\": \"Subscription\", \"Closing Date\": \"2026-08-31\" } },\n  { json: { \"Investor Name\": \"Maria Gomez\", \"Account Number\": \"ACC-1002\", \"Investment Amount\": 75000, \"Transaction Type\": \"Subscription\", \"Closing Date\": \"2026-08-31\" } },\n  { json: { \"Investor Name\": \"David Chen\", \"Account Number\": \"ACC-1003\", \"Investment Amount\": 120000, \"Transaction Type\": \"Redemption\", \"Closing Date\": \"2026-08-31\" } },\n  { json: { \"Investor Name\": \"Priya Nair\", \"Account Number\": \"ACC-1004\", \"Investment Amount\": 30000, \"Transaction Type\": \"Subscription\", \"Closing Date\": \"2026-08-31\" } },\n  { json: { \"Investor Name\": \"Omar Haddad\", \"Account Number\": \"ACC-1005\", \"Investment Amount\": 60000, \"Transaction Type\": \"Subscription\", \"Closing Date\": \"2026-08-31\" } }\n];"
+      },
+      "position": [
+        448,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "21550cf6-697e-4aea-a534-2426dd1e2f78",
+      "name": "Append Batch 1 Rows",
+      "parameters": {
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Investor Name",
+              "id": "Investor Name",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Account Number",
+              "id": "Account Number",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": false,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Investment Amount",
+              "id": "Investment Amount",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": false,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Transaction Type",
+              "id": "Transaction Type",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": false,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Closing Date",
+              "id": "Closing Date",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {}
+        },
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Create Batch 1 Sheet').item.json.spreadsheetId }}"
+        },
+        "operation": "append",
+        "options": {},
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sheet1"
+        }
+      },
+      "position": [
+        672,
+        0
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "4aec5884-076d-432b-a947-5a6893a35019",
+      "name": "Create Batch 2 Sheet",
+      "parameters": {
+        "options": {},
+        "resource": "spreadsheet",
+        "title": "Investor Batch 2 - Custodian B"
+      },
+      "position": [
+        224,
+        192
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7
+    },
+    {
+      "id": "090124b7-8f7c-4c6d-bef9-86cad394781f",
+      "name": "Batch 2 Rows",
+      "parameters": {
+        "jsCode": "return [\n  { json: { \"Investor\": \"John Carter\", \"Acct Number\": \"ACC-1001\", \"Amount\": 50000, \"Type\": \"Subscription\", \"Date\": \"2026-08-31\" } },\n  { json: { \"Investor\": \"Maria Gomez\", \"Acct Number\": \"ACC-1002\", \"Amount\": 80000, \"Type\": \"Subscription\", \"Date\": \"2026-08-31\" } },\n  { json: { \"Investor\": \"Sarah Kim\", \"Acct Number\": \"ACC-1006\", \"Amount\": 45000, \"Type\": \"Subscription\", \"Date\": \"2026-08-31\" } },\n  { json: { \"Investor\": \"\", \"Acct Number\": \"ACC-1007\", \"Amount\": 25000, \"Type\": \"Subscription\", \"Date\": \"2026-08-31\" } },\n  { json: { \"Investor\": \"David Chen\", \"Acct Number\": \"ACC-1003\", \"Amount\": 120000, \"Type\": \"Redemption\", \"Date\": \"2026-08-31\" } }\n];"
+      },
+      "position": [
+        448,
+        192
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "d6585bdd-3ffc-42d5-b09a-cd260574fc83",
+      "name": "Append Batch 2 Rows",
+      "parameters": {
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Investor",
+              "id": "Investor",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Acct Number",
+              "id": "Acct Number",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": false,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Amount",
+              "id": "Amount",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": false,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Type",
+              "id": "Type",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": false,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Date",
+              "id": "Date",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {}
+        },
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Create Batch 2 Sheet').item.json.spreadsheetId }}"
+        },
+        "operation": "append",
+        "options": {},
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sheet1"
+        }
+      },
+      "position": [
+        672,
+        192
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "342b8ad5-8878-4993-854e-c038b1ff4928",
+      "name": "Create Batch 3 Sheet",
+      "parameters": {
+        "options": {},
+        "resource": "spreadsheet",
+        "title": "Investor Batch 3 - Custodian C"
+      },
+      "position": [
+        224,
+        384
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7
+    },
+    {
+      "id": "ab3bfdcb-c795-4032-adca-0e6c56f7168e",
+      "name": "Batch 3 Rows",
+      "parameters": {
+        "jsCode": "return [\n  { json: { \"Investor Name\": \"Linda Park\", \"Account Number\": \"ACC-1008\", \"Investment Amount\": 90000, \"Transaction Type\": \"Subscription\", \"Closing Date\": \"2026-08-31\" } },\n  { json: { \"Investor Name\": \"Priya Nair\", \"Account Number\": \"ACC-1004\", \"Investment Amount\": 30000, \"Transaction Type\": \"Subscription\", \"Closing Date\": \"2026-08-31\" } },\n  { json: { \"Investor Name\": \"Tom Baker\", \"Account Number\": \"ACC-1009\", \"Investment Amount\": \"\", \"Transaction Type\": \"Subscription\", \"Closing Date\": \"2026-08-31\" } },\n  { json: { \"Investor Name\": \"Omar Haddad\", \"Account Number\": \"ACC-1005\", \"Investment Amount\": 60000, \"Transaction Type\": \"Subscription\", \"Closing Date\": \"2026-08-31\" } },\n  { json: { \"Investor Name\": \"Jason Wu\", \"Account Number\": \"ACC-1010\", \"Investment Amount\": 15000, \"Transaction Type\": \"Subscription\", \"Closing Date\": \"2026-08-31\" } }\n];"
+      },
+      "position": [
+        448,
+        384
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "0f46456d-9dc9-4be9-ae0e-f9b8ac8ad47c",
+      "name": "Append Batch 3 Rows",
+      "parameters": {
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Investor Name",
+              "id": "Investor Name",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Account Number",
+              "id": "Account Number",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": false,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Investment Amount",
+              "id": "Investment Amount",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": false,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Transaction Type",
+              "id": "Transaction Type",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": false,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Closing Date",
+              "id": "Closing Date",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {}
+        },
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Create Batch 3 Sheet').item.json.spreadsheetId }}"
+        },
+        "operation": "append",
+        "options": {},
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sheet1"
+        }
+      },
+      "position": [
+        672,
+        384
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "d1d501b1-89a4-4c66-a976-e767257b6df4",
+      "name": "Create Master Output Sheet",
+      "parameters": {
+        "options": {},
+        "resource": "spreadsheet",
+        "title": "Investor Consolidation - Master Output"
+      },
+      "position": [
+        224,
+        576
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "binaryMode": "separate",
+    "executionOrder": "v1"
+  }
+}

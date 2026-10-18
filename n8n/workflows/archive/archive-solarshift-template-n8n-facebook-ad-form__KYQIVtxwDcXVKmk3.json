@@ -1,0 +1,794 @@
+{
+  "active": false,
+  "connections": {
+    "Azure OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "End of Call Analyzer",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Create Lead": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Switch1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "End of Call Analyzer": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Proceed or Not?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Fetch Call Details1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "In Progress/Ended?1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Find Lead": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Delete Lead",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Format Phone Number": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Place Call",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Lead": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Remove Lead",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "In Progress/Ended?1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Wait 30 Seconds1",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "End of Call Analyzer",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "New Form Submitted": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create Lead",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Place Call": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Wait 30 Seconds1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Proceed or Not?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create Opportunity",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Get Lead",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Find Lead",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Find Lead",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Format Phone Number",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Wait 30 Seconds1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Fetch Call Details1",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "KYQIVtxwDcXVKmk3",
+  "name": "ARCHIVE - SolarShift template (n8n Facebook Ad Form)",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "ef47da2b-48c4-41b6-b72d-7a85b8736914",
+      "name": "New Form Submitted",
+      "parameters": {
+        "formDescription": "Fill out a form and see if you qualify for a free solar savings assessment!",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Full Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Phone Number",
+              "placeholder": "(555) 123-4567",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Do you own your home?",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Yes"
+                  },
+                  {
+                    "option": "No"
+                  }
+                ]
+              },
+              "fieldType": "dropdown",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Average Monthly Electric Bill",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Under $100"
+                  },
+                  {
+                    "option": "$100-$150"
+                  },
+                  {
+                    "option": "$150-$200"
+                  },
+                  {
+                    "option": "Over $200"
+                  }
+                ]
+              },
+              "fieldType": "dropdown",
+              "requiredField": true
+            }
+          ]
+        },
+        "formTitle": "Get Your Free Solar Savings Assessment | SolarShift",
+        "options": {
+          "appendAttribution": false,
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "Thanks for filling this form out. We'll get back to you soon!"
+            }
+          }
+        }
+      },
+      "position": [
+        0,
+        96
+      ],
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "webhookId": "488a370b-b7b7-4177-abd5-3efcfb07cc2d"
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "b3ce4bfa-baf9-4090-b3e9-c1eec62f3cef",
+      "name": "Create Lead",
+      "parameters": {
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "phoneNumber"
+          ],
+          "value": {
+            "dateTimeAdded": "={{ $now.toFormat(\"cccc, LLLL d',' yyyy, h:mm a\") }}",
+            "fullName": "={{ $json['Full Name'] }}",
+            "homeowner?": "={{ $json['Do you own your home?'] }}",
+            "phoneNumber": "={{ $json['Phone Number'] }}",
+            "spending": "={{ $json['Average Monthly Electric Bill'] }}",
+            "status": "Lead"
+          }
+        },
+        "documentId": {
+          "__rl": true,
+          "cachedResultName": "Facebook Ads Lead Storage",
+          "mode": "list",
+          "value": "1k0bQwKOeGHCS_PMmh72nUvVYDKXsw4KSL9s0bnel_8s"
+        },
+        "operation": "append",
+        "options": {},
+        "sheetName": {
+          "__rl": true,
+          "cachedResultName": "Sheet1",
+          "mode": "list",
+          "value": "gid=0"
+        }
+      },
+      "position": [
+        224,
+        96
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7
+    },
+    {
+      "id": "82d3f4fa-d804-41b2-aaeb-0b120f8c6505",
+      "name": "Switch1",
+      "parameters": {
+        "options": {
+          "fallbackOutput": "extra"
+        },
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "49c9ead2-b518-4c6d-8a03-66bb23bd82ff",
+                    "leftValue": "={{ $json['Average Monthly Electric Bill'] }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "Under $100"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                }
+              },
+              "outputKey": "Under $100 - Not Qualified",
+              "renameOutput": true
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "e12e9ba3-5c66-4050-8529-e70d72042287",
+                    "leftValue": "={{ $json['Do you own your home?'] }}",
+                    "operator": {
+                      "name": "filter.operator.equals",
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "No"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                }
+              },
+              "outputKey": "Not a Homeowner - Not Qualified",
+              "renameOutput": true
+            }
+          ]
+        }
+      },
+      "position": [
+        448,
+        80
+      ],
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "f7e34dc9-1217-47c2-ad2f-eaf593eba712",
+      "name": "Find Lead",
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "cachedResultName": "Facebook Ads Lead Storage",
+          "mode": "list",
+          "value": "1k0bQwKOeGHCS_PMmh72nUvVYDKXsw4KSL9s0bnel_8s"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "phoneNumber",
+              "lookupValue": "={{ $(\"Create Lead\").item.json.phoneNumber }}"
+            }
+          ]
+        },
+        "options": {},
+        "sheetName": {
+          "__rl": true,
+          "cachedResultName": "Sheet1",
+          "mode": "list",
+          "value": "gid=0"
+        }
+      },
+      "position": [
+        672,
+        0
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "35019282-633c-471a-874e-e59b1d803b3a",
+      "name": "Delete Lead",
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "cachedResultName": "Facebook Ads Lead Storage",
+          "mode": "list",
+          "value": "1k0bQwKOeGHCS_PMmh72nUvVYDKXsw4KSL9s0bnel_8s"
+        },
+        "operation": "delete",
+        "sheetName": {
+          "__rl": true,
+          "cachedResultName": "Sheet1",
+          "mode": "list",
+          "value": "gid=0"
+        },
+        "startIndex": "={{ $json.row_number }}"
+      },
+      "position": [
+        896,
+        0
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7
+    },
+    {
+      "id": "e23b3229-664d-43d5-898e-e421209a75e4",
+      "name": "Format Phone Number",
+      "parameters": {
+        "jsCode": "// n8n Code Node: Format phone numbers into +1XXXXXXXXXX\nconst inputNumber = $json.phone || $json.phoneNumber || $json.number || \"\";\nlet digits = inputNumber.replace(/\\D/g, \"\");\nif (digits.length === 10) {\n  digits = \"1\" + digits;\n} else if (digits.length > 11) {\n  digits = digits.slice(-11);\n} else if (digits.length < 10) {\n  throw new Error(`Invalid phone number: ${inputNumber}`);\n}\nconst formattedNumber = `+${digits}`;\nreturn [{\n  formattedPhone: formattedNumber,\n  originalInput: inputNumber,\n}];"
+      },
+      "position": [
+        672,
+        192
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "cf183d1e-2521-47dd-8bcc-5e895631f146",
+      "name": "Place Call",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "jsonBody": "={\n    \"assistantId\": \"f3878cf8-526a-48d5-9251-43cb6adfaa03\",\n    \"phoneNumberId\": \"983993c0-5094-4e21-85c3-47130498e6c6\",\n    \"customer\": {\n      \"number\": \"{{ $json.formattedPhone }}\",\n      \"name\": \"{{ $(\"Create Lead\").item.json.fullName }}\"\n  },\n  \"assistantOverrides\": {\n    \"variableValues\": {\n      \"leadName\": \"{{ $(\"Create Lead\").item.json.fullName }}\"\n    }\n  }\n}",
+        "method": "POST",
+        "options": {},
+        "sendBody": true,
+        "sendHeaders": true,
+        "specifyBody": "json",
+        "url": "https://api.vapi.ai/call"
+      },
+      "position": [
+        896,
+        192
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "0d0797aa-1456-4a1d-9ced-cfaa91d17613",
+      "name": "Wait 30 Seconds1",
+      "parameters": {
+        "amount": 30
+      },
+      "position": [
+        1120,
+        192
+      ],
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "webhookId": "a87940a2-bf64-455c-803d-8f59a8bb7805"
+    },
+    {
+      "id": "e3dc9f17-1847-485e-9b55-fd9cb9477554",
+      "name": "Fetch Call Details1",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "options": {},
+        "url": "=https://api.vapi.ai/call/{{ $(\"Place Call\").item.json.id }}"
+      },
+      "position": [
+        1344,
+        128
+      ],
+      "retryOnFail": true,
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "01916d9c-cefc-4c1a-8be9-341858ebc212",
+      "name": "In Progress/Ended?1",
+      "parameters": {
+        "options": {
+          "fallbackOutput": "none"
+        },
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "3364319f-e622-4d3c-bd10-ee3bbdda542e",
+                    "leftValue": "={{ $json.status }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "in-progress"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                }
+              },
+              "outputKey": "In Progress",
+              "renameOutput": true
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "eb1a119d-4452-4334-b1dc-374ef5086ce8",
+                    "leftValue": "={{ $json.status }}",
+                    "operator": {
+                      "name": "filter.operator.equals",
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "ended"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                }
+              },
+              "outputKey": "Call Ended",
+              "renameOutput": true
+            }
+          ]
+        }
+      },
+      "position": [
+        1568,
+        192
+      ],
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2
+    },
+    {
+      "id": "cbfef3dc-49de-4d20-8a35-09aeb1801f36",
+      "name": "End of Call Analyzer",
+      "parameters": {
+        "options": {
+          "systemMessage": "# Role\n\nYou are a post-call quality analyst for SolarShift. Your job is to review completed voice agent call transcripts and summaries to determine whether the sales team should proceed with follow-up or stop all outreach to that lead.\n\n# Specifics\n\n• Read the provided call summary and full transcript carefully\n• Identify outcome indicators such as appointment booked, callback scheduled, expressed interest, objections raised, or disqualification factors\n• Evaluate lead sentiment and engagement level based on conversational tone and responses\n• Check for disqualifying factors: renter status, monthly bill under one hundred dollars, explicit disinterest, wrong number, or hostile reaction\n• Determine if meaningful forward progress was made (booking, callback agreement, information request accepted)\n• Output your decision using ONLY the word \"proceed\" or \"stop\" with no additional text, explanation, or punctuation\n\n# Context\n\n• SolarShift's sales team needs clear binary guidance on whether to continue pursuing a lead\n• \"Proceed\" means the lead has potential value and should receive follow-up\n• \"Stop\" means the lead is disqualified or uninterested and should be removed from active outreach\n• Ambiguous or incomplete calls where the lead agreed to receive information should default to \"proceed\"\n• Leads who explicitly said \"not interested\" or have disqualifying factors must result in \"stop\"\n\n# Tools\n\n• analyzeSentiment, extractKeyPhrases, detectAppointment\n\n# Tone & Style\n• Objective and evidence-based; rely solely on transcript content and summary\n• Apply consistent decision criteria across all reviews\n• When outcome is unclear or lead is ambivalent but didn't explicitly decline, default to \"proceed\"\n• Never inject assumptions or read intent beyond what the lead explicitly stated\n• Prioritize respecting lead preferences; if they said no, honor it with \"stop\"\n\n# Notes\n• Output must be lowercase and contain no punctuation, spaces, or additional characters\n• Leads who hung up mid-call without clear disqualification should result in \"proceed\" for one retry attempt\n• Wrong number scenarios trigger \"stop\"\n• Hostile or abusive leads must result in \"stop\" regardless of technical qualification\n• If appointment was booked or callback scheduled, always output \"proceed\"\n• If lead is disqualified (renter, low bill, not interested), always output \"stop\""
+        },
+        "promptType": "define",
+        "text": "=Transcript: {{ $json.transcript }}\n\n\nSummary: {{ $json.summary }}"
+      },
+      "position": [
+        1792,
+        192
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "f9d9a448-0281-476f-8611-82fa54115b21",
+      "name": "Azure OpenAI Chat Model1",
+      "parameters": {
+        "model": "gpt-4.1-nano",
+        "options": {}
+      },
+      "position": [
+        1872,
+        416
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatAzureOpenAi",
+      "typeVersion": 1
+    },
+    {
+      "id": "18c7ac0a-beea-4f3f-9f34-bc84b1cd22e5",
+      "name": "Proceed or Not?",
+      "parameters": {
+        "options": {},
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "555c9e77-8ce3-4192-8c18-364b0fca040e",
+                    "leftValue": "",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": ""
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                }
+              },
+              "outputKey": "Proceed",
+              "renameOutput": true
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "f78289b9-cb19-4b81-9dc9-51dfb36d973a",
+                    "leftValue": "",
+                    "operator": {
+                      "name": "filter.operator.equals",
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": ""
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                }
+              },
+              "outputKey": "Stop",
+              "renameOutput": true
+            }
+          ]
+        }
+      },
+      "position": [
+        2144,
+        192
+      ],
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "3bd9dd74-3fcc-4d65-8a79-b852e9db9711",
+      "name": "Create Opportunity",
+      "parameters": {
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "phoneNumber"
+          ],
+          "value": {
+            "phoneNumber": "={{ $(\"Create Lead\").item.json.phoneNumber }}",
+            "status": "Opportunity"
+          }
+        },
+        "documentId": {
+          "__rl": true,
+          "cachedResultName": "Facebook Ads Lead Storage",
+          "mode": "list",
+          "value": "1k0bQwKOeGHCS_PMmh72nUvVYDKXsw4KSL9s0bnel_8s"
+        },
+        "operation": "update",
+        "options": {},
+        "sheetName": {
+          "__rl": true,
+          "cachedResultName": "Sheet1",
+          "mode": "list",
+          "value": "gid=0"
+        }
+      },
+      "position": [
+        2368,
+        96
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "f4907c21-4cbc-43e4-b387-a3ac43f2f3c7",
+      "name": "Get Lead",
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "cachedResultName": "Facebook Ads Lead Storage",
+          "mode": "list",
+          "value": "1k0bQwKOeGHCS_PMmh72nUvVYDKXsw4KSL9s0bnel_8s"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "phoneNumber",
+              "lookupValue": "={{ $(\"Create Lead\").item.json.phoneNumber }}"
+            }
+          ]
+        },
+        "options": {},
+        "sheetName": {
+          "__rl": true,
+          "cachedResultName": "Sheet1",
+          "mode": "list",
+          "value": "gid=0"
+        }
+      },
+      "position": [
+        2368,
+        288
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "89594728-b4bf-4820-b22d-8e26e19e50d0",
+      "name": "Remove Lead",
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "cachedResultName": "Facebook Ads Lead Storage",
+          "mode": "list",
+          "value": "1k0bQwKOeGHCS_PMmh72nUvVYDKXsw4KSL9s0bnel_8s"
+        },
+        "operation": "delete",
+        "sheetName": {
+          "__rl": true,
+          "cachedResultName": "Sheet1",
+          "mode": "list",
+          "value": "gid=0"
+        },
+        "startIndex": "={{ $json.row_number }}"
+      },
+      "position": [
+        2592,
+        288
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "executionOrder": "v1"
+  }
+}

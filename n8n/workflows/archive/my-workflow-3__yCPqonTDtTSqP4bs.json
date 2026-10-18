@@ -1,0 +1,214 @@
+{
+  "active": false,
+  "connections": {
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Code",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond to Webhook1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Edit Fields",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "HTTP Request2",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "yCPqonTDtTSqP4bs",
+  "name": "My workflow 3",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "18a6e281-34bd-4fd7-bdd5-f43c7c73d8b8",
+      "name": "HTTP Request2",
+      "parameters": {
+        "bodyParameters": {
+          "parameters": [
+            {
+              "inputDataFieldName": "file0",
+              "name": "file",
+              "parameterType": "formBinaryData"
+            }
+          ]
+        },
+        "contentType": "multipart-form-data",
+        "method": "POST",
+        "options": {},
+        "sendBody": true,
+        "url": "https://pdf-link-extractor-service.onrender.com/analyze-links"
+      },
+      "position": [
+        -128,
+        112
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "ffe9e535-f615-472d-8067-13115aef6be2",
+      "name": "AI Agent",
+      "parameters": {
+        "options": {
+          "enableStreaming": false,
+          "systemMessage": "ROLE:\nYou are the CPC Tool AI Extraction Agent inside n8n.\n\nCONTEXT:\nYou receive structured CPC docket JSON from Dallas City Plan Commission agendas. \nYour job is to parse only the information already in `raw_text`.\n\nTASK:\n- Read each docket item’s `raw_text`.\n- Extract only fields explicitly written in the text.\n- Do not invent, enrich, or hallucinate.\n- Keep missing data as `null`.\n\nFIELDS TO EXTRACT:\n{\n  \"item_number\": \"<string>\",\n  \"summary_of_application\": \"<string or null>\",\n  \"zoning_request\": \"<string or null>\",\n  \"staff_recommendation\": \"<string or null>\",\n  \"applicant\": \"<string or null>\",\n  \"representative\": \"<string or null>\",\n  \"city_planner\": \"<string or null>\",\n  \"council_district\": \"<string or null>\"\n}\n\nRESTRICTIONS:\n- Use only `raw_text` content.\n- Do not reference attachments.\n- Do not enrich from outside sources.\n- Always return strict JSON.\n\nOUTPUT FORMAT:\n- Always valid JSON.\n- Always an array of objects (one per docket item).\n- Sorted by `item_number` ascending.\n"
+        },
+        "promptType": "define",
+        "text": "=Input docket: {{ JSON.stringify($json.docket) }}\n\nInstruction: For each docket item, extract only the information that is explicitly present in `raw_text`. \nIf a field is not mentioned, output `null`. \nReturn the results as a JSON array.\n"
+      },
+      "position": [
+        320,
+        112
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "bc1369ba-7c24-47a8-9939-afd86df5907a",
+      "name": "Edit Fields",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c5657e74-0766-44b5-803d-df5aafcaa12d",
+              "name": "docket",
+              "type": "array",
+              "value": "={{ $json.docket }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        96,
+        112
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "credentials": {
+        "openRouterApi": {
+          "id": "j1QuXeG7ZrLyJEDj",
+          "name": "OpenRouter account"
+        }
+      },
+      "id": "7b4bfaa1-3307-43fd-8d85-aa7a0d89c8b6",
+      "name": "OpenRouter Chat Model",
+      "parameters": {
+        "model": "deepseek/deepseek-chat-v3.1:free",
+        "options": {
+          "timeout": 240000
+        }
+      },
+      "position": [
+        400,
+        336
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1
+    },
+    {
+      "id": "8d7fa2fa-4b7e-4b7f-8e39-04a8a2550221",
+      "name": "Code",
+      "parameters": {
+        "jsCode": "// 1. Get raw output from AI Agent\nlet rawOutput = $json.output || \"\";\n\n// 2. Strip markdown fences\nlet cleaned = rawOutput.replace(/```json|```/g, \"\").trim();\n\n// 3. Parse JSON safely\nlet parsed;\ntry {\n  parsed = JSON.parse(cleaned);\n} catch (err) {\n  throw new Error(\"Failed to parse AI output as JSON: \" + err.message + \"\\nCleaned string:\\n\" + cleaned);\n}\n\n// 4. Normalize each docket item to standard schema\nconst normalized = parsed.map(item => ({\n  item_number: item.item_number || null,\n  summary_of_application: item.summary_of_application || null,\n  zoning_request: item.zoning_request || null,\n  staff_recommendation: item.staff_recommendation || null,\n  applicant: item.applicant || null,\n  representative: item.representative || null,\n  planner: item.city_planner || item.planner || null, // map city_planner → planner\n  council_district: item.council_district || null,\n  attachments: item.attachments || [] // always array\n}));\n\n// 5. Return each docket entry as separate n8n item\nreturn normalized.map(obj => ({ json: obj }));"
+      },
+      "position": [
+        672,
+        112
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "2bbf90b1-96d8-4f34-b096-d4c49b103165",
+      "name": "Webhook1",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {
+          "binaryPropertyName": "file"
+        },
+        "path": "cpc-tool-ai-analysis",
+        "responseMode": "responseNode"
+      },
+      "position": [
+        -352,
+        112
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "f49e7bd6-4f3b-4243-b972-a256054b1b32"
+    },
+    {
+      "id": "a177c009-90db-474d-9191-b1a7efa926c3",
+      "name": "Respond to Webhook1",
+      "parameters": {
+        "options": {},
+        "respondWith": "allIncomingItems"
+      },
+      "position": [
+        896,
+        112
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4
+    }
+  ],
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,382 @@
+{
+  "active": false,
+  "connections": {
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "index": 0,
+            "node": "Supabase Vector Store",
+            "type": "ai_document"
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Supabase Vector Store",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "index": 0,
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding"
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI2": {
+      "ai_embedding": [
+        [
+          {
+            "index": 0,
+            "node": "Vector_Store",
+            "type": "ai_embedding"
+          }
+        ]
+      ]
+    },
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Download file",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent",
+            "type": "ai_memory"
+          }
+        ]
+      ]
+    },
+    "Vector_Store": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "30jIv9KaQubQTZZ4",
+  "name": "RAG AGENT",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "1ccc726a-7f0e-4e7f-af33-397b6cb2b047",
+      "name": "Google Drive Trigger",
+      "parameters": {
+        "event": "fileCreated",
+        "folderToWatch": {
+          "__rl": true,
+          "cachedResultName": "RAG Example",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1Oy_97GF1HxBYh-k8-rxxxzNM2Zsecyw6",
+          "mode": "list",
+          "value": "1Oy_97GF1HxBYh-k8-rxxxzNM2Zsecyw6"
+        },
+        "options": {},
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder"
+      },
+      "position": [
+        -192,
+        384
+      ],
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1
+    },
+    {
+      "id": "e1485605-b1a8-400d-b3c3-106acd94d81c",
+      "name": "Download file",
+      "parameters": {
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "operation": "download",
+        "options": {}
+      },
+      "position": [
+        -16,
+        384
+      ],
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3
+    },
+    {
+      "credentials": {
+        "supabaseApi": {
+          "id": "nc6EAQqDAd4ZZZlH",
+          "name": "Supabase account"
+        }
+      },
+      "id": "0116cf21-10f3-4ee9-98ae-4ccecc7b23bd",
+      "name": "Supabase Vector Store",
+      "parameters": {
+        "mode": "insert",
+        "options": {
+          "queryName": "match_documents"
+        },
+        "tableName": {
+          "__rl": true,
+          "cachedResultName": "documents",
+          "mode": "list",
+          "value": "documents"
+        }
+      },
+      "position": [
+        176,
+        384
+      ],
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3
+    },
+    {
+      "credentials": {
+        "openAiApi": {
+          "id": "T3fSxXKFoT57vf5P",
+          "name": "OpenAi account"
+        }
+      },
+      "id": "4c067bc6-6454-408f-a8be-bd7092b8113a",
+      "name": "Embeddings OpenAI",
+      "parameters": {
+        "options": {}
+      },
+      "position": [
+        144,
+        560
+      ],
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "08397423-bbcf-4bb4-9dc6-8105282550e1",
+      "name": "Default Data Loader",
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "position": [
+        320,
+        560
+      ],
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1
+    },
+    {
+      "id": "b206d8b5-de96-428d-b00a-d76c36615017",
+      "name": "AI Agent",
+      "parameters": {
+        "options": {
+          "systemMessage": "=#Overview\nYou are a helpful intelligent information extraction assistant that answers any incoming quieries using the tools that you were given\n\n##Tools\nVector_Store - This tool will ALWAYS be used when asnwering any questions may have about any topic\n\n##Rules\n- Always pull in the information to answer from the Vector_Store tool\n- Keep your answers concise and to the point"
+        }
+      },
+      "position": [
+        112,
+        816
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "837c90b4-7118-4b7a-ab3a-badb6fbe2ed9",
+      "name": "When chat message received",
+      "parameters": {
+        "options": {}
+      },
+      "position": [
+        -48,
+        816
+      ],
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "webhookId": "26348970-6bb5-40e3-bda3-108660c3fc85"
+    },
+    {
+      "credentials": {
+        "openAiApi": {
+          "id": "T3fSxXKFoT57vf5P",
+          "name": "OpenAi account"
+        }
+      },
+      "id": "13134f5f-deeb-4a51-9b94-ec37131518ab",
+      "name": "OpenAI Chat Model",
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "position": [
+        0,
+        1008
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "72efd5f4-ebe8-4a01-aff8-f4acc55bad2e",
+      "name": "Simple Memory",
+      "parameters": {},
+      "position": [
+        144,
+        1008
+      ],
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3
+    },
+    {
+      "id": "e8916a9e-aae4-4bca-9b6c-f9f2d156ef82",
+      "name": "Sticky Note",
+      "parameters": {
+        "content": "## Step 1: New Documents into the Superbase\nThis is adding a new document into the vector database",
+        "height": 448,
+        "width": 1008
+      },
+      "position": [
+        -336,
+        272
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "8300cf27-f723-4a71-82c8-eb06b26b341f",
+      "name": "Sticky Note1",
+      "parameters": {
+        "color": 5,
+        "content": "## Step 2: Querying the vector databse\nThis is quierying the vector databse",
+        "height": 544,
+        "width": 1008
+      },
+      "position": [
+        -336,
+        736
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "openAiApi": {
+          "id": "T3fSxXKFoT57vf5P",
+          "name": "OpenAi account"
+        }
+      },
+      "id": "8a8fd356-c4a0-402b-9e04-bde94ddbc265",
+      "name": "Embeddings OpenAI2",
+      "parameters": {
+        "options": {}
+      },
+      "position": [
+        352,
+        1136
+      ],
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2
+    },
+    {
+      "credentials": {
+        "supabaseApi": {
+          "id": "nc6EAQqDAd4ZZZlH",
+          "name": "Supabase account"
+        }
+      },
+      "id": "acef2365-1285-4b9c-9228-87d61d96c39d",
+      "name": "Vector_Store",
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "options": {
+          "queryName": "match_documents"
+        },
+        "tableName": {
+          "__rl": true,
+          "cachedResultName": "documents",
+          "mode": "list",
+          "value": "documents"
+        },
+        "toolDescription": "Call this tool to retrieve business strategy and FAQ information",
+        "topK": null
+      },
+      "position": [
+        272,
+        1008
+      ],
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3
+    },
+    {
+      "id": "00248a8f-d190-46f6-a097-e22f26d1214d",
+      "name": "Sticky Note23",
+      "parameters": {
+        "content": "1. RAG + Vector Database Agent\n\nNiches & Why:\n\nAgencies – heavy SOPs + client docs.\n\nLaw Firms – instant contract/case lookup.\n\nManufacturing – complex manuals + compliance.\nPricing: $1,500–$3,500 setup + 35% setup/mo",
+        "height": 272,
+        "width": 592
+      },
+      "position": [
+        848,
+        560
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "binaryMode": "separate",
+    "executionOrder": "v1"
+  }
+}

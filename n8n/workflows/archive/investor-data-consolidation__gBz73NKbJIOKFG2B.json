@@ -1,0 +1,419 @@
+{
+  "active": false,
+  "connections": {
+    "Combine All Batches": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Consolidate and Flag Records",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Consolidate and Flag Records": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Sort by Account Number",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Read Batch 1 - Custodian A": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Combine All Batches",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Read Batch 2 - Custodian B": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Standardize Batch 2 Field Names",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Read Batch 3 - Custodian C": {
+      "main": [
+        [
+          {
+            "index": 2,
+            "node": "Combine All Batches",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Run Consolidation": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Read Batch 1 - Custodian A",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Read Batch 2 - Custodian B",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Read Batch 3 - Custodian C",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Sort by Account Number": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Write Master Output",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Standardize Batch 2 Field Names": {
+      "main": [
+        [
+          {
+            "index": 1,
+            "node": "Combine All Batches",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "gBz73NKbJIOKFG2B",
+  "name": "Investor Data Consolidation",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "a8f80029-c34d-4619-9644-bbb558e7cb52",
+      "name": "Run Consolidation",
+      "parameters": {},
+      "position": [
+        0,
+        192
+      ],
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "71cfa4a8-e237-42c5-9487-850c97a0c60d",
+      "name": "Read Batch 1 - Custodian A",
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1r2_mzzFP4FaqilrwML4vT4fpztDl28K5fuYhPUCIR4k"
+        },
+        "operation": "read",
+        "resource": "sheet",
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sheet1"
+        }
+      },
+      "position": [
+        448,
+        0
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7
+    },
+    {
+      "id": "c7e12f17-e773-42b6-9113-c65e62d8a029",
+      "name": "Combine All Batches",
+      "parameters": {
+        "mode": "append",
+        "numberInputs": 3
+      },
+      "position": [
+        672,
+        176
+      ],
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2
+    },
+    {
+      "id": "c29db983-49a4-474a-bd40-71f4e04c8254",
+      "name": "Consolidate and Flag Records",
+      "parameters": {
+        "jsCode": "const rows = items.map(i => i.json);\nconst groups = {};\nfor (const row of rows) {\n  const acct = (row['Account Number'] || '').toString().trim();\n  if (!groups[acct]) groups[acct] = [];\n  groups[acct].push(row);\n}\nconst output = [];\nfor (const acct in groups) {\n  const group = groups[acct];\n  const names = [...new Set(group.map(r => (r['Investor Name'] || '').toString().trim()).filter(n => n !== ''))];\n  const amounts = [...new Set(group.map(r => (r['Investment Amount'] === '' || r['Investment Amount'] === undefined || r['Investment Amount'] === null) ? null : Number(r['Investment Amount'])))];\n  const types = [...new Set(group.map(r => (r['Transaction Type'] || '').toString().trim()))];\n  const dates = [...new Set(group.map(r => (r['Closing Date'] || '').toString().trim()))];\n  const hasMissingName = names.length === 0;\n  const hasMissingAmount = amounts.includes(null);\n  const validAmounts = amounts.filter(a => a !== null);\n  const amountMismatch = validAmounts.length > 1;\n  let status = 'OK';\n  const notes = [];\n  if (hasMissingName) { status = 'MISSING DATA'; notes.push('Investor name missing in all source records'); }\n  if (hasMissingAmount) { status = 'MISSING DATA'; notes.push('Investment amount missing in at least one source record'); }\n  if (amountMismatch) { status = 'MISMATCH'; notes.push('Investment amount differs across sources: ' + validAmounts.join(' vs ')); }\n  if (group.length > 1 && !amountMismatch && !hasMissingAmount && !hasMissingName) { notes.push('Reported in ' + group.length + ' source files, values match'); }\n  output.push({ json: {\n    'Account Number': acct,\n    'Investor Name': names[0] || '',\n    'Investment Amount': validAmounts.length ? validAmounts[0] : '',\n    'Transaction Type': types[0] || '',\n    'Closing Date': dates[0] || '',\n    'Source Count': group.length,\n    'Status': status,\n    'Notes': notes.join('; ')\n  } });\n}\nreturn output;",
+        "language": "javaScript",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        896,
+        192
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "c21f998b-19c7-40b5-bd14-2ce693d1c391",
+      "name": "Sort by Account Number",
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "Account Number",
+              "order": "ascending"
+            }
+          ]
+        },
+        "type": "simple"
+      },
+      "position": [
+        1120,
+        192
+      ],
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "d403db57-54f7-446b-861f-dcdb9240448e",
+      "name": "Write Master Output",
+      "parameters": {
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Account Number",
+              "id": "Account Number",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": false,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Investor Name",
+              "id": "Investor Name",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": false,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Investment Amount",
+              "id": "Investment Amount",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": false,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Transaction Type",
+              "id": "Transaction Type",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": false,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Closing Date",
+              "id": "Closing Date",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": false,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Source Count",
+              "id": "Source Count",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": false,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Status",
+              "id": "Status",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": false,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Notes",
+              "id": "Notes",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {}
+        },
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1yDs0BluJN7PoELaq6PIhQFQEUqM8sVjqnYC5XugNYZw"
+        },
+        "operation": "append",
+        "resource": "sheet",
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sheet1"
+        }
+      },
+      "position": [
+        1344,
+        192
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "c097e673-add8-42bd-aa5c-f0aee0492c83",
+      "name": "Read Batch 2 - Custodian B",
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1k4NosuwroG_NLeAdNvUM03EjpAkVQahmRnpiZkT7hFQ"
+        },
+        "operation": "read",
+        "resource": "sheet",
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sheet1"
+        }
+      },
+      "position": [
+        224,
+        192
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7
+    },
+    {
+      "id": "543d8e11-6028-4fb8-ae1f-7d19f6b4d239",
+      "name": "Standardize Batch 2 Field Names",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "Investor Name",
+              "type": "string",
+              "value": "={{ $json.Investor }}"
+            },
+            {
+              "id": "a2",
+              "name": "Account Number",
+              "type": "string",
+              "value": "={{ $json[\"Acct Number\"] }}"
+            },
+            {
+              "id": "a3",
+              "name": "Investment Amount",
+              "type": "string",
+              "value": "={{ $json.Amount }}"
+            },
+            {
+              "id": "a4",
+              "name": "Transaction Type",
+              "type": "string",
+              "value": "={{ $json.Type }}"
+            },
+            {
+              "id": "a5",
+              "name": "Closing Date",
+              "type": "string",
+              "value": "={{ $json.Date }}"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "mode": "manual"
+      },
+      "position": [
+        448,
+        192
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "c6fd0b17-6a38-4c54-b23a-e41f1e9dc2ab",
+      "name": "Read Batch 3 - Custodian C",
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1FNqTAq1TTiNC0MVBbkaijhgczh8ln72CSGdi_ji2Tv4"
+        },
+        "operation": "read",
+        "resource": "sheet",
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sheet1"
+        }
+      },
+      "position": [
+        448,
+        384
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "executionOrder": "v1"
+  }
+}

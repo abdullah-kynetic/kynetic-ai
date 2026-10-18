@@ -1,0 +1,216 @@
+{
+  "active": false,
+  "connections": {
+    "Call n8n Workflow Tool": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Split Out",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent",
+            "type": "ai_memory"
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "HTTP Request",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "KNgDBUKSBC47fSO8",
+  "name": "My workflow 4",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "68fc5509-d1b2-49a0-832d-62e052f1c8d9",
+      "name": "Webhook",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {
+          "binaryPropertyName": "file"
+        },
+        "path": "cpc-tool-ai-analysis",
+        "responseMode": "streaming"
+      },
+      "position": [
+        48,
+        240
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "f49e7bd6-4f3b-4243-b972-a256054b1b32"
+    },
+    {
+      "id": "19922060-c6a7-425e-b652-58a29bb50ddc",
+      "name": "HTTP Request",
+      "parameters": {
+        "bodyParameters": {
+          "parameters": [
+            {
+              "inputDataFieldName": "file0",
+              "name": "file",
+              "parameterType": "formBinaryData"
+            }
+          ]
+        },
+        "contentType": "multipart-form-data",
+        "method": "POST",
+        "options": {},
+        "sendBody": true,
+        "url": "https://pdf-link-extractor-service.onrender.com/analyze-links"
+      },
+      "position": [
+        272,
+        240
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "9839a87f-f79d-446d-9aae-a1f635f0c05d",
+      "name": "Split Out",
+      "parameters": {
+        "fieldToSplitOut": "=docket",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "position": [
+        496,
+        240
+      ],
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "openRouterApi": {
+          "id": "j1QuXeG7ZrLyJEDj",
+          "name": "OpenRouter account"
+        }
+      },
+      "id": "37534ab2-e653-455b-8f2b-0fc984ee2070",
+      "name": "OpenRouter Chat Model",
+      "parameters": {
+        "model": "qwen/qwen3-235b-a22b:free",
+        "options": {}
+      },
+      "position": [
+        720,
+        464
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1
+    },
+    {
+      "id": "329f6d5c-26aa-4e41-b336-11f670d83b1f",
+      "name": "Simple Memory",
+      "parameters": {},
+      "position": [
+        848,
+        464
+      ],
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3
+    },
+    {
+      "id": "d7b247ff-c15e-4c2b-a39c-7e04dd045900",
+      "name": "Call n8n Workflow Tool",
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "cachedResultName": "Attachment Text Extractor",
+          "mode": "list",
+          "value": "Re972wVGyM09y5HZ"
+        },
+        "workflowInputs": {
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "value": {}
+        }
+      },
+      "position": [
+        976,
+        464
+      ],
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "e74fb478-a0ed-4208-83b2-a92841b25eca",
+      "name": "AI Agent",
+      "parameters": {
+        "options": {
+          "batching": {},
+          "enableStreaming": true,
+          "passthroughBinaryImages": true,
+          "systemMessage": "You are given one docket item from the City Plan Commission agenda in JSON format. \nHere is the data:\n\nItem JSON:\n{{ $json }}\n\nAgenda Text (from docket):\n\"{{ $json.docket.raw_text }}\"\n\nAttachments (if any):\n{{ $json.docket.attachments }}\n\nUsing ONLY this information, produce a structured case report in the following template:\n\nItem [Insert Number]: [Insert Title you generate based on the case description]\nDistrict [Insert Council District]\nCity Planner [Planner if provided, else \"Not provided\"]\nApplicant [Applicant if provided, else \"Not provided\"]\nZoning Consultant [Representative if provided, else \"Not provided\"]\n\nZoning Summary:\n[Summarize the zoning request in plain language. No more than 6–8 sentences.]\n\nStaff Recommendation:\n[Summarize the staff recommendation if present.]\n\nAttachments:\n[List all attachment titles and URLs if provided.]\n\n---\n\nRemember: do not fabricate any additional context. Only reformat and structure what is already present in the agenda."
+        },
+        "promptType": "define",
+        "text": "You are an AI assistant that parses City Plan Commission agendas into structured zoning case reports. \nYou MUST only use the data provided in the input JSON and the attached agenda text. \nDo not make up or guess any information. \nIf data is missing, leave the section blank or write \"Not provided.\"\nYou also have access to sub-workflows (tools) in n8n for tasks like parsing attachments, but you must \nalways ground your outputs in the provided agenda content. \nNever invent applicants, consultants, recommendations, or planner names. "
+      },
+      "position": [
+        776,
+        240
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2
+    }
+  ],
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "active": false,
+  "connections": {},
+  "id": "R3mF6lxO9L382fSM",
+  "name": "My workflow 8",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "a1c15991-7ebd-42ab-a8fb-d0c5d1aaf4de",
+      "name": "Webhook",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {},
+        "path": "uptown-ac-demo"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "9d39adb2-cb91-413f-a238-cdab21f42007"
+    }
+  ],
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

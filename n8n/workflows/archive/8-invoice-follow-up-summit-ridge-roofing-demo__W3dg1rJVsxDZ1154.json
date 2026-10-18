@@ -1,0 +1,546 @@
+{
+  "active": false,
+  "connections": {
+    "Every Day 9am": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Unpaid Invoices",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Extract Payment Details": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Has Invoice Number?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Unpaid Invoices": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Pick Reminder Stage",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Has Invoice Number?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Mark Paid by Invoice Number",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Mark Paid by Client Email",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Mark Invoice Paid (Form)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Extract Payment Details",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Pick Reminder Stage": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Send Reminder Email",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Send Reminder Email": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Log Reminder Sent",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Stripe Payment Received": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Extract Payment Details",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Test: Run Reminders Now": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Unpaid Invoices",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "W3dg1rJVsxDZ1154",
+  "name": "#8 Invoice Follow Up | Summit Ridge Roofing Demo",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "156cf369-318d-443b-8ea0-a91ddd0d864c",
+      "name": "Every Day 9am",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 1,
+              "field": "days",
+              "triggerAtHour": 9,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "position": [
+        -240,
+        0
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3
+    },
+    {
+      "id": "90b2c56d-4fc1-49ad-b04b-48497a46494c",
+      "name": "Get Unpaid Invoices",
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "cachedResultName": "Demo Invoices Summit Ridge Roofing",
+          "mode": "id",
+          "value": "ukSfKhPZUxUZkqYT"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "condition": "neq",
+              "keyName": "status",
+              "keyValue": "paid"
+            }
+          ]
+        },
+        "matchType": "allConditions",
+        "operation": "get",
+        "resource": "row",
+        "returnAll": true
+      },
+      "position": [
+        0,
+        80
+      ],
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1
+    },
+    {
+      "id": "80ce4291-090b-437f-a562-66973054999d",
+      "name": "Pick Reminder Stage",
+      "parameters": {
+        "jsCode": "const STAGES = [7, 14, 21, 28, 35, 42];\nconst BUSINESS = 'Summit Ridge Roofing';\nconst money = n => '$' + Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });\n\nfunction build(stage, r, dueText) {\n  const name = r.first_name || 'there';\n  const inv = r.invoice_number;\n  const amt = money(r.amount_due);\n  const link = r.payment_link ? '<p><a href=\"' + r.payment_link + '\">Pay invoice ' + inv + ' online</a></p>' : '';\n  const sign = '<p>Thank you,<br>Accounts Team<br>' + BUSINESS + '</p>';\n  const t = {\n    7: ['Quick check in on invoice ' + inv,\n        '<p>Hi ' + name + ',</p><p>Hope you are doing well. Just checking in on invoice ' + inv + ' for ' + amt + ', which was due on ' + dueText + '. If payment is already on its way, please ignore this note.</p>'],\n    14: ['Reminder: invoice ' + inv + ' is 2 weeks past due',\n        '<p>Hi ' + name + ',</p><p>A friendly reminder that invoice ' + inv + ' for ' + amt + ' was due on ' + dueText + ' and is now two weeks past due. Let us know if you have any questions about it.</p>'],\n    21: ['Invoice ' + inv + ' is 3 weeks past due',\n        '<p>Hi ' + name + ',</p><p>Invoice ' + inv + ' for ' + amt + ' is now three weeks past due. If something about the work or the invoice needs attention, reply to this email and we will sort it out right away.</p>'],\n    28: ['Can you confirm a payment date for invoice ' + inv + '?',\n        '<p>Hi ' + name + ',</p><p>We still show ' + amt + ' open on invoice ' + inv + ', due ' + dueText + '. Could you reply with the date we should expect payment?</p>'],\n    35: ['Second notice: invoice ' + inv + ' is 5 weeks past due',\n        '<p>Hi ' + name + ',</p><p>Invoice ' + inv + ' for ' + amt + ' is now five weeks past due. Under our payment terms, new scheduled work may be paused until the account is current. We would like to avoid that, so please send payment or reply with a date.</p>'],\n    42: ['Final notice: invoice ' + inv,\n        '<p>Hi ' + name + ',</p><p>This is our final automated notice for invoice ' + inv + ' (' + amt + '), originally due ' + dueText + '. Our owner will call you within two business days to resolve the balance.</p>']\n  }[stage];\n  return { subject: t[0], html: t[1] + link + sign };\n}\n\nconst out = [];\n$input.all().forEach((item, i) => {\n  const r = item.json;\n  if (!r.due_date || r.status === 'paid') return;\n  const due = DateTime.fromISO(String(r.due_date)).startOf('day');\n  const daysOverdue = Math.floor($today.diff(due, 'days').days);\n  const reached = STAGES.filter(s => daysOverdue >= s);\n  if (reached.length === 0) return;\n  const stage = reached[reached.length - 1];\n  if (stage <= Number(r.last_reminder_stage || 0)) return;\n  const msg = build(stage, r, due.toFormat('MMMM d, yyyy'));\n  out.push({\n    json: {\n      rowId: r.id,\n      invoice_number: r.invoice_number,\n      company: r.company,\n      email: r.email,\n      daysOverdue: daysOverdue,\n      stage: stage,\n      newStatus: stage >= 42 ? 'needs_call' : 'overdue',\n      subject: msg.subject,\n      html: msg.html\n    },\n    pairedItem: { item: i }\n  });\n});\nreturn out;",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        240,
+        80
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dil4wMogas9aOWKP",
+          "name": "Abdullah Kynetic account"
+        }
+      },
+      "id": "6876802b-fc86-4975-b8a3-dbcf0c64e03c",
+      "name": "Send Reminder Email",
+      "parameters": {
+        "emailType": "html",
+        "message": "={{ $json.html }}",
+        "operation": "send",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Summit Ridge Roofing"
+        },
+        "resource": "message",
+        "sendTo": "={{ $json.email }}",
+        "subject": "={{ $json.subject }}"
+      },
+      "position": [
+        480,
+        80
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "webhookId": "1f1526e9-4dd9-4001-bcf3-b3ea473b735f"
+    },
+    {
+      "id": "52a505c8-9515-41e9-989b-c103eff62ca5",
+      "name": "Log Reminder Sent",
+      "parameters": {
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "last_reminder_stage",
+              "id": "last_reminder_stage",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "last_reminder_date",
+              "id": "last_reminder_date",
+              "required": false,
+              "type": "dateTime"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "status",
+              "id": "status",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "last_reminder_date": "={{ $today.toISODate() }}",
+            "last_reminder_stage": "={{ $('Pick Reminder Stage').item.json.stage }}",
+            "status": "={{ $('Pick Reminder Stage').item.json.newStatus }}"
+          }
+        },
+        "dataTableId": {
+          "__rl": true,
+          "cachedResultName": "Demo Invoices Summit Ridge Roofing",
+          "mode": "id",
+          "value": "ukSfKhPZUxUZkqYT"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "condition": "eq",
+              "keyName": "id",
+              "keyValue": "={{ $('Pick Reminder Stage').item.json.rowId }}"
+            }
+          ]
+        },
+        "matchType": "allConditions",
+        "operation": "update",
+        "resource": "row"
+      },
+      "position": [
+        720,
+        80
+      ],
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1
+    },
+    {
+      "id": "1771fb58-6fa2-4450-ac7a-d2a7b1c39d73",
+      "name": "Test: Run Reminders Now",
+      "parameters": {},
+      "position": [
+        -240,
+        180
+      ],
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1
+    },
+    {
+      "id": "c48b84b7-5b0a-48b2-b8ae-62cda8e3612c",
+      "name": "Stripe Payment Received",
+      "parameters": {
+        "events": [
+          "invoice.paid",
+          "checkout.session.completed"
+        ]
+      },
+      "position": [
+        -240,
+        500
+      ],
+      "type": "n8n-nodes-base.stripeTrigger",
+      "typeVersion": 1,
+      "webhookId": "87692f8c-33bb-4ef8-ac22-a6d177aa1d78"
+    },
+    {
+      "id": "20944746-d81d-40c3-814b-e60424213479",
+      "name": "Extract Payment Details",
+      "parameters": {
+        "jsCode": "const j = $json;\nlet invoiceRef = '';\nlet email = '';\nlet amount = null;\nlet source = 'manual form';\nif (j['Invoice Number']) {\n  invoiceRef = String(j['Invoice Number']).trim().toUpperCase();\n} else {\n  const obj = (j.data && j.data.object) || {};\n  source = 'stripe ' + (j.type || '');\n  invoiceRef = String((obj.metadata && obj.metadata.invoice_number) || obj.client_reference_id || '').trim().toUpperCase();\n  email = String(obj.customer_email || (obj.customer_details && obj.customer_details.email) || obj.receipt_email || '').trim().toLowerCase();\n  amount = Number(obj.amount_paid || obj.amount_total || obj.amount_received || 0) / 100;\n}\nreturn { json: { invoiceRef: invoiceRef, email: email, amount: amount, source: source, paidDate: $today.toISODate() } };",
+        "mode": "runOnceForEachItem"
+      },
+      "position": [
+        0,
+        600
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "29c9b585-5ac0-4bf7-9c26-65e2ceb63f47",
+      "name": "Has Invoice Number?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.invoiceRef }}",
+              "operator": {
+                "operation": "notEmpty",
+                "singleValue": true,
+                "type": "string"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        }
+      },
+      "position": [
+        240,
+        600
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "985dbf96-12af-47cf-9a2f-19eb58c6c7b3",
+      "name": "Mark Paid by Invoice Number",
+      "parameters": {
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "status",
+              "id": "status",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "paid_date",
+              "id": "paid_date",
+              "required": false,
+              "type": "dateTime"
+            }
+          ],
+          "value": {
+            "paid_date": "={{ $('Extract Payment Details').item.json.paidDate }}",
+            "status": "paid"
+          }
+        },
+        "dataTableId": {
+          "__rl": true,
+          "cachedResultName": "Demo Invoices Summit Ridge Roofing",
+          "mode": "id",
+          "value": "ukSfKhPZUxUZkqYT"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "condition": "eq",
+              "keyName": "invoice_number",
+              "keyValue": "={{ $json.invoiceRef }}"
+            }
+          ]
+        },
+        "matchType": "allConditions",
+        "operation": "update",
+        "resource": "row"
+      },
+      "position": [
+        480,
+        520
+      ],
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1
+    },
+    {
+      "id": "c3ef20bf-1d67-4d0a-bd04-ed6fd1013ab2",
+      "name": "Mark Paid by Client Email",
+      "parameters": {
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "status",
+              "id": "status",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "paid_date",
+              "id": "paid_date",
+              "required": false,
+              "type": "dateTime"
+            }
+          ],
+          "value": {
+            "paid_date": "={{ $('Extract Payment Details').item.json.paidDate }}",
+            "status": "paid"
+          }
+        },
+        "dataTableId": {
+          "__rl": true,
+          "cachedResultName": "Demo Invoices Summit Ridge Roofing",
+          "mode": "id",
+          "value": "ukSfKhPZUxUZkqYT"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "condition": "eq",
+              "keyName": "email",
+              "keyValue": "={{ $json.email }}"
+            },
+            {
+              "condition": "eq",
+              "keyName": "amount_due",
+              "keyValue": "={{ $json.amount }}"
+            },
+            {
+              "condition": "neq",
+              "keyName": "status",
+              "keyValue": "paid"
+            }
+          ]
+        },
+        "matchType": "allConditions",
+        "operation": "update",
+        "resource": "row"
+      },
+      "position": [
+        480,
+        700
+      ],
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1
+    },
+    {
+      "id": "585a11e9-f2ce-4a5c-a0e2-ceb21ba038a8",
+      "name": "Mark Invoice Paid (Form)",
+      "parameters": {
+        "formDescription": "Use this when a client pays by check, ACH, or anything outside Stripe.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Invoice Number",
+              "fieldType": "text",
+              "placeholder": "SRR-1037",
+              "requiredField": true
+            }
+          ]
+        },
+        "formTitle": "Summit Ridge Roofing: Mark Invoice Paid",
+        "options": {
+          "appendAttribution": false,
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "Got it. The invoice is marked paid and reminders will stop.",
+              "respondWith": "text"
+            }
+          }
+        },
+        "responseMode": "onReceived"
+      },
+      "position": [
+        -240,
+        700
+      ],
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "webhookId": "b961cb55-59fa-4ac9-ac9f-a9487d023137"
+    },
+    {
+      "id": "6dc4acf3-ee96-49de-8fe0-6701e844b5ac",
+      "name": "Sticky Note 81ec4c53",
+      "parameters": {
+        "color": 5,
+        "content": "## #8 Invoice Follow Up (demo: Summit Ridge Roofing)\nEvery morning at 9: reads unpaid invoices from the **Demo Invoices Summit Ridge Roofing** data table, works out days overdue, and sends the next reminder in a 7 / 14 / 21 / 28 / 35 / 42 day sequence. It tracks the last stage sent, so a missed day never causes a skipped or double reminder. At 42 days the status flips to needs_call so the owner steps in."
+      },
+      "position": [
+        100,
+        300
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "bd7b24f8-feab-43f8-bc75-624808059ea4",
+      "name": "Sticky Note f1260215",
+      "parameters": {
+        "color": 4,
+        "content": "## Payment sync\nStripe payments mark the invoice paid by the invoice_number in Stripe metadata. If none is set, it matches on client email plus exact amount, never on name. The form covers checks and ACH so reminders stop for every payment method."
+      },
+      "position": [
+        100,
+        560
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "executionOrder": "v1"
+  }
+}

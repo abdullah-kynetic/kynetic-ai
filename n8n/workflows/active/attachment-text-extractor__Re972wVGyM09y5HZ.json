@@ -1,0 +1,102 @@
+{
+  "active": true,
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Extract from File",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "HTTP Request",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Split Out",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "Re972wVGyM09y5HZ",
+  "name": "Attachment Text Extractor",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "a3ca6f03-62ea-4440-bf46-cdcbd12aee75",
+      "name": "When Executed by Another Workflow",
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"item_number\": \"3\",\n  \"raw_text\": \"An application for ...\",\n  \"attachments\": [\n    {\n      \"page\": 6,\n      \"link\": \"https://cityofdallas.legistar.com/...pdf\",\n      \"title\": \"Z245-152(TB)Z-25-000002_Case Report\"\n    }\n  ]\n}\n"
+      },
+      "position": [
+        -208,
+        -176
+      ],
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1
+    },
+    {
+      "id": "9c52ac01-e4ec-46af-b127-2b1dc4f2f1b1",
+      "name": "HTTP Request",
+      "parameters": {
+        "options": {},
+        "url": "={{ $json.link }}"
+      },
+      "position": [
+        448,
+        -176
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "fcbc6e30-1179-4dff-b73b-efbadbc36f7b",
+      "name": "Extract from File",
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "position": [
+        672,
+        -176
+      ],
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1
+    },
+    {
+      "id": "8e5250aa-81f8-4727-b551-ad1e6aa29050",
+      "name": "Split Out",
+      "parameters": {
+        "fieldToSplitOut": "query",
+        "options": {}
+      },
+      "position": [
+        0,
+        -176
+      ],
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1
+    }
+  ],
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

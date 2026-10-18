@@ -1,0 +1,101 @@
+{
+  "active": true,
+  "connections": {
+    "Get All Clients": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Resolve Client By Phone",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "When Called": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get All Clients",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "05HI35dhaWXweO5i",
+  "name": "TEMPLATE — Client Config Lookup",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "41a0a860-f9ca-4e8a-bcfa-76894c13c4c8",
+      "name": "When Called",
+      "parameters": {
+        "inputSource": "workflowInputs",
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "phone_number",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "30c5d3e0-a9c7-4b00-8c88-d0ab389ff913",
+      "name": "Get All Clients",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "cachedResultName": "Clients",
+          "mode": "list",
+          "value": "7cf8a160-6d13-43aa-99f1-c8e78f3efbec"
+        },
+        "operation": "getAll",
+        "resource": "databasePage",
+        "returnAll": true,
+        "simple": true
+      },
+      "position": [
+        224,
+        0
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "166f6523-9efb-4c06-ac9e-e46ab2ecadaf",
+      "name": "Resolve Client By Phone",
+      "parameters": {
+        "jsCode": "const inputPhone = ($('When Called').first().json.phone_number || '').replace(/\\D/g, '');\nconst clients = $input.all();\nfor (const item of clients) {\n  const assigned = (item.json['property_assigned_twilio_number'] || '').replace(/\\D/g, '');\n  if (assigned && inputPhone && assigned === inputPhone) {\n    return [{ json: {\n      found: true,\n      client_id: item.json.id,\n      client_name: item.json['property_client_name'],\n      niche: item.json['property_niche'],\n      voice_agent_name: item.json['property_voice_agent_name'],\n      after_hours_mode: item.json['property_after_hours_mode'],\n      booking_method: item.json['property_booking_method'],\n      transfer_name: item.json['property_transfer_name'],\n      brand_profile_url: item.json['property_brand_profile_url'],\n      gbp_place_id: item.json['property_gbp_place_id'],\n      assigned_twilio_number: item.json['property_assigned_twilio_number'],\n      email: item.json['property_email']\n    } }];\n  }\n}\nreturn [{ json: { found: false, client_id: null, error: 'No client matched Assigned Twilio Number ' + inputPhone } }];",
+        "language": "javaScript",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        448,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "executionOrder": "v1"
+  }
+}

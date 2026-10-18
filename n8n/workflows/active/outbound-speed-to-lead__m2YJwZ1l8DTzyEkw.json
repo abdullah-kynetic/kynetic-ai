@@ -1,0 +1,1515 @@
+{
+  "active": true,
+  "connections": {
+    "Call Settings": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Place Retell Call",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Check Recent Duplicate": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Light Gate Passes?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Create Lead in Twenty": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Resolve Lead Timezone",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Fast Retry Due?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Wait 90 Seconds",
+            "type": "main"
+          }
+        ],
+        []
+      ]
+    },
+    "Fetch Call From Retell": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Normalize Call Result",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Final Analyzed Event?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Log Call Interaction",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Find Leads Due for Retry": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Resolve Retry Lead Timezone",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Lead for Fast Retry": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Still Due for Fast Retry?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Inside Calling Hours (First Call)?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Call Settings",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Queue Lead for Morning Call",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Inside Calling Hours?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Retry Call Settings",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Defer Retry to Local Morning",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Is Analyzed Event?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Fetch Call From Retell",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Light Gate Passes?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create Lead in Twenty",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Log Submission Not Dialed",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Log Call Interaction": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Update Lead After Call",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Normalize Call Result": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Final Analyzed Event?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Normalize Lead": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Check Recent Duplicate",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Place Retell Call": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Mark Lead Calling",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Alert Call Failed",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Place Retry Call": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Mark Lead Retrying",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Alert Retry Failed",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Resolve Lead Timezone": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Inside Calling Hours (First Call)?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Resolve Retry Lead Timezone": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Inside Calling Hours?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Retell Post Call Webhook": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Is Analyzed Event?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Retry Call Settings": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Place Retry Call",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Retry Sweeper Every 5 Minutes": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Find Leads Due for Retry",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Roof Inspection Request Form": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Normalize Lead",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "SMS Keep Warm Eligible? (DRAFT)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Send Keep Warm SMS (DRAFT)",
+            "type": "main"
+          }
+        ],
+        []
+      ]
+    },
+    "Still Due for Fast Retry?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Resolve Retry Lead Timezone",
+            "type": "main"
+          }
+        ],
+        []
+      ]
+    },
+    "Update Lead After Call": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Fast Retry Due?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Wait 90 Seconds": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Lead for Fast Retry",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "m2YJwZ1l8DTzyEkw",
+  "name": "Outbound Speed to Lead",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "a4b045d4-a5cc-450e-af2d-29a3bd06b406",
+      "name": "Roof Inspection Request Form",
+      "parameters": {
+        "authentication": "none",
+        "formDescription": "Tell us about your roof and our AI assistant will call you in about a minute.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Full name",
+              "fieldName": "full_name",
+              "fieldType": "text",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Phone number",
+              "fieldName": "phone",
+              "fieldType": "text",
+              "placeholder": "(541) 555-0123",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "ZIP code",
+              "fieldName": "zip",
+              "fieldType": "text",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Do you own the property?",
+              "fieldName": "owns",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Yes"
+                  },
+                  {
+                    "option": "No"
+                  }
+                ]
+              },
+              "fieldType": "dropdown",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "What's going on with your roof?",
+              "fieldName": "issue",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Leak"
+                  },
+                  {
+                    "option": "Storm or hail damage"
+                  },
+                  {
+                    "option": "Need a replacement quote"
+                  },
+                  {
+                    "option": "Just looking"
+                  }
+                ]
+              },
+              "fieldType": "dropdown",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "How soon do you want it looked at?",
+              "fieldName": "timeline",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "As soon as possible"
+                  },
+                  {
+                    "option": "Within 2 weeks"
+                  },
+                  {
+                    "option": "Within 3 months"
+                  },
+                  {
+                    "option": "Just exploring"
+                  }
+                ]
+              },
+              "fieldType": "dropdown",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Consent to be called",
+              "fieldName": "consent",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "By submitting this form, I agree that Kynetic Roofing and its AI assistant may call me at the number I entered about my request, using an artificial or AI generated voice. Calls may be recorded. I understand consent is not a condition of any purchase."
+                  }
+                ]
+              },
+              "fieldType": "checkbox",
+              "requiredField": true
+            }
+          ]
+        },
+        "formTitle": "Get a free roof inspection | Kynetic Roofing",
+        "options": {
+          "appendAttribution": false,
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "Thanks. Our AI assistant will call you in about a minute."
+            }
+          }
+        }
+      },
+      "position": [
+        0,
+        192
+      ],
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "webhookId": "d7432694-dff4-4dda-a070-647dd4c9d606"
+    },
+    {
+      "id": "669a674e-33a3-4a32-a42c-90e87cd5890b",
+      "name": "Normalize Lead",
+      "parameters": {
+        "jsCode": "const out = [];\nconst ownsMap = { 'Yes': 'YES', 'No': 'NO' };\nconst issueMap = { 'Leak': 'LEAK', 'Storm or hail damage': 'STORM_OR_HAIL', 'Need a replacement quote': 'REPLACEMENT_QUOTE', 'Just looking': 'JUST_LOOKING' };\nconst issueSpoken = { 'LEAK': 'a leak', 'STORM_OR_HAIL': 'storm or hail damage', 'REPLACEMENT_QUOTE': 'a replacement quote', 'JUST_LOOKING': 'just looking' };\nconst timelineMap = { 'As soon as possible': 'ASAP', 'Within 2 weeks': 'TWO_WEEKS', 'Within 3 months': 'THREE_MONTHS', 'Just exploring': 'EXPLORING' };\nconst timelineSpoken = { 'ASAP': 'as soon as possible', 'TWO_WEEKS': 'within 2 weeks', 'THREE_MONTHS': 'within 3 months', 'EXPLORING': 'just exploring' };\nfor (const item of $input.all()) {\n  const f = item.json;\n  const fullName = String(f.full_name || '').trim();\n  let digits = String(f.phone || '').replace(/\\D/g, '');\n  if (digits.length === 11 && digits.startsWith('1')) digits = digits.slice(1);\n  const phoneValid = digits.length === 10;\n  const consentList = Array.isArray(f.consent) ? f.consent : (f.consent ? [f.consent] : []);\n  const owns = ownsMap[f.owns] || 'UNKNOWN';\n  const issue = issueMap[f.issue] || null;\n  const timeline = timelineMap[f.timeline] || null;\n  out.push({ json: {\n    fullName,\n    firstName: fullName.split(' ')[0] || 'there',\n    phoneDigits: digits,\n    phoneE164: phoneValid ? '+1' + digits : '',\n    phoneValid,\n    zip: String(f.zip || '').trim(),\n    consent: consentList.length > 0,\n    consentText: consentList.length > 0 ? String(consentList[0]) : '',\n    ownsProperty: owns,\n    ownsSpoken: owns === 'NO' ? 'no' : 'yes',\n    issueType: issue,\n    issueSpoken: issueSpoken[issue] || 'a roof issue',\n    timeline,\n    timelineSpoken: timelineSpoken[timeline] || 'soon',\n    submittedAt: new Date().toISOString()\n  } });\n}\nreturn out;",
+        "language": "javaScript",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        224,
+        192
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "alwaysOutputData": true,
+      "credentials": {
+        "twentyApi": {
+          "id": "41C04qbmnbi0GI2P",
+          "name": "Twenty account"
+        }
+      },
+      "id": "18bc170e-87a4-48e6-9dca-ec8329be7f4d",
+      "name": "Check Recent Duplicate",
+      "parameters": {
+        "limit": 1,
+        "objectApiName": {
+          "__rl": true,
+          "mode": "apiName",
+          "value": "endCustomer"
+        },
+        "operation": "getMany",
+        "options": {
+          "filter": "=and(phones.primaryPhoneNumber[eq]:\"{{ $json.phoneDigits }}\",formSubmittedAt[gte]:\"{{ $now.minus({ hours: 24 }).toUTC().toISO() }}\")"
+        },
+        "resource": "record",
+        "returnAll": false
+      },
+      "position": [
+        448,
+        192
+      ],
+      "type": "@blackswampai/n8n-nodes-twentycrm.twenty",
+      "typeVersion": 1
+    },
+    {
+      "id": "9f921600-7047-47d3-afd9-90951ff3d317",
+      "name": "Light Gate Passes?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $('Normalize Lead').item.json.phoneValid }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              }
+            },
+            {
+              "leftValue": "={{ $('Normalize Lead').item.json.consent }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              }
+            },
+            {
+              "leftValue": "={{ $json.id ? \"duplicate\" : \"new\" }}",
+              "operator": {
+                "operation": "equals",
+                "type": "string"
+              },
+              "rightValue": "new"
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        }
+      },
+      "position": [
+        672,
+        192
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3
+    },
+    {
+      "credentials": {
+        "twentyApi": {
+          "id": "41C04qbmnbi0GI2P",
+          "name": "Twenty account"
+        }
+      },
+      "id": "08a810ca-f193-4ae5-afc5-145876fbd343",
+      "name": "Create Lead in Twenty",
+      "parameters": {
+        "inputMode": "json",
+        "jsonInput": "={{ JSON.stringify({ name: $(\"Normalize Lead\").item.json.fullName, fullName: $(\"Normalize Lead\").item.json.fullName, phones: { primaryPhoneNumber: $(\"Normalize Lead\").item.json.phoneDigits, primaryPhoneCountryCode: \"US\", primaryPhoneCallingCode: \"+1\" }, location: $(\"Normalize Lead\").item.json.zip, leadSource: \"WEB_FORM\", consentText: $(\"Normalize Lead\").item.json.consentText, consentAt: $(\"Normalize Lead\").item.json.submittedAt, formSubmittedAt: $(\"Normalize Lead\").item.json.submittedAt, leadStatus: \"NEW\", attemptCount: 0, callOptOut: false, ownsProperty: $(\"Normalize Lead\").item.json.ownsProperty, issueType: $(\"Normalize Lead\").item.json.issueType, timeline: $(\"Normalize Lead\").item.json.timeline, clientAccountId: \"56b85831-d0fd-4f0a-a9b7-e96956278bb8\" }) }}",
+        "objectApiName": {
+          "__rl": true,
+          "mode": "apiName",
+          "value": "endCustomer"
+        },
+        "operation": "create",
+        "resource": "record"
+      },
+      "position": [
+        896,
+        96
+      ],
+      "type": "@blackswampai/n8n-nodes-twentycrm.twenty",
+      "typeVersion": 1
+    },
+    {
+      "id": "5fc856b6-828e-48a6-a76b-a5dbc1b5dab6",
+      "name": "Call Settings",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cs-agent",
+              "name": "agentId",
+              "type": "string",
+              "value": "agent_71e3cfc8384aa38a910a506b53"
+            },
+            {
+              "id": "cs-from",
+              "name": "fromNumber",
+              "type": "string",
+              "value": "+16692660586"
+            },
+            {
+              "id": "cs-company",
+              "name": "companyName",
+              "type": "string",
+              "value": "Kynetic Roofing"
+            },
+            {
+              "id": "cs-agentname",
+              "name": "agentName",
+              "type": "string",
+              "value": "Alex"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "mode": "manual"
+      },
+      "position": [
+        1120,
+        96
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mxr1KufaMuc7ve4o",
+          "name": "Retell API (outbound)"
+        }
+      },
+      "id": "18e09111-3cd6-431e-98fd-0d081a8fdf44",
+      "name": "Place Retell Call",
+      "onError": "continueErrorOutput",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "contentType": "json",
+        "genericAuthType": "httpHeaderAuth",
+        "jsonBody": "={{ JSON.stringify({ from_number: $json.fromNumber, to_number: $(\"Normalize Lead\").item.json.phoneE164, override_agent_id: $json.agentId, override_agent_version: \"latest\", retell_llm_dynamic_variables: { first_name: $(\"Normalize Lead\").item.json.firstName, company_name: $json.companyName, agent_name: $json.agentName, service_type: \"roof inspection\", lead_source: \"web form\", owns_property: $(\"Normalize Lead\").item.json.ownsSpoken, issue_type: $(\"Normalize Lead\").item.json.issueSpoken, timeline: $(\"Normalize Lead\").item.json.timelineSpoken }, metadata: { twenty_id: $json.id, attempt: 1, form_submitted_at: $(\"Normalize Lead\").item.json.submittedAt } }) }}",
+        "method": "POST",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "https://api.retellai.com/v2/create-phone-call"
+      },
+      "position": [
+        1344,
+        96
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5
+    },
+    {
+      "credentials": {
+        "twentyApi": {
+          "id": "41C04qbmnbi0GI2P",
+          "name": "Twenty account"
+        }
+      },
+      "id": "da545497-a134-4320-babb-3ad147cd7c6b",
+      "name": "Mark Lead Calling",
+      "parameters": {
+        "inputMode": "json",
+        "jsonInput": "={{ JSON.stringify({ leadStatus: \"CALLING\", firstRingAt: $now.toUTC().toISO(), lastContact: $now.toUTC().toISO(), attemptCount: 1 }) }}",
+        "objectApiName": {
+          "__rl": true,
+          "mode": "apiName",
+          "value": "endCustomer"
+        },
+        "operation": "update",
+        "recordId": "={{ $(\"Call Settings\").item.json.id }}",
+        "resource": "record"
+      },
+      "position": [
+        1568,
+        0
+      ],
+      "type": "@blackswampai/n8n-nodes-twentycrm.twenty",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "twentyApi": {
+          "id": "41C04qbmnbi0GI2P",
+          "name": "Twenty account"
+        }
+      },
+      "id": "e619a433-45c1-40b8-8cba-435c108127b1",
+      "name": "Log Submission Not Dialed",
+      "parameters": {
+        "inputMode": "json",
+        "jsonInput": "={{ JSON.stringify({ name: $(\"Normalize Lead\").item.json.fullName, fullName: $(\"Normalize Lead\").item.json.fullName, phones: { primaryPhoneNumber: $(\"Normalize Lead\").item.json.phoneDigits, primaryPhoneCountryCode: \"US\", primaryPhoneCallingCode: \"+1\" }, location: $(\"Normalize Lead\").item.json.zip, leadSource: \"WEB_FORM\", consentText: $(\"Normalize Lead\").item.json.consentText, consentAt: $(\"Normalize Lead\").item.json.consent ? $(\"Normalize Lead\").item.json.submittedAt : null, formSubmittedAt: $(\"Normalize Lead\").item.json.submittedAt, leadStatus: \"DISQUALIFIED\", attemptCount: 0, callOptOut: false, ownsProperty: $(\"Normalize Lead\").item.json.ownsProperty, issueType: $(\"Normalize Lead\").item.json.issueType, timeline: $(\"Normalize Lead\").item.json.timeline, clientAccountId: \"56b85831-d0fd-4f0a-a9b7-e96956278bb8\" }) }}",
+        "objectApiName": {
+          "__rl": true,
+          "mode": "apiName",
+          "value": "endCustomer"
+        },
+        "operation": "create",
+        "resource": "record"
+      },
+      "position": [
+        896,
+        288
+      ],
+      "type": "@blackswampai/n8n-nodes-twentycrm.twenty",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dil4wMogas9aOWKP",
+          "name": "Abdullah Kynetic account"
+        }
+      },
+      "id": "c9c6b3aa-42b3-4f77-b08f-43b7ef6abbb5",
+      "name": "Alert Call Failed",
+      "parameters": {
+        "emailType": "text",
+        "message": "=A Retell call failed to start. Lead record: {{ $(\"Call Settings\").item.json.id }}. Error: {{ $json.error?.message ?? $json.message ?? \"unknown\" }}",
+        "operation": "send",
+        "options": {
+          "appendAttribution": false
+        },
+        "resource": "message",
+        "sendTo": "abdullah@kyneticai.com",
+        "subject": "Outbound Speed to Lead: call could not be placed"
+      },
+      "position": [
+        1568,
+        192
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "webhookId": "d92ecb28-f7dc-4eb9-bf4d-a53bae525c78"
+    },
+    {
+      "id": "8fdebb92-58df-4098-b31d-7c11d1b329bb",
+      "name": "Retell Post Call Webhook",
+      "parameters": {
+        "authentication": "none",
+        "httpMethod": "POST",
+        "options": {},
+        "path": "outbound-speed-to-lead-postcall-7f3a9c21d84e",
+        "responseMode": "onReceived"
+      },
+      "position": [
+        0,
+        512
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "3a4f4695-e09d-4b92-babc-265582d6ffd4"
+    },
+    {
+      "id": "2c260836-9576-4671-a495-64425307f3d2",
+      "name": "Normalize Call Result",
+      "parameters": {
+        "jsCode": "// Normalizes the Retell call. Input is the call object fetched back from Retell's get-call API (trusted),\n// or, as a fallback, a raw webhook payload. Handles missing fields; falls back to voicemail / no_answer.\nconst VM = ['voicemail_reached','voicemail'];\nconst out = [];\nfor (const item of $input.all()) {\n  const root = item.json.call_id\n    ? { event: 'call_analyzed', call: item.json }\n    : ((item.json && item.json.body !== undefined && item.json.body !== null) ? item.json.body : (item.json || {}));\n  const call = root.call || {};\n  const meta = call.metadata || {};\n  const vars = call.retell_llm_dynamic_variables || {};\n  const analysis = call.call_analysis || {};\n  const cad = analysis.custom_analysis_data || {};\n  const reason = String(call.disconnection_reason || '');\n  let outcome = String(cad.outcome || '').trim().toLowerCase();\n  if (!outcome) {\n    if (analysis.in_voicemail === true || VM.includes(reason)) outcome = 'voicemail';\n    else outcome = 'no_answer';\n  }\n  const attemptRaw = Number(meta.attempt ?? vars.attempt ?? 1);\n  out.push({ json: {\n    event: String(root.event || item.json.event || ''),\n    callId: String(call.call_id || ''),\n    agentId: String(call.agent_id || ''),\n    leadId: String(meta.twenty_id || vars.twenty_id || ''),\n    attempt: Number.isFinite(attemptRaw) && attemptRaw > 0 ? attemptRaw : 1,\n    outcome,\n    callbackTime: String(cad.callback_time || ''),\n    bookedSlot: String(cad.booked_slot || ''),\n    summary: String(analysis.call_summary || ''),\n    notes: cad.outcome ? String(cad.notes || '') : ('No structured outcome. disconnection_reason: ' + (reason || 'unknown') + (analysis.in_voicemail === true ? ', in_voicemail' : '')),\n    disconnectionReason: reason,\n    inVoicemail: analysis.in_voicemail === true,\n    // Speed to lead: Retell call.start_timestamp (ms) minus form submit time (ISO, passed in call metadata). First attempt only.\n    startTimestamp: Number(call.start_timestamp) || null,\n    formSubmittedAt: String(meta.form_submitted_at || ''),\n    secondsToFirstRing: (Number(call.start_timestamp) > 0 && meta.form_submitted_at && Number(meta.attempt ?? 1) === 1 && !isNaN(Date.parse(meta.form_submitted_at)))\n      ? Math.round((Number(call.start_timestamp) - Date.parse(meta.form_submitted_at)) / 100) / 10 : null\n  } });\n}\nreturn out;"
+      },
+      "position": [
+        224,
+        512
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "29920f74-df0a-46ff-a794-238c8990880f",
+      "name": "Final Analyzed Event?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.event }}",
+              "operator": {
+                "operation": "equals",
+                "type": "string"
+              },
+              "rightValue": "call_analyzed"
+            },
+            {
+              "leftValue": "={{ $json.leadId }}",
+              "operator": {
+                "operation": "notEmpty",
+                "singleValue": true,
+                "type": "string"
+              }
+            },
+            {
+              "id": "fa-agent",
+              "leftValue": "={{ $json.agentId }}",
+              "operator": {
+                "operation": "equals",
+                "type": "string"
+              },
+              "rightValue": "agent_71e3cfc8384aa38a910a506b53"
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        }
+      },
+      "position": [
+        448,
+        512
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3
+    },
+    {
+      "credentials": {
+        "twentyApi": {
+          "id": "41C04qbmnbi0GI2P",
+          "name": "Twenty account"
+        }
+      },
+      "id": "85406a1c-613f-4ad8-8105-2d4c53d10270",
+      "name": "Log Call Interaction",
+      "parameters": {
+        "inputMode": "json",
+        "jsonInput": "={{ JSON.stringify({ name: \"Speed to lead call: \" + $json.outcome, interactionType: \"SPEED_TO_LEAD\", channel: \"VOICE\", outcome: $json.outcome.toUpperCase(), retellCallId: $json.callId, summary: ($json.summary + \" \" + $json.notes).trim(), callbackTime: $json.callbackTime, bookedSlot: $json.bookedSlot, occurredAt: $now.toUTC().toISO(), endCustomerId: $json.leadId, clientAccountId: \"56b85831-d0fd-4f0a-a9b7-e96956278bb8\" }) }}",
+        "objectApiName": {
+          "__rl": true,
+          "mode": "apiName",
+          "value": "customerInteraction"
+        },
+        "operation": "create",
+        "resource": "record"
+      },
+      "position": [
+        672,
+        512
+      ],
+      "type": "@blackswampai/n8n-nodes-twentycrm.twenty",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "twentyApi": {
+          "id": "41C04qbmnbi0GI2P",
+          "name": "Twenty account"
+        }
+      },
+      "id": "89f7f3d7-6a36-4b9a-abf3-468b2dafb00b",
+      "name": "Update Lead After Call",
+      "parameters": {
+        "inputMode": "json",
+        "jsonInput": "={{ JSON.stringify({ ...($(\"Normalize Call Result\").item.json.secondsToFirstRing !== null ? { secondsToFirstRing: $(\"Normalize Call Result\").item.json.secondsToFirstRing } : {}), leadStatus: ({ booked: \"BOOKED\", callback_requested: \"CALLBACK\", not_interested: \"NOT_INTERESTED\", disqualified: \"DISQUALIFIED\", wrong_number: \"DNC\", no_answer: \"NO_ANSWER\", voicemail: \"NO_ANSWER\" })[$(\"Normalize Call Result\").item.json.outcome] ?? \"NO_ANSWER\", lastOutcome: $(\"Normalize Call Result\").item.json.outcome.toUpperCase(), lastContact: $now.toUTC().toISO(), callOptOut: $(\"Normalize Call Result\").item.json.outcome === \"wrong_number\", nextAttemptAt: ([\"no_answer\", \"voicemail\"].includes($(\"Normalize Call Result\").item.json.outcome) && $(\"Normalize Call Result\").item.json.attempt < 3) ? $now.plus({ minutes: $(\"Normalize Call Result\").item.json.attempt === 1 ? 10 : 60 }).toUTC().toISO() : null }) }}",
+        "objectApiName": {
+          "__rl": true,
+          "mode": "apiName",
+          "value": "endCustomer"
+        },
+        "operation": "update",
+        "recordId": "={{ $('Normalize Call Result').item.json.leadId }}",
+        "resource": "record"
+      },
+      "position": [
+        896,
+        512
+      ],
+      "type": "@blackswampai/n8n-nodes-twentycrm.twenty",
+      "typeVersion": 1
+    },
+    {
+      "id": "4bc39acc-10d4-4f17-993f-2ce79b92aa17",
+      "name": "Retry Sweeper Every 5 Minutes",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        832
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4
+    },
+    {
+      "id": "045ce08e-3d4a-49f8-80d7-0b20d24ea882",
+      "name": "Inside Calling Hours?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "ee5fb8b0-3139-4999-ac5a-df1d26ad47d5",
+              "leftValue": "={{ $json.inLocalWindow }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        224,
+        832
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3
+    },
+    {
+      "credentials": {
+        "twentyApi": {
+          "id": "41C04qbmnbi0GI2P",
+          "name": "Twenty account"
+        }
+      },
+      "id": "7a2954cb-7de4-4976-835a-cb4eccf35462",
+      "name": "Find Leads Due for Retry",
+      "parameters": {
+        "limit": 20,
+        "objectApiName": {
+          "__rl": true,
+          "mode": "apiName",
+          "value": "endCustomer"
+        },
+        "operation": "getMany",
+        "options": {
+          "filter": "=and(leadStatus[eq]:NO_ANSWER,nextAttemptAt[lte]:\"{{ $now.toUTC().toISO() }}\",callOptOut[eq]:false,attemptCount[lt]:3)"
+        },
+        "resource": "record",
+        "returnAll": false
+      },
+      "position": [
+        448,
+        832
+      ],
+      "type": "@blackswampai/n8n-nodes-twentycrm.twenty",
+      "typeVersion": 1
+    },
+    {
+      "id": "0dad2a05-f7f1-4988-83e0-0ce96759daf2",
+      "name": "Retry Call Settings",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "rs-agent",
+              "name": "agentId",
+              "type": "string",
+              "value": "agent_71e3cfc8384aa38a910a506b53"
+            },
+            {
+              "id": "rs-from",
+              "name": "fromNumber",
+              "type": "string",
+              "value": "+16692660586"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "mode": "manual"
+      },
+      "position": [
+        672,
+        832
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mxr1KufaMuc7ve4o",
+          "name": "Retell API (outbound)"
+        }
+      },
+      "id": "a5523cdb-e310-43ef-8b15-3506a349fcea",
+      "name": "Place Retry Call",
+      "onError": "continueErrorOutput",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "contentType": "json",
+        "genericAuthType": "httpHeaderAuth",
+        "jsonBody": "={{ JSON.stringify({ from_number: $json.fromNumber, to_number: \"+1\" + $json.phones.primaryPhoneNumber, override_agent_id: $json.agentId, override_agent_version: \"latest\", retell_llm_dynamic_variables: { first_name: ($json.name || \"there\").split(\" \")[0], company_name: \"Kynetic Roofing\", agent_name: \"Alex\", service_type: \"roof inspection\", lead_source: \"web form\", owns_property: $json.ownsProperty === \"NO\" ? \"no\" : \"yes\", issue_type: ({ LEAK: \"a leak\", STORM_OR_HAIL: \"storm or hail damage\", REPLACEMENT_QUOTE: \"a replacement quote\", JUST_LOOKING: \"just looking\" })[$json.issueType] ?? \"a roof issue\", timeline: ({ ASAP: \"as soon as possible\", TWO_WEEKS: \"within 2 weeks\", THREE_MONTHS: \"within 3 months\", EXPLORING: \"just exploring\" })[$json.timeline] ?? \"soon\" }, metadata: { twenty_id: $json.id, attempt: ($json.attemptCount ?? 0) + 1 } }) }}",
+        "method": "POST",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "https://api.retellai.com/v2/create-phone-call"
+      },
+      "position": [
+        896,
+        832
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5
+    },
+    {
+      "credentials": {
+        "twentyApi": {
+          "id": "41C04qbmnbi0GI2P",
+          "name": "Twenty account"
+        }
+      },
+      "id": "09214168-225b-4d7b-8302-25bd29df7ef0",
+      "name": "Mark Lead Retrying",
+      "parameters": {
+        "inputMode": "json",
+        "jsonInput": "={{ JSON.stringify({ leadStatus: \"CALLING\", attemptCount: ($(\"Retry Call Settings\").item.json.attemptCount ?? 0) + 1, nextAttemptAt: null, lastContact: $now.toUTC().toISO() }) }}",
+        "objectApiName": {
+          "__rl": true,
+          "mode": "apiName",
+          "value": "endCustomer"
+        },
+        "operation": "update",
+        "recordId": "={{ $(\"Retry Call Settings\").item.json.id }}",
+        "resource": "record"
+      },
+      "position": [
+        1120,
+        736
+      ],
+      "type": "@blackswampai/n8n-nodes-twentycrm.twenty",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dil4wMogas9aOWKP",
+          "name": "Abdullah Kynetic account"
+        }
+      },
+      "id": "d813272d-31f8-4786-aff7-8fdc67474108",
+      "name": "Alert Retry Failed",
+      "parameters": {
+        "emailType": "text",
+        "message": "=A Retell retry call failed to start. Lead record: {{ $(\"Retry Call Settings\").item.json.id }}. Error: {{ $json.error?.message ?? $json.message ?? \"unknown\" }}",
+        "operation": "send",
+        "options": {
+          "appendAttribution": false
+        },
+        "resource": "message",
+        "sendTo": "abdullah@kyneticai.com",
+        "subject": "Outbound Speed to Lead: retry call could not be placed"
+      },
+      "position": [
+        1120,
+        928
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "webhookId": "0fdc53d1-e2f9-4f29-9779-d39f666c3b44"
+    },
+    {
+      "id": "a772ee9b-1801-4ac3-b5b8-a17b8a8cc2ff",
+      "name": "Sticky Note 98b1f86f",
+      "parameters": {
+        "color": 4,
+        "content": "## Path 1: form to first call\nForm stands in for the Meta lead form (FORM_SPEC.md). Raw submission is always stored in Twenty (endCustomer). Light gate per D-014: valid US phone, consent ticked, no submission from the same phone in 24 hours. Consent wording is a DRAFT until counsel signs off (task 1.4). Fill the two placeholders in Call Settings (agent ID, caller ID) and attach the Retell credential before any test."
+      },
+      "position": [
+        720,
+        928
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "1aa23a32-0cf3-4588-87b4-3ab37e94999e",
+      "name": "Sticky Note dff5829e",
+      "parameters": {
+        "color": 5,
+        "content": "## Path 2: post call webhook\nSet this URL as the webhook on the Retell agent. Only call_analyzed is processed. No IP allowlist (n8n Cloud hides the caller IP). Instead the call ID is fetched back from Retell's get-call API with the Retell credential, and only Alex's calls are processed. A forged request cannot produce a real call."
+      },
+      "position": [
+        720,
+        1184
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "fc483618-282d-4a53-a6dd-433dc0147b75",
+      "name": "Inside Calling Hours (First Call)?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "55249860-e9ce-43b5-83e6-01b0e1dc947b",
+              "leftValue": "={{ $json.inLocalWindow }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        1008,
+        96
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3
+    },
+    {
+      "credentials": {
+        "twentyApi": {
+          "id": "41C04qbmnbi0GI2P",
+          "name": "Twenty account"
+        }
+      },
+      "id": "d62a6f4d-e5af-4731-a267-046d6360bc43",
+      "name": "Queue Lead for Morning Call",
+      "parameters": {
+        "inputMode": "json",
+        "jsonInput": "={{ JSON.stringify({ leadStatus: \"NO_ANSWER\", attemptCount: 0, nextAttemptAt: $json.nextWindowStartUtc }) }}",
+        "objectApiName": {
+          "__rl": true,
+          "mode": "apiName",
+          "value": "endCustomer"
+        },
+        "operation": "update",
+        "recordId": "={{ $json.id }}",
+        "resource": "record"
+      },
+      "position": [
+        1232,
+        288
+      ],
+      "type": "@blackswampai/n8n-nodes-twentycrm.twenty",
+      "typeVersion": 1
+    },
+    {
+      "id": "5fe00374-395e-4bdb-8df9-75c6101256d5",
+      "name": "Resolve Lead Timezone",
+      "parameters": {
+        "jsCode": "// Resolve the lead's local time zone(s) and check the 8:00-21:00 LOCAL calling window.\n// Source order: ZIP (3-digit prefix) > phone area code > fallback America/Los_Angeles.\n// Multi-zone states/area codes list every candidate zone; the window must be open in ALL of them (conservative),\n// and the next window start is the LATEST 8:00 among them.\nconst FALLBACK = ['America/Los_Angeles'];\nconst E='America/New_York', C='America/Chicago', M='America/Denver', P='America/Los_Angeles', AZ='America/Phoenix', AK='America/Anchorage', HI='Pacific/Honolulu', PR='America/Puerto_Rico', BOI='America/Boise', DET='America/Detroit', IND='America/Indiana/Indianapolis';\nconst STATE_TZ = { AL:[C], AK:[AK], AZ:[AZ], AR:[C], CA:[P], CO:[M], CT:[E], DE:[E], DC:[E], FL:[E,C], GA:[E], HI:[HI], ID:[BOI,P], IL:[C], IN:[IND,C], IA:[C], KS:[C,M], KY:[E,C], LA:[C], ME:[E], MD:[E], MA:[E], MI:[DET,C], MN:[C], MS:[C], MO:[C], MT:[M], NE:[C,M], NV:[P], NH:[E], NJ:[E], NM:[M], NY:[E], NC:[E], ND:[C,M], OH:[E], OK:[C], OR:[P,BOI], PA:[E], RI:[E], SC:[E], SD:[C,M], TN:[E,C], TX:[C,M], UT:[M], VT:[E], VA:[E], WA:[P], WV:[E], WI:[C], WY:[M], PR:[PR] };\n// [from, to, state] by 3-digit ZIP prefix.\nconst ZIP3 = [[6,9,'PR'],[10,27,'MA'],[28,29,'RI'],[30,38,'NH'],[39,49,'ME'],[50,54,'VT'],[55,55,'MA'],[56,59,'VT'],[60,69,'CT'],[70,89,'NJ'],[100,149,'NY'],[150,196,'PA'],[197,199,'DE'],[200,205,'DC'],[206,219,'MD'],[220,246,'VA'],[247,268,'WV'],[270,289,'NC'],[290,299,'SC'],[300,319,'GA'],[320,349,'FL'],[350,369,'AL'],[370,385,'TN'],[386,397,'MS'],[398,399,'GA'],[400,427,'KY'],[430,459,'OH'],[460,479,'IN'],[480,499,'MI'],[500,528,'IA'],[530,549,'WI'],[550,567,'MN'],[570,577,'SD'],[580,588,'ND'],[590,599,'MT'],[600,629,'IL'],[630,658,'MO'],[660,679,'KS'],[680,693,'NE'],[700,714,'LA'],[716,729,'AR'],[730,749,'OK'],[750,799,'TX'],[800,816,'CO'],[820,831,'WY'],[832,838,'ID'],[840,847,'UT'],[850,865,'AZ'],[870,884,'NM'],[885,885,'TX'],[889,898,'NV'],[900,961,'CA'],[967,968,'HI'],[970,979,'OR'],[980,994,'WA'],[995,999,'AK']];\n// Single-zone refinements inside split states.\nconst ZIP3_TZ = { 324:[C], 325:[C], 798:[M], 799:[M], 885:[M] };\nfor (let z = 320; z <= 349; z++) if (!ZIP3_TZ[z]) ZIP3_TZ[z] = [E];\nfor (let z = 750; z <= 797; z++) ZIP3_TZ[z] = [C];\nconst AREA = {\n AL:'205 251 256 334 659 938', AK:'907', AZ:'480 520 602 623 928', AR:'327 479 501 870',\n CA:'209 213 279 310 323 341 350 408 415 424 442 510 530 559 562 619 626 628 650 657 661 669 707 714 747 760 805 818 820 831 840 858 909 916 925 949 951',\n CO:'303 719 720 970 983', CT:'203 475 860 959', DE:'302', DC:'202 771',\n FL:'239 305 321 324 352 386 407 448 561 645 656 689 727 728 754 772 786 813 850 863 904 941 954',\n GA:'229 404 470 478 678 706 762 770 912 943', HI:'808', ID:'208 986',\n IL:'217 224 309 312 331 447 464 618 630 708 730 773 779 815 847 861 872', IN:'219 260 317 463 574 765 812 930',\n IA:'319 515 563 641 712', KS:'316 620 785 913', KY:'270 364 502 606 859', LA:'225 318 337 504 985', ME:'207',\n MD:'227 240 301 410 443 667', MA:'339 351 413 508 617 774 781 857 978', MI:'231 248 269 313 517 586 616 679 734 810 906 947 989',\n MN:'218 320 507 612 651 763 952', MS:'228 601 662 769', MO:'235 314 417 557 573 636 660 816', MT:'406', NE:'308 402 531',\n NV:'702 725 775', NH:'603', NJ:'201 551 609 640 732 848 856 862 908 973', NM:'505 575',\n NY:'212 315 329 332 347 363 516 518 585 607 624 631 646 680 716 718 838 845 914 917 929 934',\n NC:'252 336 472 704 743 828 910 919 980 984', ND:'701', OH:'216 220 234 283 326 330 380 419 436 440 513 567 614 740 937',\n OK:'405 539 572 580 918', OR:'458 503 541 971', PA:'215 223 267 272 412 445 484 570 582 610 717 724 814 835 878', RI:'401',\n SC:'803 821 839 843 854 864', SD:'605', TN:'423 615 629 731 865 901 931',\n TX:'210 214 254 281 325 346 361 409 430 432 469 512 682 713 726 737 806 817 830 832 903 915 936 940 945 956 972 979',\n UT:'385 435 801', VT:'802', VA:'276 434 540 571 686 703 757 804 826 948', WA:'206 253 360 425 509 564', WV:'304 681',\n WI:'262 274 353 414 534 608 715 920', WY:'307', PR:'787 939' };\n// Area-code refinements inside split states (single zone where the code is clearly one zone).\nconst AREA_TZ = { 915:[M], 316:[C], 913:[C], 402:[C], 531:[C], 865:[E], 423:[E], 615:[C], 629:[C], 731:[C], 901:[C], 931:[C], 502:[E], 606:[E], 859:[E], 503:[P], 971:[P], 458:[P] };\nconst AREA_STATE = {};\nfor (const [st, codes] of Object.entries(AREA)) for (const c of codes.split(' ')) AREA_STATE[c] = st;\nfunction zonesFor(zip, phone) {\n  const z = String(zip || '').replace(/\\D/g, '');\n  if (z.length === 5) {\n    const p = Number(z.slice(0, 3));\n    if (ZIP3_TZ[p]) return { zones: ZIP3_TZ[p], source: 'zip' };\n    const r = ZIP3.find(([a, b]) => p >= a && p <= b);\n    if (r && STATE_TZ[r[2]]) return { zones: STATE_TZ[r[2]], source: 'zip' };\n  }\n  let d = String(phone || '').replace(/\\D/g, '');\n  if (d.length === 11 && d.startsWith('1')) d = d.slice(1);\n  if (d.length === 10) {\n    const ac = d.slice(0, 3);\n    if (AREA_TZ[ac]) return { zones: AREA_TZ[ac], source: 'area_code' };\n    if (AREA_STATE[ac]) return { zones: STATE_TZ[AREA_STATE[ac]], source: 'area_code' };\n  }\n  return { zones: FALLBACK, source: 'fallback' };\n}\nconst START = 8, END = 21; // local hours 8:00-21:00 (TCPA window)\nconst out = [];\nconst items = $input.all();\nfor (let i = 0; i < items.length; i++) {\n  const item = items[i];\n  const j = item.json;\n  const zip = $(\"Normalize Lead\").itemMatching(i).json.zip;\n  const phone = $(\"Normalize Lead\").itemMatching(i).json.phoneDigits;\n  const { zones, source } = zonesFor(zip, phone);\n  const now = DateTime.now();\n  const inLocalWindow = zones.every(tz => { const h = now.setZone(tz).hour; return h >= START && h < END; });\n  let next = null;\n  for (const tz of zones) {\n    const l = now.setZone(tz);\n    let s = l.set({ hour: START, minute: 0, second: 0, millisecond: 0 });\n    if (l.hour >= START) s = s.plus({ days: 1 });\n    if (!next || s.toMillis() > next.toMillis()) next = s;\n  }\n  out.push({ json: { ...j, leadTimezone: zones[0], leadTimezones: zones, leadTimezoneSource: source, inLocalWindow, nextWindowStartUtc: next.toUTC().toISO() }, pairedItem: { item: i } });\n}\nreturn out;\n",
+        "language": "javaScript",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        896,
+        296
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "a85613e5-ef82-4529-99aa-cd853ddd0826",
+      "name": "Resolve Retry Lead Timezone",
+      "parameters": {
+        "jsCode": "// Resolve the lead's local time zone(s) and check the 8:00-21:00 LOCAL calling window.\n// Source order: ZIP (3-digit prefix) > phone area code > fallback America/Los_Angeles.\n// Multi-zone states/area codes list every candidate zone; the window must be open in ALL of them (conservative),\n// and the next window start is the LATEST 8:00 among them.\nconst FALLBACK = ['America/Los_Angeles'];\nconst E='America/New_York', C='America/Chicago', M='America/Denver', P='America/Los_Angeles', AZ='America/Phoenix', AK='America/Anchorage', HI='Pacific/Honolulu', PR='America/Puerto_Rico', BOI='America/Boise', DET='America/Detroit', IND='America/Indiana/Indianapolis';\nconst STATE_TZ = { AL:[C], AK:[AK], AZ:[AZ], AR:[C], CA:[P], CO:[M], CT:[E], DE:[E], DC:[E], FL:[E,C], GA:[E], HI:[HI], ID:[BOI,P], IL:[C], IN:[IND,C], IA:[C], KS:[C,M], KY:[E,C], LA:[C], ME:[E], MD:[E], MA:[E], MI:[DET,C], MN:[C], MS:[C], MO:[C], MT:[M], NE:[C,M], NV:[P], NH:[E], NJ:[E], NM:[M], NY:[E], NC:[E], ND:[C,M], OH:[E], OK:[C], OR:[P,BOI], PA:[E], RI:[E], SC:[E], SD:[C,M], TN:[E,C], TX:[C,M], UT:[M], VT:[E], VA:[E], WA:[P], WV:[E], WI:[C], WY:[M], PR:[PR] };\n// [from, to, state] by 3-digit ZIP prefix.\nconst ZIP3 = [[6,9,'PR'],[10,27,'MA'],[28,29,'RI'],[30,38,'NH'],[39,49,'ME'],[50,54,'VT'],[55,55,'MA'],[56,59,'VT'],[60,69,'CT'],[70,89,'NJ'],[100,149,'NY'],[150,196,'PA'],[197,199,'DE'],[200,205,'DC'],[206,219,'MD'],[220,246,'VA'],[247,268,'WV'],[270,289,'NC'],[290,299,'SC'],[300,319,'GA'],[320,349,'FL'],[350,369,'AL'],[370,385,'TN'],[386,397,'MS'],[398,399,'GA'],[400,427,'KY'],[430,459,'OH'],[460,479,'IN'],[480,499,'MI'],[500,528,'IA'],[530,549,'WI'],[550,567,'MN'],[570,577,'SD'],[580,588,'ND'],[590,599,'MT'],[600,629,'IL'],[630,658,'MO'],[660,679,'KS'],[680,693,'NE'],[700,714,'LA'],[716,729,'AR'],[730,749,'OK'],[750,799,'TX'],[800,816,'CO'],[820,831,'WY'],[832,838,'ID'],[840,847,'UT'],[850,865,'AZ'],[870,884,'NM'],[885,885,'TX'],[889,898,'NV'],[900,961,'CA'],[967,968,'HI'],[970,979,'OR'],[980,994,'WA'],[995,999,'AK']];\n// Single-zone refinements inside split states.\nconst ZIP3_TZ = { 324:[C], 325:[C], 798:[M], 799:[M], 885:[M] };\nfor (let z = 320; z <= 349; z++) if (!ZIP3_TZ[z]) ZIP3_TZ[z] = [E];\nfor (let z = 750; z <= 797; z++) ZIP3_TZ[z] = [C];\nconst AREA = {\n AL:'205 251 256 334 659 938', AK:'907', AZ:'480 520 602 623 928', AR:'327 479 501 870',\n CA:'209 213 279 310 323 341 350 408 415 424 442 510 530 559 562 619 626 628 650 657 661 669 707 714 747 760 805 818 820 831 840 858 909 916 925 949 951',\n CO:'303 719 720 970 983', CT:'203 475 860 959', DE:'302', DC:'202 771',\n FL:'239 305 321 324 352 386 407 448 561 645 656 689 727 728 754 772 786 813 850 863 904 941 954',\n GA:'229 404 470 478 678 706 762 770 912 943', HI:'808', ID:'208 986',\n IL:'217 224 309 312 331 447 464 618 630 708 730 773 779 815 847 861 872', IN:'219 260 317 463 574 765 812 930',\n IA:'319 515 563 641 712', KS:'316 620 785 913', KY:'270 364 502 606 859', LA:'225 318 337 504 985', ME:'207',\n MD:'227 240 301 410 443 667', MA:'339 351 413 508 617 774 781 857 978', MI:'231 248 269 313 517 586 616 679 734 810 906 947 989',\n MN:'218 320 507 612 651 763 952', MS:'228 601 662 769', MO:'235 314 417 557 573 636 660 816', MT:'406', NE:'308 402 531',\n NV:'702 725 775', NH:'603', NJ:'201 551 609 640 732 848 856 862 908 973', NM:'505 575',\n NY:'212 315 329 332 347 363 516 518 585 607 624 631 646 680 716 718 838 845 914 917 929 934',\n NC:'252 336 472 704 743 828 910 919 980 984', ND:'701', OH:'216 220 234 283 326 330 380 419 436 440 513 567 614 740 937',\n OK:'405 539 572 580 918', OR:'458 503 541 971', PA:'215 223 267 272 412 445 484 570 582 610 717 724 814 835 878', RI:'401',\n SC:'803 821 839 843 854 864', SD:'605', TN:'423 615 629 731 865 901 931',\n TX:'210 214 254 281 325 346 361 409 430 432 469 512 682 713 726 737 806 817 830 832 903 915 936 940 945 956 972 979',\n UT:'385 435 801', VT:'802', VA:'276 434 540 571 686 703 757 804 826 948', WA:'206 253 360 425 509 564', WV:'304 681',\n WI:'262 274 353 414 534 608 715 920', WY:'307', PR:'787 939' };\n// Area-code refinements inside split states (single zone where the code is clearly one zone).\nconst AREA_TZ = { 915:[M], 316:[C], 913:[C], 402:[C], 531:[C], 865:[E], 423:[E], 615:[C], 629:[C], 731:[C], 901:[C], 931:[C], 502:[E], 606:[E], 859:[E], 503:[P], 971:[P], 458:[P] };\nconst AREA_STATE = {};\nfor (const [st, codes] of Object.entries(AREA)) for (const c of codes.split(' ')) AREA_STATE[c] = st;\nfunction zonesFor(zip, phone) {\n  const z = String(zip || '').replace(/\\D/g, '');\n  if (z.length === 5) {\n    const p = Number(z.slice(0, 3));\n    if (ZIP3_TZ[p]) return { zones: ZIP3_TZ[p], source: 'zip' };\n    const r = ZIP3.find(([a, b]) => p >= a && p <= b);\n    if (r && STATE_TZ[r[2]]) return { zones: STATE_TZ[r[2]], source: 'zip' };\n  }\n  let d = String(phone || '').replace(/\\D/g, '');\n  if (d.length === 11 && d.startsWith('1')) d = d.slice(1);\n  if (d.length === 10) {\n    const ac = d.slice(0, 3);\n    if (AREA_TZ[ac]) return { zones: AREA_TZ[ac], source: 'area_code' };\n    if (AREA_STATE[ac]) return { zones: STATE_TZ[AREA_STATE[ac]], source: 'area_code' };\n  }\n  return { zones: FALLBACK, source: 'fallback' };\n}\nconst START = 8, END = 21; // local hours 8:00-21:00 (TCPA window)\nconst out = [];\nconst items = $input.all();\nfor (let i = 0; i < items.length; i++) {\n  const item = items[i];\n  const j = item.json;\n  const zip = j.location;\n  const phone = (j.phones && j.phones.primaryPhoneNumber);\n  const { zones, source } = zonesFor(zip, phone);\n  const now = DateTime.now();\n  const inLocalWindow = zones.every(tz => { const h = now.setZone(tz).hour; return h >= START && h < END; });\n  let next = null;\n  for (const tz of zones) {\n    const l = now.setZone(tz);\n    let s = l.set({ hour: START, minute: 0, second: 0, millisecond: 0 });\n    if (l.hour >= START) s = s.plus({ days: 1 });\n    if (!next || s.toMillis() > next.toMillis()) next = s;\n  }\n  out.push({ json: { ...j, leadTimezone: zones[0], leadTimezones: zones, leadTimezoneSource: source, inLocalWindow, nextWindowStartUtc: next.toUTC().toISO() }, pairedItem: { item: i } });\n}\nreturn out;\n",
+        "language": "javaScript",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        448,
+        1032
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "twentyApi": {
+          "id": "41C04qbmnbi0GI2P",
+          "name": "Twenty account"
+        }
+      },
+      "id": "259289b8-6473-4a19-845f-c90cc9e08a2b",
+      "name": "Defer Retry to Local Morning",
+      "parameters": {
+        "inputMode": "json",
+        "jsonInput": "={{ JSON.stringify({ nextAttemptAt: $json.nextWindowStartUtc }) }}",
+        "objectApiName": {
+          "__rl": true,
+          "mode": "apiName",
+          "value": "endCustomer"
+        },
+        "operation": "update",
+        "recordId": "={{ $json.id }}",
+        "resource": "record"
+      },
+      "position": [
+        672,
+        1032
+      ],
+      "type": "@blackswampai/n8n-nodes-twentycrm.twenty",
+      "typeVersion": 1
+    },
+    {
+      "id": "92cb7b53-fb98-4433-a00c-bf340773a50c",
+      "name": "Fast Retry Due?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "2f78b4dd-a192-4d77-9fd7-34dcc53b2a8d",
+              "leftValue": "={{ [\"no_answer\",\"voicemail\"].includes($(\"Normalize Call Result\").item.json.outcome) }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              }
+            },
+            {
+              "id": "fb1a25cf-38fe-4069-b0b7-b12cf5ffa3a9",
+              "leftValue": "={{ $(\"Normalize Call Result\").item.json.attempt }}",
+              "operator": {
+                "operation": "equals",
+                "type": "number"
+              },
+              "rightValue": 1
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        1116,
+        512
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2
+    },
+    {
+      "id": "3889fcbd-9979-43a9-a1c9-159fa9cc72cb",
+      "name": "Wait 90 Seconds",
+      "parameters": {
+        "amount": 90,
+        "resume": "timeInterval",
+        "unit": "seconds"
+      },
+      "position": [
+        1336,
+        512
+      ],
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "webhookId": "4fe0e4cb-7d9f-4fb6-a7a1-4ffebcc3d434"
+    },
+    {
+      "credentials": {
+        "twentyApi": {
+          "id": "41C04qbmnbi0GI2P",
+          "name": "Twenty account"
+        }
+      },
+      "id": "283690a2-c505-4282-845e-d26b7adc72f0",
+      "name": "Get Lead for Fast Retry",
+      "parameters": {
+        "objectApiName": {
+          "__rl": true,
+          "mode": "apiName",
+          "value": "endCustomer"
+        },
+        "operation": "get",
+        "recordId": "={{ $(\"Normalize Call Result\").item.json.leadId }}",
+        "resource": "record"
+      },
+      "position": [
+        1556,
+        512
+      ],
+      "type": "@blackswampai/n8n-nodes-twentycrm.twenty",
+      "typeVersion": 1
+    },
+    {
+      "id": "46171c1d-fe30-4343-9492-f24bf833f3b0",
+      "name": "Still Due for Fast Retry?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "00b35a05-5c9c-43f5-89a7-609c250dd3a4",
+              "leftValue": "={{ $json.leadStatus }}",
+              "operator": {
+                "operation": "equals",
+                "type": "string"
+              },
+              "rightValue": "NO_ANSWER"
+            },
+            {
+              "id": "fae66ccd-f5cb-4ea8-aa87-5a843a26271f",
+              "leftValue": "={{ $json.attemptCount ?? 0 }}",
+              "operator": {
+                "operation": "lt",
+                "type": "number"
+              },
+              "rightValue": 3
+            },
+            {
+              "id": "766344df-f58c-4967-9d54-a271308fbbde",
+              "leftValue": "={{ $json.callOptOut === true }}",
+              "operator": {
+                "operation": "false",
+                "singleValue": true,
+                "type": "boolean"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        1776,
+        512
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2
+    },
+    {
+      "disabled": true,
+      "id": "f5705261-3650-4d13-aa2c-8f2b2e7616a3",
+      "name": "SMS Keep Warm Eligible? (DRAFT)",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "002615aa-1f72-47ca-9cb8-47abc1548ac7",
+              "leftValue": "={{ $(\"Normalize Call Result\").item.json.outcome }}",
+              "operator": {
+                "operation": "equals",
+                "type": "string"
+              },
+              "rightValue": "no_answer"
+            },
+            {
+              "id": "80688ca8-f703-4f3f-9017-53ba0313e7f5",
+              "leftValue": "={{ $json.leadSource }}",
+              "operator": {
+                "operation": "equals",
+                "type": "string"
+              },
+              "rightValue": "WEB_FORM"
+            },
+            {
+              "id": "7cc501da-13c8-490b-b513-8445ff47f83f",
+              "leftValue": "={{ $json.smsConsent === true }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              }
+            },
+            {
+              "id": "d82e6083-95d1-45e3-b5b9-058e242bc5ad",
+              "leftValue": "={{ $json.smsOptOut === true || $json.callOptOut === true }}",
+              "operator": {
+                "operation": "false",
+                "singleValue": true,
+                "type": "boolean"
+              }
+            },
+            {
+              "id": "f52e0eba-44d0-457a-9ad1-3e47123667d5",
+              "leftValue": "={{ $json.inLocalWindow }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        1116,
+        912
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2
+    },
+    {
+      "disabled": true,
+      "id": "f2bc22f4-b449-4fe0-a937-fdd6d34b833e",
+      "name": "Send Keep Warm SMS (DRAFT)",
+      "parameters": {
+        "from": "<A2P 10DLC registered number>",
+        "message": "=Hi {{ ($json.name || \"there\").split(\" \")[0] }}, this is Alex with Kynetic Roofing. We just tried calling about your free roof inspection request. Reply here or book a time: https://cal.com/abdullah-kyneticai/roof-inspection. Reply STOP to opt out, HELP for help.",
+        "operation": "send",
+        "options": {},
+        "resource": "sms",
+        "to": "={{ \"+1\" + $json.phones.primaryPhoneNumber }}"
+      },
+      "position": [
+        1336,
+        912
+      ],
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1
+    },
+    {
+      "id": "ab78979b-4fa0-4b44-9eeb-b35e9cc1f0d5",
+      "name": "Sticky Note SMS Draft",
+      "parameters": {
+        "color": 3,
+        "content": "## DRAFT (disabled): keep-warm SMS\nNot connected to any active path. Do not enable until: A2P 10DLC registered sender, form consent covers texts (needs an smsConsent field in Twenty), STOP/HELP handling, form-fill leads only, quiet hours 8:00-21:00 local. No Twilio credential is attached; pick it in the editor at enable time."
+      },
+      "position": [
+        1116,
+        1132
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "47a41d95-90e3-4ae5-98b0-fb68cd50e6fe",
+      "name": "Is Analyzed Event?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "ia-event",
+              "leftValue": "={{ $json.body.event }}",
+              "operator": {
+                "operation": "equals",
+                "type": "string"
+              },
+              "rightValue": "call_analyzed"
+            },
+            {
+              "id": "ia-callid",
+              "leftValue": "={{ $json.body.call?.call_id ?? '' }}",
+              "operator": {
+                "operation": "notEmpty",
+                "singleValue": true,
+                "type": "string"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        0,
+        672
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mxr1KufaMuc7ve4o",
+          "name": "Retell API (outbound)"
+        }
+      },
+      "id": "25c1865b-3e34-4d5f-a2d7-9f80a273498a",
+      "name": "Fetch Call From Retell",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "method": "GET",
+        "options": {},
+        "url": "={{ 'https://api.retellai.com/v2/get-call/' + encodeURIComponent($json.body.call.call_id) }}"
+      },
+      "position": [
+        112,
+        800
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "executionOrder": "v1"
+  }
+}

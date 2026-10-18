@@ -1,0 +1,717 @@
+{
+  "active": false,
+  "connections": {
+    "Booking Already Synced?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Update Existing Booking",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Create New Booking",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Contact Already Synced?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Update Existing Contact",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Create New Contact",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Every 30 Minutes": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Synced Clients (Contacts)",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Get Synced Clients (Bookings)",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Get All End Customers",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Get All Client Jobs",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Fetch Bookings for Client": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Split Out Bookings",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Fetch Contacts for Client": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Split Out Contacts",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Synced Clients (Bookings)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Has SeldonFrame Creds (Bookings)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Synced Clients (Contacts)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Has SeldonFrame Creds (Contacts)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Has SeldonFrame Creds (Bookings)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Fetch Bookings for Client",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Has SeldonFrame Creds (Contacts)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Fetch Contacts for Client",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Match Contact & Existing Booking": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Booking Already Synced?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Match Existing Contact": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Contact Already Synced?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Split Out Bookings": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Match Contact & Existing Booking",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Split Out Contacts": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Match Existing Contact",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "1X9m8GuekqoKE78a",
+  "name": "Kynetic CRM -> Twenty Sync",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "945ad98c-d2f3-4614-a00b-7d0c0f40c5a3",
+      "name": "Every 30 Minutes",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 30
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        192
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4
+    },
+    {
+      "id": "8c5dddfa-4ded-47e1-9b80-22037c42f2e7",
+      "name": "Fetch Contacts for Client",
+      "parameters": {
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-org-id",
+              "value": "={{ $json.seldonframeOrgId }}"
+            },
+            {
+              "name": "x-api-key",
+              "value": "={{ $json.seldonframeApiKey }}"
+            }
+          ]
+        },
+        "method": "GET",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "url": "https://kynetic-ai-fawn.vercel.app/api/v1/contacts"
+      },
+      "position": [
+        448,
+        96
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5
+    },
+    {
+      "id": "ca0df505-02ea-4e1e-8d7f-40420bb655e1",
+      "name": "Split Out Contacts",
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "include": "noOtherFields"
+      },
+      "position": [
+        672,
+        96
+      ],
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1
+    },
+    {
+      "id": "d337ad75-003e-47b1-acdf-2b891d89c65d",
+      "name": "Contact Already Synced?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.matched }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        }
+      },
+      "position": [
+        1120,
+        96
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3
+    },
+    {
+      "id": "10a82be8-a7d6-4f21-b14a-a09af5a08010",
+      "name": "Fetch Bookings for Client",
+      "parameters": {
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-org-id",
+              "value": "={{ $json.seldonframeOrgId }}"
+            },
+            {
+              "name": "x-api-key",
+              "value": "={{ $json.seldonframeApiKey }}"
+            }
+          ]
+        },
+        "method": "GET",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "url": "https://kynetic-ai-fawn.vercel.app/api/v1/bookings"
+      },
+      "position": [
+        448,
+        384
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5
+    },
+    {
+      "id": "bde31b12-08eb-4c52-8cd0-6f36a4380f6a",
+      "name": "Split Out Bookings",
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "include": "noOtherFields"
+      },
+      "position": [
+        672,
+        384
+      ],
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1
+    },
+    {
+      "id": "97e7de94-944a-4d7a-a59f-9bf4b3b3c50b",
+      "name": "Booking Already Synced?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.matched }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        }
+      },
+      "position": [
+        1344,
+        384
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3
+    },
+    {
+      "id": "2e23e693-3175-46e5-8303-bf352407e63a",
+      "name": "Sticky Note 9cd0ffd6",
+      "parameters": {
+        "color": 4,
+        "content": "## Kynetic CRM -> Twenty sync (one-way)\nRuns every 30 min. For each Client Account record in Twenty that has both \"seldonframeOrgId\" and \"seldonframeApiKey\" filled in, pulls that client's contacts and bookings from the SeldonFrame CRM API and upserts them into Twenty's End Customer / Client Job objects, matched by the seldonframeContactId / seldonframeBookingId fields.\n\nTo onboard a client once they have a real SeldonFrame workspace: open that workspace Settings -> Integrations, generate an API key, then fill in the org UUID + key on that client's Client Account record in Twenty. Nothing else to configure -- the next scheduled run picks it up automatically.\n\nCRM base URL is hardcoded in the two HTTP Request nodes (kynetic-ai-fawn.vercel.app) -- update both if the production domain changes."
+      },
+      "position": [
+        720,
+        480
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "twentyApi": {
+          "id": "41C04qbmnbi0GI2P",
+          "name": "Twenty account"
+        }
+      },
+      "id": "9882b73a-b033-4f18-9557-b5fc29db0462",
+      "name": "Get Synced Clients (Contacts)",
+      "parameters": {
+        "objectApiName": {
+          "__rl": true,
+          "mode": "apiName",
+          "value": "clientAccount"
+        },
+        "operation": "getMany",
+        "resource": "record",
+        "returnAll": true
+      },
+      "position": [
+        224,
+        96
+      ],
+      "type": "@blackswampai/n8n-nodes-twentycrm.twenty",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "twentyApi": {
+          "id": "41C04qbmnbi0GI2P",
+          "name": "Twenty account"
+        }
+      },
+      "id": "d589eaf1-193c-456a-9d5c-bb0219616471",
+      "name": "Get Synced Clients (Bookings)",
+      "parameters": {
+        "objectApiName": {
+          "__rl": true,
+          "mode": "apiName",
+          "value": "clientAccount"
+        },
+        "operation": "getMany",
+        "resource": "record",
+        "returnAll": true
+      },
+      "position": [
+        224,
+        384
+      ],
+      "type": "@blackswampai/n8n-nodes-twentycrm.twenty",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "twentyApi": {
+          "id": "41C04qbmnbi0GI2P",
+          "name": "Twenty account"
+        }
+      },
+      "id": "6f81c194-43bd-4112-a1a9-212ec077a322",
+      "name": "Get All End Customers",
+      "parameters": {
+        "objectApiName": {
+          "__rl": true,
+          "mode": "apiName",
+          "value": "endCustomer"
+        },
+        "operation": "getMany",
+        "resource": "record",
+        "returnAll": true
+      },
+      "position": [
+        224,
+        640
+      ],
+      "type": "@blackswampai/n8n-nodes-twentycrm.twenty",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "twentyApi": {
+          "id": "41C04qbmnbi0GI2P",
+          "name": "Twenty account"
+        }
+      },
+      "id": "f63a55e8-ea65-4049-be2d-b3a1febd797d",
+      "name": "Get All Client Jobs",
+      "parameters": {
+        "objectApiName": {
+          "__rl": true,
+          "mode": "apiName",
+          "value": "clientJob"
+        },
+        "operation": "getMany",
+        "resource": "record",
+        "returnAll": true
+      },
+      "position": [
+        224,
+        768
+      ],
+      "type": "@blackswampai/n8n-nodes-twentycrm.twenty",
+      "typeVersion": 1
+    },
+    {
+      "id": "ff929a6b-708c-406b-8731-c765edbe2ca0",
+      "name": "Has SeldonFrame Creds (Contacts)",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.seldonframeOrgId }}",
+              "operator": {
+                "operation": "notEmpty",
+                "type": "string"
+              },
+              "rightValue": ""
+            },
+            {
+              "leftValue": "={{ $json.seldonframeApiKey }}",
+              "operator": {
+                "operation": "notEmpty",
+                "type": "string"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        340,
+        96
+      ],
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3
+    },
+    {
+      "id": "96cd7e14-aaf3-41d6-b006-765c5c8e0b03",
+      "name": "Has SeldonFrame Creds (Bookings)",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.seldonframeOrgId }}",
+              "operator": {
+                "operation": "notEmpty",
+                "type": "string"
+              },
+              "rightValue": ""
+            },
+            {
+              "leftValue": "={{ $json.seldonframeApiKey }}",
+              "operator": {
+                "operation": "notEmpty",
+                "type": "string"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        340,
+        384
+      ],
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3
+    },
+    {
+      "id": "796fdeee-295f-484c-bd31-d42d28567ed5",
+      "name": "Match Existing Contact",
+      "parameters": {
+        "jsCode": "const item = $json;\nconst existing = $('Get All End Customers').all().find(e => e.json.seldonframeContactId === item.id);\nreturn {\n  seldonframeContactId: item.id,\n  firstName: item.firstName || '',\n  lastName: item.lastName || '',\n  phone: item.phone || '',\n  email: item.email || '',\n  status: item.status || '',\n  source: item.source || '',\n  id: existing ? existing.json.id : '',\n  matched: !!existing\n};",
+        "mode": "runOnceForEachItem"
+      },
+      "position": [
+        900,
+        96
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "c980e21b-ed2a-48c1-99c6-11c3e288816b",
+      "name": "Match Contact & Existing Booking",
+      "parameters": {
+        "jsCode": "const item = $json;\nconst contact = $('Get All End Customers').all().find(e => e.json.seldonframeContactId === item.contactId);\nconst existingJob = $('Get All Client Jobs').all().find(j => j.json.seldonframeBookingId === item.id);\nconst statusMap = { confirmed: 'SCHEDULED', booked: 'SCHEDULED', pending: 'SCHEDULED', in_progress: 'IN_PROGRESS', completed: 'COMPLETED', done: 'COMPLETED', cancelled: 'CANCELED', canceled: 'CANCELED' };\nconst rawStatus = (item.status || '').toString().toLowerCase();\nreturn {\n  seldonframeBookingId: item.id,\n  title: item.title || '',\n  status: statusMap[rawStatus] || 'SCHEDULED',\n  meetingUrl: item.meetingUrl || '',\n  startsAt: item.startsAt || '',\n  contactRecordId: contact ? contact.json.id : '',\n  id: existingJob ? existingJob.json.id : '',\n  matched: !!existingJob\n};",
+        "mode": "runOnceForEachItem"
+      },
+      "position": [
+        900,
+        384
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "twentyApi": {
+          "id": "41C04qbmnbi0GI2P",
+          "name": "Twenty account"
+        }
+      },
+      "id": "b4579b39-7832-4c0b-a689-d619f0326de8",
+      "name": "Update Existing Contact",
+      "parameters": {
+        "inputMode": "json",
+        "jsonInput": {
+          "emails": {
+            "primaryEmail": "={{ $json.email }}"
+          },
+          "fullName": "={{ ($json.firstName + ' ' + $json.lastName).trim() }}",
+          "phones": {
+            "primaryPhoneNumber": "={{ $json.phone }}"
+          }
+        },
+        "objectApiName": {
+          "__rl": true,
+          "mode": "apiName",
+          "value": "endCustomer"
+        },
+        "operation": "update",
+        "recordId": "={{ $json.id }}",
+        "resource": "record"
+      },
+      "position": [
+        1344,
+        0
+      ],
+      "type": "@blackswampai/n8n-nodes-twentycrm.twenty",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "twentyApi": {
+          "id": "41C04qbmnbi0GI2P",
+          "name": "Twenty account"
+        }
+      },
+      "id": "d960bb9b-c3bf-41dd-9277-842e60a85217",
+      "name": "Create New Contact",
+      "parameters": {
+        "inputMode": "json",
+        "jsonInput": {
+          "clientAccountId": "={{ $('Get Synced Clients (Contacts)').item.json.id }}",
+          "emails": {
+            "primaryEmail": "={{ $json.email }}"
+          },
+          "fullName": "={{ ($json.firstName + ' ' + $json.lastName).trim() }}",
+          "phones": {
+            "primaryPhoneNumber": "={{ $json.phone }}"
+          },
+          "seldonframeContactId": "={{ $json.seldonframeContactId }}"
+        },
+        "objectApiName": {
+          "__rl": true,
+          "mode": "apiName",
+          "value": "endCustomer"
+        },
+        "operation": "create",
+        "resource": "record"
+      },
+      "position": [
+        1344,
+        192
+      ],
+      "type": "@blackswampai/n8n-nodes-twentycrm.twenty",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "twentyApi": {
+          "id": "41C04qbmnbi0GI2P",
+          "name": "Twenty account"
+        }
+      },
+      "id": "52b88e53-3efa-4666-88df-f4380b63f6ea",
+      "name": "Update Existing Booking",
+      "parameters": {
+        "inputMode": "json",
+        "jsonInput": {
+          "name": "={{ $json.title }}",
+          "scheduledAt": "={{ $json.startsAt }}",
+          "status": "={{ $json.status }}"
+        },
+        "objectApiName": {
+          "__rl": true,
+          "mode": "apiName",
+          "value": "clientJob"
+        },
+        "operation": "update",
+        "recordId": "={{ $json.id }}",
+        "resource": "record"
+      },
+      "position": [
+        1568,
+        288
+      ],
+      "type": "@blackswampai/n8n-nodes-twentycrm.twenty",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "twentyApi": {
+          "id": "41C04qbmnbi0GI2P",
+          "name": "Twenty account"
+        }
+      },
+      "id": "b5defd14-cec7-4468-83b1-aca1871fc2ae",
+      "name": "Create New Booking",
+      "parameters": {
+        "inputMode": "json",
+        "jsonInput": {
+          "clientAccountId": "={{ $('Get Synced Clients (Bookings)').item.json.id }}",
+          "endCustomerId": "={{ $json.contactRecordId }}",
+          "name": "={{ $json.title }}",
+          "scheduledAt": "={{ $json.startsAt }}",
+          "seldonframeBookingId": "={{ $json.seldonframeBookingId }}",
+          "status": "={{ $json.status }}"
+        },
+        "objectApiName": {
+          "__rl": true,
+          "mode": "apiName",
+          "value": "clientJob"
+        },
+        "operation": "create",
+        "resource": "record"
+      },
+      "position": [
+        1568,
+        480
+      ],
+      "type": "@blackswampai/n8n-nodes-twentycrm.twenty",
+      "typeVersion": 1
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "executionOrder": "v1"
+  }
+}

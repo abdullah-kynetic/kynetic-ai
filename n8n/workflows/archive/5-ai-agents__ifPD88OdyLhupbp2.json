@@ -1,0 +1,2654 @@
+{
+  "active": false,
+  "connections": {
+    "4o mini2": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "Email Classifier",
+            "type": "ai_languageModel"
+          },
+          {
+            "index": 0,
+            "node": "Finance Agent",
+            "type": "ai_languageModel"
+          },
+          {
+            "index": 0,
+            "node": "High Priority Agent",
+            "type": "ai_languageModel"
+          },
+          {
+            "index": 0,
+            "node": "Customer Support Agent",
+            "type": "ai_languageModel"
+          },
+          {
+            "index": 0,
+            "node": "Promotion Agent",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Send Confirmation Email",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Add New Intake to Sheet": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Sales Agent",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "Sales Agent",
+            "type": "ai_languageModel"
+          },
+          {
+            "index": 0,
+            "node": "Email Revision Agent",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Message a model",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Brain": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "Information Extractor",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Customer Support": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Customer Support Agent",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "index": 0,
+            "node": "Supabase Vector Store",
+            "type": "ai_document"
+          }
+        ]
+      ]
+    },
+    "Download Invoice": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Extract from File1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Supabase Vector Store",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Download file1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Extract from File",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Human in the Loop",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Email Classifier": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "High Priority",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Customer Support",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Promotion",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Finance/Billing",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Email Draft": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "Customer Support Agent",
+            "type": "ai_tool"
+          },
+          {
+            "index": 0,
+            "node": "Finance Agent",
+            "type": "ai_tool"
+          },
+          {
+            "index": 0,
+            "node": "Promotion Agent",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "Email Revision Agent": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Edit Fields",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "index": 0,
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding"
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI2": {
+      "ai_embedding": [
+        [
+          {
+            "index": 0,
+            "node": "Vector_Store",
+            "type": "ai_embedding"
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Initial Job",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Extract from File1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Information Extractor",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Extract text": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Finance/Billing": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Finance Agent",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Email Classifier",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Download file",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "High Priority": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "High Priority Agent",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Human in the Loop": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Text Classifier",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Append row in sheet",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Initial Job": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Extract text",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Send a message1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "New Invoice Uploaded": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Download Invoice",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "On form submission1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Upload Resume",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "On form submission2": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Add New Intake to Sheet",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "Text Classifier",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent1",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Projects": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "Sales Agent",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "Promotion": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Promotion Agent",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Sales Agent": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Edit Fields",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Send Confirmation Email": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create a database page",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent",
+            "type": "ai_memory"
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "index": 0,
+            "node": "Sales Agent",
+            "type": "ai_outputParser"
+          },
+          {
+            "index": 0,
+            "node": "Email Revision Agent",
+            "type": "ai_outputParser"
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent1",
+            "type": "ai_outputParser"
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "High Priority Agent",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Send a message",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Email Revision Agent",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Upload Resume": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Download file1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Vector_Store": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "ifPD88OdyLhupbp2",
+  "name": "5 AI Agents",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "64577a61-6d79-45c5-b186-e26813d5de16",
+      "name": "On form submission",
+      "parameters": {
+        "formDescription": "This form will be used ",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Full Name",
+              "placeholder": "James Lowe",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "placeholder": "john@gmail.com",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Company Name",
+              "placeholder": "JM Solutionss"
+            },
+            {
+              "fieldLabel": "Intent",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Lead Generation Service"
+                  },
+                  {
+                    "option": "Content Creation Service"
+                  },
+                  {
+                    "option": "Onboarding Automation service"
+                  },
+                  {
+                    "option": "General Automation Support"
+                  }
+                ]
+              },
+              "fieldType": "dropdown",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Budget",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "<$1,000"
+                  },
+                  {
+                    "option": "$1,000-$5,000"
+                  },
+                  {
+                    "option": "$5,000-$9,000"
+                  },
+                  {
+                    "option": "$9,000+"
+                  }
+                ]
+              },
+              "fieldType": "dropdown",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Project Description",
+              "placeholder": "We are a looking for an automation that ......",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Timeline",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Within 1 week"
+                  },
+                  {
+                    "option": "1 week - 3 weeks"
+                  },
+                  {
+                    "option": "3 weeks+"
+                  }
+                ]
+              },
+              "fieldType": "dropdown",
+              "requiredField": true
+            }
+          ]
+        },
+        "formTitle": "Intake Form",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "position": [
+        -5968,
+        384
+      ],
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "webhookId": "e03533c3-3b25-4a8f-bb7a-8834a6312b76"
+    },
+    {
+      "id": "3e21d54d-edb1-45a0-9a84-dadecffdbfaa",
+      "name": "Google Drive Trigger",
+      "parameters": {
+        "event": "fileCreated",
+        "folderToWatch": {
+          "__rl": true,
+          "cachedResultName": "RAG Example",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1Oy_97GF1HxBYh-k8-rxxxzNM2Zsecyw6",
+          "mode": "list",
+          "value": "1Oy_97GF1HxBYh-k8-rxxxzNM2Zsecyw6"
+        },
+        "options": {},
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder"
+      },
+      "position": [
+        -18112,
+        160
+      ],
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1
+    },
+    {
+      "id": "9490453f-98a4-4dce-864c-4264788993a8",
+      "name": "Download file",
+      "parameters": {
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "operation": "download",
+        "options": {}
+      },
+      "position": [
+        -17936,
+        160
+      ],
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3
+    },
+    {
+      "credentials": {
+        "supabaseApi": {
+          "id": "nc6EAQqDAd4ZZZlH",
+          "name": "Supabase account"
+        }
+      },
+      "id": "eb6cdc24-8751-4a5b-85df-f5e773deb95e",
+      "name": "Supabase Vector Store",
+      "parameters": {
+        "mode": "insert",
+        "options": {
+          "queryName": "match_documents"
+        },
+        "tableName": {
+          "__rl": true,
+          "cachedResultName": "documents",
+          "mode": "list",
+          "value": "documents"
+        }
+      },
+      "position": [
+        -17744,
+        160
+      ],
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3
+    },
+    {
+      "credentials": {
+        "openAiApi": {
+          "id": "T3fSxXKFoT57vf5P",
+          "name": "OpenAi account"
+        }
+      },
+      "id": "dfd89cf4-e6db-4c9c-90f9-da0126a726a6",
+      "name": "Embeddings OpenAI",
+      "parameters": {
+        "options": {}
+      },
+      "position": [
+        -17776,
+        336
+      ],
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "95373eb1-53a7-4cb4-9500-7981cc767cc0",
+      "name": "Default Data Loader",
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "position": [
+        -17600,
+        336
+      ],
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1
+    },
+    {
+      "id": "ccad7155-5f1c-4ee1-a765-0b67b40ad2e4",
+      "name": "AI Agent",
+      "parameters": {
+        "options": {
+          "systemMessage": "=#Overview\nYou are a helpful intelligent information extraction assistant that answers any incoming quieries using the tools that you were given\n\n##Tools\nVector_Store - This tool will ALWAYS be used when asnwering any questions may have about any topic\n\n##Rules\n- Always pull in the information to answer from the Vector_Store tool\n- Keep your answers concise and to the point"
+        }
+      },
+      "position": [
+        -17808,
+        592
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "05ce30b7-4310-47d4-b626-019127d64f07",
+      "name": "When chat message received",
+      "parameters": {
+        "options": {}
+      },
+      "position": [
+        -17968,
+        592
+      ],
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "webhookId": "26348970-6bb5-40e3-bda3-108660c3fc85"
+    },
+    {
+      "credentials": {
+        "openAiApi": {
+          "id": "T3fSxXKFoT57vf5P",
+          "name": "OpenAi account"
+        }
+      },
+      "id": "40dec3f8-e5d0-4396-9fad-305cf44665d5",
+      "name": "OpenAI Chat Model",
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "position": [
+        -17920,
+        784
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "93ff34ec-8e2f-48e2-b60f-73750e29df09",
+      "name": "Simple Memory",
+      "parameters": {},
+      "position": [
+        -17776,
+        784
+      ],
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3
+    },
+    {
+      "id": "e8170b58-2f76-478d-afe1-df1ff0d66833",
+      "name": "Sticky Note",
+      "parameters": {
+        "content": "## Step 1: New Documents into the Superbase\nThis is adding a new document into the vector database",
+        "height": 448,
+        "width": 1008
+      },
+      "position": [
+        -18256,
+        48
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "eb086cfa-7a51-4ac5-a26b-70e65c62c38a",
+      "name": "Sticky Note1",
+      "parameters": {
+        "color": 5,
+        "content": "## Step 2: Querying the vector databse\nThis is quierying the vector databse",
+        "height": 544,
+        "width": 1008
+      },
+      "position": [
+        -18256,
+        512
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "openAiApi": {
+          "id": "T3fSxXKFoT57vf5P",
+          "name": "OpenAi account"
+        }
+      },
+      "id": "7ecd7232-30e0-4635-8e03-0dc316a4a577",
+      "name": "Embeddings OpenAI2",
+      "parameters": {
+        "options": {}
+      },
+      "position": [
+        -17568,
+        912
+      ],
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2
+    },
+    {
+      "credentials": {
+        "supabaseApi": {
+          "id": "nc6EAQqDAd4ZZZlH",
+          "name": "Supabase account"
+        }
+      },
+      "id": "69caed69-9664-4368-98d7-222a8f85b818",
+      "name": "Vector_Store",
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "options": {
+          "queryName": "match_documents"
+        },
+        "tableName": {
+          "__rl": true,
+          "cachedResultName": "documents",
+          "mode": "list",
+          "value": "documents"
+        },
+        "toolDescription": "Call this tool to retrieve business strategy and FAQ information",
+        "topK": {}
+      },
+      "position": [
+        -17648,
+        784
+      ],
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3
+    },
+    {
+      "id": "34bea104-1933-400e-8253-2406bf23f220",
+      "name": "Sales Agent",
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Overview\nYou are an expert sales person for an agency that delivers AI solutions. Your job is to respnd to incoming leads by addressing their needs in a professional manner. You will receive information like the lead's project description and timeline and your goal is to convince them that wee are the best AI Agency on the market.\n\n##Tools\nProjects - Use this tool to search through previous projects we've done that can be used to include inside of the email as results\n\n\n##Rules\n1) Keep the email concise and professional and under 100 words\n2) Your main objective is to convice the lead to book in a call. Your job is to make them believe that we can delivery the project they have described and exceed their expecations. \n3) Retrieve information about previous projects to share with the lead to prove that our team is capable of handling their project. Find a similar project we have done to share with the lead. Share the result of how we helped the client.\n4) ALWAYS write the email in HTML with newlines <br><br>\n5) DON'T add any emojis in the email \n\n\n##Final Notes\nSign off emails as Michele, JM Solutionss\nHere is the current date/time: {{ $now }}\n"
+        },
+        "promptType": "define",
+        "text": "=Here is the new lead intake information:\n\nFull Name: {{ $json['Full Name'] }}\n\nCompany Name:{{ $json['Company Name'] }}\n\nIntent:{{ $json.Intent }}\n\nBudget:{{ $json.Budget }}\n\nProject Description:{{ $json['Project Description'] }}\n\nTimeline:{{ $json.Timeline }}\n\n"
+      },
+      "position": [
+        -15424,
+        144
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "1b5fad53-ed4a-41e6-8e3e-be42332204a0",
+      "name": "Add New Intake to Sheet",
+      "parameters": {
+        "columns": {
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Full Name",
+              "id": "Full Name",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Email",
+              "id": "Email",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Company Name",
+              "id": "Company Name",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Intent",
+              "id": "Intent",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Budget",
+              "id": "Budget",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Project Description",
+              "id": "Project Description",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Timeline",
+              "id": "Timeline",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "submittedAt",
+              "id": "submittedAt",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "Budget": "={{ $json.Budget }}",
+            "Company Name": "={{ $json['Company Name'] }}",
+            "Email": "={{ $json.Email }}",
+            "Full Name": "={{ $json['Full Name'] }}",
+            "Intent": "={{ $json.Intent }}",
+            "Project Description": "={{ $json['Project Description'] }}",
+            "Timeline": "={{ $json.Timeline }}",
+            "submittedAt": "={{ $json.submittedAt.toDateTime().format('DD') }}"
+          }
+        },
+        "documentId": {
+          "__rl": true,
+          "cachedResultName": "New Lead Intake",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UVgCP_kV-u973N7H7ggZPMYaxyP99SzrKIAVIhJuNko/edit?usp=drivesdk",
+          "mode": "list",
+          "value": "1UVgCP_kV-u973N7H7ggZPMYaxyP99SzrKIAVIhJuNko"
+        },
+        "operation": "append",
+        "options": {},
+        "sheetName": {
+          "__rl": true,
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UVgCP_kV-u973N7H7ggZPMYaxyP99SzrKIAVIhJuNko/edit#gid=0",
+          "mode": "list",
+          "value": "gid=0"
+        }
+      },
+      "position": [
+        -15712,
+        144
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7
+    },
+    {
+      "id": "62019f44-44b6-4b24-bd4a-939588480a21",
+      "name": "Projects",
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "cachedResultName": "New Lead Intake",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UVgCP_kV-u973N7H7ggZPMYaxyP99SzrKIAVIhJuNko/edit?usp=drivesdk",
+          "mode": "list",
+          "value": "1UVgCP_kV-u973N7H7ggZPMYaxyP99SzrKIAVIhJuNko"
+        },
+        "options": {},
+        "sheetName": {
+          "__rl": true,
+          "cachedResultName": "Projects Completed",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UVgCP_kV-u973N7H7ggZPMYaxyP99SzrKIAVIhJuNko/edit#gid=1076207814",
+          "mode": "list",
+          "value": 1076207814
+        }
+      },
+      "position": [
+        -15264,
+        384
+      ],
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7
+    },
+    {
+      "id": "534cc3f3-d7e8-4d70-b78f-824f2711b375",
+      "name": "Edit Fields",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bc3cc979-4afb-4a62-8434-1d5894f88b74",
+              "name": "subject",
+              "type": "string",
+              "value": "={{ $json.output.subject }}"
+            },
+            {
+              "id": "381184c0-33cb-4318-93fa-a6b017ab2b88",
+              "name": "email_body",
+              "type": "string",
+              "value": "={{ $json.output.email_body }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        -14992,
+        144
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "85ef0b6e-89bd-4ba3-8273-4d4d3d05ada9",
+      "name": "Structured Output Parser",
+      "parameters": {
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"subject\": {\n\t\t\t\"type\": \"string\",\n            \"description\":\"the subject line of the email\"\n\t\t},\n\t\t\"email_body\": {\n\t\t\t\"type\": \"string\",\n           \"description\":\"The body of the email\"\n\t\t\t}\n\t\t},\n      \"required\": [\"subject\",\"email_body\"]\n\t}",
+        "schemaType": "manual"
+      },
+      "position": [
+        -14800,
+        560
+      ],
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3
+    },
+    {
+      "id": "1bfbaa96-fa3f-4453-b0fd-be567fc35303",
+      "name": "Anthropic Chat Model",
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "cachedResultName": "Claude 4 Sonnet",
+          "mode": "list",
+          "value": "claude-sonnet-4-20250514"
+        },
+        "options": {}
+      },
+      "position": [
+        -14656,
+        560
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3
+    },
+    {
+      "id": "6945c0c6-c5bc-462d-964f-1566e71291c6",
+      "name": "Human in the Loop",
+      "parameters": {
+        "message": "=Hey Michele, we have a new lead and below you can find the email we drafted for this lead to send through:\n\n<h2>PROJECT DESCRIPTION</h2>\n{{ $('On form submission2').item.json['Project Description'] }}\n\n\n<h2>EMAIL DRAFTED</h2>\n\n{{ $json.email_body }}\n\n\nPlease provide any feedback if you have",
+        "operation": "sendAndWait",
+        "options": {
+          "appendAttribution": false
+        },
+        "responseType": "freeText",
+        "sendTo": "michele.torti5@gmail.com",
+        "subject": "=ACTION REQUIRED: New Lead with Budget of {{ $('On form submission2').item.json.Budget }}"
+      },
+      "position": [
+        -14816,
+        144
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "webhookId": "b6cd0383-2378-4006-9c5f-719f47011f62"
+    },
+    {
+      "id": "8d1c2305-6e0f-41b9-9266-61cc0a7246b5",
+      "name": "Text Classifier",
+      "parameters": {
+        "categories": {
+          "categories": [
+            {
+              "category": "approved",
+              "description": "The sales agent approved the email and accepted the way it was written. The text that we are classifying intents that it was accepted and that everything was good\n\n\nExample Output:\n\n\"yes\"\n\"that's fine\"\n\"looks good\"\n\"send it through\""
+            },
+            {
+              "category": "denied",
+              "description": "The sales agent denied the email and denied the way it was written. The text that we are classifying intents that it needs updating or changing (usuaally provided with feedback on how to do so)\n\nExample Output:\n\n\"Make it shorter\"\n\"I don't like it\"\n\"it's too long\"\n\"Include another project\"\n\"no\"\n"
+            }
+          ]
+        },
+        "inputText": "={{ $json.data.text }}",
+        "options": {}
+      },
+      "position": [
+        -14640,
+        144
+      ],
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1
+    },
+    {
+      "id": "a812289b-c00a-4fa1-bcfc-49bb0a606f14",
+      "name": "Email Revision Agent",
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a helpful intellignet email assistant who needs to update a sales email based on the provided feedback\n\n##Tools\nProjects - Use this tool to search through previous projects we've done that can be used to include inside of the email as results\n\n\n##Rules\n1) Keep the email concise and professional \n2) Your main objective is to convice the lead to book in a call. Your job is to make them believe that we can delivery the project they have described and exceed their expecations. \n3) Retrieve information about previous projects to share with the lead to prove that our team is capable of handling their project. Find a similar project we have done to share with the lead. Share the result of how we helped the client.\n4) ALWAYS write the email in HTML with newlines <br><br>\n5) DON'T add any emojis in the email \n\n##Final Notes\nSign off emails as Michele, JM Solutionss\nHere is the current date/time: {{ $now }}\n"
+        },
+        "promptType": "define",
+        "text": "=Here is the email that was sent to the Sales Agent:\n\n##EMAIL\n{{ $('Edit Fields').item.json.email_body }}\n\n\n\n##AGENT EMAIL FEEDBACK \n{{ $json.data.text }}"
+      },
+      "position": [
+        -14176,
+        304
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "be6920d6-dea0-46a3-a3cc-b672fd878abb",
+      "name": "Send a message",
+      "parameters": {
+        "message": "={{ $('Edit Fields').item.json.email_body }}",
+        "options": {
+          "appendAttribution": false
+        },
+        "sendTo": "={{ $('On form submission2').item.json.Email }}",
+        "subject": "={{ $('Edit Fields').item.json.subject }}"
+      },
+      "position": [
+        -14128,
+        128
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "webhookId": "544ac436-1809-4fff-90f6-8b10b6332ec2"
+    },
+    {
+      "id": "b0760a9d-b262-40a4-8f5a-5f27ab37f412",
+      "name": "Sticky Note2",
+      "parameters": {
+        "color": 3,
+        "content": "## Human in the loop\nWe send an email to agent asking them to check over the email and give feedback which we classify into approved or denied",
+        "height": 512,
+        "width": 688
+      },
+      "position": [
+        -15072,
+        16
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "d7ae3c83-3980-4cf5-9cc8-50ccbfe6e0ae",
+      "name": "Sticky Note3",
+      "parameters": {
+        "color": 6,
+        "content": "## Send or Revise\nThese are the last two paths. The ones above, is for sending the email to the lead when it's accepted. The flow below is in the case of the email being denied and the AI will rewrite it as send it back",
+        "height": 512,
+        "width": 576
+      },
+      "position": [
+        -14368,
+        16
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "openAiApi": {
+          "id": "T3fSxXKFoT57vf5P",
+          "name": "OpenAi account"
+        }
+      },
+      "id": "59995754-fc7d-4c14-98d9-352aa24c3096",
+      "name": "OpenAI Chat Model1",
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "position": [
+        -14656,
+        288
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "76f06d19-d66e-4b51-83ce-077aedd115e8",
+      "name": "Sticky Note4",
+      "parameters": {
+        "content": "## New Lead intake\nSo we basically get a new leads request from a form and add it to our sheet databse",
+        "height": 288,
+        "width": 432
+      },
+      "position": [
+        -15968,
+        16
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "700e9e16-8c22-47e1-9044-79b5374ffa93",
+      "name": "Sticky Note5",
+      "parameters": {
+        "color": 5,
+        "content": "## Agent Writes Sales Email\nThis agent will be writing the sales email to send to the client",
+        "height": 512,
+        "width": 432
+      },
+      "position": [
+        -15520,
+        16
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "fa50e5c7-ebcf-42ad-a5de-30c11e4f599f",
+      "name": "Extract from File",
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "position": [
+        -11968,
+        -16
+      ],
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1
+    },
+    {
+      "id": "65e180b8-3a7a-471a-9055-d441a0a65b9c",
+      "name": "Initial Job",
+      "parameters": {
+        "fileId": {
+          "__rl": true,
+          "cachedResultName": "Investement Banking Intern.pdf",
+          "cachedResultUrl": "https://drive.google.com/file/d/1CNwc2ZNfn5eoggwyeC5_IIA9UApHhbdH/view?usp=drivesdk",
+          "mode": "list",
+          "value": "1CNwc2ZNfn5eoggwyeC5_IIA9UApHhbdH"
+        },
+        "operation": "download",
+        "options": {}
+      },
+      "position": [
+        -11744,
+        -16
+      ],
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3
+    },
+    {
+      "id": "fbffb963-6d48-4560-be01-42d09afe8d4e",
+      "name": "Send Confirmation Email",
+      "parameters": {
+        "message": "=Hey {{ $('On form submission1').item.json['Full Name'].split(\" \").first() }},  \n<br><br>  \nThanks for applying! We’ve received your application and our team will review it shortly.  \n<br><br>  \nWe’ll get back to you soon with the next steps.  \n<br><br>  \nBest,  \nJM Solutionss\n\n\n",
+        "options": {},
+        "sendTo": "={{ $('On form submission1').item.json.Email }}",
+        "subject": "Thanks for your application!"
+      },
+      "position": [
+        -11984,
+        384
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "webhookId": "89ef2326-c074-4348-a55d-e5b15078399e"
+    },
+    {
+      "id": "062c5921-9dc1-43eb-ac13-6dd565412af6",
+      "name": "Upload Resume",
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "cachedResultName": "/ (Root folder)",
+          "cachedResultUrl": "https://drive.google.com/drive",
+          "mode": "list",
+          "value": "root"
+        },
+        "inputDataFieldName": "Resume",
+        "name": "={{ $('On form submission1').item.json['Full Name'] }} - CV",
+        "options": {}
+      },
+      "position": [
+        -12400,
+        -16
+      ],
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3
+    },
+    {
+      "id": "5f6bee85-f44d-4c10-a4e5-00ab16d05cb5",
+      "name": "Create a database page",
+      "parameters": {
+        "databaseId": {
+          "__rl": true,
+          "cachedResultName": "Job Applicant Tracker",
+          "cachedResultUrl": "https://www.notion.so/2576284c21d980abad94d8d321231c98",
+          "mode": "list",
+          "value": "2576284c-21d9-80ab-ad94-d8d321231c98"
+        },
+        "options": {},
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "First Name|rich_text",
+              "textContent": "={{ $('On form submission1').item.json['Full Name'].split(\" \").first() }}"
+            },
+            {
+              "key": "Last Name|rich_text",
+              "textContent": "={{ $('On form submission1').item.json['Full Name'].split(\" \").last() }}"
+            },
+            {
+              "emailValue": "={{ $('On form submission1').item.json.Email }}",
+              "key": "Email|email"
+            },
+            {
+              "key": "Phone|phone_number",
+              "phoneValue": "={{ $('On form submission1').item.json['Phone Number'] }}"
+            },
+            {
+              "date": "={{ $now.format('yyyy-MM-dd') }}",
+              "key": "Application Date|date"
+            },
+            {
+              "key": "Resume|url",
+              "urlValue": "={{ $('Upload Resume').item.json.webViewLink }}"
+            },
+            {
+              "key": "Strengths|rich_text",
+              "textContent": "={{ $('AI Agent1').item.json.output.candidate_strengths.join(\"\\n\\n\") }}"
+            },
+            {
+              "key": "Weaknesses|rich_text",
+              "textContent": "={{ $('AI Agent1').item.json.output.candidate_weaknesses.join(\"\\n\\n\") }}"
+            },
+            {
+              "key": "Risk Factor|rich_text",
+              "textContent": "={{ $('AI Agent1').item.json.output.risk_factor.score }}\n\n{{ $('AI Agent1').item.json.output.risk_factor.explanation }}"
+            },
+            {
+              "key": "Reward Factor|rich_text",
+              "textContent": "={{ $('AI Agent1').item.json.output.reward_factor.score }}\n\n{{ $('AI Agent1').item.json.output.reward_factor.explanation }}"
+            },
+            {
+              "key": "Overall Fit|number",
+              "numberValue": "={{ $('AI Agent1').item.json.output.overall_fit_rating }}"
+            },
+            {
+              "key": "Justification|rich_text",
+              "textContent": "={{ $('AI Agent1').item.json.output.justification_for_rating }}"
+            }
+          ]
+        },
+        "resource": "databasePage",
+        "title": "={{ $('On form submission1').item.json['Full Name'] }}"
+      },
+      "position": [
+        -11760,
+        384
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "75de6b02-7296-4759-a132-4218013e41eb",
+      "name": "Extract text",
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "position": [
+        -11520,
+        -16
+      ],
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1
+    },
+    {
+      "id": "8c870c3a-9b06-4feb-8f92-8c5f68aeffa2",
+      "name": "On form submission1",
+      "parameters": {
+        "formDescription": "Please fill out this application",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Full Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Phone Number",
+              "requiredField": true
+            },
+            {
+              "acceptFileTypes": ".pdf",
+              "fieldLabel": "Resume",
+              "fieldType": "file",
+              "multipleFiles": false
+            }
+          ]
+        },
+        "formTitle": "Job Application Form",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "position": [
+        -12640,
+        -16
+      ],
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "webhookId": "e8183b42-70ad-4e25-bc17-cfddc8354a21"
+    },
+    {
+      "id": "174a746b-5060-4f9b-875b-0a81e646d875",
+      "name": "AI Agent1",
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Overview\n\nYou are an expert technical recruiter specializing in AI, automation, and software roles. You have been given a job description and a candidate resume. Your task is to analyze the resume in relation to the job description and provide a detailed screening report.\n\nFocus specifically on how well the candidate matches the core requirements and ideal profile outlined in the job description. Evaluate both technical skill alignment and business-context understanding. Use reasoning grounded in the actual content of the resume and job post — avoid making assumptions.\n\n## Output\n\nYour output should follow this exact format:\n\n**Candidate Strengths:**\nList the top strengths or relevant qualifications the candidate brings to the table. Be specific.\n\n**Candidate Weaknesses:**\nList areas where the candidate is lacking or mismatched based on the job description.\n\n**Risk Factor:**\n\n* Assign a risk score (Low / Medium / High)\n* Explain the worst-case scenario if this candidate is hired.\n\n**Reward Factor:**\n\n* Assign a reward score (Low / Medium / High)\n* Describe the best-case scenario — what value could this candidate unlock?\n* Does the candidate appear to be a short-term or long-term fit?\n\n**Overall Fit Rating (0–10):**\nAssign a number between 0 (terrible match) and 10 (perfect match). Do not give decimals.\n\n**Justification for Rating:**\nExplain clearly why this candidate received that score. Reference specific resume content and how it aligns or doesn't with the job description.\n\n## Job Description\n\n{{ $json.text }}"
+        },
+        "promptType": "define",
+        "text": "=Candidates Resume: {{ $('Extract from File').item.json.text }}\n\nJob Description Requirements: {{ $json.text }}"
+      },
+      "position": [
+        -12432,
+        288
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "openAiApi": {
+          "id": "T3fSxXKFoT57vf5P",
+          "name": "OpenAi account"
+        }
+      },
+      "id": "4021c6b0-96db-49de-be68-b7466224d771",
+      "name": "OpenAI Chat Model2",
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "position": [
+        -12480,
+        480
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "7bb2412c-47f2-49b8-8c1d-448b9ff32980",
+      "name": "Structured Output Parser1",
+      "parameters": {
+        "inputSchema": "{\n  \"name\": \"resume_screening_evaluation\",\n  \"description\": \"Analyzes a candidate's resume against a job description and outputs strengths, weaknesses, risk/reward assessment, and an overall fit score.\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"candidate_strengths\": {\n      \"type\": \"array\",\n      \"description\": \"A list of specific strengths or qualifications that match the job requirements.\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"candidate_weaknesses\": {\n      \"type\": \"array\",\n      \"description\": \"A list of areas where the candidate falls short or lacks alignment with the job requirements.\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"risk_factor\": {\n      \"type\": \"object\",\n      \"description\": \"An evaluation of the potential downside of hiring this candidate.\",\n      \"properties\": {\n        \"score\": {\n          \"type\": \"string\",\n          \"enum\": [\"Low\", \"Medium\", \"High\"]\n        },\n        \"explanation\": {\n          \"type\": \"string\",\n          \"description\": \"A brief explanation of the worst-case scenario if the candidate is hired.\"\n        }\n      },\n      \"required\": [\"score\", \"explanation\"]\n    },\n    \"reward_factor\": {\n      \"type\": \"object\",\n      \"description\": \"An evaluation of the potential upside of hiring this candidate.\",\n      \"properties\": {\n        \"score\": {\n          \"type\": \"string\",\n          \"enum\": [\"Low\", \"Medium\", \"High\"]\n        },\n        \"explanation\": {\n          \"type\": \"string\",\n          \"description\": \"A description of the best-case scenario and whether the candidate is a short-term or long-term fit.\"\n        }\n      },\n      \"required\": [\"score\", \"explanation\"]\n    },\n    \"overall_fit_rating\": {\n      \"type\": \"integer\",\n      \"description\": \"A rating from 0 to 10 indicating how well the candidate matches the job description.\",\n      \"minimum\": 0,\n      \"maximum\": 10\n    },\n    \"justification_for_rating\": {\n      \"type\": \"string\",\n      \"description\": \"A summary explaining why the candidate received the specific fit rating, referencing resume and job description alignment.\"\n    }\n  },\n  \"required\": [\n    \"candidate_strengths\",\n    \"candidate_weaknesses\",\n    \"risk_factor\",\n    \"reward_factor\",\n    \"overall_fit_rating\",\n    \"justification_for_rating\"\n  ]\n}\n",
+        "schemaType": "manual"
+      },
+      "position": [
+        -12208,
+        480
+      ],
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3
+    },
+    {
+      "id": "94b22340-30b9-4f93-91c9-cbee91ed4bc8",
+      "name": "Download file1",
+      "parameters": {
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "operation": "download",
+        "options": {}
+      },
+      "position": [
+        -12192,
+        -16
+      ],
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3
+    },
+    {
+      "id": "0bdb5401-69a1-457a-ba97-c4b3266139b9",
+      "name": "Sticky Note6",
+      "parameters": {
+        "content": "## Job Application\n",
+        "height": 240,
+        "width": 272
+      },
+      "position": [
+        -12720,
+        -96
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "d4905c6e-fe1d-4554-b2dd-7dd0073a4d95",
+      "name": "Sticky Note7",
+      "parameters": {
+        "color": 5,
+        "content": "## 2. Process CV\n",
+        "height": 240,
+        "width": 1088
+      },
+      "position": [
+        -12432,
+        -96
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "d6d0ccdf-dff8-4323-a223-31ef82532b15",
+      "name": "Sticky Note8",
+      "parameters": {
+        "color": 6,
+        "content": "## 3. Analyse CV\n",
+        "height": 432,
+        "width": 464
+      },
+      "position": [
+        -12560,
+        208
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "8489c223-1e4e-43ed-85da-43478bc7aab4",
+      "name": "Sticky Note9",
+      "parameters": {
+        "color": 3,
+        "content": "## 3. Send Email & Add to Database\n",
+        "height": 432,
+        "width": 496
+      },
+      "position": [
+        -12064,
+        208
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "51111dec-2c7b-433d-b1fe-18b0629e03ec",
+      "name": "Information Extractor",
+      "parameters": {
+        "attributes": {
+          "attributes": [
+            {
+              "description": "this is the name of the customer",
+              "name": "Customer Name",
+              "required": true
+            },
+            {
+              "description": "this is the name of the company",
+              "name": "Company Name",
+              "required": true
+            },
+            {
+              "description": "this is the email of the customer",
+              "name": "email",
+              "required": true
+            },
+            {
+              "description": "this is the address of the customer",
+              "name": "Address",
+              "required": true
+            },
+            {
+              "description": "this is the number of the invoice",
+              "name": "Invoice Number",
+              "required": true
+            },
+            {
+              "description": "this is the date of the invoice",
+              "name": "Date",
+              "required": true,
+              "type": "date"
+            },
+            {
+              "description": "this is the status of the payment",
+              "name": "Status",
+              "required": true
+            },
+            {
+              "description": "this is the line item of the invoice",
+              "name": "line item",
+              "required": true
+            },
+            {
+              "description": "this is the total amount of the invoice",
+              "name": "Total Amount",
+              "required": true
+            },
+            {
+              "description": "this is the payment method of the invoice",
+              "name": "Payment method",
+              "required": true
+            }
+          ]
+        },
+        "options": {
+          "systemPromptTemplate": "You are an expert extraction algorithm.\nOnly extract relevant information from the text.\nIf you do not know the value of an attribute asked to extract, you may omit the attribute's value."
+        },
+        "text": "={{ $json.text }}"
+      },
+      "position": [
+        -9536,
+        176
+      ],
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "aae1d07e-6692-4e8a-a961-6d80795becd7",
+      "name": "Append row in sheet",
+      "parameters": {
+        "columns": {
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Invoice Number",
+              "id": "Invoice Number",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Client Name",
+              "id": "Client Name",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Client Email",
+              "id": "Client Email",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Client Address",
+              "id": "Client Address",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Description",
+              "id": "Description",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Total Amount",
+              "id": "Total Amount",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Invoice Date",
+              "id": "Invoice Date",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Status",
+              "id": "Status",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Payment Method",
+              "id": "Payment Method",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "Client Address": "={{ $json.output.Address }}",
+            "Client Email": "={{ $json.output.email }}",
+            "Client Name": "={{ $json.output['Customer Name'] }}",
+            "Description": "={{ $json.output['line item'] }}",
+            "Invoice Date": "={{ $json.output.Date }}",
+            "Invoice Number": "={{ $json.output['Invoice Number'] }}",
+            "Payment Method": "={{ $json.output['Payment method'] }}",
+            "Status": "={{ $json.output.Status }}",
+            "Total Amount": "={{ $json.output['Total Amount'] }}"
+          }
+        },
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "18Bn066y7j73dNNcf6ddviYj8FD1sLZoVpUdA2RPl_Ko"
+        },
+        "operation": "append",
+        "options": {},
+        "sheetName": {
+          "__rl": true,
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18Bn066y7j73dNNcf6ddviYj8FD1sLZoVpUdA2RPl_Ko/edit#gid=0",
+          "mode": "list",
+          "value": "gid=0"
+        }
+      },
+      "position": [
+        -9184,
+        176
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7
+    },
+    {
+      "credentials": {
+        "openAiApi": {
+          "id": "T3fSxXKFoT57vf5P",
+          "name": "OpenAi account"
+        }
+      },
+      "id": "ca0d5c48-dfe0-427d-9255-789ea96053c8",
+      "name": "Message a model",
+      "parameters": {
+        "jsonOutput": true,
+        "messages": {
+          "values": [
+            {
+              "content": "=#Overview\n\nYou are an email expert for JM Media named Jennie. You will receive invoice information. Your job is to notify the internal billing team that an invoice was received/sent.\n\n## Email\nIn the email, make sure to also include that the system has added the fields to the google sheets DB which they can view here: https://docs.google.com/spreadsheets/d/18Bn066y7j73dNNcf6ddviYj8FD1sLZoVpUdA2RPl_Ko/edit?usp=sharing\n\n## Output\n\nYour output should be in the following JSON format\n\n{\"subjectLine\":\"subjectLineHere\", \"EmailBody\": \"bodyEmailHere\"}\n\n## Rules\n- Don't include any markdown formatting\n- Make sure the email is in HTML format",
+              "role": "system"
+            },
+            {
+              "content": "=Invoice Number: {{ $json['Invoice Number'] }}\n\nClient Name: {{ $json['Client Name'] }}\n\nClient Email:{{ $json['Client Email'] }}\n\nTotal Amount: {{ $json['Total Amount'] }}\n\nInvoice Date: {{ $json['Invoice Date'] }}\n\nStatus: {{ $json.Status }}\n\nPayment Method: {{ $json['Payment Method'] }}"
+            }
+          ]
+        },
+        "modelId": {
+          "__rl": true,
+          "cachedResultName": "GPT-4.1-MINI",
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "position": [
+        -8976,
+        176
+      ],
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8
+    },
+    {
+      "credentials": {
+        "openAiApi": {
+          "id": "T3fSxXKFoT57vf5P",
+          "name": "OpenAi account"
+        }
+      },
+      "id": "f91be021-b3ec-49ec-b38e-a5314ee5130c",
+      "name": "Brain",
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "position": [
+        -9568,
+        320
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "a1490a3a-9902-4d93-9b82-928c487b8388",
+      "name": "New Invoice Uploaded",
+      "parameters": {
+        "event": "fileCreated",
+        "folderToWatch": {
+          "__rl": true,
+          "cachedResultName": "Invoice N8N",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1EorBbveZ8Y-Nm0Ry5O9waN5GyS1UWLZB",
+          "mode": "list",
+          "value": "1EorBbveZ8Y-Nm0Ry5O9waN5GyS1UWLZB"
+        },
+        "options": {},
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder"
+      },
+      "position": [
+        -10208,
+        176
+      ],
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1
+    },
+    {
+      "id": "1f427a9f-eec8-4ce0-a959-72b22aae8cd5",
+      "name": "Download Invoice",
+      "parameters": {
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "operation": "download",
+        "options": {}
+      },
+      "position": [
+        -10016,
+        176
+      ],
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3
+    },
+    {
+      "id": "0e8a4f64-17ee-4a8a-aff9-4080e3b2e084",
+      "name": "Extract from File1",
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "position": [
+        -9744,
+        176
+      ],
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1
+    },
+    {
+      "id": "f3157aac-24e1-4dcc-a903-1c29bb58b53c",
+      "name": "Send a message1",
+      "parameters": {
+        "message": "={{ $json.message.content.EmailBody }}",
+        "options": {
+          "appendAttribution": false
+        },
+        "sendTo": "michele.torti5@gmail.com",
+        "subject": "={{ $json.message.content.subjectLine }}"
+      },
+      "position": [
+        -8624,
+        176
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "webhookId": "b919f697-39bf-4d40-9f30-1ce3a1181f4b"
+    },
+    {
+      "id": "e46f6603-6289-4f1b-be4f-a50cb1597ba3",
+      "name": "Sticky Note10",
+      "parameters": {
+        "content": "## 1. Upload Invoice\n",
+        "height": 400,
+        "width": 464
+      },
+      "position": [
+        -10288,
+        48
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "d096b2bd-f4ef-46e7-9766-74146266d26a",
+      "name": "Sticky Note11",
+      "parameters": {
+        "color": 3,
+        "content": "## 2. Extract Details from Invoice\n",
+        "height": 400,
+        "width": 544
+      },
+      "position": [
+        -9808,
+        48
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "5d201e1a-5c09-4568-a498-31fdc35fc661",
+      "name": "Sticky Note12",
+      "parameters": {
+        "color": 6,
+        "content": "## 4. Send Email to Billing Team\n",
+        "height": 400,
+        "width": 576
+      },
+      "position": [
+        -9008,
+        48
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "bd949b21-8d85-495e-bdad-6b1fab507463",
+      "name": "Sticky Note13",
+      "parameters": {
+        "color": 5,
+        "content": "## 3. Add to DB\n",
+        "height": 400,
+        "width": 224
+      },
+      "position": [
+        -9248,
+        48
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "3e5ce1f6-ab02-489c-a04d-01447c7313f8",
+      "name": "Gmail Trigger",
+      "parameters": {
+        "filters": {
+          "labelIds": []
+        },
+        "options": {},
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false
+      },
+      "position": [
+        -7312,
+        432
+      ],
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.1
+    },
+    {
+      "id": "3494a410-f249-48ab-8de6-6608306f1331",
+      "name": "High Priority",
+      "parameters": {
+        "labelIds": [
+          "Label_5284364504186484371"
+        ],
+        "messageId": "={{ $json.id }}",
+        "operation": "addLabels"
+      },
+      "position": [
+        -6672,
+        96
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "webhookId": "c2817f4a-2f52-4ae7-8cd0-16ee702b7c22"
+    },
+    {
+      "id": "9934decf-07f9-4eb0-bb2f-bcf058534085",
+      "name": "Customer Support",
+      "parameters": {
+        "labelIds": [
+          "Label_5439494405815699245"
+        ],
+        "messageId": "={{ $json.id }}",
+        "operation": "addLabels"
+      },
+      "position": [
+        -6672,
+        272
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "webhookId": "00c21fcb-fdf2-47d1-96fd-f61c83181bab"
+    },
+    {
+      "id": "9d7d9a77-261e-400f-b4a1-6b628e4d2799",
+      "name": "Promotion",
+      "parameters": {
+        "labelIds": [
+          "Label_951895353657298206"
+        ],
+        "messageId": "={{ $json.id }}",
+        "operation": "addLabels"
+      },
+      "position": [
+        -6672,
+        464
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "webhookId": "1e06eea2-bead-419e-b14c-c2ccabfa736a"
+    },
+    {
+      "id": "f33e16aa-a2cd-4c17-8163-abf545b6e9ab",
+      "name": "Finance/Billing",
+      "parameters": {
+        "labelIds": [
+          "Label_6435050078007807659"
+        ],
+        "messageId": "={{ $json.id }}",
+        "operation": "addLabels"
+      },
+      "position": [
+        -6672,
+        656
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "webhookId": "f3181ea4-b320-4e02-8518-47911e4978ac"
+    },
+    {
+      "id": "baf354e0-0595-42fb-b54b-0bd3329d7e06",
+      "name": "Email Classifier",
+      "parameters": {
+        "categories": {
+          "categories": [
+            {
+              "category": "=High Priority ",
+              "description": "Emails requiring immediate attention or action, typically from key stakeholders, clients, or decision-makers. These emails often contain time-sensitive requests, deadlines, or escalated issues. Keywords: urgent, ASAP, immediate, deadline, action required, high priority"
+            },
+            {
+              "category": "Customer Support",
+              "description": "Emails related to ongoing communication with current clients or customers, including service requests, feedback, support tickets, and inquiries. Keywords: request, inquiry, support, question, follow-up, feedback"
+            },
+            {
+              "category": "Promotions",
+              "description": "Emails related to marketing campaigns, promotional offers, newsletters, or business updates from partners. Typically these emails contain content aimed at engaging your audience or updating on promotions. Keywords: newsletter, promotion, offer, sale, campaign, marketing, launch"
+            },
+            {
+              "category": "Finance/Billing",
+              "description": " Description: Emails related to financial matters, such as invoices, billing statements, payment reminders, or expense reports. Anything involving transactions or accounting should fall under this label.  Keywords: invoice, payment, billing, receipt, financial, expense, account"
+            }
+          ]
+        },
+        "inputText": "={{ $json.text }}",
+        "options": {
+          "systemPromptTemplate": "Please classify the text provided by the user into one of the following categories: {categories}, and use the provided formatting instructions below. Don't explain, and only output the json."
+        }
+      },
+      "position": [
+        -7104,
+        400
+      ],
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1
+    },
+    {
+      "id": "f3bd6de3-fd0e-4177-9756-1a74efdbda49",
+      "name": "High Priority Agent",
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Overview\nYou are an agent in charge of high priority emails. Your job is to summarize incoming emails and escalate them to the human.\n\n## Tools\nTelegram - Use this tool to escalate to a human. Send over the summary of the email."
+        },
+        "promptType": "define",
+        "text": "=Email from: {{ $('Gmail Trigger').item.json.to.value[0].name }}\n\nHere is the Email: \n{{ $('Gmail Trigger').item.json.text }}"
+      },
+      "position": [
+        -6480,
+        96
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "qd3uLLQZsMm4E9Wm",
+          "name": "seekers staff demo"
+        }
+      },
+      "id": "cb455308-c8fc-4bd4-97af-827525753432",
+      "name": "Telegram",
+      "parameters": {
+        "additionalFields": {
+          "appendAttribution": false
+        },
+        "chatId": "=7911896473",
+        "text": "=Urgent Email: \n{{ $fromAI(\"summary\") }}"
+      },
+      "position": [
+        -5872,
+        464
+      ],
+      "type": "n8n-nodes-base.telegramTool",
+      "typeVersion": 1.2,
+      "webhookId": "4a005847-6ed4-48c6-99bd-d09e9d7271af"
+    },
+    {
+      "id": "b4017ed8-bc98-4d40-b119-7fad62431c03",
+      "name": "Customer Support Agent",
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Overview\nYou are a customer support representitive named Kelly. Your job is to respond to customer inquiries in a friendly and professional manner. \n\n## Tools\nEmail Draft - Use this to send an email reply to a customer. Always sign off as James from ABC Corp."
+        },
+        "promptType": "define",
+        "text": "=Email from: {{ $('Gmail Trigger').item.json.to.value[0].name }}\n\nEmail: {{ $('Gmail Trigger').item.json.text }}"
+      },
+      "position": [
+        -6480,
+        272
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7
+    },
+    {
+      "id": "3b4f4437-af07-4e82-b584-398128d28465",
+      "name": "Promotion Agent",
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Overview\nYou are in charge of promotional opportunities. Your job is to respond to inquiries in a friendly and professional manner. \n\n## Tools\nEmail Draft - Use this to send an email reply to a customer. Always sign off as James from ABC Corp."
+        },
+        "promptType": "define",
+        "text": "=Email from: {{ $('Gmail Trigger').item.json.to.value[0].name }}\n\nEmail: {{ $('Gmail Trigger').item.json.text }}"
+      },
+      "position": [
+        -6480,
+        464
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7
+    },
+    {
+      "id": "664fc107-b453-4ec4-a8e5-c58444a0c43e",
+      "name": "Finance Agent",
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Overview\nYou are in charge of finacnes. Your job is to respond to inquiries in a friendly and professional manner. \n\n## Tools\nEmail Draft - Use this to send an email reply to a customer. Always sign off as James from ABC Corp."
+        },
+        "promptType": "define",
+        "text": "=Email from: {{ $('Gmail Trigger').item.json.to.value[0].name }}\n\nEmail: {{ $('Gmail Trigger').item.json.text }}"
+      },
+      "position": [
+        -6480,
+        656
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7
+    },
+    {
+      "id": "53aecf20-8f97-4e9e-a461-d4621292c0f9",
+      "name": "Email Draft",
+      "parameters": {
+        "message": "={{ $fromAI(\"emailBody\") }}",
+        "options": {
+          "sendTo": "={{ $json.from.value[0].address }}",
+          "threadId": "={{ $('Gmail Trigger').item.json.threadId }}"
+        },
+        "resource": "draft",
+        "subject": "={{ $fromAI(\"subject\") }}"
+      },
+      "position": [
+        -6016,
+        464
+      ],
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "webhookId": "5d8537bc-efa2-4889-82bb-cc44dc383ace"
+    },
+    {
+      "credentials": {
+        "openAiApi": {
+          "id": "T3fSxXKFoT57vf5P",
+          "name": "OpenAi account"
+        }
+      },
+      "id": "df37d226-5822-4da9-9936-548c5d09a86b",
+      "name": "4o mini2",
+      "parameters": {
+        "model": "gpt-4.1-mini",
+        "options": {}
+      },
+      "position": [
+        -7088,
+        608
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1
+    },
+    {
+      "id": "cef1c9a8-8ba4-41a4-94d9-5067b4dc91a7",
+      "name": "Sticky Note14",
+      "parameters": {
+        "content": "## 1. Watch & Classify\n",
+        "height": 432,
+        "width": 576
+      },
+      "position": [
+        -7376,
+        288
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "55880b58-39fb-45c3-bb6e-27230cc2445e",
+      "name": "Sticky Note15",
+      "parameters": {
+        "color": 6,
+        "content": "## 2. Write Email Reply\n",
+        "height": 864,
+        "width": 656
+      },
+      "position": [
+        -6784,
+        16
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "c9488bca-cce1-4be2-b50a-c2646188c735",
+      "name": "Sticky Note16",
+      "parameters": {
+        "color": 5,
+        "content": "## 3. Alert Team OR Email Back\n",
+        "height": 432,
+        "width": 400
+      },
+      "position": [
+        -6112,
+        272
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "b8cbbcf3-c3a1-49d7-8a9c-917ee3639658",
+      "name": "Sticky Note18",
+      "parameters": {
+        "color": 4,
+        "content": "# RAG AGENT\n",
+        "height": 80
+      },
+      "position": [
+        -17920,
+        -240
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "851351f0-f70d-43a8-acf0-6b4eace868e0",
+      "name": "Sticky Note19",
+      "parameters": {
+        "color": 4,
+        "content": "# HUMAN IN THE LOOP AI SALES AGENT\n",
+        "height": 80,
+        "width": 704
+      },
+      "position": [
+        -15264,
+        -192
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "826c6e5a-6558-49bc-9356-db62b4ecd3d6",
+      "name": "Sticky Note20",
+      "parameters": {
+        "color": 4,
+        "content": "# AI RESUME SCREENING AGENT\n",
+        "height": 80,
+        "width": 560
+      },
+      "position": [
+        -12272,
+        -304
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "8cb20ec7-2787-4b75-a8cd-a9eba5afd048",
+      "name": "Sticky Note21",
+      "parameters": {
+        "color": 4,
+        "content": "# INVOICING PARSING AGENT\n",
+        "height": 80,
+        "width": 496
+      },
+      "position": [
+        -9584,
+        -384
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "64af457e-c76a-45a0-8db4-f17665d5bc7c",
+      "name": "Sticky Note22",
+      "parameters": {
+        "color": 4,
+        "content": "# EMAIL ASSISTANT AGENT\n",
+        "height": 80,
+        "width": 496
+      },
+      "position": [
+        -6736,
+        -192
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "b64d8e4a-7b8a-4f70-8eed-777af6eb4d39",
+      "name": "Sticky Note23",
+      "parameters": {
+        "content": "1. RAG + Vector Database Agent\n\nNiches & Why:\n\nAgencies – heavy SOPs + client docs.\n\nLaw Firms – instant contract/case lookup.\n\nManufacturing – complex manuals + compliance.\nPricing: $1,500–$3,500 setup + $150–$350/mo",
+        "height": 224,
+        "width": 432
+      },
+      "position": [
+        -18192,
+        1472
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "6f06d324-2ec7-4d86-9caf-59f5f95b8a54",
+      "name": "Sticky Note24",
+      "parameters": {
+        "content": "2. Human-in-the-Loop AI Sales Agent\n\nNiches & Why:\n\nB2B Agencies – slow follow-up = lost revenue.\n\nSaaS Companies – high inbound + need rapid response.\n\nReal Estate Agencies – lots of leads, poor consistency.\nPricing: $2,000–$5,000 setup + $250–$600/mo",
+        "height": 224,
+        "width": 480
+      },
+      "position": [
+        -14960,
+        1456
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "e0e98ff9-095c-4d24-ab8f-85de8b79abdf",
+      "name": "Sticky Note25",
+      "parameters": {
+        "content": "3. Resume Screening Agent\n\nNiches & Why:\n\nRecruiting Agencies – huge CV volume.\n\nHospitality/Retail – constant turnover hires.\n\nTech Companies – too many CVs to screen manually.\nPricing: $1,500–$4,000 setup + $150–$400/mo",
+        "height": 208,
+        "width": 496
+      },
+      "position": [
+        -12144,
+        1440
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "75e73c99-0369-40a7-86e5-9893aefa6db1",
+      "name": "Sticky Note26",
+      "parameters": {
+        "content": "4. Automated Invoicing & Billing Agent\n\nNiches & Why:\n\nE-commerce Stores – tons of supplier invoices.\n\nConstruction Companies – frequent vendor billing.\n\nAccounting Firms – repetitive invoice processing.\nPricing: $2,000–$6,000 setup + $200–$500/mo",
+        "height": 224,
+        "width": 432
+      },
+      "position": [
+        -9584,
+        1440
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "93b5a9c6-ba3f-4123-bf29-9e0178b75857",
+      "name": "Sticky Note27",
+      "parameters": {
+        "content": "5. Email Classifier + Auto-Responder Agent\n\nNiches & Why:\n\nAgencies – overloaded inboxes.\n\nE-commerce – high-volume support emails.\n\nProperty Management – urgent tenant requests.\nPricing: $1,000–$3,000 setup + $150–$350/mo",
+        "height": 224,
+        "width": 512
+      },
+      "position": [
+        -6704,
+        1312
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "4f9c16cd-abe2-48de-92e6-40ebebca8145",
+      "name": "On form submission2",
+      "parameters": {
+        "formDescription": "This form will be used ",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Full Name",
+              "placeholder": "James Lowe",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "placeholder": "john@gmail.com",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Company Name",
+              "placeholder": "JM Solutionss"
+            },
+            {
+              "fieldLabel": "Intent",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Lead Generation Service"
+                  },
+                  {
+                    "option": "Content Creation Service"
+                  },
+                  {
+                    "option": "Onboarding Automation service"
+                  },
+                  {
+                    "option": "General Automation Support"
+                  }
+                ]
+              },
+              "fieldType": "dropdown",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Budget",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "<$1,000"
+                  },
+                  {
+                    "option": "$1,000-$5,000"
+                  },
+                  {
+                    "option": "$5,000-$9,000"
+                  },
+                  {
+                    "option": "$9,000+"
+                  }
+                ]
+              },
+              "fieldType": "dropdown",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Project Description",
+              "placeholder": "We are a looking for an automation that ......",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Timeline",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Within 1 week"
+                  },
+                  {
+                    "option": "1 week - 3 weeks"
+                  },
+                  {
+                    "option": "3 weeks+"
+                  }
+                ]
+              },
+              "fieldType": "dropdown",
+              "requiredField": true
+            }
+          ]
+        },
+        "formTitle": "Intake Form",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "position": [
+        -15920,
+        144
+      ],
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "webhookId": "6c64a2d7-873f-443b-a95c-ee51cae09659"
+    }
+  ],
+  "settings": {
+    "binaryMode": "separate",
+    "executionOrder": "v1"
+  }
+}
