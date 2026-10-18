@@ -96,4 +96,12 @@ export async function authenticateMagic(input: { token: string; totp: string }, 
   return { ok: true, userId: u.id, sessionVersion: u.sessionVersion };
 }
 
+/** Called after an allowed Google sign-in: clears any lockout state and records the login. */
+export async function recordGoogleLogin(userId: string) {
+  await withScope({ role: "system" }, async (tx) => {
+    await tx.update(users).set({ failedLogins: 0, lockedUntil: null, lastLoginAt: new Date() }).where(eq(users.id, userId));
+    await audit(tx, { actorUserId: userId, action: "user.login_google" });
+  });
+}
+
 export { findByEmail };

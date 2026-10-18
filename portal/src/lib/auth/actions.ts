@@ -17,6 +17,7 @@ import { findByEmail } from "./authenticate";
 import { hashPassword, newPasswordProblem, verifyPassword } from "./password";
 import { newTotpSecret, totpUri, checkTotp } from "./totp";
 import { generateRecoveryCodes } from "./recovery";
+import { googleEnabled } from "./google";
 import { getSession, requireUser } from "./session";
 
 export type FormState = { error?: string; code?: string; ok?: boolean; message?: string; codes?: string[] } | undefined;
@@ -49,6 +50,12 @@ export async function loginWithPassword(_: FormState, fd: FormData): Promise<For
       redirectTo: safeNext(fd.get("next")),
     });
   } catch (e) { return authFailure(e); }
+}
+
+/** Starts Google sign-in. Access is still limited to invited accounts (see signIn callback in src/auth.ts). */
+export async function signInWithGoogle(): Promise<void> {
+  if (!googleEnabled()) return;
+  await signIn("google", { redirectTo: "/" });
 }
 
 export async function loginWithMagic(_: FormState, fd: FormData): Promise<FormState> {
