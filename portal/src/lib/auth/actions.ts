@@ -2,6 +2,7 @@
 import { AuthError } from "next-auth";
 import { eq } from "drizzle-orm";
 import { unstable_rethrow } from "next/navigation";
+import { cookies } from "next/headers";
 import { z } from "zod";
 import QRCode from "qrcode";
 import { signIn, signOut } from "@/auth";
@@ -16,7 +17,8 @@ import { consumeToken, issueToken } from "./tokens";
 import { findByEmail } from "./authenticate";
 import { hashPassword, newPasswordProblem, verifyPassword } from "./password";
 import { newTotpSecret, totpUri, checkTotp } from "./totp";
-import { generateRecoveryCodes } from "./recovery";
+import { generateRecoveryCodes, looksLikeRecoveryCode } from "./recovery";
+import { DEVICE_COOKIE, DEVICE_MAX_AGE_SEC, issueDeviceToken } from "./device";
 import { googleEnabled } from "./google";
 import { getSession, requireUser } from "./session";
 
@@ -43,13 +45,28 @@ function authFailure(e: unknown): FormState {
 /** Only allow same-site relative redirects. */
 const safeNext = (v: unknown) => (typeof v === "string" && v.startsWith("/") && !v.startsWith("//") && !v.startsWith("/\\") ? v : "/");
 
+/** After a successful admin sign-in with a real authenticator code and "remember this device" ticked, set the trusted-device cookie. */
+async function rememberDevice(fd: FormData) {
+  const totp = String(fd.get("totp") ?? "").trim();
+  if (fd.get("remember") !== "on" || !totp || looksLikeRecoveryCode(totp)) return;
+  const u = await findByEmail(String(fd.get("email") ?? "").trim().toLowerCase());
+  if (!u || u.role !== "admin" || !u.totpEnabled || !u.totpSecretEnc) return;
+  (await cookies()).set(DEVICE_COOKIE, issueDeviceToken(u), {
+    httpOnly: true, sameSite: "lax", secure: env.isProd, path: "/", maxAge: DEVICE_MAX_AGE_SEC,
+  });
+}
+
 export async function loginWithPassword(_: FormState, fd: FormData): Promise<FormState> {
   try {
     await signIn("password", {
       email: fd.get("email"), password: fd.get("password"), totp: fd.get("totp") ?? "",
       redirectTo: safeNext(fd.get("next")),
     });
-  } catch (e) { return authFailure(e); }
+  } catch (e) {
+    // A successful sign-in surfaces as a NEXT_REDIRECT; set the cookie, then let the redirect through.
+    if ((e as { digest?: unknown })?.digest?.toString().startsWith("NEXT_REDIRECT")) await rememberDevice(fd);
+    return authFailure(e);
+  }
 }
 
 /** Starts Google sign-in. Access is still limited to invited accounts (see signIn callback in src/auth.ts). */

@@ -10,6 +10,7 @@ import { consumeToken, peekToken } from "./tokens";
 import { consumeRecoveryCode, looksLikeRecoveryCode, remainingRecoveryCodes } from "./recovery";
 import { emails, sendEmail } from "../email";
 import { audit } from "../audit";
+import { isTrustedDevice } from "./device";
 
 export type AuthResult = { ok: true; userId: string; sessionVersion: number } | { ok: false; code: string };
 type User = typeof users.$inferSelect;
@@ -66,7 +67,7 @@ export async function authenticatePassword(input: { email: string; password: str
   if (isLocked(u)) return { ok: false, code: "locked" };
   if (!pwOk) { await recordFailure(u); return { ok: false, code: "invalid" }; }
   let step: number | null = null;
-  if (needsTotp(u)) {
+  if (needsTotp(u) && !(input.totp.trim() === "" && isTrustedDevice(u, headers))) {
     const r = await verifySecondFactor(u, input.totp);
     if (r === "missing") return { ok: false, code: "mfa_required" };
     if (r === "invalid") { await recordFailure(u); return { ok: false, code: "invalid_totp" }; }
@@ -84,7 +85,7 @@ export async function authenticateMagic(input: { token: string; totp: string }, 
   if (u.disabledAt) return { ok: false, code: "invalid_link" };
   if (isLocked(u)) return { ok: false, code: "locked" };
   let step: number | null = null;
-  if (needsTotp(u)) {
+  if (needsTotp(u) && !(input.totp.trim() === "" && isTrustedDevice(u, headers))) {
     const r = await verifySecondFactor(u, input.totp);
     if (r === "missing") return { ok: false, code: "mfa_required" };
     if (r === "invalid") { await recordFailure(u); return { ok: false, code: "invalid_totp" }; }
