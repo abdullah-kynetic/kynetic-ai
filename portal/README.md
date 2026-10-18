@@ -12,7 +12,8 @@ Client portal for Kynetic AI at **https://portal.kyneticai.com**. Each client si
 4. **Admins** need TOTP MFA (enrolment is forced on first login) and get 12-hour sessions.
 5. **Files** are served only through `/api/files/:id` with a live session, a short-lived HMAC signature bound to the user and document, and a tenant-scoped lookup. All failures return 404.
 6. **Headers:** per-request CSP nonce, HSTS, X-Frame-Options DENY, nosniff, Referrer-Policy.
-7. Login: Argon2id, lockout after 5 failures, DB-backed rate limits, single-use hashed magic/reset/invite tokens. Clients never see other users' names or emails.
+7. Login: Argon2id, lockout after 5 failures, DB-backed rate limits, single-use hashed magic/reset/invite tokens. New passwords are screened against known breaches (HIBP k-anonymity). Clients never see other users' names or emails.
+8. **Invite-only.** No sign-up route exists. Optional Google sign-in only admits clients an admin already created (verified email match); admins keep password + authenticator, with one-time recovery codes.
 
 ## Local development
 
@@ -40,6 +41,8 @@ npx next dev
 | `ENCRYPTION_KEY` | 32-byte base64 AES-GCM key for TOTP secrets |
 | `FILE_SIGNING_SECRET` | HMAC key for signed download URLs |
 | `UPLOAD_DIR`, `MAX_UPLOAD_MB` | Local file storage path and size limit |
+| `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET` | Optional Google sign-in (invite-only). Both empty = off |
+| `PWNED_CHECK` | `off` disables the breached-password lookup (tests only) |
 | `RESEND_API_KEY`, `EMAIL_FROM` | Email. **Empty = emails are logged to the server console** (`docker logs portal-portal-app-1`) |
 | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET` | Cloudflare R2. **Any empty = local disk** is used |
 
