@@ -11,6 +11,7 @@ import { loadResults } from "./results";
 // In a single-table select Drizzle renders `${clients.id}` unqualified ("id"), which inside a correlated
 // subquery silently binds to the subquery's own table. Always qualify explicitly.
 const CLIENT_ID = sql.raw('"clients"."id"');
+const USER_ID = sql.raw('"users"."id"');
 
 export async function listClients(s: AdminSession) {
   return withScope(adminScope(s), async (tx) => {
@@ -38,7 +39,8 @@ export async function getClientDetail(s: AdminSession, clientId: string) {
       tx.select().from(milestones).where(eq(milestones.clientId, clientId)).orderBy(asc(milestones.sort), asc(milestones.dueDate)),
       tx.select({ id: documents.id, name: documents.name, category: documents.category, mime: documents.mime, size: documents.size, createdAt: documents.createdAt, uploadedByRole: documents.uploadedByRole, uploaderEmail: users.email })
         .from(documents).leftJoin(users, eq(users.id, documents.uploadedBy)).where(eq(documents.clientId, clientId)).orderBy(desc(documents.createdAt)),
-      tx.select({ id: users.id, email: users.email, name: users.name, lastLoginAt: users.lastLoginAt, disabledAt: users.disabledAt, hasPassword: sql<boolean>`${users.passwordHash} is not null`, createdAt: users.createdAt })
+      tx.select({ id: users.id, email: users.email, name: users.name, lastLoginAt: users.lastLoginAt, disabledAt: users.disabledAt, hasPassword: sql<boolean>`${users.passwordHash} is not null`, createdAt: users.createdAt,
+        inviteExpiresAt: sql<Date | null>`(select max(t.expires_at) from auth_tokens t where t.user_id = ${USER_ID} and t.type = 'invite' and t.used_at is null)` })
         .from(users).where(and(eq(users.clientId, clientId), eq(users.role, "client"))).orderBy(asc(users.email)),
       tx.select({ id: ingestKeys.id, prefix: ingestKeys.prefix, label: ingestKeys.label, lastUsedAt: ingestKeys.lastUsedAt, revokedAt: ingestKeys.revokedAt, createdAt: ingestKeys.createdAt })
         .from(ingestKeys).where(eq(ingestKeys.clientId, clientId)).orderBy(desc(ingestKeys.createdAt)),
