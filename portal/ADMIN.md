@@ -51,3 +51,5 @@ Uploads: `sudo tar -xzf /var/backups/portal/uploads/uploads-*.tar.gz -C /opt/por
 ## Redeploy
 
 From the Mac, in `portal/`: `./deploy/deploy.sh`. Migrations run automatically on container start. Run `npm test` first.
+
+By the deploy bot (merged commits on `main` only, with tests, a health check and automatic rollback): see `deploy/BOT_DEPLOY.md`. Note that `deploy.sh` copies the local folder, while the bot path deploys exactly what is on `main`.
