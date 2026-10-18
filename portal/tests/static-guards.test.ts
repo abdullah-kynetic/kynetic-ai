@@ -41,4 +41,13 @@ describe("static guards", () => {
   it("no dangerouslySetInnerHTML in app code", () => {
     for (const f of walk(ROOT)) expect(readFileSync(f, "utf8"), f).not.toContain("dangerouslySetInnerHTML");
   });
+
+  it("Google sign-in is gated on the invite-only decision in both Auth.js callbacks", () => {
+    const src = readFileSync(path.join(ROOT, "auth.ts"), "utf8");
+    expect(src.match(/decideGoogleLogin\(/g)?.length).toBeGreaterThanOrEqual(2);
+    expect(src).toContain("return d.ok");
+    expect(src).toContain("googleEnabled()");
+    expect(src).not.toMatch(/allowDangerousEmailAccountLinking/);
+    expect(src).not.toMatch(/insert\(/); // the auth config never creates users
+  });
 });
