@@ -41,6 +41,16 @@ Rebuilt on blitz from the 2026-10-17 snapshots, same config as before:
 - **Alex | 11Labs | v1 strict prompt** `agent_8201m5afn2rbeb7v29xfkhh1pjef` and **Alex | 11Labs | v2 loose prompt** `agent_9701m5afn5rxehardsqttkq3pbjh`. Verified: tools attached, voicemail on, opener, workflow reset to start node.
 - Old account agents (`agent_9301m52zy185e609f8vyws4r1r7q` v1, `agent_8001m5abyte4frzadt0y52dpvswk` v2) are left in place and no longer the working copies.
 
+## Change log: text confirmation + hardening (2026-10-19, blitz agents only)
+Applied to both Alex | 11Labs | v1 strict prompt and v2 loose prompt, plus the two Cal.com tools:
+- Cal.com tools now use test event **7520336** (phone required, email optional). `book_appointment` sends `attendee.name`, `attendee.phoneNumber`, `attendee.timeZone` (no email) and the slot `start` exactly as returned (no UTC conversion). Both unverified until a real booking: whether v2 bookings accept `phoneNumber`, a missing email, and an offset timestamp.
+- Prompts: email step and email readback removed; confirmation is by text to the number being called (`{{lead_phone}}`; asks once if empty on a dashboard test). Closing line: "You'll get a text with the details." Readback section kept for phone numbers/letters.
+- Availability search window: next five business days, widen to ten.
+- Silence: call ends after 25 s of silence (`silence_end_call_timeout`, was never).
+- Removed the `language_detection` system tool. Dynamic variable `email` replaced with `lead_phone`.
+- **Not done: sending the text.** There is no text tool and no Twilio. Alex says a text is coming, which is false in a test until that tool exists; fine for the test persona only. Twilio trial limited to Abdullah's and Quentin's numbers is the planned way to test it.
+- Old account agents and the old event 7404470 are untouched.
+
 ## Runs
 | Run | Date | Round (voice email / prefilled) | Stacked-question turns / total turns | Waited for answers? | Email exact? | Readback 1-5 | False "all set"? | Booked? | Delay median / worst | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|

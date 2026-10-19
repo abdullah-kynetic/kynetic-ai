@@ -1,0 +1,1146 @@
+{
+    "agent_id": "agent_9701m5afn5rxehardsqttkq3pbjh",
+    "name": "Alex | 11Labs | v2 loose prompt",
+    "conversation_config": {
+        "asr": {
+            "quality": "high",
+            "provider": "scribe_realtime",
+            "user_input_audio_format": "pcm_16000",
+            "keywords": []
+        },
+        "turn": {
+            "turn_timeout": 7.0,
+            "initial_wait_time": null,
+            "silence_end_call_timeout": 25.0,
+            "mode": "turn",
+            "turn_eagerness": "normal",
+            "spelling_patience": "auto",
+            "speculative_turn": true,
+            "retranscribe_on_turn_timeout": false,
+            "turn_model": "turn_v3",
+            "interruption_ignore_terms": [],
+            "interruption_ignore_term_languages": [],
+            "merge_with_default_ignore_terms": false,
+            "transcribe_on_disabled_interruptions": false,
+            "soft_timeout_config": {
+                "timeout_seconds": -1.0,
+                "message": "Hhmmmm...yeah.",
+                "additional_soft_timeout_messages": [],
+                "use_llm_generated_message": false,
+                "randomize_fillers": false,
+                "max_soft_timeouts_per_generation": 1,
+                "llm_generated_message_prompt_override": null,
+                "disable_until_first_user_message": false
+            }
+        },
+        "tts": {
+            "model_id": "eleven_v3_conversational",
+            "voice_id": "1SM7GgM6IMuvQlz2BwM3",
+            "supported_voices": [],
+            "expressive_mode": false,
+            "suggested_audio_tags": [],
+            "agent_output_audio_format": "pcm_16000",
+            "optimize_streaming_latency": 3,
+            "stability": 0.5,
+            "speed": 1.0,
+            "similarity_boost": 0.8,
+            "pvc_strength": 0.0,
+            "text_normalisation_type": "system_prompt",
+            "pronunciation_dictionary_locators": [],
+            "enable_phoneme_tags": true,
+            "audio_effects": null
+        },
+        "conversation": {
+            "text_only": false,
+            "max_duration_seconds": 600,
+            "max_duration_seconds_after_last_agent_message": null,
+            "client_events": [
+                "audio",
+                "interruption",
+                "agent_response",
+                "user_transcript",
+                "agent_response_correction",
+                "agent_tool_response"
+            ],
+            "file_input": {
+                "enabled": true,
+                "max_files_in_memory": 10,
+                "max_files_per_conversation": 10
+            },
+            "monitoring_enabled": false,
+            "monitoring_events": [
+                "user_transcript",
+                "agent_response",
+                "agent_response_correction"
+            ],
+            "dtmf_input_settings": null,
+            "background_sound": {
+                "source_type": null,
+                "source_id": null,
+                "volume": 0.15,
+                "crossfade_loop": true
+            },
+            "compaction": {
+                "enabled": null,
+                "soft_trigger_fraction": null,
+                "tail_size": null,
+                "min_reclaimable_tokens": null
+            },
+            "source_attribution": false
+        },
+        "language_presets": {},
+        "vad": {
+            "background_voice_detection": false
+        },
+        "realtime_model": null,
+        "agent": {
+            "first_message": "Hi, is this {{first_name}}?",
+            "language": "en",
+            "hinglish_mode": false,
+            "dynamic_variables": {
+                "dynamic_variable_placeholders": {
+                    "first_name": "Abdullah",
+                    "company_name": "Kynetic Roofing",
+                    "agent_name": "Alex",
+                    "service_type": "roof inspection",
+                    "owns_property": "yes",
+                    "issue_type": "a leak",
+                    "timeline": "as soon as possible",
+                    "lead_phone": ""
+                }
+            },
+            "disable_first_message_interruptions": false,
+            "max_conversation_duration_message": "",
+            "silence_end_call_message": "",
+            "text_behavior_overrides": {
+                "whatsapp": {
+                    "verbosity": null,
+                    "output_format": null,
+                    "interaction_budget": null,
+                    "disable_max_duration": true
+                },
+                "freshdesk_integration": {
+                    "verbosity": null,
+                    "output_format": null,
+                    "interaction_budget": null,
+                    "disable_max_duration": null
+                },
+                "intercom_integration": {
+                    "verbosity": null,
+                    "output_format": null,
+                    "interaction_budget": null,
+                    "disable_max_duration": null
+                }
+            },
+            "subagents": [],
+            "subagent_config": {
+                "agents": [],
+                "self_subagent": null
+            },
+            "prompt": {
+                "prompt": "# Who you are\nYou are {{agent_name}}, an AI assistant calling for {{company_name}}, a roofing company in Bend, Oregon. Think of a good dispatcher: warm, brief, a little curt, never bubbly. You are calling a person who just filled out a form on the company website. Speak in plain, smooth sentences. No filler words like \"um\" or \"uh\". React to what they actually say, and let the conversation go where they take it.\n\n# What you know\nCurrent date and time: {{system__time}}. From the form: owns the property = {{owns_property}}, issue = {{issue_type}}, timeline = {{timeline}}. The number you are calling, and where the confirmation text goes = {{lead_phone}}. If a value is filled in, don't re-ask it from scratch; confirm it in passing (\"You mentioned a leak, right?\"). If it's blank, find out naturally.\n\n# Your goal\nGet this person booked for a free roof inspection (about thirty minutes, at the property). If they can't book now, get a good time to call back. A good call feels like a short chat with a competent person, not a questionnaire.\n\n# The shape of a call (guide, not script)\nYou usually need to cover these, in roughly this order, but follow the lead. If they jump ahead, jump with them. If they volunteer something, don't ask it again.\n- Confirm you have the right person. Your first words are only \"Hi, is this {{first_name}}?\" Then wait.\n- Say who you are, that you're an AI assistant from {{company_name}} calling about their form, and that the call may be recorded. Do this right after they confirm their name, then check it's an okay time.\n- Make sure they still want a roof inspection, and get a feel for the situation: do they own the property, what's going on with the roof, how soon they want it looked at.\n- Offer the free inspection and find a time that works. Use check_availability for real openings; never invent times. Offer two options, not a list.\n- To book you need their property address. The confirmation goes out as a text to the number you're calling; check they're fine with that. Don't ask for their number (if {{lead_phone}} is empty on a test call, ask once what number to text).\n- Confirm the day, time and address back to them, then book.\n- If it's not a good time or they hesitate, offer a callback time and confirm it once.\n\n# Rules that never bend\n1. Give the AI and recording disclosure right after they confirm who they are, every call.\n2. Never deny being an AI. If asked: \"Yeah, I'm an AI assistant for {{company_name}}.\"\n3. One question per turn. Ask, then stop and listen. Never stack two questions.\n4. Not interested, wrong number, or \"stop calling\": one polite sentence, then end the call. Don't push back or ask if they're sure.\n5. Never quote prices. The cost depends on the job and is covered at the inspection.\n6. Never ask for sensitive info (SSN, cards, passwords) or their phone number; you already have it (only exception: a test call where {{lead_phone}} is empty).\n7. Never say the appointment is booked until book_appointment returns success. While it runs, say only \"One sec, booking that now.\" If it errors, say \"Hang on, that didn't go through,\" fix the one thing that failed and retry. Never guess or invent a spelling.\n8. If they're hostile: \"I apologize for the interruption. Have a great day!\" and end the call.\n9. Say dates and times like a person: \"Thursday at two PM\".\n10. If they say \"hold on\", stay quiet until they speak again.\n11. Don't roleplay or take on character voices. Steer back to the task politely.\n\n# When you can't make it out\nPhone audio is messy. If you didn't clearly understand, or it sounds like background noise, a TV, traffic or other people talking rather than the person speaking to you, don't guess and don't answer something they didn't say. Say something short like \"Sorry, I didn't catch that,\" or \"Sorry, can you say that again?\" and wait. Ask once; if it keeps happening, say \"It's a bit hard to hear you, is there somewhere quieter?\" Treat an odd or nonsensical word as a transcription error and clarify rather than repeating it back.\n\n# Reading numbers or letters back\nWhenever you repeat a phone number or any letters or digits, go slowly: one character at a time with \" ... \" between each so there's a clear pause, exact letters, digits as digits. The readback is its own turn and ends with only \"Did I get that right?\" If it's wrong, ask which part, fix only that, and read it all back again. If it's wrong twice, say someone from the team will follow up to confirm, and wrap up.\n\n# Business facts (only if asked; never volunteer)\n- Serves Central Oregon: Bend, Redmond, Sisters, La Pine, Prineville and nearby.\n- Repair and full replacement. Pitched roofs: asphalt shingle, metal, synthetic, tile, wood. Flat roofs: asphalt systems, coatings, metal, PVC, TPO. Also siding, gutters, sheet metal.\n- Office hours Monday to Friday, eight to five. Closed weekends.\n- The inspection is free, about thirty minutes, at the property; the inspector gives a written estimate after.\n- Manufacturer warranties exist on qualifying installs; the inspector covers details.\n- Anything else: \"The inspector can answer that at the visit.\"\n\n# Tools\n- check_availability: finds open slots. Always search the next five business days (widen to ten if nothing). Run it silently.\n- book_appointment: books the slot; needs name, the phone number to text, property address and the exact date and time. After success say they'll get a text with the details.\n- end_call: ends the call. Never mention a tool or function name to the caller.",
+                "llm": "deepseek-v41-flash",
+                "reasoning_effort": null,
+                "service_tier": "standard",
+                "opener": null,
+                "thinking_budget": null,
+                "enable_reasoning_summary": false,
+                "temperature": 0.0,
+                "max_tokens": -1,
+                "tool_ids": [
+                    "tool_3501m5afmd47fjw842ya61z5kyzq",
+                    "tool_2501m5afmdgef4gacn3qsgnxagrs"
+                ],
+                "tool_ids_strict": false,
+                "built_in_tools": {
+                    "transfer_to_agent": null,
+                    "update_state": null,
+                    "memory_entry_search": null,
+                    "run_subagent": null,
+                    "flag_issue_for_review": null,
+                    "end_call": {
+                        "type": "system",
+                        "name": "end_call",
+                        "description": "",
+                        "response_timeout_secs": 20,
+                        "disable_interruptions": false,
+                        "interruption_mode": "allow",
+                        "force_pre_tool_speech": false,
+                        "pre_tool_speech": "auto",
+                        "assignments": [],
+                        "tool_call_sound": null,
+                        "tool_call_sound_behavior": "auto",
+                        "tool_error_handling_mode": "auto",
+                        "params": {
+                            "system_tool_type": "end_call"
+                        }
+                    },
+                    "language_detection": null,
+                    "transfer_to_number": null,
+                    "skip_turn": null,
+                    "play_keypad_touch_tone": null,
+                    "voicemail_detection": {
+                        "type": "system",
+                        "name": "voicemail_detection",
+                        "description": "",
+                        "response_timeout_secs": 20,
+                        "disable_interruptions": false,
+                        "interruption_mode": "allow",
+                        "force_pre_tool_speech": false,
+                        "pre_tool_speech": "auto",
+                        "assignments": [],
+                        "tool_call_sound": null,
+                        "tool_call_sound_behavior": "auto",
+                        "tool_error_handling_mode": "auto",
+                        "params": {
+                            "system_tool_type": "voicemail_detection",
+                            "voicemail_message": ""
+                        }
+                    },
+                    "transfer_to_genesys": null,
+                    "transfer_to_genesys_chat": null,
+                    "transfer_to_genesys_bot": null
+                },
+                "rich_content": {
+                    "enabled_components": [
+                        "buttons",
+                        "carousel"
+                    ]
+                },
+                "enable_parallel_tool_calls": true,
+                "mcp_server_ids": [],
+                "native_mcp_server_ids": [],
+                "knowledge_base": [],
+                "custom_llm": null,
+                "bedrock_llm": null,
+                "speech_engine": null,
+                "ignore_default_personality": true,
+                "rag": {
+                    "enabled": false,
+                    "embedding_model": "e5_mistral_7b_instruct",
+                    "optional_rag_enabled": false,
+                    "max_vector_distance": 0.6,
+                    "max_documents_length": 50000,
+                    "max_retrieved_rag_chunks_count": 20,
+                    "num_candidates": null,
+                    "query_rewrite_prompt_override": null,
+                    "knowledge_base_tool_info": null,
+                    "include_source_urls": false
+                },
+                "timezone": "America/Los_Angeles",
+                "backup_llm_config": {
+                    "preference": "default"
+                },
+                "cascade_timeout_seconds": 4.0,
+                "tools": [
+                    {
+                        "type": "webhook",
+                        "name": "check_availability",
+                        "description": "Finds open roof inspection slots on the calendar. Call silently with a start date and an end date (YYYY-MM-DD). Returns open start times in Pacific time. Offer the lead two of them.",
+                        "response_timeout_secs": 20,
+                        "disable_interruptions": false,
+                        "interruption_mode": "allow",
+                        "force_pre_tool_speech": false,
+                        "pre_tool_speech": "auto",
+                        "assignments": [],
+                        "tool_call_sound": null,
+                        "tool_call_sound_behavior": "auto",
+                        "tool_error_handling_mode": "auto",
+                        "dynamic_variables": {
+                            "dynamic_variable_placeholders": {}
+                        },
+                        "execution_mode": "immediate",
+                        "api_schema": {
+                            "request_headers": {
+                                "Authorization": {
+                                    "secret_id": "F8s22QdPcB0qJP9MsR55"
+                                },
+                                "cal-api-version": "2024-09-04",
+                                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+                            },
+                            "kind": "webhook",
+                            "url": "https://api.cal.com/v2/slots",
+                            "method": "GET",
+                            "path_params_schema": {},
+                            "query_params_schema": {
+                                "properties": {
+                                    "eventTypeId": {
+                                        "type": "string",
+                                        "description": "",
+                                        "enum": null,
+                                        "is_system_provided": false,
+                                        "dynamic_variable": "",
+                                        "allowed_values": null,
+                                        "allowed_values_dynamic_variable": "",
+                                        "constant_value": "7520336",
+                                        "is_omitted": false
+                                    },
+                                    "start": {
+                                        "type": "string",
+                                        "description": "First date to search, YYYY-MM-DD, in Pacific time. Use today or the day the lead asks about.",
+                                        "enum": null,
+                                        "is_system_provided": false,
+                                        "dynamic_variable": "",
+                                        "allowed_values": null,
+                                        "allowed_values_dynamic_variable": "",
+                                        "constant_value": "",
+                                        "is_omitted": false
+                                    },
+                                    "end": {
+                                        "type": "string",
+                                        "description": "Last date to search, YYYY-MM-DD. Usually five business days after start; widen to ten days if nothing is open.",
+                                        "enum": null,
+                                        "is_system_provided": false,
+                                        "dynamic_variable": "",
+                                        "allowed_values": null,
+                                        "allowed_values_dynamic_variable": "",
+                                        "constant_value": "",
+                                        "is_omitted": false
+                                    },
+                                    "timeZone": {
+                                        "type": "string",
+                                        "description": "",
+                                        "enum": null,
+                                        "is_system_provided": false,
+                                        "dynamic_variable": "",
+                                        "allowed_values": null,
+                                        "allowed_values_dynamic_variable": "",
+                                        "constant_value": "America/Los_Angeles",
+                                        "is_omitted": false
+                                    }
+                                },
+                                "required": [
+                                    "start",
+                                    "end"
+                                ]
+                            },
+                            "request_body_schema": null,
+                            "response_body_schema": null,
+                            "response_filter": null,
+                            "content_type": "application/json",
+                            "auth_resolved_params": [],
+                            "auth_connection": null,
+                            "mtls_auth_connection": null
+                        },
+                        "follow_redirects": false,
+                        "follow_redirects_allowed_domains": []
+                    },
+                    {
+                        "type": "webhook",
+                        "name": "book_appointment",
+                        "description": "Books the roof inspection. Call only after the lead confirmed the day, time and address. Returns status success when booked. Do not tell the lead it is booked until it returns success. The confirmation goes to the lead by text, not email.",
+                        "response_timeout_secs": 30,
+                        "disable_interruptions": false,
+                        "interruption_mode": "allow",
+                        "force_pre_tool_speech": false,
+                        "pre_tool_speech": "auto",
+                        "assignments": [],
+                        "tool_call_sound": null,
+                        "tool_call_sound_behavior": "auto",
+                        "tool_error_handling_mode": "auto",
+                        "dynamic_variables": {
+                            "dynamic_variable_placeholders": {}
+                        },
+                        "execution_mode": "immediate",
+                        "api_schema": {
+                            "request_headers": {
+                                "Authorization": {
+                                    "secret_id": "F8s22QdPcB0qJP9MsR55"
+                                },
+                                "cal-api-version": "2024-08-13",
+                                "Content-Type": "application/json",
+                                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+                            },
+                            "kind": "webhook",
+                            "url": "https://api.cal.com/v2/bookings",
+                            "method": "POST",
+                            "path_params_schema": {},
+                            "query_params_schema": null,
+                            "request_body_schema": {
+                                "description": "Booking request.",
+                                "dynamic_variable": "",
+                                "is_omitted": false,
+                                "type": "object",
+                                "required": [
+                                    "start",
+                                    "attendee"
+                                ],
+                                "properties": {
+                                    "eventTypeId": {
+                                        "type": "integer",
+                                        "description": "",
+                                        "enum": null,
+                                        "is_system_provided": false,
+                                        "dynamic_variable": "",
+                                        "allowed_values": null,
+                                        "allowed_values_dynamic_variable": "",
+                                        "constant_value": 7520336,
+                                        "is_omitted": false
+                                    },
+                                    "start": {
+                                        "type": "string",
+                                        "description": "Slot start exactly as returned by check_availability, including its UTC offset (for example 2026-10-19T09:30:00.000-07:00). Do not convert it.",
+                                        "enum": null,
+                                        "is_system_provided": false,
+                                        "dynamic_variable": "",
+                                        "allowed_values": null,
+                                        "allowed_values_dynamic_variable": "",
+                                        "constant_value": "",
+                                        "is_omitted": false
+                                    },
+                                    "attendee": {
+                                        "description": "The lead.",
+                                        "dynamic_variable": "",
+                                        "is_omitted": false,
+                                        "type": "object",
+                                        "required": [
+                                            "name",
+                                            "phoneNumber",
+                                            "timeZone"
+                                        ],
+                                        "properties": {
+                                            "name": {
+                                                "type": "string",
+                                                "description": "Lead's full name.",
+                                                "enum": null,
+                                                "is_system_provided": false,
+                                                "dynamic_variable": "",
+                                                "allowed_values": null,
+                                                "allowed_values_dynamic_variable": "",
+                                                "constant_value": "",
+                                                "is_omitted": false
+                                            },
+                                            "timeZone": {
+                                                "type": "string",
+                                                "description": "",
+                                                "enum": null,
+                                                "is_system_provided": false,
+                                                "dynamic_variable": "",
+                                                "allowed_values": null,
+                                                "allowed_values_dynamic_variable": "",
+                                                "constant_value": "America/Los_Angeles",
+                                                "is_omitted": false
+                                            },
+                                            "phoneNumber": {
+                                                "type": "string",
+                                                "description": "The lead's mobile number in international format, for example +15415550123. Use {{lead_phone}} when it is filled in; on a test call where it is empty, use the number the lead gave.",
+                                                "enum": null,
+                                                "is_system_provided": false,
+                                                "dynamic_variable": "",
+                                                "allowed_values": null,
+                                                "allowed_values_dynamic_variable": "",
+                                                "constant_value": "",
+                                                "is_omitted": false
+                                            }
+                                        }
+                                    },
+                                    "bookingFieldsResponses": {
+                                        "description": "Extra booking fields.",
+                                        "dynamic_variable": "",
+                                        "is_omitted": false,
+                                        "type": "object",
+                                        "required": [],
+                                        "properties": {
+                                            "notes": {
+                                                "type": "string",
+                                                "description": "Property address for the inspection, e.g. 'Property address: 1420 NW Wall St, Bend OR'.",
+                                                "enum": null,
+                                                "is_system_provided": false,
+                                                "dynamic_variable": "",
+                                                "allowed_values": null,
+                                                "allowed_values_dynamic_variable": "",
+                                                "constant_value": "",
+                                                "is_omitted": false
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "response_body_schema": null,
+                            "response_filter": null,
+                            "content_type": "application/json",
+                            "auth_resolved_params": [],
+                            "auth_connection": null,
+                            "mtls_auth_connection": null
+                        },
+                        "follow_redirects": false,
+                        "follow_redirects_allowed_domains": []
+                    },
+                    {
+                        "type": "system",
+                        "name": "end_call",
+                        "description": "",
+                        "response_timeout_secs": 20,
+                        "disable_interruptions": false,
+                        "interruption_mode": "allow",
+                        "force_pre_tool_speech": false,
+                        "pre_tool_speech": "auto",
+                        "assignments": [],
+                        "tool_call_sound": null,
+                        "tool_call_sound_behavior": "auto",
+                        "tool_error_handling_mode": "auto",
+                        "params": {
+                            "system_tool_type": "end_call"
+                        }
+                    },
+                    {
+                        "type": "system",
+                        "name": "voicemail_detection",
+                        "description": "",
+                        "response_timeout_secs": 20,
+                        "disable_interruptions": false,
+                        "interruption_mode": "allow",
+                        "force_pre_tool_speech": false,
+                        "pre_tool_speech": "auto",
+                        "assignments": [],
+                        "tool_call_sound": null,
+                        "tool_call_sound_behavior": "auto",
+                        "tool_error_handling_mode": "auto",
+                        "params": {
+                            "system_tool_type": "voicemail_detection",
+                            "voicemail_message": ""
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "metadata": {
+        "created_at_unix_secs": 1792427072,
+        "updated_at_unix_secs": 1792427918
+    },
+    "platform_settings": {
+        "evaluation": {
+            "criteria": [
+                {
+                    "id": "inspection_booked",
+                    "name": "Inspection Booked",
+                    "type": "prompt",
+                    "conversation_goal_prompt": "Did the agent successfully book a free roof inspection with the lead?",
+                    "use_knowledge_base": false,
+                    "scope": "conversation",
+                    "llm": null,
+                    "llm_billed": false,
+                    "analysis_schedule": null,
+                    "scoring_mode": "binary",
+                    "max_score": 100,
+                    "score_instructions": null
+                },
+                {
+                    "id": "callback_scheduled",
+                    "name": "Callback Scheduled",
+                    "type": "prompt",
+                    "conversation_goal_prompt": "If an inspection wasn't booked, did the agent successfully schedule a specific callback time?",
+                    "use_knowledge_base": false,
+                    "scope": "conversation",
+                    "llm": null,
+                    "llm_billed": false,
+                    "analysis_schedule": null,
+                    "scoring_mode": "binary",
+                    "max_score": 100,
+                    "score_instructions": null
+                },
+                {
+                    "id": "lead_contact_confirmed",
+                    "name": "Lead Contact Confirmed",
+                    "type": "prompt",
+                    "conversation_goal_prompt": "Did the agent confirm the lead's contact information for the inspection or callback?",
+                    "use_knowledge_base": false,
+                    "scope": "conversation",
+                    "llm": null,
+                    "llm_billed": false,
+                    "analysis_schedule": null,
+                    "scoring_mode": "binary",
+                    "max_score": 100,
+                    "score_instructions": null
+                },
+                {
+                    "id": "professional_tone_maintained",
+                    "name": "Professional Tone Maintained",
+                    "type": "prompt",
+                    "conversation_goal_prompt": "Did the agent maintain a professional yet warm tone throughout the conversation?",
+                    "use_knowledge_base": false,
+                    "scope": "conversation",
+                    "llm": null,
+                    "llm_billed": false,
+                    "analysis_schedule": null,
+                    "scoring_mode": "binary",
+                    "max_score": 100,
+                    "score_instructions": null
+                }
+            ]
+        },
+        "widget": {
+            "variant": "full",
+            "placement": "bottom-right",
+            "expandable": "never",
+            "avatar": {
+                "type": "orb",
+                "color_1": "#2792dc",
+                "color_2": "#9ce6e6"
+            },
+            "feedback_mode": "none",
+            "end_feedback": {
+                "type": "rating"
+            },
+            "bg_color": "#ffffff",
+            "text_color": "#000000",
+            "btn_color": "#000000",
+            "btn_text_color": "#ffffff",
+            "border_color": "#e1e1e1",
+            "focus_color": "#000000",
+            "border_radius": null,
+            "btn_radius": null,
+            "action_text": null,
+            "start_call_text": null,
+            "end_call_text": null,
+            "expand_text": null,
+            "listening_text": null,
+            "speaking_text": null,
+            "shareable_page_text": null,
+            "shareable_page_show_terms": true,
+            "terms_text": null,
+            "terms_html": null,
+            "terms_key": null,
+            "show_avatar_when_collapsed": false,
+            "disable_banner": false,
+            "override_link": null,
+            "markdown_link_allowed_hosts": [],
+            "markdown_link_include_www": true,
+            "markdown_link_allow_http": true,
+            "mic_muting_enabled": true,
+            "transcript_enabled": true,
+            "text_input_enabled": true,
+            "conversation_mode_toggle_enabled": false,
+            "default_expanded": false,
+            "always_expanded": false,
+            "dismissible": false,
+            "show_agent_status": false,
+            "show_conversation_id": true,
+            "strip_audio_tags": true,
+            "syntax_highlight_theme": null,
+            "text_contents": {
+                "main_label": null,
+                "start_call": null,
+                "start_chat": null,
+                "new_call": null,
+                "end_call": null,
+                "mute_microphone": null,
+                "change_language": null,
+                "collapse": null,
+                "expand": null,
+                "copied": null,
+                "accept_terms": null,
+                "dismiss_terms": null,
+                "listening_status": null,
+                "speaking_status": null,
+                "connecting_status": null,
+                "chatting_status": null,
+                "queue_waiting_status": null,
+                "queue_waiting_status_short": null,
+                "input_label": null,
+                "input_placeholder": null,
+                "input_placeholder_text_only": null,
+                "input_placeholder_new_conversation": null,
+                "user_ended_conversation": null,
+                "agent_ended_conversation": null,
+                "conversation_id": null,
+                "error_occurred": null,
+                "queue_timed_out": null,
+                "copy_id": null,
+                "initiate_feedback": null,
+                "request_follow_up_feedback": null,
+                "thanks_for_feedback": null,
+                "thanks_for_feedback_details": null,
+                "follow_up_feedback_placeholder": null,
+                "submit": null,
+                "go_back": null,
+                "send_message": null,
+                "text_mode": null,
+                "voice_mode": null,
+                "switched_to_text_mode": null,
+                "switched_to_voice_mode": null,
+                "copy": null,
+                "download": null,
+                "wrap": null,
+                "agent_working": null,
+                "agent_done": null,
+                "agent_error": null,
+                "attach_file": null,
+                "remove_file": null,
+                "file_upload_error": null,
+                "file_type_unsupported": null,
+                "file_too_large": null,
+                "file_limit_reached": null,
+                "typing_indicator": null,
+                "rich_content_unavailable": null
+            },
+            "styles": {
+                "base": null,
+                "base_hover": null,
+                "base_active": null,
+                "base_border": null,
+                "base_subtle": null,
+                "base_primary": null,
+                "base_error": null,
+                "accent": null,
+                "accent_hover": null,
+                "accent_active": null,
+                "accent_border": null,
+                "accent_subtle": null,
+                "accent_primary": null,
+                "overlay_padding": null,
+                "button_radius": null,
+                "input_radius": null,
+                "bubble_radius": null,
+                "sheet_radius": null,
+                "compact_sheet_radius": null,
+                "dropdown_sheet_radius": null
+            },
+            "show_resize_button": true,
+            "end_confirmation_enabled": false,
+            "language_selector": false,
+            "supports_text_only": true,
+            "custom_avatar_path": null,
+            "language_presets": {},
+            "first_message_quick_replies": []
+        },
+        "data_collection": {
+            "outcome": {
+                "type": "string",
+                "description": "One of: booked, callback_requested, not_interested, disqualified, wrong_number, no_answer, voicemail.",
+                "enum": null,
+                "is_system_provided": false,
+                "dynamic_variable": "",
+                "allowed_values": null,
+                "allowed_values_dynamic_variable": "",
+                "constant_value": "",
+                "is_omitted": false,
+                "name": null,
+                "llm": null,
+                "llm_billed": false,
+                "analysis_schedule": null
+            },
+            "callback_time": {
+                "type": "string",
+                "description": "Callback day and time the lead asked for, if any.",
+                "enum": null,
+                "is_system_provided": false,
+                "dynamic_variable": "",
+                "allowed_values": null,
+                "allowed_values_dynamic_variable": "",
+                "constant_value": "",
+                "is_omitted": false,
+                "name": null,
+                "llm": null,
+                "llm_billed": false,
+                "analysis_schedule": null
+            },
+            "booked_slot": {
+                "type": "string",
+                "description": "Booked inspection date and time, if booked.",
+                "enum": null,
+                "is_system_provided": false,
+                "dynamic_variable": "",
+                "allowed_values": null,
+                "allowed_values_dynamic_variable": "",
+                "constant_value": "",
+                "is_omitted": false,
+                "name": null,
+                "llm": null,
+                "llm_billed": false,
+                "analysis_schedule": null
+            },
+            "notes": {
+                "type": "string",
+                "description": "Short notes on anything unusual in the call.",
+                "enum": null,
+                "is_system_provided": false,
+                "dynamic_variable": "",
+                "allowed_values": null,
+                "allowed_values_dynamic_variable": "",
+                "constant_value": "",
+                "is_omitted": false,
+                "name": null,
+                "llm": null,
+                "llm_billed": false,
+                "analysis_schedule": null
+            }
+        },
+        "data_collection_scopes": {},
+        "analysis_items": {
+            "evaluation_criteria": [
+                {
+                    "source": "user",
+                    "analysis_item_id": "aitem_3801m5afn75vfpa86cyf5wbd0mh7",
+                    "version_id": null,
+                    "additional_version_ids": [],
+                    "scope": "conversation",
+                    "weight": null
+                },
+                {
+                    "source": "user",
+                    "analysis_item_id": "aitem_9201m5afn762f1paqm5cw05zpfh5",
+                    "version_id": null,
+                    "additional_version_ids": [],
+                    "scope": "conversation",
+                    "weight": null
+                },
+                {
+                    "source": "user",
+                    "analysis_item_id": "aitem_7801m5afn769f5xvsxr4pb1gzmbw",
+                    "version_id": null,
+                    "additional_version_ids": [],
+                    "scope": "conversation",
+                    "weight": null
+                },
+                {
+                    "source": "user",
+                    "analysis_item_id": "aitem_7401m5afn76geg6v57zmev32j66y",
+                    "version_id": null,
+                    "additional_version_ids": [],
+                    "scope": "conversation",
+                    "weight": null
+                }
+            ],
+            "data_collection": [
+                {
+                    "source": "user",
+                    "analysis_item_id": "aitem_0801m5afn76qeky96rex1fm7wf61",
+                    "version_id": null,
+                    "scope": "conversation"
+                },
+                {
+                    "source": "user",
+                    "analysis_item_id": "aitem_7401m5afn76xftbrcwc4r3rcegw7",
+                    "version_id": null,
+                    "scope": "conversation"
+                },
+                {
+                    "source": "user",
+                    "analysis_item_id": "aitem_2101m5afn775f1qrwqb4tg5ma1q6",
+                    "version_id": null,
+                    "scope": "conversation"
+                },
+                {
+                    "source": "user",
+                    "analysis_item_id": "aitem_5801m5afn77eehnvnbh39kz9m927",
+                    "version_id": null,
+                    "scope": "conversation"
+                }
+            ]
+        },
+        "overrides": {
+            "conversation_config_override": {
+                "asr": {
+                    "keywords": false
+                },
+                "turn": {
+                    "soft_timeout_config": {
+                        "message": false,
+                        "additional_soft_timeout_messages": false
+                    }
+                },
+                "tts": {
+                    "model_id": false,
+                    "voice_id": false,
+                    "supported_voices": false,
+                    "stability": false,
+                    "speed": false,
+                    "similarity_boost": false,
+                    "pvc_strength": false,
+                    "pronunciation_dictionary_locators": false
+                },
+                "conversation": {
+                    "text_only": true,
+                    "max_duration_seconds": false
+                },
+                "agent": {
+                    "first_message": false,
+                    "language": false,
+                    "max_conversation_duration_message": false,
+                    "silence_end_call_message": false,
+                    "prompt": {
+                        "prompt": false,
+                        "llm": false,
+                        "tool_ids": false,
+                        "tool_ids_strict": false,
+                        "native_mcp_server_ids": false,
+                        "knowledge_base": false
+                    }
+                }
+            },
+            "custom_llm_extra_body": false,
+            "enable_conversation_initiation_client_data_from_webhook": false,
+            "enable_starting_workflow_node_id_from_client": false,
+            "enable_procedure_ids_from_client": false
+        },
+        "workspace_overrides": {
+            "conversation_initiation_client_data_webhook": null,
+            "webhooks": {
+                "post_call_webhook_id": null,
+                "events": [
+                    "transcript"
+                ],
+                "transcript_format": "json",
+                "exclude_transcript": false,
+                "send_audio": false
+            },
+            "cloud_storage_export": {
+                "destination_id": null,
+                "events": [
+                    "transcript"
+                ],
+                "transcript_format": "json"
+            }
+        },
+        "testing": {
+            "attached_tests": [
+                {
+                    "test_id": "test_8501m52zy16cezbag26tx373ggxn",
+                    "workflow_node_id": null
+                },
+                {
+                    "test_id": "test_4901m52zy16gf5tt5z0y6763xmqw",
+                    "workflow_node_id": null
+                },
+                {
+                    "test_id": "test_7401m52zy16kfk9ts7j5at0c7vfb",
+                    "workflow_node_id": null
+                },
+                {
+                    "test_id": "test_7901m52zy16pemwanwj3g5c1j4zq",
+                    "workflow_node_id": null
+                }
+            ],
+            "referenced_tests_ids": [
+                "test_8501m52zy16cezbag26tx373ggxn",
+                "test_4901m52zy16gf5tt5z0y6763xmqw",
+                "test_7401m52zy16kfk9ts7j5at0c7vfb",
+                "test_7901m52zy16pemwanwj3g5c1j4zq"
+            ]
+        },
+        "archived": false,
+        "guardrails": {
+            "version": "1",
+            "focus": {
+                "is_enabled": false
+            },
+            "prompt_injection": {
+                "is_enabled": false
+            },
+            "synthetic_voice": {
+                "is_enabled": false,
+                "trigger_action": {
+                    "type": "end_call"
+                }
+            },
+            "content": {
+                "execution_mode": "streaming",
+                "config": {
+                    "sexual": {
+                        "is_enabled": false,
+                        "threshold": "medium"
+                    },
+                    "violence": {
+                        "is_enabled": false,
+                        "threshold": "medium"
+                    },
+                    "harassment": {
+                        "is_enabled": false,
+                        "threshold": "medium"
+                    },
+                    "self_harm": {
+                        "is_enabled": false,
+                        "threshold": "medium"
+                    },
+                    "profanity": {
+                        "is_enabled": false,
+                        "threshold": "medium"
+                    },
+                    "religion_or_politics": {
+                        "is_enabled": false,
+                        "threshold": "medium"
+                    },
+                    "medical_and_legal_information": {
+                        "is_enabled": false,
+                        "threshold": "medium"
+                    }
+                },
+                "trigger_action": {
+                    "type": "end_call"
+                }
+            },
+            "moderation": null,
+            "custom": {
+                "config": {
+                    "configs": []
+                }
+            }
+        },
+        "summary_language": null,
+        "auto_translate_transcript_to_app_language": null,
+        "auth": {
+            "enable_auth": false,
+            "allowlist": [],
+            "require_origin_header": false,
+            "shareable_token": null
+        },
+        "call_limits": {
+            "agent_concurrency_limit": -1,
+            "daily_limit": 100000,
+            "bursting_enabled": true
+        },
+        "queueing_config": {
+            "enabled": true,
+            "wait_timeout_seconds": 180,
+            "hold_audio": null
+        },
+        "ban": null,
+        "smb_metadata": null,
+        "privacy": {
+            "record_voice": true,
+            "retention_days": -1,
+            "delete_transcript_and_pii": false,
+            "delete_audio": false,
+            "apply_to_existing_conversations": false,
+            "zero_retention_mode": false,
+            "nested_history_redaction": false,
+            "conversation_history_redaction": {
+                "enabled": false,
+                "entities": [],
+                "excluded_data_collection_ids": []
+            },
+            "user_memory": {
+                "enabled": false,
+                "scale": "balanced"
+            }
+        },
+        "trust_context": "low",
+        "analysis_llm": "gemini-2.5-flash",
+        "analysis_bedrock_llm": null,
+        "analysis_llm_billed": false,
+        "topic_discovery": {
+            "enabled": true
+        },
+        "sentiment_analysis": {
+            "enabled": true
+        },
+        "simulation_library": {
+            "enabled": false,
+            "test_ids": []
+        },
+        "alerting": null,
+        "overview_dashboard_template_id": null,
+        "safety": {
+            "is_blocked_ivc": false,
+            "is_blocked_non_ivc": false,
+            "ignore_safety_evaluation": false
+        }
+    },
+    "phone_numbers": [],
+    "whatsapp_accounts": [],
+    "workflow": {
+        "edges": {},
+        "nodes": {
+            "start_node": {
+                "type": "start",
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "edge_order": [],
+                "parent_subgraph_id": null
+            }
+        },
+        "subgraphs": {},
+        "prevent_subagent_loops": false
+    },
+    "access_info": {
+        "is_creator": true,
+        "creator_name": "abdullahblitz24@gmail.com",
+        "creator_email": "abdullahblitz24@gmail.com",
+        "role": "admin",
+        "anonymous_access_level_override": null,
+        "access_source": "creator"
+    },
+    "access_permissions": [
+        "agent_archive",
+        "agent_duplicate",
+        "agent_edit_advanced_settings",
+        "agent_edit_config",
+        "agent_edit_conversation_metadata",
+        "agent_edit_guardrails",
+        "agent_edit_llm",
+        "agent_edit_memories",
+        "agent_edit_metadata",
+        "agent_edit_procedures",
+        "agent_edit_prompt",
+        "agent_edit_task_config",
+        "agent_edit_voice",
+        "agent_edit_widget",
+        "agent_edit_workflow",
+        "agent_manage_analysis",
+        "agent_manage_attached_knowledge_base",
+        "agent_manage_attached_mcp_servers",
+        "agent_manage_attached_pronunciation_dictionaries",
+        "agent_manage_attached_tests",
+        "agent_manage_attached_tools",
+        "agent_manage_batch_calling",
+        "agent_manage_branches",
+        "agent_manage_channels",
+        "agent_manage_experiments",
+        "agent_manage_phone_numbers",
+        "agent_manage_protected_branches",
+        "agent_manage_traffic",
+        "agent_manage_whatsapp",
+        "agent_merge_branches",
+        "agent_monitor_conversation",
+        "agent_publish_version",
+        "agent_rerun_conversation_analysis",
+        "agent_run_tasks",
+        "agent_run_tests",
+        "agent_search_conversations",
+        "agent_view_advanced_settings",
+        "agent_view_analysis",
+        "agent_view_analytics",
+        "agent_view_batch_calling",
+        "agent_view_channels",
+        "agent_view_config",
+        "agent_view_conversation_history",
+        "agent_view_costs",
+        "agent_view_experiments",
+        "agent_view_guardrails",
+        "agent_view_knowledge_base",
+        "agent_view_llm",
+        "agent_view_mcp_servers",
+        "agent_view_memories",
+        "agent_view_metadata",
+        "agent_view_phone_numbers",
+        "agent_view_procedures",
+        "agent_view_prompt",
+        "agent_view_pronunciation_dictionaries",
+        "agent_view_tasks",
+        "agent_view_tests",
+        "agent_view_tools",
+        "agent_view_version_history",
+        "agent_view_voice",
+        "agent_view_whatsapp",
+        "agent_view_widget",
+        "agent_view_workflow",
+        "resource_delete",
+        "resource_manage_access"
+    ],
+    "tags": [
+        "alex",
+        "outbound-speed-to-lead",
+        "bake-off",
+        "v2-loose"
+    ],
+    "version_id": "agtvrsn_4201m5agf18kf2gb1xghh8ma4c5r",
+    "branch_id": "agtbrch_8001m5afn72vepmrybanbtjpgk6r",
+    "main_branch_id": "agtbrch_8001m5afn72vepmrybanbtjpgk6r",
+    "procedures": {},
+    "trust_context": "low",
+    "default_hold_audio_url": "https://eleven-public-cdn-common.elevenlabs.io/convai/ambient-audio-assets/elevator1.mp3"
+}

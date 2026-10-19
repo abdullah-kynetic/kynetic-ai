@@ -1,0 +1,157 @@
+{
+    "id": "tool_2501m5afmdgef4gacn3qsgnxagrs",
+    "tool_config": {
+        "type": "webhook",
+        "name": "book_appointment",
+        "description": "Books the roof inspection. Call only after the lead confirmed the day, time and address. Returns status success when booked. Do not tell the lead it is booked until it returns success. The confirmation goes to the lead by text, not email.",
+        "response_timeout_secs": 30,
+        "disable_interruptions": false,
+        "interruption_mode": "allow",
+        "force_pre_tool_speech": false,
+        "pre_tool_speech": "auto",
+        "assignments": [],
+        "tool_call_sound": null,
+        "tool_call_sound_behavior": "auto",
+        "tool_error_handling_mode": "auto",
+        "dynamic_variables": {
+            "dynamic_variable_placeholders": {}
+        },
+        "execution_mode": "immediate",
+        "api_schema": {
+            "request_headers": {
+                "Authorization": {
+                    "secret_id": "F8s22QdPcB0qJP9MsR55"
+                },
+                "cal-api-version": "2024-08-13",
+                "Content-Type": "application/json",
+                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+            },
+            "kind": "webhook",
+            "url": "https://api.cal.com/v2/bookings",
+            "method": "POST",
+            "path_params_schema": {},
+            "query_params_schema": null,
+            "request_body_schema": {
+                "description": "Booking request.",
+                "dynamic_variable": "",
+                "is_omitted": false,
+                "type": "object",
+                "required": [
+                    "start",
+                    "attendee"
+                ],
+                "properties": {
+                    "eventTypeId": {
+                        "type": "integer",
+                        "description": "",
+                        "enum": null,
+                        "is_system_provided": false,
+                        "dynamic_variable": "",
+                        "allowed_values": null,
+                        "allowed_values_dynamic_variable": "",
+                        "constant_value": 7520336,
+                        "is_omitted": false
+                    },
+                    "start": {
+                        "type": "string",
+                        "description": "Slot start exactly as returned by check_availability, including its UTC offset (for example 2026-10-19T09:30:00.000-07:00). Do not convert it.",
+                        "enum": null,
+                        "is_system_provided": false,
+                        "dynamic_variable": "",
+                        "allowed_values": null,
+                        "allowed_values_dynamic_variable": "",
+                        "constant_value": "",
+                        "is_omitted": false
+                    },
+                    "attendee": {
+                        "description": "The lead.",
+                        "dynamic_variable": "",
+                        "is_omitted": false,
+                        "type": "object",
+                        "required": [
+                            "name",
+                            "phoneNumber",
+                            "timeZone"
+                        ],
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "Lead's full name.",
+                                "enum": null,
+                                "is_system_provided": false,
+                                "dynamic_variable": "",
+                                "allowed_values": null,
+                                "allowed_values_dynamic_variable": "",
+                                "constant_value": "",
+                                "is_omitted": false
+                            },
+                            "timeZone": {
+                                "type": "string",
+                                "description": "",
+                                "enum": null,
+                                "is_system_provided": false,
+                                "dynamic_variable": "",
+                                "allowed_values": null,
+                                "allowed_values_dynamic_variable": "",
+                                "constant_value": "America/Los_Angeles",
+                                "is_omitted": false
+                            },
+                            "phoneNumber": {
+                                "type": "string",
+                                "description": "The lead's mobile number in international format, for example +15415550123. Use {{lead_phone}} when it is filled in; on a test call where it is empty, use the number the lead gave.",
+                                "enum": null,
+                                "is_system_provided": false,
+                                "dynamic_variable": "",
+                                "allowed_values": null,
+                                "allowed_values_dynamic_variable": "",
+                                "constant_value": "",
+                                "is_omitted": false
+                            }
+                        }
+                    },
+                    "bookingFieldsResponses": {
+                        "description": "Extra booking fields.",
+                        "dynamic_variable": "",
+                        "is_omitted": false,
+                        "type": "object",
+                        "required": [],
+                        "properties": {
+                            "notes": {
+                                "type": "string",
+                                "description": "Property address for the inspection, e.g. 'Property address: 1420 NW Wall St, Bend OR'.",
+                                "enum": null,
+                                "is_system_provided": false,
+                                "dynamic_variable": "",
+                                "allowed_values": null,
+                                "allowed_values_dynamic_variable": "",
+                                "constant_value": "",
+                                "is_omitted": false
+                            }
+                        }
+                    }
+                }
+            },
+            "response_body_schema": null,
+            "response_filter": null,
+            "content_type": "application/json",
+            "auth_resolved_params": [],
+            "auth_connection": null,
+            "mtls_auth_connection": null
+        },
+        "follow_redirects": false,
+        "follow_redirects_allowed_domains": []
+    },
+    "access_info": {
+        "is_creator": true,
+        "creator_name": "abdullahblitz24@gmail.com",
+        "creator_email": "abdullahblitz24@gmail.com",
+        "role": "admin",
+        "anonymous_access_level_override": null,
+        "access_source": "creator"
+    },
+    "usage_stats": {
+        "total_calls": 0,
+        "avg_latency_secs": 0.0
+    },
+    "response_mocks": null
+}
