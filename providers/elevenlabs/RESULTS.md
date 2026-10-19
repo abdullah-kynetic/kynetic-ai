@@ -33,6 +33,14 @@ Left as found: LLM `deepseek-v41-flash` temp 0, voice 1SM7GgM6IMuvQlz2BwM3, mode
 - v1 (`agent_9301m52zy185e609f8vyws4r1r7q`) is unchanged and has no noise rule yet. Not yet tested on a call.
 - Noise settings (turn eagerness, interruptions) left at defaults on both agents; see chat notes for options.
 
+## Account move: building and testing now on the blitz account
+2026-10-19. Keys live in the environment as `ELEVENLABS_API_KEY_blitz` (new account, abdullahblitz24) and `ELEVENLABS_API_KEY_kyneticai` (old account). Plain `ELEVENLABS_API_KEY` no longer exists, so use the suffixed names. Both accounts are on the Free tier (10,000 credits).
+Rebuilt on blitz from the 2026-10-17 snapshots, same config as before:
+- Voice: "Mark - Casual, Relaxed and Light" (`1SM7GgM6IMuvQlz2BwM3`) added from the shared library; premade voices were all that existed there.
+- Secret `cal_api_key` (`F8s22QdPcB0qJP9MsR55`); tools check_availability `tool_3501m5afmd47fjw842ya61z5kyzq` and book_appointment `tool_2501m5afmdgef4gacn3qsgnxagrs` (still event type 7404470, email-based).
+- **Alex v1 (strict prompt)** `agent_8201m5afn2rbeb7v29xfkhh1pjef` and **Alex v2 (loose prompt)** `agent_9701m5afn5rxehardsqttkq3pbjh`. Verified: tools attached, voicemail on, opener, workflow reset to start node.
+- Old account agents (`agent_9301m52zy185e609f8vyws4r1r7q` v1, `agent_8001m5abyte4frzadt0y52dpvswk` v2) are left in place and no longer the working copies.
+
 ## Runs
 | Run | Date | Round (voice email / prefilled) | Stacked-question turns / total turns | Waited for answers? | Email exact? | Readback 1-5 | False "all set"? | Booked? | Delay median / worst | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|
