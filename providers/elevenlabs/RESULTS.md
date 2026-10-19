@@ -50,6 +50,7 @@ Applied to both Alex | 11Labs | v1 strict prompt and v2 loose prompt, plus the t
 - Removed the `language_detection` system tool. Dynamic variable `email` replaced with `lead_phone`.
 - **Not done: sending the text.** There is no text tool and no Twilio. Alex says a text is coming, which is false in a test until that tool exists; fine for the test persona only. Twilio trial limited to Abdullah's and Quentin's numbers is the planned way to test it.
 - Old account agents and the old event 7404470 are untouched.
+- Follow-up (same day): added the "different number" path. If the lead declines the dialed number, Alex asks for another, reads it back digit by digit, and the booking tool uses that one instead of `lead_phone`. Both prompts and the `phoneNumber` tool description updated.
 
 ## Runs
 | Run | Date | Round (voice email / prefilled) | Stacked-question turns / total turns | Waited for answers? | Email exact? | Readback 1-5 | False "all set"? | Booked? | Delay median / worst | Notes |
