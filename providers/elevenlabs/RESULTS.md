@@ -85,3 +85,10 @@ Applied to both Alex | 11Labs | v1 strict prompt and v2 loose prompt, plus the t
 - n8n integration effort (hours, estimate):
 
 ## Verdict vs Retell Alex Lab
+
+## Change log: native Cal.com integration (2026-10-19)
+- Abdullah added a Cal.com API-key connection on blitz ("cal.com testing", `icxn_9201m5am6y02ehpvw4rndr4xzd6p`). It lives under `/v1/convai/api-integration-connections`, not tools or MCP.
+- Native `calcom_create_booking` has no `location` field, so event 7520336 location changed from attendeeAddress to a fixed address ("At the property (address in booking notes)"). Validated against Cal.com with a past date (only "meeting in the past" error). The property address now goes in `bookingFieldsResponses.notes`. Event 7404470 untouched.
+- Both blitz agents now use `calcom_get_available_slots` and `calcom_create_booking` (inline `api_integration_webhook` tools, eventTypeId and timeZone constants); the custom webhook tools were detached from both agents (still exist in the workspace).
+- Native slots return UTC, so both prompts convert to Pacific before speaking (7h behind until Nov 1, then 8h). Prompts and tool names updated in PROMPT.md and PROMPT_V2.md.
+- Not yet tested live.
