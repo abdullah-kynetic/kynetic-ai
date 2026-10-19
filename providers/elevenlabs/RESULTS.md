@@ -38,7 +38,7 @@ Left as found: LLM `deepseek-v41-flash` temp 0, voice 1SM7GgM6IMuvQlz2BwM3, mode
 Rebuilt on blitz from the 2026-10-17 snapshots, same config as before:
 - Voice: "Mark - Casual, Relaxed and Light" (`1SM7GgM6IMuvQlz2BwM3`) added from the shared library; premade voices were all that existed there.
 - Secret `cal_api_key` (`F8s22QdPcB0qJP9MsR55`); tools check_availability `tool_3501m5afmd47fjw842ya61z5kyzq` and book_appointment `tool_2501m5afmdgef4gacn3qsgnxagrs` (still event type 7404470, email-based).
-- **Alex v1 (strict prompt)** `agent_8201m5afn2rbeb7v29xfkhh1pjef` and **Alex v2 (loose prompt)** `agent_9701m5afn5rxehardsqttkq3pbjh`. Verified: tools attached, voicemail on, opener, workflow reset to start node.
+- **Alex | 11Labs | v1 strict prompt** `agent_8201m5afn2rbeb7v29xfkhh1pjef` and **Alex | 11Labs | v2 loose prompt** `agent_9701m5afn5rxehardsqttkq3pbjh`. Verified: tools attached, voicemail on, opener, workflow reset to start node.
 - Old account agents (`agent_9301m52zy185e609f8vyws4r1r7q` v1, `agent_8001m5abyte4frzadt0y52dpvswk` v2) are left in place and no longer the working copies.
 
 ## Runs
