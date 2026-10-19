@@ -54,11 +54,16 @@ Applied to both Alex | 11Labs | v1 strict prompt and v2 loose prompt, plus the t
 
 - Follow-up (2026-10-19): combined the form-detail confirmation. Both prompts now confirm issue, ownership and timeline in ONE question ("I see you asked about a roof inspection for a leak, you own the property, and you'd like it looked at this week. Did I get that right?") instead of one question per detail; blank or corrected values are asked individually. v1 Steps 3 and 4 rewritten and the example call updated; v2 bullet rewritten. Applied to both blitz agents.
 
+## Fixes after runs 1 and 2 (2026-10-19)
+- `book_appointment` now sends `location: {type: attendeeAddress, address}` (required by event 7520336); `bookingFieldsResponses.notes` removed; phoneNumber description forbids passing a placeholder. Verified the new body shape against Cal.com with a past start time (no booking made): passes validation, fails only on "meeting in the past".
+- Prompts v1 and v2: offer the two earliest slots; empty `lead_phone` means ask for the number (never "the number I'm calling"); retry a failed booking once, then a single honest "scheduling system isn't responding" line, accept "ASAP" as a callback time, ask for specificity at most once; v2 confirms day/time/address as a question and waits for a yes before booking; address passed exactly as spoken.
+
 ## Runs
 | Run | Date | Round (voice email / prefilled) | Stacked-question turns / total turns | Waited for answers? | Email exact? | Readback 1-5 | False "all set"? | Booked? | Delay median / worst | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 0 (invalid) | 2026-10-16 | voice, dashboard test | n/a | n/a | n/a | n/a | Yes (said booked, no tool exists) | No real booking | not captured | Not running PROMPT.md: wrong opener, invented company name ("Bend Roofing Solutions"), no name check, no AI/recording disclosure, no qualifying questions, stacked questions, invented slots, asked for phone number, no email step, fillers present. Excluded from totals. |
-| 1 | | | | | | | | | | |
+| 1 (v1 strict, blitz) | 2026-10-19 | dashboard, Script 1, text confirmation | 0 / 16 | Yes | n/a (text) | n/a | No (never said booked) | No: 3x HTTP 400 | median 0.66 s / worst 1.38 s | `conv_1501m5akjyheenssnw1d1zs4rb6g`. Cause: Cal.com event 7520336 needs `location` {type attendeeAddress, address}; tool did not send it. Also sent phoneNumber as literal `{{lead_phone}}` (blank on dashboard tests, Alex never asked for a number). Fallback asked for a specific callback time 3x after "ASAP". |
+| 2 (v2 loose, blitz) | 2026-10-19 | dashboard, Script 1, text confirmation | 0 / 14 | Yes | n/a (text) | n/a | No | No: 3x HTTP 400 | median 0.71 s / worst 23.2 s (tool retries) | `conv_4501m5aks4weebg8hxb6wc9x7gvw`. Same Cal.com cause. Offered tomorrow's slots before today's earlier ones; said "One sec, booking that now" in the same turn as the confirmation without waiting for a yes; dropped the offer question; honest fallback ("team will follow up") but two goodbyes. |
 
 ## Edge cases
 | Case | Pass/fail | Notes |
