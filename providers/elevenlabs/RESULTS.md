@@ -52,6 +52,8 @@ Applied to both Alex | 11Labs | v1 strict prompt and v2 loose prompt, plus the t
 - Old account agents and the old event 7404470 are untouched.
 - Follow-up (same day): added the "different number" path. If the lead declines the dialed number, Alex asks for another, reads it back digit by digit, and the booking tool uses that one instead of `lead_phone`. Both prompts and the `phoneNumber` tool description updated.
 
+- Follow-up (2026-10-19): combined the form-detail confirmation. Both prompts now confirm issue, ownership and timeline in ONE question ("I see you asked about a roof inspection for a leak, you own the property, and you'd like it looked at this week. Did I get that right?") instead of one question per detail; blank or corrected values are asked individually. v1 Steps 3 and 4 rewritten and the example call updated; v2 bullet rewritten. Applied to both blitz agents.
+
 ## Runs
 | Run | Date | Round (voice email / prefilled) | Stacked-question turns / total turns | Waited for answers? | Email exact? | Readback 1-5 | False "all set"? | Booked? | Delay median / worst | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|
