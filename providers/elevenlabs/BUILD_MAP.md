@@ -1,6 +1,6 @@
 # ElevenLabs build map: Alex outbound speed-to-lead
 
-Status (2026-10-19): PROPOSAL. Nothing here is applied to n8n, Twenty or Retell. Per `providers/TEST_PLAN.md`, no n8n plumbing is built until ElevenLabs wins the bake-off. This map shows what the build would look like so the swap is a known quantity (scorecard item 13, n8n integration effort).
+Status (2026-10-19, later): the n8n workflow is built as an inactive draft: `11Labs | Outbound Speed to Lead` (`xlmyRd5jBBBu8LX7`, 35 nodes, same folder as the Retell one, renamed `Retell | Outbound Speed to Lead` `tXJwNTkNgKGnp0Ab`). Never run. Still to do before any test: pick Twenty API / templated ElevenLabs / Gmail credentials, fill the agent ID and phone number ID placeholders (Call Settings, Retry Call Settings, Finished Call For Our Agent?), import a Twilio number into ElevenLabs, set the post-call webhook URL in ElevenLabs. Nothing else in n8n, Twenty or Retell was changed (only the Retell workflow's name). Per `providers/TEST_PLAN.md`, no n8n plumbing is built until ElevenLabs wins the bake-off. This map shows what the build would look like so the swap is a known quantity (scorecard item 13, n8n integration effort).
 
 Baseline it swaps against: `retell/builds/outbound-speed-to-lead/` (BUILD_PLAN.md, N8N_MAPPING.md, FORM_SPEC.md). Same flow, different voice layer.
 
