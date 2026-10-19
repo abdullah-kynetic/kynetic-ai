@@ -45,7 +45,7 @@ Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3
 
 ## Log
 ### 2026-10-19 (voice provider bake-off, ElevenLabs track)
-- Bake-off only, no decision (D-018 stands, Retell is the platform). Branch `claude/provider-test-elevenlabs`, folder `providers/elevenlabs/`. Twenty task 3.9 and the bake-off note are updated to match.
+- Bake-off is now Retell vs ElevenLabs only (Bland dropped, never produced results). Abdullah's read: ElevenLabs is ahead and a little cheaper. No decision logged yet (D-018 stands, Retell is the platform until the scorecard and billing confirm it). Branch `claude/provider-test-elevenlabs`, folder `providers/elevenlabs/`. Twenty task 3.9 and the bake-off note are updated to match.
 - ElevenLabs work moved to the second account (blitz): agents `Alex | 11Labs | v1 strict prompt` and `v2 loose prompt`. Prompts now use text confirmation, one combined form confirmation, two earliest slots, full address (street, city, zip), noise handling and retry-once booking failure handling.
 - First scripted tests: flow good, booking failed (tool did not send the Cal.com location; phone went in as the literal placeholder). Fixed. Both agents now use ElevenLabs' native Cal.com tools on test event 7520336, whose location is a fixed line; the address goes in the booking notes. Production event 7404470 untouched.
 - Built inactive n8n workflow `11Labs | Outbound Speed to Lead` (`xlmyRd5jBBBu8LX7`, 35 nodes); Retell workflow renamed `Retell | Outbound Speed to Lead` (`tXJwNTkNgKGnp0Ab` name only). Never run. n8n Agents idea dropped.

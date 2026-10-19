@@ -1,7 +1,7 @@
 # ElevenLabs track: handoff (updated 2026-10-19)
 
 ## Context
-Voice-provider bake-off for Alex (outbound speed-to-lead, Kynetic Roofing demo). Retell is the current platform (D-018); this is a bake-off, not a decision. Shared rules, persona and scorecard: `providers/TEST_PLAN.md`. Branch: `claude/provider-test-elevenlabs`. Twenty: task 3.9 and the bake-off note.
+Voice-provider bake-off for Alex (outbound speed-to-lead, Kynetic Roofing demo). Retell is the current platform (D-018). The bake-off is Retell vs ElevenLabs only (Bland dropped). Abdullah's read as of 2026-10-19: ElevenLabs is ahead and a little cheaper; the scorecard and billing still need to confirm it before a decision is logged. Shared rules, persona and scorecard: `providers/TEST_PLAN.md`. Branch: `claude/provider-test-elevenlabs`. Twenty: task 3.9 and the bake-off note.
 
 ## State
 - Work is on the second ElevenLabs account (key env `ELEVENLABS_API_KEY_blitz`). Agents: v1 strict `agent_8201m5afn2rbeb7v29xfkhh1pjef` (PROMPT.md), v2 loose `agent_9701m5afn5rxehardsqttkq3pbjh` (PROMPT_V2.md). Old-account agents are snapshots only.
@@ -11,6 +11,7 @@ Voice-provider bake-off for Alex (outbound speed-to-lead, Kynetic Roofing demo).
 - n8n draft `11Labs | Outbound Speed to Lead` (`xlmyRd5jBBBu8LX7`) is inactive and never run. See BUILD_MAP.md.
 
 ## Next steps
+0. Treat ElevenLabs as the leading candidate; fill the scorecard and cost comparison (from billing) and log a decision if it wins.
 1. Abdullah re-runs Script 1 on both agents (gives his own cell number when asked); Claude pulls transcripts and scores in RESULTS.md. Then scripts 3, 4, 6.
 2. Add a text-confirmation tool (stub first; real send after KI-003).
 3. Decide the LLM question (deepseek-v41-flash vs gpt-4.1).
