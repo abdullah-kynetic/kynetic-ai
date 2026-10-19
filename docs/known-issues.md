@@ -35,7 +35,16 @@ The client portal (portal.kyneticai.com) must not hold real client data until th
 ### KI-008: Check the portal does not reuse the dev Postgres password (medium)
 Confirm `/opt/portal/.env` does not reuse the dev Postgres password hard-coded in `portal/scripts/pg-embedded.mts`. Not yet checked; the VPS is out of scope for repo work.
 
+### KI-011: Lead-engine records disagree or are missing (medium)
+Found 2026-10-19 (read-only review of Twenty).
+- D-002 here still says drop businesses with a receptionist or front desk. Twenty's Oct 13 notes ("Qualifying Checks", "Kynetic Prospecting Plan") say front-desk businesses are NOT dropped, and the Lane A note proposes rewording D-002 to "no dedicated instant-response call center". The reword is PENDING Abdullah's yes. Not changed here.
+- `research/search-queries.csv` and the `wave*-raw.csv` / `rerun-raw.csv` / `maps-adcheck.csv` files described in the Twenty note "Search List + How Searches Ran" are not in this repo (no `research/` folder on main or this branch). Location unknown.
+- The Lane A note asks to rotate the Treg token pasted in chat on Oct 10; not confirmed done.
+- The "no people-search or data-broker sites" rule appears in Lane A notes with no recorded reason. Kept as is; a counsel question for 1.4 if it should be loosened.
+Fix: Abdullah to say where the research files are, confirm the Treg rotation, and approve or reject the D-002 reword.
+
 ## Gotchas
+- Cloud sessions deny hosts not in the environment's allowed domains. Firecrawl returned 403 until `api.firecrawl.dev` was allowed (2026-10-19). A scrape of Facebook, BBB, the Texas Comptroller and similar sites needs those domains allowed too.
 - Never modify Nora (agent_4c34644a04c74e27253e80167b, n8n 2PFWFqBM0wabADk6).
 - Never add, remove, rename or change parameters of a Retell agent tool without approval of that specific change.
 - tools/retell.py dry-runs every write unless --apply is passed.
