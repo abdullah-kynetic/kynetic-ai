@@ -27,6 +27,12 @@ Left as found: LLM `deepseek-v41-flash` temp 0, voice 1SM7GgM6IMuvQlz2BwM3, mode
 - Verified: slots for 2026-10-19 and 2026-10-20 match the original (9 and 7). A real booking is not yet tested.
 - Not yet done: ElevenLabs tools still point at 7404470 and send an email. Next: repoint them to 7520336, send `attendee.phoneNumber`, update the prompt for text confirmation.
 
+## Agent change log: v2 variant
+2026-10-19, with Abdullah's OK (second agent, for A/B only).
+- Created **Alex v2 (loose prompt)**, `agent_8001m5abyte4frzadt0y52dpvswk`, from the 2026-10-17 snapshot of the v1 agent with only the system prompt replaced by `PROMPT_V2.md` (goal-based stages plus hard rules, no step script or example call, adds a "when you can't make it out" rule for background noise). Same voice, LLM, tools, variables, voicemail, data fields and event type 7404470 (email confirmation) as v1, so only the prompt differs.
+- v1 (`agent_9301m52zy185e609f8vyws4r1r7q`) is unchanged and has no noise rule yet. Not yet tested on a call.
+- Noise settings (turn eagerness, interruptions) left at defaults on both agents; see chat notes for options.
+
 ## Runs
 | Run | Date | Round (voice email / prefilled) | Stacked-question turns / total turns | Waited for answers? | Email exact? | Readback 1-5 | False "all set"? | Booked? | Delay median / worst | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|
