@@ -92,3 +92,4 @@ Applied to both Alex | 11Labs | v1 strict prompt and v2 loose prompt, plus the t
 - Both blitz agents now use `calcom_get_available_slots` and `calcom_create_booking` (inline `api_integration_webhook` tools, eventTypeId and timeZone constants); the custom webhook tools were detached from both agents (still exist in the workspace).
 - Native slots return UTC, so both prompts convert to Pacific before speaking (7h behind until Nov 1, then 8h). Prompts and tool names updated in PROMPT.md and PROMPT_V2.md.
 - Not yet tested live.
+- Prompts now require the full address (street, city, zip); Alex asks once for the missing city and zip.
