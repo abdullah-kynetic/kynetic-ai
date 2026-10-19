@@ -1,6 +1,6 @@
 # Lead engine, Run B: identical prompt for Claude (Firecrawl) and Muse
 
-Paste everything inside the block into each agent as the opening message. Same prompt, same sample, so the two outputs can be audited against each other. Draft 2026-10-19, not yet used.
+Paste everything inside the block into each agent as the opening message. Same prompt, same sample, so the two outputs can be audited against each other. Draft 2026-10-19, narrowed to one city (Arlington TX) and one niche (roofing); not yet used.
 
 Before running Claude with Firecrawl: allow outbound network access to facebook.com, google.com, bbb.org, comptroller.texas.gov, mycpa.cpa.state.tx.us, opencorporates.com, angi.com, yelp.com, houzz.com and the city and county sites (or choose a broad access level; city and county domains vary).
 
@@ -21,9 +21,9 @@ HARD RULES
 7. Stay inside the limits in "LIMITS".
 
 SAMPLE FOR THIS RUN
-Niche: roofing (replacement and repair, residential).
-Zone: Mid-Cities of Dallas-Fort Worth: Irving, Coppell, Grapevine, Southlake, Colleyville, Keller, Hurst, Euless, Bedford, North Richland Hills, Arlington, Grand Prairie.
-Business must be based in or clearly serve this zone. If you cannot confirm location, mark HOLD with reason "location unconfirmed".
+Niche: roofing (replacement and repair, residential). One niche only.
+City: Arlington, Texas (Tarrant County). One city only.
+Business must have its address in Arlington, or in an immediately adjacent city and say it serves Arlington. If you cannot confirm location, mark HOLD with reason "location unconfirmed".
 
 WHO COUNTS
 KEEP: an independent local roofer (one office, or 2 to 5 locations), real address, with at least one ACTIVE ad in the Meta Ad Library right now.
@@ -32,15 +32,15 @@ DROP (name the rule): national franchises or brands; private-equity or multi-sta
 PHASE 1: CENSUS (find the advertisers)
 Ad Library search URL pattern (change q=):
 https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=US&q=<term>&search_type=keyword_unordered
-Terms to try, each alone and combined with these cities: Irving, Arlington, Grand Prairie, Keller, Hurst, Southlake.
+Terms to try, each combined with "Arlington" (for example q=roof replacement Arlington), then each alone with the US filter keeping only Arlington businesses:
 "roof replacement", "free roof inspection", "storm damage roof", "roofing estimate", "new roof", "roofer", "roof repair"
-Facebook's keyword match is loose and returns unrelated ads; ignore them. Run up to 24 searches. Stop when you have 40 unique advertisers in or near the zone, or the searches run out. A single page load shows roughly 30 ads, so scroll or paginate to see more.
+Facebook's keyword match is loose and returns unrelated ads; ignore them. Run up to 14 searches. Stop when you have 25 unique advertisers based in or serving Arlington, or the searches run out. A single page load shows roughly 30 ads, so scroll or paginate to see more.
 For each unique advertiser capture: business_name; facebook_page_url (or page ID); ad_library_url; active_ad_count seen; oldest_active_ad_start_date; ad_destination (instant form / landing page / call / other); landing_page_url; city; owner_named_in_ad_copy (yes with quote, or no); keep_or_drop; drop_reason.
-Use Google Maps ONLY to resolve website, address and phone for an advertiser you already found, never to decide whether they run ads.
+Use Google Maps (search "roofing Arlington TX") ONLY to resolve website, address and phone for an advertiser you already found, never to decide whether they run ads.
 Output the census table, then STOP DESCRIBING and continue straight on.
 
 PHASE 2: PICK THE ENRICHMENT SET
-From the KEEP rows pick 15 by this rule so results are comparable: highest active_ad_count first, ties broken alphabetically by business_name. The first 5 of those 15 are the CALIBRATION SET (see Phase 3).
+From the KEEP rows pick 10 by this rule so results are comparable: highest active_ad_count first, ties broken alphabetically by business_name. The first 4 of those 10 are the CALIBRATION SET (see Phase 3).
 
 PHASE 3: OWNER NAME
 Goal: owner (or principal who signs contracts) with a source. Work down this ladder:
@@ -51,20 +51,20 @@ Goal: owner (or principal who signs contracts) with a source. Work down this lad
 5. BBB profile: "Business Management" / principal name and title
 6. Texas Comptroller Taxable Entity Search (comptroller.texas.gov / mycpa.cpa.state.tx.us): registered agent and officers, directors or managers. Free; a search is enough.
 7. OpenCorporates and any free Texas Secretary of State result you can read without logging in or paying
-8. County clerk assumed-name (DBA) search for the county of the address, for sole proprietors (Dallas, Tarrant, Denton, Collin as relevant). Skip if it needs a login or fee.
+8. County clerk assumed-name (DBA) search for the county of the address, for sole proprietors (Tarrant County clerk for Arlington). Skip if it needs a login or fee.
 9. Angi, Thumbtack, Houzz, Yelp, Nextdoor business profiles ("meet the owner")
 10. Chamber of commerce or trade association member pages
 11. A search-engine query such as site:linkedin.com/in "owner" "<business name>" using only the visible snippet. Never log in to or crawl LinkedIn.
 12. GAF / Owens Corning / CertainTeed contractor locators (mainly to confirm the business is real)
-Stopping rule: for the 10 businesses AFTER the calibration set, stop at the first source that gives a HIGH-confidence name. For the 5 CALIBRATION businesses, run EVERY step of the ladder and record what each source returned, because the point is to learn which sources work.
+Stopping rule: for the 6 businesses AFTER the calibration set, stop at the first source that gives a HIGH-confidence name. For the 4 CALIBRATION businesses, run EVERY step of the ladder and record what each source returned, because the point is to learn which sources work.
 Confidence: HIGH = name on the business's own site, the ad copy, or an official registry record tied to that business. MEDIUM = BBB, a signed Google reply, or a third-party directory. LOW = inferred. If the name comes only from a registry, say so; a registered agent is not always the owner.
-Texas has no state roofing licence, so there is no licence board lookup for this zone.
+Texas has no state roofing licence, so there is no licence board lookup for this city.
 
 PHASE 4: PHONE
 Goal: the best published number for reaching the owner. Collect every candidate with its source, then choose one. Sources, best first:
 1. Number shown under the owner's name on the business's own site
 2. Number in the website header, footer or contact page
-3. City building-permit portals for the contractor's phone (Arlington, Irving, Grand Prairie, Keller, Southlake and others): note which portals were searchable and whether a phone appeared
+3. City building-permit portals for the contractor's phone (City of Arlington permit and contractor records first, then the city of any adjacent-city address): note which portals were searchable and whether a phone appeared
 4. BBB, Facebook Page About, Google Business Profile
 5. Yelp, Angi, chamber pages
 For each candidate record phone_kind: website_main / website_listed_under_owner / permit_portal / bbb / google_profile / facebook / directory / other.
@@ -74,7 +74,7 @@ front_desk_evidence: any sign a receptionist, answering service or call center p
 PHASE 5: OUTPUT (exact format)
 A. RUN HEADER: tools you used (name them), date, assumptions, number of searches run, number of pages loaded, any credits or cost shown, wall-clock time if you can tell, where you stopped and why.
 B. CENSUS TABLE (CSV in a code block): all columns from Phase 1.
-C. ENRICHMENT TABLE (CSV in a code block), one row per business in the set of 15, columns:
+C. ENRICHMENT TABLE (CSV in a code block), one row per business in the set of 10, columns:
 business_name | facebook_page_url | website_url | owner_name | owner_role | owner_source_url | owner_quote | owner_confidence | owner_fact_type | entity_type (LLC/Inc/sole prop/unknown) | registry_source_url | registered_agent | phone | phone_source_url | phone_kind | tracking_suspected | owner_direct_status | front_desk_evidence | status (DIAL_READY / HOLD / DROP) | reason | notes
 DIAL_READY = active Meta ads confirmed AND owner name at HIGH or MEDIUM confidence AND a published phone. Otherwise HOLD (say exactly what is missing) or DROP (say which rule).
 D. SOURCE SCORECARD (table): for every ladder step in Phases 3 and 4: sources tried | businesses where it returned something | businesses where it returned a usable owner name or phone | blocked or unusable (and why) | approx effort.
@@ -82,8 +82,8 @@ E. BLOCKED / FAILED LOG: every URL or portal that failed, with the reason (login
 F. SELF-AUDIT: count of rows where every claim has a working source URL; list any cell you now doubt; any place you were tempted to guess and did not; the three changes that would most improve the next run.
 
 LIMITS
-Stop at whichever comes first: 40 advertisers censused, 15 businesses enriched, 90 minutes of work, or about 300 Firecrawl credits (if you are using Firecrawl, report credits used). Per business, at most 12 page loads in Phase 3 and 8 in Phase 4 (the 5 calibration businesses may use double). If you hit a limit, say so in the run header.
+Stop at whichever comes first: 25 advertisers censused, 10 businesses enriched, 60 minutes of work, or about 200 Firecrawl credits (if you are using Firecrawl, report credits used). Per business, at most 12 page loads in Phase 3 and 8 in Phase 4 (the 4 calibration businesses may use double). If you hit a limit, say so in the run header.
 
 HOW YOU WILL BE SCORED (an independent auditor will click a sample of your links)
-Unique real advertisers found; share of KEEP rows that are genuinely independent; share of the 15 with a HIGH or MEDIUM owner name and a working source; share with a published phone; number of fabricated or unverifiable cells (heavily penalised); honesty of the scorecard and blocked log; and cost and time.
+Unique real advertisers found; share of KEEP rows that are genuinely independent; share of the 10 with a HIGH or MEDIUM owner name and a working source; share with a published phone; number of fabricated or unverifiable cells (heavily penalised); honesty of the scorecard and blocked log; and cost and time.
 ```
