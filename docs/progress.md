@@ -44,6 +44,13 @@ Then: fill the two placeholders (agent ID, caller ID) in Call Settings and Retry
 Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-10-19 (voice provider bake-off, ElevenLabs track)
+- Bake-off only, no decision (D-018 stands, Retell is the platform). Branch `claude/provider-test-elevenlabs`, folder `providers/elevenlabs/`. Twenty task 3.9 and the bake-off note are updated to match.
+- ElevenLabs work moved to the second account (blitz): agents `Alex | 11Labs | v1 strict prompt` and `v2 loose prompt`. Prompts now use text confirmation, one combined form confirmation, two earliest slots, full address (street, city, zip), noise handling and retry-once booking failure handling.
+- First scripted tests: flow good, booking failed (tool did not send the Cal.com location; phone went in as the literal placeholder). Fixed. Both agents now use ElevenLabs' native Cal.com tools on test event 7520336, whose location is a fixed line; the address goes in the booking notes. Production event 7404470 untouched.
+- Built inactive n8n workflow `11Labs | Outbound Speed to Lead` (`xlmyRd5jBBBu8LX7`, 35 nodes); Retell workflow renamed `Retell | Outbound Speed to Lead` (`tXJwNTkNgKGnp0Ab` name only). Never run. n8n Agents idea dropped.
+- Not verified: a real booking end to end, any text delivery (no text tool exists, KI-003). Next: Abdullah re-runs Script 1 on both agents, then scripts 3, 4, 6.
+
 ### 2026-10-13 (repo cleanup, docs caught up with Twenty)
 - Removed the dead `platform/crm` mock (SeldonFrame / Vercel era; Twenty is the CRM, D-006). Moved `BUILD_LOG.md`, `automations/lead-scrape`, and `automations/retell-trade-receptionist` to `archive/`. Removed empty skill folders and the duplicate `Claude Skills/_kynetic` copy. Skills that stay live are in `.claude/skills/`.
 - Parked Vapi (D-018): `VAPI_BUILDER_PROMPT.md` moved to `archive/vapi/`. Vapi workflows were renamed and deactivated.

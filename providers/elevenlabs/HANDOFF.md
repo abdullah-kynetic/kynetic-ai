@@ -1,20 +1,23 @@
-# ElevenLabs track: handoff (updated 2026-10-16)
+# ElevenLabs track: handoff (updated 2026-10-19)
 
 ## Context
-Voice-provider bake-off for Alex (outbound speed-to-lead, Kynetic Roofing demo). Retell is the current platform (D-018); Bland and ElevenLabs are being tested against the Retell control "Alex Lab". This is a bake-off, not a decision. Shared rules, persona and scorecard: `providers/TEST_PLAN.md`. Branch: `claude/provider-test-elevenlabs`.
+Voice-provider bake-off for Alex (outbound speed-to-lead, Kynetic Roofing demo). Retell is the current platform (D-018); this is a bake-off, not a decision. Shared rules, persona and scorecard: `providers/TEST_PLAN.md`. Branch: `claude/provider-test-elevenlabs`. Twenty: task 3.9 and the bake-off note.
 
-## State (2026-10-16, later)
-- Steps 1 to 4 done via API; full change log in RESULTS.md. Agent `agent_9301m52zy185e609f8vyws4r1r7q` now runs PROMPT.md (the earlier failure was a workflow override node, now removed). Tools check_availability and book_appointment created and attached; Cal.com slots call verified, booking call not yet exercised (real booking).
-- Docs sites remain blocked, so pause tag and `{{system__time}}` are unverified; `{{system__time}}` is accepted by the API but not confirmed to resolve. Check the first transcript.
-- Open question for Abdullah: LLM is `deepseek-v41-flash`, left as found. Say if a different one should be used.
+## State
+- Work is on the second ElevenLabs account (key env `ELEVENLABS_API_KEY_blitz`). Agents: v1 strict `agent_8201m5afn2rbeb7v29xfkhh1pjef` (PROMPT.md), v2 loose `agent_9701m5afn5rxehardsqttkq3pbjh` (PROMPT_V2.md). Old-account agents are snapshots only.
+- Both agents use the native Cal.com integration ("cal.com testing", API-integration connection `icxn_9201m5am6y02ehpvw4rndr4xzd6p`): `calcom_get_available_slots`, `calcom_create_booking` on test event 7520336 (location fixed; address in booking notes). Native tools are inline `api_integration_webhook` tools; PATCH of an agent prompt replaces built_in_tools, so re-send `end_call` and `voicemail_detection` after any prompt PATCH.
+- Prompts: text confirmation, combined form confirmation, two earliest slots, full address, noise handling, booking-failure handling, UTC to Pacific conversion.
+- Script 1 ran once on each prompt (see RESULTS.md runs 1 and 2). Booking failed from a tool fault, since fixed. No real booking has run end to end yet.
+- n8n draft `11Labs | Outbound Speed to Lead` (`xlmyRd5jBBBu8LX7`) is inactive and never run. See BUILD_MAP.md.
 
 ## Next steps
-1. Abdullah runs test call 1 (voice-email round); Claude pulls transcript, timing, cost via `GET /v1/convai/conversations`, scores it, fills RESULTS.md.
-2. First booking confirms the book_appointment body shape; fix if Cal.com rejects it.
-3. Continue rounds per README. Cancel test bookings only after asking Abdullah.
+1. Abdullah re-runs Script 1 on both agents (gives his own cell number when asked); Claude pulls transcripts and scores in RESULTS.md. Then scripts 3, 4, 6.
+2. Add a text-confirmation tool (stub first; real send after KI-003).
+3. Decide the LLM question (deepseek-v41-flash vs gpt-4.1).
+4. Wire n8n only if ElevenLabs wins.
 
 ## Hard rules
-No changes to Retell, n8n, Twenty, production Alex (agent_71e3cfc8384aa38a910a506b53), Nora, Emily, or Kynetic Restoration (Demo). Commit only under providers/elevenlabs/ plus shared notes in providers/TEST_PLAN.md. Never commit keys. Message Abdullah only with a result or one needed input.
+No changes to Retell, production Alex (agent_71e3cfc8384aa38a910a506b53), Nora, Emily, or Kynetic Restoration (Demo). Never change Cal.com event 7404470. Never commit keys. Cancel test bookings only after asking Abdullah.
 
 ## Prompt to resume
-> Continue the ElevenLabs track on branch claude/provider-test-elevenlabs. Read CLAUDE.md, providers/TEST_PLAN.md, providers/elevenlabs/HANDOFF.md, README.md, PROMPT.md, RESULTS.md, then follow the next steps in HANDOFF.md.
+> Continue the ElevenLabs track on branch claude/provider-test-elevenlabs. Read CLAUDE.md, providers/TEST_PLAN.md, providers/elevenlabs/HANDOFF.md, README.md, PROMPT.md, PROMPT_V2.md, RESULTS.md, then follow the next steps in HANDOFF.md.

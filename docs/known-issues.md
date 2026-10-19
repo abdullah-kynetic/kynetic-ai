@@ -18,7 +18,11 @@ Fix: replace with Twenty nodes, needs approval (task 3.2).
 The outbound post-call webhook has no header auth (Retell signs the request; the path is unguessable). The same gap covers the parked Vapi calendar webhook and Nora's 5 webhooks.
 Fix: add a header-auth secret on the outbound workflow (task 3.6). Do not modify Nora's webhooks. Keep this repo private until the outbound webhook is authenticated.
 
+### KI-006: ElevenLabs test agents promise a text that is never sent (medium)
+The bake-off agents tell the lead "you'll get a text with the details" but no text tool exists, and Cal.com only emails (the test event has no email). Fix: stub or Twilio text tool after KI-003 (task 1.3). Applies to the bake-off only, not Retell Alex.
+
 ## Gotchas
+- ElevenLabs bake-off: native Cal.com booking tool cannot send a location, so test event 7520336 uses a fixed location and the address goes in the notes. Slots come back in UTC; the prompts convert to Pacific. Production event 7404470 is shared by Retell and Bland: do not change it. Cancel test bookings only after Abdullah says so.
 - Never modify Nora (agent_4c34644a04c74e27253e80167b, n8n 2PFWFqBM0wabADk6).
 - Never add, remove, rename or change parameters of a Retell agent tool without approval of that specific change.
 - tools/retell.py dry-runs every write unless --apply is passed.
