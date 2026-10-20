@@ -45,3 +45,26 @@ Cost: Apify $0.31, Firecrawl about 40 credits, Muse $0. Treg: $0 at this point; 
 - Phones: matched Muse for Heirloom, Verified, Berry Good, Top Sun, and Bert and Pursuit (one of several). Johnny Walker differs ((940) 735-6944 vs Muse (940) 412-8994). Ruff: code found (346) 339-3405 where Muse had none.
 - What the code cannot do: judge geography (Ruff is Houston HQ, should stay DROP), read an AI receptionist claim (Johnny Walker), or decide which phone reaches the owner (Bert has three). Registry search by name is ambiguous for common words; it does not guess.
 - First-pass bug found by checking: loose BBB name matching attached other businesses' owners to DFW Roofing Inspections, MB Roofing and Pursuit. Fixed by requiring the first two distinctive name words in the BBB URL.
+
+## Screens added to the script, rescored offline (2026-10-20)
+`tools/lead_enrich.py` now runs three screens after the fetch, and `--rescore results.json out_dir` reruns them on saved results with no API calls (0 credits). Output: `docs/lead-engine-code-run/rescore-2026-10-20/` (adds `phone_report.csv`).
+- Geography/franchise: DFW core cities by BBB city or registry city, DFW area codes (214, 469, 972, 945, 817, 682, 940); never FL/OK; brand names checked against name and domain; franchise wording on the site goes to HOLD.
+- AI answering: home page HTML is scanned for AI answering or AI follow-up products (Alivo, Smith.ai, Goodcall, Hatch, Retell, Vapi and others) and "AI receptionist" wording, which goes to HOLD. Chat or booking widgets (Podium, GoHighLevel, Birdeye...) are only noted. A bot-check page is noted as "check not done". The saved results have no HTML, so this screen did not run in the rescore.
+- Phone report: each number with the sites it appears on. A number is picked only if it is the only one found, or the only one on two different sites; toll-free and FL/OK numbers are never picked.
+- Registry: several hits are narrowed by the trade word in the name, then by BBB city. On the saved candidates this picks the right entity for Johnny Walker, Verified and Berry Good (forfeited, RTT N) and leaves DFW Roofing Inspections ambiguous. It takes effect on the next live run.
+
+Rescore against the audited statuses (10 businesses):
+| Business | Audit | Old script | Rescore |
+|---|---|---|---|
+| Bert | DIAL_READY (confirm phone) | HOLD | HOLD (3 numbers, each on one site) |
+| Ruff | DROP | DIAL_READY | DROP (Houston, no DFW number) |
+| Heirloom | DIAL_READY | DIAL_READY | DIAL_READY (noted outside core) |
+| Johnny Walker | HOLD (AI receptionist) | DIAL_READY | DIAL_READY (miss: evidence is a Google post) |
+| Verified | DIAL_READY | DIAL_READY | DIAL_READY |
+| Berry Good | HOLD (forfeited) | DIAL_READY | DIAL_READY (expected HOLD on a live run, see registry) |
+| DFW Roofing Inspections | DROP | HOLD | HOLD (lead-gen suspect, needs Maps) |
+| MB Roofing | DROP | HOLD | HOLD (lead-gen suspect, needs Maps) |
+| Pursuit | HOLD | HOLD | HOLD |
+| Top Sun | DIAL_READY | HOLD | DIAL_READY (469 number on BBB and site; 407 FL number not dialed) |
+
+Exact matches went from 3 to 5 of 10. Wrong-direction calls (DIAL_READY where the audit says HOLD or DROP) went from 3 to 2. The other 3 are cautious HOLDs. No API calls; $0.
