@@ -21,3 +21,19 @@ Account: Apify user `kyneticai`, FREE plan, $5 monthly usage cap (cycle ends 202
 
 ## Muse batch (top 10 roofers by active ad count, excluding Joe Hall and Rainstone, already done)
 Bert Roofing Inc (30), Ruff Roofing (16), Heirloom Roofing & Restorations (12), Johnny Walker Roofing & Construction (11), Verified Roofing LLC (8), Berry Good Roofing (6), DFW Roofing Inspections (6), MB Roofing and Reconstruction (6), Pursuit Roofing & Construction (5), Top Sun Roofing & Foundation (5).
+
+## Muse batch result and audit (2026-10-20)
+Muse output: `docs/lead-engine-run-b-muse/pilot-batch-results.csv` (10 businesses).
+
+Independent checks:
+- Texas open data (franchise-tax permit holders) matches Muse's taxpayer numbers for Bert Roofing, Inc. (17522644784), Verified Roofing, LLC (32068529844, Bedford), Top Sun Roofing LLC (32088175297, SOS 0804905406), Heirloom Roofing & Restorations, LLC (32067054588), Johnny Walker Roofing & Construction, LLC (32085742685) and Berry Good Roofing and Efficiency LLC (32090825467). Berry Good's record shows right-to-transact "N", which agrees with Muse's FORFEITED flag; the registry city is Midlothian, Muse says Alvarado.
+- Bert's owner quote matches the live About page word for word.
+- Johnny Walker's site is behind a bot challenge, so the "Grace" AI receptionist claim (from a Google post) is unverified.
+- Muse's headline said 7 DIAL_READY; the CSV has 6.
+- Possible Muse miss: the registry lists PURSUIT ROOFING LLC (Southlake, formed 2025-04-12, right-to-transact N). Muse searched two other name variants. Not confirmed to be the Forney business.
+- Bert's phone is unresolved: Muse reports the site at (214) 321-9341; a Firecrawl link scrape of bertroofing.com showed tel 214-984-3018; ad copy shows 972-360-9690; Google shows (469) 382-9436.
+- Treg: one capped Hunter domain search for pursuitindustries.net returned 0 emails and cost $0.
+
+Audited statuses: DIAL_READY Bert (phone to confirm), Top Sun, Heirloom (Sherman, north of DFW core), Verified Roofing. HOLD Johnny Walker (already has an AI receptionist), Berry Good (forfeited), Pursuit (unconfirmed owner). DROP Ruff, DFW Roofing Inspections, MB Roofing.
+
+Cost: Apify $0.31, Firecrawl about 40 credits, Treg $0, Muse $0.
