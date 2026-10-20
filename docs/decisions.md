@@ -1,6 +1,6 @@
 # Decisions
 
-Mirror of the Twenty decision notes. If this disagrees with Twenty, Twenty wins. Do not reopen these without asking.
+Mirror of the Twenty decision notes. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one. Do not reopen these without asking.
 
 ## D-001: Price is $1,500 setup + $997/mo
 Status: superseded by D-017 (2026-10-13). Do not quote this price.
@@ -93,7 +93,7 @@ Why: Of 14 reviewed sources, 4 disclose, 3 do not, none give conversion data or 
 Consequence: Drop "Never mention AI" from the SolarShift prompt. Never deny being an AI. Counsel to confirm current AI-voice disclosure rules (task 1.4).
 
 ## D-012: Outbound v1 call handling
-Status: decided
+Status: decided. Item 2 (retry cadence) superseded by D-020 (2026-10-17); the rest stands.
 Date: 2026-10-06
 Why: Keeps v1 small and testable. (1) Hang up on voicemail, log as voicemail, retry; leaving a voicemail is TBD. (2) First call within about 60 seconds of form submit, retries at 5 min, 1 hour, next day, max 4 attempts, run by a scheduled sweeper over Twenty. (3) gpt-4.1 + 11labs-Cimo, revisit after test calls. (4) Human transfer deferred past v1. (5) Retell webhook filtered to the final analyzed event replaces the polling loop; structured outcome from Retell native post-call analysis; Twenty record ID passed in call metadata.
 
@@ -109,3 +109,30 @@ Status: decided
 Date: 2026-10-13
 Why: New voice work stays on Retell. The Vapi side experiment is parked. Its workflows were renamed and deactivated. The builder prompt is in `archive/vapi/` and is not a build spec.
 Workspaces: `abdullahblitz` is for new builds, including the Alex outbound agent. `kyneticai` is the older workspace and holds Nora and Emily. Nora stays frozen.
+Note (2026-10-17): the builder prompt named above was removed from main; see D-019.
+
+## D-019: Legacy material removed from main; recoverable via tag
+Status: decided
+Date: 2026-10-17
+Why: Main holds only current Kynetic AI material, organized around the four context files. Legacy material was removed from main, not moved to another repo. Recoverable via tag `archive/pre-reorg-2026-10-17`. No separate archive repo.
+Removed: `archive/` (Vapi prompt, lead-scrape flow, trade-receptionist export, SeldonFrame BUILD_LOG), the duplicate `Claude Skills/brand-profile-generator`, and the generic `deep-research` and `frontend-design` skills.
+
+## D-020: Outbound retry cadence and calling window are as built
+Status: decided
+Date: 2026-10-17
+Why: Abdullah chose the behavior the n8n workflow "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`) already has over the D-012 retry plan. Attempt 1 goes out on form submit. After a no-answer or voicemail on attempt 1, a fast retry runs about 90 seconds later; if it does not run, the 5-minute sweeper picks the lead up at +10 minutes. After a no-answer or voicemail on attempt 2, the next try is about 60 minutes later. Maximum 3 attempts. Calls only inside 8:00 to 21:00 in the lead's local time (time zone from ZIP, then area code); outside the window the lead is queued for the local morning.
+Replaced: D-012 item 2 (retries at 5 minutes, 1 hour and next day, maximum 4 attempts) and the 9:00 to 20:00 Pacific window in BUILD_PLAN.md. The rest of D-012 stands.
+Note: the first attempt was tested end to end on Oct 15. The retry path has not run yet.
+
+## D-021: Portal access is invite-only; Google sign-in is for clients only
+Status: decided
+Date: 2026-10-17
+Why: Abdullah wants only people he invites to be able to sign in, with no public sign-up. Industry practice (OWASP authentication and forgot-password cheat sheets, NIST SP 800-63B) is closed registration with single-use expiring invite tokens, generic responses that don't reveal who has an account, length-based password rules with a breached-password screen and no composition or rotation rules, and MFA with a recovery path for privileged users.
+Decided: Accounts are created only by an admin invite; the invitee sets their own password. Google sign-in is allowed only for a client user that already exists and has a verified matching Google email; it never creates accounts. Admins stay on password + TOTP (+ recovery codes) because an OAuth round trip cannot ask for TOTP.
+
+
+## D-022: The single portal deploy path is server-side `portal-deploy`; the `bob-box-ovh-vps` key keeps full root
+Status: decided
+Date: 2026-10-18
+Why: Abdullah said he is fine with the `bob-box-ovh-vps` key keeping full root on the VPS (KI-010) and left the choice of deploy path to Claude. `portal-deploy` is the one with a health check and automatic rollback, only deploys commits on `main`, and is already what the restricted `deploy` key and the GitHub Action run.
+Decided: Portal deploys go through `/usr/local/sbin/portal-deploy` (via the restricted `deploy` key). `portal/deploy/deploy.sh` is not used for routine deploys, because both overwrite `/opt/portal/src`. The `bob-box-ovh-vps` key keeps full administrator access.

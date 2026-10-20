@@ -1,0 +1,210 @@
+{
+  "W3dg1rJVsxDZ1154": {
+    "name": "#8 Invoice Follow Up | Summit Ridge Roofing Demo",
+    "bucket": "archive"
+  },
+  "ynf9BsV4zqT0bEI5": {
+    "name": "#9 Inbox Triage | Brightline Media Demo",
+    "bucket": "archive"
+  },
+  "ifPD88OdyLhupbp2": {
+    "name": "5 AI Agents",
+    "bucket": "archive"
+  },
+  "vDRli9T7urJ0xzMV": {
+    "name": "AI Analysis",
+    "bucket": "archive"
+  },
+  "KYQIVtxwDcXVKmk3": {
+    "name": "ARCHIVE - SolarShift template (n8n Facebook Ad Form)",
+    "bucket": "archive"
+  },
+  "Re972wVGyM09y5HZ": {
+    "name": "Attachment Text Extractor",
+    "bucket": "active"
+  },
+  "5AiEk5IK4rNh0aK4": {
+    "name": "backup hvac automation",
+    "bucket": "archive"
+  },
+  "MFbTct3TItnZHzhJ": {
+    "name": "DEMO HVAC Receptionist Riley",
+    "bucket": "active"
+  },
+  "VEFMgGLzMsFgC1V0": {
+    "name": "Dental Receptionist",
+    "bucket": "archive"
+  },
+  "k0WDnEKp1mWkEmi4": {
+    "name": "EMAIL ASSISTANT AGENT",
+    "bucket": "archive"
+  },
+  "0PwP1tUf4478lNbf": {
+    "name": "Emily Restoration Speed to Lead",
+    "bucket": "archive"
+  },
+  "F2zM6M7bCqLZnfP3": {
+    "name": "Great Clips AI Receptionist",
+    "bucket": "active"
+  },
+  "BRFsAhKbCSRm21KK": {
+    "name": "HUMAN IN THE LOOP AI SALES AGENT",
+    "bucket": "archive"
+  },
+  "LkXK5AFWXkVcL6rs": {
+    "name": "HVAC - Inbound Voice AI Agent",
+    "bucket": "archive"
+  },
+  "gBz73NKbJIOKFG2B": {
+    "name": "Investor Data Consolidation",
+    "bucket": "archive"
+  },
+  "dW2FxKtjHU7eKDbN": {
+    "name": "INVOICING PARSING AGENT",
+    "bucket": "archive"
+  },
+  "1X9m8GuekqoKE78a": {
+    "name": "Kynetic CRM -> Twenty Sync",
+    "bucket": "archive"
+  },
+  "DKrVLeGNqtxg3wpS": {
+    "name": "Kynetic CRM Email (Gmail via n8n)",
+    "bucket": "active"
+  },
+  "DaOVUpSChkjaNg3B": {
+    "name": "Kynetic Restoration — Inbound SMS Opt-Out Handler",
+    "bucket": "archive"
+  },
+  "oD88RhVrSF7FrSQ6": {
+    "name": "Kynetic — Appointment Setter",
+    "bucket": "archive"
+  },
+  "3orAiCNLOCJ7xglI": {
+    "name": "Kynetic — Lead Scrape (Apify → Notion Outreach)",
+    "bucket": "archive"
+  },
+  "9hFHRndsWStlqVYm": {
+    "name": "Kynetic — Missed-Call Text-Back",
+    "bucket": "archive"
+  },
+  "qMB6WUFHf5y7HPel": {
+    "name": "Kynetic — Reactivation Reply Handler",
+    "bucket": "archive"
+  },
+  "El2ku9XRVIwrbMBQ": {
+    "name": "Kynetic — Reactivation Sender",
+    "bucket": "archive"
+  },
+  "477BKA79couMRF51": {
+    "name": "Kynetic — Review Request + Response + Referral Chain",
+    "bucket": "archive"
+  },
+  "6F8XXOmCLJIlvHPS": {
+    "name": "My workflow 2",
+    "bucket": "archive"
+  },
+  "yCPqonTDtTSqP4bs": {
+    "name": "My workflow 3",
+    "bucket": "archive"
+  },
+  "KNgDBUKSBC47fSO8": {
+    "name": "My workflow 4",
+    "bucket": "archive"
+  },
+  "zLwEL5GNTLGlrksW": {
+    "name": "My workflow 5",
+    "bucket": "archive"
+  },
+  "JsvhvdRruRGv78MH": {
+    "name": "My workflow 6",
+    "bucket": "archive"
+  },
+  "74uXWWSNF3T997xK": {
+    "name": "My workflow 7",
+    "bucket": "archive"
+  },
+  "R3mF6lxO9L382fSM": {
+    "name": "My workflow 8",
+    "bucket": "archive"
+  },
+  "2KK3hCOFbH24hp45eMWE_": {
+    "name": "My workflow 9",
+    "bucket": "archive"
+  },
+  "1IhmLIp78hZoOjgP": {
+    "name": "N8N / Retell / Twillio / Trade Receptionist",
+    "bucket": "archive"
+  },
+  "PmFF3NZeeyXYsiiz": {
+    "name": "N8N / Retell / Twillio / Trade Receptionist",
+    "bucket": "archive"
+  },
+  "2PFWFqBM0wabADk6": {
+    "name": "Nora Restoration AI Receptionist",
+    "bucket": "active"
+  },
+  "m2YJwZ1l8DTzyEkw": {
+    "name": "Outbound Speed to Lead",
+    "bucket": "active"
+  },
+  "zeuXYovHQ4u75heS": {
+    "name": "Outbound Speed to Lead (Vapi)",
+    "bucket": "archive"
+  },
+  "EZeQXO1LiFtIBGb4": {
+    "name": "Pap Products - Telegram Inbound Agent",
+    "bucket": "active"
+  },
+  "6IZkQqfXbIZ4eY07": {
+    "name": "Pap Products — WhatsApp Lead Capture",
+    "bucket": "archive"
+  },
+  "EAQ1whwjHb6ntgeM": {
+    "name": "Porchlight Card: Ad Intake Form",
+    "bucket": "active"
+  },
+  "r15zGLOW6LVWuEOB": {
+    "name": "Porchlight Card: Payment Received",
+    "bucket": "active"
+  },
+  "AANCbsZrmEqiiTpa": {
+    "name": "Porchlight Card: Send Payment Link",
+    "bucket": "active"
+  },
+  "30jIv9KaQubQTZZ4": {
+    "name": "RAG AGENT",
+    "bucket": "archive"
+  },
+  "OZP3KKSZ6tgx04v1": {
+    "name": "Research Agent",
+    "bucket": "active"
+  },
+  "pC1whqZ7DNfTTQkF": {
+    "name": "Seekers Youth — WhatsApp AI Agent",
+    "bucket": "archive"
+  },
+  "l510HfB5hW06D480": {
+    "name": "Setup - Investor Test Data",
+    "bucket": "archive"
+  },
+  "05HI35dhaWXweO5i": {
+    "name": "TEMPLATE — Client Config Lookup",
+    "bucket": "active"
+  },
+  "c4wDiziRm7e5ikZ7": {
+    "name": "VAPI COPY - do not use (was Outbound Speed to Lead (Retell))",
+    "bucket": "archive"
+  },
+  "L4MqMMIa8aNAwdmA": {
+    "name": "WF — Seekers Approval Handler",
+    "bucket": "active"
+  },
+  "YEjOwG1Aq6ORIlIc": {
+    "name": "WF — Seekers Youth Staff Bot",
+    "bucket": "active"
+  },
+  "UFvcMjFZPAGKA1aK": {
+    "name": "Zip Attachments",
+    "bucket": "active"
+  }
+}

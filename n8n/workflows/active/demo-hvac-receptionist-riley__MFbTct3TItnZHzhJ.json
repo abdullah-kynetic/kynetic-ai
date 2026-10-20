@@ -1,0 +1,622 @@
+{
+  "active": true,
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Riley",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "Riley",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Retell Inbound": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Switch",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Riley": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond to Retell",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Edit Fields",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "End of Call Report",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "bookAppointment": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "Riley",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "checkAvailability": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "Riley",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "newLead": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "Riley",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "MFbTct3TItnZHzhJ",
+  "name": "DEMO HVAC Receptionist Riley",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "mkRROm01AAPHp2CU",
+          "name": "Kynetic AI Abdullah Cal"
+        }
+      },
+      "id": "8f4641b8-47d6-4416-ae08-ed6c9067f320",
+      "name": "checkAvailability",
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "cachedResultName": "Southern Comfort HVAC - Demo Appointments",
+          "mode": "list",
+          "value": "c_34ad7db17166710d4dc4a1eb00ff7e6ab5855965c14b8ef5fb5a689d28ad6ff7@group.calendar.google.com"
+        },
+        "operation": "getAll",
+        "options": {},
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Before', ``, 'string') }}",
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('After', ``, 'string') }}"
+      },
+      "position": [
+        752,
+        224
+      ],
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "bccda1eb-aa21-4d25-8711-308ea6f6d691",
+      "name": "newLead",
+      "parameters": {
+        "columns": {
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Timestamp",
+              "id": "Timestamp",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Name",
+              "id": "Name",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Phone",
+              "id": "Phone",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Email",
+              "id": "Email",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Service Address",
+              "id": "Service Address",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Service Interest",
+              "id": "Service Interest",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Urgency Level",
+              "id": "Urgency Level",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Notes",
+              "id": "Notes",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Appointment Booked",
+              "id": "Appointment Booked",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Lead Source",
+              "id": "Lead Source",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "Appointment Booked": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Appointment_Booked', ``, 'string') }}",
+            "Email": "={{ $fromAI('customerEmail') }}",
+            "Lead Source": "Voice AI",
+            "Name": "={{ $fromAI('customerName') }}",
+            "Notes": "={{ $fromAI('notes') }}",
+            "Phone": "={{ $fromAI('customerPhone') }}",
+            "Service Address": "={{ $fromAI('serviceAddress') }}",
+            "Service Interest": "={{ $fromAI('serviceInterest') }}",
+            "Timestamp": "={{ $fromAI('Timestamp', ``, 'string') }}",
+            "Urgency Level": "={{ $fromAI('urgencyLevel') }}"
+          }
+        },
+        "documentId": {
+          "__rl": true,
+          "cachedResultName": "DEMO Southern Comfort HVAC - Voice AI CRM",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15kR_qaq0T6OO4epSXmjPGLZPw7ed9ioxTs9z1SmwZlQ/edit?usp=drivesdk",
+          "mode": "list",
+          "value": "15kR_qaq0T6OO4epSXmjPGLZPw7ed9ioxTs9z1SmwZlQ"
+        },
+        "operation": "append",
+        "options": {},
+        "sheetName": {
+          "__rl": true,
+          "cachedResultName": "Lead Capture",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15kR_qaq0T6OO4epSXmjPGLZPw7ed9ioxTs9z1SmwZlQ/edit#gid=0",
+          "mode": "list",
+          "value": "gid=0"
+        }
+      },
+      "position": [
+        1120,
+        224
+      ],
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6
+    },
+    {
+      "id": "280738e6-83e0-4724-adcd-32c551c88c68",
+      "name": "Switch",
+      "parameters": {
+        "options": {},
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "b0c45d93-e6de-451d-bcaf-5f4d395f36b0",
+                    "leftValue": "={{ $json.body.name }}",
+                    "operator": {
+                      "operation": "notEmpty",
+                      "singleValue": true,
+                      "type": "string"
+                    },
+                    "rightValue": "call"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                }
+              },
+              "outputKey": "Tool Calls",
+              "renameOutput": true
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "444935d1-fac0-4a6b-a5ed-528979f66874",
+                    "leftValue": "={{ $json.body.call.call_status }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "ended"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                }
+              },
+              "outputKey": "End Of Call Report",
+              "renameOutput": true
+            }
+          ]
+        }
+      },
+      "position": [
+        -224,
+        112
+      ],
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8c8OFuvMVgiSRhDv",
+          "name": "Kynetic AI Google Sheets"
+        }
+      },
+      "id": "becb7167-5853-45ee-b22c-eec6e15fb167",
+      "name": "End of Call Report",
+      "parameters": {
+        "columns": {
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "customerNumber"
+          ],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "customerNumber",
+              "id": "customerNumber",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "name",
+              "id": "name",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "inquiryType",
+              "id": "inquiryType",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "success",
+              "id": "success",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "summary",
+              "id": "summary",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "transcript",
+              "id": "transcript",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "endedReason",
+              "id": "endedReason",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "calledAt",
+              "id": "calledAt",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "calledAt": "={{ $json.body.message.startedAt }}",
+            "customerNumber": "={{ $('Retell Inbound').item.json.body.message.customer.number }}",
+            "endedReason": "={{ $json.body.message.endedReason }}",
+            "inquiryType": "={{ $json.body.message.analysis.structuredData.inquiryType }}",
+            "name": "={{ $json.body.message.analysis.structuredData.name }}",
+            "success": "={{ $json.body.message.analysis.successEvaluation }}",
+            "summary": "={{ $json.body.message.analysis.summary }}",
+            "transcript": "={{ $json.body.message.artifact.transcript }}"
+          }
+        },
+        "documentId": {
+          "__rl": true,
+          "cachedResultName": "DEMO Southern Comfort HVAC - Voice AI CRM",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15kR_qaq0T6OO4epSXmjPGLZPw7ed9ioxTs9z1SmwZlQ/edit?usp=drivesdk",
+          "mode": "list",
+          "value": "15kR_qaq0T6OO4epSXmjPGLZPw7ed9ioxTs9z1SmwZlQ"
+        },
+        "operation": "append",
+        "options": {},
+        "sheetName": {
+          "__rl": true,
+          "cachedResultName": "End of Call Reports",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_0Z2Zcfe8TGCreEDDj40fw1-uRe9PfIwVjfAMghGN30/edit#gid=1625688687",
+          "mode": "list",
+          "value": 1625688687
+        }
+      },
+      "position": [
+        208,
+        208
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6
+    },
+    {
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "mkRROm01AAPHp2CU",
+          "name": "Kynetic AI Abdullah Cal"
+        }
+      },
+      "id": "ec3cc45c-f579-44c9-83bd-5230abc66d7c",
+      "name": "bookAppointment",
+      "parameters": {
+        "additionalFields": {
+          "attendees": [],
+          "description": "={{ $fromAI('description') }}",
+          "location": "={{ $fromAI('formattedAddress') }}",
+          "summary": "={{ $fromAI('title') }}"
+        },
+        "calendar": {
+          "__rl": true,
+          "cachedResultName": "Southern Comfort HVAC - Demo Appointments",
+          "mode": "list",
+          "value": "c_34ad7db17166710d4dc4a1eb00ff7e6ab5855965c14b8ef5fb5a689d28ad6ff7@group.calendar.google.com"
+        },
+        "end": "={{$fromAI('endTime')}}",
+        "start": "={{$fromAI('startTime')}}"
+      },
+      "position": [
+        944,
+        224
+      ],
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3
+    },
+    {
+      "credentials": {
+        "openRouterApi": {
+          "id": "j1QuXeG7ZrLyJEDj",
+          "name": "OpenRouter account"
+        }
+      },
+      "id": "196c02e6-c2f8-4fbc-84c8-250daec69c5b",
+      "name": "OpenRouter Chat Model",
+      "parameters": {
+        "model": "google/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "position": [
+        608,
+        224
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1
+    },
+    {
+      "id": "83128505-0882-43ef-84d5-ced3967a77df",
+      "name": "Riley",
+      "parameters": {
+        "options": {
+          "systemMessage": "=## Role\n\nYou are Riley, the backend assistant for Southern Comfort Heating & Air Services.  \nYour role is to process validated tool calls issued by the Retell voice agent.  \nYou are responsible for verifying input, executing tools correctly, and returning structured output.  \nYou do not speak or engage with users directly.\n\n---\n\n## Information Extraction Guidelines\n\nThe conversation transcript contains all customer information you need. Extract data as follows:\n\n**Customer Information:**\n- Name: Look for agent confirmations like \"Your name is...\" or direct user statements\n- Phone: Look for spoken digits or agent confirmations like \"Your phone number is...\"\n- Address: Full street address with city and zip code\n- Email: May not always be present (optional)\n\n**Service Details:**\n- Service type: AC maintenance, emergency repair, installation, etc.\n- Urgency: Emergency vs standard service\n- Date preference: May be specific date or relative (\"today\", \"tomorrow\", \"soonest available\", \"next week\")\n- Time preference: Specific time, time range, or \"anytime\"\n\n**Date Interpretation:**\n- \"Today\" = the date in currentDateTime\n- \"Tomorrow\" = one day after currentDateTime  \n- \"Soonest available\" = check starting from currentDateTime\n- \"Next [day]\" = calculate from currentDateTime\n- Specific dates = use as stated\n\n---\n\n## Tool Handling Rules\n\n### 1. check_availability\n\n**When to use:**\n- Customer requests availability check\n- Before booking to verify slot is open\n- When asked about open time slots\n\n**Requirements:**\n- Date to check (extract from transcript or use currentDateTime for \"today\"/\"soonest\")\n- Time range (morning, afternoon, evening, or \"full day\" if not specified)\n\n**Business Hours:**\n- Weekdays: 7:00 AM to 6:00 PM\n- Weekends: 7:00 AM to 3:00 PM\n- Emergency services: 24/7\n\n**Tool Response:**\nThis tool retrieves booked appointments, which tells you what times are NOT booked (available).\n\n**Return format:**\n- `available: true` if requested slot is open\n- `available: false` if requested slot is taken\n- List of booked time slots in the requested range (so you know what's available)\n\n**Output Examples:**\n- \"I can see that 2:00 PM on Tuesday is available. Would you like me to book it?\"\n- \"That time slot is already taken. I have 3:00 PM or 4:30 PM available instead.\"\n- \"Tuesday morning is wide open. We have 8:00 AM, 9:00 AM, 10:00 AM, and 11:00 AM available.\"\n\n---\n\n### 2. book_appointment\n\n**When to use:**\n- Customer confirms they want to book\n- Availability has been checked and confirmed\n- All required information is collected\n\n**Requirements - ALL must be present:**\n- Customer name\n- Phone number\n- Email address (optional)\n- Full service address (street, city, zip)\n- Service type\n- Urgency level (emergency or standard)\n- Appointment date\n- Appointment time\n\n**Validation Rules:**\n- Requested time must have been confirmed as available\n- Emergency services: can book any time (24/7)\n- Non-emergency services: must fall within business hours\n  - Weekdays: 7:00 AM to 6:00 PM\n  - Weekends: 7:00 AM to 3:00 PM\n- Cannot book over an existing event\n- Cannot book appointments in the past\n\n**Appointment Durations:**\n- Emergency Repair: 90 minutes\n- Standard Repair: 60 minutes\n- Maintenance Service: 45 minutes\n- Installation Consultation: 60 minutes\n- Indoor Air Quality Service: 45 minutes\n- Energy Audit: 60 minutes\n\n**Start/End Time Calculation:**\nCalculate start and end times using ISO 8601 format with timezone offsets:\n- March through November (Daylight Savings): Use -05:00 (CDT)\n- November through March (Standard Time): Use -06:00 (CST)\n\nExample: If booking \"2:00 PM on June 15, 2026\" for Maintenance Service (45 min):\n- Start: 2026-06-15T14:00:00-05:00\n- End: 2026-06-15T14:45:00-05:00\n\n**Output Examples:**\n- \"Perfect! I've scheduled your Emergency Repair for today at 2:00 PM. You should receive a confirmation text shortly.\"\n- \"Your Maintenance Service is booked for Tuesday, January 14th at 9:00 AM at 8834 Westheimer Road.\"\n- \"All set! Your Installation Consultation is scheduled for Thursday at 2:00 PM. You'll receive a confirmation shortly.\"\n\n---\n\n### 3. capture_lead\n\n**When to use:**\n- Customer provides contact info but isn't ready to book\n- Customer has questions only (no booking requested)\n- After successful booking (log their info)\n- As fallback when booking fails\n\n**Requirements - Minimum needed:**\n- Customer name\n- Phone number\n\n**Optional but recommended:**\n- Email address\n- Service address\n- Service interest\n- Urgency level\n- Notes (callback time, specific concerns, reason for delay)\n\n**Trigger immediately when:**\n- Name AND phone are collected\n- Even if no appointment is requested\n- Even if booking was successful (capture anyway for records)\n\n**Output Examples:**\n- \"I've got all your information. Someone from our team will reach out to you within 30 minutes.\"\n- \"Your information has been captured. We'll follow up with you shortly.\"\n- \"Got it—we have your details and will get back to you today.\"\n\n---\n\n## Error Handling\n\nIf a tool call fails or data is incomplete:\n\n**Rules:**\n1. Do not make assumptions - return an error message\n2. Specify exactly what information is missing\n3. Never execute partial bookings\n4. For capture_lead: only skip if BOTH name AND phone are missing\n\n**Error Response Examples:**\n- \"Unable to book appointment - customer phone number is required\"\n- \"Cannot check availability - no date specified in conversation\"\n- \"Booking failed - requested time is outside business hours (7:00 AM to 6:00 PM on weekdays, 7:00 AM to 3:00 PM on weekends)\"\n- \"Cannot book - that time slot is already taken\"\n- \"Missing required field: customer address not found in transcript\"\n\n---\n\n## Output Format Guidelines\n\n**Your responses should be:**\n- Short and natural (1-2 sentences)\n- Speakable by the voice agent to the customer\n- Confirmation-focused (state what was done)\n- Specific (include relevant details: date, time, service type)\n\n**Do NOT:**\n- Explain the process\n- Use technical jargon\n- Reference internal systems\n- Ask follow-up questions (the voice agent handles that)\n\nYour job is to execute the tool and return a clean confirmation or error message."
+        },
+        "promptType": "define",
+        "text": "=Use the below information to execute the requested tool call. Extract all necessary data from the conversation transcript. Some fields may need to be inferred from context.\n\n---\n\n### Tool Called:\n{{ $json.allToolNames }}\n\n---\n\n### Current Date & Time:\n{{ $json.currentDateTime }}\n\n---\n\n### Full Conversation Transcript:\n{{ $json.transcript }}\n\n---\n\n## Your Task:\n\nRead the transcript above and extract the information required for the {{ $json.allToolNames }} function.\n\n**Key extraction points:**\n- Customer details are typically confirmed by the agent (name, phone, address)\n- Service requests are stated by the user or confirmed by the agent\n- Date/time preferences may be specific (\"Tuesday at 2pm\") or relative (\"tomorrow\", \"soonest available\")\n- Use the Current Date & Time above as your reference for \"today\" when interpreting relative dates\n\nExecute the tool with extracted information and return your response according to the system guidelines."
+      },
+      "position": [
+        800,
+        0
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2
+    },
+    {
+      "id": "2c419524-3ae1-44a6-9943-ebd58ce3c457",
+      "name": "Retell Inbound",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {},
+        "path": "hvac-demo-retell-inbound",
+        "responseMode": "responseNode"
+      },
+      "position": [
+        -448,
+        112
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "webhookId": "11610f5b-6869-400a-9853-2c6bd78c4cd2"
+    },
+    {
+      "id": "b28d0171-57d3-42f5-a88b-261cb8f236e7",
+      "name": "Respond to Retell",
+      "parameters": {
+        "options": {},
+        "respondWith": "json",
+        "responseBody": "={{ $json.output }}"
+      },
+      "position": [
+        1328,
+        0
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1
+    },
+    {
+      "id": "4920253c-be13-4a29-926d-e66956bebaec",
+      "name": "Edit Fields",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0d8d41a6-d522-4928-bee2-49e5c8c09507",
+              "name": "allToolNames",
+              "type": "string",
+              "value": "={{ $json.body.name }}"
+            },
+            {
+              "id": "b6052162-639b-4d75-b7b5-33ff23b11bdb",
+              "name": "transcript",
+              "type": "string",
+              "value": "={{ $json.body.call.transcript }}"
+            },
+            {
+              "id": "f7e6af94-09bd-45a3-9d4f-18318b61f4bd",
+              "name": "latestToolCallId",
+              "type": "string",
+              "value": "={{ 'call_' + Date.now() }}"
+            },
+            {
+              "id": "f9ec7d59-4dc8-4caa-870e-6a57969e2819",
+              "name": "currentDateTime",
+              "type": "string",
+              "value": "={{ new Date().toLocaleString('en-US', { timeZone: 'America/Chicago', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        224,
+        0
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    }
+  ],
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

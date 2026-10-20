@@ -1,0 +1,686 @@
+{
+  "active": false,
+  "connections": {
+    "Combine Lead and Contact Data": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Returning Customer?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Create Lead Log Entry": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Format Lead Card",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Create New Contact": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Restore Lead Data After Create",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Extract WhatsApp Message": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Valid WA Message?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Format Lead Card": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Send Lead Card to Owner",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Look Up Contact by Phone": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Combine Lead and Contact Data",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Normalize WhatsApp Lead": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Look Up Contact by Phone",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Parse WA with Claude": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Normalize WhatsApp Lead",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Restore Lead Data After Create": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create Lead Log Entry",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Returning Customer (no action)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create Lead Log Entry",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Returning Customer?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Returning Customer (no action)",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Create New Contact",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Send Lead Card to Owner": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "WhatsApp Source?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Valid WA Message?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Parse WA with Claude",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Respond Verification",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "WhatsApp Source?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Send Customer Confirmation",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "No Customer Reply",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Extract WhatsApp Message",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "6IZkQqfXbIZ4eY07",
+  "name": "Pap Products — WhatsApp Lead Capture",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "8ab83ea2-164d-4b31-b7b3-579b8e4b7f39",
+      "name": "Extract WhatsApp Message",
+      "parameters": {
+        "jsCode": "const body = $input.item.json.body || $input.item.json;\nif (body['hub.challenge']) return { skip: true, challenge: String(body['hub.challenge']) };\ntry {\n  const val = body.entry?.[0]?.changes?.[0]?.value;\n  const msg = val?.messages?.[0];\n  if (!msg || val?.statuses) return { skip: true, challenge: '' };\n  return {\n    skip: false,\n    challenge: '',\n    from_phone: (msg.from || '').replace(/\\D/g,''),\n    profile_name: val?.contacts?.[0]?.profile?.name || '',\n    message_body: msg.text?.body || ''\n  };\n} catch(e) { return { skip: true, challenge: '' }; }",
+        "mode": "runOnceForEachItem"
+      },
+      "position": [
+        224,
+        192
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "df5684c5-7b72-4b3d-82db-edd44e2f8d03",
+      "name": "Valid WA Message?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.skip }}",
+              "operator": {
+                "operation": "equals",
+                "type": "string"
+              },
+              "rightValue": "false"
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        448,
+        192
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "openRouterApi": {
+          "id": "j1QuXeG7ZrLyJEDj",
+          "name": "OpenRouter account"
+        }
+      },
+      "id": "4be411e2-e7a6-4d9a-9d5e-fad94a79b3f8",
+      "name": "Parse WA with Claude",
+      "parameters": {
+        "authentication": "predefinedCredentialType",
+        "jsonBody": "={ \"model\": \"anthropic/claude-sonnet-4-6\", \"messages\": [{ \"role\": \"system\", \"content\": \"Extract order info from this WhatsApp message. Return ONLY a JSON object with fields: business_name (string), contact_name (string), products_needed (string), quantity (string), urgency (one of: ASAP, This week, Just browsing). Use empty string for unknown fields.\" }, { \"role\": \"user\", \"content\": \"Sender name: {{ $json.profile_name }}\\nMessage: {{ $json.message_body }}\" }], \"response_format\": { \"type\": \"json_object\" } }",
+        "method": "POST",
+        "nodeCredentialType": "openRouterApi",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "https://openrouter.ai/api/v1/chat/completions"
+      },
+      "position": [
+        672,
+        96
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3
+    },
+    {
+      "id": "0558666e-b31b-4633-887f-e9b371d659bf",
+      "name": "Normalize WhatsApp Lead",
+      "parameters": {
+        "jsCode": "let parsed = {};\ntry { parsed = JSON.parse($('Parse WA with Claude').item.json.choices[0].message.content || '{}'); } catch(e) {}\nconst raw = $('Extract WhatsApp Message').item.json;\nreturn {\n  source: 'WhatsApp',\n  phone: raw.from_phone || '',\n  business_name: parsed.business_name || raw.profile_name || '',\n  contact_name: parsed.contact_name || raw.profile_name || '',\n  products_needed: parsed.products_needed || '',\n  quantity: parsed.quantity || '',\n  urgency: parsed.urgency || 'Unknown',\n  raw_content: (raw.message_body || '').slice(0, 2000),\n  reply_to_phone: raw.from_phone || ''\n};",
+        "mode": "runOnceForEachItem"
+      },
+      "position": [
+        896,
+        96
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "3feacab1-bd28-4314-8a0f-4ba7c541a0f8",
+      "name": "Look Up Contact by Phone",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "e56f034a12f649f0898f332368e403a1"
+        },
+        "filterType": "json",
+        "limit": 1,
+        "operation": "getAll",
+        "options": {},
+        "resource": "databasePage"
+      },
+      "position": [
+        1120,
+        96
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "d13690ad-1a15-447d-b0d9-5cf1ab044295",
+      "name": "Combine Lead and Contact Data",
+      "parameters": {
+        "jsCode": "const lead = $('Normalize WhatsApp Lead').item.json;\nconst notion = $input.item.json;\nconst contactId = notion.id || '';\nreturn { ...lead, contact_id: contactId, is_returning: !!contactId };",
+        "mode": "runOnceForEachItem"
+      },
+      "position": [
+        1344,
+        96
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "5dbd01db-23bd-4879-adaf-51a174b561a8",
+      "name": "Returning Customer?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.is_returning }}",
+              "operator": {
+                "operation": "equals",
+                "type": "string"
+              },
+              "rightValue": "true"
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        1568,
+        96
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "3238cfde-1d21-49db-92ce-37ab016278a6",
+      "name": "Returning Customer (no action)",
+      "parameters": {
+        "assignments": {
+          "assignments": []
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "position": [
+        2016,
+        0
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "e14118a5-1d48-4c82-b337-7b005b4a4735",
+      "name": "Create Lead Log Entry",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "8e452c97914a4ff4b556cc3715494ba3"
+        },
+        "options": {},
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Source|select",
+              "selectValue": "={{ $json.source }}",
+              "type": "select"
+            },
+            {
+              "key": "Business Name|rich_text",
+              "textContent": "={{ $json.business_name }}",
+              "type": "rich_text"
+            },
+            {
+              "key": "Contact Name|rich_text",
+              "textContent": "={{ $json.contact_name }}",
+              "type": "rich_text"
+            },
+            {
+              "key": "Phone|phone_number",
+              "phoneValue": "={{ $json.phone }}",
+              "type": "phone_number"
+            },
+            {
+              "key": "Products Needed|rich_text",
+              "textContent": "={{ $json.products_needed }}",
+              "type": "rich_text"
+            },
+            {
+              "key": "Quantity|rich_text",
+              "textContent": "={{ $json.quantity }}",
+              "type": "rich_text"
+            },
+            {
+              "key": "Urgency|select",
+              "selectValue": "={{ $json.urgency }}",
+              "type": "select"
+            },
+            {
+              "key": "Status|select",
+              "selectValue": "New",
+              "type": "select"
+            },
+            {
+              "key": "Raw Content|rich_text",
+              "textContent": "={{ $json.raw_content }}",
+              "type": "rich_text"
+            },
+            {
+              "checkboxValue": "={{ $json.is_returning }}",
+              "key": "Returning Customer|checkbox",
+              "type": "checkbox"
+            },
+            {
+              "date": "={{ $now.toISO() }}",
+              "key": "Timestamp|date",
+              "type": "date"
+            }
+          ]
+        },
+        "resource": "databasePage",
+        "title": "={{ $json.business_name }} – {{ $now.toFormat(\"MMM d\") }} – {{ $json.source }}"
+      },
+      "position": [
+        2240,
+        96
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "bf6696f7-cdcd-490e-8900-718efe56a556",
+      "name": "Format Lead Card",
+      "parameters": {
+        "jsCode": "let lead = {};\ntry { lead = $('Restore Lead Data After Create').item.json; } catch(e) {}\nif (!lead.phone) { try { lead = $('Returning Customer (no action)').item.json; } catch(e) {} }\n\nconst notionUrl = $input.item.json.url || '';\nconst returning = lead.is_returning ? '🔁 Returning customer' : '🆕 New customer';\nconst card = [\n  '🔔 New Lead — Pap Products',\n  'Source: ' + (lead.source || ''),\n  'Business: ' + (lead.business_name || ''),\n  'Contact: ' + (lead.contact_name || '') + ' · ' + (lead.phone || ''),\n  'Needs: ' + (lead.products_needed || ''),\n  'Qty: ' + (lead.quantity || ''),\n  'Urgency: ' + (lead.urgency || ''),\n  returning,\n  notionUrl ? 'Notion: ' + notionUrl : ''\n].filter(Boolean).join('\\n');\n\nreturn { ...lead, lead_card_text: card, notion_url: notionUrl };",
+        "mode": "runOnceForEachItem"
+      },
+      "position": [
+        2464,
+        96
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "whatsAppApi": {
+          "id": "ZXcl12npJO7pqFhO",
+          "name": "pap Demo"
+        }
+      },
+      "id": "0064d087-d32c-4d8f-b98e-81d89ba12e0b",
+      "name": "Send Lead Card to Owner",
+      "parameters": {
+        "additionalFields": {},
+        "operation": "send",
+        "phoneNumberId": "1100979796433743",
+        "recipientPhoneNumber": "+19084779490",
+        "textBody": "={{ $json.lead_card_text }}"
+      },
+      "position": [
+        2688,
+        96
+      ],
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "webhookId": "fcec1548-35b0-428c-a35a-2e023eb32740"
+    },
+    {
+      "id": "4a52a8cf-93d0-4ed5-b4c0-927f4ab176ed",
+      "name": "WhatsApp Source?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.source }}",
+              "operator": {
+                "operation": "equals",
+                "type": "string"
+              },
+              "rightValue": "WhatsApp"
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        2912,
+        96
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "whatsAppApi": {
+          "id": "ZXcl12npJO7pqFhO",
+          "name": "pap Demo"
+        }
+      },
+      "id": "29185289-94e3-4d33-ade3-6587d4c148d8",
+      "name": "Send Customer Confirmation",
+      "parameters": {
+        "additionalFields": {},
+        "operation": "send",
+        "recipientPhoneNumber": "={{ $json.reply_to_phone }}",
+        "textBody": "=Thanks for reaching out to Pap Products! We received your request for {{ $json.products_needed }}. The owner will follow up with you shortly — usually within the hour. 📦"
+      },
+      "position": [
+        3136,
+        0
+      ],
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "webhookId": "6e14ed88-94a0-4cc0-918c-8181511377c4"
+    },
+    {
+      "id": "fbb9ff00-cf54-470a-a6e0-f7d6d9341f9f",
+      "name": "No Customer Reply",
+      "parameters": {},
+      "position": [
+        3136,
+        192
+      ],
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "ed028263-e2e4-416a-a70c-3ce390414e9e",
+      "name": "Create New Contact",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "e56f034a12f649f0898f332368e403a1"
+        },
+        "options": {},
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Phone|phone_number",
+              "phoneValue": "={{ $json.phone }}",
+              "type": "phone_number"
+            },
+            {
+              "key": "Business Name|rich_text",
+              "textContent": "={{ $json.business_name }}",
+              "type": "rich_text"
+            },
+            {
+              "key": "Contact Name|rich_text",
+              "textContent": "={{ $json.contact_name }}",
+              "type": "rich_text"
+            },
+            {
+              "key": "Channel|select",
+              "selectValue": "={{ $json.source }}",
+              "type": "select"
+            },
+            {
+              "key": "Total Interactions|number",
+              "numberValue": 1,
+              "type": "number"
+            },
+            {
+              "date": "={{ $now.toISO() }}",
+              "key": "First Contact|date",
+              "type": "date"
+            }
+          ]
+        },
+        "resource": "databasePage",
+        "title": "={{ $json.business_name }} – {{ $json.contact_name }}"
+      },
+      "position": [
+        1792,
+        192
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "29357521-cf39-4a14-aac4-007554a7739d",
+      "name": "Restore Lead Data After Create",
+      "parameters": {
+        "jsCode": "const lead = $('Combine Lead and Contact Data').item.json;\nconst newPage = $input.item.json;\nreturn { ...lead, contact_id: newPage.id || '', is_returning: false };",
+        "mode": "runOnceForEachItem"
+      },
+      "position": [
+        2016,
+        192
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "9d5dd87f-cb5a-43f0-83bd-3605828ed65c",
+      "name": "Respond Verification",
+      "parameters": {
+        "options": {},
+        "respondWith": "text",
+        "responseBody": "={{ $json.challenge }}"
+      },
+      "position": [
+        672,
+        288
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5
+    },
+    {
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "wGjdpRqym1iAijoe",
+          "name": "pap Demo"
+        }
+      },
+      "id": "ecc02d84-64ba-4cf6-9334-f2af62103f20",
+      "name": "WhatsApp Trigger",
+      "parameters": {
+        "options": {
+          "messageStatusUpdates": [
+            "all"
+          ]
+        },
+        "updates": [
+          "messages"
+        ]
+      },
+      "position": [
+        -64,
+        192
+      ],
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "webhookId": "2dcfc102-9752-4f09-9404-6e06e43e7253"
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "binaryMode": "separate",
+    "executionOrder": "v1"
+  }
+}

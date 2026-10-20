@@ -1,5 +1,5 @@
 # Agent Instructions
 
-The instructions for this repo are in `CLAUDE.md`. Rules, IDs, pricing, and the Retell workspaces are in `KYNETIC_CONTEXT.md`. Read both before changing anything.
+The instructions for this repo are in `CLAUDE.md`. Read it first. The four files it names are `docs/progress.md`, `docs/decisions.md`, `docs/known-issues.md` and `KYNETIC_CONTEXT.md` (rules, IDs, pricing, Retell workspaces).
 
-Twenty is the system of record. `docs/progress.md`, `docs/decisions.md`, and `docs/known-issues.md` mirror it. If they disagree with Twenty, Twenty wins.
+Twenty CRM is canonical; those files mirror it. On a mismatch, flag it rather than silently picking one.

@@ -1,0 +1,210 @@
+{
+  "active": false,
+  "connections": {
+    "Find Contact by Phone": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Set SMS Opt-Out",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Inbound SMS": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Is Opt-Out Keyword?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Is Opt-Out Keyword?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Find Contact by Phone",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Set SMS Opt-Out": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Send Opt-Out Confirmation",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "DaOVUpSChkjaNg3B",
+  "name": "Kynetic Restoration — Inbound SMS Opt-Out Handler",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "36b6c9de-d0d4-48ca-b5ca-fb086ee9886f",
+      "name": "Inbound SMS",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {},
+        "path": "kynetic-restoration-sms-optout"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "webhookId": "a9bafb2e-f93e-46a4-b61b-b43fad0f093a"
+    },
+    {
+      "id": "0a4b491d-1290-4427-a357-de6862151897",
+      "name": "Is Opt-Out Keyword?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ ['STOP','STOPALL','UNSUBSCRIBE','CANCEL','END','QUIT'].includes((($json.body && $json.body.Body) || '').trim().toUpperCase()) }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          }
+        }
+      },
+      "position": [
+        224,
+        0
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "1294cb23-f30a-4b8d-a996-6c0b7d5ad3f9",
+      "name": "Find Contact by Phone",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "cachedResultName": "Contacts",
+          "mode": "id",
+          "value": "ab554e24-f46f-47fe-aab1-3d121823e0a8"
+        },
+        "filterType": "manual",
+        "filters": {
+          "conditions": [
+            {
+              "condition": "equals",
+              "key": "Phone|phone_number",
+              "phoneNumberValue": "={{ $('Inbound SMS').item.json.body.From }}",
+              "type": "phone_number"
+            }
+          ]
+        },
+        "limit": 1,
+        "matchType": "allFilters",
+        "operation": "getAll",
+        "options": {},
+        "resource": "databasePage",
+        "returnAll": false,
+        "simple": true
+      },
+      "position": [
+        448,
+        0
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "161ed09e-85ab-406a-882a-2704d84830ae",
+      "name": "Set SMS Opt-Out",
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "pageId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "checkboxValue": true,
+              "key": "SMS Opt-Out|checkbox"
+            },
+            {
+              "date": "={{ $now.toISO() }}",
+              "includeTime": true,
+              "key": "SMS Opt-Out Date|date"
+            }
+          ]
+        },
+        "resource": "databasePage"
+      },
+      "position": [
+        672,
+        0
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "twilioApi": {
+          "id": "aoIjAKkkoPR85aOq",
+          "name": "Twilio account"
+        }
+      },
+      "id": "4107a75a-3f36-46f8-b03a-5c65f2bec781",
+      "name": "Send Opt-Out Confirmation",
+      "parameters": {
+        "from": "[TWILIO_NUMBER_PENDING]",
+        "message": "You've been unsubscribed from Kynetic Restoration text updates and won't receive further messages. Reply HELP for help, or call us directly with any questions.",
+        "operation": "send",
+        "options": {},
+        "resource": "sms",
+        "to": "={{ $('Inbound SMS').item.json.body.From }}"
+      },
+      "position": [
+        896,
+        0
+      ],
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "executionOrder": "v1"
+  }
+}

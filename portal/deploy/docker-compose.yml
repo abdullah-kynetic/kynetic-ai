@@ -1,0 +1,44 @@
+# Kynetic client portal. Lives in /opt/portal on the VPS; project name "portal" keeps it isolated from Twenty.
+name: portal
+services:
+  portal-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PORTAL_OWNER_PASSWORD: ${PORTAL_OWNER_PASSWORD}
+      PORTAL_APP_PASSWORD: ${PORTAL_APP_PASSWORD}
+    volumes:
+      - portal-db-data:/var/lib/postgresql/data
+      - ./src/deploy/init-db.sh:/docker-entrypoint-initdb.d/10-init.sh:ro
+    networks: [portal]
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d portal || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+  portal-app:
+    build:
+      context: ./src
+      dockerfile: deploy/Dockerfile
+    image: kynetic-portal:latest
+    restart: unless-stopped
+    depends_on:
+      portal-db:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      NODE_ENV: production
+    ports:
+      - "127.0.0.1:3020:3000"
+    volumes:
+      - ./uploads:/data/uploads
+    networks: [portal]
+    mem_limit: 768m
+networks:
+  portal: {}
+volumes:
+  portal-db-data: {}

@@ -1,0 +1,286 @@
+{
+  "active": true,
+  "connections": {
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Compression",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Compression": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond to Webhook",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Split Out",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Loop Over Items1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Wait1",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Wait",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Loop Over Items1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "HTTP Request1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Aggregate",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "HTTP Request",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "UFvcMjFZPAGKA1aK",
+  "name": "Zip Attachments",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "84d369d1-1717-43ce-b3e9-24c31e225599",
+      "name": "Webhook",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {
+          "binaryPropertyName": "file"
+        },
+        "path": "zip-attachments",
+        "responseMode": "responseNode"
+      },
+      "position": [
+        -320,
+        224
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "f49e7bd6-4f3b-4243-b972-a256054b1b32"
+    },
+    {
+      "id": "49edfe66-cc33-41b8-848e-585a8727bfac",
+      "name": "HTTP Request",
+      "parameters": {
+        "bodyParameters": {
+          "parameters": [
+            {
+              "inputDataFieldName": "file0",
+              "name": "file",
+              "parameterType": "formBinaryData"
+            }
+          ]
+        },
+        "contentType": "multipart-form-data",
+        "method": "POST",
+        "options": {},
+        "sendBody": true,
+        "url": "https://pdf-link-extractor-service.onrender.com/analyze"
+      },
+      "position": [
+        -96,
+        224
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "alwaysOutputData": false,
+      "id": "326c6a16-2164-4e83-9782-5f570023bcd4",
+      "name": "Loop Over Items1",
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "batchSize": 5,
+        "options": {
+          "reset": false
+        }
+      },
+      "position": [
+        352,
+        224
+      ],
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3
+    },
+    {
+      "id": "8e353687-4e83-4484-9a99-15bb3507fff9",
+      "name": "Aggregate",
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {
+          "includeBinaries": true
+        }
+      },
+      "position": [
+        800,
+        32
+      ],
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1
+    },
+    {
+      "id": "17ea37ea-175d-4cd6-b7d5-2dd3805301da",
+      "name": "Compression",
+      "parameters": {
+        "binaryPropertyName": "={{ Object.keys($binary).join(',') }}",
+        "fileName": "agenda_cases.zip",
+        "operation": "compress"
+      },
+      "position": [
+        1024,
+        32
+      ],
+      "type": "n8n-nodes-base.compression",
+      "typeVersion": 1.1
+    },
+    {
+      "id": "d405a60b-7f5e-4989-9d88-b107286623e7",
+      "name": "Wait1",
+      "parameters": {
+        "amount": 0.5
+      },
+      "position": [
+        576,
+        32
+      ],
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "webhookId": "554afed4-0d4b-4a0c-ac73-2ee0f1d12abb"
+    },
+    {
+      "id": "239c8ef9-0897-42d4-8741-0439dfcb7323",
+      "name": "Respond to Webhook",
+      "parameters": {
+        "options": {},
+        "respondWith": "binary"
+      },
+      "position": [
+        1248,
+        32
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1
+    },
+    {
+      "id": "8195da8e-010e-48eb-bfdd-7071d1fb70f1",
+      "name": "Wait",
+      "parameters": {
+        "amount": 0.02
+      },
+      "position": [
+        576,
+        224
+      ],
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "webhookId": "40e879bc-a42a-4c4b-92e9-3e41919adcf7"
+    },
+    {
+      "id": "96cae046-7293-4a6e-987c-2a715430f876",
+      "name": "HTTP Request1",
+      "parameters": {
+        "options": {
+          "allowUnauthorizedCerts": false
+        },
+        "url": "={{ $json.link }}"
+      },
+      "position": [
+        800,
+        304
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "23049f30-3e92-407d-a654-7c89e1ad8975",
+      "name": "Split Out",
+      "parameters": {
+        "fieldToSplitOut": "all_links",
+        "options": {}
+      },
+      "position": [
+        128,
+        224
+      ],
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1
+    }
+  ],
+  "settings": {
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionOrder": "v1"
+  }
+}

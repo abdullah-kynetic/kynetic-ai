@@ -20,7 +20,7 @@ Comparing voice AI platforms for **Alex**, the outbound speed-to-lead agent for 
 | Config snapshots (agents, tools JSON) | `providers/elevenlabs/snapshots/2026-10-17` (old account), `snapshots/2026-10-19-blitz` |
 | Repo branch | `claude/provider-test-elevenlabs` of `abdullah-kynetic/kynetic-ai` (unmerged; nothing on main) |
 | Twenty | note "VOICE PROVIDER BAKE-OFF: Retell vs ElevenLabs" (id `aca91c0f-bd17-4b24-be0d-360cedce194b`), task 3.9 (`7c350f17-a000-452c-9f08-db215f54b706`) |
-| Repo docs | `docs/progress.md` (2026-10-19 entry), `docs/known-issues.md` (KI-006 and a gotcha), `docs/decisions.md` (D-018: Retell is the platform) |
+| Repo docs | `docs/progress.md` (2026-10-19 entry), `docs/known-issues.md` (KI-011, renumbered from KI-006 on 2026-10-20, and a gotcha), `docs/decisions.md` (D-018: Retell is the platform) |
 
 ## The two builds
 - **Control: Retell Alex Lab** `agent_423ae0cb2803cba2891b376d44` (production Alex `agent_71e3cfc8384aa38a910a506b53` is never touched). LLM gpt-4.1, voice 11labs-Cimo (D-008, D-012). Measured about 14.5 cents a minute all-in (call `call_4bfbca5c12d7f5e7f1f2ba04a6a`, v1.0 prompt): stacked questions in the opener and readback, two email spellings disagreed, said "you're all set" while the booking had failed.

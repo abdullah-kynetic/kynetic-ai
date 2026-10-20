@@ -4,5 +4,11 @@
       "Bash(python tools/retell.py *)",
       "Bash(python3 tools/retell.py *)"
     ]
+  },
+  "env": {
+    "GIT_AUTHOR_NAME": "abdullah-kynetic",
+    "GIT_AUTHOR_EMAIL": "abdullah@kyneticai.com",
+    "GIT_COMMITTER_NAME": "abdullah-kynetic",
+    "GIT_COMMITTER_EMAIL": "abdullah@kyneticai.com"
   }
 }

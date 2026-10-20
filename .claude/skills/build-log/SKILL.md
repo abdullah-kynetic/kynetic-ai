@@ -5,9 +5,9 @@ description: Run at the end of a session that changed kynetic-ai. Updates docs/p
 
 # Session docs update
 
-Twenty is the system of record. The three files in `docs/` mirror it. If a doc and Twenty disagree, Twenty wins.
+Twenty is canonical. The three files in `docs/` mirror it. If a doc and Twenty disagree, flag it rather than silently picking one.
 
-Do not recreate `BUILD_LOG.md`. That file is the SeldonFrame / Vercel CRM log and lives in `archive/BUILD_LOG.md`. Do not append to it.
+Do not recreate `BUILD_LOG.md`. It was the SeldonFrame / Vercel CRM log and was retired; it is recoverable from tag `archive/pre-reorg-2026-10-17`.
 
 ## What to do
 

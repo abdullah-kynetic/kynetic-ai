@@ -1,0 +1,15 @@
+{
+  "note": "Demo data (fake companies, abdullah+...@kyneticai.com addresses). n8n data table 'Demo Invoices Summit Ridge Roofing' (id ukSfKhPZUxUZkqYT) saved 2026-10-18 from n8n cloud. Used by the inactive '#8 Invoice Follow Up' demo.",
+  "columns": ["invoice_number","company","first_name","last_name","email","amount_due","status","issue_date","due_date","payment_terms","payment_link","last_reminder_stage","last_reminder_date","paid_date"],
+  "rows": [
+    ["SRR-1041","Oakmont Property Group","Rachel","Nguyen","abdullah+oakmont@kyneticai.com",4850,"sent","2026-08-20","2026-09-19","Net 30","https://pay.example.com/SRR-1041",0,null,null],
+    ["SRR-1037","Lakeview HOA","Marcus","Hill","abdullah+lakeview@kyneticai.com",12400,"sent","2026-08-15","2026-09-14","Net 30","https://pay.example.com/SRR-1037",0,null,null],
+    ["SRR-1032","Crestline Apartments","Priya","Shah","abdullah+crestline@kyneticai.com",8900,"overdue","2026-08-08","2026-09-07","Net 30","https://pay.example.com/SRR-1032",7,"2026-09-14",null],
+    ["SRR-1028","Pinecrest Medical Plaza","Tom","Becker","abdullah+pinecrest@kyneticai.com",21750,"overdue","2026-08-01","2026-08-31","Net 30","https://pay.example.com/SRR-1028",14,"2026-09-14",null],
+    ["SRR-1021","Harbor Point Storage","Elena","Ruiz","abdullah+harbor@kyneticai.com",6300,"overdue","2026-07-24","2026-08-23","Net 30","https://pay.example.com/SRR-1021",21,"2026-09-13",null],
+    ["SRR-1015","Westgate Retail Center","David","Okafor","abdullah+westgate@kyneticai.com",15200,"overdue","2026-07-18","2026-08-17","Net 30","https://pay.example.com/SRR-1015",28,"2026-09-14",null],
+    ["SRR-1009","Redstone Community Church","Grace","Miller","abdullah+redstone@kyneticai.com",9600,"overdue","2026-07-09","2026-08-08","Net 30","https://pay.example.com/SRR-1009",35,"2026-09-12",null],
+    ["SRR-1044","Maple Grove Townhomes","Kevin","Park","abdullah+maplegrove@kyneticai.com",7300,"sent","2026-09-10","2026-10-10","Net 30","https://pay.example.com/SRR-1044",0,null,null],
+    ["SRR-1035","Sunset Dental Group","Lisa","Tran","abdullah+sunset@kyneticai.com",5400,"paid","2026-08-12","2026-09-11","Net 30","https://pay.example.com/SRR-1035",0,null,"2026-09-09"]
+  ]
+}

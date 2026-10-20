@@ -1,0 +1,199 @@
+{
+  "active": true,
+  "connections": {
+    "Kynetic CRM Email Webhook": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Normalize Payload",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Normalize Payload": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Send via Gmail",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Send via Gmail": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond Success",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Respond Error",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "DKrVLeGNqtxg3wpS",
+  "name": "Kynetic CRM Email (Gmail via n8n)",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "56kIUGRBDhXv23mH",
+          "name": "Header Auth account"
+        }
+      },
+      "id": "4a2c44b0-79e9-4712-acf7-9be0bac572e3",
+      "name": "Kynetic CRM Email Webhook",
+      "parameters": {
+        "authentication": "headerAuth",
+        "httpMethod": "POST",
+        "path": "kynetic-crm-email",
+        "responseMode": "responseNode"
+      },
+      "position": [
+        0,
+        96
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "4aee4887-c5a0-446e-898d-9d48cc4e84e4"
+    },
+    {
+      "id": "128112c9-3ade-40d9-a1b5-cba94cfc22b9",
+      "name": "Normalize Payload",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "email-to",
+              "name": "emailTo",
+              "type": "string",
+              "value": "={{ $json.body?.to ?? \"\" }}"
+            },
+            {
+              "id": "email-subject",
+              "name": "emailSubject",
+              "type": "string",
+              "value": "={{ $json.body?.subject ?? \"(no subject)\" }}"
+            },
+            {
+              "id": "email-message",
+              "name": "emailMessage",
+              "type": "string",
+              "value": "={{ $json.body?.html ?? $json.body?.text ?? \"\" }}"
+            },
+            {
+              "id": "sender-name",
+              "name": "senderName",
+              "type": "string",
+              "value": "={{ $json.body?.from ?? \"Kynetic AI\" }}"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "mode": "manual"
+      },
+      "position": [
+        224,
+        96
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5
+    },
+    {
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dil4wMogas9aOWKP",
+          "name": "Abdullah Kynetic account"
+        }
+      },
+      "id": "c1e6b175-32d3-49b5-84d7-cdf1ffc93f33",
+      "name": "Send via Gmail",
+      "onError": "continueErrorOutput",
+      "parameters": {
+        "emailType": "html",
+        "message": "={{ $json.emailMessage }}",
+        "operation": "send",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "={{ $json.senderName }}"
+        },
+        "resource": "message",
+        "sendTo": "={{ $json.emailTo }}",
+        "subject": "={{ $json.emailSubject }}"
+      },
+      "position": [
+        448,
+        96
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "webhookId": "031d4d1b-6d79-4562-892e-c9350dfe984c"
+    },
+    {
+      "id": "6d9886f8-90dd-4453-acad-33b0a6caf3b4",
+      "name": "Respond Error",
+      "parameters": {
+        "options": {
+          "responseCode": 502
+        },
+        "respondWith": "json",
+        "responseBody": "={{ { \"ok\": false, \"reason\": \"gmail_send_failed\" } }}"
+      },
+      "position": [
+        672,
+        192
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5
+    },
+    {
+      "id": "cfb5d7bf-abcc-481c-9013-c5d74596aec0",
+      "name": "Respond Success",
+      "parameters": {
+        "options": {
+          "responseCode": 200
+        },
+        "respondWith": "json",
+        "responseBody": "={{ { \"ok\": true, \"externalMessageId\": $json.id, \"provider\": \"gmail-n8n\" } }}"
+      },
+      "position": [
+        672,
+        0
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5
+    },
+    {
+      "id": "eb1241f7-4c21-4e73-ad0e-e4f5227018c8",
+      "name": "Sticky Note 4c02d1bd",
+      "parameters": {
+        "color": 4,
+        "content": "## Setup (one-time)\n1. Open the \"Kynetic CRM Email Webhook Auth\" credential (Webhook node) and set a header name (e.g. X-Webhook-Secret) and a secret value you generate.\n2. Put that exact header name + value into the CRM's Vercel env vars (N8N_EMAIL_WEBHOOK_URL, N8N_EMAIL_WEBHOOK_HEADER_NAME, N8N_EMAIL_WEBHOOK_HEADER_VALUE).\n3. Activate this workflow, then copy the Production webhook URL from the trigger node into N8N_EMAIL_WEBHOOK_URL.\n4. Confirm the Gmail node is using the \"Abdullah Kynetic account\" credential.",
+        "height": 200,
+        "width": 300
+      },
+      "position": [
+        -50,
+        -50
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "executionOrder": "v1"
+  }
+}

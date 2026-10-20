@@ -1,0 +1,654 @@
+{
+  "active": false,
+  "connections": {
+    "Extract Tool Call ID": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond to Webhook",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Info Extraction": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Master AI Agent",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Master AI Agent": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Extract Tool Call ID",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "Master AI Agent",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "rescheduleAppointment",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "cancelAppointment",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Info Extraction",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "rescheduleAppointment",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Switch",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "bookAppointment": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "Master AI Agent",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "cancel": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "cancelAppointment",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "cancelAppointment": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "Master AI Agent",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "checkAvailability": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "Master AI Agent",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "getAppointment": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "cancelAppointment",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "getBooking": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "rescheduleAppointment",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "reason": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "Master AI Agent",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "reschedule": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "rescheduleAppointment",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "rescheduleAppointment": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "Master AI Agent",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "think": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "cancelAppointment",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "VEFMgGLzMsFgC1V0",
+  "name": "Dental Receptionist",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "fb9bd9f3-82f8-480e-91f5-feb361a4f329",
+      "name": "Webhook",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {},
+        "path": "knowlton-ortho",
+        "responseMode": "responseNode"
+      },
+      "position": [
+        432,
+        0
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "ba20d41a-7bb9-450c-bdca-5531fa74db9f"
+    },
+    {
+      "id": "e5010a3d-9923-4e02-a7b7-b9b769cbe77a",
+      "name": "Switch",
+      "parameters": {
+        "options": {},
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "b7612062-6290-4d52-ba51-a653bbf387e8",
+                    "leftValue": "={{ $json.body.message.type }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "tool-calls"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                }
+              },
+              "outputKey": "Tool Calls",
+              "renameOutput": true
+            }
+          ]
+        }
+      },
+      "position": [
+        640,
+        0
+      ],
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2
+    },
+    {
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "mkRROm01AAPHp2CU",
+          "name": "Google Calendar account"
+        }
+      },
+      "id": "a3dd904e-2a2e-418b-9cbd-6779479e1e62",
+      "name": "bookAppointment",
+      "parameters": {
+        "additionalFields": {
+          "description": "={{ $fromAI(\"callerDetails\", \"the details of the caller like their name, their appointment type, email, phone number, and any notes, separated by newlines\") }}",
+          "guestsCanModify": false,
+          "location": "123 Smart Street, New York City, United States",
+          "summary": "={{ $fromAI(\"title\", \"the title of the event, in the format '[Full Name]—[Appointment Type]'\") }}"
+        },
+        "calendar": {
+          "__rl": true,
+          "cachedResultName": "abdullah@kyneticai.com",
+          "mode": "list",
+          "value": "abdullah@kyneticai.com"
+        },
+        "descriptionType": "manual",
+        "end": "={{$fromAI(\"appointmentEnd\", \"the time that the appointment ends, usually 30, 60, or 90 minutes after the start time, in YYYY-MM-DDTHH:mm format\")}}",
+        "start": "={{ $fromAI(\"startTime\", \"the start time of the appointment in YYYY-MM-DDTHH:mm format\") }}",
+        "toolDescription": "Use this to book an appointment"
+      },
+      "position": [
+        800,
+        224
+      ],
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3
+    },
+    {
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "mkRROm01AAPHp2CU",
+          "name": "Google Calendar account"
+        }
+      },
+      "id": "5b24ecb7-115d-4f7c-a97b-7676d8a1d6b7",
+      "name": "reschedule",
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "cachedResultName": "abdullah@kyneticai.com",
+          "mode": "list",
+          "value": "abdullah@kyneticai.com"
+        },
+        "descriptionType": "manual",
+        "eventId": "={{$fromAI(\"bookingId\", \"the ID of the appointment booking retrieved with the 'getBooking' tool\")}}",
+        "operation": "update",
+        "toolDescription": "Reschedules an appointment in a calendar after getting the appointment ID from the 'getBooking' tool",
+        "updateFields": {}
+      },
+      "position": [
+        944,
+        432
+      ],
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3
+    },
+    {
+      "id": "ad124c58-7712-4d7f-969f-8e5df18047f5",
+      "name": "rescheduleAppointment",
+      "parameters": {
+        "options": {
+          "systemMessage": "# Role\n- You are the **Reschedule Appointment backend agent** for Knowlton Family Orthodontics.  \n- You receive reschedule requests from the parent agent, along with patient identifiers.  \n- Your job is to fetch the existing appointment, confirm it, and naturally communicate the reschedule outcome.\n\n# Context\n- Organization: **Knowlton Family Orthodontics**.  \n- Input fields passed from parent agent: `full_name`, `phone_number`, `email`, `original_datetime`, `new_datetime`, `appointment_type`.  \n- Output must always be in clear, natural language for human consumption.\n\n# Specifics\n- **Process flow:**  \n  1. Use `Think` internally to plan steps.  \n  2. Call `getBooking` with identifiers to fetch the appointment and ID.  \n  3. If appointment is found → call `reschedule` with the ID and `new_datetime`.  \n  4. Return a short, natural sentence confirming the reschedule, e.g., *\"Your adjustment appointment has been moved to September 14th at 1 p.m.\"*  \n- **Error handling:**  \n  - If no appointment found → respond naturally: *\"I couldn't find an appointment with those details. Please double-check your information.\"*  \n  - If the requested new time is unavailable → respond naturally: *\"That time isn't available. Please provide another time that works for you.\"*  \n- Never expose tool names or reasoning steps.\n\n# Tools\n- **Think** — use this to think through your steps for more complex reasoning\n- **getBooking** — input: identifiers. Output: appointment record including ID.  \n- **reschedule** — input: {appointment_id, new_datetime}. Output: success confirmation.\n\n# Examples\n## Example A — Successful reschedule\nInput: `{ full_name: \"Mark Chen\", ... new_datetime: \"2025-09-14 13:00\" }`  \n→ Response: *\"Your adjustment appointment has been rescheduled to September 14th at 1 p.m.\"*\n\n## Example B — Appointment not found\nInput: `{ full_name: \"Jane Miller\", ... original_datetime: \"2025-09-01 10:00\" }`  \n→ Response: *\"I couldn't find any appointment for Jane Miller on September 1st at 10 a.m.\"*"
+        },
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', `Necessary details like the individual's (full) name, appointment type, date, etc.`, 'string') }}",
+        "toolDescription": "Use this to reschedule appointment bookings"
+      },
+      "position": [
+        928,
+        224
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "mkRROm01AAPHp2CU",
+          "name": "Google Calendar account"
+        }
+      },
+      "id": "545b57f9-362a-4bcb-aac4-7b08d943bd81",
+      "name": "getBooking",
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "cachedResultName": "abdullah@kyneticai.com",
+          "mode": "list",
+          "value": "abdullah@kyneticai.com"
+        },
+        "descriptionType": "manual",
+        "operation": "getAll",
+        "options": {},
+        "toolDescription": "Retrieves all bookings to locate caller's booking"
+      },
+      "position": [
+        1072,
+        432
+      ],
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3
+    },
+    {
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "mkRROm01AAPHp2CU",
+          "name": "Google Calendar account"
+        }
+      },
+      "id": "9c5e12a7-ae89-4182-8c8f-40a2f88908e6",
+      "name": "getAppointment",
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "cachedResultName": "abdullah@kyneticai.com",
+          "mode": "list",
+          "value": "abdullah@kyneticai.com"
+        },
+        "descriptionType": "manual",
+        "operation": "getAll",
+        "options": {},
+        "toolDescription": "Retrieves all bookings to locate caller's booking"
+      },
+      "position": [
+        1456,
+        432
+      ],
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3
+    },
+    {
+      "id": "f2018f9d-6f0c-43e1-9569-738aa944959a",
+      "name": "Master AI Agent",
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Role\n\n- You are the **backend AI agent for Knowlton Family Orthodontics**.\n\n- You interpret the caller transcript, **Latest tool** name from Vapi, and relevant details to decide the correct scheduling action.\n\n- You handle appointment availability, booking, rescheduling, and cancellations only (no FAQs, no notifications).\n\n# Specifics\n\n- **Inputs & Time** — Read: `final_transcript`, **Latest tool**, and `relevant_details`. Treat **{{$now}}** as the current timestamp for all comparisons; timezone is Central Time (Sherman, TX).\n\n- **Map Procedure & Duration** — Derive duration from this internal map:\n\n- Complimentary Consultation **45m**; Initial Records **60m**; Braces Placement **90m**; Invisalign Start **60m**; Adjustment/Check-up **30m**; Emergency Visit **30m**; Retainer Check **15m**.\n\n- **24‑Hour Rule** — New bookings must be ≥ **24 hours** after **{{$now}}**. If requested_time < {{$now}} + 24h, deny politely unless emergency. **Emergency exception:** allowed ASAP.\n\n- **Emergency Handling** — If the transcript indicates a severe, painful, or life‑threatening issue (facial trauma, difficulty breathing, excessive bleeding) → **do not check or book**; respond naturally with: *\"This sounds like a medical emergency. Please go to the nearest emergency room or call 911 immediately.\"* For orthodontic urgencies (broken bracket, wire poking), offer same-day or next-day appointments.\n\n- **Tool Decision Logic** — Use **Latest tool** to decide the next call:\n\n- `checkAvailability` → confirm requested slot; respond naturally: *\"Let me check if we have availability for that time.\"* Return available/unavailable in plain words.\n\n- `bookAppointment` → if not confirmed, first check availability; then respond naturally with confirmation like *\"Your complimentary consultation has been booked for Friday at 2 p.m.\"*\n\n- `rescheduleAppointment` → pass identifiers to the Reschedule Appointment Agent; return its natural language output directly.\n\n- `cancelAppointment` → pass identifiers to the Cancel Appointment Agent; return its natural language output directly.\n\n- **Field Completeness** — If any required field is missing, respond naturally: *\"I'll need your full name, phone number, and preferred time to book that appointment.\"* Never output raw payloads.\n\n- **Consultation First** — Always recommend the FREE complimentary consultation for new patients. Emphasize it's free and includes evaluation with Dr. Knowlton.\n\n# Context\n\n- Practice: **Knowlton Family Orthodontics**, 301 North Highland Avenue, Sherman, TX 75092.\n\n- Doctor: Dr. Clark Knowlton, Board Certified Orthodontist.\n\n- Hours: Monday-Friday 8:00 AM - 5:00 PM, Closed weekends.\n\n- Services: Metal Braces, Clear Ceramic Braces, Invisalign Clear Aligners.\n\n- All ages: Children, Teens, Adults.\n\n- Operational constraints: no double‑booking (system enforced); no waitlists/reminders.\n\n- **Current Time:** use **{{$now}}** for all date/time rules.\n\n# Tools\n\n- **checkAvailability** — input: `procedure_type`, `requested_time`, `duration_minutes`. Natural output: confirm whether requested slot is open.\n\n- **bookAppointment** — input: `full_name`, `procedure_type`, `confirmed_time`, `notes` (optional). Natural output: confirm appointment booked.\n\n- **rescheduleAppointment** — delegated to reschedule agent with identifiers. Natural output: confirmation or error.\n\n- **cancelAppointment** — delegated to cancel agent with identifiers. Natural output: confirmation or error.\n\n- **reason** — use this to think through your steps for more complex reasoning\n\n# Examples\n\n## Example A — Booking consultation\n\n- **Transcript:** \"Hi, I'd like to schedule braces for my daughter.\"\n\n- **Latest tool:** `bookAppointment`\n\n- **Relevant details:** `{ full_name: \"Sarah Miller\", phone: \"903-555-1234\", email: \"sarah@email.com\", requested_time: \"2025-11-22 14:00\", procedure: \"braces\" }`\n\n- **Now:** `{{$now}}`\n\n- **Logic:** New patient needs consultation first.\n\n- **Response:** *\"Great! For new patients, we start with a free complimentary consultation with Dr. Knowlton. I've scheduled Sarah's consultation for Friday, November 22nd at 2 p.m. at our Sherman office.\"*\n\n## Example B — Reschedule\n\n- **Transcript:** \"This is Mark Chen. Please move my adjustment from November 20th at 9 a.m. to November 22nd at 1 p.m.\"\n\n- **Latest tool:** `rescheduleAppointment`\n\n- **Relevant details:** `{ full_name: \"Mark Chen\", phone: \"903-555-0987\", email: \"mark.chen@email.com\", original_datetime: \"2025-11-20 09:00\", new_datetime: \"2025-11-22 13:00\", procedure: \"Adjustment\" }`\n\n- **Response (from reschedule agent):** *\"Your adjustment appointment has been moved to November 22nd at 1 p.m.\"*\n\n## Example C — Emergency triage\n\n- **Transcript:** \"My bracket just came off and it's poking my cheek.\"\n\n- **Latest tool:** `checkAvailability`\n\n- **Relevant details:** `{ issue: \"broken bracket\" }`\n\n- **Response:** *\"I'm sorry to hear that! That's uncomfortable but not a medical emergency. We can usually see you within 24 hours for orthodontic urgencies. Let me check our availability for today or tomorrow.\"*\n\n## Example D — Medical emergency redirect\n\n- **Transcript:** \"My jaw is swelling rapidly and I can barely breathe.\"\n\n- **Latest tool:** `checkAvailability`\n\n- **Relevant details:** `{}`\n\n- **Response:** *\"This sounds like a medical emergency. Please go to the nearest emergency room or call 911 immediately.\"*\n\n# Notes\n\n- This agent is **non‑conversational** and runs inside n8n; no greetings/farewells.\n\n- Do not expose tool names or reasoning.\n\n- Never provide raw payloads; always return natural, human‑friendly sentences.\n\n- Enforce the 24‑hour rule for new bookings; emergency is the sole exception.\n\n- Always mention the consultation is FREE for new patients.\n\n- Be warm and professional, reflecting Dr. Knowlton's commitment to confidence and kindness."
+        },
+        "promptType": "define",
+        "text": "=Combined Conversation Info: {{$json.combinedContent}}\n\nLatest Tool Called: {{$json.latestToolName}}\n\nInformation: {{$json.latestToolArgs}}\n\nTimestamp: {{$json.extractedAt}}"
+      },
+      "position": [
+        1040,
+        0
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "4166fe3a-61a9-4c7c-813f-109c1173a4d7",
+      "name": "Respond to Webhook",
+      "parameters": {
+        "options": {},
+        "respondWith": "json",
+        "responseBody": "={\n  \"results\": [\n    {\n      \"toolCallId\": \"{{$('Extract Tool Call ID').item.json.latestToolCallId}}\",\n      \"result\": \"{{$('Master AI Agent').item.json.output}}\"\n    }\n  ]\n}"
+      },
+      "position": [
+        1616,
+        0
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4
+    },
+    {
+      "id": "46d8af90-513a-4ca3-943a-fc033198d220",
+      "name": "Extract Tool Call ID",
+      "parameters": {
+        "jsCode": "// n8n Code Node - Latest ToolCallId Extractor\n// Ultra-efficient extraction of the latest toolCallId from webhook payload\n\ntry {\n  // Direct access to toolCalls array from webhook\n  const toolCalls = $('Webhook').first().json.body.message.toolCalls;\n  \n  // Fast validation and extraction\n  if (!Array.isArray(toolCalls) || toolCalls.length === 0) {\n    return [{\n      json: {\n        latestToolCallId: null,\n        error: 'No toolCalls found or empty array',\n        totalToolCalls: 0,\n        extractedAt: new Date().toISOString()\n      }\n    }];\n  }\n  \n  // Get the latest (last) toolCall - most efficient approach\n  const latestIndex = toolCalls.length - 1;\n  const latestToolCall = toolCalls[latestIndex];\n  \n  // Extract the ID with validation\n  const latestToolCallId = latestToolCall?.id || null;\n  \n  if (!latestToolCallId) {\n    return [{\n      json: {\n        latestToolCallId: null,\n        error: `ToolCall at index ${latestIndex} missing id property`,\n        totalToolCalls: toolCalls.length,\n        latestIndex: latestIndex,\n        extractedAt: new Date().toISOString()\n      }\n    }];\n  }\n  \n  // Success - return the latest toolCallId\n  return [{\n    json: {\n      latestToolCallId: latestToolCallId,\n      latestIndex: latestIndex,\n      totalToolCalls: toolCalls.length,\n      extractedAt: new Date().toISOString()\n    }\n  }];\n  \n} catch (error) {\n  // Error handling\n  return [{\n    json: {\n      latestToolCallId: null,\n      error: `Extraction failed: ${error.message}`,\n      totalToolCalls: 0,\n      extractedAt: new Date().toISOString()\n    }\n  }];\n}"
+      },
+      "position": [
+        1392,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "998fd2d6-f488-4237-bf10-b6904655c868",
+      "name": "Info Extraction",
+      "parameters": {
+        "jsCode": "try {\n  const input = $input.first().json;\n\n  // Get messages from messagesOpenAIFormatted array\n  const messages = input?.body?.message?.artifact?.messagesOpenAIFormatted;\n  const combinedContent = [];\n\n  if (Array.isArray(messages)) {\n    for (let i = 1; i < messages.length; i++) {\n      const content = messages[i]?.content;\n      if (content) {\n        combinedContent.push(content);\n      }\n    }\n  }\n\n  // Get latest tool call\n  const toolCalls = input?.body?.message?.toolCalls;\n  let latestToolName = null;\n  let latestToolArgs = \"\";\n\n  if (Array.isArray(toolCalls) && toolCalls.length > 0) {\n    const lastIndex = toolCalls.length - 1;\n    const lastTool = toolCalls[lastIndex]?.function;\n\n    latestToolName = lastTool?.name || null;\n\n    // Handle arguments (may be stringified JSON or object)\n    let args = lastTool?.arguments;\n    if (typeof args === \"string\") {\n      try {\n        args = JSON.parse(args);\n      } catch (e) {\n        args = {};\n      }\n    }\n\n    if (args && typeof args === \"object\") {\n      // Convert args object into a single string\n      latestToolArgs = Object.entries(args)\n        .map(([key, value]) => `${key}: ${value}`)\n        .join(\", \");\n    }\n  }\n\n  // Return result\n  return [{\n    json: {\n      combinedContent: combinedContent.join('\\n\\n'),\n      totalMessagesFound: combinedContent.length,\n      latestToolName,\n      latestToolArgs, // single string variable with all key-value pairs\n      extractedAt: new Date().toISOString()\n    }\n  }];\n\n} catch (error) {\n  return [{\n    json: {\n      combinedContent: '',\n      totalMessagesFound: 0,\n      latestToolName: null,\n      latestToolArgs: '',\n      error: error.message,\n      extractedAt: new Date().toISOString()\n    }\n  }];\n}"
+      },
+      "position": [
+        864,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "mkRROm01AAPHp2CU",
+          "name": "Google Calendar account"
+        }
+      },
+      "id": "8c63c4ac-fa95-44bb-b8e0-1f19d4a16a58",
+      "name": "checkAvailability",
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "cachedResultName": "abdullah@kyneticai.com",
+          "mode": "list",
+          "value": "abdullah@kyneticai.com"
+        },
+        "descriptionType": "manual",
+        "options": {
+          "timezone": {
+            "__rl": true,
+            "cachedResultName": "America/New_York",
+            "mode": "list",
+            "value": "America/New_York"
+          }
+        },
+        "resource": "calendar",
+        "timeMax": "={{ $fromAI(\"endTime\", \"the requested time for the appointment plus 30, 60, or 90 minutes, depending on appointment type\") }}",
+        "timeMin": "={{ $fromAI(\"requestedStartTime\", \"the requested time for the appointment\") }}",
+        "toolDescription": "Use this to retrieve bookings and thus check availability"
+      },
+      "position": [
+        1264,
+        224
+      ],
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3
+    },
+    {
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "mkRROm01AAPHp2CU",
+          "name": "Google Calendar account"
+        }
+      },
+      "id": "3f9c40d7-b366-43f8-b059-81c9d5cb2cbe",
+      "name": "cancel",
+      "parameters": {
+        "additionalFields": {},
+        "calendar": {
+          "__rl": true,
+          "cachedResultName": "abdullah@kyneticai.com",
+          "mode": "list",
+          "value": "abdullah@kyneticai.com"
+        },
+        "descriptionType": "manual",
+        "toolDescription": "Cancels an appointment using the ID"
+      },
+      "position": [
+        1584,
+        432
+      ],
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3
+    },
+    {
+      "id": "0c79abf3-a5af-4d01-b0e1-67645a9baac5",
+      "name": "cancelAppointment",
+      "parameters": {
+        "options": {
+          "systemMessage": "# Role\n- You are the **Cancel Appointment backend agent** for Knowlton Family Orthodontics.  \n- You receive cancellation requests from the parent agent, along with patient identifiers.  \n- Your job is to fetch the appointment, cancel it, and return a natural confirmation.\n\n# Context\n- Organization: **Knowlton Family Orthodontics**.  \n- Input fields passed from parent agent: `full_name`, `phone_number`, `email`, `datetime`.  \n- Output must always be in clear, natural language for human consumption.\n\n# Specifics\n- **Process flow:**  \n  1. Use `think` internally to plan steps.  \n  2. Call `getAppointment` with identifiers to fetch the appointment and ID.  \n  3. If appointment is found → call `cancel` with the ID.  \n  4. Return a short, natural confirmation sentence, e.g., *\"Your appointment on September 10th at 11 a.m. has been canceled.\"*  \n- **Error handling:**  \n  - If appointment not found → respond naturally: *\"I couldn't find an appointment with those details.\"*  \n  - If appointment is already canceled → respond naturally: *\"That appointment was already canceled.\"*  \n- Never expose tool names or reasoning steps.\n\n# Tools\n- **think** — use this to think through your steps for more complex reasoning\n- **getAppointment** — input: identifiers. Output: appointment record including ID.  \n- **cancel** — input: {appointment_id}. Output: success confirmation.\n\n# Examples\n## Example A — Successful cancellation\nInput: `{ full_name: \"Sarah Lee\", ... datetime: \"2025-09-10 11:00\" }`  \n→ Response: *\"Your appointment on September 10th at 11 a.m. has been canceled.\"*\n\n## Example B — Appointment not found\nInput: `{ full_name: \"Tom Walker\", ... datetime: \"2025-09-01 14:00\" }`  \n→ Response: *\"I couldn't find an appointment for Tom Walker on September 1st at 2 p.m.\"*"
+        },
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', `The necessary details of the individual like their (full) name, date of appointment, type of appointment, etc.`, 'string') }}",
+        "toolDescription": "Use this to cancel appointment bookings"
+      },
+      "position": [
+        1440,
+        224
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "2fa5930c-72c9-4507-b12c-2d9ebeef3ff2",
+      "name": "Think",
+      "parameters": {
+        "description": "Use the tool to think through your processes of calendar management or other activity. Use it when complex reasoning is needed."
+      },
+      "position": [
+        1200,
+        432
+      ],
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1
+    },
+    {
+      "id": "7e72bf4d-290b-4f9f-b275-ec3ffc5ca681",
+      "name": "reason",
+      "parameters": {
+        "description": "Use the tool to think through your processes of calendar management or other activity. Use it when complex reasoning is needed."
+      },
+      "position": [
+        1728,
+        224
+      ],
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1
+    },
+    {
+      "id": "ab8d8e37-09fc-4d04-8626-d463043df16a",
+      "name": "think",
+      "parameters": {
+        "description": "Use the tool to think through your processes of calendar management or other activity. Use it when complex reasoning is needed."
+      },
+      "position": [
+        1712,
+        432
+      ],
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1
+    },
+    {
+      "credentials": {
+        "openRouterApi": {
+          "id": "j1QuXeG7ZrLyJEDj",
+          "name": "OpenRouter account"
+        }
+      },
+      "id": "8e1ac698-0e91-4bec-ae52-f673689639b3",
+      "name": "OpenRouter Chat Model",
+      "parameters": {
+        "model": "openrouter/sherlock-think-alpha",
+        "options": {}
+      },
+      "position": [
+        672,
+        224
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "openRouterApi": {
+          "id": "j1QuXeG7ZrLyJEDj",
+          "name": "OpenRouter account"
+        }
+      },
+      "id": "cf17a2aa-4515-4174-a2a5-166369cef6e4",
+      "name": "OpenRouter Chat Model1",
+      "parameters": {
+        "model": "openrouter/sherlock-think-alpha",
+        "options": {}
+      },
+      "position": [
+        816,
+        432
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "openRouterApi": {
+          "id": "j1QuXeG7ZrLyJEDj",
+          "name": "OpenRouter account"
+        }
+      },
+      "id": "5be1a6a8-ebb6-46e8-8a2e-1ddb3ea5f8ab",
+      "name": "OpenRouter Chat Model2",
+      "parameters": {
+        "model": "openrouter/sherlock-think-alpha",
+        "options": {}
+      },
+      "position": [
+        1328,
+        432
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1
+    }
+  ],
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

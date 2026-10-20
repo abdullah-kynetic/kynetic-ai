@@ -1,0 +1,840 @@
+{
+  "active": false,
+  "connections": {
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Aggregate",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Update a row2",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        []
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond to Webhook",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Merge1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Edit Fields10": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Loop Over Items1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "index": 1,
+            "node": "Merge1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "index": 1,
+            "node": "Merge",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Merge",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Edit Fields9": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Split Out",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Edit Fields1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Extract from File1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Edit Fields4",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Extract from File4": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Edit Fields10",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Edit Fields3",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Extract from File4",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Loop Over Items1",
+            "type": "main"
+          }
+        ],
+        []
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Edit Fields2",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Split Out3",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create a row",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Code1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent2",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Edit Fields9",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "If",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Split Out3": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "HTTP Request4",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent2",
+            "type": "ai_outputParser"
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "HTTP Request",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Extract from File1",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "vDRli9T7urJ0xzMV",
+  "name": "AI Analysis",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "4ccc9f3d-9236-405e-9453-084e35a033c1",
+      "name": "HTTP Request",
+      "parameters": {
+        "bodyParameters": {
+          "parameters": [
+            {
+              "inputDataFieldName": "file0",
+              "name": "file",
+              "parameterType": "formBinaryData"
+            }
+          ]
+        },
+        "contentType": "multipart-form-data",
+        "method": "POST",
+        "options": {},
+        "sendBody": true,
+        "url": "https://pdf-link-extractor-service.onrender.com/analyze-links"
+      },
+      "position": [
+        1680,
+        1728
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "73cdbde6-911d-421b-a11c-f96dba8541ec",
+      "name": "Edit Fields3",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c5657e74-0766-44b5-803d-df5aafcaa12d",
+              "name": "cleaned_agenda_only_docket",
+              "type": "array",
+              "value": "={{ $json.docket }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        1904,
+        1728
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "alwaysOutputData": false,
+      "id": "a14be0e6-c835-4ded-b153-3591342fccac",
+      "name": "Webhook",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {
+          "binaryPropertyName": "file"
+        },
+        "path": "cpc-tool-ai-analysis",
+        "responseMode": "responseNode"
+      },
+      "position": [
+        1456,
+        1632
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "f49e7bd6-4f3b-4243-b972-a256054b1b32"
+    },
+    {
+      "id": "6b89924a-933f-4f8e-a640-02a79a19d120",
+      "name": "Extract from File1",
+      "parameters": {
+        "binaryPropertyName": "file0",
+        "operation": "pdf",
+        "options": {}
+      },
+      "position": [
+        1680,
+        1536
+      ],
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1
+    },
+    {
+      "id": "56d0f87d-055d-47d2-8e0c-38a11bffb807",
+      "name": "Edit Fields4",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1ab9943c-889c-407a-b186-cedf1832423c",
+              "name": "full_agenda_text",
+              "type": "string",
+              "value": "={{ $json.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        1904,
+        1536
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "5cf3fec7-0910-44dd-806a-2998344e91be",
+      "name": "Merge",
+      "parameters": {
+        "combineBy": "combineAll",
+        "mode": "combine",
+        "options": {}
+      },
+      "position": [
+        2128,
+        1632
+      ],
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2
+    },
+    {
+      "credentials": {
+        "supabaseApi": {
+          "id": "nc6EAQqDAd4ZZZlH",
+          "name": "Supabase account"
+        }
+      },
+      "id": "7bb94c03-0400-4a43-abc1-cd88a3d43b71",
+      "name": "Create a row",
+      "parameters": {
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "full_agenda_text",
+              "fieldValue": "={{ $json.full_agenda_text }}"
+            },
+            {
+              "fieldId": "cleaned_agenda_only_docket",
+              "fieldValue": "={{ $json.cleaned_agenda_only_docket }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "processing"
+            }
+          ]
+        },
+        "tableId": "jobs"
+      },
+      "position": [
+        2352,
+        1632
+      ],
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1
+    },
+    {
+      "id": "c083621a-62b4-43ca-9c05-2c3b7d5a806a",
+      "name": "Respond to Webhook",
+      "parameters": {
+        "options": {},
+        "respondWith": "json",
+        "responseBody": "={\n  \"job_id\": \"{{ $json.id }}\"\n} "
+      },
+      "position": [
+        2576,
+        1632
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4
+    },
+    {
+      "id": "0f818e17-afd0-415f-8a66-1483d08f252d",
+      "name": "AI Agent2",
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {
+          "enableStreaming": false,
+          "systemMessage": "ROLE:\nYou are the CPC Tool AI Extraction Agent inside n8n.\n\nCONTEXT:\nYou receive structured CPC docket JSON from Dallas City Plan Commission agendas. \nYou are given two inputs: \n1. `full_agenda_text` (all raw text extracted from the PDF agenda).  \n2. `cleaned_agenda_only_docket` (parsed docket items with `item_number` and `raw_text`).  \n\nTASK:\n- For each docket item, read its `raw_text`. \n- Extract only the fields explicitly written in the text. \n- Do not invent, enrich, or hallucinate values.  \n- If a field has no information, return `null` (or `[]` for attachments).  \n- Every object must include *all fields listed below*.  \n\nFIELDS TO EXTRACT:\n{\n  \"item_number\": \"<string>\",\n  \"agenda_item_title\": \"<string or null>\",\n  \"district_and_commissioner\": \"<string or null>\",\n  \"location_of_zoning_change\": \"<string or null>\",\n  \"city_planner\": \"<string or null>\",\n  \"applicant\": \"<string or null>\",\n  \"zoning_consultant\": \"<string or null>\",\n  \"zoning_change_summary\": \"<string or null>\",\n  \"staff_recommendation\": \"<string or null>\",\n  \"staffing_recommendation_summary\": \"<string or null>\",\n  \"summary_of_application\": \"<string or null>\",\n  \"analysis_of_request\": \"<string or null>\",\n  \"history_of_zoning\": \"<string or null>\",\n  \"recommended_questions\": \"<string or null>\",\n  \"attachments\": \"<array of objects or empty array>\",\n  \"council_district\": \"<string or null>\"\n}\n\nOUTPUT FORMAT:\n- Return only a JSON array of objects, one per docket item.\n- Do not wrap the result in an \"output\" field.\n- Do not return the array as a string.\n- Always output valid, parsable JSON.\n- Sorted by `item_number` ascending.\n"
+        },
+        "promptType": "define",
+        "text": "=You are given two inputs from a Dallas City Plan Commission agenda PDF:\n\n1. Full Agenda Text (all raw text extracted from the PDF):\n{{ $json.full_agenda_text }}\n\n2. Cleaned Docket Items (parsed list of items with item_number and raw_text):\n{{ JSON.stringify($json.cleaned_agenda_only_docket) }}\n\nInstruction:\nFor each docket item in `cleaned_agenda_only_docket`, analyze its `raw_text` and extract **all required fields** exactly as defined in the schema.  \n\n- Always output **one JSON object per docket item**.  \n- If a field cannot be found in the `raw_text`, set its value to `null` (or `[]` for attachments).  \n- Include *all* fields in every object, even if they are null.  \n- Do not enrich or hallucinate values.  \n- Do not wrap the results in `\"output\"` or a string.  \n- The final response must be a **JSON array of objects**, with each object representing one docket item.  \n\nExample of the required output format if there were 2 items:\n\n[\n  {\n    \"item_number\": \"1\",\n    \"summary_of_application\": null,\n    \"zoning_request\": \"Example zoning text\",\n    \"staff_recommendation\": null,\n    \"applicant\": \"Applicant Name\",\n    \"representative\": null,\n    \"city_planner\": \"Planner Name\",\n    \"council_district\": \"8\",\n    \"attachments\": [],\n    \"zoning_consultant\": null,\n    \"analysis_of_request\": null,\n    \"history_of_zoning\": null,\n    \"recommended_questions\": null\n  },\n  {\n    \"item_number\": \"2\",\n    \"summary_of_application\": \"Application summary text\",\n    \"zoning_request\": null,\n    \"staff_recommendation\": \"Approval\",\n    \"applicant\": null,\n    \"representative\": \"Representative Name\",\n    \"city_planner\": null,\n    \"council_district\": \"3\",\n    \"attachments\": [],\n    \"zoning_consultant\": null,\n    \"analysis_of_request\": null,\n    \"history_of_zoning\": null,\n    \"recommended_questions\": null\n  }\n]\n\nReturn only this JSON array. Nothing else.\n"
+      },
+      "position": [
+        4368,
+        1392
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "openRouterApi": {
+          "id": "j1QuXeG7ZrLyJEDj",
+          "name": "OpenRouter account"
+        }
+      },
+      "id": "6f2f6b05-fa0f-4b91-a503-880a4dcb27eb",
+      "name": "OpenRouter Chat Model2",
+      "parameters": {
+        "model": "moonshotai/kimi-dev-72b:free",
+        "options": {
+          "timeout": 240000
+        }
+      },
+      "position": [
+        4384,
+        1616
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1
+    },
+    {
+      "id": "d2b76a6b-2b68-41c6-9944-deadf6cba4a1",
+      "name": "Structured Output Parser2",
+      "parameters": {
+        "inputSchema": "{\n  \"type\": \"array\",\n  \"items\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"item_number\": { \"type\": \"string\" },\n      \"agenda_item_title\": { \"type\": [\"string\", \"null\"] },\n      \"district_and_commissioner\": { \"type\": [\"string\", \"null\"] },\n      \"location_of_zoning_change\": { \"type\": [\"string\", \"null\"] },\n      \"city_planner\": { \"type\": [\"string\", \"null\"] },\n      \"applicant\": { \"type\": [\"string\", \"null\"] },\n      \"zoning_consultant\": { \"type\": [\"string\", \"null\"] },\n      \"zoning_change_summary\": { \"type\": [\"string\", \"null\"] },\n      \"staff_recommendation\": { \"type\": [\"string\", \"null\"] },\n      \"staffing_recommendation_summary\": { \"type\": [\"string\", \"null\"] },\n      \"summary_of_application\": { \"type\": [\"string\", \"null\"] },\n      \"analysis_of_request\": { \"type\": [\"string\", \"null\"] },\n      \"history_of_zoning\": { \"type\": [\"string\", \"null\"] },\n      \"recommended_questions\": { \"type\": [\"string\", \"null\"] },\n      \"attachments\": {\n        \"type\": \"array\",\n        \"items\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"link\": { \"type\": \"string\" },\n            \"page\": { \"type\": \"integer\" },\n            \"title\": { \"type\": \"string\" }\n          },\n          \"required\": [\"link\", \"page\", \"title\"]\n        }\n      },\n      \"council_district\": { \"type\": [\"string\", \"null\"] }\n    },\n    \"required\": [\"item_number\", \"agenda_item_title\", \"attachments\"]\n  }\n}\n",
+        "schemaType": "manual"
+      },
+      "position": [
+        4512,
+        1616
+      ],
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3
+    },
+    {
+      "credentials": {
+        "supabaseApi": {
+          "id": "nc6EAQqDAd4ZZZlH",
+          "name": "Supabase account"
+        }
+      },
+      "id": "649c4888-e07f-4eeb-ba76-99058db48f04",
+      "name": "Update a row2",
+      "parameters": {
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "case_items",
+              "fieldValue": "={{ $json.output }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "complete"
+            }
+          ]
+        },
+        "filters": {
+          "conditions": [
+            {
+              "condition": "eq",
+              "keyName": "id",
+              "keyValue": "={{ $('Create a row2').item.json.id }}"
+            }
+          ]
+        },
+        "matchType": "allFilters",
+        "operation": "update",
+        "tableId": "jobs"
+      },
+      "position": [
+        4944,
+        1504
+      ],
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1
+    },
+    {
+      "id": "4b9c73d9-4bd0-4133-9e2b-8d48d5698837",
+      "name": "Edit Fields9",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "32e59fc4-eda3-49e4-b890-928efa8da3e3",
+              "name": "cleaned_agenda_only_docket",
+              "type": "array",
+              "value": "={{ $json.cleaned_agenda_only_docket }}"
+            },
+            {
+              "id": "93c9d2f1-1d93-428c-be13-c046c4d5250b",
+              "name": "full_agenda_text",
+              "type": "string",
+              "value": "={{ $json.full_agenda_text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        2800,
+        1632
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "6533b65f-8add-4b8c-92bb-4db58b9739e1",
+      "name": "HTTP Request4",
+      "parameters": {
+        "options": {},
+        "url": "={{ $json.attachments.link }}"
+      },
+      "position": [
+        3920,
+        1776
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "88ffdf43-56f1-4d63-8641-abd669ec8ee5",
+      "name": "Extract from File4",
+      "parameters": {
+        "operation": "pdf",
+        "options": {
+          "keepSource": "json"
+        }
+      },
+      "position": [
+        4144,
+        1776
+      ],
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1
+    },
+    {
+      "id": "95fecccd-2bb4-4bdc-a1e2-236fa822e986",
+      "name": "Split Out3",
+      "parameters": {
+        "fieldToSplitOut": "attachments",
+        "fieldsToInclude": "item_number",
+        "include": "selectedOtherFields",
+        "options": {}
+      },
+      "position": [
+        3696,
+        1776
+      ],
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1
+    },
+    {
+      "id": "2742fdcb-9e13-4506-83ea-b9e9d2a392cc",
+      "name": "Edit Fields10",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f2a16552-8deb-4633-8f04-483ee186a9db",
+              "name": "text",
+              "type": "string",
+              "value": "={{ $json.text }}"
+            },
+            {
+              "id": "c394fa44-f0dd-458c-8a32-2fbc87d8a1c1",
+              "name": "=item_number",
+              "type": "string",
+              "value": "={{ $json.item_number }}"
+            },
+            {
+              "id": "26030e4a-e69d-4a28-9b27-c66b1521b6b2",
+              "name": "attachments.title",
+              "type": "string",
+              "value": "={{ $json.attachments.title }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        4432,
+        1824
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "0e9d81f7-f2c2-485f-85e3-b2065d937785",
+      "name": "Code1",
+      "parameters": {
+        "jsCode": "// Get all inputs\nconst allInputs = $input.all().map(i => i.json);\n\nconsole.log('=== DIAGNOSTIC START ===');\nconsole.log('Total inputs:', allInputs.length);\n\n// Check what we received\nallInputs.forEach((input, idx) => {\n  console.log(`\\nInput ${idx}:`, {\n    hasCleanedDocket: !!input.cleaned_agenda_only_docket,\n    hasFullText: !!input.full_agenda_text,\n    hasText: !!input.text,\n    hasItemNumber: !!input.item_number,\n    hasTitle: !!input.title,\n    titleType: typeof input.title,\n    sampleKeys: Object.keys(input).slice(0, 5)\n  });\n  \n  // Show first attachment example\n  if (input.title && idx === 1) {\n    console.log('Sample title structure:', JSON.stringify(input.title, null, 2));\n  }\n});\n\n// Find baseline\nconst agendaInput = allInputs.find(i => i.cleaned_agenda_only_docket !== undefined);\nconsole.log('\\n=== BASELINE ===');\nconsole.log('Found baseline:', !!agendaInput);\nconsole.log('Docket items:', agendaInput?.cleaned_agenda_only_docket?.length);\n\n// Find attachments\nconst attachInputs = allInputs.filter(i => \n  i.text !== undefined && \n  i.item_number !== undefined && \n  i.title !== undefined\n);\nconsole.log('\\n=== ATTACHMENTS ===');\nconsole.log('Attachment items found:', attachInputs.length);\n\n// Show first 3 keys that would be created\nattachInputs.slice(0, 3).forEach(item => {\n  const titleString = item.title?.title || item.title;\n  const key = `${item.item_number}:${titleString}`;\n  console.log('Sample key:', key);\n});\n\nconsole.log('=== DIAGNOSTIC END ===');\n\n// Return empty for now\nreturn [{ json: { diagnostic: 'complete' } }];"
+      },
+      "position": [
+        4144,
+        1504
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "5dd4cb5e-805f-4376-a7ab-adb75a941a00",
+      "name": "Loop Over Items1",
+      "parameters": {
+        "options": {}
+      },
+      "position": [
+        3472,
+        1776
+      ],
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3
+    },
+    {
+      "id": "016df445-4c3b-41c5-bd6b-3df87dd2c78c",
+      "name": "Aggregate",
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        4720,
+        1504
+      ],
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1
+    },
+    {
+      "id": "0e40f1be-2a74-4a3a-bd7a-d1e1c2a6b5a4",
+      "name": "Split Out",
+      "parameters": {
+        "fieldToSplitOut": "cleaned_agenda_only_docket",
+        "options": {}
+      },
+      "position": [
+        2992,
+        1776
+      ],
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1
+    },
+    {
+      "id": "08321c87-d8ad-438a-be00-b8a44e76ed59",
+      "name": "If",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "ddbe63ad-2e72-4437-8ee9-b0a4ba4b2695",
+              "leftValue": "={{$json.attachments}}",
+              "operator": {
+                "operation": "exists",
+                "singleValue": true,
+                "type": "string"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          }
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "ignoreCase": false
+        }
+      },
+      "position": [
+        3200,
+        1776
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "83027795-0e64-4844-af7d-740ac87ffcf5",
+      "name": "Merge1",
+      "parameters": {},
+      "position": [
+        3984,
+        1440
+      ],
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2
+    },
+    {
+      "id": "c76ff737-d370-4e69-ba83-8b2bfd0a9c0d",
+      "name": "Edit Fields1",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b9a6591c-a96d-40df-b3c8-7aa737d61718",
+              "name": "cleaned_agenda_only_docket",
+              "type": "array",
+              "value": "={{ $json.cleaned_agenda_only_docket }}"
+            },
+            {
+              "id": "358d75d0-a55a-4a40-9c14-053da9498982",
+              "name": "full_agenda_text",
+              "type": "string",
+              "value": "={{ $json.full_agenda_text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        3680,
+        1456
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "926c360c-9843-43ec-882a-eed1f1984dd1",
+      "name": "Edit Fields2",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "da3a08be-6756-436c-a8cb-378f6b9faffb",
+              "name": "text",
+              "type": "string",
+              "value": "={{ $json.text }}"
+            },
+            {
+              "id": "e3310ac4-9961-4664-88a5-1f9971ca6321",
+              "name": "item_number",
+              "type": "string",
+              "value": "={{ $json.item_number }}"
+            },
+            {
+              "id": "ce67ca76-7a56-4845-a36a-19363c5bd29b",
+              "name": "title",
+              "type": "object",
+              "value": "={{ $json.attachments }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        3696,
+        1616
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    }
+  ],
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

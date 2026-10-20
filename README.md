@@ -1,22 +1,35 @@
 # kynetic-ai
 
-Working repo for Kynetic AI. Twenty CRM is the system of record. This repo mirrors it: agent rules, the Plan 1 outbound build, and the decision log. If a doc disagrees with Twenty, Twenty wins.
+Working repo for Kynetic AI. Twenty CRM is canonical; this repo mirrors it: agent rules, the Plan 1 outbound build, the portal, and the decision log. On a mismatch, flag it rather than silently picking one.
+
+## The four context files
+
+Every agent session reads these first (see `CLAUDE.md`):
+
+| File | Purpose |
+|---|---|
+| `docs/progress.md` | Where we are |
+| `docs/decisions.md` | What is already decided (D-001 through D-019) |
+| `docs/known-issues.md` | Gotchas and open problems |
+| `KYNETIC_CONTEXT.md` | Rules, IDs, D-017 pricing, the two Retell workspaces, Twenty, the portal |
 
 ## Layout
 
 | Path | What it is |
 |---|---|
-| `KYNETIC_CONTEXT.md` | Rules, IDs, D-017 pricing, the two Retell workspaces |
-| `CLAUDE.md` | Agent instructions. `AGENTS.md` points here |
-| `docs/` | `progress.md`, `decisions.md` (D-001 through D-018), `known-issues.md`, counsel notes |
+| `CLAUDE.md` | Agent instructions and the session protocol. `AGENTS.md` points here |
+| `docs/` | The three context docs above, plus counsel notes and the Plan 1 walkthrough (point-in-time) |
 | `retell/builds/outbound-speed-to-lead/` | Plan 1: Alex, the Kynetic Roofing demo, the n8n mapping |
 | `retell/PROMPTING_STYLE.md` | House style for Retell prompts |
-| `tools/retell.py` | Retell API client. Dry-run unless `--apply` |
 | `retell/builds/emily-speed-to-lead/` | Plan 2 Emily build, paused |
 | `retell/builds/kynetic-restoration/` | Kynetic Restoration (Demo). Leave it alone |
-| `.claude/skills/` | `brand-profile`, `retell-builder`, `build-log` |
-| `Claude Skills/` | Other skill notes, including `skills-breakdown.md` |
-| `archive/` | Parked Vapi prompt, the old lead-scrape flow, the old trade-receptionist export, the SeldonFrame build log |
+| `retell/builds/_inflate-original/` | Reference export of the original build. Leave it alone |
+| `tools/retell.py` | Retell API client. Dry-run unless `--apply` |
+| `portal/` | Client portal (Next.js, portal.kyneticai.com). Ops docs: `portal/ADMIN.md`, `portal/N8N.md`; build report in `portal/docs/` |
+| `.claude/skills/` | `brand-profile`, `demo-profile-generator`, `retell-builder`, `build-log`, `n8n-code-javascript`, plus `skills-breakdown.md` |
+| `.mcp.json`, `.env.example` | MCP servers and the names of the environment variables |
+
+Legacy material (Vapi prompt, lead-scrape flow, trade-receptionist export, SeldonFrame log) is no longer on main. It is recoverable from tag `archive/pre-reorg-2026-10-17`.
 
 Secrets stay in `.env` (see `.env.example`) or in the cloud environment. Never commit them.
 

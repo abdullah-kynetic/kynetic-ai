@@ -1,0 +1,8 @@
+# Append to /etc/caddy/Caddyfile, then: sudo caddy validate --config /etc/caddy/Caddyfile && sudo systemctl reload caddy
+portal.kyneticai.com {
+	encode zstd gzip
+	request_body {
+		max_size 30MB
+	}
+	reverse_proxy 127.0.0.1:3020
+}

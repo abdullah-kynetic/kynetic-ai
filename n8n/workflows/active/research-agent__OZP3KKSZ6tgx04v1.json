@@ -1,0 +1,921 @@
+{
+  "active": true,
+  "connections": {
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Loop Over Items",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Update a row2",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Split Out1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond to Webhook",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Merge1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Edit Fields10": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Loop Over Items1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "index": 1,
+            "node": "Merge1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "index": 1,
+            "node": "Merge",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Merge",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Edit Fields9": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Split Out",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Edit Fields1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Extract from File1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Edit Fields4",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Extract from File4": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Edit Fields10",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Edit Fields3",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Extract from File4",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Loop Over Items1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Aggregate",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "AI Agent",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Edit Fields2",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Split Out3",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create a row",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Code1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Edit Fields9",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "If",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Loop Over Items",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Split Out3": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "HTTP Request4",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent",
+            "type": "ai_outputParser"
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "HTTP Request",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Extract from File1",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "OZP3KKSZ6tgx04v1",
+  "name": "Research Agent",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "baf331d4-c83f-44b6-bc6e-81a22cebd91d",
+      "name": "HTTP Request",
+      "parameters": {
+        "bodyParameters": {
+          "parameters": [
+            {
+              "inputDataFieldName": "file0",
+              "name": "file",
+              "parameterType": "formBinaryData"
+            }
+          ]
+        },
+        "contentType": "multipart-form-data",
+        "method": "POST",
+        "options": {},
+        "sendBody": true,
+        "url": "https://pdf-link-extractor-service.onrender.com/analyze-links"
+      },
+      "position": [
+        -2688,
+        352
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "43ad71b7-b123-49c0-abee-5ad54d33226b",
+      "name": "Edit Fields3",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c5657e74-0766-44b5-803d-df5aafcaa12d",
+              "name": "cleaned_agenda_only_docket",
+              "type": "array",
+              "value": "={{ $json.docket }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        -2464,
+        352
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "alwaysOutputData": false,
+      "id": "ec4873c0-7058-4913-b5ec-3818c4261f50",
+      "name": "Webhook",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {
+          "binaryPropertyName": "file"
+        },
+        "path": "cpc-tool-ai-analysis",
+        "responseMode": "responseNode"
+      },
+      "position": [
+        -2912,
+        256
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "f49e7bd6-4f3b-4243-b972-a256054b1b32"
+    },
+    {
+      "id": "7691c19b-1e2c-4dc0-857b-e7596c42a0b0",
+      "name": "Extract from File1",
+      "parameters": {
+        "binaryPropertyName": "file0",
+        "operation": "pdf",
+        "options": {}
+      },
+      "position": [
+        -2688,
+        160
+      ],
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1
+    },
+    {
+      "id": "8c2f0fd7-2e2e-4cc1-97b7-e456a9c36682",
+      "name": "Edit Fields4",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1ab9943c-889c-407a-b186-cedf1832423c",
+              "name": "full_agenda_text",
+              "type": "string",
+              "value": "={{ $json.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        -2464,
+        160
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "04466a3c-b6cb-4df1-b22f-a613c093af4c",
+      "name": "Merge",
+      "parameters": {
+        "combineBy": "combineAll",
+        "mode": "combine",
+        "options": {}
+      },
+      "position": [
+        -2240,
+        256
+      ],
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2
+    },
+    {
+      "credentials": {
+        "supabaseApi": {
+          "id": "nc6EAQqDAd4ZZZlH",
+          "name": "Supabase account"
+        }
+      },
+      "id": "5d059991-d0d5-4ac6-be0d-1be5562b9f35",
+      "name": "Create a row",
+      "parameters": {
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "full_agenda_text",
+              "fieldValue": "={{ $json.full_agenda_text }}"
+            },
+            {
+              "fieldId": "cleaned_agenda_only_docket",
+              "fieldValue": "={{ $json.cleaned_agenda_only_docket }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "processing"
+            }
+          ]
+        },
+        "tableId": "jobs"
+      },
+      "position": [
+        -2016,
+        256
+      ],
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1
+    },
+    {
+      "id": "e2f2b5a7-dde3-4fa5-82a1-39e328a2d1eb",
+      "name": "Respond to Webhook",
+      "parameters": {
+        "options": {},
+        "respondWith": "json",
+        "responseBody": "={\n  \"job_id\": \"{{ $json.id }}\"\n} "
+      },
+      "position": [
+        -1792,
+        256
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4
+    },
+    {
+      "credentials": {
+        "supabaseApi": {
+          "id": "nc6EAQqDAd4ZZZlH",
+          "name": "Supabase account"
+        }
+      },
+      "id": "99dde8ed-7cc1-4058-81bf-a02c0da4c0fa",
+      "name": "Update a row2",
+      "parameters": {
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "case_items",
+              "fieldValue": "={{ $json.output }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "complete"
+            }
+          ]
+        },
+        "filters": {
+          "conditions": [
+            {
+              "condition": "eq",
+              "keyName": "id",
+              "keyValue": "={{ $('Create a row2').item.json.id }}"
+            }
+          ]
+        },
+        "matchType": "allFilters",
+        "operation": "update",
+        "tableId": "jobs"
+      },
+      "position": [
+        800,
+        -96
+      ],
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1
+    },
+    {
+      "id": "0da7a9e9-acdf-424d-8d5f-c7222879fa82",
+      "name": "Edit Fields9",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "32e59fc4-eda3-49e4-b890-928efa8da3e3",
+              "name": "cleaned_agenda_only_docket",
+              "type": "array",
+              "value": "={{ $json.cleaned_agenda_only_docket }}"
+            },
+            {
+              "id": "93c9d2f1-1d93-428c-be13-c046c4d5250b",
+              "name": "full_agenda_text",
+              "type": "string",
+              "value": "={{ $json.full_agenda_text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        -1568,
+        256
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "2125f374-8115-44d3-84a2-0e274b09b283",
+      "name": "HTTP Request4",
+      "parameters": {
+        "options": {},
+        "url": "={{ $json.attachments.link }}"
+      },
+      "position": [
+        -448,
+        288
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "9701862c-f38f-431f-a01d-311d5e753387",
+      "name": "Extract from File4",
+      "parameters": {
+        "operation": "pdf",
+        "options": {
+          "keepSource": "json"
+        }
+      },
+      "position": [
+        -224,
+        288
+      ],
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1
+    },
+    {
+      "id": "78dbddbb-fce3-48b4-87ec-8392211d6a66",
+      "name": "Split Out3",
+      "parameters": {
+        "fieldToSplitOut": "attachments",
+        "fieldsToInclude": "item_number",
+        "include": "selectedOtherFields",
+        "options": {}
+      },
+      "position": [
+        -672,
+        288
+      ],
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1
+    },
+    {
+      "id": "e2b7a918-77f2-4d5b-9b1f-6df2eebd2a8c",
+      "name": "Edit Fields10",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f2a16552-8deb-4633-8f04-483ee186a9db",
+              "name": "text",
+              "type": "string",
+              "value": "={{ $json.text }}"
+            },
+            {
+              "id": "c394fa44-f0dd-458c-8a32-2fbc87d8a1c1",
+              "name": "=item_number",
+              "type": "string",
+              "value": "={{ $json.item_number }}"
+            },
+            {
+              "id": "26030e4a-e69d-4a28-9b27-c66b1521b6b2",
+              "name": "attachments.title",
+              "type": "string",
+              "value": "={{ $json.attachments.title }}"
+            },
+            {
+              "id": "db189f0e-3202-401d-9f75-81354ee9dd4f",
+              "name": "attachments.link",
+              "type": "string",
+              "value": "={{ $json.attachments.link }}"
+            },
+            {
+              "id": "1256578a-e308-47dc-b9f7-04500fb49561",
+              "name": "attachments.page",
+              "type": "number",
+              "value": "={{ $json.attachments.page }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        0,
+        432
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "bafb86ec-53a9-4fa6-b0a1-45f54a14ead0",
+      "name": "Code1",
+      "parameters": {
+        "jsCode": "const allInputs = $input.all().map(i => i.json);\n\n// 1. Baseline docket (from Edit Fields1)\nconst agendaInput = allInputs.find(i => i.cleaned_agenda_only_docket);\n\n// 2. Extracted attachment texts (from Edit Fields2)\nconst extractedAttachments = allInputs.filter(i =>\n  i.text !== undefined &&\n  i.item_number !== undefined &&\n  i.attachments?.title !== undefined\n);\n\n// 3. Build lookup: key = \"item_number||title\"\nconst attachmentMap = new Map();\nextractedAttachments.forEach(item => {\n  const key = `${item.item_number}||${item.attachments.title}`;\n  attachmentMap.set(key, {\n    title: item.attachments.title,\n    link: item.attachments.link,\n    text: item.text\n  });\n});\n\n// 4. Enrich baseline docket\nconst caseItems = (agendaInput?.cleaned_agenda_only_docket || []).map(item => {\n  const enrichedAttachments = (item.attachments || []).map(attach => {\n    const key = `${item.item_number}||${attach.title}`;\n    const extracted = attachmentMap.get(key);\n    return extracted \n      ? { ...attach, text: extracted.text } \n      : { ...attach, text: null };\n  });\n\n  return {\n    item_number: item.item_number,\n    raw_text: item.raw_text,\n    attachments: enrichedAttachments\n  };\n});\n\n// 5. Output for AI Agent\nreturn [{\n  json: {\n    full_agenda_text: agendaInput?.full_agenda_text || \"\",\n    case_items: caseItems\n  }\n}];"
+      },
+      "position": [
+        -224,
+        96
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "3f3cb399-ed49-46df-9732-b08e5797e6dd",
+      "name": "Loop Over Items1",
+      "parameters": {
+        "options": {}
+      },
+      "position": [
+        -896,
+        368
+      ],
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3
+    },
+    {
+      "id": "320b9a45-2e9a-40a1-b949-73ce9e168b00",
+      "name": "Aggregate",
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        512,
+        -96
+      ],
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1
+    },
+    {
+      "id": "260029b9-088b-4b9e-ab2b-6f64a0aa4372",
+      "name": "Split Out",
+      "parameters": {
+        "fieldToSplitOut": "cleaned_agenda_only_docket",
+        "options": {}
+      },
+      "position": [
+        -1344,
+        368
+      ],
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1
+    },
+    {
+      "id": "336deaf0-4952-45aa-b9ff-8991b14d79c7",
+      "name": "If",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "ddbe63ad-2e72-4437-8ee9-b0a4ba4b2695",
+              "leftValue": "={{$json.attachments}}",
+              "operator": {
+                "operation": "exists",
+                "singleValue": true,
+                "type": "string"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          }
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "ignoreCase": false
+        }
+      },
+      "position": [
+        -1120,
+        368
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "7774f5a7-56b9-4c66-9514-398fc041ba7d",
+      "name": "Merge1",
+      "parameters": {},
+      "position": [
+        -448,
+        96
+      ],
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2
+    },
+    {
+      "id": "ad4ab8bb-6307-488b-8e49-b6d78d46d1e8",
+      "name": "Edit Fields1",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b9a6591c-a96d-40df-b3c8-7aa737d61718",
+              "name": "cleaned_agenda_only_docket",
+              "type": "array",
+              "value": "={{ $json.cleaned_agenda_only_docket }}"
+            },
+            {
+              "id": "358d75d0-a55a-4a40-9c14-053da9498982",
+              "name": "full_agenda_text",
+              "type": "string",
+              "value": "={{ $json.full_agenda_text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        -672,
+        -96
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "3a819ad1-6dee-42a2-bd34-dea61fa6498e",
+      "name": "Edit Fields2",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "da3a08be-6756-436c-a8cb-378f6b9faffb",
+              "name": "=text",
+              "type": "string",
+              "value": "={{ $json.text }}"
+            },
+            {
+              "id": "e3310ac4-9961-4664-88a5-1f9971ca6321",
+              "name": "=item_number",
+              "type": "string",
+              "value": "={{ $json.item_number }}"
+            },
+            {
+              "id": "ce67ca76-7a56-4845-a36a-19363c5bd29b",
+              "name": "=attachments.title",
+              "type": "string",
+              "value": "={{ $json.attachments.title }}"
+            },
+            {
+              "id": "de343129-10d2-4092-a887-13c9f7809d2f",
+              "name": "attachments.link",
+              "type": "string",
+              "value": "={{ $json.attachments.link }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        -672,
+        96
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "executeOnce": false,
+      "id": "52135877-5727-4033-9178-8021c9cd19e5",
+      "name": "AI Agent",
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "ROLE:\nYou are the CPC Tool AI Extraction Agent processing ONE case at a time.\n\nCONTEXT:\nYou receive:\n1. full_agenda_text (for reference context)\n2. case_items object containing:\n   - item_number\n   - raw_text\n   - attachments[]\n\nTASK:\n- Extract fields ONLY from the case_items.raw_text and case_items.attachments\n- Do NOT process multiple cases\n- Do NOT invent information\n- Return null for missing fields\n\nOUTPUT FORMAT:\n- Return ONE JSON object (not array)\n- Include ALL fields\n- Valid JSON only"
+        },
+        "promptType": "define",
+        "text": "You are given ONE case item to process from a Dallas City Plan Commission agenda:\n\n**Full Agenda Text (for context only):**\n{{ $json.full_agenda_text }}\n\n**SINGLE CASE ITEM TO PROCESS:**\nItem Number: {{ $json.case_items.item_number }}\nRaw Text: {{ $json.case_items.raw_text }}\nAttachments: {{ JSON.stringify($json.case_items.attachments) }}\n\n---\n\nTASK:\nExtract ALL required fields for THIS ONE CASE ITEM ONLY.\n\nOUTPUT FORMAT:\nReturn exactly ONE JSON object (NOT an array) with these fields:\n\n{\n  \"item_number\": \"{{ $json.case_items.item_number }}\",\n  \"agenda_item_title\": \"<string or null>\",\n  \"district_and_commissioner\": \"<string or null>\",\n  \"location_of_zoning_change\": \"<string or null>\",\n  \"city_planner\": \"<string or null>\",\n  \"applicant\": \"<string or null>\",\n  \"zoning_consultant\": \"<string or null>\",\n  \"zoning_change_summary\": \"<string or null>\",\n  \"staff_recommendation\": \"<string or null>\",\n  \"staffing_recommendation_summary\": \"<string or null>\",\n  \"summary_of_application\": \"<string or null>\",\n  \"analysis_of_request\": \"<string or null>\",\n  \"history_of_zoning\": \"<string or null>\",\n  \"recommended_questions\": \"<string or null>\",\n  \"attachments\": [],\n  \"council_district\": \"<string or null>\"\n}\n\nCRITICAL RULES:\n- Extract ONLY from the raw_text and attachments for THIS case\n- Set fields to null if information is not found\n- Include ALL fields even if null\n- Return ONE object, NOT an array\n- Do NOT hallucinate or enrich values"
+      },
+      "position": [
+        448,
+        208
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "7e70b64f-7170-4617-858f-56c7ea4349ad",
+      "name": "Split Out1",
+      "parameters": {
+        "fieldToSplitOut": "case_items",
+        "fieldsToInclude": "full_agenda_text",
+        "include": "selectedOtherFields",
+        "options": {}
+      },
+      "position": [
+        0,
+        96
+      ],
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1
+    },
+    {
+      "id": "63cce3ee-28fe-4811-a3ce-d56710a2230d",
+      "name": "Loop Over Items",
+      "parameters": {
+        "options": {}
+      },
+      "position": [
+        224,
+        96
+      ],
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3
+    },
+    {
+      "credentials": {
+        "openRouterApi": {
+          "id": "hbKKePpm5LghGFFU",
+          "name": "OpenRouter abdublitz"
+        }
+      },
+      "id": "3dabc3ef-3d6c-4f6d-a1d7-33f25c863a33",
+      "name": "OpenRouter Chat Model",
+      "parameters": {
+        "model": "shisa-ai/shisa-v2-llama3.3-70b:free",
+        "options": {
+          "responseFormat": "json_object"
+        }
+      },
+      "position": [
+        304,
+        416
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1
+    },
+    {
+      "id": "b20b6444-bd0a-48af-82f2-421964fe8cb5",
+      "name": "Structured Output Parser",
+      "parameters": {
+        "inputSchema": "={\n  \"type\": \"object\",\n  \"properties\": {\n    \"item_number\": {\"type\": \"string\"},\n    \"agenda_item_title\": {\"type\": [\"string\", \"null\"]},\n    \"district_and_commissioner\": {\"type\": [\"string\", \"null\"]},\n    \"location_of_zoning_change\": {\"type\": [\"string\", \"null\"]},\n    \"city_planner\": {\"type\": [\"string\", \"null\"]},\n    \"applicant\": {\"type\": [\"string\", \"null\"]},\n    \"zoning_consultant\": {\"type\": [\"string\", \"null\"]},\n    \"zoning_change_summary\": {\"type\": [\"string\", \"null\"]},\n    \"staff_recommendation\": {\"type\": [\"string\", \"null\"]},\n    \"staffing_recommendation_summary\": {\"type\": [\"string\", \"null\"]},\n    \"summary_of_application\": {\"type\": [\"string\", \"null\"]},\n    \"analysis_of_request\": {\"type\": [\"string\", \"null\"]},\n    \"history_of_zoning\": {\"type\": [\"string\", \"null\"]},\n    \"recommended_questions\": {\"type\": [\"string\", \"null\"]},\n    \"attachments\": {\"type\": \"array\", \"default\": []},\n    \"council_district\": {\"type\": [\"string\", \"null\"]}\n  },\n  \"required\": [\"item_number\"],\n  \"additionalProperties\": false\n}",
+        "schemaType": "manual"
+      },
+      "position": [
+        624,
+        416
+      ],
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3
+    }
+  ],
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

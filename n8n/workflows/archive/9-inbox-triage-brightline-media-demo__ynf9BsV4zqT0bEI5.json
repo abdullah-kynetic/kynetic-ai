@@ -1,0 +1,604 @@
+{
+  "active": false,
+  "connections": {
+    "AI Triage": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Triage Result",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Gmail Labels": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Prepare Emails",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Gmail Labels",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "List Triage Labels": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create Gmail Label",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "OpenAI Model": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "AI Triage",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Prepare Emails": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "AI Triage",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Route Action": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Telegram Urgent Alert",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Create Draft Reply",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Run Once: Create Labels": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "List Triage Labels",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Triage Output Format": {
+      "ai_outputParser": [
+        [
+          {
+            "index": 0,
+            "node": "AI Triage",
+            "type": "ai_outputParser"
+          }
+        ]
+      ]
+    },
+    "Triage Result": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Apply Labels",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Route Action",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "ynf9BsV4zqT0bEI5",
+  "name": "#9 Inbox Triage | Brightline Media Demo",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "fe52eda6-f3e4-451c-a9e8-66d6dc10f73a",
+      "name": "Run Once: Create Labels",
+      "parameters": {},
+      "position": [
+        -200,
+        -400
+      ],
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1
+    },
+    {
+      "id": "f8b0237c-7f78-4ac4-88e0-6dddfdac70f7",
+      "name": "List Triage Labels",
+      "parameters": {
+        "jsCode": "const names = ['AI/Urgent', 'AI/Client', 'AI/Lead', 'AI/Promotion', 'AI/FYI', 'AI/Cold Pitch', 'AI/Triaged'];\nreturn names.map(n => ({ json: { name: n } }));",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        40,
+        -400
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dil4wMogas9aOWKP",
+          "name": "Abdullah Kynetic account"
+        }
+      },
+      "id": "7b35a737-fa21-43d3-a2fe-47367bb45f08",
+      "name": "Create Gmail Label",
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "name": "={{ $json.name }}",
+        "operation": "create",
+        "options": {
+          "labelListVisibility": "labelShow",
+          "messageListVisibility": "show"
+        },
+        "resource": "label"
+      },
+      "position": [
+        280,
+        -400
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "webhookId": "c2a69c86-c569-4af6-9098-469d4d86571f"
+    },
+    {
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dil4wMogas9aOWKP",
+          "name": "Abdullah Kynetic account"
+        }
+      },
+      "id": "a308e967-924f-4610-be62-f3474d67df6f",
+      "name": "Gmail Trigger",
+      "parameters": {
+        "event": "messageReceived",
+        "filters": {
+          "includeDrafts": false,
+          "includeSpamTrash": false,
+          "q": "in:inbox -label:ai-triaged newer_than:2d",
+          "readStatus": "both"
+        },
+        "maxResults": 10,
+        "options": {
+          "downloadAttachments": false
+        },
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false
+      },
+      "position": [
+        -200,
+        0
+      ],
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4
+    },
+    {
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dil4wMogas9aOWKP",
+          "name": "Abdullah Kynetic account"
+        }
+      },
+      "executeOnce": true,
+      "id": "dcc8a8ad-762a-407f-b1ab-818498d82645",
+      "name": "Get Gmail Labels",
+      "parameters": {
+        "operation": "getAll",
+        "resource": "label",
+        "returnAll": true
+      },
+      "position": [
+        40,
+        0
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "webhookId": "569c7a61-f992-4e01-a70c-024c86ff9498"
+    },
+    {
+      "id": "2c44d676-9eea-4694-9b05-7fd2e6b7054a",
+      "name": "Prepare Emails",
+      "parameters": {
+        "jsCode": "const byName = {};\nfor (const l of $('Get Gmail Labels').all()) { byName[l.json.name] = l.json.id; }\nconst labelMap = {\n  urgent: byName['AI/Urgent'],\n  client_request: byName['AI/Client'],\n  sales_lead: byName['AI/Lead'],\n  promotion: byName['AI/Promotion'],\n  fyi: byName['AI/FYI'],\n  cold_pitch: byName['AI/Cold Pitch'],\n  triaged: byName['AI/Triaged']\n};\nreturn $('Gmail Trigger').all().map((e, i) => {\n  const sender = (e.json.from && e.json.from.value && e.json.from.value[0]) || {};\n  const body = (e.json.text || e.json.snippet || '').toString().slice(0, 6000);\n  return {\n    json: {\n      messageId: e.json.id,\n      threadId: e.json.threadId,\n      fromEmail: sender.address || '',\n      fromName: sender.name || sender.address || 'Unknown sender',\n      subject: e.json.subject || '(no subject)',\n      body: body,\n      receivedAt: e.json.date || '',\n      labelMap: labelMap\n    },\n    pairedItem: { item: i }\n  };\n});",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        280,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "631570b2-c086-47ec-882a-4817be0f416a",
+      "name": "AI Triage",
+      "parameters": {
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You triage the inbox for James Carter, founder of Brightline Media, a small performance marketing agency that runs Google and Meta ads for local businesses.\n\nPick exactly one category:\n- urgent: a client or partner reports something broken, money at risk, a deadline today, or an angry client. Needs James personally.\n- client_request: an existing client asks a question or requests work, but nothing is on fire.\n- sales_lead: a prospective client asks about services, pricing, or a call.\n- promotion: a vendor or partner offer, discount, or event invite James might care about.\n- fyi: receipts, notifications, newsletters, internal updates. No reply needed.\n- cold_pitch: unsolicited sales pitches, link building, offshore dev offers, spam.\n\nRules:\n- urgent_summary: only for urgent. Two short sentences: what happened and what James should do. Plain text, no symbols like < or &.\n- draft_reply: only for client_request, sales_lead, and promotion. Write a short, warm reply from James in plain text, under 120 words, no subject line. Never promise pricing, dates, or refunds. For sales leads, suggest a quick call and ask for two times that work.\n- For fyi, cold_pitch, and urgent, leave draft_reply as an empty string.\n- reasoning: one sentence on why you chose the category.\n\nExamples:\n\"Our conversion tracking stopped working, we cannot see results\" -> urgent\n\"Can you add a new ad set for our fall promo?\" -> client_request\n\"Saw your site, what would ads cost for my dental office?\" -> sales_lead\n\"30% off our reporting software this week\" -> promotion\n\"Your Stripe receipt\" -> fyi\n\"We build backlinks, DA 50+\" -> cold_pitch",
+              "type": "SystemMessagePromptTemplate"
+            }
+          ]
+        },
+        "promptType": "define",
+        "text": "=From: {{ $json.fromName }} <{{ $json.fromEmail }}>\nSubject: {{ $json.subject }}\n\nBody:\n{{ $json.body }}"
+      },
+      "position": [
+        520,
+        0
+      ],
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9
+    },
+    {
+      "credentials": {
+        "openAiApi": {
+          "id": "T3fSxXKFoT57vf5P",
+          "name": "OpenAi account"
+        }
+      },
+      "id": "da41d368-375a-4e50-a84f-1e93b58019be",
+      "name": "OpenAI Model",
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-5-mini"
+        },
+        "options": {
+          "reasoningEffort": "low"
+        }
+      },
+      "position": [
+        520,
+        220
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3
+    },
+    {
+      "id": "3aeed12e-3c45-419d-9935-054c60b3a7dd",
+      "name": "Triage Output Format",
+      "parameters": {
+        "autoFix": false,
+        "jsonSchemaExample": "{ \"category\": \"urgent\", \"reasoning\": \"Client reports tracking outage affecting live campaigns\", \"urgent_summary\": \"Acme says conversion tracking stopped. Needs a fix today.\", \"draft_reply\": \"\" }",
+        "schemaType": "fromJson"
+      },
+      "position": [
+        680,
+        220
+      ],
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3
+    },
+    {
+      "id": "6968855a-d6a3-4bf0-80e7-f042bc3668c5",
+      "name": "Triage Result",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "r1",
+              "name": "messageId",
+              "type": "string",
+              "value": "={{ $('Prepare Emails').item.json.messageId }}"
+            },
+            {
+              "id": "r2",
+              "name": "threadId",
+              "type": "string",
+              "value": "={{ $('Prepare Emails').item.json.threadId }}"
+            },
+            {
+              "id": "r3",
+              "name": "fromEmail",
+              "type": "string",
+              "value": "={{ $('Prepare Emails').item.json.fromEmail }}"
+            },
+            {
+              "id": "r4",
+              "name": "fromName",
+              "type": "string",
+              "value": "={{ $('Prepare Emails').item.json.fromName }}"
+            },
+            {
+              "id": "r5",
+              "name": "subject",
+              "type": "string",
+              "value": "={{ $('Prepare Emails').item.json.subject }}"
+            },
+            {
+              "id": "r6",
+              "name": "category",
+              "type": "string",
+              "value": "={{ $json.output.category }}"
+            },
+            {
+              "id": "r7",
+              "name": "reasoning",
+              "type": "string",
+              "value": "={{ $json.output.reasoning }}"
+            },
+            {
+              "id": "r8",
+              "name": "urgentSummary",
+              "type": "string",
+              "value": "={{ $json.output.urgent_summary }}"
+            },
+            {
+              "id": "r9",
+              "name": "draftReply",
+              "type": "string",
+              "value": "={{ $json.output.draft_reply }}"
+            },
+            {
+              "id": "r10",
+              "name": "labelIds",
+              "type": "array",
+              "value": "={{ [ $('Prepare Emails').item.json.labelMap[$json.output.category], $('Prepare Emails').item.json.labelMap.triaged ].filter(Boolean) }}"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "mode": "manual"
+      },
+      "position": [
+        760,
+        0
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dil4wMogas9aOWKP",
+          "name": "Abdullah Kynetic account"
+        }
+      },
+      "id": "cc15cbdc-1bb4-417b-8ae7-7fb209c02a61",
+      "name": "Apply Labels",
+      "parameters": {
+        "labelIds": "={{ $json.labelIds }}",
+        "messageId": "={{ $json.messageId }}",
+        "operation": "addLabels",
+        "resource": "message"
+      },
+      "position": [
+        1000,
+        -180
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "webhookId": "17cfb850-dffb-44b1-9133-f878b5252bd7"
+    },
+    {
+      "id": "c8cc3b43-96c4-4662-b219-f46f44e88c86",
+      "name": "Route Action",
+      "parameters": {
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Label Only"
+        },
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.category }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "urgent"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                }
+              },
+              "outputKey": "Urgent",
+              "renameOutput": true
+            },
+            {
+              "conditions": {
+                "combinator": "or",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.category }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "client_request"
+                  },
+                  {
+                    "leftValue": "={{ $json.category }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "sales_lead"
+                  },
+                  {
+                    "leftValue": "={{ $json.category }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "promotion"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                }
+              },
+              "outputKey": "Needs Reply",
+              "renameOutput": true
+            }
+          ]
+        }
+      },
+      "position": [
+        1000,
+        80
+      ],
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "tSAAmGkOvKH4V94G",
+          "name": "pap demo"
+        }
+      },
+      "id": "b7e8d2f7-713b-4ac7-b809-d5125d4799b4",
+      "name": "Telegram Urgent Alert",
+      "parameters": {
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        },
+        "chatId": "<__PLACEHOLDER_VALUE__Your Telegram chat ID (message @userinfobot on Telegram to get it)__>",
+        "operation": "sendMessage",
+        "resource": "message",
+        "text": "=🚨 <b>Urgent email</b>\n<b>From:</b> {{ $json.fromName.replace(/&/g, \"and\").replace(/</g, \"\").replace(/>/g, \"\") }}\n<b>Subject:</b> {{ $json.subject.replace(/&/g, \"and\").replace(/</g, \"\").replace(/>/g, \"\") }}\n\n{{ $json.urgentSummary.replace(/&/g, \"and\").replace(/</g, \"\").replace(/>/g, \"\") }}"
+      },
+      "position": [
+        1260,
+        -20
+      ],
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "webhookId": "e233af30-98ce-49c1-bcd2-1efe1e6f077d"
+    },
+    {
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dil4wMogas9aOWKP",
+          "name": "Abdullah Kynetic account"
+        }
+      },
+      "id": "1d0bdc19-2539-4e95-93ee-c623082204eb",
+      "name": "Create Draft Reply",
+      "parameters": {
+        "emailType": "text",
+        "message": "={{ $json.draftReply }}",
+        "operation": "create",
+        "options": {
+          "sendTo": "={{ $json.fromEmail }}",
+          "threadId": "={{ $json.threadId }}"
+        },
+        "resource": "draft",
+        "subject": "={{ $json.subject.startsWith(\"Re:\") ? $json.subject : \"Re: \" + $json.subject }}"
+      },
+      "position": [
+        1260,
+        160
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "webhookId": "cd14943b-d9a0-4fde-8978-eee979cf0926"
+    },
+    {
+      "id": "b6cc0163-804e-451c-8220-17437aace3a3",
+      "name": "Sticky Note c9895168",
+      "parameters": {
+        "color": 4,
+        "content": "## Setup (run once)\nClick **Execute workflow** on this branch to create the 7 Gmail labels (AI/Urgent, AI/Client, AI/Lead, AI/Promotion, AI/FYI, AI/Cold Pitch, AI/Triaged). Safe to rerun."
+      },
+      "position": [
+        100,
+        300
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "f2f095f6-452a-4318-aa65-129935d950ba",
+      "name": "Sticky Note 19120bc5",
+      "parameters": {
+        "color": 5,
+        "content": "## #9 Inbox Triage (demo: Brightline Media, marketing agency)\nEvery minute: new inbox emails are classified by AI into 6 categories. Every email gets a category label plus AI/Triaged (so it is never processed twice). Urgent emails ping the founder on Telegram instead of drafting. Client requests, sales leads, and promotions get a draft reply saved in Gmail. Nothing is ever sent automatically."
+      },
+      "position": [
+        100,
+        560
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "394b5e3f-e02a-44bb-a2c5-9907e9c83686",
+      "name": "Sticky Note 3eb2d4f2",
+      "parameters": {
+        "color": 6,
+        "content": "## Actions\nUrgent: Telegram alert (set your chat ID).\nNeeds Reply: draft saved in the same thread.\nLabel Only: FYI and cold pitches just get labeled."
+      },
+      "position": [
+        100,
+        816
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "executionOrder": "v1"
+  }
+}

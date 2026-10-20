@@ -1,6 +1,6 @@
 # Text-confirmation tool: draft (2026-10-20, not applied)
 
-Closes KI-006: both bake-off agents say "You'll get a text with the details" and nothing is sent. Nothing here is live. Every step that touches ElevenLabs or n8n needs Abdullah's yes on that exact change.
+Closes KI-011 (was KI-006 on this branch; main already used KI-006 for the portal): both bake-off agents say "You'll get a text with the details" and nothing is sent. Nothing here is live. Every step that touches ElevenLabs or n8n needs Abdullah's yes on that exact change.
 
 ## Recommended path: ElevenLabs webhook tool -> n8n webhook -> (stub now, Twilio later)
 Why through n8n and not straight to Twilio: Twilio's Messages API takes form-encoded bodies with Basic auth, and it is unverified whether an ElevenLabs webhook tool can send form encoding. n8n also keeps one texting path for every provider (Retell can call the same webhook), and the stub-to-Twilio swap is one node with no agent change.
