@@ -2,7 +2,7 @@
 
 Goal: find out which voice AI platform gives the best Alex (outbound speed-to-lead, Kynetic Roofing demo). Retell is the current platform (D-018). This is a bake-off, not a decision. If another provider clearly wins, log a new decision in `docs/decisions.md`; do not edit D-018 silently.
 
-Providers: Retell (control), Bland (branch `claude/provider-test-bland`), ElevenLabs (branch `claude/provider-test-elevenlabs`).
+Providers: Retell (control) and ElevenLabs (branch `claude/provider-test-elevenlabs`). Bland (branch `claude/provider-test-bland`) was dropped on 2026-10-19 with no results. Full summary: `providers/BAKEOFF_SUMMARY.md`.
 
 ## Rules
 - Nothing in this bake-off changes production Alex (`agent_71e3cfc8384aa38a910a506b53`), the n8n workflow `m2YJwZ1l8DTzyEkw`, Twenty, Nora, Emily, or the Kynetic Restoration (Demo) build. Read-only checks are fine.
