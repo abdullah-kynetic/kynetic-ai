@@ -16,7 +16,7 @@ Lead form (n8n Form Trigger, consent checkbox)               [unchanged]
   ElevenLabs agent "Alex" (prompt, voice, system tools)
         |-- check_availability  -> Cal.com slots             [native Cal.com tool or custom webhook tool]
         |-- book_appointment    -> Cal.com bookings          [same]
-        |-- send_confirmation_sms -> Twilio Messages API     [NEW: text instead of email]
+        |-- send_confirmation_text -> n8n -> Twilio         [NEW: text instead of email, see SMS_TOOL.md]
         |-- end_call / voicemail_detection (system tools)
         v
   POST-CALL WEBHOOK (signed) -> n8n                          [CHANGED: new payload + signature check]
@@ -30,12 +30,12 @@ Lead form (n8n Form Trigger, consent checkbox)               [unchanged]
 
 | Piece | Retell today | ElevenLabs version | Effort | Status |
 |---|---|---|---|---|
-| Agent | `agent_71e3...` prod, `agent_423a...` Alex Lab | `agent_9301m52zy185e609f8vyws4r1r7q` (test agent) | done | Configured 2026-10-16, see RESULTS.md |
+| Agent | `agent_71e3...` prod, `agent_423a...` Alex Lab | blitz account: v1 `agent_8201m5afn2rbeb7v29xfkhh1pjef`, v2 `agent_9701m5afn5rxehardsqttkq3pbjh` (old-account `agent_9301m52zy185e609f8vyws4r1r7q` is a snapshot only) | done | Rebuilt 2026-10-19, see RESULTS.md |
 | Place call | HTTP POST `/v2/create-phone-call`, `retell_llm_dynamic_variables`, metadata `{twenty_id}` | POST `/v1/convai/twilio/outbound-call` (or SIP trunk equivalent) with agent id, agent phone number id, `to_number`, `conversation_initiation_client_data.dynamic_variables`; Twenty id passed as a dynamic variable | 1 node | Endpoint name unverified, docs blocked |
 | Phone number | Retell number | Import a Twilio number into ElevenLabs. None attached today. | Abdullah: Twilio account + number | Blocked on Twilio, KI-003 |
 | Dynamic variables | first_name, company_name, agent_name, service_type, lead_source, owns_property, issue_type, timeline, email | Same names, set as placeholders + overridden per call. Add `twenty_id`. | trivial | Placeholders set |
 | Booking | Native Cal.com tools | Native Cal.com tools, or my custom webhook tools (current) | test | See section 4 |
-| Confirmation | Cal.com email | Text via `send_confirmation_sms` | new tool + Twilio | Stub first, real send needs KI-003 |
+| Confirmation | Cal.com email | Text via `send_confirmation_text` (draft: `SMS_TOOL.md`) | new tool + n8n webhook + Twilio | Stub first, real send needs KI-003 |
 | Voicemail | hang up | `voicemail_detection` system tool (set, empty message) + Twilio answering-machine detection event | done | Untested live |
 | Post-call data | `call_analysis.custom_analysis_data` | `analysis.data_collection_results` (outcome, callback_time, booked_slot, notes) | rewrite 1 node | Fields set |
 | Post-call webhook | `call_analyzed`, `x-retell-signature` | `post_call_transcription`, `elevenlabs-signature` HMAC; also `call_initiation_failure` | 1 webhook + signature verify | Not configured (`post_call_webhook_id` null) |

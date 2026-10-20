@@ -9,7 +9,7 @@ Providers: Retell (control) and ElevenLabs (branch `claude/provider-test-elevenl
 - Retell control = **Alex Lab** (`agent_423ae0cb2803cba2891b376d44`), same hardcoded persona.
 - Only the winner gets wired into n8n. Do not build n8n plumbing for a provider before it wins on conversation quality.
 - Secrets stay in the provider consoles or environment variables. Never commit keys.
-- Every run that reaches the booking step makes a real booking on Cal.com event type 7404470 (Roof Inspection). Log them and clear them when testing ends (ask Abdullah first).
+- Every run that reaches the booking step makes a real booking. Retell Alex Lab books on Cal.com event type 7404470 (Roof Inspection); the ElevenLabs agents book on test event type 7520336 (phone required, email optional). Log them and clear them when testing ends (ask Abdullah first).
 
 ## Test persona (identical on every provider)
 | Variable | Value |
