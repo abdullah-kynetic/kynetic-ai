@@ -22,3 +22,9 @@ No changes to Retell, production Alex (agent_71e3cfc8384aa38a910a506b53), Nora, 
 
 ## Prompt to resume
 > Continue the ElevenLabs track on branch claude/provider-test-elevenlabs. Read CLAUDE.md, providers/TEST_PLAN.md, providers/elevenlabs/HANDOFF.md, README.md, PROMPT.md, PROMPT_V2.md, RESULTS.md, then follow the next steps in HANDOFF.md.
+
+## Session 2026-10-20
+- Twenty note `aca91c0f-...` and task 3.9 checked read-only: they match this branch. Task 3.9 is P1 (medium), so it does not block dialing or clients 1-2; Retell Alex stays the platform (D-018).
+- New read-only puller/scorer: `tools/elevenlabs_conv.py` (`list <agent_id> --since YYYY-MM-DD`, `score <conversation_id> [--save DIR]`). Prints the RESULTS.md row, stacked-question turns, delays, every tool call/result, false "all set" and billed cost. Payload field paths are unverified until it runs against a real conversation.
+- Text-confirmation tool drafted in `SMS_TOOL.md` (ElevenLabs webhook tool -> inactive n8n stub -> Twilio after KI-003). Not applied. Needs Abdullah's yes and his answer on which n8n instance is canonical (audit 2026-10-20: VPS `tXJwNTkNgKGnp0Ab` inactive, cloud `m2YJwZ1l8DTzyEkw` active Oct 19).
+- Blocked: this cloud session has no `ELEVENLABS_API_KEY_blitz` or `CAL_API_KEY`, so no transcripts were pulled and no Free-tier minutes were checked.
