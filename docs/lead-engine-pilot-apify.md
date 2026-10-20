@@ -36,7 +36,7 @@ Independent checks:
 
 Audited statuses: DIAL_READY Bert (phone to confirm), Top Sun, Heirloom (Sherman, north of DFW core), Verified Roofing. HOLD Johnny Walker (already has an AI receptionist), Berry Good (forfeited), Pursuit (unconfirmed owner). DROP Ruff, DFW Roofing Inspections, MB Roofing.
 
-Cost: Apify $0.31, Firecrawl about 40 credits, Treg $0, Muse $0.
+Cost: Apify $0.31, Firecrawl about 40 credits, Muse $0. Treg: $0 at this point; the later email/phone test cost about $0.049 (see docs/lead-engine-handoff.md).
 
 ## Code-only rerun with Firecrawl (2026-10-20)
 `tools/lead_enrich.py` ran the same 10 businesses with no browser agent: Texas open data, Comptroller account page by taxpayer number, BBB (search then profile), business site and About page. Output: `docs/lead-engine-code-run/` (results.json, results.csv).

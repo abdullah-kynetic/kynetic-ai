@@ -26,7 +26,7 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Rete
 - 3.5 outbound build. Prep is in the repo. On 2026-10-17 a read-only check found `m2YJwZ1l8DTzyEkw` active with the Alex agent ID (`agent_71e3cfc8384aa38a910a506b53`) set in Call Settings and Retry Call Settings and the "Retell API (outbound)" credential attached. Go-live approved by Abdullah on 2026-10-18 (KI-009). Alex prompt v1.2.3 is on branch `claude/alex-demo-live-test`, not merged or published. Blocked on Abdullah; see Blockers.
 - Voice provider bake-off (Retell vs Bland vs ElevenLabs) for Alex. **Testing, no decision: Retell stays (D-018) unless a challenger clearly wins on the shared scorecard.** Control is Retell Alex Lab. ElevenLabs is furthest along; Bland has a test track and no results yet. Both live on unmerged branches (`claude/provider-test-elevenlabs`, `claude/provider-test-bland`), not on main. Current state, agent IDs and rules: the "Voice provider bake-off" section of KYNETIC_CONTEXT.md; running log: `providers/elevenlabs/RESULTS.md` on the branch and the Twenty note "VOICE PROVIDER BAKE-OFF". Twenty has no task for it yet.
 
-- Lead engine Run B (Lane A, tasks 2.1/2.2/2.4/2.5): prompt written and pushed (`docs/lead-engine-run-b-prompt.md`, branch `claude/modest-thompson-h9atoy`); waiting on Abdullah to run it in a separate Claude+Firecrawl chat and in Muse, then Claude audits both. Twenty has not been updated for this yet. Dialing is planned for Tue Oct 20 and needs about 3,000 owner-gated numbers; the lead pool is not there yet (7.1 launch gate).
+- Lead engine (Lane A, tasks 2.1/2.2/2.4/2.5): Run B, the Apify DFW pilot, a Treg test and a Firecrawl-only script are done and audited; nothing is built in Modal/n8n. Full state, results and a start prompt for a new session: `docs/lead-engine-handoff.md` (branch `claude/modest-thompson-h9atoy`; Twenty note "LEAD ENGINE: Run B + pilots handoff (Oct 19-20, 2026)"). Next: add a geography filter and AI-receptionist detector to `tools/lead_enrich.py`, run the remaining ~17 roofers, scale the Treg test. Dialing is planned for Tue Oct 20 and needs about 3,000 owner-gated numbers; the lead pool is not there yet (7.1 launch gate).
 
 ## Paused (D-010, Oct 6, 2026 — inbound is near-done, left alone until a client demo needs it)
 - 3.1 Repoint Emily's 4 tool webhooks and post-call webhook, greeting says Emily. Approved, URL only.
@@ -53,6 +53,16 @@ Then: confirm the post-call webhook URL is set on the agent, web-call test Alex,
 Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-10-20 (lead engine pilots: Apify census, Treg test, Firecrawl-only script)
+- Research and tooling only. Nothing changed in n8n or Retell. Twenty updated with Abdullah's yes (see below).
+- Run B (Arlington roofing) audited: Claude+Firecrawl and Muse agree on the same 2 dial-ready businesses and phones; Muse reaches form-gated records (Comptroller, permit portal), Firecrawl is cheaper and leaves direct ad links. Muse's "no ads found" DROPs are unreliable. `docs/lead-engine-run-b-audit.md`.
+- Apify actor `solidcode/meta-ads-library-scraper`: 343 DFW roofing ads for $0.31 -> 93 advertisers -> about 27 real roofers. Apify account is Free with a $5 cap, not $30. Muse enriched the top 10; audited statuses in `docs/lead-engine-pilot-apify.md`.
+- Treg tested on 3 owners (email find, verify, phone find): about $0.049 of the $1; works but sample too small; phone finder not cleared for use (counsel 1.4).
+- Added `tools/lead_enrich.py`: Firecrawl-only owner/phone enrichment (Texas open data, Comptroller page, BBB, site). On the same 10 businesses: 53 credits, 4 minutes, owner names matched Muse on 7 of 7, phone conflicts flagged not guessed. Results in `docs/lead-engine-code-run/`.
+- Proposed (not approved or built): Modal job called from n8n, results logged to Twenty. Described in the handoff.
+- Handoff doc for a new session: `docs/lead-engine-handoff.md`.
+- Twenty updated (Abdullah said to mark all updates): new handoff note, dated lines on tasks 2.1, 2.2, 2.5, and a mismatch line on the Lane A note.
+
 ### 2026-10-19 (lead engine research: owner/phone sourcing, Firecrawl unblocked, Run B prompt)
 - Research and docs only. Nothing changed in n8n, Retell or Twenty.
 - Firecrawl returned HTTP 403 in the cloud session. Cause: the environment's network policy denied `api.firecrawl.dev:443` (proxy log), not the Firecrawl account. After Abdullah added allowed domains it worked: a search call (2 credits) and a scrape of the live Meta Ad Library page (`q=roof replacement`, US, active) returned 29 ads, about 25 roofing, with Library ID, start date, ad copy, advertiser name and Page link. Some ad copy names the owner. One page load gives about 30 ads, so more needs scrolling (untested through Firecrawl). The official Ad Library API does not cover US commercial ads, so the web page is the source.

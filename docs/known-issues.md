@@ -43,6 +43,14 @@ Found 2026-10-19 (read-only review of Twenty).
 - The "no people-search or data-broker sites" rule appears in Lane A notes with no recorded reason. Kept as is; a counsel question for 1.4 if it should be loosened.
 Fix: Abdullah to say where the research files are, confirm the Treg rotation, and approve or reject the D-002 reword.
 
+### KI-012: Lead enrichment: phone certainty, rate limits, wrong-business matches (medium)
+Found 2026-10-20.
+- No tested stack shows which phone reaches the owner (Bert has several; Johnny Walker differs between Muse and the script). Sample hand-dials needed.
+- Treg phone finder returns personal-looking numbers; compliance not cleared (task 1.4). Treat as off.
+- Firecrawl returns HTTP 429 on bursts; `tools/lead_enrich.py` paces and retries. BBB/registry name matching can attach another business's owner; the script now needs the first two distinctive name words in the BBB URL, but audit every row.
+- Apify account `kyneticai` is Free with a $5 monthly cap (cycle ends 2026-10-29), not $30.
+Fix: hand-dial a sample, counsel answer, and keep the audit step in every run.
+
 ## Gotchas
 - Cloud sessions deny hosts not in the environment's allowed domains. Firecrawl returned 403 until `api.firecrawl.dev` was allowed (2026-10-19). A scrape of Facebook, BBB, the Texas Comptroller and similar sites needs those domains allowed too.
 - Never modify Nora (agent_4c34644a04c74e27253e80167b, n8n 2PFWFqBM0wabADk6).
