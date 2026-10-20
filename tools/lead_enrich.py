@@ -9,13 +9,18 @@ It only reads public pages. It never logs in, submits a form or contacts anyone.
 
 Usage:
   python tools/lead_enrich.py input.json out_dir [--max-credits 120]
+  python tools/lead_enrich.py --rescore results.json out_dir   (no API calls)
 
 input.json: [{"name": "Bert Roofing Inc", "website": "https://bertroofing.com",
-              "facebook": "https://www.facebook.com/BertRoofingInc/"}, ...]
-Writes out_dir/results.json and out_dir/results.csv. Anything it cannot source is
+              "facebook": "https://www.facebook.com/BertRoofingInc/",
+              "ad_phones": ["(972) 360-9690"], "city": "Dallas", "state": "TX"}, ...]
+(ad_phones, city and state are optional and come from the ad census.)
+Writes out_dir/results.json, results.csv and phone_report.csv. Anything it cannot source is
 left "unknown"; it never guesses an owner. Status is DIAL_READY only when an owner
-is named by BBB or the Comptroller and a phone was found; the caller still has to
-resolve conflicting phones.
+is named by BBB or the Comptroller and one phone is either the only number found
+or the only one corroborated by two different sites. Screens run after the fetch:
+geography (target metro, never FL/OK), franchise/lead-gen signals, and existing AI
+call answering. --rescore reruns only those screens on a saved results.json.
 """
 import csv
 import json
@@ -35,6 +40,56 @@ CREDITS = {"used": 0, "max": 120}
 PHONE_RE = re.compile(r"\(?\b([2-9]\d{2})\)?[\s.\-]?(\d{3})[\s.\-](\d{4})\b")
 TOLL_FREE = {"800", "833", "844", "855", "866", "877", "888"}
 
+# Target market. Cities are the DFW core (Dallas, Tarrant, Collin, Denton, Rockwall,
+# Ellis, Johnson, Kaufman, Parker counties); a business outside them is kept only if it
+# also publishes a DFW area code (e.g. Heirloom in Sherman), and is noted as outside core.
+TARGET_STATE = "tx"
+METRO_AREA_CODES = {"214", "469", "972", "945", "817", "682", "940"}
+METRO_CITIES = set("""dallas fort-worth arlington plano garland irving grand-prairie mckinney frisco
+mesquite carrollton denton richardson lewisville allen flower-mound north-richland-hills mansfield
+rowlett euless desoto grapevine bedford cedar-hill wylie keller coppell hurst duncanville rockwall
+the-colony burleson lancaster little-elm haltom-city southlake prosper midlothian waxahachie forney
+weatherford cleburne sachse saginaw celina anna princeton royse-city azle benbrook crowley
+farmers-branch addison colleyville watauga balch-springs seagoville red-oak glenn-heights ennis
+terrell kaufman granbury aledo alvarado joshua highland-village corinth argyle trophy-club roanoke
+fate heath murphy fairview lucas melissa sunnyvale richland-hills white-settlement lake-worth
+kennedale everman forest-hill university-park highland-park justin northlake haslet krum sanger
+aubrey pilot-point van-alstyne ovilla red-oak palmer ferris venus godley keene""".split())
+CITY_ALIASES = {"n-richlnd-hls": "north-richland-hills", "n-richland-hills": "north-richland-hills",
+                "ft-worth": "fort-worth", "grand-prarie": "grand-prairie"}
+BLOCKED_STATES = {"fl", "ok"}  # never prospect Florida or Oklahoma
+BLOCKED_AREA_CODES = {  # Florida and Oklahoma
+    "239", "305", "321", "324", "352", "386", "407", "448", "561", "645", "656", "689", "727", "728",
+    "754", "772", "786", "813", "850", "863", "904", "941", "954", "405", "539", "572", "580", "918"}
+
+# Franchise / national brand / lead-gen signals (drop rule in the Run B prompt).
+FRANCHISE_RE = re.compile(
+    r"independently owned and operated|\bfranchis(?:e|ee|ed|ing)\b|find a location near you|"
+    r"locations nationwide|serving \d+ states|get matched with|connect you with (?:a |local )?(?:pros|contractors)",
+    re.I)
+BRANDS = ["mighty dog roofing", "roofing corp of america", "roof maxx", "mr. roof", "leaffilter",
+          "leafguard", "power home remodeling", "erie home", "renewal by andersen", "window nation",
+          "bath fitter", "re-bath", "west shore home", "bath planet", "five star bath", "kitchen tune-up",
+          "aire serv", "one hour heating", "roto-rooter", "mr. rooter", "ars rescue rooter", "long roofing",
+          "storm guard", "dryer vent wizard", "homeadvisor", "angi", "modernize"]  # checked against name and domain only
+
+# Existing AI call answering or AI lead follow-up (HOLD: already has what Plan 1 sells),
+# matched in the home page HTML, and plain chat widgets (noted only, not a reason to drop).
+AI_ANSWERING = {"alivo": "Alivo AI answering", "goodcall": "Goodcall AI agent", "smith.ai": "Smith.ai",
+                "myaifrontdesk": "My AI Front Desk", "dialzara": "Dialzara", "heyrosie": "Rosie AI",
+                "synthflow": "Synthflow", "retellai": "Retell", "vapi.ai": "Vapi", "bland.ai": "Bland",
+                "numahelpers": "Numa", "hatchapp": "Hatch AI follow-up",
+                "answerconnect": "AnswerConnect", "ruby.com": "Ruby receptionists", "rosie.ai": "Rosie AI"}
+AI_TEXT_RE = re.compile(
+    r"\bAI[- ](?:receptionist|phone (?:agent|assistant)|answering|voice (?:agent|assistant))|"
+    r"virtual receptionist|24/7 (?:live )?(?:answering|call center)", re.I)
+CHAT_WIDGETS = {"podium.com": "Podium", "birdeye.com": "Birdeye", "leadconnectorhq": "GoHighLevel chat",
+                "msgsndr": "GoHighLevel chat", "widget.intercom.io": "Intercom", "js.driftt": "Drift", "tidio": "Tidio",
+                "livechatinc": "LiveChat", "tawk.to": "Tawk.to", "chatbase": "Chatbase", "voiceflow": "Voiceflow",
+                "scheduleengine": "ServiceTitan Schedule Engine", "nicejob": "NiceJob",
+                "housecallpro": "Housecall Pro", "getjobber": "Jobber", "roofr.com": "Roofr", "signpost.com": "Signpost"}
+BLOCK_RE = re.compile(r"just a moment\.\.\.|cf-chl|challenge-platform|verify you are human|attention required", re.I)
+
 
 def load_key():
     key = os.environ.get("FIRECRAWL_API_KEY")
@@ -48,10 +103,12 @@ def load_key():
     return key
 
 
-KEY = load_key()
+KEY = None
 
 
 def post(path, body):
+    global KEY
+    KEY = KEY or load_key()
     if CREDITS["used"] >= CREDITS["max"]:
         raise RuntimeError("credit cap reached")
     req = urllib.request.Request(
@@ -68,14 +125,15 @@ def post(path, body):
     raise RuntimeError("HTTP 429 after retries")
 
 
-def scrape(url, fmt="markdown"):
+def scrape(url, fmt="markdown", also=None):
+    formats = [fmt] + ([also] if also else [])
     try:
-        out = post("/scrape", {"url": url, "formats": [fmt], "onlyMainContent": False})
+        out = post("/scrape", {"url": url, "formats": formats, "onlyMainContent": False})
     except Exception as e:  # blocked, timeout, cap
-        return None, str(e)
+        return (None, None, str(e)) if also else (None, str(e))
     d = out.get("data", {})
     CREDITS["used"] += d.get("metadata", {}).get("creditsUsed", 1)
-    return d.get(fmt), None
+    return (d.get(fmt), d.get(also), None) if also else (d.get(fmt), None)
 
 
 def search(query, domain):
@@ -151,11 +209,24 @@ def bbb(name):
     return {}, err or "no BBB profile found"
 
 
+def site_signals(md, html):
+    """What the home page shows about franchising and existing AI or chat answering."""
+    low = (html or "").lower()
+    sig = {"blocked": bool(BLOCK_RE.search((md or "")[:3000])),
+           "ai_answering": sorted({v for k, v in AI_ANSWERING.items() if k in low}),
+           "chat_widgets": sorted({v for k, v in CHAT_WIDGETS.items() if k in low}),
+           "ai_claims": sorted({m.group(0) for m in AI_TEXT_RE.finditer(md or "")})[:3],
+           "franchise_phrases": sorted({m.group(0).lower() for m in FRANCHISE_RE.finditer(md or "")})[:3]}
+    sig["checked"] = bool(html) and not sig["blocked"]
+    return sig
+
+
 def website(url):
     out = {"phones": {}, "about_url": ""}
-    md, err = scrape(url)
+    md, html, err = scrape(url, "markdown", also="rawHtml")
     if not md:
         return out, err
+    out["signals"] = site_signals(md, html)
     for p, how in phones_in(md).items():
         out["phones"].setdefault(p, []).append(url)
     link = re.search(r"\]\((https?://[^)\s]*(?:about|team|our-story|meet)[^)\s]*)\)", md, re.I)
@@ -163,6 +234,8 @@ def website(url):
         out["about_url"] = link.group(1)
         md2, _ = scrape(link.group(1))
         if md2:
+            more = site_signals(md2, "")["franchise_phrases"]
+            out["signals"]["franchise_phrases"] = sorted(set(out["signals"]["franchise_phrases"]) | set(more))
             for p in phones_in(md2):
                 out["phones"].setdefault(p, []).append(link.group(1))
             m = re.search(r"([^.\n]*\b(?:owner|founder|president|run by)\b[^.\n]*\.)", md2, re.I)
@@ -170,11 +243,45 @@ def website(url):
     return out, None
 
 
+def slug(city):
+    c = re.sub(r"[^a-z0-9]+", "-", (city or "").lower()).strip("-")
+    return CITY_ALIASES.get(c, c)
+
+
+def narrow_registry(cands, name, city):
+    """Cut several registry hits down using evidence, never a guess: the trade word in the
+    business name (ROOFING, CONSTRUCTION...) must be in the entity name, then the BBB city."""
+    generic = {"llc", "inc", "and", "the", "co", "company", "&"}
+    trade = [w for w in re.sub(r"[^A-Za-z ]", " ", name).upper().split()[2:] if w.lower() not in generic]
+    how = []
+    if trade:
+        hit = [c for c in cands if any(w in c["taxpayer_name"].upper() for w in trade)]
+        if hit and len(hit) < len(cands):
+            cands, _ = hit, how.append("trade word")
+    if len(cands) > 1 and city:
+        hit = [c for c in cands if slug(c.get("taxpayer_city")) == slug(city)]
+        if hit:
+            cands, _ = hit, how.append("BBB city")
+    return cands, " + ".join(how)
+
+
+def bbb_place(url):
+    m = re.search(r"bbb\.org/us/([a-z]{2})/([a-z0-9-]+)/", url or "")
+    return (m.group(1), m.group(2)) if m else ("", "")
+
+
 def enrich(b):
     t0 = time.time()
     c0 = CREDITS["used"]
     row = {"business": b["name"], "website": b.get("website", ""), "facebook": b.get("facebook", ""),
+           "census_city": b.get("city", ""), "census_state": b.get("state", ""),
            "owner_candidates": [], "phones": {}, "notes": []}
+    for p in b.get("ad_phones", []):
+        m = PHONE_RE.search(p)
+        if m:
+            row["phones"].setdefault("(%s) %s-%s" % m.groups(), []).append("ad copy " + (b.get("facebook") or "Meta ad"))
+    bb, bbb_err = bbb(b["name"])
+    row["bbb"] = bb
     cands, err = registry(b["name"])
     if err:
         row["notes"].append("registry: " + err)
@@ -182,9 +289,13 @@ def enrich(b):
         "%s | %s %s | %s | RTT=%s" % (c["taxpayer_name"], c.get("taxpayer_city", ""), c.get("taxpayer_zip", ""),
                                    c["taxpayer_number"], c.get("right_to_transact_business_code"))
         for c in cands]
-    active = [c for c in cands if c.get("right_to_transact_business_code") == "A"]
-    pick = active if active else cands
+    pick, how = narrow_registry(cands, b["name"], bbb_place(bb.get("url"))[1]) if len(cands) > 1 else (cands, "")
+    if len(pick) > 1:
+        active = [c for c in pick if c.get("right_to_transact_business_code") == "A"]
+        pick = active or pick
     if len(pick) == 1:
+        row["registry_match"] = {"name": pick[0]["taxpayer_name"], "city": pick[0].get("taxpayer_city", ""),
+                                 "rtt": pick[0].get("right_to_transact_business_code"), "picked_by": how or "only hit"}
         comp, e = comptroller(pick[0]["taxpayer_number"])
         row["comptroller"] = comp
         seen = set()
@@ -198,18 +309,17 @@ def enrich(b):
         row["notes"].append("registry ambiguous (%d candidates); not guessed" % len(pick))
     else:
         row["notes"].append("no registry match on first two words")
-    bb, e = bbb(b["name"])
-    row["bbb"] = bb
     if bb.get("management_raw"):
         row["owner_candidates"].append(
             {"name": bb["management_raw"], "role": "BBB Business Management", "source": bb["url"],
              "confidence": "MEDIUM (BBB)"})
-    elif e:
-        row["notes"].append("bbb: " + e)
+    elif bbb_err:
+        row["notes"].append("bbb: " + bbb_err)
     if bb.get("main_phone"):
         row["phones"].setdefault(bb["main_phone"], []).append(bb["url"] + " (BBB main)")
     if b.get("website"):
         w, e = website(b["website"])
+        row["site_signals"] = w.get("signals", {})
         for p, srcs in w["phones"].items():
             row["phones"].setdefault(p, []).extend(srcs)
         if w.get("owner_sentence"):
@@ -220,25 +330,165 @@ def enrich(b):
             row["notes"].append("website: " + e)
     else:
         row["notes"].append("no website supplied")
-    distinct = list(row["phones"])
-    row["phone_conflict"] = len(distinct) > 1
-    row["toll_free_seen"] = any(p[1:4] in TOLL_FREE for p in distinct)
-    has_owner = any(o["confidence"].startswith(("HIGH", "MEDIUM")) for o in row["owner_candidates"])
-    if has_owner and distinct:
-        row["status"] = "DIAL_READY" if not row["phone_conflict"] else "HOLD"
-        row["reason"] = "owner sourced; phones disagree, pick by hand" if row["phone_conflict"] else "owner and one phone sourced"
-    else:
-        row["status"] = "HOLD"
-        row["reason"] = "missing: " + ", ".join(x for x, ok in (("owner", has_owner), ("phone", bool(distinct))) if not ok)
+    classify(row)
     row["credits"] = CREDITS["used"] - c0
     row["seconds"] = round(time.time() - t0, 1)
     return row
+
+
+def source_site(src):
+    """The site a phone was read from; two pages of one site count once."""
+    if src.startswith("ad copy"):
+        return "meta ad"
+    host = urllib.parse.urlparse(src.split(" ")[0]).netloc.lower()
+    return host[4:] if host.startswith("www.") else host
+
+
+def phone_report(row):
+    """Every phone with where it was seen, then the one to dial if the evidence picks one.
+    A number wins only if two different sites show it and no other number has as many."""
+    report = []
+    for p, srcs in row.get("phones", {}).items():
+        ac = p[1:4]
+        sites = sorted({source_site(s) for s in srcs})
+        region = ("toll-free" if ac in TOLL_FREE else "DFW" if ac in METRO_AREA_CODES
+                  else "FL/OK" if ac in BLOCKED_AREA_CODES else "other")
+        kinds = sorted({"BBB main" if "(BBB main)" in s else "ad copy" if s.startswith("ad copy")
+                        else "own site" for s in srcs})
+        report.append({"phone": p, "area": region, "sites": sites, "seen_on": kinds, "sources": srcs})
+    dialable = [r for r in report if r["area"] in ("DFW", "other")]
+    dialable.sort(key=lambda r: -len(r["sites"]))
+    best, why = "", ""
+    if len(dialable) == 1 and len(report) == 1:
+        best, why = dialable[0]["phone"], "only number found"
+    elif dialable and len(dialable[0]["sites"]) >= 2 and (len(dialable) == 1 or len(dialable[1]["sites"]) < len(dialable[0]["sites"])):
+        best, why = dialable[0]["phone"], "on %d sites: %s" % (len(dialable[0]["sites"]), ", ".join(dialable[0]["sites"]))
+    for r in report:
+        r["pick"] = "DIAL" if r["phone"] == best else ""
+        if r["seen_on"] == ["ad copy"] and len(report) > 1:
+            r["note"] = "ad copy only; tracking number suspected"
+        elif r["area"] in ("toll-free", "FL/OK"):
+            r["note"] = "not dialed: " + r["area"]
+    return report, best, why
+
+
+def screens(row):
+    """Geography, franchise and existing-AI checks. Returns (drop reasons, hold reasons, notes)."""
+    drop, hold, notes = [], [], []
+    st, city = bbb_place((row.get("bbb") or {}).get("url"))
+    reg = row.get("registry_match") or {}
+    if not city and reg.get("picked_by") not in (None, "", "only hit"):
+        st, city = TARGET_STATE, slug(reg.get("city"))
+    if not city and row.get("census_city"):
+        st, city = (row.get("census_state") or "").lower(), slug(row["census_city"])
+    city = CITY_ALIASES.get(city, city)
+    codes = {p[1:4] for p in row.get("phones", {})}
+    local = codes & METRO_AREA_CODES
+    if st in BLOCKED_STATES:
+        drop.append("based in %s (no FL/OK prospecting)" % st.upper())
+    elif st and st != TARGET_STATE:
+        drop.append("based out of state (%s)" % st.upper())
+    elif city and city not in METRO_CITIES:
+        if local:
+            notes.append("based in %s, outside the DFW core, but publishes a DFW number" % city)
+        else:
+            drop.append("based in %s, outside DFW, no DFW number" % city)
+    elif not city:
+        notes.append("location not confirmed")
+        if codes and not local and not codes <= TOLL_FREE:
+            hold.append("no DFW area code among its phones")
+    if codes & BLOCKED_AREA_CODES:
+        notes.append("an FL/OK area code is listed (%s); not dialed" % ", ".join(sorted(codes & BLOCKED_AREA_CODES)))
+    name = row.get("business", "").lower() + " " + urllib.parse.urlparse(row.get("website", "")).netloc.lower()
+    brand = [x for x in BRANDS if re.search(r"(?<![a-z])" + re.escape(x) + r"(?![a-z])", name)]
+    if brand:
+        drop.append("national brand or lead-gen name: " + brand[0])
+    sig = row.get("site_signals") or {}
+    if sig.get("franchise_phrases"):
+        hold.append("franchise wording on site: " + "; ".join(sig["franchise_phrases"]))
+    if sig.get("ai_answering"):
+        hold.append("site already runs AI call answering or follow-up: " + ", ".join(sig["ai_answering"]))
+    if sig.get("ai_claims"):
+        hold.append("site claims AI or 24/7 answering: " + "; ".join(sig["ai_claims"]))
+    if sig.get("chat_widgets"):
+        notes.append("chat/booking widget: " + ", ".join(sig["chat_widgets"]) + " (not a reason to drop)")
+    if sig.get("blocked"):
+        notes.append("site behind a bot check; AI-answering check not done")
+    elif not sig.get("checked"):
+        notes.append("AI-answering check not run")
+    rtt = (row.get("comptroller") or {}).get("right_to_transact", "") or ""
+    if (reg.get("rtt") == "N" or (rtt and rtt != "ACTIVE")):
+        if reg.get("picked_by") == "only hit" and not city:
+            notes.append("only registry hit %s is not active; match unconfirmed" % reg.get("name"))
+        else:
+            hold.append("registry: not active in Texas (right to transact %s)" % (rtt or "N"))
+    if not row.get("website") and not (row.get("bbb") or {}).get("url") and not reg:
+        hold.append("no site, BBB or registry entity found: lead-gen suspect, needs a Maps check")
+    return drop, hold, notes
+
+
+def classify(row):
+    if row.get("comptroller") and "registry_match" not in row:  # results saved before registry_match existed
+        c = row.get("registry_candidates", [])
+        row["registry_match"] = {"name": c[0].split(" | ")[0] if len(c) == 1 else row["comptroller"].get("entity", ""),
+                                 "city": c[0].split(" | ")[1].rsplit(" ", 1)[0] if len(c) == 1 else "",
+                                 "rtt": c[0].rsplit("RTT=", 1)[1] if len(c) == 1 else "",
+                                 "picked_by": "only hit" if len(c) == 1 else "active filter"}
+    report, best, why = phone_report(row)
+    row["phone_report"], row["best_phone"], row["best_phone_why"] = report, best, why
+    row["phone_conflict"] = len(row.get("phones", {})) > 1
+    row["toll_free_seen"] = any(p[1:4] in TOLL_FREE for p in row.get("phones", {}))
+    drop, hold, notes = screens(row)
+    row["screen_notes"] = notes
+    has_owner = any(o["confidence"].startswith(("HIGH", "MEDIUM")) for o in row.get("owner_candidates", []))
+    if drop:
+        row["status"], row["reason"] = "DROP", "; ".join(drop)
+    elif hold:
+        row["status"], row["reason"] = "HOLD", "; ".join(hold)
+    elif has_owner and best:
+        row["status"] = "DIAL_READY"
+        row["reason"] = "owner sourced; phone " + why
+    elif has_owner and report:
+        row["status"], row["reason"] = "HOLD", "owner sourced; phones disagree, pick by hand"
+    else:
+        row["status"] = "HOLD"
+        row["reason"] = "missing: " + ", ".join(x for x, ok in (("owner", has_owner), ("phone", bool(report))) if not ok)
+    return row
+
+
+def write_outputs(rows, out):
+    (out / "results.json").write_text(json.dumps(rows, indent=2))
+    with open(out / "results.csv", "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["business", "status", "reason", "owner_candidates", "best_phone", "phones", "screen_notes",
+                    "credits", "seconds", "notes"])
+        for r in rows:
+            w.writerow([r.get("business"), r.get("status"), r.get("reason"),
+                        " || ".join("%s [%s; %s]" % (o["name"], o["role"], o["confidence"]) for o in r.get("owner_candidates", [])),
+                        r.get("best_phone", ""),
+                        " || ".join("%s <- %d src" % (p, len(s)) for p, s in r.get("phones", {}).items()),
+                        "; ".join(r.get("screen_notes", [])),
+                        r.get("credits"), r.get("seconds"), "; ".join(r.get("notes", []))])
+    with open(out / "phone_report.csv", "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["business", "status", "phone", "pick", "area", "sites", "seen_on", "note", "sources"])
+        for r in rows:
+            for p in r.get("phone_report", []):
+                w.writerow([r.get("business"), r.get("status"), p["phone"], p["pick"], p["area"], len(p["sites"]),
+                            ", ".join(p["seen_on"]), p.get("note", ""), " | ".join(p["sources"])])
 
 
 def main():
     args = sys.argv[1:]
     if len(args) < 2:
         sys.exit(__doc__)
+    if args[0] == "--rescore":
+        out = Path(args[2]) if len(args) > 2 else Path(args[1]).parent
+        out.mkdir(parents=True, exist_ok=True)
+        rows = [classify(r) if r.get("status") != "SKIPPED" else r for r in json.loads(Path(args[1]).read_text())]
+        write_outputs(rows, out)
+        print("rescored", len(rows), "rows; no API calls")
+        return
     if "--max-credits" in args:
         CREDITS["max"] = int(args[args.index("--max-credits") + 1])
     inp, out = Path(args[0]), Path(args[1])
@@ -250,15 +500,7 @@ def main():
         except RuntimeError as e:
             rows.append({"business": b["name"], "status": "SKIPPED", "reason": str(e)})
             break
-    (out / "results.json").write_text(json.dumps(rows, indent=2))
-    with open(out / "results.csv", "w", newline="") as f:
-        w = csv.writer(f)
-        w.writerow(["business", "status", "reason", "owner_candidates", "phones", "credits", "seconds", "notes"])
-        for r in rows:
-            w.writerow([r.get("business"), r.get("status"), r.get("reason"),
-                        " || ".join("%s [%s; %s]" % (o["name"], o["role"], o["confidence"]) for o in r.get("owner_candidates", [])),
-                        " || ".join("%s <- %d src" % (p, len(s)) for p, s in r.get("phones", {}).items()),
-                        r.get("credits"), r.get("seconds"), "; ".join(r.get("notes", []))])
+    write_outputs(rows, out)
     print("credits used:", CREDITS["used"])
 
 
