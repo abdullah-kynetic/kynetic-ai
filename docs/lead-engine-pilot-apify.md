@@ -37,3 +37,11 @@ Independent checks:
 Audited statuses: DIAL_READY Bert (phone to confirm), Top Sun, Heirloom (Sherman, north of DFW core), Verified Roofing. HOLD Johnny Walker (already has an AI receptionist), Berry Good (forfeited), Pursuit (unconfirmed owner). DROP Ruff, DFW Roofing Inspections, MB Roofing.
 
 Cost: Apify $0.31, Firecrawl about 40 credits, Treg $0, Muse $0.
+
+## Code-only rerun with Firecrawl (2026-10-20)
+`tools/lead_enrich.py` ran the same 10 businesses with no browser agent: Texas open data, Comptroller account page by taxpayer number, BBB (search then profile), business site and About page. Output: `docs/lead-engine-code-run/` (results.json, results.csv).
+- Cost: 53 Firecrawl credits for the second run (48 for a first run that matched wrong BBB profiles and was discarded). About 5 credits and 5-15 s per business when not rate-limited; the whole run took 4 minutes because calls are paced against 429s.
+- Owner names agreed with Muse on all 7 businesses where Muse found one (Bert, Ruff, Heirloom, Johnny Walker, Verified, Berry Good, Top Sun). Pursuit, DFW Roofing Inspections and MB Roofing: no owner, same as Muse.
+- Phones: matched Muse for Heirloom, Verified, Berry Good, Top Sun, and Bert and Pursuit (one of several). Johnny Walker differs ((940) 735-6944 vs Muse (940) 412-8994). Ruff: code found (346) 339-3405 where Muse had none.
+- What the code cannot do: judge geography (Ruff is Houston HQ, should stay DROP), read an AI receptionist claim (Johnny Walker), or decide which phone reaches the owner (Bert has three). Registry search by name is ambiguous for common words; it does not guess.
+- First-pass bug found by checking: loose BBB name matching attached other businesses' owners to DFW Roofing Inspections, MB Roofing and Pursuit. Fixed by requiring the first two distinctive name words in the BBB URL.
