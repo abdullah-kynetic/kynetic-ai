@@ -341,7 +341,7 @@ Honorable mentions: `.mcp.json` runs three `npx ...@latest` servers (unpinned); 
 
 ## 9. Questions I need answered before applying anything
 
-1. Which n8n is canonical for "Outbound Speed to Lead": the VPS workflow `tXJwNTkNgKGnp0Ab` or cloud `m2YJwZ1l8DTzyEkw`? Is anything still live on cloud? (Decides the ID fixes in `KYNETIC_CONTEXT.md` and `docs/`.)
+1. ~~Which n8n is canonical?~~ Answered per the coordinator (project memory, Abdullah, 2026-10-21): the VPS workflow `tXJwNTkNgKGnp0Ab` is canonical and the cloud ID `m2YJwZ1l8DTzyEkw` in the repo is stale. Still open: is anything still live on cloud, and may the ID fixes in `KYNETIC_CONTEXT.md` and `docs/` be applied?
 2. Should `n8n/workflows/active/` stay the self-host import set, or should Nora and the client demos move to a "do not import" bucket first?
 3. May I narrow the `retell.py` allowlist so `--apply` always prompts? (A `.claude/settings.json` change.)
 4. Adopt the seven CONTEXT.md files as written, a subset, or none? And is a `map/` shelf wanted at all?
