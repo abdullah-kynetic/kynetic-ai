@@ -53,6 +53,11 @@ Then: confirm the post-call webhook URL is set on the agent, web-call test Alex,
 Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-10-21 (lead engine: remaining roofers run)
+- Apify (`APIFY_API_TOKEN`) and Firecrawl keys work in the new environment. Re-pulled dataset `odgk84u6wM8rrsd73` (343 ads, no new Apify spend) and added `tools/lead_census.py` (free filter: 2+ ads, Texas signal, non-roofers dropped). 18 roofers remained after excluding the 12 already done.
+- `tools/lead_enrich.py` on the 18: 103 Firecrawl credits, about 9 minutes. 10 DIAL_READY, 8 HOLD, 1 AI answering flagged (Fort Tex, Alivo). Output in `docs/lead-engine-code-run/remaining-18-2026-10-21/`. Statuses are unaudited.
+- Treg not used. No live-system changes.
+
 ### 2026-10-20 (lead engine pilots: Apify census, Treg test, Firecrawl-only script)
 - Research and tooling only. Nothing changed in n8n or Retell. Twenty updated with Abdullah's yes (see below).
 - Run B (Arlington roofing) audited: Claude+Firecrawl and Muse agree on the same 2 dial-ready businesses and phones; Muse reaches form-gated records (Comptroller, permit portal), Firecrawl is cheaper and leaves direct ad links. Muse's "no ads found" DROPs are unreliable. `docs/lead-engine-run-b-audit.md`.
