@@ -173,6 +173,8 @@ def treg_search(query, cursor, cap):
                 data = ((json.load(r).get("output") or {}).get("data")) or {}
                 return data.get("ads", []), data.get("nextCursor")
         except urllib.error.HTTPError as e:
+            if e.code == 402 and b"insufficient_balance" in e.read():
+                raise RuntimeError("Treg balance is empty: add funds at https://treg.to/app#billing")
             if e.code not in (429, 500, 502, 503):
                 raise
     return [], None
@@ -235,6 +237,99 @@ def census_apify(db, niche, cities, state, args):
     print("  apify: %d ads, %d new (est. $%.3f)" % (len(rows), store_ads(db, rows, niche, "apify", state, "apify"), SPEND["apify"]))
 
 
+# ---------- Treg-only enrichment ----------
+STOP = {"roofing", "roof", "roofs", "llc", "inc", "co", "corp", "company", "construction", "contracting", "contractors",
+        "restoration", "restorations", "and", "the", "of", "services", "service", "exteriors", "general", "group", "pros"}
+OWNER_TITLE = re.compile(r"owner|president|founder|ceo|chief executive|partner|principal|managing member|proprietor", re.I)
+
+
+def treg_call(ep, body, cap=0.05):
+    req = urllib.request.Request("https://treg.to/call/" + ep, json.dumps(body).encode(), {
+        "X-Treg-Token": need("TREG_API_KEY_KYNETICAI"), "X-Treg-Route-Max-Cost": str(cap), "Content-Type": "application/json"})
+    for wait in (0, 5, 15):
+        time.sleep(wait)
+        try:
+            with urllib.request.urlopen(req, timeout=90) as r:
+                SPEND["treg"] += int(r.headers.get("x-treg-cost-micro", 0)) / 1e6
+                return (json.load(r).get("output") or {})
+        except urllib.error.HTTPError as e:
+            if e.code == 402 and b"insufficient_balance" in e.read():
+                raise RuntimeError("Treg balance is empty: add funds at https://treg.to/app#billing")
+            if e.code not in (429, 500, 502, 503):
+                return {}
+    return {}
+
+
+def words(name):
+    w = [x for x in re.findall(r"[a-z0-9]+", name.lower()) if x not in STOP]
+    return w[:2] or re.findall(r"[a-z0-9]+", name.lower())[:2]
+
+
+def same_name(a, b):
+    return all(w in b.lower() for w in words(a))
+
+
+def enrich_treg(b, owner_contacts=False):
+    """Maps place -> company LinkedIn page -> owner-titled employees, all through Treg. Each owner is kept only if the
+    LinkedIn title names this business; a business with no verified owner stays HOLD, never a guess."""
+    row = {"business": b["name"], "website": b.get("website", ""), "facebook": b.get("facebook", ""), "phones": {},
+           "owner_candidates": [], "notes": []}
+    st = b.get("state") or ""
+    place = None
+    for p in ((treg_call("anyapi.google.serp.maps", {"query": b["name"], "location": "%s, %s" % (b.get("city", ""), st),
+                                                      "limit": 3}).get("data") or {}).get("items") or []):
+        if same_name(b["name"], p.get("name", "")):
+            place = p
+            break
+    if place:
+        m = re.search(r",\s*([A-Z]{2})\s+\d{5}", place.get("address", ""))
+        row["maps"] = {"name": place["name"], "address": place.get("address"), "rating": place.get("rating"),
+                       "reviews": place.get("reviewCount"), "url": place.get("url")}
+        if place.get("phone"):
+            row["phones"][place["phone"]] = ["Google Maps listing " + (place.get("url") or "")]
+        row["website"] = row["website"] or place.get("website") or ""
+        if m and st and m.group(1) != st:
+            row["status"], row["reason"] = "DROP", "Maps listing is in %s, not %s" % (m.group(1), st)
+            return row
+    else:
+        row["notes"].append("no matching Google Maps listing")
+    for ph in b.get("ad_phones", []):
+        row["phones"].setdefault(ph, []).append("Meta ad text")
+    dom = re.sub(r"^https?://(www\.)?", "", row["website"]).split("/")[0] if row["website"] else ""
+    comp = treg_call("treg.companies.enrich", {"domain": dom}) if dom else {}
+    li = comp.get("linkedin_url") if comp.get("name") and same_name(b["name"], comp["name"]) else None
+    if comp.get("linkedin_url") and not li:
+        row["notes"].append("LinkedIn page %s is a different company; ignored" % comp.get("name"))
+    for pe in ((treg_call("anyapi.linkedin.company.people", {"company": li, "jobTitle": "owner OR president OR founder OR CEO OR partner",
+                                                           "limit": 3}, 0.12).get("data") or {}).get("items") or []) if li else []:
+        title = pe.get("jobTitle", "")
+        if OWNER_TITLE.search(title) and same_name(b["name"], title.split(" at ", 1)[-1]):
+            row["owner_candidates"].append({"name": pe["name"], "role": title, "source": pe.get("url"),
+                                            "confidence": "MEDIUM (LinkedIn title names this business)"})
+    if owner_contacts and row["owner_candidates"]:
+        o = row["owner_candidates"][0]
+        ph = treg_call("treg.people.phone.find", {"linkedin_url": o["source"]}, 0.05).get("phone")
+        if ph:
+            row["phones"].setdefault(ph, []).append("Treg phone finder for " + o["name"] + " (owner direct)")
+            o["direct_phone"] = ph
+        em = treg_call("treg.people.email.find", {"domain": dom, "full_name": o["name"]}, 0.05).get("email") if dom else None
+        if em:
+            o["email"] = em
+    phones = [p for p in row["phones"] if p[2:5] not in ("800", "833", "844", "855", "866", "877", "888")]
+    owner_phone = next((o["direct_phone"] for o in row["owner_candidates"] if o.get("direct_phone")), None)
+    row["best_phone"] = owner_phone or (phones[0] if len(phones) == 1 or place and place.get("phone") in phones else "")
+    row["best_phone"] = row["best_phone"] or (phones[0] if phones else "")
+    if row["owner_candidates"] and row["best_phone"]:
+        row["status"], row["reason"] = "DIAL_READY", "owner from LinkedIn, phone from " + (
+            "owner direct dial" if owner_phone else "Google Maps listing (business line)")
+    else:
+        row["status"] = "HOLD"
+        row["reason"] = "missing: " + ", ".join(x for x, ok in (("verified owner", bool(row["owner_candidates"])),
+                                                                ("phone", bool(row["best_phone"]))) if not ok)
+    row["notes"].append("AI-answering check not run (Treg-only)")
+    return row
+
+
 # ---------- candidates + enrichment ----------
 def site_of(link):
     if not link:
@@ -265,19 +360,33 @@ def candidates(db, niche, state, min_ads):
 
 
 def enrich_run(db, niche, state, args):
+    if args.enricher == "treg":
+        return enrich_loop(db, niche, state, args, lambda b: enrich_treg(b, args.owner_contacts))
     import lead_enrich as le  # BBB, Texas registry, Comptroller, site scan, screens
     le.CREDITS["max"] = args.max_credits
     le.METRO_CITIES = type("AnyCity", (set,), {"__contains__": lambda s, x: True})()  # national: any city in-state is fine
     le.METRO_AREA_CODES = {str(n) for n in range(200, 1000)}
+    orig_registry = le.registry
+
+    def fire(b):
+        le.TARGET_STATE = b["state"].lower() if b["state"] else "tx"
+        le.registry = orig_registry if b["state"] == "TX" else (lambda name: ([], None))  # registry = Texas open data only
+        return le.enrich(b)
+    enrich_loop(db, niche, state, args, fire)
+    le.registry = orig_registry
+    return le.CREDITS["used"]
+
+
+def enrich_loop(db, niche, state, args, fn):
     cands = candidates(db, niche, state, args.min_ads)[:args.max_enrich]
     print("enriching %d candidates (min %d ads)" % (len(cands), args.min_ads))
-    orig_registry = le.registry
     for b in cands:
         st = b["state"]
-        le.TARGET_STATE = st.lower() if st else "tx"
-        le.registry = orig_registry if st == "TX" else (lambda name: ([], None))  # the registry is Texas open data only
+        if args.enricher == "treg" and SPEND["treg"] >= args.enrich_budget:
+            print("enrich budget reached ($%.3f)" % SPEND["treg"])
+            break
         try:
-            row = le.enrich(b)
+            row = fn(b)
         except RuntimeError as e:
             print("stopped:", e)
             break
@@ -292,8 +401,7 @@ def enrich_run(db, niche, state, args):
                     time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), b["page_id"], niche))
         db.commit()
         print("  %-8s %s (%s)" % (row.get("status"), b["name"], row.get("reason", "")[:70]))
-    le.registry = orig_registry
-    return le.CREDITS["used"]
+    return 0
 
 
 # ---------- export, mark, stats ----------
@@ -367,7 +475,11 @@ def run(args):
                 break
             print("census %s %s: %d cities" % (niche, st, len(cities)))
             if args.source in ("treg", "both"):
-                census(db, niche, cities, st, args)
+                try:
+                    census(db, niche, cities, st, args)
+                except RuntimeError as e:
+                    print("stopped:", e)
+                    break
             if args.source in ("apify", "both"):
                 census_apify(db, niche, cities, st, args)
     credits = 0
@@ -392,6 +504,10 @@ def main():
     ap.add_argument("--refresh", action="store_true", help="re-run searches already stored")
     ap.add_argument("--min-ads", type=int, default=2)
     ap.add_argument("--max-enrich", type=int, default=100)
+    ap.add_argument("--enricher", choices=["treg", "firecrawl"], default="treg",
+                    help="treg: Maps + LinkedIn, Treg only (~$0.02 per business). firecrawl: BBB, Texas registry, site scan")
+    ap.add_argument("--owner-contacts", action="store_true", help="treg enricher: also look up the owner's direct phone and email")
+    ap.add_argument("--enrich-budget", type=float, default=5.0, help="treg enricher stops at this many Treg dollars in total")
     ap.add_argument("--max-credits", type=int, default=500, help="Firecrawl credit cap for the enrich step")
     ap.add_argument("--apify-terms", type=int, default=10), ap.add_argument("--apify-max", type=int, default=500)
     ap.add_argument("--apify-cap", type=float, default=1.0)

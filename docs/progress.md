@@ -53,6 +53,12 @@ Then: confirm the post-call webhook URL is set on the agent, web-call test Alex,
 Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-10-21 (Treg-only pipeline test)
+- Treg balance is spent: the $1 is gone ($0.54 for the US roofing census, the rest on endpoint tests). Treg now refuses calls (`insufficient_balance`), so nothing past this point was run. Top up at https://treg.to/app#billing.
+- US roofing census through Treg (`lead_engine.py`, 252 searches, 40 states, FL/OK excluded): 5,735 ads, 2,032 advertisers, 958 with 2+ active ads, $0.54. The same period on Apify cost about $0.93 for 520 ads (about 17x more per ad). One Apify run (GA) failed with HTTP 400, cause not investigated.
+- Treg-only enrichment pilot on 10 known DFW roofers, $0.16 total: Google Maps match and phone 9 of 10, LinkedIn company page 6 of 10, an owner-titled person 6 of 10, but only about 3 of those 6 were the right business (wrong-company and non-owner matches filtered by a title check added in `enrich_treg`). Owner direct-dial lookup returned a number for 1 of 2 tries at $0.0005 and $0 on a miss. The `enrich_treg` path inside the script has not completed a clean run because the balance ran out.
+- Docs and a user decision still needed: owner direct-dial use depends on the counsel answer (task 1.4); Abdullah said Treg is cleared, Twenty not yet updated.
+
 ### 2026-10-21 (national lead database)
 - New `tools/lead_engine.py`: one entry point for census (Treg Meta Ad Library keyword search, about $0.0011 per ~30 ads, roughly 20x cheaper per ad than the Apify actor), a SQLite store (`leads.db`, resumable, dedupes by Page ID), enrichment through `tools/lead_enrich.py`, CSV export, a "called" flag, and a Modal wrapper (untested, not deployed). Apify is an optional second census source (`--source apify|both`).
 - `docs/lead-engine-niche-audit.md`: Meta-ad density for 20 niches (Dallas, Houston, $0.044). Recommends adding kitchen to the main list, testing fence and concrete, holding HVAC, generators, solar and pools, and treating restoration as a non-Meta source. Needs Abdullah's decision.
