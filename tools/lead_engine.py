@@ -154,6 +154,11 @@ def db_open(path):
     CREATE TABLE IF NOT EXISTS runs(ts TEXT, kind TEXT, detail TEXT, treg_usd REAL, apify_usd REAL, firecrawl_credits INTEGER);
     CREATE TABLE IF NOT EXISTS searched(niche TEXT, phrase TEXT, city TEXT, ts TEXT, ads INTEGER, PRIMARY KEY(niche, phrase, city));
     """)
+    for col in ("start_ts", "end_ts"):  # added later; older databases get the columns on open
+        try:
+            db.execute("ALTER TABLE ads ADD COLUMN %s INTEGER" % col)
+        except sqlite3.OperationalError:
+            pass
     return db
 
 
@@ -180,15 +185,26 @@ def treg_search(query, cursor, cap):
     return [], None
 
 
+def to_ts(v):
+    """Epoch seconds from Treg (epoch string) or Apify ('YYYY-MM-DD')."""
+    try:
+        return int(v)
+    except (TypeError, ValueError):
+        try:
+            return int(time.mktime(time.strptime(str(v)[:10], "%Y-%m-%d")))
+        except ValueError:
+            return None
+
+
 def store_ads(db, rows, niche, city, state, source):
     n = 0
     now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     for r in rows:
         if not r["ad_id"] or not r["page_id"]:
             continue
-        cur = db.execute("INSERT OR IGNORE INTO ads VALUES(?,?,?,?,?,?,?,?,?,?,?)", (
+        cur = db.execute("INSERT OR IGNORE INTO ads VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)", (
             r["ad_id"], r["page_id"], r["page_name"], r["page_url"], r["link_url"], (r["text"] or "")[:700], niche, city,
-            state, source, now))
+            state, source, now, to_ts(r.get("start")), to_ts(r.get("end"))))
         n += cur.rowcount
     db.commit()
     return n
@@ -209,7 +225,7 @@ def census(db, niche, cities, state, args):
                 ads, cursor = treg_search(q, cursor, 0.01)
                 rows = [{"ad_id": a.get("id"), "page_id": a.get("pageId"), "page_name": a.get("pageName", ""),
                          "page_url": a.get("pageUrl", ""), "link_url": a.get("linkUrl") or a.get("caption") or "",
-                         "text": a.get("text", "")} for a in ads]
+                         "text": a.get("text", ""), "start": a.get("startDate"), "end": a.get("endDate")} for a in ads]
                 got += store_ads(db, rows, niche, city, state, "treg")
                 if not cursor or not ads or SPEND["treg"] >= args.budget:
                     break
@@ -232,7 +248,7 @@ def census_apify(db, niche, cities, state, args):
         items = json.load(r)
     rows = [{"ad_id": a.get("adArchiveID"), "page_id": a.get("pageID"), "page_name": a.get("pageName", ""),
              "page_url": a.get("pageURL", ""), "link_url": a.get("ctaUrl") or a.get("ctaDomain") or "",
-             "text": a.get("adText", "")} for a in items]
+             "text": a.get("adText", ""), "start": a.get("startDate"), "end": a.get("endDate")} for a in items]
     SPEND["apify"] += 0.005 + 0.00108 * len(items)  # published per-ad price with both add-ons; actual is on the run page
     print("  apify: %d ads, %d new (est. $%.3f)" % (len(rows), store_ads(db, rows, niche, "apify", state, "apify"), SPEND["apify"]))
 
@@ -404,9 +420,32 @@ def enrich_loop(db, niche, state, args, fn):
     return 0
 
 
+# ---------- ad spend estimate ----------
+# Meta does not publish spend for commercial ads in the US, so this is a proxy, not data: live ads
+# x an assumed daily budget per live ad x 30. Ads in one ad set share a budget, so the per-ad rates are low. Both rates
+# are assumptions for local-service lead ads, not measured; change them.
+DAILY_LOW, DAILY_HIGH = 3, 10
+
+
+def spend_estimate(db, page_id, niche):
+    now = time.time()
+    rows = db.execute("SELECT text, start_ts FROM ads WHERE page_id=? AND niche=?", (page_id, niche)).fetchall()
+    creatives = {(t or "")[:80] for t, _ in rows}
+    starts = [st for _, st in rows if st]
+    n = len(creatives)
+    out = {"live_ads": len(rows), "creatives": n,
+           "oldest_days": int((now - min(starts)) / 86400) if starts else "",
+           "new_30d": sum(1 for st in starts if now - st < 30 * 86400)}
+    lo, hi = len(rows) * DAILY_LOW * 30, len(rows) * DAILY_HIGH * 30
+    out["spend_month_low"], out["spend_month_high"] = lo, hi
+    out["spend_tier"] = ("under $1k" if hi < 1000 else "$1-3k" if lo < 3000 and hi < 10000 else
+                         "$3-10k" if lo < 10000 else "$10k+")
+    return out
+
+
 # ---------- export, mark, stats ----------
 def export(db, path, args):
-    q, p = "SELECT niche,name,city,state,status,owner,best_phone,phones,website,facebook,ads,reason,notes FROM leads WHERE 1=1", []
+    q, p = "SELECT niche,name,city,state,status,owner,best_phone,phones,website,facebook,ads,reason,notes,page_id FROM leads WHERE 1=1", []
     if args.status:
         q += " AND status=?"
         p.append(args.status)
@@ -422,9 +461,12 @@ def export(db, path, args):
     with open(path, "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["niche", "name", "city", "state", "status", "owner", "best_phone", "all_phones", "website", "facebook",
-                    "active_ads", "reason", "notes"])
+                    "active_ads", "reason", "notes", "distinct_creatives", "oldest_ad_days", "new_ads_30d",
+                    "est_spend_month_low", "est_spend_month_high", "spend_tier"])
         for r in rows:
-            w.writerow(list(r[:7]) + [", ".join(json.loads(r[7] or "{}"))] + list(r[8:]))
+            e = spend_estimate(db, r[13], r[0])
+            w.writerow(list(r[:7]) + [", ".join(json.loads(r[7] or "{}"))] + list(r[8:13]) +
+                       [e["creatives"], e["oldest_days"], e["new_30d"], e["spend_month_low"], e["spend_month_high"], e["spend_tier"]])
     print("exported %d leads to %s" % (len(rows), path))
 
 
