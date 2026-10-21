@@ -53,6 +53,12 @@ Then: confirm the post-call webhook URL is set on the agent, web-call test Alex,
 Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-10-21 (national lead database)
+- New `tools/lead_engine.py`: one entry point for census (Treg Meta Ad Library keyword search, about $0.0011 per ~30 ads, roughly 20x cheaper per ad than the Apify actor), a SQLite store (`leads.db`, resumable, dedupes by Page ID), enrichment through `tools/lead_enrich.py`, CSV export, a "called" flag, and a Modal wrapper (untested, not deployed). Apify is an optional second census source (`--source apify|both`).
+- `docs/lead-engine-niche-audit.md`: Meta-ad density for 20 niches (Dallas, Houston, $0.044). Recommends adding kitchen to the main list, testing fence and concrete, holding HVAC, generators, solar and pools, and treating restoration as a non-Meta source. Needs Abdullah's decision.
+- Treg phone finder: Abdullah said Treg is "cleared and confirmed fine" on 2026-10-21; counsel task 1.4 status in Twenty not yet updated. Flagged, not assumed.
+- No Twenty, n8n, Retell or Modal changes made.
+
 ### 2026-10-21 (lead engine: remaining roofers run)
 - Apify (`APIFY_API_TOKEN`) and Firecrawl keys work in the new environment. Re-pulled dataset `odgk84u6wM8rrsd73` (343 ads, no new Apify spend) and added `tools/lead_census.py` (free filter: 2+ ads, Texas signal, non-roofers dropped). 18 roofers remained after excluding the 12 already done.
 - `tools/lead_enrich.py` on the 18: 103 Firecrawl credits, about 9 minutes. 10 DIAL_READY, 8 HOLD, 1 AI answering flagged (Fort Tex, Alivo). Output in `docs/lead-engine-code-run/remaining-18-2026-10-21/`. Statuses are unaudited.

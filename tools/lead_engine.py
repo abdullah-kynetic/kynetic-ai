@@ -1,0 +1,438 @@
+#!/usr/bin/env python3
+"""Lead engine: build a stored database of independent home-service businesses running Meta ads.
+
+One entry point, standard library only (plus tools/lead_enrich.py, which it imports for the
+BBB / registry / website enrichment). Keys come from the environment or .env:
+  TREG_API_KEY_KYNETICAI   ad census (Treg route anyapi.facebook.ads_search, about $0.0011 per page of ~30 ads)
+  FIRECRAWL_API_KEY        enrichment (about 5 credits per business)
+  APIFY_API_TOKEN          optional second census source (--source apify|both)
+
+  python tools/lead_engine.py run --niche roofing --state TX --metro DFW      # census + enrich
+  python tools/lead_engine.py run --niche bath --all-us --budget 5            # every state except FL/OK
+  python tools/lead_engine.py census --niche roofing --cities "Phoenix,Tempe" --state AZ
+  python tools/lead_engine.py enrich --niche roofing --max-credits 200
+  python tools/lead_engine.py export --status DIAL_READY --uncalled out.csv
+  python tools/lead_engine.py mark "Bert Roofing Inc" called                  # so it never comes up twice
+  python tools/lead_engine.py stats
+
+Everything lands in one SQLite file (leads.db by default, --db to change), so reruns skip what is
+already stored and you can top up in the background. Public sources only; it never logs in, submits
+a form or contacts a business. Anything it cannot source stays "unknown". FL and OK are never searched.
+The same code runs on Modal (see the bottom of the file; deploy is untested until you approve it).
+"""
+import argparse
+import csv
+import json
+import os
+import re
+import sqlite3
+import sys
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+TREG = "https://treg.to/call/anyapi.facebook.ads_search"
+SPEND = {"treg": 0.0, "apify": 0.0}
+
+# niche -> search phrases, and a regex the advertiser name/page category must match to be kept.
+# Ticket sizes are rough (Angi / industry averages, not verified here).
+NICHES = {
+    "roofing": (["roofing", "roof replacement"], r"roof|exterior|shingle"),
+    "bath": (["bathroom remodel", "walk-in shower"], r"bath|remodel|shower|renovat"),
+    "kitchen": (["kitchen remodel"], r"kitchen|remodel|renovat|cabinet"),
+    "foundation": (["foundation repair"], r"foundation|pier|slab|structur|waterproof|crawl"),
+    "windows": (["window replacement"], r"window|door|glass"),
+    "siding": (["siding replacement", "siding installation"], r"siding|exterior|roof"),
+    "restoration": (["water damage restoration", "fire damage restoration", "mold remediation"],
+                    r"restor|remediat|water|fire|mold|disaster|damage"),
+    "fence": (["fence installation"], r"fenc"),
+    "concrete": (["driveway concrete", "concrete patio"], r"concrete|paving|driveway|masonry"),
+    "hvac": (["hvac replacement", "ac replacement"], r"hvac|air|heating|cooling|\bac\b|comfort"),
+    "generators": (["standby generator"], r"generat|power"),
+    "pools": (["pool installation", "pool remodel"], r"pool|spa|outdoor"),
+}
+BRANDS = ["mighty dog roofing", "roof maxx", "mr. roof", "leaffilter", "leafguard", "power home remodeling",
+          "renewal by andersen", "window nation", "bath fitter", "re-bath", "west shore home", "bath planet",
+          "five star bath", "kitchen tune-up", "servpro", "servicemaster", "paul davis", "belfor", "service master",
+          "polygon", "puroclean", "homeadvisor", "angi", "modernize", "home service pros", "roofing contractors",
+          "you may have a case", "attorney", "law firm", "seo", "webmaster", "marketing", "lead gen", "advertis",
+          "roofing contractors"]
+SOCIAL = {"", "fb.me", "fb.com", "facebook.com", "l.facebook.com", "instagram.com", "m.me", "wa.me", "linktr.ee",
+          "forms.gle", "calendly.com", "bit.ly"}
+PHONE_RE = re.compile(r"\(?\b([2-9]\d{2})\)?[\s.\-]?(\d{3})[\s.\-](\d{4})\b")
+BLOCKED_STATES = {"FL", "OK"}  # never prospected
+
+# state -> cities searched with --all-us or --state (largest home-service markets; edit freely)
+CITY_TABLE = """TX:Dallas,Fort Worth,Arlington,Plano,Frisco,McKinney,Denton,Garland,Irving,Houston,Katy,The Woodlands,Sugar Land,San Antonio,Austin,Round Rock,El Paso,Corpus Christi,Lubbock,Amarillo,Waco,Tyler,Killeen,McAllen,Beaumont
+GA:Atlanta,Marietta,Alpharetta,Savannah,Augusta,Columbus
+AZ:Phoenix,Tucson,Mesa,Scottsdale,Chandler,Gilbert
+TN:Nashville,Memphis,Knoxville,Chattanooga,Franklin
+NC:Charlotte,Raleigh,Durham,Greensboro,Wilmington
+SC:Greenville,Charleston,Columbia,Myrtle Beach
+MO:Kansas City,St. Louis,Springfield
+KS:Wichita,Overland Park,Topeka
+IN:Indianapolis,Fort Wayne,Evansville
+CO:Denver,Colorado Springs,Aurora,Fort Collins
+AL:Birmingham,Huntsville,Mobile,Montgomery
+CA:Los Angeles,San Diego,Sacramento,San Jose,Fresno,Riverside,Bakersfield
+NV:Las Vegas,Henderson,Reno
+UT:Salt Lake City,Provo,Ogden
+OH:Columbus,Cleveland,Cincinnati,Toledo,Akron
+MI:Detroit,Grand Rapids,Lansing
+IL:Chicago,Naperville,Rockford,Springfield
+WI:Milwaukee,Madison,Green Bay
+MN:Minneapolis,Saint Paul,Rochester
+IA:Des Moines,Cedar Rapids
+NE:Omaha,Lincoln
+AR:Little Rock,Fayetteville,Fort Smith
+LA:New Orleans,Baton Rouge,Shreveport,Lafayette
+MS:Jackson,Gulfport
+KY:Louisville,Lexington
+VA:Virginia Beach,Richmond,Norfolk,Chesapeake
+MD:Baltimore,Frederick
+PA:Philadelphia,Pittsburgh,Allentown
+NJ:Newark,Jersey City,Toms River
+NY:Buffalo,Rochester,Syracuse,Long Island
+MA:Boston,Worcester
+CT:Hartford,New Haven
+WA:Seattle,Spokane,Tacoma
+OR:Portland,Eugene,Bend
+ID:Boise,Meridian
+NM:Albuquerque,Las Cruces
+MT:Billings
+SD:Sioux Falls
+ND:Fargo
+DE:Wilmington
+WV:Charleston
+NH:Manchester
+ME:Portland
+SC:Spartanburg"""
+METROS = {"DFW": ["Dallas", "Fort Worth", "Arlington", "Plano", "Frisco", "McKinney", "Denton", "Garland", "Irving"],
+          "HOU": ["Houston", "Katy", "The Woodlands", "Sugar Land"], "SAT": ["San Antonio"],
+          "AUS": ["Austin", "Round Rock"]}
+
+
+def cities_for(state):
+    out = []
+    for line in CITY_TABLE.splitlines():
+        st, _, names = line.partition(":")
+        if st == state:
+            out += [c.strip() for c in names.split(",") if c.strip() not in out]
+    return out
+
+
+def load_env():
+    env = HERE.parent / ".env"
+    if env.exists():
+        for line in env.read_text().splitlines():
+            if "=" in line and not line.startswith("#"):
+                k, v = line.split("=", 1)
+                os.environ.setdefault(k.strip(), v.strip().strip('"'))
+
+
+def need(name):
+    v = os.environ.get(name)
+    if not v:
+        sys.exit("%s not set (environment or .env)" % name)
+    return v
+
+
+# ---------- storage ----------
+def db_open(path):
+    db = sqlite3.connect(path)
+    db.executescript("""
+    CREATE TABLE IF NOT EXISTS ads(ad_id TEXT PRIMARY KEY, page_id TEXT, page_name TEXT, page_url TEXT, link_url TEXT,
+      text TEXT, niche TEXT, search_city TEXT, search_state TEXT, source TEXT, seen_at TEXT);
+    CREATE INDEX IF NOT EXISTS ads_page ON ads(page_id, niche);
+    CREATE TABLE IF NOT EXISTS leads(page_id TEXT, niche TEXT, name TEXT, city TEXT, state TEXT, ads INTEGER, website TEXT,
+      facebook TEXT, status TEXT, reason TEXT, owner TEXT, best_phone TEXT, phones TEXT, notes TEXT, row_json TEXT,
+      enriched_at TEXT, called TEXT DEFAULT '', PRIMARY KEY(page_id, niche));
+    CREATE TABLE IF NOT EXISTS runs(ts TEXT, kind TEXT, detail TEXT, treg_usd REAL, apify_usd REAL, firecrawl_credits INTEGER);
+    CREATE TABLE IF NOT EXISTS searched(niche TEXT, phrase TEXT, city TEXT, ts TEXT, ads INTEGER, PRIMARY KEY(niche, phrase, city));
+    """)
+    return db
+
+
+# ---------- census ----------
+def treg_search(query, cursor, cap):
+    body = {"query": query, "country": "US", "status": "ACTIVE", "searchType": "keyword_unordered"}
+    if cursor:
+        body["cursor"] = cursor
+    req = urllib.request.Request(TREG, json.dumps(body).encode(), {
+        "X-Treg-Token": need("TREG_API_KEY_KYNETICAI"), "X-Treg-Route-Max-Cost": str(cap),
+        "Content-Type": "application/json"})
+    for wait in (0, 5, 15):
+        time.sleep(wait)
+        try:
+            with urllib.request.urlopen(req, timeout=90) as r:
+                SPEND["treg"] += int(r.headers.get("x-treg-cost-micro", 0)) / 1e6
+                data = ((json.load(r).get("output") or {}).get("data")) or {}
+                return data.get("ads", []), data.get("nextCursor")
+        except urllib.error.HTTPError as e:
+            if e.code not in (429, 500, 502, 503):
+                raise
+    return [], None
+
+
+def store_ads(db, rows, niche, city, state, source):
+    n = 0
+    now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    for r in rows:
+        if not r["ad_id"] or not r["page_id"]:
+            continue
+        cur = db.execute("INSERT OR IGNORE INTO ads VALUES(?,?,?,?,?,?,?,?,?,?,?)", (
+            r["ad_id"], r["page_id"], r["page_name"], r["page_url"], r["link_url"], (r["text"] or "")[:700], niche, city,
+            state, source, now))
+        n += cur.rowcount
+    db.commit()
+    return n
+
+
+def census(db, niche, cities, state, args):
+    phrases = NICHES[niche][0]
+    for city in cities:
+        for ph in phrases:
+            if SPEND["treg"] >= args.budget:
+                print("census budget reached ($%.3f)" % SPEND["treg"])
+                return
+            if db.execute("SELECT 1 FROM searched WHERE niche=? AND phrase=? AND city=?", (niche, ph, city)).fetchone() \
+                    and not args.refresh:
+                continue
+            q, cursor, got = "%s %s" % (ph, city), None, 0
+            for _ in range(args.pages):
+                ads, cursor = treg_search(q, cursor, 0.01)
+                rows = [{"ad_id": a.get("id"), "page_id": a.get("pageId"), "page_name": a.get("pageName", ""),
+                         "page_url": a.get("pageUrl", ""), "link_url": a.get("linkUrl") or a.get("caption") or "",
+                         "text": a.get("text", "")} for a in ads]
+                got += store_ads(db, rows, niche, city, state, "treg")
+                if not cursor or not ads or SPEND["treg"] >= args.budget:
+                    break
+            db.execute("INSERT OR REPLACE INTO searched VALUES(?,?,?,?,?)",
+                       (niche, ph, city, time.strftime("%Y-%m-%d"), got))
+            db.commit()
+            print("  %-34s +%d new ads  (treg $%.4f)" % (q, got, SPEND["treg"]))
+
+
+def census_apify(db, niche, cities, state, args):
+    """Optional: Apify actor solidcode/meta-ads-library-scraper for the same phrases (uses your Apify credit)."""
+    terms = ["%s %s" % (ph, c) for c in cities for ph in NICHES[niche][0]][:args.apify_terms]
+    body = {"searchTerms": terms, "country": "US", "adActiveStatus": "ACTIVE", "maxResults": args.apify_max,
+            "scrapeAdDetails": True, "includeAboutPage": True}
+    url = ("https://api.apify.com/v2/acts/solidcode~meta-ads-library-scraper/run-sync-get-dataset-items"
+           "?maxTotalChargeUsd=%s&timeout=280" % args.apify_cap)
+    req = urllib.request.Request(url, json.dumps(body).encode(), {
+        "Authorization": "Bearer " + need("APIFY_API_TOKEN"), "Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=300) as r:
+        items = json.load(r)
+    rows = [{"ad_id": a.get("adArchiveID"), "page_id": a.get("pageID"), "page_name": a.get("pageName", ""),
+             "page_url": a.get("pageURL", ""), "link_url": a.get("ctaUrl") or a.get("ctaDomain") or "",
+             "text": a.get("adText", "")} for a in items]
+    SPEND["apify"] += 0.005 + 0.00108 * len(items)  # published per-ad price with both add-ons; actual is on the run page
+    print("  apify: %d ads, %d new (est. $%.3f)" % (len(rows), store_ads(db, rows, niche, "apify", state, "apify"), SPEND["apify"]))
+
+
+# ---------- candidates + enrichment ----------
+def site_of(link):
+    if not link:
+        return ""
+    u = link if link.startswith("http") else "https://" + link
+    host = urllib.parse.urlparse(u).netloc.lower().removeprefix("www.")
+    return "" if host in SOCIAL else u.split("?")[0]
+
+
+def candidates(db, niche, state, min_ads):
+    name_re = re.compile(NICHES[niche][1], re.I)
+    rows = db.execute("""SELECT page_id, MAX(page_name), MAX(page_url), COUNT(*) n, GROUP_CONCAT(link_url, ' '),
+        GROUP_CONCAT(text, ' '), search_city, search_state FROM ads WHERE niche=? GROUP BY page_id
+        HAVING n>=? ORDER BY n DESC""", (niche, min_ads)).fetchall()
+    done = {r[0] for r in db.execute("SELECT page_id FROM leads WHERE niche=?", (niche,))}
+    out = []
+    for pid, name, purl, n, links, text, city, st in rows:
+        if pid in done or (state and st != state):
+            continue
+        low = name.lower()
+        if not name_re.search(name) or any(b in low for b in BRANDS) or st in BLOCKED_STATES:
+            continue
+        site = next((s for s in (site_of(x) for x in links.split(" ") if x) if s), "")
+        phones = sorted({"(%s) %s-%s" % m for m in PHONE_RE.findall(text or "")})
+        out.append({"page_id": pid, "name": name.strip(), "facebook": purl, "website": site, "ad_phones": phones,
+                    "ads": n, "city": city, "state": st or ""})
+    return out
+
+
+def enrich_run(db, niche, state, args):
+    import lead_enrich as le  # BBB, Texas registry, Comptroller, site scan, screens
+    le.CREDITS["max"] = args.max_credits
+    le.METRO_CITIES = type("AnyCity", (set,), {"__contains__": lambda s, x: True})()  # national: any city in-state is fine
+    le.METRO_AREA_CODES = {str(n) for n in range(200, 1000)}
+    cands = candidates(db, niche, state, args.min_ads)[:args.max_enrich]
+    print("enriching %d candidates (min %d ads)" % (len(cands), args.min_ads))
+    orig_registry = le.registry
+    for b in cands:
+        st = b["state"]
+        le.TARGET_STATE = st.lower() if st else "tx"
+        le.registry = orig_registry if st == "TX" else (lambda name: ([], None))  # the registry is Texas open data only
+        try:
+            row = le.enrich(b)
+        except RuntimeError as e:
+            print("stopped:", e)
+            break
+        except Exception as e:  # one bad site must not stop the run
+            row = {"business": b["name"], "status": "HOLD", "reason": "enrich error: %s" % str(e)[:120], "phones": {},
+                   "owner_candidates": [], "notes": []}
+        owner = " | ".join(o["name"][:60] for o in row.get("owner_candidates", [])[:2])
+        db.execute("INSERT OR REPLACE INTO leads VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,COALESCE((SELECT called FROM leads WHERE page_id=? AND niche=?),''))",
+                   (b["page_id"], niche, b["name"], b["city"], st, b["ads"], b["website"], b["facebook"],
+                    row.get("status"), row.get("reason"), owner, row.get("best_phone", ""),
+                    json.dumps(row.get("phones", {})), "; ".join(row.get("notes", [])), json.dumps(row),
+                    time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), b["page_id"], niche))
+        db.commit()
+        print("  %-8s %s (%s)" % (row.get("status"), b["name"], row.get("reason", "")[:70]))
+    le.registry = orig_registry
+    return le.CREDITS["used"]
+
+
+# ---------- export, mark, stats ----------
+def export(db, path, args):
+    q, p = "SELECT niche,name,city,state,status,owner,best_phone,phones,website,facebook,ads,reason,notes FROM leads WHERE 1=1", []
+    if args.status:
+        q += " AND status=?"
+        p.append(args.status)
+    if args.niche:
+        q += " AND niche=?"
+        p.append(args.niche)
+    if args.state:
+        q += " AND state=?"
+        p.append(args.state)
+    if args.uncalled:
+        q += " AND called=''"
+    rows = db.execute(q + " ORDER BY ads DESC", p).fetchall()
+    with open(path, "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["niche", "name", "city", "state", "status", "owner", "best_phone", "all_phones", "website", "facebook",
+                    "active_ads", "reason", "notes"])
+        for r in rows:
+            w.writerow(list(r[:7]) + [", ".join(json.loads(r[7] or "{}"))] + list(r[8:]))
+    print("exported %d leads to %s" % (len(rows), path))
+
+
+def stats(db):
+    print("ads stored:", db.execute("SELECT COUNT(*) FROM ads").fetchone()[0],
+          "| advertisers:", db.execute("SELECT COUNT(DISTINCT page_id) FROM ads").fetchone()[0])
+    for r in db.execute("SELECT niche, status, COUNT(*), SUM(called<>'') FROM leads GROUP BY niche, status ORDER BY niche, status"):
+        print("  %-12s %-11s %4d leads (%d called)" % r)
+    t = db.execute("SELECT SUM(treg_usd), SUM(apify_usd), SUM(firecrawl_credits) FROM runs").fetchone()
+    print("spend to date: Treg $%.3f, Apify $%.3f, Firecrawl %d credits" % tuple(x or 0 for x in t))
+
+
+def log_run(db, kind, detail, credits=0):
+    db.execute("INSERT INTO runs VALUES(?,?,?,?,?,?)", (time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), kind,
+                                                        detail, SPEND["treg"], SPEND["apify"], credits))
+    db.commit()
+
+
+# ---------- main ----------
+def plan(args):
+    if args.cities:
+        return [c.strip() for c in args.cities.split(",")], (args.state or "").upper()
+    if args.metro:
+        return METROS[args.metro.upper()], "TX"
+    return cities_for((args.state or "").upper()), (args.state or "").upper()
+
+
+def run(args):
+    load_env()
+    db = db_open(args.db)
+    niche = args.niche
+    if niche not in NICHES:
+        sys.exit("niche must be one of: " + ", ".join(NICHES))
+    if args.cmd in ("run", "census"):
+        targets = []
+        if args.all_us:
+            for line in CITY_TABLE.splitlines():
+                st = line.split(":")[0]
+                if st not in BLOCKED_STATES:
+                    targets.append((st, cities_for(st)[:args.per_state]))
+        else:
+            cities, st = plan(args)
+            if st in BLOCKED_STATES or not cities:
+                sys.exit("no cities to search (FL and OK are never searched; pass --state, --metro or --cities)")
+            targets.append((st, cities))
+        for st, cities in targets:
+            if SPEND["treg"] >= args.budget:
+                break
+            print("census %s %s: %d cities" % (niche, st, len(cities)))
+            if args.source in ("treg", "both"):
+                census(db, niche, cities, st, args)
+            if args.source in ("apify", "both"):
+                census_apify(db, niche, cities, st, args)
+    credits = 0
+    if args.cmd in ("run", "enrich"):
+        credits = enrich_run(db, niche, (args.state or "").upper() if not args.all_us else "", args)
+    log_run(db, args.cmd, "%s %s" % (niche, args.state or args.metro or args.cities or "all-us"), credits)
+    print("spend this run: Treg $%.4f, Apify $%.4f, Firecrawl %d credits" % (SPEND["treg"], SPEND["apify"], credits))
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("cmd", choices=["run", "census", "enrich", "export", "mark", "stats"])
+    ap.add_argument("target", nargs="*", help="export: output.csv | mark: <business name> <called|reset>")
+    ap.add_argument("--db", default="leads.db")
+    ap.add_argument("--niche", default="roofing")
+    ap.add_argument("--state"), ap.add_argument("--metro"), ap.add_argument("--cities")
+    ap.add_argument("--all-us", action="store_true")
+    ap.add_argument("--per-state", type=int, default=6, help="cities per state with --all-us")
+    ap.add_argument("--source", choices=["treg", "apify", "both"], default="treg")
+    ap.add_argument("--budget", type=float, default=3.0, help="census stops at this many Treg dollars")
+    ap.add_argument("--pages", type=int, default=3, help="result pages per search (~30 ads each)")
+    ap.add_argument("--refresh", action="store_true", help="re-run searches already stored")
+    ap.add_argument("--min-ads", type=int, default=2)
+    ap.add_argument("--max-enrich", type=int, default=100)
+    ap.add_argument("--max-credits", type=int, default=500, help="Firecrawl credit cap for the enrich step")
+    ap.add_argument("--apify-terms", type=int, default=10), ap.add_argument("--apify-max", type=int, default=500)
+    ap.add_argument("--apify-cap", type=float, default=1.0)
+    ap.add_argument("--status"), ap.add_argument("--uncalled", action="store_true")
+    args = ap.parse_args()
+    if args.cmd in ("run", "census", "enrich"):
+        run(args)
+        return
+    db = db_open(args.db)
+    if args.cmd == "stats":
+        stats(db)
+    elif args.cmd == "export":
+        export(db, args.target[0] if args.target else "leads.csv", args)
+    elif args.cmd == "mark":
+        name, how = " ".join(args.target[:-1]), args.target[-1]
+        n = db.execute("UPDATE leads SET called=? WHERE name LIKE ?", (time.strftime("%Y-%m-%d") if how == "called" else "",
+                                                                       name)).rowcount
+        db.commit()
+        print("marked %d lead(s)" % n)
+
+
+# ---------- Modal (optional; deploy only after approval) ----------
+try:
+    import modal  # noqa: E402
+
+    app = modal.App("kynetic-lead-engine")
+    image = (modal.Image.debian_slim().add_local_python_source("lead_enrich", "lead_engine"))
+    vol = modal.Volume.from_name("kynetic-leads", create_if_missing=True)
+
+    @app.function(image=image, volumes={"/data": vol}, timeout=3600,
+                  secrets=[modal.Secret.from_name("kynetic-lead-engine")])  # holds the 3 keys
+    def run_job(niche="roofing", state="", metro="", cities="", all_us=False, budget=3.0, max_enrich=100):
+        """Called by an n8n webhook (n8n form -> HTTP node). Writes /data/leads.db; n8n/Twenty import comes later."""
+        sys.argv = ["lead_engine", "run", "--db", "/data/leads.db", "--niche", niche, "--budget", str(budget),
+                    "--max-enrich", str(max_enrich)] + (["--state", state] if state else []) + \
+                   (["--metro", metro] if metro else []) + (["--cities", cities] if cities else []) + \
+                   (["--all-us"] if all_us else [])
+        main()
+        vol.commit()
+except ImportError:
+    pass
+
+if __name__ == "__main__":
+    main()
