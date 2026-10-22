@@ -445,8 +445,8 @@ def spend_estimate(db, page_id, niche):
 
 
 # ---------- export, mark, stats ----------
-EXPORT_COLS = ["name", "status", "owner", "best_phone", "city", "state", "niche", "spend_tier", "live_ads", "oldest_ad_days",
-               "new_ads_30d", "est_spend_month_low", "est_spend_month_high", "website", "facebook_page", "ad_library_link",
+EXPORT_COLS = ["name", "status", "owner", "best_phone", "city", "state", "niche", "live_ads", "oldest_ad_days",
+               "new_ads_30d", "website", "facebook_page", "ad_library_link",
                "all_phones", "reason", "notes", "meta_page_id"]  # most important first, everything else after
 
 
@@ -488,8 +488,7 @@ TWENTY_NICHE = {"roofing": "ROOFING", "foundation": "FOUNDATION_REPAIR", "hvac":
                 "kitchen": "KITCHEN", "windows": "WINDOWS", "siding": "SIDING", "fence": "FENCE", "concrete": "CONCRETE",
                 "restoration": "WATER_DAMAGE_RESTORATION"}
 TWENTY_NEW_FIELDS = ["metaPageId (text, unique key)", "facebookPageUrl (links)", "liveAds (number)", "oldestAdDays (number)",
-                     "newAds30d (number)", "estAdSpendMonthLow (number)", "estAdSpendMonthHigh (number)",
-                     "engineStatus (select DIAL_READY/HOLD)", "engineReason (text)", "state (text)",
+                     "newAds30d (number)", "engineStatus (select DIAL_READY/HOLD)", "engineReason (text)", "state (text)",
                      "niche options: BATH, KITCHEN, WINDOWS, SIDING, FENCE, CONCRETE"]
 
 
@@ -505,7 +504,6 @@ def twenty_payload(db, path, args):
                    "googleRating": r["_maps"].get("rating"), "reviewCount": r["_maps"].get("reviews"),
                    "metaPageId": r["meta_page_id"], "facebookPageUrl": r["facebook_page"],
                    "liveAds": r["live_ads"], "oldestAdDays": r["oldest_ad_days"], "newAds30d": r["new_ads_30d"],
-                   "estAdSpendMonthLow": r["est_spend_month_low"], "estAdSpendMonthHigh": r["est_spend_month_high"],
                    "engineStatus": r["status"], "engineReason": r["reason"], "state": r["state"]}
         people = [{"name": o["name"], "jobTitle": o.get("role"), "contactRole": "OWNER", "linkedinLink": o.get("source"),
                    "email": o.get("email"), "phone": o.get("direct_phone")} for o in r["_owner_candidates"][:2]]
