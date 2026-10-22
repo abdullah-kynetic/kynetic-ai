@@ -20,6 +20,11 @@
   --color-brand-violet: #7c3aed;
   --color-brand-tint: #2a1a2e;
 
+  --color-brand-text: #e879f9;
+  --color-success-text: #86efac;
+  --color-warning-text: #fbbf24;
+  --color-danger-text: #f87171;
+  --color-info-text: #7dd3fc;
   --color-success: #22c55e;
   --color-warning: #f59e0b;
   --color-danger: #ef4444;
@@ -35,9 +40,39 @@
 @keyframes slide-in { from { transform: translateX(-100%) } to { transform: translateX(0) } }
 @keyframes pop-in { from { opacity: 0; transform: translateY(4px) scale(0.98) } to { opacity: 1; transform: none } }
 
-:root {
-  color-scheme: dark;
+:root { color-scheme: dark; }
+
+/* Light theme: same brand, re-tuned for white surfaces. Text tokens are darkened to meet WCAG AA (4.5:1). */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-background: #f7f7f8;
+  --color-surface: #ffffff;
+  --color-elevated: #ffffff;
+  --color-hover: #efeff2;
+  --color-foreground: #0f0f12;
+  --color-muted: #52525b;
+  --color-subtle: #6b6b76;
+  --color-border: rgb(15 15 18 / 0.1);
+  --color-border-strong: rgb(15 15 18 / 0.18);
+  --color-brand: #a10bb0;
+  --color-brand-hover: #8a0997;
+  --color-brand-tint: #f6e6f8;
+  --color-brand-text: #8a0997;
+  --color-success: #15803d;
+  --color-warning: #b45309;
+  --color-danger: #dc2626;
+  --color-info: #0369a1;
+  --color-success-text: #166534;
+  --color-warning-text: #92400e;
+  --color-danger-text: #b91c1c;
+  --color-info-text: #075985;
 }
+
+/* Theme change: circular reveal from the toggle (View Transitions API). Falls back to an instant swap. */
+::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+::view-transition-old(root) { z-index: 1; }
+::view-transition-new(root) { z-index: 2; }
+@media (prefers-reduced-motion: reduce) { ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; } }
 
 html, body {
   background: var(--color-background);
@@ -52,7 +87,7 @@ html, body {
 * { scrollbar-width: thin; scrollbar-color: rgb(255 255 255 / 0.12) transparent; }
 
 .bg-brand-gradient { background-image: linear-gradient(135deg, #7c3aed, #b70dc6); }
-.bg-glow { background-image: radial-gradient(ellipse at top, rgb(183 13 198 / 0.15) 0%, transparent 60%); }
+.bg-glow { background-image: radial-gradient(ellipse at top, rgb(183 13 198 / var(--glow, 0.15)) 0%, transparent 60%); }
 .text-brand-gradient {
   background-image: linear-gradient(135deg, #a78bfa, #e879f9);
   -webkit-background-clip: text; background-clip: text; color: transparent;
@@ -60,3 +95,5 @@ html, body {
 
 /* Date input icon on dark */
 input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.7); }
+:root[data-theme="light"] { --glow: 0.07; }
+:root[data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator { filter: none; }

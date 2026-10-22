@@ -35,7 +35,7 @@ export function UploadBox({ clientId }: { clientId?: string }) {
       onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
       onDragLeave={() => setDrag(false)}
       onDrop={(e) => { e.preventDefault(); setDrag(false); const f = e.dataTransfer.files[0]; if (f) void send(f); }}
-      className={cn("flex flex-col items-center gap-3 rounded-xl border border-dashed p-6 text-center transition-colors", drag ? "border-brand bg-brand-tint" : "border-white/15")}
+      className={cn("flex flex-col items-center gap-3 rounded-xl border border-dashed p-6 text-center transition-colors", drag ? "border-brand bg-brand-tint" : "border-foreground/15")}
     >
       <UploadCloud className="size-6 text-muted" />
       <p className="text-sm text-muted">Drag a file here, or choose one. PDF, images, Office docs, up to 25&nbsp;MB.</p>

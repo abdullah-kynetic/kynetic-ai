@@ -2,8 +2,8 @@
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 type Row = { date: string; leads: number; calls: number; bookings: number; minutesUsed: number; avgSpeedToLeadSec: number | null };
-const tick = { fill: "#a0a0a0", fontSize: 11 };
-const tip = { contentStyle: { background: "#1e1e1e", border: "1px solid rgba(255,255,255,.12)", borderRadius: 8, fontSize: 12 }, labelStyle: { color: "#fff" }, cursor: { stroke: "rgba(255,255,255,.15)" } };
+const tick = { fill: "var(--color-muted)", fontSize: 11 };
+const tip = { contentStyle: { background: "var(--color-elevated)", border: "1px solid var(--color-border-strong)", borderRadius: 8, fontSize: 12, color: "var(--color-foreground)" }, labelStyle: { color: "var(--color-foreground)" }, cursor: { stroke: "var(--color-border-strong)" } };
 const short = (d: string) => d.slice(5);
 
 function Frame({ title, children }: { title: string; children: React.ReactElement }) {
@@ -21,16 +21,16 @@ export function ResultsCharts({ rows }: { rows: Row[] }) {
     <div className="grid gap-4 lg:grid-cols-2">
       <Frame title="Speed to lead (seconds)">
         <LineChart data={rows} margin={{ left: -16, right: 8, top: 4 }}>
-          <CartesianGrid stroke="rgba(255,255,255,.06)" vertical={false} />
+          <CartesianGrid stroke="var(--color-border)" vertical={false} />
           <XAxis dataKey="date" tickFormatter={short} tick={tick} tickLine={false} axisLine={false} minTickGap={24} />
           <YAxis tick={tick} tickLine={false} axisLine={false} />
           <Tooltip {...tip} formatter={(v) => [`${v}s`, "Avg speed"]} />
-          <Line type="monotone" dataKey="avgSpeedToLeadSec" stroke="#e879f9" strokeWidth={2} dot={false} connectNulls />
+          <Line type="monotone" dataKey="avgSpeedToLeadSec" stroke="var(--color-brand-text)" strokeWidth={2} dot={false} connectNulls />
         </LineChart>
       </Frame>
       <Frame title="Leads & bookings per day">
         <BarChart data={rows} margin={{ left: -16, right: 8, top: 4 }}>
-          <CartesianGrid stroke="rgba(255,255,255,.06)" vertical={false} />
+          <CartesianGrid stroke="var(--color-border)" vertical={false} />
           <XAxis dataKey="date" tickFormatter={short} tick={tick} tickLine={false} axisLine={false} minTickGap={24} />
           <YAxis tick={tick} tickLine={false} axisLine={false} allowDecimals={false} />
           <Tooltip {...tip} />
@@ -40,7 +40,7 @@ export function ResultsCharts({ rows }: { rows: Row[] }) {
       </Frame>
       <Frame title="Calls per day">
         <AreaChart data={rows} margin={{ left: -16, right: 8, top: 4 }}>
-          <CartesianGrid stroke="rgba(255,255,255,.06)" vertical={false} />
+          <CartesianGrid stroke="var(--color-border)" vertical={false} />
           <XAxis dataKey="date" tickFormatter={short} tick={tick} tickLine={false} axisLine={false} minTickGap={24} />
           <YAxis tick={tick} tickLine={false} axisLine={false} allowDecimals={false} />
           <Tooltip {...tip} />
@@ -49,7 +49,7 @@ export function ResultsCharts({ rows }: { rows: Row[] }) {
       </Frame>
       <Frame title="Minutes used per day">
         <BarChart data={rows} margin={{ left: -16, right: 8, top: 4 }}>
-          <CartesianGrid stroke="rgba(255,255,255,.06)" vertical={false} />
+          <CartesianGrid stroke="var(--color-border)" vertical={false} />
           <XAxis dataKey="date" tickFormatter={short} tick={tick} tickLine={false} axisLine={false} minTickGap={24} />
           <YAxis tick={tick} tickLine={false} axisLine={false} />
           <Tooltip {...tip} />

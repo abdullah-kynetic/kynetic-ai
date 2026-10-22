@@ -38,7 +38,7 @@ export function LoginForm({ next }: { next?: string }) {
           <Field label="Password" htmlFor="password"><Input id="password" name="password" type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} /></Field>
         </>
       )}
-      {error ? <p role="alert" className="rounded-lg border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-red-300">{error}</p> : null}
+      {error ? <p role="alert" className="rounded-lg border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger-text">{error}</p> : null}
       {mfa && state?.code === "mfa_required" ? <p className="text-sm text-muted">{state.error}</p> : null}
       <Button type="submit" size="lg" disabled={pending}>{pending ? "Signing in…" : mfa ? "Verify and sign in" : "Sign in"}</Button>
       {mfa ? (

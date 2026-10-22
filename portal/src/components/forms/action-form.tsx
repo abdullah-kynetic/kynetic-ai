@@ -26,8 +26,8 @@ export function ActionForm({
     <form ref={ref} action={formAction} className={cn("grid gap-4", className)}>
       {hidden ? Object.entries(hidden).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />) : null}
       {children}
-      {state?.error ? <p role="alert" className="rounded-lg border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-red-300">{state.error}</p> : null}
-      {state?.ok && state.message && !state.secret ? <p className="text-sm text-green-400">{state.message}</p> : null}
+      {state?.error ? <p role="alert" className="rounded-lg border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger-text">{state.error}</p> : null}
+      {state?.ok && state.message && !state.secret ? <p className="text-sm text-success-text">{state.message}</p> : null}
       <div className="flex items-center gap-3">
         {submit ? <Button type="submit" variant={submitVariant} disabled={pending}>{pending ? (pendingLabel ?? "Working…") : submit}</Button> : null}
         {footer}

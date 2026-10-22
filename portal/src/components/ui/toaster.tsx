@@ -8,7 +8,7 @@ export function Toaster() {
       position="bottom-right"
       toastOptions={{
         classNames: {
-          toast: "!bg-elevated !border !border-white/10 !text-foreground !rounded-xl",
+          toast: "!bg-elevated !border !border-foreground/10 !text-foreground !rounded-xl",
           description: "!text-muted",
         },
       }}

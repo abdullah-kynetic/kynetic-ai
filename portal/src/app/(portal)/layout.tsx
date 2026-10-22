@@ -16,5 +16,5 @@ const items: NavItem[] = [
 export default async function PortalLayout({ children }: LayoutProps<"/">) {
   const s = await requireClient();
   const client = await getClient(s);
-  return <Shell sidebar={<Sidebar items={items} sub="Client portal" who={s.name || s.email} org={client?.name} />}>{children}</Shell>;
+  return <Shell sidebar={<Sidebar items={items} sub="Client portal" who={s.name || s.email} title={client?.name ?? "Your portal"} entries={[{ href: "/", label: client?.name ?? "Your portal", hint: client?.planName }]} />}>{children}</Shell>;
 }
