@@ -1,6 +1,6 @@
 # Objects index
 
-22 cards verified 2026-10-22 (`objects/<cluster>/<slug>.md`); the remaining entries are stubs. Processes: `../processes/`. Change index: `../effects/CONTEXT.md`.
+20 cards verified 2026-10-22 (`objects/<cluster>/<slug>.md`); the remaining entries are stubs. Processes: `../processes/`. Change index: `../effects/CONTEXT.md`.
 
 Format: `slug | cluster | universe | status | owning path`.
 
@@ -28,10 +28,8 @@ Format: `slug | cluster | universe | status | owning path`.
 - retell-agent-tools | retell | live | verified | NO-TOUCH class; see KYNETIC_CONTEXT.md rule 2
 - retell-allowlist | retell | live | verified | .claude/settings.json
 
-## plan2 (inbound receptionists and upsells; Nora and Emily are no-touch)
-- nora | plan2 | live | verified | n8n/workflows/active/nora-restoration-ai-receptionist__2PFWFqBM0wabADk6.json; NO-TOUCH
-- emily | plan2 | leftover | verified | retell/builds/emily-speed-to-lead/; paused; NO-TOUCH
-- kynetic-restoration-demo | plan2 | live | stub | retell/builds/kynetic-restoration/build-ids.md; NO-TOUCH
+## plan2 (Nora, Emily, the Restoration demo and upsells: no cards, all read-only; rules in CONTEXT.md and CLAUDE.md)
+- kynetic-restoration-demo | plan2 | live | stub (no card needed) | retell/builds/kynetic-restoration/build-ids.md; NO-TOUCH
 - inflate-original | plan2 | leftover | stub | retell/builds/_inflate-original/; leave alone
 - upsell-workflows | plan2 | leftover | stub | n8n/workflows/archive/ (review chain, reactivation sender + reply handler, missed-call text-back, appointment setter); Twenty tasks tagged [P2] LATER UPSELL
 
@@ -45,6 +43,7 @@ Format: `slug | cluster | universe | status | owning path`.
 - lead-list-twenty-load | leadsourcing | live | stub | Twenty tasks 2.1-2.5 (Companies with a source for every fact)
 
 ## portal
+- portal-buildout | portal | live | plan | docs/map/PORTAL-BUILDOUT.md (the build-out plan for the client dashboard; the portal Abdullah wants to work on in depth)
 - portal-tenancy-rls | portal | live | verified | portal/src/lib/db/, portal/drizzle/0001_rls.sql
 - portal-auth | portal | live | verified | portal/src/lib/auth/, portal/src/app/(auth)/
 - portal-ingest-api | portal | live | verified | portal/src/app/api/ingest/, portal/N8N.md
