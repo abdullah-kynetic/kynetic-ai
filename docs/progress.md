@@ -53,6 +53,11 @@ Then: confirm the post-call webhook URL is set on the agent, web-call test Alex,
 Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-10-22 (Twenty fields for the lead engine; Abdullah approved on the decision card)
+- Created on Twenty `companies` (self-hosted, crm.kyneticai.com): Engine status (select DIAL_READY/HOLD), Meta Page ID (text), Facebook Page (links), Live ads, Oldest ad (days), New ads (30d), Est. ad spend/mo low and high (numbers, a rough proxy not real spend), Engine reason (text), State (text). That is 10 fields; the card said 9 but listed 10, all 10 were created.
+- Added niche options Bath Remodel, Kitchen Remodel, Windows & Doors, Siding, Fence, Concrete to the existing Niche field (all existing options kept with their ids).
+- No records were created or changed, and no views were changed. `lead_engine.py twenty-payload` still only writes a dry-run JSON; the import (and list-view column order) need a separate yes.
+
 ### 2026-10-21 (Treg-only pipeline test)
 - Treg balance is spent: the $1 is gone ($0.54 for the US roofing census, the rest on endpoint tests). Treg now refuses calls (`insufficient_balance`), so nothing past this point was run. Top up at https://treg.to/app#billing.
 - US roofing census through Treg (`lead_engine.py`, 252 searches, 40 states, FL/OK excluded): 5,735 ads, 2,032 advertisers, 958 with 2+ active ads, $0.54. The same period on Apify cost about $0.93 for 520 ads (about 17x more per ad). One Apify run (GA) failed with HTTP 400, cause not investigated.

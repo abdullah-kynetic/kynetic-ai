@@ -482,9 +482,11 @@ def export(db, path, args):
     print("exported %d leads to %s (most important columns first)" % (len(rows), path))
 
 
-# Twenty mapping. Existing fields on `companies`/`people` are used as they are; the NEW fields below do not exist yet and
-# must be created in Twenty (with Abdullah's yes) before an import. Dry run only: this writes a JSON file, nothing is sent.
-TWENTY_NICHE = {"roofing": "ROOFING", "foundation": "FOUNDATION_REPAIR", "hvac": "HVAC", "pools": "POOL"}  # others need new options
+# Twenty mapping. The 10 engine fields and the 6 extra niche options were created in Twenty on 2026-10-22 (Abdullah's yes).
+# Dry run only: this writes a JSON file, nothing is sent to Twenty.
+TWENTY_NICHE = {"roofing": "ROOFING", "foundation": "FOUNDATION_REPAIR", "hvac": "HVAC", "pools": "POOL", "bath": "BATH",
+                "kitchen": "KITCHEN", "windows": "WINDOWS", "siding": "SIDING", "fence": "FENCE", "concrete": "CONCRETE",
+                "restoration": "WATER_DAMAGE_RESTORATION"}
 TWENTY_NEW_FIELDS = ["metaPageId (text, unique key)", "facebookPageUrl (links)", "liveAds (number)", "oldestAdDays (number)",
                      "newAds30d (number)", "estAdSpendMonthLow (number)", "estAdSpendMonthHigh (number)",
                      "engineStatus (select DIAL_READY/HOLD)", "engineReason (text)", "state (text)",
@@ -498,16 +500,16 @@ def twenty_payload(db, path, args):
             continue
         company = {"name": r["name"], "domainName": {"primaryLinkUrl": r["website"]} if r["website"] else None,
                    "phone": r["best_phone"], "leadSource": "SCRAPE", "metaAdsActive": True, "leadStatus": "NEW",
-                   "niche": TWENTY_NICHE.get(r["niche"], "OTHER (niche option missing: " + r["niche"] + ")"),
+                   "niche": TWENTY_NICHE.get(r["niche"], "OTHER"),
                    "adLibraryUrl": {"primaryLinkUrl": r["ad_library_link"]}, "ownerGate": "OWNER_UNVERIFIED",
                    "googleRating": r["_maps"].get("rating"), "reviewCount": r["_maps"].get("reviews"),
-                   "NEW:metaPageId": r["meta_page_id"], "NEW:facebookPageUrl": r["facebook_page"],
-                   "NEW:liveAds": r["live_ads"], "NEW:oldestAdDays": r["oldest_ad_days"], "NEW:newAds30d": r["new_ads_30d"],
-                   "NEW:estAdSpendMonthLow": r["est_spend_month_low"], "NEW:estAdSpendMonthHigh": r["est_spend_month_high"],
-                   "NEW:engineStatus": r["status"], "NEW:engineReason": r["reason"], "NEW:state": r["state"]}
+                   "metaPageId": r["meta_page_id"], "facebookPageUrl": r["facebook_page"],
+                   "liveAds": r["live_ads"], "oldestAdDays": r["oldest_ad_days"], "newAds30d": r["new_ads_30d"],
+                   "estAdSpendMonthLow": r["est_spend_month_low"], "estAdSpendMonthHigh": r["est_spend_month_high"],
+                   "engineStatus": r["status"], "engineReason": r["reason"], "state": r["state"]}
         people = [{"name": o["name"], "jobTitle": o.get("role"), "contactRole": "OWNER", "linkedinLink": o.get("source"),
                    "email": o.get("email"), "phone": o.get("direct_phone")} for o in r["_owner_candidates"][:2]]
-        items.append({"match_on": "NEW:metaPageId, then domainName", "company": company, "people": people})
+        items.append({"match_on": "metaPageId, then domainName", "company": company, "people": people})
     Path(path).write_text(json.dumps({"new_fields_needed": TWENTY_NEW_FIELDS, "records": items}, indent=1))
     print("wrote %d records to %s (dry run, nothing sent to Twenty)" % (len(items), path))
 
