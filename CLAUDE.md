@@ -22,6 +22,7 @@ Read before anything else: `docs/progress.md` (state; never assume state that is
 | Back up or compare n8n workflows | `n8n/`, `tools/n8n_backup.py` (read-only) |
 | Client portal code or deploy | `portal/` (its own `AGENTS.md`) |
 | Decisions, state, issues | `docs/` |
+| What is X / what else moves if I change X | `docs/map/CLAUDE.md` (system map) |
 | Skills | `.claude/skills/skills-breakdown.md` |
 
 Check `tools/` for an existing script before writing one. At the start of a conversation scan the trigger signals in `.claude/skills/skills-breakdown.md`.
