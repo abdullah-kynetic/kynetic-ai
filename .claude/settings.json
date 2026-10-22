@@ -1,8 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python tools/retell.py *)",
-      "Bash(python3 tools/retell.py *)"
+      "Bash(python tools/retell.py get-agent *)",
+      "Bash(python tools/retell.py get-llm *)",
+      "Bash(python tools/retell.py snapshot *)",
+      "Bash(python3 tools/retell.py get-agent *)",
+      "Bash(python3 tools/retell.py get-llm *)",
+      "Bash(python3 tools/retell.py snapshot *)"
     ]
   },
   "env": {
