@@ -12,6 +12,7 @@ BBB / registry / website enrichment). Keys come from the environment or .env:
   python tools/lead_engine.py census --niche roofing --cities "Phoenix,Tempe" --state AZ
   python tools/lead_engine.py enrich --niche roofing --max-credits 200
   python tools/lead_engine.py export --status DIAL_READY --uncalled out.csv
+  python tools/lead_engine.py twenty-payload twenty_import.json              # dry-run Twenty records, nothing sent
   python tools/lead_engine.py mark "Bert Roofing Inc" called                  # so it never comes up twice
   python tools/lead_engine.py stats
 
@@ -444,30 +445,71 @@ def spend_estimate(db, page_id, niche):
 
 
 # ---------- export, mark, stats ----------
-def export(db, path, args):
-    q, p = "SELECT niche,name,city,state,status,owner,best_phone,phones,website,facebook,ads,reason,notes,page_id FROM leads WHERE 1=1", []
-    if args.status:
-        q += " AND status=?"
-        p.append(args.status)
-    if args.niche:
-        q += " AND niche=?"
-        p.append(args.niche)
-    if args.state:
-        q += " AND state=?"
-        p.append(args.state)
+EXPORT_COLS = ["name", "status", "owner", "best_phone", "city", "state", "niche", "spend_tier", "live_ads", "oldest_ad_days",
+               "new_ads_30d", "est_spend_month_low", "est_spend_month_high", "website", "facebook_page", "ad_library_link",
+               "all_phones", "reason", "notes", "meta_page_id"]  # most important first, everything else after
+
+
+def lead_rows(db, args):
+    q, p = "SELECT niche,name,city,state,status,owner,best_phone,phones,website,facebook,ads,reason,notes,page_id,row_json FROM leads WHERE 1=1", []
+    for cond, val in (("status=?", args.status), ("niche=?", args.niche), ("state=?", args.state)):
+        if val:
+            q += " AND " + cond
+            p.append(val)
     if args.uncalled:
         q += " AND called=''"
-    rows = db.execute(q + " ORDER BY ads DESC", p).fetchall()
+    out = []
+    for r in db.execute(q + " ORDER BY status='DIAL_READY' DESC, ads DESC", p).fetchall():
+        e = spend_estimate(db, r[13], r[0])
+        ad = db.execute("SELECT ad_id FROM ads WHERE page_id=? AND niche=? LIMIT 1", (r[13], r[0])).fetchone()
+        row = json.loads(r[14] or "{}")
+        out.append({"name": r[1], "status": r[4], "owner": r[5], "best_phone": r[6], "city": r[2], "state": r[3], "niche": r[0],
+                    "spend_tier": e["spend_tier"], "live_ads": e["live_ads"], "oldest_ad_days": e["oldest_days"],
+                    "new_ads_30d": e["new_30d"], "est_spend_month_low": e["spend_month_low"],
+                    "est_spend_month_high": e["spend_month_high"], "website": r[8], "facebook_page": r[9],
+                    "ad_library_link": ("https://www.facebook.com/ads/library/?id=" + ad[0]) if ad else "",
+                    "all_phones": ", ".join(json.loads(r[7] or "{}")), "reason": r[11], "notes": r[12], "meta_page_id": r[13],
+                    "_owner_candidates": row.get("owner_candidates", []), "_maps": row.get("maps", {})})
+    return out
+
+
+def export(db, path, args):
+    rows = lead_rows(db, args)
     with open(path, "w", newline="") as f:
-        w = csv.writer(f)
-        w.writerow(["niche", "name", "city", "state", "status", "owner", "best_phone", "all_phones", "website", "facebook",
-                    "active_ads", "reason", "notes", "distinct_creatives", "oldest_ad_days", "new_ads_30d",
-                    "est_spend_month_low", "est_spend_month_high", "spend_tier"])
-        for r in rows:
-            e = spend_estimate(db, r[13], r[0])
-            w.writerow(list(r[:7]) + [", ".join(json.loads(r[7] or "{}"))] + list(r[8:13]) +
-                       [e["creatives"], e["oldest_days"], e["new_30d"], e["spend_month_low"], e["spend_month_high"], e["spend_tier"]])
-    print("exported %d leads to %s" % (len(rows), path))
+        w = csv.DictWriter(f, fieldnames=EXPORT_COLS, extrasaction="ignore")
+        w.writeheader()
+        w.writerows(rows)
+    print("exported %d leads to %s (most important columns first)" % (len(rows), path))
+
+
+# Twenty mapping. Existing fields on `companies`/`people` are used as they are; the NEW fields below do not exist yet and
+# must be created in Twenty (with Abdullah's yes) before an import. Dry run only: this writes a JSON file, nothing is sent.
+TWENTY_NICHE = {"roofing": "ROOFING", "foundation": "FOUNDATION_REPAIR", "hvac": "HVAC", "pools": "POOL"}  # others need new options
+TWENTY_NEW_FIELDS = ["metaPageId (text, unique key)", "facebookPageUrl (links)", "liveAds (number)", "oldestAdDays (number)",
+                     "newAds30d (number)", "estAdSpendMonthLow (number)", "estAdSpendMonthHigh (number)",
+                     "engineStatus (select DIAL_READY/HOLD)", "engineReason (text)", "state (text)",
+                     "niche options: BATH, KITCHEN, WINDOWS, SIDING, FENCE, CONCRETE"]
+
+
+def twenty_payload(db, path, args):
+    items = []
+    for r in lead_rows(db, args):
+        if r["status"] == "DROP":
+            continue
+        company = {"name": r["name"], "domainName": {"primaryLinkUrl": r["website"]} if r["website"] else None,
+                   "phone": r["best_phone"], "leadSource": "SCRAPE", "metaAdsActive": True, "leadStatus": "NEW",
+                   "niche": TWENTY_NICHE.get(r["niche"], "OTHER (niche option missing: " + r["niche"] + ")"),
+                   "adLibraryUrl": {"primaryLinkUrl": r["ad_library_link"]}, "ownerGate": "OWNER_UNVERIFIED",
+                   "googleRating": r["_maps"].get("rating"), "reviewCount": r["_maps"].get("reviews"),
+                   "NEW:metaPageId": r["meta_page_id"], "NEW:facebookPageUrl": r["facebook_page"],
+                   "NEW:liveAds": r["live_ads"], "NEW:oldestAdDays": r["oldest_ad_days"], "NEW:newAds30d": r["new_ads_30d"],
+                   "NEW:estAdSpendMonthLow": r["est_spend_month_low"], "NEW:estAdSpendMonthHigh": r["est_spend_month_high"],
+                   "NEW:engineStatus": r["status"], "NEW:engineReason": r["reason"], "NEW:state": r["state"]}
+        people = [{"name": o["name"], "jobTitle": o.get("role"), "contactRole": "OWNER", "linkedinLink": o.get("source"),
+                   "email": o.get("email"), "phone": o.get("direct_phone")} for o in r["_owner_candidates"][:2]]
+        items.append({"match_on": "NEW:metaPageId, then domainName", "company": company, "people": people})
+    Path(path).write_text(json.dumps({"new_fields_needed": TWENTY_NEW_FIELDS, "records": items}, indent=1))
+    print("wrote %d records to %s (dry run, nothing sent to Twenty)" % (len(items), path))
 
 
 def stats(db):
@@ -533,7 +575,7 @@ def run(args):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["run", "census", "enrich", "export", "mark", "stats"])
+    ap.add_argument("cmd", choices=["run", "census", "enrich", "export", "twenty-payload", "mark", "stats"])
     ap.add_argument("target", nargs="*", help="export: output.csv | mark: <business name> <called|reset>")
     ap.add_argument("--db", default="leads.db")
     ap.add_argument("--niche", default="roofing")
@@ -563,6 +605,8 @@ def main():
         stats(db)
     elif args.cmd == "export":
         export(db, args.target[0] if args.target else "leads.csv", args)
+    elif args.cmd == "twenty-payload":
+        twenty_payload(db, args.target[0] if args.target else "twenty_import.json", args)
     elif args.cmd == "mark":
         name, how = " ".join(args.target[:-1]), args.target[-1]
         n = db.execute("UPDATE leads SET called=? WHERE name LIKE ?", (time.strftime("%Y-%m-%d") if how == "called" else "",
