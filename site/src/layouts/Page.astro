@@ -1,0 +1,21 @@
+---
+// Wraps a snapshot page (markup + CSS exported from the published site, see scripts/snapshot.mjs).
+interface Props { head: string; css: string; body: string; script?: boolean }
+const { head, css, body, script = true } = Astro.props;
+const site = Astro.site!.origin;
+const absHead = head.replace(/(content|href)="(\/assets\/[^"]+)"/g, `$1="${site}$2"`)
+  // icons stay relative, only social-share images need absolute URLs
+  .replace(new RegExp(`(<link[^>]*rel="icon"[^>]*href=")${site}`, 'g'), '$1')
+  .replace(new RegExp(`(href=")${site}(\\/assets\\/[^"]+"[^>]*rel="icon")`, 'g'), '$1$2');
+---
+<!doctype html>
+<html lang="en" data-redirect-timezone="1">
+  <head>
+    <Fragment set:html={absHead} />
+    <style is:inline set:html={css} />
+  </head>
+  <body>
+    <Fragment set:html={body} />
+    {script && <script src="../scripts/main.ts"></script>}
+  </body>
+</html>
