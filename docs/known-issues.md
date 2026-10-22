@@ -52,6 +52,9 @@ Confirm `/opt/portal/.env` does not reuse the dev Postgres password hard-coded i
 Workflow `m2YJwZ1l8DTzyEkw` was found active on Oct 17 (read-only check, 38 nodes) with the Alex agent ID set and the Retell credential attached. Go-live not yet approved; Abdullah to confirm. Docs previously said inactive and never run. The public form and the post-call webhook are live while it is active. Do not change n8n without a yes on that specific change.
 Resolved 2026-10-18: Abdullah approved the workflow staying live. No n8n change was made. The post-call webhook still has no header auth (KI-005).
 
+### KI-011: Rebuilt site card loops are replays, form webhook not set (medium)
+2026-10-22. In `site/`, the looping service-card animations replay cycles recorded from the live site (`site/scripts/build-loops.mjs`), not Framer's own code, so they look the same but can't be edited as logic. The contact form needs `PUBLIC_CONTACT_WEBHOOK` at build time; without it the button shows "Something went wrong". Success and error button colours and the spinner ring are approximated (not captured from Framer). The site's pricing copy still differs from D-017.
+
 ### KI-010: Who and what can change the portal server (was medium)
 Found read-only on 2026-10-17. Two keys have full administrator access to the VPS (which also holds Twenty and its backups): Abdullah's Mac, and one labelled `bob-box-ovh-vps` (believed to be Abdullah's Grok bot). A restricted `deploy` key (forced command, deploys only commits on `main`, rolls back on failure) was added the same evening. There are now two ways to deploy: the bot path (`portal-deploy`) and `portal/deploy/deploy.sh`; each overwrites `/opt/portal/src`, so use one. Decide whether the bot should keep full root, and which deploy path is the one.
 Resolved 2026-10-18 (D-022): the `bob-box-ovh-vps` key keeps full root by Abdullah's choice, and `portal-deploy` is the single deploy path.

@@ -136,3 +136,10 @@ Status: decided
 Date: 2026-10-18
 Why: Abdullah said he is fine with the `bob-box-ovh-vps` key keeping full root on the VPS (KI-010) and left the choice of deploy path to Claude. `portal-deploy` is the one with a health check and automatic rollback, only deploys commits on `main`, and is already what the restricted `deploy` key and the GitHub Action run.
 Decided: Portal deploys go through `/usr/local/sbin/portal-deploy` (via the restricted `deploy` key). `portal/deploy/deploy.sh` is not used for routine deploys, because both overwrite `/opt/portal/src`. The `bob-box-ovh-vps` key keeps full administrator access.
+
+
+## D-023: kyneticai.com is rebuilt as custom code (Astro) and hosted free on Cloudflare Pages
+Status: decided
+Date: 2026-10-22
+Why: Abdullah wants the Framer site copied exactly, with the same motion, and hosted free. Ploy's source export is paid-only and he is on the free plan, so he chose to build it ourselves (Option B).
+Decided: The site lives in `site/` (Astro, static output). Contact form posts to an n8n webhook on the VPS n8n (workflow still to be created, inactive, after his yes). The Benefits links are removed because that section was deleted. Everything else, including the pricing and placeholders, is copied as is and fixed one by one afterwards. DNS is on Squarespace. No deploy and no DNS change without his explicit yes.
