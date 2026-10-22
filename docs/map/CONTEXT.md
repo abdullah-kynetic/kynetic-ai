@@ -18,4 +18,4 @@ One job: answer "what is X" and "what else moves if I change X" without reading 
 Nora (agent, LLM, workflow), Emily, Retell agent tools, Kynetic Restoration (Demo) records and build files, the AM-1 Roofing number, `.env` files and every secret, template workflow `KYQIVtxwDcXVKmk3`. IDs: `../../KYNETIC_CONTEXT.md`.
 
 ## Status
-Slice 1 done (this folder). Slice 2 (object cards) not started: `processes/` and `effects/` are intentionally absent until nouns exist.
+Slices 1-4 done. Open: the remaining stub entries, and slice 5 (re-verify Hits / Does not hit after a person has read them).
