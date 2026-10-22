@@ -37,7 +37,7 @@ async function shoot(url, w, h, file) {
   await p.goto(url, { waitUntil: 'networkidle', timeout: 60000 });
   await p.waitForTimeout(3500);
   const H = await p.evaluate(() => document.documentElement.scrollHeight);
-  for (let y = 0; y <= H; y += Math.floor(h / 2)) { await p.evaluate((y) => window.scrollTo(0, y), y); await p.waitForTimeout(450); }
+  for (let y = 0; y <= H; y += Math.floor(h / 2)) { await p.evaluate((y) => window.scrollTo(0, y), y); await p.waitForTimeout(900); }
   await p.evaluate(() => window.scrollTo(0, 0));
   await p.waitForTimeout(2500);
   await p.screenshot({ path: file, fullPage: true });
