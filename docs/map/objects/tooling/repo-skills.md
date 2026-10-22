@@ -5,7 +5,7 @@ universe: live
 status: verified
 entity: .claude/skills/
 verified_on: 2026-10-22
-verified_at: 772431c (source unchanged since 67763e6)
+verified_at: 772431c (icm-architect and map-audit added after 67763e6)
 ---
 
 # Repo skills
