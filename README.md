@@ -9,7 +9,7 @@ Every agent session reads these first (see `CLAUDE.md`):
 | File | Purpose |
 |---|---|
 | `docs/progress.md` | Where we are |
-| `docs/decisions.md` | What is already decided (D-001 through D-019) |
+| `docs/decisions.md` | What is already decided (D-001 through D-022) |
 | `docs/known-issues.md` | Gotchas and open problems |
 | `KYNETIC_CONTEXT.md` | Rules, IDs, D-017 pricing, the two Retell workspaces, Twenty, the portal |
 
@@ -26,7 +26,7 @@ Every agent session reads these first (see `CLAUDE.md`):
 | `retell/builds/_inflate-original/` | Reference export of the original build. Leave it alone |
 | `tools/retell.py` | Retell API client. Dry-run unless `--apply` |
 | `portal/` | Client portal (Next.js, portal.kyneticai.com). Ops docs: `portal/ADMIN.md`, `portal/N8N.md`; build report in `portal/docs/` |
-| `.claude/skills/` | `brand-profile`, `demo-profile-generator`, `retell-builder`, `build-log`, `n8n-code-javascript`, plus `skills-breakdown.md` |
+| `.claude/skills/` | `brand-profile`, `demo-profile-generator`, `retell-builder`, `build-log`, `n8n-code-javascript`, `icm-architect` (System map mode only), plus `skills-breakdown.md` |
 | `.mcp.json`, `.env.example` | MCP servers and the names of the environment variables |
 
 Legacy material (Vapi prompt, lead-scrape flow, trade-receptionist export, SeldonFrame log) is no longer on main. It is recoverable from tag `archive/pre-reorg-2026-10-17`.

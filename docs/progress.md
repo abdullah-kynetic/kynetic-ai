@@ -19,7 +19,7 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Rete
 - n8n workflow "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`) built. Read-only check on 2026-10-17: it is active and has 38 nodes (3 sticky notes and 2 disabled draft-SMS nodes included). See KI-009.
 - 2026-10-15 end-to-end smoke test of "Outbound Speed to Lead" (found in Twenty on 2026-10-17): one test lead (Abdullah) submitted the form at 19:36 UTC, the Alex call was placed (`secondsToFirstRing` 13.8), the lead ended `BOOKED`, and the call was logged as a `SPEED_TO_LEAD` interaction. It is the only lead on record.
 - PR #14 merged: documented the move to self-hosted Twenty at https://crm.kyneticai.com.
-- PR #15 merged: client portal at https://portal.kyneticai.com (code in `portal/`, deployed on the OVH VPS). DNS A record not set; no real client data until the must-fixes are done. See the Portal section of KYNETIC_CONTEXT.md and KI-006 to KI-008.
+- PR #15 merged: client portal at https://portal.kyneticai.com (code in `portal/`, deployed on the OVH VPS). DNS A record was not set at the time (set since, see KI-006); no real client data until the must-fixes are done. See the Portal section of KYNETIC_CONTEXT.md and KI-006 to KI-008.
 - PR #16 merged: Claude sessions commit as `abdullah-kynetic` (`.claude/settings.json`, CLAUDE.md).
 
 ## In progress

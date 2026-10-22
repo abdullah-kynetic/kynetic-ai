@@ -11,6 +11,7 @@ Rebuilt 2026-10-17 from what is actually in this repo. Scan the **Trigger Signal
 | `brand-profile` | Skill 1: full Brand Profile from an intake form plus GBP data; the source of truth every downstream skill reads | "new client onboarding", "brand profile", signed client with intake form |
 | `demo-profile-generator` | Skill 1, demo mode: Brand Profile from a single `raw-data.json`, no intake form | "demo profile", a `raw-data.json` path or pasted GBP JSON, prospect before outreach |
 | `n8n-code-javascript` | JavaScript in n8n Code nodes (modes, data access, return format, helpers). Notes: `DATA_ACCESS.md`, `COMMON_PATTERNS.md`, `ERROR_PATTERNS.md`, `BUILTIN_FUNCTIONS.md` | writing or debugging a Code node, `$input` / `$json` / `$helpers.httpRequest`, `DateTime`, Code node error |
+| `icm-architect` | Design or audit a folder as an ICM workspace (RinDig/icm-architect, MIT, markdown only). In this repo use System map mode only; never Restructure without a yes | "map this repo", "audit this folder", "what would a change hit", "ICM this" |
 
 Known gaps: `brand-profile` and `demo-profile-generator` expect GBP data in a `raw-data.json`, but the scraper (`tools/gbp_scrape.py`) is not in the repo. See the OPEN notes inside those skills.
 

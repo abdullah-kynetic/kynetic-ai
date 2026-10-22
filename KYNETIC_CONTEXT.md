@@ -53,7 +53,7 @@ Kynetic Restoration (Demo) build IDs: `retell/builds/kynetic-restoration/build-i
 ## Outbound speed-to-lead (Plan 1, task 3.5)
 
 - Demo: Kynetic Roofing, agent Alex (D-015, D-016). Build files: `retell/builds/outbound-speed-to-lead/`. Prompt style: `retell/PROMPTING_STYLE.md`.
-- n8n workflow "Outbound Speed to Lead" `m2YJwZ1l8DTzyEkw` is **38 nodes** (3 sticky notes and 2 disabled draft-SMS nodes included) and was found **active** on 2026-10-17 with the Alex agent ID set and the "Retell API (outbound)" credential attached. Go-live is not yet approved; Abdullah to confirm (KI-009). Alex prompt v1.2.3 is on branch `claude/alex-demo-live-test`, not merged or published.
+- n8n workflow "Outbound Speed to Lead" `m2YJwZ1l8DTzyEkw` is **38 nodes** (3 sticky notes and 2 disabled draft-SMS nodes included) and was found **active** on 2026-10-17 with the Alex agent ID set and the "Retell API (outbound)" credential attached. Go-live approved by Abdullah on 2026-10-18 (KI-009 resolved). Alex prompt v1.2.3 is on branch `claude/alex-demo-live-test`, not merged or published.
 - The imported template `KYQIVtxwDcXVKmk3` is unchanged (Google Sheets / Vapi / Azure). Do not activate or run it.
 - Create the Retell agent with `python tools/retell.py create-outbound` (dry run; `--apply` only with Abdullah's yes). Cal.com Roof Inspection event type `7404470`.
 - Never dial the AM-1 office number on the demo company record.
