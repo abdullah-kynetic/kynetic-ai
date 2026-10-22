@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ROI Calculator | Kynetic AI</title>
-<link rel="canonical" href="https://www.kyneticai.com/roi-calculator">
+<meta name="robots" content="noindex,nofollow">
 <style>
   :root{
     --bg:#060708; --card:#0f1114; --card2:#14171b; --line:#24282e; --text:#f4f5f7;
@@ -79,6 +79,13 @@
     input[type=range],.toolbar,.status{display:none !important}
     .print-only{display:block}
   }
+  .hero{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:0 0 22px}
+  @media (max-width:1000px){.hero{grid-template-columns:repeat(2,1fr)}}
+  .hero .h{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:16px;padding:18px}
+  .hero .k{color:var(--muted);font-size:14px;margin-bottom:8px}
+  .hero .v{font-size:38px;font-weight:800;letter-spacing:-.02em;line-height:1.05}
+  .hero .v.good{color:var(--good)} .hero .v.accent{color:var(--accent)} .hero .v.warn{color:var(--warn)}
+  .field input[type=number]{font-size:18px}
 </style>
 </head>
 <body>
@@ -88,6 +95,15 @@
   <p class="status" id="status" role="status" aria-live="polite"></p>
   <div class="toolbar"><button type="button" id="resetBtn">Reset</button><button type="button" id="printBtn">Print / save as PDF</button></div>
   <p class="print-only note" id="printStamp"></p>
+
+  <div class="hero" aria-live="polite">
+    <div class="h"><div class="k">Revenue left on the table / month</div><div class="v warn" id="h_lost">—</div></div>
+    <div class="h"><div class="k">Revenue recovered / month</div><div class="v good" id="h_rec">—</div></div>
+    <div class="h"><div class="k">Jobs to break even on $10,000</div><div class="v accent" id="h_be">—</div></div>
+    <div class="h"><div class="k">3-month ROI</div><div class="v accent" id="h_roi">—</div></div>
+    <div class="h"><div class="k">Payback time</div><div class="v" id="h_pay">—</div></div>
+  </div>
+  <p class="note" style="margin:-10px 0 20px">"Left on the table" = the extra revenue the lift assumptions below say faster follow-up would capture. Assumptions, not promises or guarantees.</p>
 
   <div class="grid">
     <!-- INPUTS -->
@@ -136,12 +152,12 @@
       <div class="grid" style="gap:24px">
         <div>
           <div class="sublabel">Contact-rate lift (relative, %)</div>
-          <div class="slider-row"><input type="range" id="liftContactR" min="0" max="100" step="1" value="10">
+          <div class="slider-row"><input type="range" tabindex="-1" id="liftContactR" min="0" max="100" step="1" value="10">
             <div class="inbox"><input id="liftContact" type="number" min="0" max="100" step="1" value="10"><span>%</span></div></div>
           <div class="hint">New contact rate: <b id="o_newContactPct">0.0%</b> (capped at 100%)</div>
           <div style="height:16px"></div>
           <div class="sublabel">Booking-rate lift (relative, %)</div>
-          <div class="slider-row"><input type="range" id="liftBookR" min="0" max="100" step="1" value="5">
+          <div class="slider-row"><input type="range" tabindex="-1" id="liftBookR" min="0" max="100" step="1" value="5">
             <div class="inbox"><input id="liftBook" type="number" min="0" max="100" step="1" value="5"><span>%</span></div></div>
           <div class="hint">New booked / contacted: <b id="o_newBookPct">0.0%</b> (capped at 100%)</div>
           <p class="note">Conservative defaults: +10% contact rate, +5% booking rate, both relative (e.g., a 50% contact rate × 1.10 = 55%). Show rate and close rate stay at the owner's current numbers.</p>
@@ -187,11 +203,7 @@
     </section>
   </div>
 
-  <section class="card" style="margin-top:18px;text-align:center">
-    <div class="label" style="justify-content:center">Next step</div>
-    <p class="sub" style="margin:8px 0 14px">Want us to run these numbers with you on your own leads?</p>
-    <a class="cta" href="https://cal.com/abdullah-kyneticai/kynetic-ai-audit-call" target="_blank" rel="noopener" style="display:inline-block;background:var(--accent);color:#000;font-weight:700;padding:12px 22px;border-radius:999px;text-decoration:none">Book your free AI audit call</a>
-  </section>
+  <p class="note" style="text-align:center;margin-top:18px">Next step: lock in the 3-month package and we start the build this week.</p>
 
   <footer>Kynetic AI · Illustrative calculator for discovery calls. Not a quote, a forecast or a guarantee. No outside benchmarks or past results are built in. Every input comes from the prospect.</footer>
 </div>
@@ -331,9 +343,17 @@ if (typeof module !== 'undefined') { module.exports = { compute: compute, clampP
     $('o_paybackPkg').textContent = jobs(r.paybackJobsPackage);
     $('o_paybackTier').textContent = jobs(r.paybackJobsTier);
     $('o_netTier').textContent = usd(r.netAfterTier);
+    var miss = missing.length > 0, er = r.extraRevenue;
+    $('h_lost').textContent = miss ? '—' : usd(Math.max(0, er));
+    $('h_rec').textContent = miss ? '—' : usd(Math.max(0, er));
+    $('h_be').textContent = (miss || r.paybackJobsPackage === null) ? '—' : (Math.round(r.paybackJobsPackage*10)/10).toFixed(1);
+    $('h_roi').textContent = miss ? '—' : mult(r.roiPackage);
+    $('h_pay').textContent = (miss || !(er > 0)) ? '—' : (Math.round(state.packagePrice/er*10)/10).toFixed(1) + ' mo';
     if (missing.length) { ['o_roiPkg','o_roiTier','o_paybackPkg','o_paybackTier','o_netTier'].forEach(function(id){ $(id).textContent = '—'; }); }
   }
   render();
+  ids.forEach(function(id){ $(id).addEventListener('focus', function(){ this.select(); }); });
+  $('jobValue').focus();
 })();
 </script>
 </body>
