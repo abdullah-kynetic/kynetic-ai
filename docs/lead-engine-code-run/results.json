@@ -1,0 +1,485 @@
+[
+  {
+    "business": "Bert Roofing Inc",
+    "website": "https://bertroofing.com",
+    "facebook": "",
+    "owner_candidates": [
+      {
+        "name": "JOHN E BERT",
+        "role": "DIRECTOR",
+        "source": "https://comptroller.texas.gov/taxes/franchise/account-status/search/17522644784",
+        "confidence": "HIGH (registry)"
+      },
+      {
+        "name": "JOHN E BERT",
+        "role": "PRESIDENT",
+        "source": "https://comptroller.texas.gov/taxes/franchise/account-status/search/17522644784",
+        "confidence": "HIGH (registry)"
+      },
+      {
+        "name": "JOHN E BERT",
+        "role": "TREASURER",
+        "source": "https://comptroller.texas.gov/taxes/franchise/account-status/search/17522644784",
+        "confidence": "HIGH (registry)"
+      },
+      {
+        "name": "JOHN E BERT",
+        "role": "SECRETARY",
+        "source": "https://comptroller.texas.gov/taxes/franchise/account-status/search/17522644784",
+        "confidence": "HIGH (registry)"
+      },
+      {
+        "name": "Mr. John E. Bert, President/DirectorMrs. Nicole McElwee, Vice PresidentMr. Edward Bert, Treasurer/Secretary",
+        "role": "BBB Business Management",
+        "source": "https://www.bbb.org/us/tx/dallas/profile/roofing-contractors/bert-roofing-inc-0875-8000039",
+        "confidence": "MEDIUM (BBB)"
+      },
+      {
+        "name": "Today, Bert Roofing is run by John Edward Bert II, who has served as President of the North Texas Roofing Contractors Association.",
+        "role": "site sentence",
+        "source": "https://bertroofing.com/about/",
+        "confidence": "HIGH (own site), needs reading"
+      }
+    ],
+    "phones": {
+      "(214) 321-9341": [
+        "https://www.bbb.org/us/tx/dallas/profile/roofing-contractors/bert-roofing-inc-0875-8000039 (BBB main)"
+      ],
+      "(214) 984-3018": [
+        "https://bertroofing.com"
+      ],
+      "(214) 997-1649": [
+        "https://bertroofing.com/about/"
+      ]
+    },
+    "notes": [],
+    "registry_candidates": [
+      "BERT ROOFING, INC. | DALLAS 75228 | 17522644784 | RTT=A"
+    ],
+    "comptroller": {
+      "url": "https://comptroller.texas.gov/taxes/franchise/account-status/search/17522644784",
+      "entity": "BERT ROOFING, INC.",
+      "right_to_transact": "ACTIVE",
+      "registered_agent": "JOHN B BERT",
+      "officers": [
+        {
+          "title": "DIRECTOR",
+          "name": "JOHN E BERT"
+        },
+        {
+          "title": "PRESIDENT",
+          "name": "JOHN E BERT"
+        },
+        {
+          "title": "TREASURER",
+          "name": "JOHN E BERT"
+        },
+        {
+          "title": "DIRECTOR",
+          "name": "JOHN E BERT"
+        },
+        {
+          "title": "DIRECTOR",
+          "name": "JOHN E BERT"
+        },
+        {
+          "title": "SECRETARY",
+          "name": "JOHN E BERT"
+        },
+        {
+          "title": "DIRECTOR",
+          "name": "JOHN E BERT"
+        },
+        {
+          "title": "DIRECTOR",
+          "name": "JOHN E BERT"
+        }
+      ]
+    },
+    "bbb": {
+      "url": "https://www.bbb.org/us/tx/dallas/profile/roofing-contractors/bert-roofing-inc-0875-8000039",
+      "management_raw": "Mr. John E. Bert, President/DirectorMrs. Nicole McElwee, Vice PresidentMr. Edward Bert, Treasurer/Secretary",
+      "main_phone": "(214) 321-9341",
+      "other_phones": {
+        "(214) 321-9341": "tel link",
+        "(800) 870-0351": "tel link",
+        "(972) 386-7663": "tel link",
+        "(214) 324-1687": "text"
+      }
+    },
+    "phone_conflict": true,
+    "toll_free_seen": false,
+    "status": "HOLD",
+    "reason": "owner sourced; phones disagree, pick by hand",
+    "credits": 7,
+    "seconds": 8.3
+  },
+  {
+    "business": "Ruff Roofing",
+    "website": "https://ruff-roofing.co",
+    "facebook": "",
+    "owner_candidates": [
+      {
+        "name": "Mira HamdanMr. Ala Ababneh, OwnerMr. Youssef Annali, OwnerMr. Amin Marjani, Owner",
+        "role": "BBB Business Management",
+        "source": "https://www.bbb.org/us/tx/houston/profile/roofing-contractors/ruff-roofing-0915-90069522",
+        "confidence": "MEDIUM (BBB)"
+      }
+    ],
+    "phones": {
+      "(346) 339-3405": [
+        "https://www.bbb.org/us/tx/houston/profile/roofing-contractors/ruff-roofing-0915-90069522 (BBB main)"
+      ]
+    },
+    "notes": [
+      "no registry match on first two words"
+    ],
+    "registry_candidates": [],
+    "bbb": {
+      "url": "https://www.bbb.org/us/tx/houston/profile/roofing-contractors/ruff-roofing-0915-90069522",
+      "management_raw": "Mira HamdanMr. Ala Ababneh, OwnerMr. Youssef Annali, OwnerMr. Amin Marjani, Owner",
+      "main_phone": "(346) 339-3405",
+      "other_phones": {
+        "(346) 339-3405": "tel link"
+      }
+    },
+    "phone_conflict": false,
+    "toll_free_seen": false,
+    "status": "DIAL_READY",
+    "reason": "owner and one phone sourced",
+    "credits": 5,
+    "seconds": 5.1
+  },
+  {
+    "business": "Heirloom Roofing & Restorations",
+    "website": "https://heirloomrr.com",
+    "facebook": "",
+    "owner_candidates": [
+      {
+        "name": "JOSHUA SUTTON",
+        "role": "OWNER",
+        "source": "https://comptroller.texas.gov/taxes/franchise/account-status/search/32067054588",
+        "confidence": "HIGH (registry)"
+      },
+      {
+        "name": "Mr. Joshua Sutton, Managing Member",
+        "role": "BBB Business Management",
+        "source": "https://www.bbb.org/us/tx/sherman/profile/roofing-contractors/heirloom-roofing-restorations-0875-91339813",
+        "confidence": "MEDIUM (BBB)"
+      },
+      {
+        "name": "Our owner is passionate about helping others.",
+        "role": "site sentence",
+        "source": "https://heirloomrr.com/about",
+        "confidence": "HIGH (own site), needs reading"
+      }
+    ],
+    "phones": {
+      "(469) 674-4455": [
+        "https://www.bbb.org/us/tx/sherman/profile/roofing-contractors/heirloom-roofing-restorations-0875-91339813 (BBB main)",
+        "https://heirloomrr.com",
+        "https://heirloomrr.com/about"
+      ]
+    },
+    "notes": [],
+    "registry_candidates": [
+      "HEIRLOOM ROOFING & RESTORATIONS, LLC | SHERMAN 75092 | 32067054588 | RTT=A"
+    ],
+    "comptroller": {
+      "url": "https://comptroller.texas.gov/taxes/franchise/account-status/search/32067054588",
+      "entity": "HEIRLOOM ROOFING & RESTORATIONS, LLC",
+      "right_to_transact": "ACTIVE",
+      "registered_agent": "UNITED STATES CORPORATION AGENTS, INC.",
+      "officers": [
+        {
+          "title": "OWNER",
+          "name": "JOSHUA SUTTON"
+        }
+      ]
+    },
+    "bbb": {
+      "url": "https://www.bbb.org/us/tx/sherman/profile/roofing-contractors/heirloom-roofing-restorations-0875-91339813",
+      "management_raw": "Mr. Joshua Sutton, Managing Member",
+      "main_phone": "(469) 674-4455",
+      "other_phones": {
+        "(469) 674-4455": "tel link"
+      }
+    },
+    "phone_conflict": false,
+    "toll_free_seen": false,
+    "status": "DIAL_READY",
+    "reason": "owner and one phone sourced",
+    "credits": 7,
+    "seconds": 64.9
+  },
+  {
+    "business": "Johnny Walker Roofing & Construction",
+    "website": "https://jwrandc.com",
+    "facebook": "",
+    "owner_candidates": [
+      {
+        "name": "Mr. John Poteet, Owner Mr. Walker Carrell, Owner/Manager",
+        "role": "BBB Business Management",
+        "source": "https://www.bbb.org/us/tx/fort-worth/profile/residential-general-contractor/johnny-walker-roofing-and-construction-0825-1000219535",
+        "confidence": "MEDIUM (BBB)"
+      }
+    ],
+    "phones": {
+      "(940) 735-6944": [
+        "https://www.bbb.org/us/tx/fort-worth/profile/residential-general-contractor/johnny-walker-roofing-and-construction-0825-1000219535 (BBB main)"
+      ]
+    },
+    "notes": [
+      "registry ambiguous (2 candidates); not guessed"
+    ],
+    "registry_candidates": [
+      "JOHNNY WALKER ROOFING & CONSTRUCTION, LLC | N RICHLND HLS 76182 | 32085742685 | RTT=A",
+      "JOHNNY WALKER'S LODGE, LLC | PASADENA 77504 | 32095205640 | RTT=A"
+    ],
+    "bbb": {
+      "url": "https://www.bbb.org/us/tx/fort-worth/profile/residential-general-contractor/johnny-walker-roofing-and-construction-0825-1000219535",
+      "management_raw": "Mr. John Poteet, Owner Mr. Walker Carrell, Owner/Manager",
+      "main_phone": "(940) 735-6944",
+      "other_phones": {
+        "(940) 735-6944": "tel link",
+        "(936) 287-3044": "tel link",
+        "(940) 412-8994": "tel link"
+      }
+    },
+    "phone_conflict": false,
+    "toll_free_seen": false,
+    "status": "DIAL_READY",
+    "reason": "owner and one phone sourced",
+    "credits": 5,
+    "seconds": 5.1
+  },
+  {
+    "business": "Verified Roofing LLC",
+    "website": "https://verified-roofing.com",
+    "facebook": "",
+    "owner_candidates": [
+      {
+        "name": "Mr. Sidney W Curtis, Member",
+        "role": "BBB Business Management",
+        "source": "https://www.bbb.org/us/tx/bedford/profile/roofing-contractors/verified-roofing-0825-1000208565",
+        "confidence": "MEDIUM (BBB)"
+      }
+    ],
+    "phones": {
+      "(817) 715-6750": [
+        "https://www.bbb.org/us/tx/bedford/profile/roofing-contractors/verified-roofing-0825-1000208565 (BBB main)",
+        "https://verified-roofing.com"
+      ]
+    },
+    "notes": [
+      "registry ambiguous (2 candidates); not guessed"
+    ],
+    "registry_candidates": [
+      "VERIFIED ROOFING GROUP LLC | HOUSTON 77093 | 32108095269 | RTT=A",
+      "VERIFIED ROOFING, LLC | BEDFORD 76021 | 32068529844 | RTT=A"
+    ],
+    "bbb": {
+      "url": "https://www.bbb.org/us/tx/bedford/profile/roofing-contractors/verified-roofing-0825-1000208565",
+      "management_raw": "Mr. Sidney W Curtis, Member",
+      "main_phone": "(817) 715-6750",
+      "other_phones": {
+        "(817) 715-6750": "tel link"
+      }
+    },
+    "phone_conflict": false,
+    "toll_free_seen": false,
+    "status": "DIAL_READY",
+    "reason": "owner and one phone sourced",
+    "credits": 5,
+    "seconds": 5.1
+  },
+  {
+    "business": "Berry Good Roofing",
+    "website": "https://berrygoodroofs.com",
+    "facebook": "",
+    "owner_candidates": [
+      {
+        "name": "Mr. Joshua A. Garvin, Managing Member",
+        "role": "BBB Business Management",
+        "source": "https://www.bbb.org/us/tx/midlothian/profile/roofing-contractors/berry-good-roofing-and-efficiency-0875-91342071",
+        "confidence": "MEDIUM (BBB)"
+      }
+    ],
+    "phones": {
+      "(682) 882-3779": [
+        "https://www.bbb.org/us/tx/midlothian/profile/roofing-contractors/berry-good-roofing-and-efficiency-0875-91342071 (BBB main)",
+        "https://berrygoodroofs.com",
+        "https://www.berrygoodroofs.com/aboutus"
+      ]
+    },
+    "notes": [
+      "registry ambiguous (4 candidates); not guessed"
+    ],
+    "registry_candidates": [
+      "BERRY GOOD CONSULTING, LLC | SEMINOLE 79360 | 32104769321 | RTT=A",
+      "BERRY GOOD LABS, LLC | ROUND ROCK 78664 | 32033381719 | RTT=A",
+      "BERRY GOOD ROOFING AND EFFICIENCY LLC | MIDLOTHIAN 76065 | 32090825467 | RTT=N",
+      "BERRY GOOD SWING LLC | SAN ANTONIO 78247 | 32103867761 | RTT=A",
+      "BERRY GOOD VIBES LLC | BOYD 76023 | 32107779186 | RTT=A"
+    ],
+    "bbb": {
+      "url": "https://www.bbb.org/us/tx/midlothian/profile/roofing-contractors/berry-good-roofing-and-efficiency-0875-91342071",
+      "management_raw": "Mr. Joshua A. Garvin, Managing Member",
+      "main_phone": "(682) 882-3779",
+      "other_phones": {
+        "(682) 882-3779": "tel link"
+      }
+    },
+    "phone_conflict": false,
+    "toll_free_seen": false,
+    "status": "DIAL_READY",
+    "reason": "owner and one phone sourced",
+    "credits": 6,
+    "seconds": 68.4
+  },
+  {
+    "business": "DFW Roofing Inspections",
+    "website": "",
+    "facebook": "",
+    "owner_candidates": [],
+    "phones": {},
+    "notes": [
+      "registry ambiguous (2 candidates); not guessed",
+      "bbb: no BBB profile found",
+      "no website supplied"
+    ],
+    "registry_candidates": [
+      "DFW ROOFING INC. | GARLAND 75040 | 32048726601 | RTT=A",
+      "DFW ROOFING PRO LLC | MCKINNEY 75070 | 32071588936 | RTT=A"
+    ],
+    "bbb": {},
+    "phone_conflict": false,
+    "toll_free_seen": false,
+    "status": "HOLD",
+    "reason": "missing: owner, phone",
+    "credits": 3,
+    "seconds": 3.1
+  },
+  {
+    "business": "MB Roofing and Reconstruction",
+    "website": "",
+    "facebook": "",
+    "owner_candidates": [],
+    "phones": {},
+    "notes": [
+      "registry: <urlopen error [Errno 104] Connection reset by peer>",
+      "no registry match on first two words",
+      "bbb: no BBB profile found",
+      "no website supplied"
+    ],
+    "registry_candidates": [],
+    "bbb": {},
+    "phone_conflict": false,
+    "toll_free_seen": false,
+    "status": "HOLD",
+    "reason": "missing: owner, phone",
+    "credits": 2,
+    "seconds": 9.8
+  },
+  {
+    "business": "Pursuit Roofing & Construction",
+    "website": "https://pursuitindustries.net",
+    "facebook": "",
+    "owner_candidates": [],
+    "phones": {
+      "(469) 510-0765": [
+        "https://pursuitindustries.net",
+        "https://www.pursuitindustries.net/about"
+      ],
+      "(469) 474-9933": [
+        "https://pursuitindustries.net",
+        "https://www.pursuitindustries.net/about"
+      ]
+    },
+    "notes": [
+      "bbb: no BBB profile found"
+    ],
+    "registry_candidates": [
+      "PURSUIT ROOFING LLC | SOUTHLAKE 76092 | 32099714894 | RTT=N"
+    ],
+    "comptroller": {
+      "url": "https://comptroller.texas.gov/taxes/franchise/account-status/search/32099714894",
+      "entity": "PURSUIT ROOFING LLC",
+      "right_to_transact": "FORFEITED",
+      "registered_agent": "REGISTERED AGENTS INC.",
+      "officers": []
+    },
+    "bbb": {},
+    "phone_conflict": true,
+    "toll_free_seen": false,
+    "status": "HOLD",
+    "reason": "missing: owner",
+    "credits": 6,
+    "seconds": 6.7
+  },
+  {
+    "business": "Top Sun Roofing & Foundation",
+    "website": "https://topsunroofing.com",
+    "facebook": "",
+    "owner_candidates": [
+      {
+        "name": "JULIO HERRERA RECAGNO",
+        "role": "MANAGER",
+        "source": "https://comptroller.texas.gov/taxes/franchise/account-status/search/32088175297",
+        "confidence": "HIGH (registry)"
+      },
+      {
+        "name": "Mr. Julio Herrera Recagno, Owner",
+        "role": "BBB Business Management",
+        "source": "https://www.bbb.org/us/tx/dallas/profile/roofing-contractors/top-sun-roofing-0875-91342833",
+        "confidence": "MEDIUM (BBB)"
+      },
+      {
+        "name": "![Julio Recagno, founder of Top Sun Roofing](https://topsunroofing.",
+        "role": "site sentence",
+        "source": "https://topsunroofing.com/about",
+        "confidence": "HIGH (own site), needs reading"
+      }
+    ],
+    "phones": {
+      "(469) 938-7810": [
+        "https://www.bbb.org/us/tx/dallas/profile/roofing-contractors/top-sun-roofing-0875-91342833 (BBB main)",
+        "https://topsunroofing.com",
+        "https://topsunroofing.com/about"
+      ],
+      "(407) 969-2212": [
+        "https://topsunroofing.com"
+      ]
+    },
+    "notes": [],
+    "registry_candidates": [
+      "TOP SUN ROOFING LLC | DALLAS 75238 | 32088175297 | RTT=A"
+    ],
+    "comptroller": {
+      "url": "https://comptroller.texas.gov/taxes/franchise/account-status/search/32088175297",
+      "entity": "TOP SUN ROOFING LLC",
+      "right_to_transact": "ACTIVE",
+      "registered_agent": "JULIO HERRERA RECAGNO",
+      "officers": [
+        {
+          "title": "MANAGER",
+          "name": "JULIO HERRERA RECAGNO"
+        }
+      ]
+    },
+    "bbb": {
+      "url": "https://www.bbb.org/us/tx/dallas/profile/roofing-contractors/top-sun-roofing-0875-91342833",
+      "management_raw": "Mr. Julio Herrera Recagno, Owner",
+      "main_phone": "(469) 938-7810",
+      "other_phones": {
+        "(469) 938-7810": "tel link"
+      }
+    },
+    "phone_conflict": true,
+    "toll_free_seen": false,
+    "status": "HOLD",
+    "reason": "owner sourced; phones disagree, pick by hand",
+    "credits": 7,
+    "seconds": 68.1
+  }
+]

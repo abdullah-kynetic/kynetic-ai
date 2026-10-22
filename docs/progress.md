@@ -26,6 +26,8 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Rete
 - 3.5 outbound build. Prep is in the repo. On 2026-10-17 a read-only check found `m2YJwZ1l8DTzyEkw` active with the Alex agent ID (`agent_71e3cfc8384aa38a910a506b53`) set in Call Settings and Retry Call Settings and the "Retell API (outbound)" credential attached. Go-live approved by Abdullah on 2026-10-18 (KI-009). Alex prompt v1.2.3 is on branch `claude/alex-demo-live-test`, not merged or published. Blocked on Abdullah; see Blockers.
 - Voice provider bake-off (Retell vs Bland vs ElevenLabs) for Alex. **Testing, no decision: Retell stays (D-018) unless a challenger clearly wins on the shared scorecard.** Control is Retell Alex Lab. ElevenLabs is furthest along; Bland has a test track and no results yet. Both live on unmerged branches (`claude/provider-test-elevenlabs`, `claude/provider-test-bland`), not on main. Current state, agent IDs and rules: the "Voice provider bake-off" section of KYNETIC_CONTEXT.md; running log: `providers/elevenlabs/RESULTS.md` on the branch and the Twenty note "VOICE PROVIDER BAKE-OFF". Twenty has no task for it yet.
 
+- Lead engine (Lane A, tasks 2.1/2.2/2.4/2.5): Run B, the Apify DFW pilot, a Treg test and a Firecrawl-only script are done and audited; nothing is built in Modal/n8n. Full state, results and a start prompt for a new session: `docs/lead-engine-handoff.md` (branch `claude/modest-thompson-h9atoy`; Twenty note "LEAD ENGINE: Run B + pilots handoff (Oct 19-20, 2026)"). Next: add a geography filter and AI-receptionist detector to `tools/lead_enrich.py`, run the remaining ~17 roofers, scale the Treg test. Dialing is planned for Tue Oct 20 and needs about 3,000 owner-gated numbers; the lead pool is not there yet (7.1 launch gate).
+
 ## Paused (D-010, Oct 6, 2026 — inbound is near-done, left alone until a client demo needs it)
 - 3.1 Repoint Emily's 4 tool webhooks and post-call webhook, greeting says Emily. Approved, URL only.
 - 3.2 Swap Emily's 13 Notion nodes for Twenty nodes. Needs approval of the node-by-node plan.
@@ -51,6 +53,45 @@ Then: confirm the post-call webhook URL is set on the agent, web-call test Alex,
 Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-10-22 (Twenty fields for the lead engine; Abdullah approved on the decision card)
+- Created on Twenty `companies` (self-hosted, crm.kyneticai.com): Engine status (select DIAL_READY/HOLD), Meta Page ID (text), Facebook Page (links), Live ads, Oldest ad (days), New ads (30d), Est. ad spend/mo low and high (numbers, a rough proxy not real spend), Engine reason (text), State (text). That is 10 fields; the card said 9 but listed 10, all 10 were created.
+- Added niche options Bath Remodel, Kitchen Remodel, Windows & Doors, Siding, Fence, Concrete to the existing Niche field (all existing options kept with their ids).
+- No records were created or changed, and no views were changed. `lead_engine.py twenty-payload` still only writes a dry-run JSON; the import (and list-view column order) need a separate yes.
+
+### 2026-10-21 (Treg-only pipeline test)
+- Treg balance is spent: the $1 is gone ($0.54 for the US roofing census, the rest on endpoint tests). Treg now refuses calls (`insufficient_balance`), so nothing past this point was run. Top up at https://treg.to/app#billing.
+- US roofing census through Treg (`lead_engine.py`, 252 searches, 40 states, FL/OK excluded): 5,735 ads, 2,032 advertisers, 958 with 2+ active ads, $0.54. The same period on Apify cost about $0.93 for 520 ads (about 17x more per ad). One Apify run (GA) failed with HTTP 400, cause not investigated.
+- Treg-only enrichment pilot on 10 known DFW roofers, $0.16 total: Google Maps match and phone 9 of 10, LinkedIn company page 6 of 10, an owner-titled person 6 of 10, but only about 3 of those 6 were the right business (wrong-company and non-owner matches filtered by a title check added in `enrich_treg`). Owner direct-dial lookup returned a number for 1 of 2 tries at $0.0005 and $0 on a miss. The `enrich_treg` path inside the script has not completed a clean run because the balance ran out.
+- Docs and a user decision still needed: owner direct-dial use depends on the counsel answer (task 1.4); Abdullah said Treg is cleared, Twenty not yet updated.
+
+### 2026-10-21 (national lead database)
+- New `tools/lead_engine.py`: one entry point for census (Treg Meta Ad Library keyword search, about $0.0011 per ~30 ads, roughly 20x cheaper per ad than the Apify actor), a SQLite store (`leads.db`, resumable, dedupes by Page ID), enrichment through `tools/lead_enrich.py`, CSV export, a "called" flag, and a Modal wrapper (untested, not deployed). Apify is an optional second census source (`--source apify|both`).
+- `docs/lead-engine-niche-audit.md`: Meta-ad density for 20 niches (Dallas, Houston, $0.044). Recommends adding kitchen to the main list, testing fence and concrete, holding HVAC, generators, solar and pools, and treating restoration as a non-Meta source. Needs Abdullah's decision.
+- Treg phone finder: Abdullah said Treg is "cleared and confirmed fine" on 2026-10-21; counsel task 1.4 status in Twenty not yet updated. Flagged, not assumed.
+- No Twenty, n8n, Retell or Modal changes made.
+
+### 2026-10-21 (lead engine: remaining roofers run)
+- Apify (`APIFY_API_TOKEN`) and Firecrawl keys work in the new environment. Re-pulled dataset `odgk84u6wM8rrsd73` (343 ads, no new Apify spend) and added `tools/lead_census.py` (free filter: 2+ ads, Texas signal, non-roofers dropped). 18 roofers remained after excluding the 12 already done.
+- `tools/lead_enrich.py` on the 18: 103 Firecrawl credits, about 9 minutes. 10 DIAL_READY, 8 HOLD, 1 AI answering flagged (Fort Tex, Alivo). Output in `docs/lead-engine-code-run/remaining-18-2026-10-21/`. Statuses are unaudited.
+- Treg not used. No live-system changes.
+
+### 2026-10-20 (lead engine pilots: Apify census, Treg test, Firecrawl-only script)
+- Research and tooling only. Nothing changed in n8n or Retell. Twenty updated with Abdullah's yes (see below).
+- Run B (Arlington roofing) audited: Claude+Firecrawl and Muse agree on the same 2 dial-ready businesses and phones; Muse reaches form-gated records (Comptroller, permit portal), Firecrawl is cheaper and leaves direct ad links. Muse's "no ads found" DROPs are unreliable. `docs/lead-engine-run-b-audit.md`.
+- Apify actor `solidcode/meta-ads-library-scraper`: 343 DFW roofing ads for $0.31 -> 93 advertisers -> about 27 real roofers. Apify account is Free with a $5 cap, not $30. Muse enriched the top 10; audited statuses in `docs/lead-engine-pilot-apify.md`.
+- Treg tested on 3 owners (email find, verify, phone find): about $0.049 of the $1; works but sample too small; phone finder not cleared for use (counsel 1.4).
+- Added `tools/lead_enrich.py`: Firecrawl-only owner/phone enrichment (Texas open data, Comptroller page, BBB, site). On the same 10 businesses: 53 credits, 4 minutes, owner names matched Muse on 7 of 7, phone conflicts flagged not guessed. Results in `docs/lead-engine-code-run/`.
+- Proposed (not approved or built): Modal job called from n8n, results logged to Twenty. Described in the handoff.
+- Handoff doc for a new session: `docs/lead-engine-handoff.md`.
+- Twenty updated (Abdullah said to mark all updates): new handoff note, dated lines on tasks 2.1, 2.2, 2.5, and a mismatch line on the Lane A note.
+
+### 2026-10-19 (lead engine research: owner/phone sourcing, Firecrawl unblocked, Run B prompt)
+- Research and docs only. Nothing changed in n8n, Retell or Twenty.
+- Firecrawl returned HTTP 403 in the cloud session. Cause: the environment's network policy denied `api.firecrawl.dev:443` (proxy log), not the Firecrawl account. After Abdullah added allowed domains it worked: a search call (2 credits) and a scrape of the live Meta Ad Library page (`q=roof replacement`, US, active) returned 29 ads, about 25 roofing, with Library ID, start date, ad copy, advertiser name and Page link. Some ad copy names the owner. One page load gives about 30 ads, so more needs scrolling (untested through Firecrawl). The official Ad Library API does not cover US commercial ads, so the web page is the source.
+- Read-only review of Twenty for the existing lead-engine work: notes "Search List + How Searches Ran" (5,539-query list across 15 metros, 191 cities), "MUSE PROMPT: Wave 1 North DFW census", "Lead Engine: research, ICP and method (Lane A)", "Qualifying Checks + Oct 13 Scraping (Superseded Demo)" and "Kynetic Prospecting Plan"; tasks 2.1, 2.2, 2.4, 2.5. The Oct 13 runs produced 54 dial-ready rows (31 Meta-ads tier 1, 23 quote-form tier 2); searching has been paused since Oct 13. Lane A notes say no people-search or data-broker sites but record no reason; Apollo and ownerphones.com are allowed for gaps after a quote.
+- Added `docs/lead-engine-run-b-prompt.md`: one prompt for Claude (Firecrawl) and Muse, run separately and audited against each other. Sample is one city and one trade (Arlington TX roofing), caps 25 advertisers censused and 10 enriched (first 4 are a calibration set that runs every source), owner-name and phone source ladders (Texas Comptroller, county DBA, BBB, city permit portals and others), source scorecard and blocked log. Not yet run.
+- Next: Abdullah runs the prompt in a separate Claude chat (Firecrawl) and in Muse, brings both outputs back, and Claude audits them (links, fabrication, owner and phone hit rates, cost and time). Allow the listed domains in that environment first.
+
 ### 2026-10-18 (portal login changes, Google on, VPS cleanup, n8n self-hosting decision)
 - PRs #21-#25 merged as merge commits. #21 fixed the stale DNS/Resend statements (KI-006, context). #22 recorded D-022 (single deploy path is server-side `portal-deploy`; the `bob-box-ovh-vps` key keeps full root; KI-010 closed). #23 recorded Abdullah's approval of "Outbound Speed to Lead" staying live (KI-009 closed; no n8n change). #24 added the two-step admin login and "Remember this device for 30 days" (admin only, signed cookie, skips only the authenticator code; revoked by a password change or authenticator re-enrolment). #25 signs a new user straight in after accepting an invite; password resets still end at the sign-in page; a new admin must set up an authenticator before any admin page.
 - Deployed with `portal-deploy`: `7cd69cc` (#24) and `bdc4afe` (#25), both "deploy OK", `/api/health` ok.
