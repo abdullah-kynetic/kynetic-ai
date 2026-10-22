@@ -16,7 +16,6 @@ Format: `slug | cluster | universe | status | owning path`.
 - twenty-lead-objects | lead | live | stub | KYNETIC_CONTEXT.md "Twenty" (endCustomer, customerInteraction, client_accounts)
 - cal-roof-inspection-event | lead | live | stub | KYNETIC_CONTEXT.md (event type 7404470)
 - pricing-d017 | lead | live | stub | docs/decisions.md D-017
-- voice-bakeoff | lead | ghost | stub | on branches only (providers/ not on main); Twenty note is canonical
 
 ## n8n
 - n8n-backup-copy | n8n | live | verified | n8n/workflows/, n8n/manifest.json, tools/n8n_backup.py
@@ -29,11 +28,21 @@ Format: `slug | cluster | universe | status | owning path`.
 - retell-agent-tools | retell | live | stub | NO-TOUCH class; see KYNETIC_CONTEXT.md rule 2
 - retell-allowlist | retell | live | stub | .claude/settings.json
 
-## frozen
-- nora | frozen | live | stub | n8n/workflows/active/nora-restoration-ai-receptionist__2PFWFqBM0wabADk6.json; NO-TOUCH
-- emily | frozen | leftover | stub | retell/builds/emily-speed-to-lead/; paused; NO-TOUCH
-- kynetic-restoration-demo | frozen | live | stub | retell/builds/kynetic-restoration/build-ids.md; NO-TOUCH
-- inflate-original | frozen | leftover | stub | retell/builds/_inflate-original/; leave alone
+## plan2 (inbound receptionists and upsells; Nora and Emily are no-touch)
+- nora | plan2 | live | stub | n8n/workflows/active/nora-restoration-ai-receptionist__2PFWFqBM0wabADk6.json; NO-TOUCH
+- emily | plan2 | leftover | stub | retell/builds/emily-speed-to-lead/; paused; NO-TOUCH
+- kynetic-restoration-demo | plan2 | live | stub | retell/builds/kynetic-restoration/build-ids.md; NO-TOUCH
+- inflate-original | plan2 | leftover | stub | retell/builds/_inflate-original/; leave alone
+- upsell-workflows | plan2 | leftover | stub | n8n/workflows/archive/ (review chain, reactivation sender + reply handler, missed-call text-back, appointment setter); Twenty tasks tagged [P2] LATER UPSELL
+
+## bakeoff (voice provider test, parallel to Plan 1; no decision logged)
+- bakeoff-summary | bakeoff | ghost | stub | providers/BAKEOFF_SUMMARY.md on branch claude/provider-test-elevenlabs (not on main); Twenty note "VOICE PROVIDER BAKE-OFF" and task 3.9 are canonical
+- bakeoff-elevenlabs-agents | bakeoff | ghost | stub | ElevenLabs v1/v2 agents on the second account; ids in Twenty note, not in this repo
+- bakeoff-11labs-workflow | bakeoff | ghost | stub | VPS n8n xlmyRd5jBBBu8LX7 (inactive; agent and phone-number ids still placeholders when read 2026-10-22); not in repo
+
+## leadsourcing (Meta-ads owner list for human dialing, parallel to Plan 1)
+- lead-engine | leadsourcing | ghost | stub | docs/lead-engine-handoff.md, tools/lead_enrich.py on branch claude/modest-thompson-h9atoy (not on main); Twenty note "LEAD ENGINE: Run B + pilots handoff"
+- lead-list-twenty-load | leadsourcing | live | stub | Twenty tasks 2.1-2.5 (Companies with a source for every fact)
 
 ## portal
 - portal-tenancy-rls | portal | live | verified | portal/src/lib/db/, portal/drizzle/0001_rls.sql

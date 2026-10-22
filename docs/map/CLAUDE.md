@@ -18,7 +18,8 @@ A walkable edit map of this repo: what the nouns are, and what else moves if you
 - **Outbound Speed to Lead** = n8n workflow of that name. Same name exists as cloud copy (`m2YJwZ1l8DTzyEkw`, leftover) and VPS copy (`tXJwNTkNgKGnp0Ab`, canonical per Abdullah 2026-10-21, unverified in repo).
 - **Lead** = Twenty object `endCustomer`. **Call** = Twenty object `customerInteraction` (field `retellCallId` also stores an 11Labs conversation id).
 - **Kynetic Roofing** = fictional demo skin built on AM-1 Roofing's real profile. **Kynetic Restoration (Demo)** = protected Plan 2 demo client (Nora's world). Different things.
-- **Nora** = frozen inbound receptionist. **Emily** = paused Plan 2 build copy.
+- **Nora** and **Emily** = the Plan 2 inbound receptionists (Nora frozen and live, Emily a paused build copy). Neither is part of Plan 1.
+- **Bake-off** and **lead sourcing** are separate clusters that run in parallel to Plan 1.
 - **Retell workspaces**: `abdullahblitz` (new builds, Alex) vs `kyneticai` (Nora, Emily).
 
 ## Universes
