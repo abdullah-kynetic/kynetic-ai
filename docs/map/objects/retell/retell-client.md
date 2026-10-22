@@ -20,7 +20,7 @@ Stdlib Python client for the Retell API. Writes are dry runs unless `--apply` (`
 - Key loading: `RETELL_API_KEY` from env or `.env` (`:34-42`); `CAL_API_KEY` from env only (`:125`).
 
 ## If you change this
-- **Hits:** `.claude/settings.json` allowlist (pre-approves `python tools/retell.py *`, so `--apply` runs without a prompt), `retell-builder` skill, `KYNETIC_CONTEXT.md` Access, [[alex-agent]] (reads `PROMPT.md`, `agent.config.json`).
+- **Hits:** `.claude/settings.json` allowlist (used to pre-approve `python tools/retell.py *` (narrowed 2026-10-22 to the three read commands), so `--apply` now prompts), `retell-builder` skill, `KYNETIC_CONTEXT.md` Access, [[alex-agent]] (reads `PROMPT.md`, `agent.config.json`).
 - **Does not hit:** n8n, Twenty.
 - **Protection is instruction-only:** nothing in code stops a write against Nora or Emily ids.
 
