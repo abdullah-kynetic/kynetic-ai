@@ -5,7 +5,7 @@ universe: live
 status: verified
 entity: .claude/settings.json
 verified_on: 2026-10-22
-verified_at: 5888b13 (source unchanged since 67763e6)
+verified_at: d417246 (settings narrowed in bd35a17)
 ---
 
 # Claude allowlist and git identity
