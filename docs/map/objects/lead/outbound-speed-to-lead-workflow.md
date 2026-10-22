@@ -32,4 +32,4 @@ Twenty is the CRM and Retell is the voice platform, so the workflow only moves d
 - **Outside the tree:** which n8n instance is live; the Retell agent's post-call webhook URL points at this workflow's path.
 
 ## See
-- `n8n/workflows/active/outbound-speed-to-lead__m2YJwZ1l8DTzyEkw.json`, `retell/builds/outbound-speed-to-lead/N8N_MAPPING.md` (header is stale, see AUDIT.md)
+- `n8n/workflows/active/outbound-speed-to-lead__m2YJwZ1l8DTzyEkw.json`, `retell/builds/outbound-speed-to-lead/N8N_MAPPING.md` (header is stale, see docs/plans/AUDIT.md)

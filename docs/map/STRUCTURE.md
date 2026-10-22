@@ -83,7 +83,7 @@ kynetic-ai/
 │     ├─ objects/tooling/     repo-skills, mcp-config
 │     ├─ processes/           lead-to-call, change-alex, backup-n8n, deploy-portal, end-of-session-docs
 │     ├─ effects/CONTEXT.md   "if you change X, open these"
-│     └─ plans, not map:      AUDIT.md, PLAN1-REMAINING.md, PORTAL-BUILDOUT.md
+│  ├─ plans/                          NEW  AUDIT.md, PLAN1-REMAINING.md, PORTAL-BUILDOUT.md (plans, not map cards)
 ├─ n8n/
 │  ├─ CONTEXT.md                      NEW
 │  └─ README.md, CREDENTIALS.md, manifest.json, data-tables/, workflows/{active,archive}/   unchanged
@@ -102,7 +102,7 @@ kynetic-ai/
    └─ everything else unchanged (src/, tests/, drizzle/, deploy/, ADMIN.md, N8N.md, ...)
 ```
 
-One tidy-up to decide: `AUDIT.md`, `PLAN1-REMAINING.md` and `PORTAL-BUILDOUT.md` are plans and findings, not map cards. They would sit better in `docs/plans/`. I have not moved them; say if you want that.
+The three plan files live in `docs/plans/` (moved from `docs/map/` on 2026-10-22 with Abdullah's approval).
 
 ## 4. Keeping it true
 

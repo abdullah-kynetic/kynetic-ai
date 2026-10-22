@@ -1,6 +1,6 @@
 # System map of kynetic-ai
 
-A walkable edit map of this repo: what the nouns are, and what else moves if you change one. The repo stays the source of truth; cards cite it and never replace it. Status: slices 1-4 done (catalog, 20 verified object cards, 5 process cards, change index) plus `PORTAL-BUILDOUT.md`. Slice 5 (re-verify) pending your read.
+A walkable edit map of this repo: what the nouns are, and what else moves if you change one. The repo stays the source of truth; cards cite it and never replace it. Status: slices 1-4 done (catalog, 20 verified object cards, 5 process cards, change index) plus the plans in `../plans/`. Slice 5 (re-verify) pending your read.
 
 ## Where to go
 
@@ -10,7 +10,7 @@ A walkable edit map of this repo: what the nouns are, and what else moves if you
 | What else moves if I change X | the card's "If you change this", or `effects/CONTEXT.md` |
 | How this map works, universes, name collisions | `CONTEXT.md` |
 | What may not be touched | `CONTEXT.md` "No-touch", `../../KYNETIC_CONTEXT.md` |
-| The portal build-out plan (Twenty sync, onboarding, proposals) | `PORTAL-BUILDOUT.md` |
+| The portal build-out plan (Twenty sync, onboarding, proposals) | `../plans/PORTAL-BUILDOUT.md` |
 | Repo rules and session protocol | `../../CLAUDE.md` |
 
 ## Name collisions (product word = file or system name)

@@ -14,4 +14,4 @@ verified_at: 5888b13 (source unchanged since 67763e6)
 
 ## If you change this
 - **Hits:** each other (counts, ids, node numbers repeat across them), `README.md` layout table, CLAUDE.md session protocol. New D-/KI- numbers must be checked against Twenty first (Twenty's next D-number differs from the repo's).
-- Known stale items are listed in `AUDIT.md`.
+- Known stale items are listed in `docs/plans/AUDIT.md`.

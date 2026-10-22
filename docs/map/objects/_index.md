@@ -43,7 +43,7 @@ Format: `slug | cluster | universe | status | owning path`.
 - lead-list-twenty-load | leadsourcing | live | stub | Twenty tasks 2.1-2.5 (Companies with a source for every fact)
 
 ## portal
-- portal-buildout | portal | live | plan | docs/map/PORTAL-BUILDOUT.md (the build-out plan for the client dashboard; the portal Abdullah wants to work on in depth)
+- portal-buildout | portal | live | plan | docs/plans/PORTAL-BUILDOUT.md (the build-out plan for the client dashboard; the portal Abdullah wants to work on in depth)
 - portal-tenancy-rls | portal | live | verified | portal/src/lib/db/, portal/drizzle/0001_rls.sql
 - portal-auth | portal | live | verified | portal/src/lib/auth/, portal/src/app/(auth)/
 - portal-ingest-api | portal | live | verified | portal/src/app/api/ingest/, portal/N8N.md
