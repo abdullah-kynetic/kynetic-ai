@@ -19,11 +19,11 @@
   --color-border-strong: #d6cdbf;
 
   --color-brand: #d9662a;          /* buttons, logo mark, selected states */
-  --color-brand-hover: #c2571f;
+  --color-brand-hover: #e2723a;   /* lighter on hover so the near-black label keeps 6.2:1 */
   --color-brand-tint: #f8e6da;
   --color-brand-text: #a8461a;     /* orange text and links on light (5.6:1) */
   --color-on-brand: #0e0d0b;       /* labels on orange: near-black, never white */
-  --color-gold: #8a6a2f;           /* champagne on light (4.7:1) */
+  --color-gold: #7a5c26;           /* champagne on light: 6.2:1 on white, 5.4:1 on #f2eee8 alternate sections */
 
   --color-success: #15803d;
   --color-warning: #b45309;
