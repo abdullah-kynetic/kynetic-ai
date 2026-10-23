@@ -1,6 +1,7 @@
 ---
 // Wraps a snapshot page (markup + CSS exported from the published site, see scripts/snapshot.mjs).
 interface Props { head: string; css: string; body: string; script?: boolean }
+import luxury from '../styles/luxury.css?raw';
 const { head, css, body, script = true } = Astro.props;
 const site = Astro.site!.origin;
 const absHead = head.replace(/(content|href)="(\/assets\/[^"]+)"/g, `$1="${site}$2"`)
@@ -12,7 +13,11 @@ const absHead = head.replace(/(content|href)="(\/assets\/[^"]+)"/g, `$1="${site}
 <html lang="en" data-redirect-timezone="1">
   <head>
     <Fragment set:html={absHead} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style is:inline set:html={css} />
+    <style is:inline set:html={luxury} />
   </head>
   <body>
     <Fragment set:html={body} />

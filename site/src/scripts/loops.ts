@@ -15,7 +15,8 @@ const fill = (tpl: string, nums: number[]) => {
 
 function play(card: HTMLElement, cycle: Cycle) {
   const els = [card, ...card.querySelectorAll<HTMLElement>('*')];
-  const tracks = cycle.tracks.map((t) => ({ ...t, node: els[t.el] as HTMLElement }));
+  // the recorded glow-border gradients are dropped: the rebrand has no gradients or glows
+  const tracks = cycle.tracks.filter((t) => !t.tpl.includes('gradient')).map((t) => ({ ...t, node: els[t.el] as HTMLElement }));
   const frame = (now: number) => {
     const phase = now % cycle.period;
     for (const t of tracks) {

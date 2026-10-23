@@ -1,0 +1,56 @@
+/* Luxury rebrand layer: burnt orange + navy on warm near-black, champagne for hairlines and labels.
+   The Framer snapshot CSS carries the palette through its tokens; this file covers what tokens cannot
+   (fonts, section surfaces, button label colour, and removing glows, gradients and shadows). */
+:root {
+  --kn-bg: #0e0d0b;
+  --kn-navy: #0b1220;
+  --kn-card: #121b2d;
+  --kn-text: #f4f1ea;
+  --kn-muted: #a8a29a;
+  --kn-orange: #d9662a;
+  --kn-orange-hover: #e57a42;
+  --kn-champagne: #c9a96e;
+  --kn-on-orange: #0e0d0b;
+  --kn-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --kn-sans: "Inter", "Inter Placeholder", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+html, body { background-color: var(--kn-bg); color: var(--kn-text); }
+
+/* Surfaces: navy header (inline), navy footer, and two navy sections to break up the dark neutrals */
+footer.framer-34GLz,
+section[data-framer-name="Process"],
+section[data-framer-name="Testimonials"] { background-color: var(--kn-navy); }
+
+/* Type: Cormorant Garamond headlines, Inter body */
+.framer-text, .framer-text *, input, textarea, button { font-family: var(--kn-sans) !important; }
+h1.framer-text, h2.framer-text, h3.framer-text,
+h1.framer-text *, h2.framer-text *, h3.framer-text * {
+  font-family: var(--kn-serif) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+  font-size-adjust: 0.44;
+}
+
+/* Small uppercase labels with wide tracking: nav links, footer column headings (champagne) */
+.framer-1dy8hem p, .framer-1k530gz p, .framer-97ffzp p {
+  text-transform: uppercase;
+  letter-spacing: 0.16em !important;
+  font-size: 12px !important;
+}
+.framer-1k530gz p, .framer-97ffzp p { --framer-text-color: var(--kn-champagne) !important; }
+
+/* Orange buttons always carry near-black text, never white */
+.framer-yPywB.kn-orange p.framer-text,
+.framer-yPywB[style*="background-color:rgb(217, 102, 42)"] p.framer-text,
+button.framer-NHy43 p.framer-text { --framer-text-color: var(--kn-on-orange) !important; }
+.framer-yPywB.kn-orange svg,
+.framer-yPywB[style*="background-color:rgb(217, 102, 42)"] svg { stroke: var(--kn-on-orange); }
+.framer-yPywB, button.framer-NHy43 { box-shadow: none !important; }
+
+/* Decorative glow and blurred footer shapes are removed (their fills are already neutralised in the markup) */
+[data-framer-name="Glow"], [data-framer-name="Light shade"], .framer-nlg57g, .framer-1ak19lv { display: none !important; }
+
+/* No glows, no text shadows, no drop shadows */
+*, *::before, *::after { text-shadow: none !important; }
+.framer-1uh874n { filter: none !important; }

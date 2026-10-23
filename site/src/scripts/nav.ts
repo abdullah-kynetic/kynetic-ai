@@ -1,10 +1,10 @@
 // Top navigation: link hover chip, scroll-spy highlight, smooth anchor scrolling and the mobile menu.
-// Nav links (framer-520aC): background fades to 10% white on hover/selected, spring 300/50.
+// Nav links (framer-520aC): background fades to 18% orange on hover/selected, spring 300/50.
 // Mobile bar (framer-FbUpk): closed 64px -> open (menu height) spring 500/60, hamburger lines cross.
 import { animate } from 'motion';
 import { reducedMotion } from './appear';
 
-const CHIP_ON = 'rgba(255, 255, 255, 0.1)';
+const CHIP_ON = 'rgba(217, 102, 42, 0.18)';
 const CHIP_OFF = 'rgba(0, 0, 0, 0)';
 const CHIP = { type: 'spring', stiffness: 300, damping: 50, mass: 1 } as const;
 const BAR = { type: 'spring', stiffness: 500, damping: 60, mass: 1 } as const;

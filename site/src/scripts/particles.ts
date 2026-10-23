@@ -1,5 +1,5 @@
 // Hero star field. The original is the Framer "Particles Background" component (tsParticles):
-// 30 white circles, 1 to 2px, constant opacity 1, speed 1, no links, no hover/click interaction,
+// 30 champagne circles, 1 to 2px, constant opacity 1, speed 1, no links, no hover/click interaction,
 // wrapper opacity 0.3 (already in the markup).
 import { tsParticles } from '@tsparticles/engine';
 import { loadSlim } from '@tsparticles/slim';
@@ -20,7 +20,7 @@ export async function initParticles() {
       interactivity: { events: { onClick: { enable: false }, onHover: { enable: false } } },
       particles: {
         number: { value: 30, density: { enable: false } },
-        color: { value: 'rgb(255, 255, 255)' },
+        color: { value: 'rgb(201, 169, 110)' },
         shape: { type: 'circle' },
         opacity: { value: 1 },
         size: { value: { min: 1, max: 2 } },

@@ -5,7 +5,7 @@ import { animate } from 'motion';
 
 const ENDPOINT: string = import.meta.env.PUBLIC_CONTACT_WEBHOOK ?? '';
 const TWEEN = { duration: 0.2, ease: [0.44, 0, 0.56, 1] } as const;
-const BG = { rest: 'rgb(183, 13, 198)', hover: 'rgba(51, 51, 51, 0.85)', press: 'rgb(51, 51, 51)', error: 'rgba(255, 34, 68, 0.15)' };
+const BG = { rest: 'rgb(217, 102, 42)', hover: 'rgb(229, 122, 66)', press: 'rgb(194, 85, 34)', error: 'rgba(255, 34, 68, 0.15)' };
 
 export function initForm() {
   document.querySelectorAll<HTMLFormElement>('form').forEach((form) => {
@@ -42,9 +42,7 @@ export function initForm() {
           p.style.display = 'none';
           const s = document.createElement('div');
           s.className = 'kn-spin';
-          s.style.cssText =
-            'width:20px;height:20px;border-radius:50%;background:conic-gradient(from 7.2deg,rgba(255,255,255,0),#fff 100%);' +
-            '-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 3px));mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 3px))';
+          s.style.cssText = 'width:20px;height:20px;border-radius:50%;box-sizing:border-box;border:3px solid rgba(14,13,11,0.25);border-top-color:#0e0d0b';
           btn.append(s);
           animate(s, { rotate: 360 }, { duration: 1, ease: 'linear', repeat: Infinity });
         }
