@@ -1,34 +1,38 @@
 @import "tailwindcss";
 
-/* Kynetic AI — dark-first design tokens. */
+/* Kynetic AI palette: warm light is the main theme, espresso is the dark theme.
+   Orange is the only accent (about 5% of any screen); champagne is for small labels and rules. No gradients, glows or shadows. */
 @theme {
-  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, "Times New Roman", serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 
-  --color-background: #0a0a0a;
-  --color-surface: #141414;
-  --color-elevated: #1e1e1e;
-  --color-hover: #1a1a1a;
-  --color-foreground: #ffffff;
-  --color-muted: #a0a0a0;
-  --color-subtle: #6b6b6b;
-  --color-border: rgb(255 255 255 / 0.08);
-  --color-border-strong: rgb(255 255 255 / 0.14);
+  /* Light (default) */
+  --color-background: #faf8f5;
+  --color-surface: #ffffff;
+  --color-elevated: #ffffff;
+  --color-hover: #f2eee8;
+  --color-foreground: #14100c;
+  --color-muted: #5c5650;
+  --color-subtle: #756e66;
+  --color-border: #e8e2d8;
+  --color-border-strong: #d6cdbf;
 
-  --color-brand: #b70dc6;
-  --color-brand-hover: #d020e0;
-  --color-brand-violet: #7c3aed;
-  --color-brand-tint: #2a1a2e;
+  --color-brand: #d9662a;          /* buttons, logo mark, selected states */
+  --color-brand-hover: #c2571f;
+  --color-brand-tint: #f8e6da;
+  --color-brand-text: #a8461a;     /* orange text and links on light (5.6:1) */
+  --color-on-brand: #0e0d0b;       /* labels on orange: near-black, never white */
+  --color-gold: #8a6a2f;           /* champagne on light (4.7:1) */
 
-  --color-brand-text: #e879f9;
-  --color-success-text: #86efac;
-  --color-warning-text: #fbbf24;
-  --color-danger-text: #f87171;
-  --color-info-text: #7dd3fc;
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
-  --color-danger: #ef4444;
-  --color-info: #38bdf8;
+  --color-success: #15803d;
+  --color-warning: #b45309;
+  --color-danger: #b3261e;
+  --color-info: #0369a1;
+  --color-success-text: #166534;
+  --color-warning-text: #92400e;
+  --color-danger-text: #b3261e;
+  --color-info-text: #075985;
 
   --radius-card: 12px;
   --animate-fade-in: fade-in 160ms ease-out;
@@ -40,39 +44,36 @@
 @keyframes slide-in { from { transform: translateX(-100%) } to { transform: translateX(0) } }
 @keyframes pop-in { from { opacity: 0; transform: translateY(4px) scale(0.98) } to { opacity: 1; transform: none } }
 
-:root { color-scheme: dark; }
+/* Espresso (dark theme) */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-background: #1c1916;
+  --color-surface: #26211c;
+  --color-elevated: #2d2822;
+  --color-hover: #302a24;
+  --color-foreground: #f4f1ea;     /* 15.5:1 */
+  --color-muted: #b9b1a5;
+  --color-subtle: #9a9286;
+  --color-border: #3a332b;
+  --color-border-strong: #4d443a;
 
-/* Light theme: same brand, re-tuned for white surfaces. Text tokens are darkened to meet WCAG AA (4.5:1). */
-:root[data-theme="light"] {
-  color-scheme: light;
-  --color-background: #f7f7f8;
-  --color-surface: #ffffff;
-  --color-elevated: #ffffff;
-  --color-hover: #efeff2;
-  --color-foreground: #0f0f12;
-  --color-muted: #52525b;
-  --color-subtle: #6b6b76;
-  --color-border: rgb(15 15 18 / 0.1);
-  --color-border-strong: rgb(15 15 18 / 0.18);
-  --color-brand: #a10bb0;
-  --color-brand-hover: #8a0997;
-  --color-brand-tint: #f6e6f8;
-  --color-brand-text: #8a0997;
-  --color-success: #15803d;
-  --color-warning: #b45309;
-  --color-danger: #dc2626;
-  --color-info: #0369a1;
-  --color-success-text: #166534;
-  --color-warning-text: #92400e;
-  --color-danger-text: #b91c1c;
-  --color-info-text: #075985;
+  --color-brand: #d9662a;
+  --color-brand-hover: #e07a3f;
+  --color-brand-tint: #3a2417;
+  --color-brand-text: #e07a3f;     /* orange text on espresso (5.9:1) */
+  --color-gold: #c9a96e;           /* champagne on espresso (7.8:1) */
+
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-info: #38bdf8;
+  --color-success-text: #86efac;
+  --color-warning-text: #fbbf24;
+  --color-danger-text: #f87171;
+  --color-info-text: #7dd3fc;
 }
 
-/* Theme change: circular reveal from the toggle (View Transitions API). Falls back to an instant swap. */
-::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
-::view-transition-old(root) { z-index: 1; }
-::view-transition-new(root) { z-index: 2; }
-@media (prefers-reduced-motion: reduce) { ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; } }
+:root { color-scheme: light; }
 
 html, body {
   background: var(--color-background);
@@ -80,20 +81,21 @@ html, body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
+h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.01em; }
 
-::selection { background: rgb(183 13 198 / 0.35); }
+::selection { background: rgb(217 102 42 / 0.3); }
 
 /* Thin, quiet scrollbars */
-* { scrollbar-width: thin; scrollbar-color: rgb(255 255 255 / 0.12) transparent; }
+* { scrollbar-width: thin; scrollbar-color: var(--color-border-strong) transparent; }
 
-.bg-brand-gradient { background-image: linear-gradient(135deg, #7c3aed, #b70dc6); }
-.bg-glow { background-image: radial-gradient(ellipse at top, rgb(183 13 198 / var(--glow, 0.15)) 0%, transparent 60%); }
-.text-brand-gradient {
-  background-image: linear-gradient(135deg, #a78bfa, #e879f9);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
+/* Small uppercase champagne labels */
+.label-gold { color: var(--color-gold); text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.6875rem; font-weight: 600; }
 
 /* Date input icon on dark */
-input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.7); }
-:root[data-theme="light"] { --glow: 0.07; }
-:root[data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator { filter: none; }
+:root[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.7); }
+
+/* Theme change: circular reveal from the toggle (View Transitions API). Falls back to an instant swap. */
+::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+::view-transition-old(root) { z-index: 1; }
+::view-transition-new(root) { z-index: 2; }
+@media (prefers-reduced-motion: reduce) { ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; } }

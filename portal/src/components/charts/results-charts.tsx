@@ -34,8 +34,8 @@ export function ResultsCharts({ rows }: { rows: Row[] }) {
           <XAxis dataKey="date" tickFormatter={short} tick={tick} tickLine={false} axisLine={false} minTickGap={24} />
           <YAxis tick={tick} tickLine={false} axisLine={false} allowDecimals={false} />
           <Tooltip {...tip} />
-          <Bar dataKey="leads" name="Leads" fill="#7c3aed" radius={[3, 3, 0, 0]} />
-          <Bar dataKey="bookings" name="Bookings" fill="#22c55e" radius={[3, 3, 0, 0]} />
+          <Bar dataKey="leads" name="Leads" fill="var(--color-brand)" radius={[3, 3, 0, 0]} />
+          <Bar dataKey="bookings" name="Bookings" fill="var(--color-success)" radius={[3, 3, 0, 0]} />
         </BarChart>
       </Frame>
       <Frame title="Calls per day">
@@ -44,7 +44,7 @@ export function ResultsCharts({ rows }: { rows: Row[] }) {
           <XAxis dataKey="date" tickFormatter={short} tick={tick} tickLine={false} axisLine={false} minTickGap={24} />
           <YAxis tick={tick} tickLine={false} axisLine={false} allowDecimals={false} />
           <Tooltip {...tip} />
-          <Area type="monotone" dataKey="calls" name="Calls" stroke="#38bdf8" fill="#38bdf8" fillOpacity={0.15} strokeWidth={2} />
+          <Area type="monotone" dataKey="calls" name="Calls" stroke="var(--color-gold)" fill="var(--color-gold)" fillOpacity={0.15} strokeWidth={2} />
         </AreaChart>
       </Frame>
       <Frame title="Minutes used per day">
@@ -53,7 +53,7 @@ export function ResultsCharts({ rows }: { rows: Row[] }) {
           <XAxis dataKey="date" tickFormatter={short} tick={tick} tickLine={false} axisLine={false} minTickGap={24} />
           <YAxis tick={tick} tickLine={false} axisLine={false} />
           <Tooltip {...tip} />
-          <Bar dataKey="minutesUsed" name="Minutes" fill="#b70dc6" radius={[3, 3, 0, 0]} />
+          <Bar dataKey="minutesUsed" name="Minutes" fill="var(--color-gold)" radius={[3, 3, 0, 0]} />
         </BarChart>
       </Frame>
     </div>

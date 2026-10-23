@@ -6,7 +6,7 @@ export function Card({ className, featured, ...props }: React.HTMLAttributes<HTM
     <div
       className={cn(
         "rounded-xl border bg-surface",
-        featured ? "border-brand/40 shadow-[0_0_40px_-20px_rgba(183,13,198,0.6)]" : "border-border",
+        featured ? "border-brand/50" : "border-border",
         className,
       )}
       {...props}

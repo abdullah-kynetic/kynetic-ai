@@ -6,7 +6,7 @@ export function Progress({ value, className, tone = "brand" }: { value: number; 
     <div role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(v)} className={cn("h-2 w-full overflow-hidden rounded-full bg-foreground/[0.06]", className)}>
       <div
         className={cn("h-full rounded-full transition-[width] duration-500",
-          tone === "brand" && "bg-brand-gradient", tone === "warning" && "bg-warning", tone === "danger" && "bg-danger")}
+          tone === "brand" && "bg-brand", tone === "warning" && "bg-warning", tone === "danger" && "bg-danger")}
         style={{ width: `${v}%` }}
       />
     </div>

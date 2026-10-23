@@ -39,7 +39,7 @@ export function Switcher({ title, sub, entries, onNavigate }: { title: string; s
     <div ref={ref} className="relative min-w-0 flex-1">
       <button type="button" aria-haspopup="listbox" aria-expanded={open} onClick={() => setOpen((o) => !o)} className={cn(cls, "hover:bg-foreground/[0.05]")}>{head}</button>
       {open ? (
-        <div role="listbox" className="absolute left-0 top-full z-40 mt-1 max-h-80 w-64 animate-pop-in overflow-auto rounded-xl border border-border-strong bg-elevated p-1 shadow-xl">
+        <div role="listbox" className="absolute left-0 top-full z-40 mt-1 max-h-80 w-64 animate-pop-in overflow-auto rounded-xl border border-border-strong bg-elevated p-1">
           {entries.map((e) => (
             <Link key={e.href} href={e.href} role="option" aria-selected={e.href === activeHref} onClick={() => { setOpen(false); onNavigate?.(); }}
               className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm hover:bg-foreground/[0.06]">

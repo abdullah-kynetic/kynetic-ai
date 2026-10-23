@@ -36,13 +36,13 @@ export function Dialog({ open, onOpenChange, title, description, children, class
   if (!open || typeof document === "undefined") return null;
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4">
-      <div className="absolute inset-0 animate-fade-in bg-black/70 backdrop-blur-sm" onClick={dismissible ? close : undefined} />
+      <div className="absolute inset-0 animate-fade-in bg-black/50" onClick={dismissible ? close : undefined} />
       <div
         ref={panel}
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={cn("relative z-10 max-h-[90dvh] w-full overflow-y-auto rounded-t-2xl border border-border bg-surface p-5 shadow-2xl animate-pop-in sm:max-w-lg sm:rounded-2xl", className)}
+        className={cn("relative z-10 max-h-[90dvh] w-full overflow-y-auto rounded-t-2xl border border-border bg-surface p-5 animate-pop-in sm:max-w-lg sm:rounded-2xl", className)}
       >
         <div className="mb-4 flex items-start justify-between gap-4">
           <div>
@@ -69,9 +69,9 @@ export function Sheet({ open, onOpenChange, children, side = "left", label }: { 
   if (!open || typeof document === "undefined") return null;
   return createPortal(
     <div className="fixed inset-0 z-50">
-      <div className="absolute inset-0 animate-fade-in bg-black/70 backdrop-blur-sm" onClick={close} />
+      <div className="absolute inset-0 animate-fade-in bg-black/50" onClick={close} />
       <div role="dialog" aria-modal="true" aria-label={label}
-        className={cn("absolute inset-y-0 w-72 max-w-[85vw] border-border bg-background shadow-2xl animate-slide-in", side === "left" ? "left-0 border-r" : "right-0 border-l")}>
+        className={cn("absolute inset-y-0 w-72 max-w-[85vw] border-border bg-background animate-slide-in", side === "left" ? "left-0 border-r" : "right-0 border-l")}>
         {children}
       </div>
     </div>,

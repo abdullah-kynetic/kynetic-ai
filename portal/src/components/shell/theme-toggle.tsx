@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 /** Light/dark toggle. The new theme sweeps out from the button as a circle (View Transitions); older browsers and reduced-motion users get an instant swap. */
 export function ThemeToggle({ className }: { className?: string }) {
   const [theme, setTheme] = useState<"light" | "dark">(() =>
-    typeof document !== "undefined" && document.documentElement.dataset.theme === "light" ? "light" : "dark");
+    typeof document !== "undefined" && document.documentElement.dataset.theme === "dark" ? "dark" : "light");
 
   function toggle(e: React.MouseEvent<HTMLButtonElement>) {
     const next = theme === "dark" ? "light" : "dark";
