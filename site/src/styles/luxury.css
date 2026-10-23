@@ -7,7 +7,7 @@
   color-scheme: light;
   --kn-bg: #faf8f5;
   --kn-alt: #f2eee8;
-  --kn-navy: #0B1A33;
+  --kn-navy: #1C1916;
   --kn-card: #ffffff;
   --kn-line: #e8e2d8;
   --kn-line2: #e8e2d8;
@@ -34,19 +34,19 @@ section[data-framer-name="Process"],
 section[data-framer-name="Testimonials"] {
   --kn-ink: #f4f1ea;
   --kn-muted: #b9b3a9;
-  --kn-card: #112444;
-  --kn-line: #c9a96e33;
+  --kn-card: #26211C;
+  --kn-line: #3A332B;
   --kn-line2: #f4f1ea40;
-  --kn-track: #2a3b5c;
-  --kn-accent-text: #E8854F;
+  --kn-track: #3A332B;
+  --kn-accent-text: #E07A3F;
   --kn-accent-hover: #F2A173;
   --kn-champagne: #C9A96E;
-  --token-b3ff2230-c5c0-41a8-b629-d659f479b689: #0B1A33;
+  --token-b3ff2230-c5c0-41a8-b629-d659f479b689: #1C1916;
   --token-92a1cea2-6d53-45ff-98da-32c110a8c3fc: #f4f1ea;
   --token-8c14519b-b926-46e8-8772-9a05cbede172: #b9b3a9;
   --token-c9fc1380-5d14-49ab-960e-cc3a53f6f2d0: #c9a96e1f;
   --token-6839e435-35f3-4ab3-b723-e98c27e525bc: #c9a96e33;
-  --token-729f323b-4a85-474f-8f3a-c5c840127090: #112444;
+  --token-729f323b-4a85-474f-8f3a-c5c840127090: #26211C;
   --token-667dfe34-ef33-4a0e-b107-e347ef5ffaa2: #f4f1ea26;
   --token-17c08985-425f-4b75-81e9-d1425ce278a8: #f4f1ea1f;
   --token-7d1aeb66-0d56-4f38-8bc3-f9e169a51b6e: #f4f1ea;
