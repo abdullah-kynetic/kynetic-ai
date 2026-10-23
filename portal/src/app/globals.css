@@ -52,7 +52,7 @@
   --color-elevated: #2d2822;
   --color-hover: #302a24;
   --color-foreground: #f4f1ea;     /* 15.5:1 */
-  --color-muted: #b9b1a5;
+  --color-muted: #b9b2a7;
   --color-subtle: #9a9286;
   --color-border: #3a332b;
   --color-border-strong: #4d443a;
@@ -69,7 +69,7 @@
   --color-info: #38bdf8;
   --color-success-text: #86efac;
   --color-warning-text: #fbbf24;
-  --color-danger-text: #f87171;
+  --color-danger-text: #ff8a80;
   --color-info-text: #7dd3fc;
 }
 
