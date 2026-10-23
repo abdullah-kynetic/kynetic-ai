@@ -5,7 +5,7 @@ import { animate } from 'motion';
 
 const ENDPOINT: string = import.meta.env.PUBLIC_CONTACT_WEBHOOK ?? '';
 const TWEEN = { duration: 0.2, ease: [0.44, 0, 0.56, 1] } as const;
-const BG = { rest: 'rgb(217, 102, 42)', hover: 'rgb(229, 122, 66)', press: 'rgb(194, 85, 34)', error: 'rgba(255, 34, 68, 0.15)' };
+const BG = { rest: 'rgb(217, 102, 42)', hover: 'rgb(229, 122, 66)', press: 'rgb(194, 85, 34)', error: 'rgba(179, 38, 30, 0.1)' };
 
 export function initForm() {
   document.querySelectorAll<HTMLFormElement>('form').forEach((form) => {
@@ -47,7 +47,7 @@ export function initForm() {
           animate(s, { rotate: 360 }, { duration: 1, ease: 'linear', repeat: Infinity });
         }
         if (next === 'success') { p.textContent = 'Thank you'; paint(btn, BG.rest); }
-        if (next === 'error') { p.textContent = 'Something went wrong'; p.style.color = 'rgb(255, 34, 68)'; paint(btn, idleBg()); }
+        if (next === 'error') { p.textContent = 'Something went wrong'; p.style.color = '#B3261E'; paint(btn, idleBg()); }
       };
     });
     const setAll = (s: typeof state) => buttons.forEach((b) => (b as any)._set(s));

@@ -21,7 +21,7 @@ export function initButtons() {
         const dy = before[i] - r.getBoundingClientRect().top;
         if (dy) animate(r, { y: [dy, 0] }, SPRING);
       });
-      animate(btn, { '--border-color': on ? 'rgba(201, 169, 110, 0.5)' : 'rgba(201, 169, 110, 0.2)' }, SPRING);
+      animate(btn, { '--border-color': on ? 'rgba(138, 106, 47, 0.6)' : 'rgba(138, 106, 47, 0.3)' }, SPRING);
       if (orange) animate(btn, { backgroundColor: on ? 'rgb(229, 122, 66)' : 'rgb(217, 102, 42)' }, SPRING);
     };
     btn.addEventListener('pointerenter', (e) => e.pointerType === 'mouse' && roll(true));

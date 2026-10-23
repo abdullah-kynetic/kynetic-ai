@@ -20,7 +20,7 @@ export async function initParticles() {
       interactivity: { events: { onClick: { enable: false }, onHover: { enable: false } } },
       particles: {
         number: { value: 30, density: { enable: false } },
-        color: { value: 'rgb(201, 169, 110)' },
+        color: { value: 'rgb(138, 106, 47)' },
         shape: { type: 'circle' },
         opacity: { value: 1 },
         size: { value: { min: 1, max: 2 } },

@@ -9,19 +9,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  /* Luxury palette. Dark is the default; light follows the OS setting.
+  /* Luxury palette, light only (no dark mode, whatever the OS setting).
      --accent is orange for text/links (A8461A on light surfaces), --accent-fill is the orange button fill. */
   :root{
-    --bg:#0e0d0b; --navy:#0b1220; --card:#121b2d; --line:rgba(201,169,110,.28); --text:#f4f1ea; --text-soft:#d6d1c8;
-    --muted:#a8a29a; --accent:#D9662A; --accent-hover:#E57A42; --accent-fill:#D9662A; --champ:#C9A96E;
-    --field:#0b1220; --track:#1c2740; --tint:rgba(201,169,110,.08); --on-accent:#0e0d0b;
-  }
-  @media (prefers-color-scheme: light){
-    :root{
-      --bg:#faf8f5; --navy:#0B1A33; --card:#ffffff; --line:rgba(138,106,47,.35); --text:#14100c; --text-soft:#3a342e;
-      --muted:#5c5650; --accent:#A8461A; --accent-hover:#8F3B15; --accent-fill:#D9662A; --champ:#8A6A2F;
-      --field:#f2eee8; --track:#ddd6cb; --tint:rgba(138,106,47,.08); --on-accent:#0e0d0b;
-    }
+    color-scheme:light;
+    --bg:#faf8f5; --navy:#0B1A33; --card:#ffffff; --line:#e8e2d8; --text:#14100c; --text-soft:#3a342e;
+    --muted:#5c5650; --accent:#A8461A; --accent-hover:#8F3B15; --accent-fill:#D9662A; --champ:#8A6A2F;
+    --field:#f2eee8; --track:#ddd6cb; --tint:rgba(138,106,47,.08); --on-accent:#0e0d0b;
   }
   *{box-sizing:border-box}
   html,body{margin:0;background:var(--bg);color:var(--text);

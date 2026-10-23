@@ -1,26 +1,75 @@
-/* Luxury rebrand layer: burnt orange + navy on warm near-black, champagne for hairlines and labels.
-   The Framer snapshot CSS carries the palette through its tokens; this file covers what tokens cannot
-   (fonts, section surfaces, button label colour, and removing glows, gradients and shadows). */
+/* Luxury rebrand layer, light-first: warm off-white page, white cards, navy header/footer and two navy sections,
+   burnt orange fills with near-black labels, champagne hairlines and labels.
+   The Framer snapshot CSS carries its palette through --token-* custom properties (swapped to light values in
+   snapshot/*.css) and the markup routes its inline colours through the --kn-* properties below. Navy surfaces
+   re-declare both sets (see "Navy surfaces") so text on them stays light. */
 :root {
-  --kn-bg: #0e0d0b;
-  --kn-navy: #0b1220;
-  --kn-card: #121b2d;
-  --kn-text: #f4f1ea;
-  --kn-muted: #a8a29a;
-  --kn-orange: #d9662a;
-  --kn-orange-hover: #e57a42;
-  --kn-champagne: #c9a96e;
+  color-scheme: light;
+  --kn-bg: #faf8f5;
+  --kn-alt: #f2eee8;
+  --kn-navy: #0B1A33;
+  --kn-card: #ffffff;
+  --kn-line: #e8e2d8;
+  --kn-line2: #e8e2d8;
+  --kn-track: #e8e2d8;
+  --kn-fill: #D9662A;
+  --kn-ink: #14100c;
+  --kn-muted: #5c5650;
+  --kn-orange: #D9662A;
   --kn-on-orange: #0e0d0b;
+  --kn-accent-text: #A8461A;
+  --kn-accent-hover: #8F3B15;
+  --kn-champagne: #8A6A2F;
+  --kn-error: #B3261E;
   --kn-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
   --kn-sans: "Inter", "Inter Placeholder", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
-html, body { background-color: var(--kn-bg); color: var(--kn-text); }
+html, body { background-color: var(--kn-bg); color: var(--kn-ink); }
 
-/* Surfaces: navy header (inline), navy footer, and two navy sections to break up the dark neutrals */
+/* Navy surfaces: header, footer, Process and Testimonials. Same tokens, dark values. */
+nav.framer-FbUpk,
 footer.framer-34GLz,
 section[data-framer-name="Process"],
-section[data-framer-name="Testimonials"] { background-color: var(--kn-navy); }
+section[data-framer-name="Testimonials"] {
+  --kn-ink: #f4f1ea;
+  --kn-muted: #b9b3a9;
+  --kn-card: #112444;
+  --kn-line: #c9a96e33;
+  --kn-line2: #f4f1ea40;
+  --kn-track: #2a3b5c;
+  --kn-accent-text: #E8854F;
+  --kn-accent-hover: #F2A173;
+  --kn-champagne: #C9A96E;
+  --token-b3ff2230-c5c0-41a8-b629-d659f479b689: #0B1A33;
+  --token-92a1cea2-6d53-45ff-98da-32c110a8c3fc: #f4f1ea;
+  --token-8c14519b-b926-46e8-8772-9a05cbede172: #b9b3a9;
+  --token-c9fc1380-5d14-49ab-960e-cc3a53f6f2d0: #c9a96e1f;
+  --token-6839e435-35f3-4ab3-b723-e98c27e525bc: #c9a96e33;
+  --token-729f323b-4a85-474f-8f3a-c5c840127090: #112444;
+  --token-667dfe34-ef33-4a0e-b107-e347ef5ffaa2: #f4f1ea26;
+  --token-17c08985-425f-4b75-81e9-d1425ce278a8: #f4f1ea1f;
+  --token-7d1aeb66-0d56-4f38-8bc3-f9e169a51b6e: #f4f1ea;
+  --token-061fde40-8df3-4a80-b54f-43767097cbb9: #f4f1ea33;
+  --token-5e82b7fb-875b-478b-b151-baffd23609a0: #f4f1ea33;
+  --token-b07f98ba-d294-46af-ad23-b848a3a1115d: #D9662A;
+  --token-55fce8bf-ab86-42dc-8b77-6335cf9cf588: #f4f1ea;
+  color: var(--kn-ink);
+}
+nav.framer-FbUpk,
+footer.framer-34GLz,
+section[data-framer-name="Process"],
+section[data-framer-name="Testimonials"] { background-color: var(--kn-navy) !important; }
+
+/* Icons drawn as data-URI SVGs can't read custom properties; they are dark ink in the markup, so flip them on navy */
+nav.framer-FbUpk [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]),
+footer.framer-34GLz [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]),
+section[data-framer-name="Process"] [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]),
+section[data-framer-name="Testimonials"] [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]) { filter: invert(1); }
+
+/* Alt sections */
+section[data-framer-name="Services"],
+section[data-framer-name="Contact"] { background-color: var(--kn-alt); }
 
 /* Type: Cormorant Garamond headlines, Inter body */
 .framer-text, .framer-text *, input, textarea, button { font-family: var(--kn-sans) !important; }
@@ -46,11 +95,10 @@ h1.framer-text *, h2.framer-text *, h3.framer-text * {
 button.framer-NHy43 p.framer-text { --framer-text-color: var(--kn-on-orange) !important; }
 .framer-yPywB.kn-orange svg,
 .framer-yPywB[style*="background-color:rgb(217, 102, 42)"] svg { stroke: var(--kn-on-orange); }
-.framer-yPywB, button.framer-NHy43 { box-shadow: none !important; }
 
 /* Decorative glow and blurred footer shapes are removed (their fills are already neutralised in the markup) */
 [data-framer-name="Glow"], [data-framer-name="Light shade"], .framer-nlg57g, .framer-1ak19lv { display: none !important; }
 
 /* No glows, no text shadows, no drop shadows */
-*, *::before, *::after { text-shadow: none !important; }
-.framer-1uh874n { filter: none !important; }
+*, *::before, *::after { text-shadow: none !important; box-shadow: none !important; }
+[style*="drop-shadow"], .framer-1uh874n { filter: none !important; }
