@@ -1,5 +1,8 @@
 // Top navigation: link hover chip, scroll-spy highlight, smooth anchor scrolling and the mobile menu.
 // Nav links (framer-520aC): background fades to the alt surface (#f2eee8) on hover/selected, spring 300/50.
+// Desktop pill (framer-FbUpk): collapses to a compact pill (mark, links, icon button) once the Process section
+// reaches the top of the viewport, and expands again on the way back up. Measured on the published site:
+// variant Desktop -> Process (framer-v-vc9era), pill 1200 -> 495px, ~0.6s spring ease-out.
 // Mobile bar (framer-FbUpk): closed 64px -> open (menu height) spring 500/60, hamburger lines cross.
 import { animate } from 'motion';
 import { reducedMotion } from './appear';
@@ -7,6 +10,7 @@ import { reducedMotion } from './appear';
 const CHIP_ON = 'rgb(242, 238, 232)';
 const CHIP_OFF = 'rgba(242, 238, 232, 0)';
 const CHIP = { type: 'spring', stiffness: 300, damping: 50, mass: 1 } as const;
+const PILL = { type: 'spring', stiffness: 220, damping: 30, mass: 1 } as const;
 const BAR = { type: 'spring', stiffness: 500, damping: 60, mass: 1 } as const;
 
 // Scroll-spy: a link is selected from the moment its section top passes this line.
@@ -43,6 +47,35 @@ function initLinks() {
   };
   addEventListener('scroll', spy, { passive: true });
   spy();
+}
+
+function initCollapse() {
+  const nav = document.querySelector<HTMLElement>('nav[data-framer-name="Desktop"]');
+  const pill = nav?.querySelector<HTMLElement>('.framer-1eavvn1');
+  const logo = nav?.querySelector<HTMLElement>('.framer-iz97ye');
+  const process = document.getElementById('process');
+  if (!nav || !pill || !logo || !process) return;
+  const FULL = 'framer-v-1t6bwo0', COMPACT = 'framer-v-vc9era';
+  let compact = false;
+
+  const set = (next: boolean) => {
+    if (next === compact) return;
+    compact = next;
+    const from = pill.getBoundingClientRect().width;
+    nav.classList.replace(compact ? FULL : COMPACT, compact ? COMPACT : FULL);
+    nav.classList.toggle('kn-nav-compact', compact);
+    nav.dataset.framerName = compact ? 'Process' : 'Desktop';
+    pill.dataset.framerName = nav.dataset.framerName;
+    if (reducedMotion()) return;
+    const to = pill.getBoundingClientRect().width;
+    animate(pill, { width: [`${from}px`, `${to}px`] }, PILL).then(() => (pill.style.width = ''));
+    animate(logo, { opacity: [0, 1] }, { duration: 0.3 });
+  };
+
+  // Collapsed from the moment the Process section top passes the viewport top (same line as the scroll-spy).
+  const check = () => set(process.getBoundingClientRect().top <= SPY_OFFSET);
+  addEventListener('scroll', check, { passive: true });
+  check();
 }
 
 function scrollToHash(hash: string) {
@@ -105,6 +138,7 @@ function initMobileMenu() {
 
 export function initNav() {
   initLinks();
+  initCollapse();
   initAnchors();
   initMobileMenu();
 }

@@ -2,6 +2,10 @@
 /* White bar with a 1px border token, ink links that turn orange-text on hover, ink hamburger. The desktop
    pill (framer-1eavvn1) and the mobile bar carry the fill inline (#ffffff) and read the border token. */
 nav.framer-FbUpk { color: var(--kn-ink); }
+/* Collapsed desktop pill: the K mark replaces the wordmark and the button keeps only its arrow */
+nav.kn-nav-compact .framer-iz97ye img[alt="Kynetic AI"] { display: none !important; }
+nav.kn-nav-compact .framer-iz97ye .kn-nav-mark { display: block !important; }
+nav.kn-nav-compact .framer-17m08j9, nav.kn-nav-compact .framer-xo714e { display: none; }
 nav.framer-FbUpk a.framer-520aC:hover p.framer-text { --framer-text-color: var(--kn-accent-text) !important; color: var(--kn-accent-text) !important; }
 nav.framer-FbUpk .framer-1poozl0 a:hover p.framer-text { --framer-text-color: var(--kn-accent-text) !important; color: var(--kn-accent-text) !important; }
 
@@ -37,10 +41,15 @@ section[data-framer-name="Services"] .framer-1kdc4rl { background-color: var(--c
 section[data-framer-name="Services"] [style*="--border-color:rgba(255, 255, 255"] { --border-color: var(--kn-line) !important; }
 
 /* Plans -------------------------------------------------------------------------------------------- */
-/* "Fully Managed Build" tag: gold fill (#8A6A2F) with a #faf8f5 label, 4.7:1 */
-section[data-framer-name="Plans"] .framer-1j44nk1 { background-color: var(--color-gold) !important; }
+/* "Fully Managed Build" tag: a single soft-orange pill (#D9662A at ~10% over white) with a 1px orange border and
+   #A8461A text (5.5:1). The outer wrapper is the pill; the inner gold fill is cleared so there is no double pill. */
+section[data-framer-name="Plans"] .framer-14aj3ks {
+  background-color: #fbefe9 !important; border: 1px solid var(--color-accent); border-radius: 999px !important; box-sizing: border-box; padding: 0 !important;
+}
+section[data-framer-name="Plans"] .framer-1j44nk1 { background-color: transparent !important; top: 0; left: 0; width: 100%; height: 100%; }
+section[data-framer-name="Plans"] .framer-x2q6p8 { background-color: transparent !important; }
 section[data-framer-name="Plans"] .framer-14aj3ks p.framer-text {
-  --framer-text-color: var(--color-page) !important; color: var(--color-page) !important;
+  --framer-text-color: #A8461A !important; color: #A8461A !important;
 }
 /* Prices stay ink; the featured card (Full System) gets the orange border */
 section[data-framer-name="Plans"] .framer-7cpj4a[data-border="true"] { --border-color: var(--color-accent) !important; }

@@ -35,6 +35,26 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
     ok(`desktop nav "${label}" scrolls to #${id}`, Math.abs(top) < 120, `top=${Math.round(top)}`);
     ok(`desktop nav "${label}" updates hash`, (await page.evaluate(() => location.hash)) === '#' + id);
   }
+  // nav collapses to the compact pill once #process reaches the top, and expands again on the way back
+  {
+    const pillW = () => page.evaluate(() => Math.round(document.querySelector('nav.framer-1t6bwo0 .framer-1eavvn1').getBoundingClientRect().width));
+    const name = () => page.evaluate(() => document.querySelector('nav.framer-1t6bwo0').dataset.framerName);
+    const pt = await page.evaluate(() => document.getElementById('process').getBoundingClientRect().top + scrollY);
+    await page.evaluate(() => scrollTo({ top: 0, behavior: 'instant' })); await page.waitForTimeout(1200);
+    const w0 = await pillW();
+    ok('nav expanded at top', (await name()) === 'Desktop' && w0 > 1000, `w=${w0}`);
+    await page.evaluate((y) => scrollTo({ top: y - 5, behavior: 'instant' }), pt); await page.waitForTimeout(800);
+    ok('nav still expanded just above #process', (await name()) === 'Desktop' && (await pillW()) === w0);
+    await page.evaluate((y) => scrollTo({ top: y + 5, behavior: 'instant' }), pt); await page.waitForTimeout(1500);
+    const w1 = await pillW();
+    ok('nav collapses past Who We Are', (await name()) === 'Process' && w1 < 700 && w1 > 300, `w=${w1}`);
+    ok('collapsed nav shows the K mark, not the wordmark', await page.evaluate(() => {
+      const l = document.querySelector('nav.framer-1t6bwo0 .framer-iz97ye'); const vis = (e) => e.getBoundingClientRect().width > 0;
+      return vis(l.querySelector('.kn-nav-mark')) && !vis(l.querySelector('img[alt="Kynetic AI"]'));
+    }));
+    await page.evaluate(() => scrollTo({ top: 0, behavior: 'instant' })); await page.waitForTimeout(1500);
+    ok('nav expands again scrolling back up', (await name()) === 'Desktop' && (await pillW()) === w0);
+  }
   // FAQ
   await page.evaluate(() => document.getElementById('contact') && 0);
   const rows = page.locator('.framer-Hzat5');
