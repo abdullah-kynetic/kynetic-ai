@@ -43,3 +43,13 @@ section[data-framer-name="Process"] span[style*="rgb(217, 102, 42)"] { color: va
 section[data-framer-name="Testimonials"] .framer-xpzngr { background-color: var(--color-border); }
 /* Star ratings, if added, are gold on the alternate band */
 section[data-framer-name="Testimonials"] [data-framer-name*="tar"] { color: var(--color-gold-on-alt); fill: var(--color-gold-on-alt); }
+
+/* Contact and FAQ ---------------------------------------------------------------------------------- */
+/* Both sit on the page background (Contact follows the alternate Testimonials band). Form fields are in
+   components.css. FAQ rows are white cards with a border token, in both open and closed states. */
+.framer-FuH2f .framer-Hzat5 {
+  background-color: var(--kn-card) !important;
+  --border-color: var(--kn-line) !important;
+  --border-style: solid; --border-top-width: 1px; --border-right-width: 1px;
+  --border-bottom-width: 1px; --border-left-width: 1px;
+}

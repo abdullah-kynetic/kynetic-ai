@@ -67,9 +67,6 @@ footer.framer-34GLz { background-color: var(--kn-navy) !important; }
 nav.framer-FbUpk [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]),
 footer.framer-34GLz [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]) { filter: invert(1); }
 
-/* Alt sections */
-section[data-framer-name="Contact"] { background-color: var(--kn-alt); }
-
 /* Type: Cormorant Garamond headlines, Inter body */
 .framer-text, .framer-text *, input, textarea, button { font-family: var(--kn-sans) !important; }
 h1.framer-text, h2.framer-text, h3.framer-text,
