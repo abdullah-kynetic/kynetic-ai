@@ -1,3 +1,39 @@
+/* Espresso surfaces: header, footer and the closing CTA band. Same tokens, dark values. */
+nav.framer-FbUpk,
+footer.framer-34GLz,
+.framer-FuH2f .framer-1gqj635 {
+  --kn-ink: var(--espresso-text);
+  --kn-muted: var(--espresso-muted);
+  --kn-card: var(--espresso-card);
+  --kn-line: var(--espresso-border);
+  --kn-line2: var(--espresso-divider);
+  --kn-track: var(--espresso-border);
+  --kn-accent-text: var(--espresso-accent-text);
+  --kn-accent-hover: var(--espresso-accent-text-hover);
+  --kn-champagne: var(--espresso-gold);
+  --token-b3ff2230-c5c0-41a8-b629-d659f479b689: #1C1916;
+  --token-92a1cea2-6d53-45ff-98da-32c110a8c3fc: #f4f1ea;
+  --token-8c14519b-b926-46e8-8772-9a05cbede172: #b9b2a7;
+  --token-c9fc1380-5d14-49ab-960e-cc3a53f6f2d0: #c9a96e1f;
+  --token-6839e435-35f3-4ab3-b723-e98c27e525bc: #c9a96e33;
+  --token-729f323b-4a85-474f-8f3a-c5c840127090: #26211C;
+  --token-667dfe34-ef33-4a0e-b107-e347ef5ffaa2: #f4f1ea26;
+  --token-17c08985-425f-4b75-81e9-d1425ce278a8: #f4f1ea1f;
+  --token-7d1aeb66-0d56-4f38-8bc3-f9e169a51b6e: #f4f1ea;
+  --token-061fde40-8df3-4a80-b54f-43767097cbb9: #f4f1ea33;
+  --token-5e82b7fb-875b-478b-b151-baffd23609a0: #f4f1ea33;
+  --token-b07f98ba-d294-46af-ad23-b848a3a1115d: #D9662A;
+  --token-55fce8bf-ab86-42dc-8b77-6335cf9cf588: #f4f1ea;
+  color: var(--kn-ink);
+}
+nav.framer-FbUpk,
+footer.framer-34GLz { background-color: var(--kn-band) !important; }
+
+/* Icons drawn as data-URI SVGs can't read custom properties; they are dark ink in the markup, so flip them on espresso */
+nav.framer-FbUpk [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]),
+footer.framer-34GLz [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]),
+.framer-1gqj635 [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]) { filter: invert(1); }
+
 /* Sections layer, loaded after components.css: per-section surfaces for the home page.
    Surfaces: page (#faf8f5) for hero, intro, Services, Plans, Contact and FAQ; alternate band (#f2eee8)
    for Process and Testimonials; espresso for header, footer and the closing CTA band. Everything reads the
@@ -55,13 +91,13 @@ section[data-framer-name="Testimonials"] [data-framer-name*="tar"] { color: var(
 }
 
 /* Closing CTA band ---------------------------------------------------------------------------------- */
-/* The CTA block is the page's espresso accent band (tokens re-declared in luxury.css). The band is a
+/* The CTA block is the page's espresso accent band (tokens re-declared above). The band is a
    full-width pseudo-element behind the block, running down through the section's bottom padding to the
    footer; the section clips it sideways. The primary button stays orange with a near-black label. */
 .framer-FuH2f .framer-1gqj635 { overflow: visible; isolation: isolate; }
 .framer-FuH2f .framer-1gqj635::before {
   content: ""; position: absolute; z-index: -1; top: 0; bottom: -80px; left: 50%;
-  width: 100vw; transform: translateX(-50%); background-color: var(--kn-navy);
+  width: 100vw; transform: translateX(-50%); background-color: var(--kn-band);
 }
 @media (min-width: 810px) and (max-width: 1199.98px) { .framer-FuH2f .framer-1gqj635::before { bottom: -56px; } }
 @media (max-width: 809.98px) { .framer-FuH2f .framer-1gqj635::before { bottom: -48px; } }

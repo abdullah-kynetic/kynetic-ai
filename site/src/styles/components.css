@@ -1,11 +1,59 @@
-/* Components layer, loaded after luxury.css: buttons, cards, badges, dividers and form fields.
-   Everything reads the semantic tokens (tokens.css) through the --kn-* aliases from luxury.css, so
+/* Components layer: base type and links, buttons, cards, badges, dividers and form fields.
+   Everything reads the semantic tokens (tokens.css) through the --kn-* aliases, so
    espresso surfaces (nav, footer) pick up their values without extra rules.
    The snapshot sets fills and borders inline, hence the !important on the properties it sets there. */
 
+html, body { font-family: var(--font-sans); background-color: var(--kn-bg); color: var(--kn-ink); }
+
+/* Links: orange text with a darker hover (espresso surfaces re-declare the tokens, so they get the light orange) */
+a { color: var(--kn-accent-text); }
+a:hover { color: var(--kn-accent-hover); }
+
+/* Type: Cormorant Garamond headlines, Inter body */
+.framer-text, .framer-text *, input, textarea, button { font-family: var(--kn-sans) !important; }
+h1.framer-text, h2.framer-text, h3.framer-text,
+h1.framer-text *, h2.framer-text *, h3.framer-text * {
+  font-family: var(--kn-serif) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+  font-size-adjust: 0.44;
+}
+
+/* Small uppercase labels with wide tracking: nav links, footer column headings (champagne) */
+.framer-1dy8hem p, .framer-1k530gz p, .framer-97ffzp p {
+  text-transform: uppercase;
+  letter-spacing: 0.16em !important;
+  font-size: 12px !important;
+}
+.framer-1k530gz p, .framer-97ffzp p { --framer-text-color: var(--kn-champagne) !important; }
+
+/* Orange buttons always carry near-black text, never white */
+.framer-yPywB.kn-orange p.framer-text,
+.framer-yPywB[style*="background-color:rgb(217, 102, 42)"] p.framer-text,
+button.framer-NHy43 p.framer-text { --framer-text-color: var(--kn-on-orange) !important; }
+.framer-yPywB.kn-orange svg,
+.framer-yPywB[style*="background-color:rgb(217, 102, 42)"] svg { stroke: var(--kn-on-orange); }
+
+/* Decorative glow and blurred footer shapes are removed (their fills are already neutralised in the markup) */
+[data-framer-name="Glow"], [data-framer-name="Light shade"], .framer-nlg57g, .framer-1ak19lv { display: none !important; }
+
+/* No glows, no text shadows, no drop shadows */
+*, *::before, *::after { text-shadow: none !important; box-shadow: none !important; }
+[style*="drop-shadow"], .framer-1uh874n { filter: none !important; }
+
+/* Section labels (Framer "Badge"): small uppercase champagne */
+[data-framer-name="Badge"] .framer-text {
+  --framer-text-color: var(--color-gold) !important; color: var(--color-gold) !important;
+  text-transform: uppercase; letter-spacing: 0.18em; font-size: 11px !important; font-weight: 500 !important;
+}
+nav.framer-FbUpk [data-framer-name="Badge"] .framer-text,
+footer.framer-34GLz [data-framer-name="Badge"] .framer-text,
+.framer-1gqj635 [data-framer-name="Badge"] .framer-text { --framer-text-color: var(--espresso-gold) !important; color: var(--espresso-gold) !important; }
+
 /* Buttons ------------------------------------------------------------------------------------------ */
 /* Focus ring is orange on every surface (espresso scopes re-declare --kn-accent-text) */
-a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible,
+[tabindex="0"]:focus-visible {
   outline: var(--focus-ring-width) solid var(--kn-accent-text);
   outline-offset: var(--focus-ring-offset);
 }
