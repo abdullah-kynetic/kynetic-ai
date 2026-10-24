@@ -102,7 +102,7 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
   ok('hamburger toggles closed again', (await nav.getAttribute('data-framer-name')) === 'Mobileclosed');
   await ham.focus(); await page.keyboard.press('Tab'); await ham.focus();
   const ring = await ham.evaluate((e) => getComputedStyle(e).outlineStyle + ' ' + getComputedStyle(e).outlineColor);
-  ok('hamburger shows an orange focus ring', /solid rgb\(224, 122, 63\)/.test(ring), ring);
+  ok('hamburger shows an orange focus ring', /solid rgb\(168, 70, 26\)/.test(ring), ring);
   ok('mobile: no console errors', errors.length === 0, errors.slice(0, 3).join(' | '));
   await ctx.close();
 }
