@@ -60,3 +60,41 @@ section[data-framer-name="Contact"] [data-framer-name="Badge"] .framer-text {
 /* Hairline borders and dividers read the border / divider tokens, so espresso surfaces get their own values */
 [data-border="true"]:not(a.framer-yPywB):not(button) { --border-color: var(--kn-line); }
 hr { border: 0; border-top: 1px solid var(--kn-line2); }
+
+/* Form fields -------------------------------------------------------------------------------------- */
+/* White fill, darker edge (3:1 on the page), ink text, muted placeholder (>=4.5:1), orange focus ring */
+html body .framer-form-input-wrapper.framer-form-text-input {
+  --framer-input-background: #ffffff;
+  --framer-input-border-color: var(--color-border-input);
+  --framer-input-font-color: var(--color-text);
+  --framer-input-placeholder-color: var(--color-muted);
+  --framer-input-icon-color: var(--color-muted);
+  --framer-input-focused-border-color: var(--color-accent-text);
+  --framer-input-focused-background: #ffffff;
+  --framer-input-box-shadow: none;
+  --framer-input-focused-box-shadow: none;
+}
+.framer-form-input-wrapper:focus-within { outline: var(--focus-ring-width) solid var(--kn-accent-text); outline-offset: var(--focus-ring-offset); }
+/* Invalid after the visitor has interacted (native validation; the script adds no field messages) */
+html body .framer-form-input-wrapper.framer-form-text-input:has(.framer-form-input:user-invalid) {
+  --framer-input-border-color: var(--color-error);
+  --framer-input-focused-border-color: var(--color-error);
+}
+.framer-form-input:user-invalid { color: var(--color-error); }
+
+/* Submit button states (button.framer-NHy43 carries data-state, set in form.ts) */
+button.framer-NHy43[data-state="error"] {
+  background-color: transparent !important;
+  border: 1px solid var(--color-error) !important;
+}
+button.framer-NHy43[data-state="error"] p.framer-text { --framer-text-color: var(--color-error) !important; color: var(--color-error) !important; }
+button.framer-NHy43[data-state="success"] {
+  background-color: transparent !important;
+  border: 1px solid var(--color-success) !important;
+}
+button.framer-NHy43[data-state="success"] p.framer-text { --framer-text-color: var(--color-success) !important; color: var(--color-success) !important; }
+.kn-spin {
+  width: 20px; height: 20px; border-radius: 50%; box-sizing: border-box;
+  border: 3px solid transparent; border-color: color-mix(in srgb, var(--color-on-accent) 25%, transparent);
+  border-top-color: var(--color-on-accent);
+}
