@@ -9,13 +9,26 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  /* Luxury palette, light only (no dark mode, whatever the OS setting).
-     --accent is orange for text/links (A8461A on light surfaces), --accent-fill is the orange button fill. */
+  /* Mirrors the variables in src/styles/tokens.css (this page is standalone, so it can't import it); keep in step. */
   :root{
     color-scheme:light;
-    --bg:#faf8f5; --navy:#1C1916; --card:#ffffff; --line:#e8e2d8; --text:#14100c; --text-soft:#3a342e;
-    --muted:#5c5650; --accent:#A8461A; --accent-hover:#8F3B15; --accent-fill:#D9662A; --champ:#8A6A2F;
-    --field:#f2eee8; --track:#ddd6cb; --tint:rgba(138,106,47,.08); --on-accent:#0e0d0b;
+    --color-page:#faf8f5; --color-card:#ffffff; --color-alt:#f2eee8; --color-border:#e8e2d8; --color-border-input:#8f877c;
+    --color-text:#14100c; --color-muted:#5c5650; --color-accent:#D9662A; --color-accent-hover:#E2723A; --color-on-accent:#0e0d0b;
+    --color-accent-text:#A8461A; --color-accent-text-hover:#8F3B15; --color-gold:#8A6A2F; --color-gold-on-alt:#7A5C26;
+    --color-error:#B3261E; --color-success:#2f7d4f;
+    --espresso-band:#1C1916; --espresso-card:#26211C; --espresso-border:#3A332B; --espresso-text:#f4f1ea; --espresso-muted:#b9b2a7;
+    --espresso-accent-text:#E07A3F; --espresso-gold:#C9A96E; --espresso-error:#FF8A80;
+    --font-serif:"Cormorant Garamond",Georgia,"Times New Roman",serif;
+    --font-sans:"Inter","Inter Placeholder",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --focus-ring-color:var(--color-accent-text); --focus-ring-width:2px; --focus-ring-offset:2px;
+    --focus-ring:var(--focus-ring-width) solid var(--focus-ring-color);
+  }
+  /* Page-local aliases onto the tokens (rendered colours unchanged) */
+  :root{
+    --bg:var(--color-page); --navy:var(--espresso-band); --card:var(--color-card); --line:var(--color-border); --text:var(--color-text);
+    --text-soft:#3a342e; --muted:var(--color-muted); --accent:var(--color-accent-text); --accent-hover:var(--color-accent-text-hover);
+    --accent-fill:var(--color-accent); --champ:var(--color-gold);
+    --field:var(--color-alt); --track:#ddd6cb; --tint:rgba(138,106,47,.08); --on-accent:var(--color-on-accent);
   }
   *{box-sizing:border-box}
   html,body{margin:0;background:var(--bg);color:var(--text);
