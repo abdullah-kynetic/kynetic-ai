@@ -67,3 +67,14 @@ section[data-framer-name="Testimonials"] [data-framer-name*="tar"] { color: var(
 @media (max-width: 809.98px) { .framer-FuH2f .framer-1gqj635::before { bottom: -48px; } }
 /* Champagne label (#C9A96E, 7.8:1 on the band) on the CTA pill */
 .framer-FuH2f .framer-vkcjs6 p.framer-text { --framer-text-color: var(--espresso-gold) !important; color: var(--espresso-gold) !important; }
+
+/* Legal pages (Privacy, Terms) ----------------------------------------------------------------------- */
+/* Light page, ink serif headings, muted body text, orange-text links (espresso header and footer are untouched) */
+main[data-framer-name="Content"] article .framer-styles-preset-1qvpi5a,
+main[data-framer-name="Content"] article .framer-styles-preset-1qvpi5a * {
+  font-family: var(--kn-serif) !important; font-weight: 600 !important; font-size: 28px;
+  letter-spacing: var(--tracking-heading) !important; --framer-text-color: var(--kn-ink) !important; color: var(--kn-ink);
+}
+main[data-framer-name="Content"] article a.framer-text { color: var(--kn-accent-text) !important; text-decoration: underline; text-underline-offset: 2px; }
+main[data-framer-name="Content"] article a.framer-text:hover { color: var(--kn-accent-hover) !important; }
+main[data-framer-name="Content"] article strong.framer-text { color: var(--kn-ink); }
