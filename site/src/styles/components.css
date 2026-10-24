@@ -1,0 +1,37 @@
+/* Components layer, loaded after luxury.css: buttons, cards, badges, dividers and form fields.
+   Everything reads the semantic tokens (tokens.css) through the --kn-* aliases from luxury.css, so
+   espresso surfaces (nav, footer, Process, Testimonials) pick up their values without extra rules.
+   The snapshot sets fills and borders inline, hence the !important on the properties it sets there. */
+
+/* Buttons ------------------------------------------------------------------------------------------ */
+/* Focus ring is orange on every surface (espresso scopes re-declare --kn-accent-text) */
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: var(--focus-ring-width) solid var(--kn-accent-text);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Primary: orange fill, near-black label. `.kn-orange` is added by buttons.ts; the attribute selector covers
+   the markup before the script runs. The script animates the inline fill, so the fill is pinned here. */
+a.framer-yPywB.kn-orange,
+a.framer-yPywB[style*="background-color:rgb(217, 102, 42)"],
+button.framer-NHy43 {
+  background-color: var(--color-accent) !important;
+  --border-color: transparent !important;
+}
+a.framer-yPywB.kn-orange:hover,
+a.framer-yPywB[style*="background-color:rgb(217, 102, 42)"]:hover,
+button.framer-NHy43:hover {
+  background-color: var(--color-accent-hover) !important;
+}
+
+/* Secondary: transparent, border token and ink text; the border turns orange on hover */
+a.framer-yPywB:not(.kn-orange):not([style*="background-color:rgb(217, 102, 42)"]) {
+  background-color: transparent !important;
+  --border-color: var(--kn-line) !important;
+}
+a.framer-yPywB:not(.kn-orange):not([style*="background-color:rgb(217, 102, 42)"]):hover {
+  --border-color: var(--kn-accent-text) !important;
+}
+a.framer-yPywB:not(.kn-orange):not([style*="background-color:rgb(217, 102, 42)"]) p.framer-text {
+  --framer-text-color: var(--kn-ink) !important;
+}
