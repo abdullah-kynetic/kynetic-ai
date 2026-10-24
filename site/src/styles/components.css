@@ -35,3 +35,13 @@ a.framer-yPywB:not(.kn-orange):not([style*="background-color:rgb(217, 102, 42)"]
 a.framer-yPywB:not(.kn-orange):not([style*="background-color:rgb(217, 102, 42)"]) p.framer-text {
   --framer-text-color: var(--kn-ink) !important;
 }
+
+/* Cards -------------------------------------------------------------------------------------------- */
+/* White on light, #26211C on espresso (--kn-card / --kn-line are re-declared on espresso scopes). 1px border, no shadow. */
+.framer-FuH2f .framer-11qxgfj, .framer-FuH2f .framer-13j44ve, .framer-FuH2f .framer-1fzimy7,
+.framer-FuH2f .framer-11vgufz, .framer-FuH2f .framer-3uwjrv,
+.framer-FuH2f .framer-fx0m8a, .framer-FuH2f .framer-1j4nby4, .framer-FuH2f .framer-wijd7 {
+  background-color: var(--kn-card);
+  --border-color: var(--kn-line);
+  box-shadow: none;
+}
