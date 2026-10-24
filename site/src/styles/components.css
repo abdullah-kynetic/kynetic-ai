@@ -5,7 +5,8 @@
 
 /* Buttons ------------------------------------------------------------------------------------------ */
 /* Focus ring is orange on every surface (espresso scopes re-declare --kn-accent-text) */
-a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible,
+[tabindex="0"]:focus-visible {
   outline: var(--focus-ring-width) solid var(--kn-accent-text);
   outline-offset: var(--focus-ring-offset);
 }
