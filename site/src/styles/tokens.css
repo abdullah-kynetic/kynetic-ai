@@ -1,6 +1,5 @@
 /* Kynetic AI design tokens: single source of truth for palette, type and focus.
-   Light is the default (:root). Espresso surfaces (header, footer, accent bands) opt in with
-   [data-theme="espresso"] or .kn-espresso, which re-declare the semantic colours below.
+   Light is the default (:root). The espresso variables below are kept as constants; no surface uses them now.
    public/roi-calculator/index.html mirrors these variables in an inline :root block; keep them in step. */
 :root {
   color-scheme: light;
@@ -66,24 +65,7 @@
   --focus-ring: var(--focus-ring-width) solid var(--focus-ring-color);
 }
 
-[data-theme="espresso"],
-.kn-espresso {
-  color-scheme: dark;
-  --color-page: var(--espresso-band);
-  --color-card: var(--espresso-card);
-  --color-alt: var(--espresso-card);
-  --color-border: var(--espresso-border);
-  --color-divider: var(--espresso-divider);
-  --color-text: var(--espresso-text);
-  --color-muted: var(--espresso-muted);
-  --color-accent-text: var(--espresso-accent-text);
-  --color-accent-text-hover: var(--espresso-accent-text-hover);
-  --color-gold: var(--espresso-gold);
-  --color-gold-on-alt: var(--espresso-gold);
-  --color-error: var(--espresso-error);
-}
-
-/* Short aliases the snapshot markup reads (--kn-*); they follow the semantic tokens, so espresso scopes re-declare them below. */
+/* Short aliases the snapshot markup reads (--kn-*). */
 :root {
   --kn-bg: var(--color-page);
   --kn-alt: var(--color-alt);
