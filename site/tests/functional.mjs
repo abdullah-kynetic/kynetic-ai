@@ -35,25 +35,44 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
     ok(`desktop nav "${label}" scrolls to #${id}`, Math.abs(top) < 120, `top=${Math.round(top)}`);
     ok(`desktop nav "${label}" updates hash`, (await page.evaluate(() => location.hash)) === '#' + id);
   }
-  // nav collapses to the compact pill once #process reaches the top, and expands again on the way back
+  // nav collapses to the compact pill once scrollY passes min(viewport, hero bottom), and expands 80px above that line
   {
     const pillW = () => page.evaluate(() => Math.round(document.querySelector('nav.framer-1t6bwo0 .framer-1eavvn1').getBoundingClientRect().width));
     const name = () => page.evaluate(() => document.querySelector('nav.framer-1t6bwo0').dataset.framerName);
-    const pt = await page.evaluate(() => document.getElementById('process').getBoundingClientRect().top + scrollY);
-    await page.evaluate(() => scrollTo({ top: 0, behavior: 'instant' })); await page.waitForTimeout(1200);
+    const jump = (y) => page.evaluate((y) => scrollTo({ top: y, behavior: 'instant' }), y);
+    // pill widths sampled every frame for `ms` after the caller scrolls
+    const sample = (ms) => page.evaluate((ms) => new Promise((done) => {
+      const el = document.querySelector('nav.framer-1t6bwo0 .framer-1eavvn1'), ws = [], t0 = performance.now();
+      const tick = () => { ws.push(Math.round(el.getBoundingClientRect().width)); performance.now() - t0 < ms ? requestAnimationFrame(tick) : done(ws); };
+      requestAnimationFrame(tick);
+    }), ms);
+    const thr = await page.evaluate(() => Math.round(Math.min(innerHeight, document.getElementById('hero').getBoundingClientRect().bottom + scrollY)));
+    await jump(0); await page.waitForTimeout(1200);
     const w0 = await pillW();
     ok('nav expanded at top', (await name()) === 'Desktop' && w0 > 1000, `w=${w0}`);
-    await page.evaluate((y) => scrollTo({ top: y - 5, behavior: 'instant' }), pt); await page.waitForTimeout(800);
-    ok('nav still expanded just above #process', (await name()) === 'Desktop' && (await pillW()) === w0);
-    await page.evaluate((y) => scrollTo({ top: y + 5, behavior: 'instant' }), pt); await page.waitForTimeout(1500);
-    const w1 = await pillW();
-    ok('nav collapses past Who We Are', (await name()) === 'Process' && w1 < 700 && w1 > 300, `w=${w1}`);
+    await jump(thr - 5); await page.waitForTimeout(800);
+    ok('nav still expanded just above the threshold', (await name()) === 'Desktop' && (await pillW()) === w0, `thr=${thr}`);
+    await jump(thr + 5);
+    const down = await sample(1200);
+    const w1 = down.at(-1);
+    ok('nav collapses past the hero', (await name()) === 'Process' && w1 < 700 && w1 > 300, `w=${w1}`);
+    ok('collapse passes through intermediate widths', down.filter((w) => w > w1 + 40 && w < w0 - 40).length >= 3, down.filter((w, i) => i % 6 === 0).join(','));
     ok('collapsed nav shows the K mark, not the wordmark', await page.evaluate(() => {
       const l = document.querySelector('nav.framer-1t6bwo0 .framer-iz97ye'); const vis = (e) => e.getBoundingClientRect().width > 0;
       return vis(l.querySelector('.kn-nav-mark')) && !vis(l.querySelector('img[alt="Kynetic AI"]'));
     }));
-    await page.evaluate(() => scrollTo({ top: 0, behavior: 'instant' })); await page.waitForTimeout(1500);
-    ok('nav expands again scrolling back up', (await name()) === 'Desktop' && (await pillW()) === w0);
+    await jump(thr - 40); await page.waitForTimeout(800);
+    ok('nav stays compact inside the 80px hysteresis band', (await name()) === 'Process' && (await pillW()) === w1);
+    await jump(thr - 100);
+    const up = await sample(1200);
+    ok('nav expands again scrolling back up', (await name()) === 'Desktop' && up.at(-1) === w0, `w=${up.at(-1)}`);
+    ok('expand passes through intermediate widths', up.filter((w) => w > w1 + 40 && w < w0 - 40).length >= 3, up.filter((w, i) => i % 6 === 0).join(','));
+    // reverse mid-collapse: width must continue from where it is, never snap to either end
+    await jump(thr + 5); await page.waitForTimeout(150);
+    const mid = await pillW();
+    await jump(thr - 100);
+    const back = await sample(1200);
+    ok('reversing mid-collapse is smooth', mid < w0 - 40 && mid > w1 + 40 && Math.abs(back[0] - mid) < 150 && back.at(-1) === w0, `mid=${mid} first=${back[0]} end=${back.at(-1)}`);
   }
   // FAQ
   await page.evaluate(() => document.getElementById('contact') && 0);

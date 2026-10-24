@@ -1,8 +1,8 @@
 // Top navigation: link hover chip, scroll-spy highlight, smooth anchor scrolling and the mobile menu.
 // Nav links (framer-520aC): background fades to the alt surface (#f2eee8) on hover/selected, spring 300/50.
-// Desktop pill (framer-FbUpk): collapses to a compact pill (mark, links, icon button) once the Process section
-// reaches the top of the viewport, and expands again on the way back up. Measured on the published site:
-// variant Desktop -> Process (framer-v-vc9era), pill 1200 -> 495px, ~0.6s spring ease-out.
+// Desktop pill (framer-FbUpk): collapses to a compact pill (mark, links, icon button) once the page
+// has scrolled past the hero (or one viewport), and expands again 80px above that line. Measured on the published site:
+// variant Desktop -> Process (framer-v-vc9era), pill 1200 -> 495px, ~0.6s spring ease-out, same motion both ways.
 // Mobile bar (framer-FbUpk): closed 64px -> open (menu height) spring 500/60, hamburger lines cross.
 import { animate } from 'motion';
 import { reducedMotion } from './appear';
@@ -53,29 +53,113 @@ function initCollapse() {
   const nav = document.querySelector<HTMLElement>('nav[data-framer-name="Desktop"]');
   const pill = nav?.querySelector<HTMLElement>('.framer-1eavvn1');
   const logo = nav?.querySelector<HTMLElement>('.framer-iz97ye');
-  const process = document.getElementById('process');
-  if (!nav || !pill || !logo || !process) return;
+  const word = logo?.querySelector<HTMLElement>('img[alt="Kynetic AI"]');
+  const mark = logo?.querySelector<HTMLElement>('.kn-nav-mark');
+  const labels = [...(nav?.querySelectorAll<HTMLElement>('.framer-17m08j9, .framer-xo714e') ?? [])];
+  if (!nav || !pill || !logo || !word || !mark || !labels.length) return;
   const FULL = 'framer-v-1t6bwo0', COMPACT = 'framer-v-vc9era';
+  const hero = document.getElementById('hero');
+  const HYSTERESIS = 80;
+  const MARK = 28;
+  const morphing = [pill, word, mark, ...labels];
   let compact = false;
+  let progress = 0; // 0 = full pill, 1 = compact pill
+  let running: { stop: () => void } | null = null;
+  const m = { full: 0, compact: 0, word: 0, label: 0, logoGap: 0, labelGap: 0 };
 
-  const set = (next: boolean) => {
-    if (next === compact) return;
-    compact = next;
-    const from = pill.getBoundingClientRect().width;
-    nav.classList.replace(compact ? FULL : COMPACT, compact ? COMPACT : FULL);
-    nav.classList.toggle('kn-nav-compact', compact);
-    nav.dataset.framerName = compact ? 'Process' : 'Desktop';
+  const setState = (next: boolean) => {
+    nav.classList.remove(FULL, COMPACT);
+    nav.classList.add(next ? COMPACT : FULL);
+    nav.classList.toggle('kn-nav-compact', next);
+    nav.dataset.framerName = next ? 'Process' : 'Desktop';
     pill.dataset.framerName = nav.dataset.framerName;
-    if (reducedMotion()) return;
-    const to = pill.getBoundingClientRect().width;
-    animate(pill, { width: [`${from}px`, `${to}px`] }, PILL).then(() => (pill.style.width = ''));
-    animate(logo, { opacity: [0, 1] }, { duration: 0.3 });
+  };
+  const clear = () => {
+    for (const e of morphing) for (const k of ['flex', 'width', 'opacity', 'margin-right']) e.style.removeProperty(k);
+    word.style.width = 'auto'; // the markup's own inline value
+    nav.classList.remove('kn-nav-morph');
   };
 
-  // Collapsed from the moment the Process section top passes the viewport top (same line as the scroll-spy).
-  const check = () => set(process.getBoundingClientRect().top <= SPY_OFFSET);
-  addEventListener('scroll', check, { passive: true });
-  check();
+  // The expanded pill is `flex: 1 0 0` (flex-basis 0), so an animated `width` is ignored there and the pill snapped
+  // open. The morph is driven by one progress value p (0 full .. 1 compact) that sets flex:none plus an explicit pill
+  // width and the width/opacity of the wordmark, K mark and button label together. Both directions are the same
+  // animation, and a reversal just continues from the current p.
+  const measure = () => {
+    clear();
+    const was = compact;
+    setState(false);
+    m.full = pill.getBoundingClientRect().width;
+    nav.classList.add('kn-nav-morph');
+    m.word = word.getBoundingClientRect().width;
+    m.label = labels[0].getBoundingClientRect().width;
+    m.logoGap = parseFloat(getComputedStyle(logo).columnGap) || 0;
+    m.labelGap = parseFloat(getComputedStyle(labels[0].parentElement!).columnGap) || 0;
+    nav.classList.remove('kn-nav-morph');
+    setState(true);
+    m.compact = pill.getBoundingClientRect().width;
+    setState(was);
+  };
+  const paint = (p: number) => {
+    progress = p;
+    pill.style.flex = 'none';
+    pill.style.width = `${m.full + (m.compact - m.full) * p}px`;
+    word.style.width = `${m.word * (1 - p)}px`;
+    word.style.opacity = String(1 - p);
+    word.style.marginRight = `${-m.logoGap * p}px`;
+    mark.style.width = `${MARK * p}px`;
+    mark.style.opacity = String(p);
+    for (const l of labels) {
+      l.style.width = `${m.label * (1 - p)}px`;
+      l.style.opacity = String(1 - p);
+      l.style.marginRight = `${-m.labelGap * p}px`;
+    }
+  };
+
+  const go = (next: boolean, instant = false) => {
+    if (next === compact && !instant) return;
+    compact = next;
+    running?.stop();
+    running = null;
+    if (instant || reducedMotion()) {
+      clear();
+      setState(next);
+      progress = next ? 1 : 0;
+      return;
+    }
+    if (!nav.classList.contains('kn-nav-morph')) {
+      measure();
+      setState(false); // full layout for the whole morph, so the content spreads continuously
+      nav.classList.add('kn-nav-morph');
+      paint(progress);
+    }
+    running = animate(progress, next ? 1 : 0, {
+      ...PILL,
+      onUpdate: paint,
+      onComplete: () => {
+        running = null;
+        clear();
+        setState(next);
+      },
+    });
+  };
+
+  // Collapse once scrollY passes the end of the hero (or one viewport, whichever is first); expand again 80px above
+  // that line so a small scroll jitter around it can't flicker.
+  const threshold = () => Math.min(innerHeight, hero ? hero.getBoundingClientRect().bottom + scrollY : innerHeight);
+  const decide = () => {
+    const y = scrollY, t = threshold();
+    if (!compact && y > t) go(true);
+    else if (compact && y < t - HYSTERESIS) go(false);
+  };
+  let queued = false;
+  const onScroll = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => { queued = false; decide(); });
+  };
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', onScroll);
+  if (scrollY > threshold()) go(true, true);
 }
 
 function scrollToHash(hash: string) {
