@@ -27,9 +27,9 @@ footer.framer-34GLz,
   color: var(--kn-ink);
 }
 nav.framer-FbUpk,
-footer.framer-34GLz { background-color: var(--kn-navy) !important; }
+footer.framer-34GLz { background-color: var(--kn-band) !important; }
 
-/* Icons drawn as data-URI SVGs can't read custom properties; they are dark ink in the markup, so flip them on navy */
+/* Icons drawn as data-URI SVGs can't read custom properties; they are dark ink in the markup, so flip them on espresso */
 nav.framer-FbUpk [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]),
 footer.framer-34GLz [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]),
 .framer-1gqj635 [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]) { filter: invert(1); }
@@ -97,7 +97,7 @@ section[data-framer-name="Testimonials"] [data-framer-name*="tar"] { color: var(
 .framer-FuH2f .framer-1gqj635 { overflow: visible; isolation: isolate; }
 .framer-FuH2f .framer-1gqj635::before {
   content: ""; position: absolute; z-index: -1; top: 0; bottom: -80px; left: 50%;
-  width: 100vw; transform: translateX(-50%); background-color: var(--kn-navy);
+  width: 100vw; transform: translateX(-50%); background-color: var(--kn-band);
 }
 @media (min-width: 810px) and (max-width: 1199.98px) { .framer-FuH2f .framer-1gqj635::before { bottom: -56px; } }
 @media (max-width: 809.98px) { .framer-FuH2f .framer-1gqj635::before { bottom: -48px; } }

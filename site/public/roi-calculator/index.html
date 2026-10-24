@@ -30,7 +30,7 @@
   }
   /* Page-local aliases onto the tokens (rendered colours unchanged) */
   :root{
-    --bg:var(--color-page); --navy:var(--espresso-band); --card:var(--color-card); --line:var(--color-border); --text:var(--color-text);
+    --bg:var(--color-page); --band:var(--espresso-band); --card:var(--color-card); --line:var(--color-border); --text:var(--color-text);
     --text-soft:var(--color-text); --muted:var(--color-muted); --accent:var(--color-accent-text); --accent-hover:var(--color-accent-text-hover);
     --accent-fill:var(--color-accent); --champ:var(--color-gold);
     --field:var(--color-card); --edge:var(--color-border-input); --track:var(--color-border-input); --tint:var(--color-alt); --on-accent:var(--color-on-accent);
@@ -116,7 +116,7 @@
   @media (max-width:1000px){.hero{grid-template-columns:repeat(2,1fr)}}
   /* hero tiles are espresso accent tiles: they carry the espresso text, muted, border and orange-text values */
   .hero .h{--text:#f4f1ea; --muted:#b9b2a7; --accent:#E07A3F; --line:#3A332B;
-    background:var(--navy);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:22px 18px}
+    background:var(--band);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:22px 18px}
   .hero .k{color:var(--muted);font-size:14px;margin-bottom:8px}
   .hero .v{font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1.05}
   .hero .v.good,.hero .v.accent,.hero .v.warn{color:var(--accent)}

@@ -87,7 +87,7 @@
 :root {
   --kn-bg: var(--color-page);
   --kn-alt: var(--color-alt);
-  --kn-navy: var(--espresso-band);
+  --kn-band: var(--espresso-band);
   --kn-card: var(--color-card);
   --kn-line: var(--color-border);
   --kn-line2: var(--color-divider);
