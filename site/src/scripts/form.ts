@@ -5,7 +5,7 @@ import { animate } from 'motion';
 
 const ENDPOINT: string = import.meta.env.PUBLIC_CONTACT_WEBHOOK ?? '';
 const TWEEN = { duration: 0.2, ease: [0.44, 0, 0.56, 1] } as const;
-const BG = { rest: 'rgb(217, 102, 42)', hover: 'rgb(229, 122, 66)', press: 'rgb(194, 85, 34)', error: 'rgba(179, 38, 30, 0.1)' };
+const BG = { rest: 'rgb(217, 102, 42)', hover: 'rgb(229, 122, 66)', press: 'rgb(194, 85, 34)', error: 'rgba(0, 0, 0, 0)' };
 
 export function initForm() {
   document.querySelectorAll<HTMLFormElement>('form').forEach((form) => {
@@ -33,6 +33,7 @@ export function initForm() {
       btn.addEventListener('pointerup', () => state === 'idle' && paint(btn, BG.hover));
       (btn as any)._set = (next: typeof state) => {
         state = next;
+        btn.dataset.state = next; // styled in components.css
         btn.querySelector('.kn-spin')?.remove();
         p.style.display = '';
         p.style.color = '';
@@ -42,12 +43,11 @@ export function initForm() {
           p.style.display = 'none';
           const s = document.createElement('div');
           s.className = 'kn-spin';
-          s.style.cssText = 'width:20px;height:20px;border-radius:50%;box-sizing:border-box;border:3px solid rgba(14,13,11,0.25);border-top-color:#0e0d0b';
           btn.append(s);
           animate(s, { rotate: 360 }, { duration: 1, ease: 'linear', repeat: Infinity });
         }
         if (next === 'success') { p.textContent = 'Thank you'; paint(btn, BG.rest); }
-        if (next === 'error') { p.textContent = 'Something went wrong'; p.style.color = '#B3261E'; paint(btn, idleBg()); }
+        if (next === 'error') { p.textContent = 'Something went wrong'; paint(btn, idleBg()); }
       };
     });
     const setAll = (s: typeof state) => buttons.forEach((b) => (b as any)._set(s));
