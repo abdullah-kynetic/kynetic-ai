@@ -1,0 +1,26 @@
+/* Sections layer, loaded after components.css: per-section surfaces for the home page.
+   Surfaces: page (#faf8f5) for hero, intro, Services, Plans, Contact and FAQ; alternate band (#f2eee8)
+   for Process and Testimonials; espresso for header, footer and the closing CTA band. Everything reads the
+   semantic tokens through the --kn-* aliases, so each block only chooses which surface it sits on. */
+
+/* Hero --------------------------------------------------------------------------------------------- */
+/* Page background, ink serif headline. The corner shades are warm #f2eee8 shapes and the particles are
+   gold dots at low opacity, so nothing greys the page. */
+section[data-framer-name="Hero section"] h1.framer-text,
+section[data-framer-name="Hero section"] h1.framer-text * { --framer-text-color: var(--kn-ink) !important; color: var(--kn-ink); }
+
+/* Services ----------------------------------------------------------------------------------------- */
+/* Page background with white cards (components.css). The mockup panels inside the cards were drawn for a
+   dark surface with white-alpha fills; they now use the alt and border tokens. */
+section[data-framer-name="Services"] .framer-1oe2mnv { background-color: var(--color-alt); }
+section[data-framer-name="Services"] .framer-1kdc4rl { background-color: var(--color-border); }
+section[data-framer-name="Services"] [style*="--border-color:rgba(255, 255, 255"] { --border-color: var(--kn-line) !important; }
+
+/* Plans -------------------------------------------------------------------------------------------- */
+/* "Fully Managed Build" tag: gold fill (#8A6A2F) with a #faf8f5 label, 4.7:1 */
+section[data-framer-name="Plans"] .framer-1j44nk1 { background-color: var(--color-gold) !important; }
+section[data-framer-name="Plans"] .framer-14aj3ks p.framer-text {
+  --framer-text-color: var(--color-page) !important; color: var(--color-page) !important;
+}
+/* Prices stay ink; the featured card (Full System) gets the orange border */
+section[data-framer-name="Plans"] .framer-7cpj4a[data-border="true"] { --border-color: var(--color-accent) !important; }

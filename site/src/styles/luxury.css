@@ -74,7 +74,6 @@ section[data-framer-name="Process"] [style*="data:image/svg"]:not([style*="rgb(2
 section[data-framer-name="Testimonials"] [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]) { filter: invert(1); }
 
 /* Alt sections */
-section[data-framer-name="Services"],
 section[data-framer-name="Contact"] { background-color: var(--kn-alt); }
 
 /* Type: Cormorant Garamond headlines, Inter body */
