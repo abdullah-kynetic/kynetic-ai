@@ -17,7 +17,7 @@ function answerNode(html: string) {
   wrap.dataset.framerName = 'Answer';
   wrap.innerHTML =
     `<div class="framer-1di4gu7" data-framer-component-type="RichTextContainer" style="--extracted-r6o4lv:${ANSWER_VAR};--framer-link-text-color:var(--kn-accent-text);--framer-link-text-decoration:underline;--framer-paragraph-spacing:0px">` +
-    `<p class="framer-text" style="--font-selector:R0Y7T3V0Zml0LXJlZ3VsYXI=;--framer-font-family:&quot;Outfit&quot;,&quot;Outfit Placeholder&quot;,sans-serif;--framer-line-height:1.5em;--framer-text-alignment:left;--framer-text-color:var(--extracted-r6o4lv,${ANSWER_VAR})">${html}</p></div>`;
+    `<p class="framer-text" style="--font-selector:R0Y7T3V0Zml0LXJlZ3VsYXI=;--framer-font-family:&quot;Inter&quot;,&quot;Inter Placeholder&quot;,sans-serif;--framer-line-height:1.5em;--framer-text-alignment:left;--framer-text-color:var(--extracted-r6o4lv,${ANSWER_VAR})">${html}</p></div>`;
   return wrap;
 }
 
