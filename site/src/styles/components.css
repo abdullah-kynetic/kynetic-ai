@@ -45,3 +45,18 @@ a.framer-yPywB:not(.kn-orange):not([style*="background-color:rgb(217, 102, 42)"]
   --border-color: var(--kn-line);
   box-shadow: none;
 }
+
+/* Badges, pills and dividers ------------------------------------------------------------------------ */
+/* Pills carry the card fill and border token; their label is gold (#8A6A2F on light, champagne only on espresso) */
+.framer-FuH2f .framer-n13udx, .framer-FuH2f .framer-vkcjs6 {
+  background-color: var(--kn-card);
+  --border-color: var(--kn-line);
+}
+/* Gold darkens on the alt-coloured sections */
+section[data-framer-name="Services"] [data-framer-name="Badge"] .framer-text,
+section[data-framer-name="Contact"] [data-framer-name="Badge"] .framer-text {
+  --framer-text-color: var(--color-gold-on-alt) !important; color: var(--color-gold-on-alt) !important;
+}
+/* Hairline borders and dividers read the border / divider tokens, so espresso surfaces get their own values */
+[data-border="true"]:not(a.framer-yPywB):not(button) { --border-color: var(--kn-line); }
+hr { border: 0; border-top: 1px solid var(--kn-line2); }
