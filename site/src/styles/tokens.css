@@ -82,3 +82,25 @@
   --color-gold-on-alt: var(--espresso-gold);
   --color-error: var(--espresso-error);
 }
+
+/* Short aliases the snapshot markup reads (--kn-*); they follow the semantic tokens, so espresso scopes re-declare them below. */
+:root {
+  --kn-bg: var(--color-page);
+  --kn-alt: var(--color-alt);
+  --kn-navy: var(--espresso-band);
+  --kn-card: var(--color-card);
+  --kn-line: var(--color-border);
+  --kn-line2: var(--color-divider);
+  --kn-track: var(--color-border);
+  --kn-fill: var(--color-accent);
+  --kn-ink: var(--color-text);
+  --kn-muted: var(--color-muted);
+  --kn-orange: var(--color-accent);
+  --kn-on-orange: var(--color-on-accent);
+  --kn-accent-text: var(--color-accent-text);
+  --kn-accent-hover: var(--color-accent-text-hover);
+  --kn-champagne: var(--color-gold);
+  --kn-error: var(--color-error);
+  --kn-serif: var(--font-serif);
+  --kn-sans: var(--font-sans);
+}
