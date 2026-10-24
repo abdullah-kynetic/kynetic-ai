@@ -1,0 +1,13 @@
+business,status,phone,pick,area,sites,seen_on,note,sources
+Bert Roofing Inc,HOLD,(214) 321-9341,,DFW,1,BBB main,,https://www.bbb.org/us/tx/dallas/profile/roofing-contractors/bert-roofing-inc-0875-8000039 (BBB main)
+Bert Roofing Inc,HOLD,(214) 984-3018,,DFW,1,own site,,https://bertroofing.com
+Bert Roofing Inc,HOLD,(214) 997-1649,,DFW,1,own site,,https://bertroofing.com/about/
+Ruff Roofing,DROP,(346) 339-3405,DIAL,other,1,BBB main,,https://www.bbb.org/us/tx/houston/profile/roofing-contractors/ruff-roofing-0915-90069522 (BBB main)
+Heirloom Roofing & Restorations,DIAL_READY,(469) 674-4455,DIAL,DFW,2,"BBB main, own site",,https://www.bbb.org/us/tx/sherman/profile/roofing-contractors/heirloom-roofing-restorations-0875-91339813 (BBB main) | https://heirloomrr.com | https://heirloomrr.com/about
+Johnny Walker Roofing & Construction,DIAL_READY,(940) 735-6944,DIAL,DFW,1,BBB main,,https://www.bbb.org/us/tx/fort-worth/profile/residential-general-contractor/johnny-walker-roofing-and-construction-0825-1000219535 (BBB main)
+Verified Roofing LLC,DIAL_READY,(817) 715-6750,DIAL,DFW,2,"BBB main, own site",,https://www.bbb.org/us/tx/bedford/profile/roofing-contractors/verified-roofing-0825-1000208565 (BBB main) | https://verified-roofing.com
+Berry Good Roofing,DIAL_READY,(682) 882-3779,DIAL,DFW,2,"BBB main, own site",,https://www.bbb.org/us/tx/midlothian/profile/roofing-contractors/berry-good-roofing-and-efficiency-0875-91342071 (BBB main) | https://berrygoodroofs.com | https://www.berrygoodroofs.com/aboutus
+Pursuit Roofing & Construction,HOLD,(469) 510-0765,,DFW,1,own site,,https://pursuitindustries.net | https://www.pursuitindustries.net/about
+Pursuit Roofing & Construction,HOLD,(469) 474-9933,,DFW,1,own site,,https://pursuitindustries.net | https://www.pursuitindustries.net/about
+Top Sun Roofing & Foundation,DIAL_READY,(469) 938-7810,DIAL,DFW,2,"BBB main, own site",,https://www.bbb.org/us/tx/dallas/profile/roofing-contractors/top-sun-roofing-0875-91342833 (BBB main) | https://topsunroofing.com | https://topsunroofing.com/about
+Top Sun Roofing & Foundation,DIAL_READY,(407) 969-2212,,FL/OK,1,own site,not dialed: FL/OK,https://topsunroofing.com
