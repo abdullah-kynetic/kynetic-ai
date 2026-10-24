@@ -1,6 +1,4 @@
-/* Espresso surfaces: header, footer and the closing CTA band. Same tokens, dark values. */
-nav.framer-FbUpk,
-footer.framer-34GLz,
+/* Espresso surface: the closing CTA band only (header and footer are light). Same tokens, dark values. */
 .framer-FuH2f .framer-1gqj635 {
   --kn-ink: var(--espresso-text);
   --kn-muted: var(--espresso-muted);
@@ -26,13 +24,15 @@ footer.framer-34GLz,
   --token-55fce8bf-ab86-42dc-8b77-6335cf9cf588: #f4f1ea;
   color: var(--kn-ink);
 }
-nav.framer-FbUpk,
-footer.framer-34GLz { background-color: var(--kn-band) !important; }
-
 /* Icons drawn as data-URI SVGs can't read custom properties; they are dark ink in the markup, so flip them on espresso */
-nav.framer-FbUpk [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]),
-footer.framer-34GLz [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]),
 .framer-1gqj635 [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]) { filter: invert(1); }
+
+/* Header (light) ------------------------------------------------------------------------------------ */
+/* White bar with a 1px border token, ink links that turn orange-text on hover, ink hamburger. The desktop
+   pill (framer-1eavvn1) and the mobile bar carry the fill inline (#ffffff) and read the border token. */
+nav.framer-FbUpk { color: var(--kn-ink); }
+nav.framer-FbUpk a.framer-520aC:hover p.framer-text { --framer-text-color: var(--kn-accent-text) !important; color: var(--kn-accent-text) !important; }
+nav.framer-FbUpk .framer-1poozl0 a:hover p.framer-text { --framer-text-color: var(--kn-accent-text) !important; color: var(--kn-accent-text) !important; }
 
 /* Sections layer, loaded after components.css: per-section surfaces for the home page.
    Surfaces: page (#faf8f5) for hero, intro, Services, Plans, Contact and FAQ; alternate band (#f2eee8)
@@ -105,7 +105,7 @@ section[data-framer-name="Testimonials"] [data-framer-name*="tar"] { color: var(
 .framer-FuH2f .framer-vkcjs6 p.framer-text { --framer-text-color: var(--espresso-gold) !important; color: var(--espresso-gold) !important; }
 
 /* Legal pages (Privacy, Terms) ----------------------------------------------------------------------- */
-/* Light page, ink serif headings, muted body text, orange-text links (espresso header and footer are untouched) */
+/* Light page, ink serif headings, muted body text, orange-text links (header and footer are light) */
 main[data-framer-name="Content"] article .framer-styles-preset-1qvpi5a,
 main[data-framer-name="Content"] article .framer-styles-preset-1qvpi5a * {
   font-family: var(--kn-serif) !important; font-weight: 600 !important; font-size: 28px;
