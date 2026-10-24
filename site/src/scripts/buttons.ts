@@ -22,7 +22,7 @@ export function initButtons() {
         if (dy) animate(r, { y: [dy, 0] }, SPRING);
       });
       animate(btn, { '--border-color': on ? 'rgba(138, 106, 47, 0.6)' : 'rgba(138, 106, 47, 0.3)' }, SPRING);
-      if (orange) animate(btn, { backgroundColor: on ? 'rgb(229, 122, 66)' : 'rgb(217, 102, 42)' }, SPRING);
+      if (orange) animate(btn, { backgroundColor: on ? 'rgb(226, 114, 58)' : 'rgb(217, 102, 42)' }, SPRING);
     };
     btn.addEventListener('pointerenter', (e) => e.pointerType === 'mouse' && roll(true));
     btn.addEventListener('pointerleave', (e) => e.pointerType === 'mouse' && roll(false));

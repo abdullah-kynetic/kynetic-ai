@@ -1,11 +1,11 @@
 /* Components layer: base type and links, buttons, cards, badges, dividers and form fields.
    Everything reads the semantic tokens (tokens.css) through the --kn-* aliases, so
-   espresso scopes (the closing CTA band) pick up their values without extra rules.
+   scopes that re-declare the tokens pick up their values without extra rules.
    The snapshot sets fills and borders inline, hence the !important on the properties it sets there. */
 
 html, body { font-family: var(--font-sans); background-color: var(--kn-bg); color: var(--kn-ink); }
 
-/* Links: orange text with a darker hover (espresso surfaces re-declare the tokens, so they get the light orange) */
+/* Links: orange text with a darker hover */
 a { color: var(--kn-accent-text); }
 a:hover { color: var(--kn-accent-hover); }
 
@@ -46,10 +46,9 @@ button.framer-NHy43 p.framer-text { --framer-text-color: var(--kn-on-orange) !im
   --framer-text-color: var(--color-gold) !important; color: var(--color-gold) !important;
   text-transform: uppercase; letter-spacing: 0.18em; font-size: 11px !important; font-weight: 500 !important;
 }
-.framer-1gqj635 [data-framer-name="Badge"] .framer-text { --framer-text-color: var(--espresso-gold) !important; color: var(--espresso-gold) !important; }
 
 /* Buttons ------------------------------------------------------------------------------------------ */
-/* Focus ring is orange on every surface (espresso scopes re-declare --kn-accent-text) */
+/* Focus ring is orange on every surface */
 a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible,
 [tabindex="0"]:focus-visible {
   outline: var(--focus-ring-width) solid var(--kn-accent-text);
@@ -83,7 +82,7 @@ a.framer-yPywB:not(.kn-orange):not([style*="background-color:rgb(217, 102, 42)"]
 }
 
 /* Cards -------------------------------------------------------------------------------------------- */
-/* White on light, #26211C on espresso (--kn-card / --kn-line are re-declared on espresso scopes). 1px border, no shadow. */
+/* White with a border token. 1px border, no shadow. */
 .framer-FuH2f .framer-11qxgfj, .framer-FuH2f .framer-13j44ve, .framer-FuH2f .framer-1fzimy7,
 .framer-FuH2f .framer-11vgufz, .framer-FuH2f .framer-3uwjrv,
 .framer-FuH2f .framer-fx0m8a, .framer-FuH2f .framer-1j4nby4, .framer-FuH2f .framer-wijd7 {
@@ -93,7 +92,7 @@ a.framer-yPywB:not(.kn-orange):not([style*="background-color:rgb(217, 102, 42)"]
 }
 
 /* Badges, pills and dividers ------------------------------------------------------------------------ */
-/* Pills carry the card fill and border token; their label is gold (#8A6A2F on light, champagne only on espresso) */
+/* Pills carry the card fill and border token; their label is gold (#8A6A2F) */
 .framer-FuH2f .framer-n13udx, .framer-FuH2f .framer-vkcjs6 {
   background-color: var(--kn-card);
   --border-color: var(--kn-line);
@@ -103,7 +102,7 @@ section[data-framer-name="Process"] [data-framer-name="Badge"] .framer-text,
 section[data-framer-name="Testimonials"] [data-framer-name="Badge"] .framer-text {
   --framer-text-color: var(--color-gold-on-alt) !important; color: var(--color-gold-on-alt) !important;
 }
-/* Hairline borders and dividers read the border / divider tokens, so espresso surfaces get their own values */
+/* Hairline borders and dividers read the border / divider tokens */
 [data-border="true"]:not(a.framer-yPywB):not(button) { --border-color: var(--kn-line); }
 hr { border: 0; border-top: 1px solid var(--kn-line2); }
 

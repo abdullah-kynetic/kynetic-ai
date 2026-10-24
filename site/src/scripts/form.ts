@@ -5,7 +5,7 @@ import { animate } from 'motion';
 
 const ENDPOINT: string = import.meta.env.PUBLIC_CONTACT_WEBHOOK ?? '';
 const TWEEN = { duration: 0.2, ease: [0.44, 0, 0.56, 1] } as const;
-const BG = { rest: 'rgb(217, 102, 42)', hover: 'rgb(229, 122, 66)', press: 'rgb(194, 85, 34)', error: 'rgba(0, 0, 0, 0)' };
+const BG = { rest: 'rgb(217, 102, 42)', hover: 'rgb(226, 114, 58)', press: 'rgb(194, 85, 34)', error: 'rgba(0, 0, 0, 0)' };
 
 export function initForm() {
   document.querySelectorAll<HTMLFormElement>('form').forEach((form) => {
