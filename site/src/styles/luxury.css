@@ -24,7 +24,14 @@
   --kn-sans: var(--font-sans);
 }
 
-html, body { background-color: var(--kn-bg); color: var(--kn-ink); }
+html, body { font-family: var(--font-sans); background-color: var(--kn-bg); color: var(--kn-ink); }
+
+/* Links: orange text with a darker hover (espresso surfaces re-declare the tokens, so they get the light orange) */
+a { color: var(--kn-accent-text); }
+a:hover { color: var(--kn-accent-hover); }
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: var(--focus-ring); outline-offset: var(--focus-ring-offset);
+}
 
 /* Navy surfaces: header, footer, Process and Testimonials. Same tokens, dark values. */
 nav.framer-FbUpk,
