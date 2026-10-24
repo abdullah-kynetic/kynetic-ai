@@ -1,0 +1,69 @@
+/* Sections layer, loaded after components.css: per-section surfaces for the home page.
+   Surfaces: page (#faf8f5) for hero, intro, Services, Plans, Contact and FAQ; alternate band (#f2eee8)
+   for Process and Testimonials; espresso for header, footer and the closing CTA band. Everything reads the
+   semantic tokens through the --kn-* aliases, so each block only chooses which surface it sits on. */
+
+/* Hero --------------------------------------------------------------------------------------------- */
+/* Page background, ink serif headline. The corner shades are warm #f2eee8 shapes and the particles are
+   gold dots at low opacity, so nothing greys the page. */
+section[data-framer-name="Hero section"] h1.framer-text,
+section[data-framer-name="Hero section"] h1.framer-text * { --framer-text-color: var(--kn-ink) !important; color: var(--kn-ink); }
+
+/* Services ----------------------------------------------------------------------------------------- */
+/* Page background with white cards (components.css). The mockup panels inside the cards were drawn for a
+   dark surface with white-alpha fills; they now use the alt and border tokens. */
+section[data-framer-name="Services"] .framer-1oe2mnv { background-color: var(--color-alt); }
+section[data-framer-name="Services"] .framer-1kdc4rl { background-color: var(--color-border); }
+section[data-framer-name="Services"] [style*="--border-color:rgba(255, 255, 255"] { --border-color: var(--kn-line) !important; }
+
+/* Plans -------------------------------------------------------------------------------------------- */
+/* "Fully Managed Build" tag: gold fill (#8A6A2F) with a #faf8f5 label, 4.7:1 */
+section[data-framer-name="Plans"] .framer-1j44nk1 { background-color: var(--color-gold) !important; }
+section[data-framer-name="Plans"] .framer-14aj3ks p.framer-text {
+  --framer-text-color: var(--color-page) !important; color: var(--color-page) !important;
+}
+/* Prices stay ink; the featured card (Full System) gets the orange border */
+section[data-framer-name="Plans"] .framer-7cpj4a[data-border="true"] { --border-color: var(--color-accent) !important; }
+
+/* Process and Testimonials: alternate band -------------------------------------------------------- */
+/* Light tokens on #f2eee8, white cards with a border token, gold labels at #7A5C26 (components.css) */
+section[data-framer-name="Process"],
+section[data-framer-name="Testimonials"] { background-color: var(--kn-alt); }
+section[data-framer-name="Process"] .framer-1v6qzy9,
+section[data-framer-name="Testimonials"] .framer-EzGTn { background-color: var(--kn-card) !important; --border-color: var(--kn-line) !important; }
+/* Process mockups were drawn for a dark card: cream-alpha panels, lines and dots become alt / border tokens */
+section[data-framer-name="Process"] .framer-15vprxl { background-color: var(--color-alt); }
+section[data-framer-name="Process"] .framer-gnrguo,
+section[data-framer-name="Process"] .framer-1baun43,
+section[data-framer-name="Process"] .framer-17bb8o3,
+section[data-framer-name="Process"] .framer-11cuk49 { background-color: var(--color-border); }
+section[data-framer-name="Process"] .framer-dc0axe { background-color: var(--kn-ink); }
+section[data-framer-name="Process"] span[style*="rgb(217, 102, 42)"] { color: var(--kn-accent-text) !important; }
+/* Team avatars: neutral frame instead of cream-alpha */
+section[data-framer-name="Testimonials"] .framer-xpzngr { background-color: var(--color-border); }
+/* Star ratings, if added, are gold on the alternate band */
+section[data-framer-name="Testimonials"] [data-framer-name*="tar"] { color: var(--color-gold-on-alt); fill: var(--color-gold-on-alt); }
+
+/* Contact and FAQ ---------------------------------------------------------------------------------- */
+/* Both sit on the page background (Contact follows the alternate Testimonials band). Form fields are in
+   components.css. FAQ rows are white cards with a border token, in both open and closed states. */
+.framer-FuH2f .framer-Hzat5 {
+  background-color: var(--kn-card) !important;
+  --border-color: var(--kn-line) !important;
+  --border-style: solid; --border-top-width: 1px; --border-right-width: 1px;
+  --border-bottom-width: 1px; --border-left-width: 1px;
+}
+
+/* Closing CTA band ---------------------------------------------------------------------------------- */
+/* The CTA block is the page's espresso accent band (tokens re-declared in luxury.css). The band is a
+   full-width pseudo-element behind the block, running down through the section's bottom padding to the
+   footer; the section clips it sideways. The primary button stays orange with a near-black label. */
+.framer-FuH2f .framer-1gqj635 { overflow: visible; isolation: isolate; }
+.framer-FuH2f .framer-1gqj635::before {
+  content: ""; position: absolute; z-index: -1; top: 0; bottom: -80px; left: 50%;
+  width: 100vw; transform: translateX(-50%); background-color: var(--kn-navy);
+}
+@media (min-width: 810px) and (max-width: 1199.98px) { .framer-FuH2f .framer-1gqj635::before { bottom: -56px; } }
+@media (max-width: 809.98px) { .framer-FuH2f .framer-1gqj635::before { bottom: -48px; } }
+/* Champagne label (#C9A96E, 7.8:1 on the band) on the CTA pill */
+.framer-FuH2f .framer-vkcjs6 p.framer-text { --framer-text-color: var(--espresso-gold) !important; color: var(--espresso-gold) !important; }

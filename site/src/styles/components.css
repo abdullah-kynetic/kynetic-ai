@@ -1,6 +1,6 @@
 /* Components layer, loaded after luxury.css: buttons, cards, badges, dividers and form fields.
    Everything reads the semantic tokens (tokens.css) through the --kn-* aliases from luxury.css, so
-   espresso surfaces (nav, footer, Process, Testimonials) pick up their values without extra rules.
+   espresso surfaces (nav, footer) pick up their values without extra rules.
    The snapshot sets fills and borders inline, hence the !important on the properties it sets there. */
 
 /* Buttons ------------------------------------------------------------------------------------------ */
@@ -53,8 +53,8 @@ a.framer-yPywB:not(.kn-orange):not([style*="background-color:rgb(217, 102, 42)"]
   --border-color: var(--kn-line);
 }
 /* Gold darkens on the alt-coloured sections */
-section[data-framer-name="Services"] [data-framer-name="Badge"] .framer-text,
-section[data-framer-name="Contact"] [data-framer-name="Badge"] .framer-text {
+section[data-framer-name="Process"] [data-framer-name="Badge"] .framer-text,
+section[data-framer-name="Testimonials"] [data-framer-name="Badge"] .framer-text {
   --framer-text-color: var(--color-gold-on-alt) !important; color: var(--color-gold-on-alt) !important;
 }
 /* Hairline borders and dividers read the border / divider tokens, so espresso surfaces get their own values */

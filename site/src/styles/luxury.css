@@ -33,11 +33,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   outline: var(--focus-ring); outline-offset: var(--focus-ring-offset);
 }
 
-/* Navy surfaces: header, footer, Process and Testimonials. Same tokens, dark values. */
+/* Espresso surfaces: header, footer and the closing CTA band. Same tokens, dark values. */
 nav.framer-FbUpk,
 footer.framer-34GLz,
-section[data-framer-name="Process"],
-section[data-framer-name="Testimonials"] {
+.framer-FuH2f .framer-1gqj635 {
   --kn-ink: var(--espresso-text);
   --kn-muted: var(--espresso-muted);
   --kn-card: var(--espresso-card);
@@ -63,19 +62,12 @@ section[data-framer-name="Testimonials"] {
   color: var(--kn-ink);
 }
 nav.framer-FbUpk,
-footer.framer-34GLz,
-section[data-framer-name="Process"],
-section[data-framer-name="Testimonials"] { background-color: var(--kn-navy) !important; }
+footer.framer-34GLz { background-color: var(--kn-navy) !important; }
 
 /* Icons drawn as data-URI SVGs can't read custom properties; they are dark ink in the markup, so flip them on navy */
 nav.framer-FbUpk [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]),
 footer.framer-34GLz [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]),
-section[data-framer-name="Process"] [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]),
-section[data-framer-name="Testimonials"] [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]) { filter: invert(1); }
-
-/* Alt sections */
-section[data-framer-name="Services"],
-section[data-framer-name="Contact"] { background-color: var(--kn-alt); }
+.framer-1gqj635 [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]) { filter: invert(1); }
 
 /* Type: Cormorant Garamond headlines, Inter body */
 .framer-text, .framer-text *, input, textarea, button { font-family: var(--kn-sans) !important; }
@@ -116,5 +108,4 @@ button.framer-NHy43 p.framer-text { --framer-text-color: var(--kn-on-orange) !im
 }
 nav.framer-FbUpk [data-framer-name="Badge"] .framer-text,
 footer.framer-34GLz [data-framer-name="Badge"] .framer-text,
-section[data-framer-name="Process"] [data-framer-name="Badge"] .framer-text,
-section[data-framer-name="Testimonials"] [data-framer-name="Badge"] .framer-text { --framer-text-color: var(--espresso-gold) !important; color: var(--espresso-gold) !important; }
+.framer-1gqj635 [data-framer-name="Badge"] .framer-text { --framer-text-color: var(--espresso-gold) !important; color: var(--espresso-gold) !important; }
