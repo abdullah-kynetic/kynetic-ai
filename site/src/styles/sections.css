@@ -53,3 +53,17 @@ section[data-framer-name="Testimonials"] [data-framer-name*="tar"] { color: var(
   --border-style: solid; --border-top-width: 1px; --border-right-width: 1px;
   --border-bottom-width: 1px; --border-left-width: 1px;
 }
+
+/* Closing CTA band ---------------------------------------------------------------------------------- */
+/* The CTA block is the page's espresso accent band (tokens re-declared in luxury.css). The band is a
+   full-width pseudo-element behind the block, running down through the section's bottom padding to the
+   footer; the section clips it sideways. The primary button stays orange with a near-black label. */
+.framer-FuH2f .framer-1gqj635 { overflow: visible; isolation: isolate; }
+.framer-FuH2f .framer-1gqj635::before {
+  content: ""; position: absolute; z-index: -1; top: 0; bottom: -80px; left: 50%;
+  width: 100vw; transform: translateX(-50%); background-color: var(--kn-navy);
+}
+@media (min-width: 810px) and (max-width: 1199.98px) { .framer-FuH2f .framer-1gqj635::before { bottom: -56px; } }
+@media (max-width: 809.98px) { .framer-FuH2f .framer-1gqj635::before { bottom: -48px; } }
+/* Champagne label (#C9A96E, 7.8:1 on the band) on the CTA pill */
+.framer-FuH2f .framer-vkcjs6 p.framer-text { --framer-text-color: var(--espresso-gold) !important; color: var(--espresso-gold) !important; }

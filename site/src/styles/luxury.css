@@ -33,9 +33,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   outline: var(--focus-ring); outline-offset: var(--focus-ring-offset);
 }
 
-/* Navy surfaces: header and footer. Same tokens, dark values. */
+/* Espresso surfaces: header, footer and the closing CTA band. Same tokens, dark values. */
 nav.framer-FbUpk,
-footer.framer-34GLz {
+footer.framer-34GLz,
+.framer-FuH2f .framer-1gqj635 {
   --kn-ink: var(--espresso-text);
   --kn-muted: var(--espresso-muted);
   --kn-card: var(--espresso-card);
@@ -65,7 +66,8 @@ footer.framer-34GLz { background-color: var(--kn-navy) !important; }
 
 /* Icons drawn as data-URI SVGs can't read custom properties; they are dark ink in the markup, so flip them on navy */
 nav.framer-FbUpk [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]),
-footer.framer-34GLz [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]) { filter: invert(1); }
+footer.framer-34GLz [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]),
+.framer-1gqj635 [style*="data:image/svg"]:not([style*="rgb(217, 102, 42)"]) { filter: invert(1); }
 
 /* Type: Cormorant Garamond headlines, Inter body */
 .framer-text, .framer-text *, input, textarea, button { font-family: var(--kn-sans) !important; }
@@ -105,4 +107,5 @@ button.framer-NHy43 p.framer-text { --framer-text-color: var(--kn-on-orange) !im
   text-transform: uppercase; letter-spacing: 0.18em; font-size: 11px !important; font-weight: 500 !important;
 }
 nav.framer-FbUpk [data-framer-name="Badge"] .framer-text,
-footer.framer-34GLz [data-framer-name="Badge"] .framer-text { --framer-text-color: var(--espresso-gold) !important; color: var(--espresso-gold) !important; }
+footer.framer-34GLz [data-framer-name="Badge"] .framer-text,
+.framer-1gqj635 [data-framer-name="Badge"] .framer-text { --framer-text-color: var(--espresso-gold) !important; color: var(--espresso-gold) !important; }
