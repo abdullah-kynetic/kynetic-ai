@@ -42,6 +42,8 @@ footer.framer-34GLz [data-framer-name="Badge"] .framer-text { --framer-text-colo
 footer.framer-34GLz .framer-1k530gz p, footer.framer-34GLz .framer-97ffzp p { --framer-text-color: var(--kn-ink) !important; color: var(--kn-ink); }
 footer.framer-34GLz a.framer-1cg0spb { color: var(--kn-accent-text) !important; }
 footer.framer-34GLz a.framer-1cg0spb:hover { color: var(--kn-accent-hover) !important; }
+footer.framer-34GLz a.framer-styles-preset-1cg0spb { --framer-text-color: var(--kn-accent-text) !important; color: var(--kn-accent-text) !important; }
+footer.framer-34GLz a.framer-styles-preset-1cg0spb:hover { --framer-text-color: var(--kn-accent-hover) !important; color: var(--kn-accent-hover) !important; }
 footer.framer-34GLz .framer-z7as9h > a { background-color: transparent !important; border: 1px solid var(--kn-line); }
 footer.framer-34GLz .framer-z7as9h > a:hover { border-color: var(--kn-accent-text); }
 
