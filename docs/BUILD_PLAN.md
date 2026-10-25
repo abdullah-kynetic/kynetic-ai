@@ -34,9 +34,9 @@ Rules for using this file:
 Resume notes must contain, in this order: `branch:`; `last commit:` (short hash); `done so far:`; `files touched:`; `tests:` (which pass, which fail, what command); `next step:` (one concrete action); `watch out:` (anything surprising). A new thread reads the task row, the Implements sections, the branch diff against `main`, then continues from `next step`. It sets the status back to `in-progress` and adds `resumed: <date>`.
 
 ## Summary
-- 127 tasks in 13 milestone groups and 29 waves.
-- Models: Sonnet 75, Opus 29, Haiku 23.
-- Sizes: S 30, M 69, L 28.
+- 128 tasks in 13 milestone groups and 29 waves.
+- Models: Sonnet 76, Opus 29, Haiku 23.
+- Sizes: S 30, M 70, L 28.
 
 ## Wave plan
 Wave n can start when all its tasks' dependencies are done. The count of tasks marked parallel is how many threads can usefully run at once.
@@ -57,12 +57,12 @@ Wave n can start when all its tasks' dependencies are done. The count of tasks m
 | 12 | M1-01, M4-01, M4-03, M4-04, M4-08, M4-09, M7-04, M8a-01, M9-08, M9-09, M10-05 | 8 of 11 |
 | 13 | M1-02, M1-03, M1-05, M2-01, M4-02, M4-05, M4-06, M4-12, M4-13, M8a-02, M8a-03, M8a-04, M8a-05, M8a-06, M10-06 | 12 of 15 |
 | 14 | M1-04, M1-06, M1-07, M2-02, M2-03, M2-04, M2-05, M3-01, M4-07, M4-10, M4-11, M8a-07, M8a-08, M9-10 | 12 of 14 |
-| 15 | M1-08, M2-06, M3-02, M3-03, M4-14, M8a-09, M9-11 | 3 of 7 |
-| 16 | M3-04, M5-01, M7-01, M8b-03, M8b-04, M8b-05, M8b-06, M8b-07, M9-01, M9-06, M9-07, M9-12 | 9 of 12 |
-| 17 | M3-05, M5-02, M5-03, M7-02, M7-03, M7-10, M9-02, M10-02, M10-03, M10-04 | 7 of 10 |
-| 18 | M5-04, M7-05, M7-06, M7-07, M7-08, M9-03 | 5 of 6 |
-| 19 | M5-05, M7-09, M9-04, M9-05 | 3 of 4 |
-| 20 | M6-01, M7-11, M9-13 | 1 of 3 |
+| 15 | M1-08, M2-06, M3-02, M3-03, M4-14, M8a-09, M9-11 | 4 of 7 |
+| 16 | M1-09, M3-04, M5-01, M7-01, M8b-03, M8b-04, M8b-05, M8b-06, M8b-07, M9-12 | 7 of 10 |
+| 17 | M3-05, M5-02, M5-03, M7-02, M7-03, M7-10, M9-01, M9-06, M9-07, M10-02, M10-03, M10-04 | 9 of 12 |
+| 18 | M5-04, M7-05, M7-06, M7-07, M7-08, M9-02 | 5 of 6 |
+| 19 | M5-05, M7-09, M9-03 | 1 of 3 |
+| 20 | M6-01, M7-11, M9-04, M9-05, M9-13 | 3 of 5 |
 | 21 | M6-02, M6-03, M6-04, M6-05, M9-14 | 4 of 5 |
 | 22 | M6-06 | 1 of 1 |
 | 23 | M6-07 | 0 of 1 |
@@ -119,7 +119,8 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M1-05 | Companies service and pages (CRM Lite) | PRD F-10 | M1-01 | Module off returns 403; rollup of contacts and deals correct | M | Sonnet | yes | 13 | todo | - |
 | M1-06 | Custom fields: definitions, values, settings UI, list and detail rendering (CRM Full) | PRD F-12 | M1-01, M1-02 | Each field type validates; `lite` tenant gets 403 | L | Sonnet | yes | 14 | todo | - |
 | M1-07 | Bulk actions: tag, assign, status, delete; enrol-in-sequence stub (CRM Full) | PRD F-08 | M1-02 | 20 selected rows updated in one action and audited | M | Sonnet | yes | 14 | todo | - |
-| M1-08 | M1 gate: acceptance, TESTING statuses, docs | AGENTS; T | M1-01..M1-07 | All M1 rows pass | S | Haiku | no | 15 | todo | - |
+| M1-08 | Merge duplicate contacts: survivor selection, move deals, notes and activities, soft-remove the loser, `contact.merged` | PRD F-07 | M1-01, M1-04 | Merge moves all linked records and is audited; loser is soft-removed | M | Sonnet | yes | 15 | todo | - |
+| M1-09 | M1 gate: acceptance, TESTING statuses, docs | AGENTS; T | M1-01..M1-08 | All M1 rows pass | S | Haiku | no | 16 | todo | - |
 
 ## M2 Pipeline and kanban (base portal) with configurable stages (Lite) and multi-contact deals (Full)
 
@@ -230,19 +231,19 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M9-01 | Import engine part 1: file intake (csv, xlsx, size and row limits, signature check), column mapping, mapping templates | PRD F-90; SEC 5.3; DB Imports | M1-08, M8a-09 | 10 MB and 50,000 row limits enforced; .xlsm and archives refused | M | Opus | no | 16 | todo | - |
-| M9-02 | Import engine part 2: dry-run validation, dedupe on E.164 phone and lower-case email, duplicate rule skip or fill-blanks, report | PRD F-91; DB Imports | M9-01 | Dry run changes nothing; report lists failures with row numbers | L | Opus | no | 17 | todo | - |
-| M9-03 | Import engine part 3: commit job, source and batch tags, no-outreach guarantee, undo with edited-record list | PRD F-92, F-93, F-96; ARCH import flow | M9-02 | No `lead.created` emitted; undo lists records edited after import; partial batch is undoable | L | Opus | no | 18 | todo | - |
-| M9-04 | Import wizard UI (upload, map, preview, report, commit) | PRD F-90, F-91, F-94; DS import | M9-03 | Admin completes a 50,000-row dry run; client roles get 403 | L | Sonnet | yes | 19 | todo | - |
-| M9-05 | Import history page and undo UI | PRD F-93 | M9-03 | Undo removes batch records; edited records listed | M | Sonnet | yes | 19 | todo | - |
-| M9-06 | Global search and Cmd+K (CRM Full) | PRD F-37 | M1-08, M2-06 | Phone fragment finds the contact; search under 500 ms p95 | M | Sonnet | yes | 16 | todo | - |
-| M9-07 | CSV export per table view (CRM Full, permissioned) | PRD F-38; SEC export rules | M1-08 | Export honors filters and the staff permission; audited | M | Sonnet | yes | 16 | todo | - |
+| M9-01 | Import engine part 1: file intake (csv, xlsx, size and row limits, signature check), column mapping, mapping templates | PRD F-90; SEC 5.3; DB Imports | M1-09, M8a-09 | 10 MB and 50,000 row limits enforced; .xlsm and archives refused | M | Opus | no | 17 | todo | - |
+| M9-02 | Import engine part 2: dry-run validation, dedupe on E.164 phone and lower-case email, duplicate rule skip or fill-blanks, report | PRD F-91; DB Imports | M9-01 | Dry run changes nothing; report lists failures with row numbers | L | Opus | no | 18 | todo | - |
+| M9-03 | Import engine part 3: commit job, source and batch tags, no-outreach guarantee, undo with edited-record list | PRD F-92, F-93, F-96; ARCH import flow | M9-02 | No `lead.created` emitted; undo lists records edited after import; partial batch is undoable | L | Opus | no | 19 | todo | - |
+| M9-04 | Import wizard UI (upload, map, preview, report, commit) | PRD F-90, F-91, F-94; DS import | M9-03 | Admin completes a 50,000-row dry run; client roles get 403 | L | Sonnet | yes | 20 | todo | - |
+| M9-05 | Import history page and undo UI | PRD F-93 | M9-03 | Undo removes batch records; edited records listed | M | Sonnet | yes | 20 | todo | - |
+| M9-06 | Global search and Cmd+K (CRM Full) | PRD F-37 | M1-09, M2-06 | Phone fragment finds the contact; search under 500 ms p95 | M | Sonnet | yes | 17 | todo | - |
+| M9-07 | CSV export per table view (CRM Full, permissioned) | PRD F-38; SEC export rules | M1-09 | Export honors filters and the staff permission; audited | M | Sonnet | yes | 17 | todo | - |
 | M9-08 | Branding settings: logo upload, color with contrast check, business name | PRD F-39; SEC uploads; DS client color rules | M0-28 | Bad file refused; low-contrast color refused | M | Sonnet | yes | 12 | todo | - |
 | M9-09 | Business settings: hours, service area, services, transfer number, team | PRD F-41 | M0-28 | Hours feed availability and call windows | M | Sonnet | yes | 12 | todo | - |
 | M9-10 | Client Alex settings: pause and call hours only | PRD F-42; PRD decision 8 | M4-13 | Other fields are not writable; change audited | S | Sonnet | yes | 14 | todo | - |
 | M9-11 | Settings pages: tags and notification preferences (Lite) | PRD F-43 | M2-05, M7-04 | Preferences honored by `notify()` | M | Haiku | yes | 15 | todo | - |
 | M9-12 | Documents page and admin upload (proposal F-103) | PRD F-103; DB tenant_documents | M4-03, M8a-09 | Signed URL; other tenant 404 | M | Haiku | yes | 16 | todo | - |
-| M9-13 | Mobile polish pass on daily-use pages | PRD F-44; DS responsive | M1-08, M2-06, M3-05, M5-05 | Playwright 390px passes; 44px touch targets | M | Sonnet | yes | 20 | todo | - |
+| M9-13 | Mobile polish pass on daily-use pages | PRD F-44; DS responsive | M1-09, M2-06, M3-05, M5-05 | Playwright 390px passes; 44px touch targets | M | Sonnet | yes | 20 | todo | - |
 | M9-14 | M9 gate | AGENTS; T | M9-01..M9-13 | All M9 rows pass | S | Haiku | no | 21 | todo | - |
 
 ## M10 Hardening and launch
