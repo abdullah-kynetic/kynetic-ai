@@ -4,7 +4,7 @@
 
 Plain-language map of everything between today and the first signed client. Mirrors the Twenty note "PLAN 1 WALKTHROUGH: top to bottom" and the 33 [P1] tasks. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
-Plan 1 = the outbound speed-to-lead agent only, sold to roofing owners already running Meta ads. Price is D-017 (Quentin signed off): the first 3 clients pay $4,675 and clients 4 and up pay $8,500, billed as three Stripe invoices at 50/25/25. That replaces D-001. Gate to Plan 2 is 5 paying clients (D-013). D-003: build everything first, switch outreach on once.
+Plan 1 = the outbound speed-to-lead agent only, sold to owners in the five D-024 trades (remodelers, solar and battery, custom pools, windows and doors, decks and outdoor living) already running Meta ads. Price is D-024 (2026-10-24): founding $6,500 for the first 3 clients ($1,500/mo after month 3), standard $10,000 after ($2,000/mo after month 3); software included, no minute charges; 14-day guarantee. That replaces D-017 and D-001. Gate to Plan 2 is 5 paying clients (D-013). D-003: build everything first, switch outreach on once.
 
 Status of the 33 [P1] tasks today: 2 done, 3 in progress, 28 not started.
 

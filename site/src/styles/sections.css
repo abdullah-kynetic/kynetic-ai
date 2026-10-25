@@ -102,3 +102,44 @@ main[data-framer-name="Content"] article .framer-styles-preset-1qvpi5a * {
 main[data-framer-name="Content"] article a.framer-text { color: var(--kn-accent-text) !important; text-decoration: underline; text-underline-offset: 2px; }
 main[data-framer-name="Content"] article a.framer-text:hover { color: var(--kn-accent-hover) !important; }
 main[data-framer-name="Content"] article strong.framer-text { color: var(--kn-ink); }
+
+/* Pricing ------------------------------------------------------------------------------------------- */
+/* Hand-built (replaces the ported three-tier Framer cards): founding and standard offer, guarantee, add-ons. */
+.kn-pricing { background: var(--color-page); padding: 96px 24px; width: 100%; box-sizing: border-box; display: block; }
+.kn-pricing__inner { max-width: 1080px; margin: 0 auto; }
+.kn-pricing__head { text-align: center; max-width: 720px; margin: 0 auto 48px; }
+.kn-pricing__eyebrow { font-family: var(--font-sans); font-size: var(--text-sm); font-weight: var(--weight-semibold); letter-spacing: .08em; text-transform: uppercase; color: var(--color-gold); margin: 0 0 12px; }
+.kn-pricing__title { font-family: var(--font-serif); font-weight: 600; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.1; color: var(--color-text); margin: 0 0 16px; }
+.kn-pricing__lede { font-family: var(--font-sans); font-size: var(--text-lg); line-height: 1.6; color: var(--color-muted); margin: 0; }
+.kn-pricing__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.kn-plan { background: var(--color-card); border: 1px solid var(--color-border); border-radius: 16px; padding: 32px; display: flex; flex-direction: column; gap: 16px; font-family: var(--font-sans); }
+.kn-plan--featured { border: 2px solid var(--color-accent); }
+.kn-plan__tag { margin: 0; font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--color-accent-text); }
+.kn-plan__name { margin: 0; font-family: var(--font-serif); font-weight: 600; font-size: 1.75rem; color: var(--color-text); }
+.kn-plan__price { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; }
+.kn-plan__amount { font-size: 2.75rem; font-weight: var(--weight-bold); color: var(--color-text); line-height: 1; }
+.kn-plan__unit { font-size: var(--text-base); color: var(--color-muted); }
+.kn-plan__terms { margin: 0; font-size: var(--text-base); line-height: 1.55; color: var(--color-muted); }
+.kn-plan__list { margin: 0; padding: 0 0 0 20px; color: var(--color-text); line-height: 1.7; flex: 1; }
+.kn-btn { display: inline-flex; justify-content: center; align-items: center; padding: 14px 20px; border-radius: 8px; font-weight: var(--weight-semibold); text-decoration: none; font-family: var(--font-sans); transition: background-color .2s, color .2s; }
+.kn-btn--primary { background: var(--color-accent); color: var(--color-on-accent); }
+.kn-btn--primary:hover { background: var(--color-accent-hover); }
+.kn-btn--secondary { background: var(--color-card); color: var(--color-text); border: 1px solid var(--color-border-input); }
+.kn-btn--secondary:hover { background: var(--color-alt); }
+.kn-btn:focus-visible { outline: 2px solid var(--color-accent-text); outline-offset: 3px; }
+.kn-pricing__guarantee { margin-top: 24px; background: var(--color-alt); border-radius: 16px; padding: 24px 32px; font-family: var(--font-sans); color: var(--color-text); text-align: center; }
+.kn-pricing__guarantee p { margin: 0; font-size: var(--text-lg); }
+.kn-pricing__guarantee .kn-pricing__guarantee-title { font-size: var(--text-sm); font-weight: var(--weight-semibold); letter-spacing: .08em; text-transform: uppercase; color: var(--color-gold-on-alt); margin-bottom: 6px; }
+.kn-pricing__addons { margin-top: 24px; font-family: var(--font-sans); }
+.kn-pricing__addons-title { text-align: center; font-weight: var(--weight-semibold); color: var(--color-text); margin: 0 0 12px; }
+.kn-pricing__addons ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.kn-pricing__addons li { background: var(--color-card); border: 1px solid var(--color-border); border-radius: 12px; padding: 16px 20px; display: flex; flex-direction: column; gap: 4px; }
+.kn-pricing__addons strong { color: var(--color-text); }
+.kn-pricing__addons span { color: var(--color-muted); font-size: var(--text-sm); }
+@media (max-width: 809px) {
+  .kn-pricing { padding: 64px 16px; }
+  .kn-pricing__grid, .kn-pricing__addons ul { grid-template-columns: 1fr; }
+  .kn-plan { padding: 24px; }
+}
+.kn-plan__list, .kn-pricing__addons strong, .kn-pricing__addons-title { font-size: var(--text-base); }
+.kn-btn { font-size: var(--text-base); }

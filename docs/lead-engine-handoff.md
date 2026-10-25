@@ -3,7 +3,7 @@
 Single entry point for anyone (human or Claude session) taking over the lead-sourcing work for Plan 1. Everything below is backed by files in this repo on branch `claude/modest-thompson-h9atoy`; Twenty has a mirror note "LEAD ENGINE: Run B + pilots handoff (Oct 19-20, 2026)". Twenty is canonical; on a mismatch, flag it.
 
 ## 1. Goal and hard rules
-- Goal: a repeatable, cheap way to get independent local businesses that are running Meta (Facebook/Instagram) ads, with the owner's name (sourced) and the best published phone. Plan 1 (outbound AI speed-to-lead agent, $4,675 for the first 3 clients, $8,500 after) is sold to them. Dialing target is 75 owner calls a day; the launch gate needs about 3,000 owner-gated numbers (task 7.1).
+- Goal: a repeatable, cheap way to get independent local businesses that are running Meta (Facebook/Instagram) ads, with the owner's name (sourced) and the best published phone. Plan 1 (outbound AI speed-to-lead agent, D-024: founding $6,500 for the first 3 clients ($1,500/mo after month 3), standard $10,000 after ($2,000/mo after month 3)) is sold to them. Dialing target is 75 owner calls a day; the launch gate needs about 3,000 owner-gated numbers (task 7.1).
 - A human cold-calls the owners. No AI calls to prospects (D-007).
 - Public sources only. No logins, no CAPTCHA solving, no contacting any business, no form submissions or test leads.
 - No people-search or data-broker sites (Lane A rule; the reason is not recorded, see KI-011). Do not record home addresses or consumer-only phone numbers.
