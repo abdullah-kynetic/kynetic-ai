@@ -36,7 +36,7 @@ Rules:
 | DC-016 | 2026-10-25 | Quiet hours are 8am to 9pm in the lead's local time, with stricter state rules layered on top. The 60-second speed-to-lead promise yields to quiet hours. | Explicit (PRD 18) | SECURITY, PRD, TESTING |
 | DC-017 | 2026-10-25 | Admin 2FA (TOTP for Kynetic admin and VA) is in v1 as F-98, not Later. | Explicit | PRD, SECURITY, TESTING |
 | DC-018 | 2026-10-25 | Online Presence Management is its own milestone, M11. M8 is split into M8a and M8b. | Explicit (PRD 6) | PRD, ARCHITECTURE, AGENTS |
-| DC-019 | 2026-10-25 | Twenty push of tenant summaries is not built in v1. If built later it carries no client personal data and gets an F-ID then. | Explicit (PRD 16) | PRD, ARCHITECTURE |
+| DC-019 | 2026-10-25 | Twenty push of tenant summaries is not built in v1. If built later it carries no client personal data and gets an F-ID then. Superseded by DC-043. | Explicit (PRD 16) | PRD, ARCHITECTURE |
 | DC-020 | 2026-10-25 | Founding price: $6,500 setup plus 3 months, then $1,500/mo, with 25% off add-on setup fees. The older $4,675 figure is dropped. | Explicit (PRD 12) | PRD, TESTING |
 | DC-021 | 2026-10-25 | Accessibility target is WCAG 2.2 AA. | Explicit (PRD 13) | PRD, DESIGN_SYSTEM, TESTING |
 | DC-022 | 2026-10-25 | Design proposals approved: success green (light #1E7A46, dark #6FBF8E) and the stronger input border token. | Explicit | DESIGN_SYSTEM |
@@ -49,7 +49,7 @@ Rules:
 | DC-029 | 2026-10-25 | Health score: five inputs at 20% each; green at 70 or more, yellow 40 to 69, red below 40. Guarantee target and start date live on `tenants`. | Recommended option (PRD 10) | PRD, DATABASE |
 | DC-030 | 2026-10-25 | One domain, portal.kyneticai.com, for everyone. Per-client subdomains are Later (F-40). | Recommended option (PRD 11) | PRD, ARCHITECTURE |
 | DC-031 | 2026-10-25 | D-007 ("phone only, by a human") governs Kynetic's own prospecting. Alex calling a client's own inbound leads is allowed, subject to consent, DNC, quiet hours and the compliance gate. Abdullah can overrule at any time. | Recommended option (PRD 14) | PRD, SECURITY |
-| DC-032 | 2026-10-25 | Metric definitions: leads received, speed-to-lead (median seconds), contact rate, booking rate, revenue recovered (Won deal value with an Alex call or booking). | Recommended option (PRD 15) | PRD, TESTING |
+| DC-032 | 2026-10-25 | Metric definitions: leads received, speed-to-lead (median seconds), contact rate, booking rate, revenue recovered (Won deal value with an Alex call or booking).  Reopened by DC-044; now a proposal only. | Recommended option (PRD 15) | PRD, TESTING |
 | DC-033 | 2026-10-25 | Performance targets: mobile LCP at or under 2.5 s at p75; list API reads under 500 ms at p95 with 10,000 contacts; search under 500 ms at p95. | Recommended option (PRD 13) | PRD, TESTING |
 | DC-034 | 2026-10-25 | Hosting: separate Docker Compose project on the OVH VPS with its own network and database; Caddy; a separate VM is Later. Recordings are copied to R2 and served by signed URL; backups go to R2. | Recommended option | ARCHITECTURE, SECURITY |
 | DC-035 | 2026-10-25 | Sequences run in pg-boss inside the app; n8n runs cross-system workflows through the service API. | Recommended option | ARCHITECTURE |
@@ -60,6 +60,9 @@ Rules:
 | DC-040 | 2026-10-25 | Dark mode ships in v1 with default light. Sidebar is an espresso band with the logo on a cream chip. | Recommended option | DESIGN_SYSTEM |
 | DC-041 | 2026-10-25 | **Alex-only clients get the base portal**: leads, pipeline kanban, appointments, Alex call logs and reports (plus messages log, notifications, settings). **CRM Lite and CRM Full are paid upsells toggled per tenant on top of that.** M0 builds the base portal shell and the module mechanism so Lite and Full ship as gated modules. Lite adds companies, tasks, notes, configurable stages and settings pages; Full adds custom fields, bulk actions, multi-contact deals, search and Cmd+K, export and sequence enrollment. Supersedes the earlier recommended option in PRD decision 1 (read-only Leads list for Alex-only tenants). | Explicit (PRD 1) | PRD, ARCHITECTURE, DATABASE, SECURITY, DESIGN_SYSTEM, TESTING, AGENTS |
 | DC-042 | 2026-10-25 | `canContact` signature is `canContact(ctx, contactId, channel, now, opts?: { purpose? })`. `ctx` carries the tenant, so the tenant is not passed separately; the contact is loaded inside. Purpose is an optional field, not a positional argument. Supersedes the `(ctx, contactId, channel, purpose, now)` form in SECURITY and DATABASE and the `(tenant, contact, channel, purpose, now)` form in ARCHITECTURE. | Explicit (Abdullah, 2026-10-25) | ARCHITECTURE, SECURITY, DATABASE, CODE_STYLE |
+| DC-043 | 2026-10-25 | Twenty push is Later, not v1. Client data never goes into Twenty; Twenty stays Kynetic-internal only. Supersedes DC-019. | Explicit (Abdullah, 2026-10-25; PRD 16) | PRD, ARCHITECTURE, TESTING |
+| DC-044 | 2026-10-25 | Metric definitions (PRD decision 15) are reopened: UNRESOLVED, Abdullah decides before M6 starts. The PRD formulas are a proposal only. Supersedes DC-032. | Explicit (Abdullah, 2026-10-25) | PRD, ARCHITECTURE, DATABASE, TESTING, AGENTS, BUILD_PLAN |
+| DC-045 | 2026-10-25 | F-71 cites SECURITY 2.1 as where Better-Auth sign-in, magic links and sessions are defined; PRD and SECURITY stay in sync. | Explicit (Abdullah, 2026-10-25) | PRD, SECURITY |
 
 ## Gap check, 2026-10-25 (proposals awaiting Abdullah's yes)
 
@@ -85,6 +88,7 @@ Added at Abdullah's request after a sweep of what the portal needs that no doc c
 | Item | Needs |
 | --- | --- |
 | Delivery date | Abdullah's date |
+| Metric definitions (speed-to-lead, contact rate, booking rate, revenue recovered) | Abdullah, before M6 starts |
 | Which F-97 direct connectors, in what order, and their API access | Abdullah and the providers |
 | State calling and recording rules, consent wording, Terms and Privacy wording, incident notification duties | Counsel |
 | Twilio A2P campaign approval and per-tenant sending numbers | Twilio |

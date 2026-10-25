@@ -382,7 +382,7 @@ Details to confirm against each provider's docs when M4 starts; the adapter inte
 | Twilio | One Kynetic account; one number per tenant bought by an admin and stored in `phone_numbers` (auto-provision is F-56, Later); SMS through a Messaging Service | `POST /api/hooks/twilio/status` and `/inbound`, `X-Twilio-Signature` verified | `SmsProvider.send` through `OutboundGate` | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` | A2P campaign not approved (error 30034). UNRESOLVED (needs Twilio): approval and per-tenant numbers. Opt-out wording is lowercase natural ("just reply stop"). STOP and HELP are mirrored into `consents` (F-74). |
 | Resend | App email only (invites, magic links, notifications, reports) | `POST /api/hooks/resend`, signature verified; bounce and complaint mark the address suppressed and show in F-62 | `EmailProvider.send` | `RESEND_API_KEY`, `RESEND_WEBHOOK_SECRET` | Domain verification (above). Templates: invite, magic link, new lead, booked, task due, hot-lead alert, deal won, report ready, backup or security alert. Non-transactional mail carries an unsubscribe link. |
 | n8n | Cross-system workflows through `/api/service/*` and signed outbound events (F-89) | service tokens | HMAC-signed event POSTs | token and secret live in n8n credentials | New workflows are built inactive; activation needs Abdullah's yes. |
-| Twenty | Kynetic-internal only; no client data; no push in v1 (PRD decision 16). `tenants.twenty_company_id` is a reference only (F-106 is Later). | none | none | none | none |
+| Twenty | Kynetic-internal only; no client data; push is Later, not v1 (PRD decision 16). `tenants.twenty_company_id` is a reference only (F-106 is Later). | none | none | none | none |
 
 ### Pre-go-live gates (gap check 2026-10-25)
 No real client data enters the new portal until all of these pass: the restore drill; the cross-tenant isolation test (SEC-T-01 and SEC-T-02) against the production-like stack; the security review (M10); backups running off-server; known issues KI-006 (database passwords in the container environment) and KI-008 (dev password reuse) closed or shown not to apply to the new stack; Cloudflare in front with the origin locked down; the 8am to 9pm quiet-hours gate on; the kill switch tested; and the counsel-dependent items either answered or the affected channel left off for that tenant.
@@ -414,13 +414,13 @@ Abdullah approved these explicitly or told us to take the recommended option. De
 5. Hosting: separate compose project, own network and database on the OVH VPS; Caddy. Domain: portal.kyneticai.com for everyone.
 6. Files: recordings copied to R2, signed URLs. Backups to R2.
 7. Retention: recordings and transcripts 12 months, messages 24, audit 24, consent 5 years after revocation, webhook payloads 30 days, raw import files 30 days after commit.
-8. Client-editable Alex settings: pause and call hours only. Health score, guarantee target and metric definitions as in the PRD.
+8. Client-editable Alex settings: pause and call hours only. Health score and guarantee target as in the PRD. Metric definitions are UNRESOLVED (proposal in the PRD; Abdullah decides before M6).
 9. Sequences: pg-boss in the app; n8n for cross-system workflows.
 10. Lite/Full split and the follow-up bundle membership as in PRD decisions 1 and 7. Staff permission toggles (exports, bulk delete) live on `memberships`. Service tokens live in `service_tokens` (hashed); the n8n webhook URL and token live in n8n credentials, never in the repo.
 11. Closed: no migration of the old portal; clean launch with a synthetic demo tenant (F-88).
 12. Numeric rate limits, alert thresholds and scale limits: the SECURITY 5.4 numbers are the v1 defaults; M10's load test may tune them. Alerts go by email through Resend.
 13. This doc is authoritative for layout; CODE_STYLE follows it.
-14. Twenty push of tenant summaries is not built in v1.
+14. Twenty push of tenant summaries is Later, not v1. Client data never goes into Twenty.
 
 ### UNRESOLVED (needs outside information)
 
@@ -428,6 +428,7 @@ Abdullah approved these explicitly or told us to take the recommended option. De
 2. Which F-97 direct connectors, and OPM vendors or connectors beyond status records.
 3. State calling and recording rules and consent wording (counsel). The 8am-9pm lead-local window is decided; the per-state table is not.
 4. Delivery date.
+5. Metric definitions (PRD decision 15): Abdullah decides before M6 starts.
 
 ### Contradictions found
 

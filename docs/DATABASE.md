@@ -710,7 +710,7 @@ CREATE TABLE metrics_daily (                                            -- rebui
   contacts_reached integer NOT NULL DEFAULT 0 CHECK (contacts_reached >= 0),
   estimates_booked integer NOT NULL DEFAULT 0 CHECK (estimates_booked >= 0),
   booked_value_cents bigint NOT NULL DEFAULT 0,
-  won_revenue_cents bigint NOT NULL DEFAULT 0,                          -- "revenue recovered" per PRD Metric definitions (Won deal value with an Alex call or booking)
+  won_revenue_cents bigint NOT NULL DEFAULT 0,                          -- "revenue recovered" definition is UNRESOLVED (PRD proposal: Won deal value with an Alex call or booking)
   avg_speed_to_lead_s numeric(10,2),
   speed_to_lead_samples integer NOT NULL DEFAULT 0,
   computed_at timestamptz NOT NULL DEFAULT now(),
@@ -1339,7 +1339,7 @@ Contradictions between sources:
 6. Price format. Decisions write "Monthly (setup)", for example "Alex core $2.5K($10K)". The PRD reads the parenthetical as setup. CRM build-out is written as "$3.5K + $500/mo", a different shape from the other modules. `module_prices` follows the PRD reading.
 7. Base product vs upsell. Spec section 1 sells the CRM as the product ("a CRM good enough that clients drop their old one"). Decisions list "CRM build-out (Lite/Full)" as a module. Schema treats the core CRM tables as always present and `crm` as a level flag (PRD F-85). PRD decision 1 settles what Alex-only clients get any CRM.
 8. Reviews. Spec feature F-48 ("Reviews add-on", Later) has no matching decision module. PRD maps it to `opm` (decided, recommended option).
-9. "Revenue recovered" (F-01) had no definition in any source. Decided: PRD "Metric definitions" (Won deal value with an Alex call or booking); `metrics_daily` columns follow it.
+9. "Revenue recovered" (F-01) has no definition in any source. UNRESOLVED: Abdullah decides before M6 (PRD proposal: Won deal value with an Alex call or booking). `metrics_daily` columns follow the proposal until then.
 10. Module-off behavior. PRD says data is kept when a module is off. Automation templates and runs under a disabled module move to `stopped_module_off` (kept). Consistent, but the spec does not say so; this doc adds the status.
 11. Milestone order vs writes. Spec wave 2 runs M4 in parallel with M1, but M4 writes `activities`, `contacts` and `calls`. Resolved: the M0 baseline creates every table, so no milestone waits on another's migration (ARCHITECTURE section 1). Feature code still follows the milestone's dependency rules.
 12. Pipeline stage names. Spec default stages match PRD F-17. No conflict. Recorded so nobody renames them in the seed.
