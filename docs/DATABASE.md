@@ -1,7 +1,7 @@
 # DATABASE: Kynetic Client CRM & Portal
 
 Status: Draft for review. Not approved.
-Sources, in order of precedence: `DECISIONS_locked.md` (Oct 25 2026, wins on conflict), `PRD.md` (feature IDs F-01 to F-98, module keys, open decisions), `SPEC_client_crm_portal.md` (data model, section 5), and the existing portal schema in `portal/drizzle/0000_init.sql` to `0002_recovery_codes.sql` (current VPS portal, read only).
+Sources, in order of precedence: `DECISIONS_locked.md` (Oct 25 2026, wins on conflict), `PRD.md` (feature IDs F-01 to F-106, module keys, open decisions), `SPEC_client_crm_portal.md` (data model, section 5), and the existing portal schema in `portal/drizzle/0000_init.sql` to `0002_recovery_codes.sql` (current VPS portal, read only).
 
 Conventions used here:
 - Primary keys are `uuid` with `gen_random_uuid()`. Timestamps are `timestamptz`.
@@ -181,7 +181,7 @@ CREATE TABLE tenant_modules (                                           -- one r
 CREATE UNIQUE INDEX tenant_modules_one_crm_level ON tenant_modules (tenant_id) WHERE module_key = 'crm' AND enabled;
 ```
 
-Note: `platform` cannot be off, which the CHECK enforces with `module_key <> 'platform' OR enabled`. A client who only bought Alex has `crm` off; PRD decision 1 defines the read-only Leads view it still sees.
+Note: `platform` cannot be off, which the CHECK enforces with `module_key <> 'platform' OR enabled`. A client who only bought Alex has `crm` off and still gets the base portal (leads, kanban, appointments, calls, reports; PRD decision 1). Companies, tasks, notes and configurable stages need `crm` Lite; custom fields, bulk actions, multi-contact deals, search and export need `crm` Full. The tables always exist.
 
 ### Secrets, audit and operations
 
@@ -871,6 +871,71 @@ CREATE INDEX contacts_import_batch_idx ON contacts (tenant_id, import_batch_id) 
 -- activities.type gains 'import' (timeline entry for imported history and for batch events).
 ```
 
+### Gap-check additions (2026-10-25; UNRESOLVED (proposal: create in the M0 baseline) until Abdullah says yes)
+
+```sql
+ALTER TABLE tenants ADD COLUMN twenty_company_id text UNIQUE;           -- F-106 reference only; no sync in v1
+
+CREATE TABLE terms_acceptances (                                         -- F-102; global per user, not tenant-scoped data
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  document text NOT NULL CHECK (document IN ('terms','privacy')),
+  version text NOT NULL,
+  accepted_at timestamptz NOT NULL DEFAULT now(),
+  ip inet,
+  UNIQUE (user_id, document, version)
+);
+
+CREATE TABLE tenant_billing (                                            -- F-99; admin-only, no owner or staff policy
+  tenant_id uuid PRIMARY KEY REFERENCES tenants(id) ON DELETE RESTRICT,
+  billing_start_date date,
+  stripe_customer_id text,
+  notes text,
+  updated_by uuid REFERENCES users(id) ON DELETE SET NULL,
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE TABLE tenant_billing_modules (                                    -- price snapshot taken when a module is enabled
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid NOT NULL REFERENCES tenants(id) ON DELETE RESTRICT,
+  module_key text NOT NULL REFERENCES module_catalog(module_key),
+  level text NOT NULL DEFAULT '',
+  setup_cents integer NOT NULL CHECK (setup_cents >= 0),
+  monthly_cents integer NOT NULL CHECK (monthly_cents >= 0),
+  discount_pct integer NOT NULL DEFAULT 0 CHECK (discount_pct BETWEEN 0 AND 100),
+  snapshot_at timestamptz NOT NULL DEFAULT now(),
+  ended_at timestamptz
+);
+CREATE INDEX tenant_billing_modules_idx ON tenant_billing_modules (tenant_id, module_key);
+
+CREATE TABLE onboarding_steps (                                          -- F-100
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid NOT NULL REFERENCES tenants(id) ON DELETE RESTRICT,
+  step_key text NOT NULL,                                                -- from a template, per enabled module
+  title text NOT NULL,
+  module_key text,
+  client_visible boolean NOT NULL DEFAULT false,                         -- owner sees only these, read-only
+  status text NOT NULL DEFAULT 'todo' CHECK (status IN ('todo','doing','blocked','done','n/a')),
+  owner_user_id uuid REFERENCES users(id) ON DELETE SET NULL,
+  due_date date,
+  done_at timestamptz,
+  note text,
+  UNIQUE (tenant_id, step_key)
+);
+
+CREATE TABLE tenant_documents (                                          -- F-103
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid NOT NULL REFERENCES tenants(id) ON DELETE RESTRICT,
+  kind text NOT NULL CHECK (kind IN ('agreement','proposal','invoice','report','other')),
+  title text NOT NULL,
+  file_key text NOT NULL,                                                -- private R2 key under the tenant prefix
+  uploaded_by uuid REFERENCES users(id) ON DELETE SET NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX tenant_documents_idx ON tenant_documents (tenant_id, created_at DESC);
+```
+
+Access: `tenant_billing` and `tenant_billing_modules` have the standard RLS enabled but no policy for owner or staff roles in application code; only admin routes read them, through `withTenant` while viewing a tenant as admin, and the audit trigger records every write. `onboarding_steps` rows are readable by owners only where `client_visible`. `tenant_documents` is readable by owners and written by admins. `terms_acceptances` is a global table: users read and insert their own rows.
+
 ### Not in the baseline schema (decided by the PRD decisions log)
 
 - OPM data (F-83): a status/task record per item and the monthly report (M11, approved). Tables `presence_items` and `review_snapshots`; no vendor integration tables until vendors are chosen (UNRESOLVED).
@@ -921,7 +986,8 @@ SELECT app_enable_tenant_rls(t) FROM unnest(ARRAY[
   'companies','custom_field_defs','contacts','pipelines','pipeline_stages','deals','deal_contacts',
   'activities','tasks','notes','note_mentions','calls','messages','consents','dnc_entries',
   'integrations','phone_numbers','alex_configs','alex_prompts','service_tokens','appointments',
-  'metrics_daily','reports','automations','automation_steps','automation_runs','notifications','import_batches','import_batch_records'
+  'metrics_daily','reports','automations','automation_steps','automation_runs','notifications','import_batches','import_batch_records',
+  'tenant_billing','tenant_billing_modules','onboarding_steps','tenant_documents'
 ]::regclass[]) AS t;
 -- Implementation note: this runs after the table DDL in the same migration.
 
@@ -1215,6 +1281,11 @@ Required fields and allowed values are in the DDL. These rules apply on top, enf
 | F-26 to F-28, F-30, F-32 (consent part) | M4 | calls, messages, consents |
 | F-58, F-42 | M4 (data), M8 (admin UI) | alex_configs, alex_prompts |
 | F-62 | M4 | integrations, webhook_events |
+| F-99 | M8a | tenant_billing, tenant_billing_modules |
+| F-100 | M8a | onboarding_steps |
+| F-102 | M0 | terms_acceptances |
+| F-103 | M9 | tenant_documents |
+| F-106 | Later | tenants.twenty_company_id (reference) |
 | F-89, lead intake | M0 (table); M4 (lead intake); M7 (n8n use) | service_tokens, webhook_events |
 | F-49 | M6 | reports, metrics_daily |
 | F-31 to F-33, F-35 | M7 (tables created in M0) | automation_templates, automations, automation_steps, automation_runs, notifications |
@@ -1229,7 +1300,7 @@ Required fields and allowed values are in the DDL. These rules apply on top, enf
 All questions that were open here are closed by Abdullah's approvals on 2026-10-25 (PRD "Decisions log"). What each means for the schema:
 
 Decided:
-1. Alex-only client surfaces and CRM Lite/Full: PRD decision 1. `crm.level` is `lite` or `full`; core CRM tables always exist.
+1. Alex-only clients get the base portal; CRM Lite and Full are paid per-tenant upsells (PRD decision 1, explicit). `crm.level` is `lite` or `full`; core CRM tables always exist.
 2. Auth: Better-Auth with Google and magic links, admin TOTP (decisions 2). Auth library tables (including two-factor) are created by the library's migration inside the M0 baseline; `invitations` stays ours.
 3. Voice: ElevenLabs primary, Retell fallback. `provider` stays a generic text column.
 4. Drizzle, pg-boss, Resend confirmed. Plain SQL migrations for RLS.
@@ -1266,7 +1337,7 @@ Contradictions between sources:
 4. Onboarding vs tier. The onboarding form (F-55) has no average job value, but tier is chosen at onboarding (F-86). `avg_job_value_cents` is therefore nullable and `pricing_tier` is nullable until someone enters it.
 5. Auth. Spec stack says Better-Auth with Google and magic link. Decisions say Better-Auth or Auth.js. The existing portal uses its own password and TOTP, not a library. Decided: Better-Auth (PRD decision 2); auth tables come from its migration.
 6. Price format. Decisions write "Monthly (setup)", for example "Alex core $2.5K($10K)". The PRD reads the parenthetical as setup. CRM build-out is written as "$3.5K + $500/mo", a different shape from the other modules. `module_prices` follows the PRD reading.
-7. Base product vs upsell. Spec section 1 sells the CRM as the product ("a CRM good enough that clients drop their old one"). Decisions list "CRM build-out (Lite/Full)" as a module. Schema treats the core CRM tables as always present and `crm` as a level flag (PRD F-85 recommended option). PRD decision 1 settles what Alex-only clients get any CRM.
+7. Base product vs upsell. Spec section 1 sells the CRM as the product ("a CRM good enough that clients drop their old one"). Decisions list "CRM build-out (Lite/Full)" as a module. Schema treats the core CRM tables as always present and `crm` as a level flag (PRD F-85). PRD decision 1 settles what Alex-only clients get any CRM.
 8. Reviews. Spec feature F-48 ("Reviews add-on", Later) has no matching decision module. PRD maps it to `opm` (decided, recommended option).
 9. "Revenue recovered" (F-01) had no definition in any source. Decided: PRD "Metric definitions" (Won deal value with an Alex call or booking); `metrics_daily` columns follow it.
 10. Module-off behavior. PRD says data is kept when a module is off. Automation templates and runs under a disabled module move to `stopped_module_off` (kept). Consistent, but the spec does not say so; this doc adds the status.
@@ -1274,6 +1345,6 @@ Contradictions between sources:
 12. Pipeline stage names. Spec default stages match PRD F-17. No conflict. Recorded so nobody renames them in the seed.
 
 Cross-document check items:
-- Feature IDs are PRD IDs (F-01 to F-98). Spec section numbering is not used.
+- Feature IDs are PRD IDs (F-01 to F-106). Spec section numbering is not used.
 - Module keys match PRD v4 and ARCHITECTURE exactly.
 - CODE_STYLE decided `tenant_modules(tenant_id, module_key, enabled, config jsonb, updated_at)`. This doc adds `level`, `changed_by` and `changed_at`, which the PRD F-70 requires (changed-by, timestamp) and the CRM level requires.

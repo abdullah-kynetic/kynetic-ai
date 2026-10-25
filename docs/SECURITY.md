@@ -2,7 +2,7 @@
 
 Kynetic Client CRM & Portal. Owner: Abdullah. Status: draft for review, Oct 25, 2026.
 
-**Sources.** `SPEC_client_crm_portal.md`, `DECISIONS_locked.md` (these win over the spec), `docs/PRD.md` (authoritative for feature IDs F-01 to F-98, module keys and the module catalog, and for open decision numbers "OD-n"), `docs/CODE_STYLE.md` (error codes, logging), and the Kynetic hard rules.
+**Sources.** `SPEC_client_crm_portal.md`, `DECISIONS_locked.md` (these win over the spec), `docs/PRD.md` (authoritative for feature IDs F-01 to F-106, module keys and the module catalog, and for open decision numbers "OD-n"), `docs/CODE_STYLE.md` (error codes, logging), and the Kynetic hard rules.
 
 **Conventions.**
 - Feature IDs `F-xx` and module keys are the PRD's. Nothing here defines a feature.
@@ -146,7 +146,7 @@ Locked decision: each Kynetic system and upsell has its own backend and is toggl
 | `reactivation` | F-82 | Highest compliance risk (3.8). One-time campaign |
 | `opm` | F-83 (and F-48 if PRD 7 accepts the mapping) | Holds third-party OAuth tokens (encrypted, section 4) |
 | `followup_bundle` | F-84 | Convenience grant that enables member flags. Bundle contents: PRD PRD 7 |
-| `crm` with level `lite` or `full` | F-05 to F-23, F-37, F-38, F-43, F-50, F-51, F-85 | Which surfaces are Lite vs Full: PRD PRD 1 |
+| `crm` with level `lite` or `full` | Lite: F-10, F-17, F-20, F-22, F-43. Full: F-08, F-12, F-15, F-37, F-38. F-85 | Upsell on top of the base portal. Base routes (F-05 to F-07, F-14, F-16, F-19) are not gated by `crm` (PRD 1) |
 
 Rules:
 1. `requireModule(ctx, key)` runs first in every route handler, server action, job handler, webhook processor and admin action that belongs to a module. It reads the flag from the database for that request or job run. It is not read from the client or a token claim. Cache at most 30 s, invalidated on write.
@@ -154,7 +154,7 @@ Rules:
 3. Check at **execution time**, not enqueue time. A step queued before a module was turned off must not run (SEC-T-12).
 4. Only the Kynetic admin can change flags. Each change is audit logged with before and after values and takes effect within 30 s. Client owners can see their modules and cannot edit them.
 5. Turning a module off stops its outbound activity immediately and keeps its data (F-70). Deleting data on cancel follows section 6.1.
-6. `crm` levels: a `lite` tenant gets 403 on Full-only routes (F-85). Which routes is PRD PRD 1.
+6. `crm` levels: a tenant without `crm` gets 403 on every Lite and Full route, and a `lite` tenant gets 403 on Full-only routes (F-85); base-portal routes stay available (PRD 1).
 7. Test matrix: for every module key, a tenant without it gets 403 and skipped jobs on every owned endpoint, and a tenant with it works (SEC-T-12).
 
 ### 2.5 Recovery and revocation
@@ -546,7 +546,7 @@ Tests below go into `docs/TESTING.md` and run in CI (Vitest for unit and integra
 ## Appendix B. Decisions and open items
 
 All PRD decisions below were approved by Abdullah on 2026-10-25 (cite them, do not re-ask):
-- **PRD 1** Lite vs Full scope and surfaces for an Alex-only client. Used in 2.4.
+- **PRD 1** Base portal for every tenant; CRM Lite and Full are paid upsells. Used in 2.4.
 - **PRD 2** Better-Auth, Google plus magic link, admin 2FA in v1 (F-98). Used in 2.1.
 - **PRD 3** ElevenLabs primary, Retell fallback. Affects 4.1 and 3.6.
 - **PRD 4** Drizzle, pg-boss, Resend confirmed.
@@ -579,7 +579,7 @@ Raised in this file, decided 2026-10-25 (recommended option approved) unless mar
 
 - **C1 Auth library.** Spec names Better-Auth; decisions allow Better-Auth or Auth.js. Resolved: Better-Auth (PRD 2).
 - **C2 Sign-in methods.** Spec stack adds email magic link; decisions say Google. Resolved: both (PRD 2).
-- **C3 CRM as module vs base product.** Decisions list "CRM build-out (Lite/Full)" as a priced, toggleable module. The spec and PRD treat the CRM as the base for every tenant. Resolved (PRD 1). The PRD catalog keys it as `crm`, which is how this file gates it.
+- **C3 CRM as module vs base product.** Decisions list "CRM build-out (Lite/Full)" as a priced, toggleable module. Resolved (PRD 1): the base portal (leads, kanban, appointments, calls, reports) is for everyone; the `crm` module (Lite/Full) is the paid upsell, which is how this file gates it.
 - **C4 Twenty and Phase 2.** Spec Phase 2 has the same codebase replace Twenty for Kynetic's own pipeline. Decisions keep Twenty internal and client data out of it. Compatible only if Kynetic's pipeline sits outside client tenants (Appendix A, F-65 to F-69).
 - **C5 Voice provider.** Spec leaves Retell or ElevenLabs open; Kynetic project notes record ElevenLabs as chosen (Oct 22), reversing D-018, with ElevenLabs primary and Retell fallback (PRD 3). Verifiers in 3.6 cover both.
 - **C6 Per-call cost.** Spec and decisions say Later. Consistent. Hidden from clients in v1.
@@ -590,3 +590,13 @@ Raised in this file, decided 2026-10-25 (recommended option approved) unless mar
 - **C11 VA access.** Spec gives VAs read-only view-as and also "edit contacts or tasks on request". Resolved in 2.6 by a separate logged support-edit action.
 - **C12 Hard rules vs product.** Hard rules say outreach is phone-only and by a human, with no AI cold calls or cold SMS. The product contacts leads by AI voice and SMS. Reconciled by limiting to consented, inbound-requested leads (3.1 to 3.8). Reactivation (3.8) is the edge case and is gated by consent, DNC and quiet hours. PRD 14.
 - **C13 Module-off status.** Spec says UI hidden; PRD F-70 and CODE_STYLE say 403 on the server. Both are followed: UI hidden and server 403 (2.4).
+
+## Appendix D. Gap-check additions (2026-10-25)
+Each is UNRESOLVED (proposal: as written) until Abdullah says yes.
+- **F-99 billing profile.** Kynetic admin only: read and write. VA, owner and staff get 403. Stripe customer id is an identifier, not a secret; no card data is ever stored. Every write is audited with before and after.
+- **F-100 setup checklist.** Admin and VA read and write; owners read only steps flagged `client_visible`, with no vendor ids, credentials or internal notes.
+- **F-101 operations tools.** Admin only, except webhook viewer and job viewer which VAs may read. Kill switch, replay, retry, suspend and 2FA reset are admin-only, audited, and rate limited (5.4). Replay goes through the same idempotent path as the first delivery and re-checks module and compliance state. The kill switch is checked by `OutboundGate` before every call or text, so a queued job cannot slip past it.
+- **F-102 terms acceptance.** Stored per user with version, time and IP. The acceptance page is the only route allowed before acceptance. The wording is UNRESOLVED (needs counsel).
+- **F-103 documents.** Upload by admin only; PDF only, size limit 10 MB, magic-number check, stored under the tenant prefix; owners download by a signed URL that expires in 5 minutes after `authorize()`. Another tenant's id returns 404.
+- **Branding inputs (F-39).** Logo upload follows 2.x upload rules (type, size, re-encode); primary color must pass the contrast rule in DESIGN_SYSTEM before it is saved.
+- **Preview environments** carry synthetic data only and sit behind Cloudflare Access.

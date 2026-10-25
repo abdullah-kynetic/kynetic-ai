@@ -2,7 +2,7 @@
 
 Kynetic Client CRM & Portal. Target path in the build repo: `docs/TESTING.md`.
 
-Source order: `DECISIONS_locked.md` (Oct 25, 2026) wins over `SPEC_client_crm_portal.md`. `PRD.md` supplies the F-IDs (F-01 to F-98) and the milestone and module tags. Anything in none of these is marked `Decided 2026-10-25 (recommended option: ...)` or, if it needs outside information, `UNRESOLVED`. Commands not verified in a running repo are marked `Not configured`.
+Source order: `DECISIONS_locked.md` (Oct 25, 2026) wins over `SPEC_client_crm_portal.md`. `PRD.md` supplies the F-IDs (F-01 to F-106) and the milestone and module tags. Anything in none of these is marked `Decided 2026-10-25 (recommended option: ...)` or, if it needs outside information, `UNRESOLVED`. Commands not verified in a running repo are marked `Not configured`.
 
 Status of this document: draft. No test has been executed. Every row in the acceptance matrix is `Not run`.
 
@@ -249,7 +249,8 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-83 (M11, opm) | Module off | Section and routes absent (403) | Integration | Not run |
 | F-84 (M0 flag and M7, followup_bundle) | Bundle on | Member modules behave as enabled (recommended option: quote_followup, reactivation, missed_call_textback) | Unit and Integration | Not run |
 | F-84 (M0 flag and M7, followup_bundle) | Bundle off | Only independently enabled modules remain | Integration | Not run |
-| F-85 (M0 flag; M1 to M9 gating, crm) | crm Lite | Full-only surfaces hidden; their routes 403 (recommended option list in PRD) | E2E and Integration | Not run |
+| F-85 (M0 flag; M1 to M9 gating, crm) | No `crm` (Alex-only tenant) | Base portal works (leads, kanban, appointments, calls, reports); Lite and Full routes 403 and are absent from nav | E2E and Integration | Not run |
+| F-85 (M0 flag; M1 to M9 gating, crm) | crm Lite | Companies, tasks, notes, stage settings available; Full-only surfaces hidden and their routes 403 | E2E and Integration | Not run |
 | F-85 (M0 flag, crm) | Upgrade Lite to Full | Full surfaces appear; data intact | Integration | Not run |
 | F-86 (M0 columns, M8 UI, platform) | Tenant created with plan and tier | Stored and shown in All clients | Integration | Not run |
 | F-86 (M8, platform) | Founding plan reference text | Shows $6,500 setup and 3 months then $1,500/mo (price decided, PRD decision 12) | E2E | Not run |
@@ -290,7 +291,7 @@ Every module must pass each column for release. Off means the tenant flag is fal
 | `reactivation` | Launch endpoint | Launch button absent | Campaign run no-op | Past campaigns intact |
 | `opm` | Online Presence routes | Section and nav absent | Monthly OPM report no-op | Status records intact (PRD decision 7) |
 | `followup_bundle` | Bundle enablement | Bundle toggle state reflects member flags | Member jobs follow member flags (decided, recommended option) | Member flags intact |
-| `crm` Lite | Full-only routes (recommended option list in PRD F-85) | Full-only surfaces absent | Not applicable | Full data kept on downgrade (Decided: data is kept, surfaces hidden) |
+| `crm` Lite | Lite routes (no `crm`) and Full-only routes (`lite`), per PRD F-85 | Full-only surfaces absent | Not applicable | Full data kept on downgrade (Decided: data is kept, surfaces hidden) |
 | `crm` Full | Not applicable | Not applicable | Not applicable | Not applicable |
 
 Cross-module rules to test (release-blocking, recommended option wherever marked):
@@ -404,6 +405,23 @@ Keep `Not run` distinct from `Passed`. Record each run here in this form:
 
 Regression policy: every important bug fix adds a regression test named with the F-ID it touches, before the fix merges.
 
+### Gap-check rows (2026-10-25; UNRESOLVED (proposal: as written) until approved)
+
+| ID, milestone, module | Scenario | Expected | Layer | Status |
+| --- | --- | --- | --- | --- |
+| F-99 (M8a, platform) | Admin enables a module | Price snapshot row created from `module_prices`; totals correct | Integration | Not run |
+| F-99 (M8a, platform) | `module_prices` changes later | Existing snapshots unchanged | Integration | Not run |
+| F-99 (M8a, platform) | Owner, staff and VA request the billing profile | 403 | Integration | Not run |
+| F-100 (M8a, platform) | New tenant with `alex_core` | Checklist created with the module's steps | Integration | Not run |
+| F-100 (M8a, platform) | Owner opens the dashboard before go-live | Setup progress shows only `client_visible` steps; none after go-live | E2E | Not run |
+| F-101 (M8b, platform) | Kill switch on, a call job runs | No call or text sent; job waits; resumes after off | Integration | Not run |
+| F-101 (M8b, platform) | Replay a failed webhook twice | Processed once | Integration | Not run |
+| F-101 (M8b, platform) | Suspend a tenant | Its users cannot sign in; its jobs no-op | Integration | Not run |
+| F-102 (M0, platform) | User has not accepted the current version | Redirect to acceptance; accepted once, not asked again | E2E | Not run |
+| F-103 (M9, platform) | Owner downloads a document; another tenant's id | Signed URL; 404 | Integration | Not run |
+| F-98 (M0, platform) | Staff account without TOTP | Reaches only enrolment; sign-in with TOTP works; reset by another admin is audited | E2E | Not run |
+| F-85 (M0, crm) | Alex-only tenant opens Leads, Kanban, Appointments, Calls, Reports | All work; Companies, Tasks, Notes, Search, Export are absent and 403 | E2E | Not run |
+
 ---
 
 ## Open items
@@ -412,7 +430,7 @@ Regression policy: every important bug fix adds a regression test named with the
 
 Abdullah approved these explicitly or told us to take the recommended option. Tests assert them.
 
-1. Alex-only client surfaces and CRM Lite/Full: PRD decision 1 (gating matrix for `crm`).
+1. Alex-only clients get the base portal; CRM Lite/Full are paid upsells: PRD decision 1 (gating matrix for `crm`).
 2. Auth: Better-Auth, Google plus magic link (F-71); admin TOTP is in v1 (F-98, see its rows).
 3. Voice: ElevenLabs primary, Retell fallback. The fake adapter implements both.
 4. Drizzle, pg-boss, Resend confirmed.

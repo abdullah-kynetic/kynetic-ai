@@ -2,7 +2,7 @@
 
 Kynetic Client CRM & Portal.
 
-Sources, in order: `DECISIONS_locked.md` (Oct 25, 2026; wins on any conflict), `SPEC_client_crm_portal.md`, `docs/PRD.md` (feature IDs F-01 to F-98, module catalog, acceptance criteria; authoritative for IDs, module keys and milestone tags), and the existing `portal/` in `abdullah-kynetic/kynetic-ai` (Next.js 16, Postgres RLS, Auth.js v5 beta, live on the OVH VPS at portal.kyneticai.com). Project memory (2026-10-22): Abdullah chose ElevenLabs as the voice platform, reversing Retell (D-018, not yet re-decided in the repo).
+Sources, in order: `DECISIONS_locked.md` (Oct 25, 2026; wins on any conflict), `SPEC_client_crm_portal.md`, `docs/PRD.md` (feature IDs F-01 to F-106, module catalog, acceptance criteria; authoritative for IDs, module keys and milestone tags), and the existing `portal/` in `abdullah-kynetic/kynetic-ai` (Next.js 16, Postgres RLS, Auth.js v5 beta, live on the OVH VPS at portal.kyneticai.com). Project memory (2026-10-22): Abdullah chose ElevenLabs as the voice platform, reversing Retell (D-018, not yet re-decided in the repo).
 
 Labels: **Confirmed** = in the decisions or spec. **Decided** = approved by Abdullah on 2026-10-25 (explicitly, or as the recommended option when he told us to take it). **UNRESOLVED** = needs outside information. "Not configured" = a command or setting not verified for the new app.
 
@@ -101,7 +101,7 @@ Migrations follow DATABASE.md: the M0 baseline migration (0001) creates every ta
 
 | Owner | Tables |
 | --- | --- |
-| M0 | tenants, users, memberships, invitations, module_catalog, module_prices, tenant_modules, tenant_secrets, audit_log, impersonation_sessions, backup_runs, activities (write helper), service_tokens, consents (table, canContact), notifications (table, notify()); auth-library tables are global |
+| M0 | terms_acceptances (F-102), tenants, users, memberships, invitations, module_catalog, module_prices, tenant_modules, tenant_secrets, audit_log, impersonation_sessions, backup_runs, activities (write helper), service_tokens, consents (table, canContact), notifications (table, notify()); auth-library tables are global |
 | M1 | companies, custom_field_defs, contacts |
 | M2 | pipelines, pipeline_stages, deals, deal_contacts |
 | M3 | tasks, notes, note_mentions (activities read API and timeline UI) |
@@ -109,8 +109,8 @@ Migrations follow DATABASE.md: the M0 baseline migration (0001) creates every ta
 | M5 | appointments |
 | M6 | metrics_daily, reports |
 | M7 | automation_templates, automations, automation_steps, automation_runs (notifications UI, preferences and email delivery) |
-| M8 | no new tenant tables |
-| M9 | import_batches, import_batch_records (F-90 to F-94, F-96); export only for F-38 |
+| M8 | `tenant_billing`, `tenant_billing_modules`, `onboarding_steps` (F-99, F-100) |
+| M9 | import_batches, import_batch_records (F-90 to F-94, F-96); `tenant_documents` (F-103); export only for F-38 |
 | M10 | none |
 
 Rules for every tenant table (Confirmed by spec Section 5 and PRD F-72): `tenant_id uuid not null`, an index that starts with `tenant_id`, and `FORCE ROW LEVEL SECURITY` with a policy on `app.tenant_id`. The existing `portal/` uses `app.client_id`; the new build uses `app.tenant_id` as the spec says.
@@ -171,7 +171,7 @@ Server rules:
 
 Client rules: the layout loads `listEnabledModules(ctx)` once. Nav entries and dashboard cards declare `module?: ModuleKey`, and `<ModuleGate module="...">` renders nothing when off. Stat cards that depend on a module hide rather than show zeros. The server check is the real gate.
 
-Core versus gated, as decided in PRD decision 1: `platform` is always on. `crm` level controls Lite versus Full (PRD F-85, decided: Lite = contacts, companies, single pipeline and kanban, tasks, notes, timeline; Full adds custom fields, bulk actions, sequences and enrollment, import and export, search). `alex_core` gates calls, call logs, the booking tool and Alex settings.
+Core versus gated, as decided in PRD decision 1: `platform` is always on. The base portal (leads, pipeline kanban with default stages, appointments, call logs, messages log, reports, notifications, settings) belongs to `platform` and `alex_core` and needs no `crm` flag. `crm` is a paid upsell whose level controls Lite versus Full (PRD F-85, decision 1): Lite adds companies, tasks, rich notes, configurable stages and settings pages; Full adds custom fields, bulk actions, multi-contact deals, search, export and sequence enrollment. M0 builds the base portal and the module mechanism so Lite and Full ship gated. `alex_core` gates calls, call logs, the booking tool and Alex settings.
 
 `followup_bundle` (PRD F-84, decided): enabling it sets `quote_followup`, `reactivation` and `missed_call_textback` in one admin action. Billing stays per member module.
 
@@ -186,7 +186,7 @@ Core versus gated, as decided in PRD decision 1: `platform` is always on. `crm` 
 | `reactivation` | One-time campaign over a selected audience; only consented contacts enter (F-82) | admin or owner launch | `automation_runs`, `messages` | M7 |
 | `opm` | Business profile, review sites, directory listings, FB and IG posts, monthly report (F-83, F-48) | monthly job; admin actions | `presence_items`, `review_snapshots` (status and task records; no vendor integration in v1) | M11 (approved, PRD decision 6) |
 | `followup_bundle` | Composite switch of three member modules (F-84) | admin action | `tenant_modules` | M0 (flag), M7 |
-| `crm` | Lite and Full gating (F-85) | none | `tenant_modules.level` | M0 (flag); enforced in M1 to M9 |
+| `crm` | Lite and Full gating (F-85) | none | `tenant_modules.level` | M0 (flag); enforced in M1 to M9; base-portal routes are never gated by `crm` |
 
 Spec conflict: the spec calls reviews a "reviews add-on" (F-48). Decisions put review work inside OPM. Treated here as part of `opm`, per PRD decision 7.
 
@@ -274,7 +274,7 @@ requireUser(); requireRole(ctx, ['owner', 'staff']); requireKynetic('admin' | 'v
 
 View as client (F-57): sets `impersonation`, makes writes fail inside `withTenant` unless an admin explicitly escalates, shows a banner, stamps `audit_log.impersonator_id` on every write, and logs start and end. Staff permission toggles for exports and bulk delete (spec Section 2) are stored in tenant settings JSON or membership; decided in DATABASE.md (UNRESOLVED).
 
-Permissions matrix (F-73) lives in SECURITY.md. Google sign-in is the only sign-in path for tenant users (F-71); a user without a membership is refused.
+Permissions matrix (F-73) lives in SECURITY.md. Tenant users sign in with Google or an email magic link (F-71); a user without a membership is refused. Kynetic staff also complete TOTP (F-98).
 
 ### 9. Milestone contracts and ownership
 
@@ -291,7 +291,7 @@ Spec dependency quirks, and how this document handles them (Decided):
 
 | Milestone | PRD features owned | Imports | Exports (contract) | Must not touch |
 | --- | --- | --- | --- | --- |
-| M0 Foundation | F-52, F-60 (helper), F-70 (mechanism), F-71, F-72, F-73, F-84 (flag), F-74 (consent service only; M4 owns enforcement), F-85 (flag), F-87; `notify()` service | none | Section 2 package, module guard, auth facade | business logic of feature tables |
+| M0 Foundation | F-52, F-102, F-60 (helper), F-70 (mechanism), F-71, F-72, F-73, F-84 (flag), F-74 (consent service only; M4 owns enforcement), F-85 (flag), F-87; `notify()` service | none | Section 2 package, module guard, auth facade | business logic of feature tables |
 | M1 Contacts, companies, custom fields | F-05 to F-08, F-10, F-12 | M0 | contacts and companies services, dedupe, custom-field API, `contact.*` events | deals, timeline UI |
 | M2 Deals and kanban | F-14 to F-17 (data and API) | M0, M1 services | deals and pipelines services, `deal.*` events | contact internals |
 | M3 Activity, notes, tasks | F-19, F-20, F-22 | M0 (`recordActivity`, `notify`), M1, M2 | activities read API, tasks and notes services, `task.*` events | write paths of other tables |
@@ -299,8 +299,8 @@ Spec dependency quirks, and how this document handles them (Decided):
 | M5 Appointments | F-24, F-78 (booking) | M0, M1, M4 routing | appointments service, availability function, `appointment.*` events | voice provider code |
 | M6 Dashboard and reports | F-01 to F-03, F-49 | events and services of M2, M4, M5 | `metrics_daily` read API, `ReportSection` registry, `report.ready` | other tables (read via services) |
 | M7 Automations and notifications | F-31 to F-33, F-35, F-79 to F-82, F-84, F-89 | M2, M3, M4 events; `OutboundGate` | automations services; `enrollInSequence` implementation; bell UI, preferences, email delivery (F-35) | provider adapters |
-| M8 Admin (a and b) | F-53 to F-55, F-57, F-58, F-60 (viewer), F-61 to F-63, F-86 | M0 (a); M4, M6 (b) | admin API, module toggle API, impersonation | tenant business logic |
-| M9 Search, onboarding import, export, branding, settings, polish | F-37 to F-39, F-41 to F-44, F-90 to F-94, F-96 | M0, M1, M2, M3 (notes and timeline), M8a (admin entry point on the tenant page) | import service (`importBatches.dryRun`, `commit`, `undo`), search API, branding applied by M0 theme hook | adapters, outbound gate |
+| M8 Admin (a and b) | F-53 to F-55, F-57, F-58, F-60 (viewer), F-61 to F-63, F-86, F-99 to F-101 | M0 (a); M4, M6 (b) | admin API, module toggle API, impersonation | tenant business logic |
+| M9 Search, onboarding import, export, branding, settings, polish | F-37 to F-39, F-41 to F-44, F-90 to F-94, F-96, F-103 | M0, M1, M2, M3 (notes and timeline), M8a (admin entry point on the tenant page) | import service (`importBatches.dryRun`, `commit`, `undo`), search API, branding applied by M0 theme hook | adapters, outbound gate |
 | M10 Hardening and launch | F-88 (clean launch, synthetic demo tenant); security review; load test; restore drill | all | none | no new features |
 | M11 OPM (approved) | F-83, F-48 | M0, M6 `ReportSection` | OPM services and report section | everything else |
 
@@ -346,6 +346,46 @@ crm/
 - **Logs and monitoring:** structured JSON logs with `tenantId`, `requestId`, `jobId`; never secrets or message bodies. Uptime check. Sentry optional (spec). Alert thresholds: Not configured.
 - **Scale:** target is 25+ clients (project goal). Numeric limits (rows per tenant, concurrent calls, webhook throughput) are not in any source; M10's load test sets them.
 - **Commands:** none verified for the new app. Install, dev, build, lint, typecheck, test, migrate, seed: Not configured until M0 creates the package. `portal/` today has `npm run lint`, `typecheck`, `test`, `db:migrate`, `db:seed`.
+
+
+### Server and deployment setup (gap check 2026-10-25)
+Each item is UNRESOLVED (proposal: ...) until Abdullah says yes, except where it restates a confirmed decision.
+- **Host.** Separate Docker Compose project on the OVH VPS (Decided, section "Hosting"): `app`, `worker`, `postgres`, `caddy`. Own Docker network and own Postgres, never shared with `portal/`, n8n or Twenty. Sizing: UNRESOLVED (proposal: at least 4 vCPU and 8 GB RAM, with Postgres data on its own volume; revisit after the M10 load test).
+- **Network.** Caddy terminates TLS; only ports 80 and 443 are open, and 443 only to Cloudflare ranges (Confirmed: nothing exposed except through Cloudflare). SSH by key only, no root login, fail2ban, unattended security updates, host firewall on. UNRESOLVED (proposal: as written).
+- **Secrets on the server.** An `.env` file owned by the deploy user with mode 600, outside the repo; never printed or committed. Per-environment values (F-87).
+- **Image build and registry.** CI builds one image per commit and pushes it to GitHub Container Registry; the server pulls by tag. UNRESOLVED (proposal: GHCR, private).
+- **Deploy.** A restricted `portal-deploy`-style script on the server (same pattern as D-022 for `portal/`): pull tag, run migrations as the owner role, start the new containers, call `/api/health`, roll back to the previous tag on failure. Production deploys happen only after Abdullah's yes.
+- **Preview environments.** Per branch, own database, synthetic seed only (no real client data). UNRESOLVED (proposal: ephemeral Compose projects on the same VPS behind `*.preview.kyneticai.com`, protected by Cloudflare Access, at most two alive at once, torn down when the branch merges). Needs the Cloudflare DNS move below.
+- **Recording and file storage.** R2 bucket, private, tenant-prefixed keys, versioning on, lifecycle rule that matches retention (PRD decision 9). The backup job also records the bucket's object counts so a restore drill can verify them.
+
+### Domain, DNS and email domain (gap check 2026-10-25)
+- **Portal domain.** `portal.kyneticai.com` for everyone (PRD decision 11). Today `kyneticai.com` DNS is at Squarespace and the bare domain does not resolve (project memory, 2026-10-22). Cloudflare in front of the portal needs the zone, or at least the `portal` and `*.preview` records, on Cloudflare. UNRESOLVED (needs Abdullah; proposal: move the nameservers to Cloudflare and recreate the Squarespace records first, so the site keeps working). This is pending question 9 in the project notes.
+- **TLS.** Cloudflare edge certificate plus a Caddy origin certificate (Cloudflare Origin CA), full-strict mode. Certificate expiry is alerted at 14 days.
+- **Email domain.** Resend sending domain on a subdomain, `mail.kyneticai.com`, with SPF, DKIM and DMARC (start at `p=none`, tighten to `quarantine` after a clean month). UNRESOLVED (proposal: as written; needs DNS access). Sender display name is the tenant's business name (F-39); the address stays Kynetic's verified domain; Reply-To is the owner's email.
+- **Per-client custom domains** stay Later (F-40).
+
+### Monitoring and alerting (gap check 2026-10-25)
+UNRESOLVED (proposal: as written). Alert channel is email through Resend (Decided).
+- `/api/health` checks database and queue. An external uptime monitor (proposal: a free hosted one) hits it every minute.
+- Error tracking: Sentry optional (spec). UNRESOLVED (proposal: Sentry cloud free tier, with message bodies and PII scrubbed).
+- Host metrics (CPU, memory, disk): UNRESOLVED (proposal: a small self-hosted agent such as Netdata or Uptime Kuma on the same VPS).
+- Alerts: health failing 2 checks in a row; oldest queued job older than 10 minutes; more than 5 failed jobs in 15 minutes; more than 20 webhook signature failures in 10 minutes; newest backup older than 26 hours; disk above 80%; certificate within 14 days of expiry; 5xx rate above 2% for 5 minutes; Twilio or voice provider error spike (F-62).
+- Logs: JSON to stdout, rotated by Docker (10 MB, 5 files), shipped nowhere in v1. UNRESOLVED (proposal: add a log shipper only if the load test shows a need).
+
+### Provider integration details (gap check 2026-10-25)
+Details to confirm against each provider's docs when M4 starts; the adapter interfaces in section 7 do not change.
+
+| Provider | What we use | Inbound | Outbound | Keys (names only) | Open items |
+| --- | --- | --- | --- | --- | --- |
+| ElevenLabs (primary voice) | One agent per tenant (`alex_configs.agent_id`); outbound call API; agent tools call our availability and booking endpoints with the tenant tool token; recording and transcript fetched after the call and copied to R2 | `POST /api/hooks/voice/elevenlabs`, HMAC verified, stored in `webhook_events`, processed by a job that writes `calls`, `activities`, `appointments` | Start call with dynamic variables: contact first name, service, business name, disclosure text, call-window rules | `ELEVENLABS_API_KEY`, `ELEVENLABS_WEBHOOK_SECRET` | The account is on the free tier, demos only. UNRESOLVED (needs Abdullah: paid plan, and how real calls get a phone number, since phone import is not available on free). Concurrency cap per account to be set at M4. |
+| Retell (fallback) | Same adapter shape | `POST /api/hooks/voice/retell` | Same | `RETELL_API_KEY` | Parked; kept so the provider is a config choice. |
+| Twilio | One Kynetic account; one number per tenant bought by an admin and stored in `phone_numbers` (auto-provision is F-56, Later); SMS through a Messaging Service | `POST /api/hooks/twilio/status` and `/inbound`, `X-Twilio-Signature` verified | `SmsProvider.send` through `OutboundGate` | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` | A2P campaign not approved (error 30034). UNRESOLVED (needs Twilio): approval and per-tenant numbers. Opt-out wording is lowercase natural ("just reply stop"). STOP and HELP are mirrored into `consents` (F-74). |
+| Resend | App email only (invites, magic links, notifications, reports) | `POST /api/hooks/resend`, signature verified; bounce and complaint mark the address suppressed and show in F-62 | `EmailProvider.send` | `RESEND_API_KEY`, `RESEND_WEBHOOK_SECRET` | Domain verification (above). Templates: invite, magic link, new lead, booked, task due, hot-lead alert, deal won, report ready, backup or security alert. Non-transactional mail carries an unsubscribe link. |
+| n8n | Cross-system workflows through `/api/service/*` and signed outbound events (F-89) | service tokens | HMAC-signed event POSTs | token and secret live in n8n credentials | New workflows are built inactive; activation needs Abdullah's yes. |
+| Twenty | Kynetic-internal only; no client data; no push in v1 (PRD decision 16). `tenants.twenty_company_id` is a reference only (F-106 is Later). | none | none | none | none |
+
+### Pre-go-live gates (gap check 2026-10-25)
+No real client data enters the new portal until all of these pass: the restore drill; the cross-tenant isolation test (SEC-T-01 and SEC-T-02) against the production-like stack; the security review (M10); backups running off-server; known issues KI-006 (database passwords in the container environment) and KI-008 (dev password reuse) closed or shown not to apply to the new stack; Cloudflare in front with the origin locked down; the 8am to 9pm quiet-hours gate on; the kill switch tested; and the counsel-dependent items either answered or the affected channel left off for that tenant.
 
 ## Decisions and unknowns
 

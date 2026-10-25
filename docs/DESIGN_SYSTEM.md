@@ -7,7 +7,7 @@ Kynetic Client CRM & Portal. Written 2026-10-25. Feature IDs match the PRD.
 **How to read this file:**
 - Anything not in the spec, the decisions or the rebrand files is marked `Decided 2026-10-25 (recommended option approved: ...)`. A recommended option is a suggestion to approve, not a decision.
 - Contrast ratios were computed for this document from the token hex values (WCAG 2.x relative luminance). They are stated as measured; CI re-verifies them (see Accessibility).
-- Feature IDs `F-xx` are taken from the PRD at `/mnt/project-files/kynetic-crm-docs/docs/PRD.md` (F-01 to F-98). F-01 to F-69 match the spec's feature order; F-70 to F-89 are PRD additions (module toggles, auth, isolation, lead intake, upsell modules, tier, secrets, legacy users, n8n). If the PRD changes, the PRD wins. The map is in Appendix A.
+- Feature IDs `F-xx` are taken from the PRD at `/mnt/project-files/kynetic-crm-docs/docs/PRD.md` (F-01 to F-106). F-01 to F-69 match the spec's feature order; F-70 to F-89 are PRD additions (module toggles, auth, isolation, lead intake, upsell modules, tier, secrets, legacy users, n8n). If the PRD changes, the PRD wins. The map is in Appendix A.
 - Commands: none in this file. Any command not yet verified is "Not configured".
 
 ---
@@ -181,7 +181,7 @@ Rules:
 2. A gated module's route returns 403 `MODULE_DISABLED` for direct URL access, enforced server-side (PRD F-70). The UI never links to it. A record belonging to another tenant still returns 404, so existence is never revealed across tenants; hiding the link is never the only protection. The UI reads the tenant's flag set from one server-provided object so every surface agrees.
 3. No disabled or "upgrade" teaser is shown to clients in v1. Nav, dashboard cards and settings sections collapse cleanly when a module is off, with no empty gaps (test each module off in Playwright at 390px and 1280px). An in-portal add-on page is not built; the spec's "sell add-ons inside the portal" goal is open (PRD decision 1 and the spec's business goal).
 4. The admin side shows every module as a labeled toggle per tenant (on/off, with who changed it and when via the audit log, F-60). Module toggles are F-70 in the PRD (the spec had no row for them).
-5. Module list (from decisions): Alex core, quote follow-up, after-hours/missed calls, missed-call text-back, old-lead reactivation, Online Presence Management (OPM), follow-up bundle, CRM build-out (Lite/Full). What CRM Lite vs Full hides in the UI is not defined: Decided 2026-10-25 (recommended option approved: Lite = contacts, deals, tasks, notes, calendar; Full adds custom fields, multi-contact deals, import/export, reports; confirm with Abdullah). OPM has no UI defined beyond "monthly portal report": Decided 2026-10-25 (recommended option approved: an OPM tab inside Reports showing GBP, reviews, listings and posts summary; PRD to specify).
+5. Module list (from decisions): Alex core, quote follow-up, after-hours/missed calls, missed-call text-back, old-lead reactivation, Online Presence Management (OPM), follow-up bundle, CRM build-out (Lite/Full). What CRM Lite vs Full adds on top of the base portal is defined in PRD F-85: Decided 2026-10-25 (PRD decision 1): the base portal (leads, kanban, appointments, calls, reports) is always there; Lite adds companies, tasks, notes, stage settings; Full adds custom fields, bulk actions, multi-contact deals, search, export. OPM has no UI defined beyond "monthly portal report": Decided 2026-10-25 (recommended option approved: an OPM tab inside Reports showing GBP, reviews, listings and posts summary; PRD to specify).
 
 ### Shell chrome (Decided (recommended option approved))
 
@@ -457,7 +457,7 @@ Abdullah approved these explicitly or told us to take the recommended option.
 8. **Spacing, radius, elevation, motion, type scale, breakpoints.** As specified in this file.
 9. **Client primary color rules** as written (Kynetic orange hidden in tenant views, derived on/text colors, 3:1 rejection, hue warning, gold/espresso stay Kynetic's).
 10. **Sidebar** is an espresso band with the logo on a cream chip.
-11. **Admin modules panel (F-70).** Lite vs Full and Alex-only surfaces follow PRD decision 1. The OPM UI is a status and task list plus the monthly report section (M11).
+11. **Admin modules panel (F-70).** The base portal is always present; Lite and Full surfaces follow PRD decision 1. The OPM UI is a status and task list plus the monthly report section (M11).
 12. **In-portal add-on teaser.** None in v1; gated UI is hidden when off (PRD F-70).
 13. **Email sender name.** Business name in v1; custom sender domain is Later (F-40).
 14. **Accessibility.** WCAG 2.2 AA is the bar (PRD decision 13). Verification tooling: `Not configured` until M0 sets up CI.
@@ -466,6 +466,15 @@ Abdullah approved these explicitly or told us to take the recommended option.
 17. Client-editable Alex settings: pause and call hours only (F-42). Per-call cost is hidden (Later). Health score weights and guarantee target: PRD decision 10.
 
 UNRESOLVED (needs outside information): OPM vendor connectors and F-97 connectors, which affect UI only if they are chosen.
+
+## Gap-check screens and rules (2026-10-25)
+Each is UNRESOLVED (proposal: as written) until Abdullah says yes.
+- **Sign-in and magic-link pages are Kynetic-branded.** The tenant is not known before sign-in, so tenant branding (logo, primary color, name) starts after sign-in. Emails use the tenant's name and logo in the header and a small Kynetic footer. Favicon and app icon stay Kynetic's. With no logo uploaded, the sidebar shows a chip with the business initial.
+- **Terms acceptance (F-102)** is a full-page step after sign-in with the document text, a version label and one Accept button.
+- **Setup progress (F-100)**: owners see a card on the dashboard until go-live: a short list of steps with done, doing and waiting states and no internal detail. Admins get a checklist tab on the tenant page with owner, due date and status per step.
+- **Billing tab (F-99)** on the admin tenant page: modules with setup and monthly amounts, discounts, totals, billing start date, Stripe customer id. Read-only for everyone but admin. Never shown to clients or VAs.
+- **Operations page (F-101)**, admin only: kill switch (global and per tenant, with a confirm dialog that names the effect), webhook events with Replay, failed jobs with Retry, suspended tenants, demo reseed. Destructive buttons use the error tone and an undo-free confirm.
+- **Documents page (F-103)**: a plain list with kind, title, date and a download button.
 
 ## Contradictions found
 
