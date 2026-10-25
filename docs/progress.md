@@ -53,6 +53,12 @@ Then: confirm the post-call webhook URL is set on the agent, web-call test Alex,
 Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-10-25 (Alex go-live thread: ElevenLabs chosen; D-025)
+- Verdict: ElevenLabs wins, v1 strict `agent_8201m5afn2rbeb7v29xfkhh1pjef` goes live (D-025). Free tier, demos only until the first client signs; Abdullah declined a paid plan for now. Retell go-live parked, nothing was activated.
+- 2026-10-22: edited the live v1 prompt (ElevenLabs API, prompt only; model and both Cal.com tools unchanged) to drop the "you'll get a text" promise. Before/after in `providers/elevenlabs/golive/`. Restore the text wording when the Twilio A2P campaign is approved (pre-approved by Abdullah).
+- Read-only findings: n8n workflow `xlmyRd5jBBBu8LX7` is not on the VPS (only the Retell one `tXJwNTkNgKGnp0Ab` is); VPS lacks the Twenty and Gmail credentials; Twilio +16692660586 is not Nora's line. Plan: `docs/plans/ALEX-ELEVENLABS-GOLIVE.md`.
+- Twenty: task 3.9 and the decision notes updated to match; mismatch between Twenty D-023 (offer) and repo D-023 (site) / D-024 (offer) flagged in D-025.
+
 ### 2026-10-22 (Twenty fields for the lead engine; Abdullah approved on the decision card)
 - Created on Twenty `companies` (self-hosted, crm.kyneticai.com): Engine status (select DIAL_READY/HOLD), Meta Page ID (text), Facebook Page (links), Live ads, Oldest ad (days), New ads (30d), Est. ad spend/mo low and high (numbers, a rough proxy not real spend), Engine reason (text), State (text). That is 10 fields; the card said 9 but listed 10, all 10 were created.
 - Added niche options Bath Remodel, Kitchen Remodel, Windows & Doors, Siding, Fence, Concrete to the existing Niche field (all existing options kept with their ids).
