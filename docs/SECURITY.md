@@ -180,7 +180,7 @@ Rules:
 Product context. Alex is an **outbound speed-to-lead** agent. It calls people who submitted a lead form for the client (F-78). It is not a cold-calling tool. Kynetic's hard rules forbid AI cold calls, cold SMS and ringless voicemail, and require consent wording on callback forms (D-007). The portal must make prohibited contact impossible by default, not merely discouraged.
 
 ### 3.1 The compliance gate
-One code path can start a call, send an SMS or send a marketing email: `canContact(ctx, contactId, channel, purpose, now)` (in `src/server/consent`, ARCHITECTURE). It returns allow, or deny with a reason code.
+One code path can start a call, send an SMS or send a marketing email: `canContact(ctx, contactId, channel, now, opts?: { purpose? })` (in `src/server/consent`, ARCHITECTURE). It returns allow, or deny with a reason code.
 1. Provider adapters (Retell/ElevenLabs, Twilio, Resend) are imported only by the gate's `dispatch()`. A lint rule enforces this (SEC-T-13).
 2. The gate runs **at send time, inside the job**, against the latest consent, opt-out, DNC, module and tenant state. A STOP arriving while a job is queued still blocks it.
 3. Every allow and deny writes an `activities` row (F-19) and a log entry with the reason, so "why was this person called?" is answerable.

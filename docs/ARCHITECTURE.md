@@ -77,7 +77,7 @@ Outbound action (example: a new lead starts an Alex call, F-78):
 2. The `VoiceProvider` adapter places the call with an idempotency key (`tenantId:contactId:trigger:attempt`).
 3. The result is written to `calls`; the provider's callbacks return through the inbound flow.
 
-`OutboundGate` calls `compliance.canContact(tenant, contact, channel, purpose, now)`, which SECURITY owns and which returns allow or one deny reason: `no_consent`, `consent_revoked`, `opted_out`, `internal_dnc`, `quiet_hours`, `module_off`, `tenant_suspended`, `alex_paused`, `outbound_disabled`, `sms_not_approved`, `rate_cap`, `unknown_timezone`. A deny writes an activity "blocked: reason" and does not call the provider. Feature code never imports a provider adapter directly (SECURITY SEC-T-13).
+`OutboundGate` calls `compliance.canContact(ctx, contactId, channel, now, opts?: { purpose? })` (the tenant comes from `ctx`; the contact is loaded inside), which SECURITY owns and which returns allow or one deny reason: `no_consent`, `consent_revoked`, `opted_out`, `internal_dnc`, `quiet_hours`, `module_off`, `tenant_suspended`, `alex_paused`, `outbound_disabled`, `sms_not_approved`, `rate_cap`, `unknown_timezone`. A deny writes an activity "blocked: reason" and does not call the provider. Feature code never imports a provider adapter directly (SECURITY SEC-T-13).
 
 Onboarding import (F-90 to F-96, owner M9; the admin entry point is a button on the tenant page in M8a):
 
@@ -133,7 +133,7 @@ src/server/events/index.ts          emitEvent(tx, envelope), subscribe(name, han
 src/server/activity/index.ts        recordActivity(tx, { contactId, dealId, type, refTable, refId, summary, actor })
 src/server/jobs/index.ts            enqueue(queue, payload, opts), registerWorker(queue, handler)
 src/server/webhooks/index.ts        ingestWebhook({ source, externalId, payload, verify })   // idempotent insert + enqueue
-src/server/consent/index.ts         compliance.canContact(tenant, contact, channel, purpose, now): allow | deny(reason) (SECURITY owns); recordConsent(), revokeConsent()
+src/server/consent/index.ts         compliance.canContact(ctx, contactId, channel, now, opts?: { purpose? }): allow | deny(reason) (SECURITY owns); recordConsent(), revokeConsent()
 src/server/notifications/index.ts  notify(tx, { userId, type, title, link })   // M0 owns; M3, M4, M7 call it
 src/server/adapters/{voice,sms,email}/types.ts + fake.ts
 src/server/outbound/gate.ts         OutboundGate (shared by M4 and M7)
