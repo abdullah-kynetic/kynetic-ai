@@ -3,7 +3,7 @@
 Mirror of the Twenty decision notes. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one. Do not reopen these without asking.
 
 ## D-001: Price is $1,500 setup + $997/mo
-Status: superseded by D-017 (2026-10-13). Do not quote this price.
+Status: superseded by D-017 (2026-10-13), then by D-024 (2026-10-24). Do not quote this price.
 Date: 2026-10-01
 Why: Replaces the $750 founding setup. Guarantee terms are still not set.
 Replaced: $750 setup + $997/mo.
@@ -98,7 +98,7 @@ Date: 2026-10-06
 Why: Keeps v1 small and testable. (1) Hang up on voicemail, log as voicemail, retry; leaving a voicemail is TBD. (2) First call within about 60 seconds of form submit, retries at 5 min, 1 hour, next day, max 4 attempts, run by a scheduled sweeper over Twenty. (3) gpt-4.1 + 11labs-Cimo, revisit after test calls. (4) Human transfer deferred past v1. (5) Retell webhook filtered to the final analyzed event replaces the polling loop; structured outcome from Retell native post-call analysis; Twenty record ID passed in call metadata.
 
 ## D-017: Plan 1 price is $4,675 for the first 3 clients and $8,500 after that
-Status: decided. Quentin signed off.
+Status: superseded by D-024 (2026-10-24). Do not quote this price. (Was: decided, Quentin signed off.)
 Date: 2026-10-13
 Why: Final price for the outbound speed-to-lead package. The first 3 clients pay $4,675. Clients 4 and up pay $8,500. Each client is billed as three Stripe invoices: 50% at the start, 25% when the system is built and sent for testing, and 25% at completion. Not a monthly subscription.
 Replaced: D-001, and the price line originally in D-013.
@@ -143,3 +143,16 @@ Status: decided
 Date: 2026-10-22
 Why: Abdullah wants the Framer site copied exactly, with the same motion, and hosted free. Ploy's source export is paid-only and he is on the free plan, so he chose to build it ourselves (Option B).
 Decided: The site lives in `site/` (Astro, static output). Contact form posts to an n8n webhook on the VPS n8n (workflow still to be created, inactive, after his yes). The Benefits links are removed because that section was deleted. Everything else, including the pricing and placeholders, is copied as is and fixed one by one afterwards. DNS is on Squarespace. No deploy and no DNS change without his explicit yes.
+
+## D-024: Current offer, pricing, niches and upsells (Oct 24, 2026)
+Status: decided. Abdullah approved 2026-10-24.
+Date: 2026-10-24
+Twenty: Note `93db3245-96ee-4fb8-8afd-73ae66985d95` (numbered D-023 in Twenty; the repo already used D-023 for the Astro site decision, so it is D-024 here).
+Supersedes: D-017, D-001, and the "$30K by Dec 31" goal. Goal is now **$100K in signed contracts by Dec 31, 2026**.
+Offer: Fully managed AI speed-to-lead caller (Alex) that calls new leads back within 60 seconds and books appointments.
+Niches: remodelers of any kind (kitchen, bath, whole-home, design-build); solar and battery installers; custom pool builders; window and door replacement; decks and outdoor living. Every prospect must be running Meta ads. Foundation repair and ADUs are dropped.
+Software: included, no per-minute charges (replaces "1,200 minutes, then 25¢").
+Founding price (first 3 clients): $6,500 for setup + 3 months managed, 50% at signing and 50% at go-live. Then $1,500/mo locked in, or $4,000 prepaid for months 4–6, in exchange for a case study.
+Standard price: $10,000 for setup + 3 months, 50% at signing, 25% at go-live, 25% on day 45. Month 4 free if paid in full. Then $2,000/mo, or $5,000 prepaid for months 4–6.
+Guarantee: live in 14 days with booked appointments, or that month's fee is waived.
+Upsells (after day 30): old-lead reactivation $3,000 one-time or $1,000/mo; quote follow-up $2,500 + $500/mo; after-hours and missed calls $1,500 + $500/mo.
