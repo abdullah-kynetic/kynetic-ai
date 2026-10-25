@@ -42,11 +42,11 @@ Asked: list anything the portal needs that no doc covers. New items are marked `
 | Pre-go-live gates from the old portal plan (KI-006, KI-008, isolation test) | ARCHITECTURE Operations, Pre-go-live gates |
 | Later items from the old portal build-out plan: proposal builder and estimator (F-105), Twenty to portal client sync (F-106), AI drafts and weekly summary (F-104) | PRD |
 
-Not found on disk this session: `SPEC_client_crm_portal.md` and `DECISIONS_locked.md`. The sweep used the eight docs, `PORTAL-BUILDOUT.md`, project memory, the project's thread list and the latest messages of the portal redesign thread (not every thread was read in full); anything those two files hold that the docs never captured is not covered by this check.
+Re-run against the real `SPEC_client_crm_portal.md` and `DECISIONS_locked.md` (now in `docs/source/`): every spec feature row, table, integration, milestone and open question maps to a doc. The one gap found was that contact merge (spec Contacts, F-07) had no build task; it is now M1-08. Differences from the spec are all recorded decisions: 2FA is v1 not Later (DC-017), import is admin-only in v1 (DC-023), M10's "migrate existing portal users" is replaced by a clean launch (DC-012), M8 is split and M11 added (DC-018), and the in-portal add-on teaser from the spec's business goal is not in v1 (DC-039).
 
 ## Notes for the repo
 - The root `AGENTS.md` here replaces the existing 5-line pointer to `CLAUDE.md`. The new file opens with a pointer back to `CLAUDE.md`.
-- The docs cite `DECISIONS_locked.md` and `SPEC_client_crm_portal.md`, which are not in this repo.
+- The docs cite `DECISIONS_locked.md` and `SPEC_client_crm_portal.md`; copies are in `docs/source/`.
 
 ## Still UNRESOLVED (needs outside information)
 1. Delivery date.

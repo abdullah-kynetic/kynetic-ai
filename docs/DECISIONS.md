@@ -6,7 +6,7 @@ Rules:
 - A PR that changes a decision adds an entry here and updates the affected docs in the same PR (see `AGENTS.md`).
 - Entries are never deleted. A changed decision gets a new entry that says `Supersedes DC-nnn`, and the old entry is marked `Superseded by DC-nnn`.
 - "Explicit" means Abdullah decided it in his own words. "Recommended option approved" means he told us to take the recommended option. "Proposal" means not yet approved.
-- `DECISIONS_locked.md` (Oct 25, 2026) wins over the spec. This log records decisions made in the docs process on top of both. The PRD "Decisions log" holds the same product decisions in its own numbering ("PRD decision n").
+- `DECISIONS_locked.md` and the spec are in `docs/source/`. `DECISIONS_locked.md` (Oct 25, 2026) wins over the spec. This log records decisions made in the docs process on top of both. The PRD "Decisions log" holds the same product decisions in its own numbering ("PRD decision n").
 - Repo-level D-numbers (the Kynetic AI decision log) are assigned by Abdullah, not here.
 
 ## Locked before the docs process (source: DECISIONS_locked.md and project memory)
