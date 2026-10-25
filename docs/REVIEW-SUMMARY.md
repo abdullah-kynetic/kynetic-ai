@@ -16,7 +16,7 @@ Reviewed the 8 docs against each other, `SPEC_client_crm_portal.md` and `DECISIO
 - Admin 2FA (TOTP) is in v1 (F-98). Clients edit only pause and call hours. Quiet hours 8am to 9pm lead-local with stricter state rules on top; the 60-second promise yields to them.
 - Founding price $6,500 setup + 3 months, then $1,500/mo (the $4,675 figure is dropped). Accessibility WCAG 2.2 AA. Design tokens (success green, input border) approved.
 - Import (F-90 to F-97): admin-only wizard, `.csv`/`.xlsx` up to 10 MB / 50,000 rows, dry run before commit, skip duplicates by default with optional fill-blanks, undo lists records edited after import, raw files deleted 30 days after commit, imports never start outreach. Existing portal users: none, clean launch, synthetic demo tenant only.
-- Metric definitions and health score (five inputs at 20%, green 70+, yellow 40 to 69, red below 40) are in the PRD.
+- Health score (five inputs at 20%, green 70+, yellow 40 to 69, red below 40) is in the PRD. Metric definitions are a proposal only; Abdullah decides them before M6.
 - Commits are authored only as abdullah-kynetic, with no AI co-author trailer and no "Generated with" footer (AGENTS, CODE_STYLE).
 
 ## What I changed
@@ -50,6 +50,7 @@ Re-run against the real `SPEC_client_crm_portal.md` and `DECISIONS_locked.md` (n
 
 ## Still UNRESOLVED (needs outside information)
 1. Delivery date.
+1a. Metric definitions (speed-to-lead, contact rate, booking rate, revenue recovered): Abdullah decides before M6 starts.
 2. Which F-97 direct connectors to build (Jobber, ServiceTitan, Housecall Pro, HubSpot, Google Sheets export), in what order, and their API access. Later, not v1.
 3. State-by-state calling and recording rules and the consent wording, which need counsel. The app builds to the decided defaults with the state table as versioned config.
 4. Twilio A2P campaign approval and per-tenant sending numbers. SMS modules cannot go live until then.

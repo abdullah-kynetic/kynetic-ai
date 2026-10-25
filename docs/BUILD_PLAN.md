@@ -176,8 +176,8 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M6-01 | `metrics_daily` roll-up job per the PRD metric definitions | PRD Metric definitions, F-01; DB metrics | M4-14, M5-05 | Hand-computed expected values from the seed fixture match | L | Opus | no | 20 | todo | - |
-| M6-02 | Seed fixture with hand-computed expected dashboard numbers | T Expected values | M6-01 | Fixture and expected values stored together; signed off by Abdullah | M | Sonnet | yes | 21 | todo | - |
+| M6-01 | `metrics_daily` roll-up job per the PRD metric definitions | PRD Metric definitions, F-01; DB metrics | M4-14, M5-05 | Hand-computed expected values from the seed fixture match | L | Opus | no | 20 | blocked | needs Abdullah's metric definitions (PRD decision 15) |
+| M6-02 | Seed fixture with hand-computed expected dashboard numbers | T Expected values | M6-01 | Fixture and expected values stored together; signed off by Abdullah | M | Sonnet | yes | 21 | blocked | needs Abdullah's metric definitions (PRD decision 15) |
 | M6-03 | Dashboard page: stat cards vs baseline, trend and source charts, activity feed | PRD F-01, F-02; DS dashboard | M6-01 | Cards hide when the module is off; numbers match the fixture | L | Sonnet | yes | 21 | todo | - |
 | M6-04 | Guarantee progress component | PRD F-03 | M6-01 | Progress and days left correct on a fixed clock | S | Haiku | yes | 21 | todo | - |
 | M6-05 | Reports service, `ReportSection` registry, monthly ROI report job (email and page) | PRD F-49; ARCH 7 | M6-01 | Full month fixture produces the report; `report.ready` emitted | L | Sonnet | yes | 21 | todo | - |
@@ -270,6 +270,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 
 ## Open items that can block tasks
 These come from `docs/DECISIONS.md` (Still UNRESOLVED and gap-check proposals).
+- Metric definitions (PRD decision 15) gate M6-01 and M6-02 and everything that reads `metrics_daily`: Abdullah decides before M6 starts.
 - Delivery date: no task is blocked, but the plan cannot be dated until Abdullah gives it.
 - Gap-check proposals GP-01 to GP-05 (F-99, F-100, F-101, F-102, F-103) gate tasks M0-25, M8a-07, M8a-08, M8b-07, M9-12 (and the gap tables in M0-05). Ask Abdullah before starting them.
 - Twilio A2P approval gates going live with SMS (M4-08, M7-07, M7-08), not building them against fakes.

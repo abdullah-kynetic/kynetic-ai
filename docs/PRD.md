@@ -180,7 +180,8 @@ Acceptance criteria are written as Given/When/Then. "Cross-tenant" always means 
 | F-51 | Quotes and invoices | Quote builder, e-sign, invoices, payments | Given a quote, then it can be sent and signed. | Later | Unscheduled | crm |
 | F-52 | Starter chat and AI chat demo pages | Not built | Given v1, then those routes are removed from the app. | Skip | M0 (removal) | platform |
 
-### Metric definitions (F-01, F-49; decided 2026-10-25, recommended defaults approved)
+### Metric definitions (F-01, F-49; PROPOSAL ONLY, UNRESOLVED: Abdullah decides before M6 starts)
+The formulas below are a proposal. They are not decided. M6 does not start until Abdullah confirms or changes them.
 - Leads received: count of contacts created through lead intake in the range (imports excluded, F-96).
 - Speed-to-lead: median seconds from lead creation to the first outbound call attempt. Shown against the baseline captured at signup.
 - Calls made: count of outbound call attempts in the range.
@@ -218,7 +219,7 @@ These are not rows in the spec's feature tables. They are needed for the locked 
 | ID | User need | Behavior | Acceptance criteria | Priority | Milestone | Module |
 | --- | --- | --- | --- | --- | --- | --- |
 | F-70 | As an admin, I need to switch modules on and off per tenant | Per-tenant flags in `tenant_modules` (one row per tenant and module, per DATABASE.md) with enabled state, changed-by and timestamp. One server-side guard used by every route, server action and job. UI hides disabled modules. | Given module X off, when the tenant calls any X route or action directly, then the response is 403 MODULE_DISABLED and nothing is written. Cross-tenant record ids return 404 everywhere. Given X off, then X's nav entry and pages are absent. Given a toggle, then `audit_log` records it. Given X turned off then on, then X's data is intact. | Must | M0 (mechanism), M8a (admin UI) | platform |
-| F-71 | As a user, I need to sign in securely | Decided 2026-10-25: Better-Auth with Google sign-in and email magic links. Kynetic staff (admin, VA) sign in with Google on an allowlisted account plus TOTP (F-98). Client users use Google or a magic link. | Given a user with a membership, when they sign in with Google or a valid magic link, then they land in their tenant. Given a user with no membership, then access is refused. Given a used or expired magic link, then it is refused. Given Clerk, then no Clerk code or dependency remains. | Must | M0 | platform |
+| F-71 | As a user, I need to sign in securely | Decided 2026-10-25: Better-Auth with Google sign-in and email magic links. Kynetic staff (admin, VA) sign in with Google on an allowlisted account plus TOTP (F-98). Client users use Google or a magic link. Sign-in methods, magic-link rules and sessions are defined in SECURITY 2.1. | Given a user with a membership, when they sign in with Google or a valid magic link, then they land in their tenant. Given a user with no membership, then access is refused. Given a used or expired magic link, then it is refused. Given Clerk, then no Clerk code or dependency remains. | Must | M0 | platform |
 | F-72 | As Kynetic, I need tenants hard-isolated | RLS on every tenant table via session `app.tenant_id`. App connects as a non-owner database role. | Given a tenant A user, when reading or writing tenant B rows via API or direct SQL as the app role, then zero rows return or the write fails. Test runs in CI. | Must | M0 | platform |
 | F-73 | As Kynetic, I need role-based access | Roles: Kynetic admin, Kynetic VA, client owner, client staff. Checks run on the server for every action. Owner can toggle staff export, bulk-delete and CSV import permissions. CSV import permission is off by default and only takes effect when client-side import ships (F-95, Later); v1 import is admin-only (F-94). | Given each role and each protected action, then the permission matrix in `SECURITY.md` is enforced and the UI hides what the role cannot do. | Must | M0 | platform |
 | F-74 | As Kynetic, I need TCPA-safe contact | Consent stored per contact and channel (source, wording, timestamp, IP). Block calls and SMS without consent. STOP and DNC honored immediately. Quiet hours by contact timezone. | Given no consent, when Alex or an automation tries to call or text, then the attempt is blocked and logged. Given STOP, then consent is revoked and sequences stop. Given a contact in a quiet-hour window, then the call or SMS is deferred. | Must | M0 (consents table, canContact/recordConsent/revokeConsent in the contract package), M4 (capture, STOP/HELP, enforcement) | alex_core |
@@ -288,7 +289,7 @@ Founding clients: fixed $6,500 setup plus 3 months, then $1,500/mo, with 25% off
 Approved by Abdullah on 2026-10-25. Numbers are kept so other docs can cite them (PRD OD-n). "Recommended option approved" means Abdullah told us to take the recommended option for anything not decided explicitly.
 
 1. DECIDED (explicit, Abdullah 2026-10-25, replaces the earlier recommendation). Alex-only clients get the base portal: leads, pipeline kanban, appointments, Alex call logs and reports (plus the messages log, notifications and settings). CRM Lite and CRM Full are paid upsells toggled per tenant on top of that. M0 builds the base portal and the module mechanism, so Lite and Full ship as gated modules. Lite adds companies, tasks, notes, configurable stages and settings pages; Full adds custom fields, bulk actions, multi-contact deals, search, export and sequence enrollment. Admin-run onboarding import (F-90 to F-94) is platform.
-2. DECIDED (explicit). Better-Auth with Google sign-in and email magic links (F-71). Admin 2FA is in v1 (F-98).
+2. DECIDED (explicit). Better-Auth with Google sign-in and email magic links (F-71; defined in SECURITY 2.1). Admin 2FA is in v1 (F-98).
 3. DECIDED (recommended option approved). ElevenLabs is the primary voice provider; the Retell adapter stays as a fallback. Abdullah assigns the D-number in the repo decision log (this project does not assign one).
 4. DECIDED (recommended option approved). Drizzle ORM, pg-boss and Resend are confirmed.
 5. DECIDED (explicit). No migration of existing portal users. Clean launch; demos run from a synthetic demo tenant (F-88).
@@ -301,13 +302,14 @@ Approved by Abdullah on 2026-10-25. Numbers are kept so other docs can cite them
 12. DECIDED (explicit). Founding clients: $6,500 setup + 3 months, then $1,500/mo, with 25% off add-on setup fees (DECISIONS_locked). The older $4,675 figure is dropped.
 13. DECIDED. Accessibility: WCAG 2.2 AA (explicit). Performance targets (recommended option approved): mobile LCP at or under 2.5 s at p75; list API reads under 500 ms at p95 with 10,000 contacts; search under 500 ms at p95. UNRESOLVED: the delivery date (needs Abdullah's date).
 14. DECIDED (recommended option approved). D-007 ("phone only, by a human") governs Kynetic's own prospecting. Alex calling a client's own inbound leads is allowed, subject to consent, DNC, quiet hours and the compliance gate. Abdullah can overrule this at any time.
-15. DECIDED (recommended option approved). Metric definitions are in the "Metric definitions" section above.
-16. DECIDED (explicit). No push of tenant summaries to Twenty in v1. If built later it carries no client personal data and gets an F-ID then.
+15. UNRESOLVED (Abdullah will decide before M6 starts). The "Metric definitions" section above is a proposal only.
+16. DECIDED (explicit). A push of tenant summaries to Twenty is Later, not v1. Client data never goes into Twenty; Twenty stays Kynetic-internal only. If built later it carries no client personal data and gets an F-ID then.
 17. DECIDED (explicit): import accepts .csv and .xlsx up to 10 MB and 50,000 rows; duplicates are skipped by default with an optional fill-blanks merge; undo lists records edited after import instead of removing them; import is admin-only in v1; raw files are deleted 30 days after commit. UNRESOLVED (needs outside information): which Phase 2 direct connectors F-97 covers (Jobber, ServiceTitan, Housecall Pro, HubSpot, Google Sheets export, and in what order).
 18. DECIDED (explicit). Quiet hours: 8:00 am to 9:00 pm in the lead's local time, with stricter state rules layered on top (a per-state window table). UNRESOLVED (needs counsel): the state list and wording.
 
 ### Still UNRESOLVED (needs outside information)
 - Delivery date (13).
+- Metric definitions (15): Abdullah decides before M6 starts.
 - Which F-97 connectors, and their API access (17).
 - The state-by-state calling and recording rules and consent wording, which need counsel (18, SECURITY 3).
 - Twilio A2P campaign approval and per-tenant sending numbers (Twilio, in progress).

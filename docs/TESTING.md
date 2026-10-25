@@ -309,7 +309,7 @@ Cross-module rules to test (release-blocking, recommended option wherever marked
   - Search fixture: 10,000 contacts in one tenant (F-37).
   - Import fixtures (F-90 to F-96): 1,000-row CSV with mapped and duplicate rows, 50 bad rows, mixed phone formats, a consent column, an XLSX with formulas, and an open-jobs file. All fictional.
   - Phone numbers use fictional `555-01XX` style ranges.
-- **Expected values.** Dashboard and report expected numbers are computed by hand, or by a script separate from the code under test. They are stored beside the fixture. Who writes them is `Decided 2026-10-25 (recommended option approved: the M6 thread writes them with the seed, and Abdullah signs off)`. The metric definitions for speed-to-lead, contact rate, booking rate and revenue recovered are in the PRD "Metric definitions" section (Decided 2026-10-25).
+- **Expected values.** Dashboard and report expected numbers are computed by hand, or by a script separate from the code under test. They are stored beside the fixture. Who writes them is `Decided 2026-10-25 (recommended option approved: the M6 thread writes them with the seed, and Abdullah signs off)`. The metric definitions for speed-to-lead, contact rate, booking rate and revenue recovered are a PRD proposal and UNRESOLVED until Abdullah decides before M6; expected values cannot be written until then.
 - **External services (fakes).**
   - Retell and ElevenLabs: fake adapter that returns scripted call-ended events. ElevenLabs is primary and Retell the fallback (PRD decision 3).
   - Twilio: fake adapter for SMS send, status callbacks and inbound STOP and HELP. Real SMS is not tested until A2P approval; project memory (Oct 22, 2026) says sends fail with 30034.
@@ -444,7 +444,7 @@ Abdullah approved these explicitly or told us to take the recommended option. Te
 12. Founding price: $6,500 setup + 3 months, then $1,500/mo (the $4,675 figure is dropped).
 13. Performance and accessibility numbers as above (WCAG 2.2 AA).
 14. D-007 governs Kynetic's own prospecting only.
-15. Metric definitions: PRD "Metric definitions"; expected dashboard values are written by the M6 thread with the seed and signed off by Abdullah.
+15. Metric definitions: UNRESOLVED (PRD proposal; Abdullah decides before M6). Expected dashboard values are written by the M6 thread with the seed and signed off by Abdullah after that.
 16. Quiet hours 08:00 to 21:00 lead-local; stricter state rules layered on top (F-74, F-75).
 17. Duplicate phone/email normalisation: E.164 phones, lower-cased emails (F-07).
 18. Missed-call text-back is sent only to callers with consent or a permitted basis recorded by the compliance gate (F-81).
@@ -464,7 +464,7 @@ Abdullah approved these explicitly or told us to take the recommended option. Te
 2. **Auth library.** Resolved: Better-Auth.
 3. **Voice provider.** Resolved: ElevenLabs primary, Retell fallback. The D-number is assigned by Abdullah in the repo decision log.
 4. **Reviews.** Resolved: part of opm (F-48).
-5. **Twenty.** Resolved: no push in v1. If one is built later, a test must prove no client personal data leaves for Twenty.
+5. **Twenty.** Resolved: Twenty push is Later, not v1; client data never goes into Twenty. If one is built later, a test must prove no client personal data leaves for Twenty.
 6. **Client edits to Alex settings.** Resolved: pause and call hours only (F-42).
 7. **Preview wording.** Not a true conflict; a per-PR preview is not a production deploy. Tests treat both as preview.
 8. **Accessibility and performance.** The spec gives 44px touch targets only; the PRD adds WCAG 2.2 AA, LCP and p95 numbers, approved.
