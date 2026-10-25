@@ -11,7 +11,19 @@ Durable context for agent sessions. Twenty is canonical; this file mirrors it. O
 5. **Hard rules (D-007).** No AI-placed cold calls, no cold SMS at scale, no ringless voicemail drops. Consent wording on any form that triggers a callback.
 6. **Never dial the AM-1 Roofing office number** on the demo company record.
 
-## Pricing (D-017)
+## Offer and pricing (D-024, Oct 24, 2026)
+
+Twenty Note `93db3245-96ee-4fb8-8afd-73ae66985d95`. Goal: **$100K in signed contracts by Dec 31, 2026** (replaces the $30K goal).
+
+- **Offer:** fully managed AI speed-to-lead caller (Alex), calls new leads back within 60 seconds and books appointments.
+- **Niches:** remodelers of any kind; solar and battery installers; custom pool builders; window and door replacement; decks and outdoor living. Prospect must be running Meta ads. Foundation repair and ADUs dropped.
+- **Software:** included, no per-minute charges.
+- **Founding (first 3 clients):** $6,500 setup + 3 months, 50% at signing / 50% at go-live. Then $1,500/mo locked in, or $4,000 prepaid for months 4–6, in exchange for a case study.
+- **Standard:** $10,000 setup + 3 months, 50% signing / 25% go-live / 25% day 45. Month 4 free if paid in full. Then $2,000/mo, or $5,000 prepaid for months 4–6.
+- **Guarantee:** live in 14 days with booked appointments, or that month's fee is waived.
+- **Upsells (after day 30):** old-lead reactivation $3,000 one-time or $1,000/mo; quote follow-up $2,500 + $500/mo; after-hours and missed calls $1,500 + $500/mo.
+
+### Superseded: Pricing (D-017), kept for history
 
 Quentin signed off on 2026-10-13. Plan 1, the outbound speed-to-lead agent only:
 
@@ -23,7 +35,7 @@ This replaces $1,500 setup + $997/mo (D-001).
 
 ## Two plans (D-013)
 
-- **Plan 1, now:** only the outbound speed-to-lead agent, sold to owners already running Meta ads, at the D-017 price.
+- **Plan 1, now:** only the outbound speed-to-lead agent, sold to owners already running Meta ads, at the D-024 price.
 - **Gate:** 5 paying Plan 1 clients before Plan 2. Quentin's partnership terms still finalize at 5.
 - **Plan 2, paused:** Revenue Recovery System — Reputation Engine, Inbound AI Receptionist (Emily), Lead Recovery and Nurture. Pricing undecided. Twenty task titles carry `[P1]` / `[P2]`.
 - "Speed to lead" means the outbound agent. Full detail: Twenty note "BUSINESS MODEL: Two Plans".
@@ -87,7 +99,7 @@ Retell stays the platform (D-018) unless another provider clearly wins. Only a w
 - API keys are rate-limited to 100 requests per 60 seconds. Never use REST DELETE on either instance; soft-delete in the UI only.
 - n8n credential "Twenty account" `41C04qbmnbi0GI2P`, node `@blackswampai/n8n-nodes-twentycrm`.
 - Custom objects: client_accounts, client_jobs, end_customers, customer_interactions, call_logs, invoices, expenses. Opportunity stages: DEMO_BOOKED → DEMO_HELD / NO_SHOW → PROPOSAL_SENT → CLOSED_WON/LOST.
-- Dashboard: "Plan 1: $30K by Dec 31" `acda0613-2565-47f6-bb4c-9072b45a6d4c`, with tabs "Sales funnel" and "Clients & Cash".
+- Dashboard (goal superseded by D-024: now $100K in signed contracts by Dec 31): "Plan 1: $30K by Dec 31" `acda0613-2565-47f6-bb4c-9072b45a6d4c`, with tabs "Sales funnel" and "Clients & Cash".
 - Other workflows: Emily `0PwP1tUf4478lNbf` (paused), Client Config Lookup `05HI35dhaWXweO5i`. Lead Scrape `3orAiCNLOCJ7xglI` is legacy and stays off. Nora `2PFWFqBM0wabADk6` is frozen.
 
 ## Portal
