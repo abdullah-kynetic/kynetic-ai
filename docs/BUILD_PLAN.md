@@ -269,7 +269,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M11-04 | M11 gate | AGENTS; T | M11-01, M11-02, M11-03 | All M11 rows pass | S | Haiku | no | 26 | todo | - |
 
 ## Open items that can block tasks
-These come from `docs/DECISIONS.md` (Still UNRESOLVED and gap-check proposals).
+These come from `docs/DECISIONS.md` (Still UNRESOLVED and approved gap-check items).
 - Delivery date: no task is blocked, but the plan cannot be dated until Abdullah gives it.
 - Gap-check items GP-01 to GP-12 are approved for v1 (DECISIONS DC-047); no task is blocked on them.
 - Twilio A2P approval gates going live with SMS (M4-08, M7-07, M7-08), not building them against fakes.
