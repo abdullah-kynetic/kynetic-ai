@@ -9,7 +9,7 @@ Every agent session reads these first (see `CLAUDE.md`):
 | File | Purpose |
 |---|---|
 | `docs/progress.md` | Where we are |
-| `docs/decisions.md` | What is already decided (D-001 through D-022) |
+| `docs/decisions.md` | What is already decided (D-001 through D-025) |
 | `docs/known-issues.md` | Gotchas and open problems |
 | `KYNETIC_CONTEXT.md` | Rules, IDs, D-017 pricing, the two Retell workspaces, Twenty, the portal |
 

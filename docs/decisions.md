@@ -110,6 +110,7 @@ Date: 2026-10-13
 Why: New voice work stays on Retell. The Vapi side experiment is parked. Its workflows were renamed and deactivated. The builder prompt is in `archive/vapi/` and is not a build spec.
 Workspaces: `abdullahblitz` is for new builds, including the Alex outbound agent. `kyneticai` is the older workspace and holds Nora and Emily. Nora stays frozen.
 Note (2026-10-17): the builder prompt named above was removed from main; see D-019.
+Note (2026-10-25): partly superseded by D-025 (ElevenLabs is the voice platform for Alex).
 
 ## D-019: Legacy material removed from main; recoverable via tag
 Status: decided
@@ -136,3 +137,17 @@ Status: decided
 Date: 2026-10-18
 Why: Abdullah said he is fine with the `bob-box-ovh-vps` key keeping full root on the VPS (KI-010) and left the choice of deploy path to Claude. `portal-deploy` is the one with a health check and automatic rollback, only deploys commits on `main`, and is already what the restricted `deploy` key and the GitHub Action run.
 Decided: Portal deploys go through `/usr/local/sbin/portal-deploy` (via the restricted `deploy` key). `portal/deploy/deploy.sh` is not used for routine deploys, because both overwrite `/opt/portal/src`. The `bob-box-ovh-vps` key keeps full administrator access.
+
+## D-025: ElevenLabs is the voice platform for Alex (v1 strict); text promise removed until Twilio A2P approves
+Status: decided
+Date: 2026-10-25 (verdict given 2026-10-22)
+Why: The Retell vs ElevenLabs bake-off (task 3.9) is closed. Abdullah called the verdict: ElevenLabs wins, and the v1 strict prompt goes live ("v1 is perfect"). v1 is the only prompt with a clean booked call (Oct 21, 0 stacked questions in 19 turns, median response delay 0.14 s). The 13-point scorecard, the v2 re-run and edge scripts 3, 4 and 6 were not run; the verdict is Abdullah's call.
+Decided:
+1. Alex runs on ElevenLabs agent `agent_8201m5afn2rbeb7v29xfkhh1pjef` (v1 strict prompt, blitz account `abdullahblitz24`). The v2 loose agent `agent_9701m5afn5rxehardsqttkq3pbjh` is not used.
+2. Free tier, demos only until the first client signs. No paid plan, no phone import and no outbound dialing from ElevenLabs yet. Full go-live plan: `docs/plans/ALEX-ELEVENLABS-GOLIVE.md`.
+3. On 2026-10-22 the live v1 prompt was edited to stop promising a text, because no text can be sent until a Twilio A2P campaign is approved. It still collects the contact number for the booking and ends with "You're all set. Anything else?". Before and after prompts: `providers/elevenlabs/golive/`.
+4. Standing approval (Abdullah, 2026-10-22): once the Twilio A2P campaign is approved, Claude restores the text wording itself and adds the SMS tool from `providers/elevenlabs/SMS_TOOL.md`, without asking again.
+5. The Retell Alex build (agent `agent_71e3cfc8384aa38a910a506b53`, n8n `tXJwNTkNgKGnp0Ab`) is parked, not deleted. It was not activated.
+Replaced: D-018 item 2 and 3 as far as they make Retell the platform for Alex. Still stands from D-018: Vapi stays parked, and Nora and Emily stay on Retell workspace `kyneticai`, frozen.
+Note: Twenty and this repo number decisions differently after Oct 24. Twenty has D-023 as the offer and pricing decision; the repo branches `feat/brand-revamp` and `fix/a2p-privacy-terms` carry D-023 (site rebuild) and D-024 (offer). D-025 was the first number free in both. Flag for Abdullah: reconcile D-023/D-024 when those branches merge.
+
