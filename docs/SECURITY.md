@@ -592,7 +592,7 @@ Raised in this file, decided 2026-10-25 (recommended option approved) unless mar
 - **C13 Module-off status.** Spec says UI hidden; PRD F-70 and CODE_STYLE say 403 on the server. Both are followed: UI hidden and server 403 (2.4).
 
 ## Appendix D. Gap-check additions (2026-10-25)
-Each is UNRESOLVED (proposal: as written) until Abdullah says yes.
+Approved by Abdullah 2026-10-25 (GP-01 to GP-05). The Terms and Privacy wording still needs counsel.
 - **F-99 billing profile.** Kynetic admin only: read and write. VA, owner and staff get 403. Stripe customer id is an identifier, not a secret; no card data is ever stored. Every write is audited with before and after.
 - **F-100 setup checklist.** Admin and VA read and write; owners read only steps flagged `client_visible`, with no vendor ids, credentials or internal notes.
 - **F-101 operations tools.** Admin only, except webhook viewer and job viewer which VAs may read. Kill switch, replay, retry, suspend and 2FA reset are admin-only, audited, and rate limited (5.4). Replay goes through the same idempotent path as the first delivery and re-checks module and compliance state. The kill switch is checked by `OutboundGate` before every call or text, so a queued job cannot slip past it.

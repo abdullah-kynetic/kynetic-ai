@@ -6,7 +6,7 @@ Rules for using this file:
 - One thread works one task at a time. A task may start only when every dependency is `done`. Tasks in the same wave with `Parallel = yes` can run in separate threads at once.
 - Every task ends with its acceptance tests passing in CI, the affected docs updated in the same PR (`AGENTS.md`), and its row updated here (status, resume notes).
 - Nothing here deploys, merges or touches live systems on its own. Deploys, provider changes and merges need Abdullah's yes.
-- Items marked "proposal" in the Implements column depend on a gap-check proposal in `docs/DECISIONS.md` (GP-nn). If it is not approved yet, skip that task and mark it `blocked`.
+- Gap-check items (F-99 to F-103 and the operations setup) were approved for v1 on 2026-10-25 (DECISIONS DC-047).
 - Do not widen a task. If the work is bigger than its size, split it, add the new rows here, and note it in the PR.
 
 ## Columns
@@ -103,7 +103,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M0-22 | Secrets: envelope encryption for `tenant_secrets`, env-key handling | SEC 4 | M0-05 | Ciphertext in DB; API never returns a decrypted token (SEC-T-34) | M | Opus | yes | 5 | todo | - |
 | M0-23 | App shell: rebrand tokens, layout, sidebar, header, dark-mode toggle, Kynetic-branded sign-in page | DS tokens, layout, sign-in rules; PRD F-44 | M0-01, M0-13 | Renders per role; keyboard path works; axe passes | M | Sonnet | yes | 8 | todo | - |
 | M0-24 | Base UI components (buttons, inputs, table, dialog, toast, badge, empty and error states) | DS components | M0-23 | Components match tokens; focus rings visible; axe passes | M | Haiku | yes | 9 | todo | - |
-| M0-25 | Terms and Privacy acceptance page (proposal F-102) | PRD F-102; DB terms_acceptances | M0-10, M0-24 | Unaccepted user redirected; accepted once, not asked again | S | Haiku | yes | 10 | todo | - |
+| M0-25 | Terms and Privacy acceptance page | PRD F-102; DB terms_acceptances | M0-10, M0-24 | Unaccepted user redirected; accepted once, not asked again | S | Haiku | yes | 10 | todo | - |
 | M0-26 | Seed data: module catalog and prices, automation templates, two synthetic demo tenants | DB Migrations and seed data | M0-07 | Seed is idempotent; demo data is synthetic (555-01xx numbers) | S | Sonnet | yes | 6 | todo | - |
 | M0-27 | Preview environment pipeline: per branch, own database, synthetic seed only | ARCH Operations | M0-02, M0-03, M0-26 | Preview deploys with no real data; torn down on merge | M | Sonnet | yes | 7 | todo | - |
 | M0-28 | M0 gate: run all M0 acceptance tests, update TESTING statuses, confirm docs match, record resume notes | AGENTS; T | M0-01..M0-27 | All M0 rows pass in CI; PR ready for review | S | Sonnet | no | 11 | todo | - |
@@ -176,8 +176,8 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M6-01 | `metrics_daily` roll-up job per the PRD metric definitions | PRD Metric definitions, F-01; DB metrics | M4-14, M5-05 | Hand-computed expected values from the seed fixture match | L | Opus | no | 20 | blocked | needs Abdullah's metric definitions (PRD decision 15) |
-| M6-02 | Seed fixture with hand-computed expected dashboard numbers | T Expected values | M6-01 | Fixture and expected values stored together; signed off by Abdullah | M | Sonnet | yes | 21 | blocked | needs Abdullah's metric definitions (PRD decision 15) |
+| M6-01 | `metrics_daily` roll-up job per the PRD metric definitions | PRD Metric definitions, F-01; DB metrics | M4-14, M5-05 | Hand-computed expected values from the seed fixture match | L | Opus | no | 20 | todo | - |
+| M6-02 | Seed fixture with hand-computed expected dashboard numbers | T Expected values | M6-01 | Fixture and expected values stored together; signed off by Abdullah | M | Sonnet | yes | 21 | todo | - |
 | M6-03 | Dashboard page: stat cards vs baseline, trend and source charts, activity feed | PRD F-01, F-02; DS dashboard | M6-01 | Cards hide when the module is off; numbers match the fixture | L | Sonnet | yes | 21 | todo | - |
 | M6-04 | Guarantee progress component | PRD F-03 | M6-01 | Progress and days left correct on a fixed clock | S | Haiku | yes | 21 | todo | - |
 | M6-05 | Reports service, `ReportSection` registry, monthly ROI report job (email and page) | PRD F-49; ARCH 7 | M6-01 | Full month fixture produces the report; `report.ready` emitted | L | Sonnet | yes | 21 | todo | - |
@@ -210,8 +210,8 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M8a-04 | View as client with banner, read-only default, logged sessions | PRD F-57; SEC 2.6 | M8a-01 | Writes fail in read-only; every write stamps the impersonator | L | Opus | yes | 13 | todo | - |
 | M8a-05 | Audit log viewer with filters | PRD F-60 | M8a-01 | Filter by tenant, user, action; VA read per SEC 2.2 | M | Sonnet | yes | 13 | todo | - |
 | M8a-06 | Modules panel: toggle per tenant, CRM level, history | PRD F-70, F-85 | M8a-01 | Toggle audited; flag change takes effect on next request | M | Sonnet | yes | 13 | todo | - |
-| M8a-07 | Plan and tier fields and billing tab (proposals F-86, F-99) | PRD F-86, F-99; DB tenant_billing | M8a-06 | Price snapshot per module; owner and VA get 403 | M | Sonnet | yes | 14 | todo | - |
-| M8a-08 | Onboarding checklist and owner setup progress card (proposal F-100) | PRD F-100; DB onboarding_steps | M8a-02 | Checklist created per module; owner sees only client-visible steps | M | Sonnet | yes | 14 | todo | - |
+| M8a-07 | Plan and tier fields and billing tab | PRD F-86, F-99; DB tenant_billing | M8a-06 | Price snapshot per module; owner and VA get 403 | M | Sonnet | yes | 14 | todo | - |
+| M8a-08 | Onboarding checklist and owner setup progress card | PRD F-100; DB onboarding_steps | M8a-02 | Checklist created per module; owner sees only client-visible steps | M | Sonnet | yes | 14 | todo | - |
 | M8a-09 | M8a gate | AGENTS; T | M8a-01..M8a-08 | All M8a rows pass | S | Haiku | no | 15 | todo | - |
 
 ## M8b Admin operations
@@ -224,7 +224,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M8b-04 | Per-client Alex config admin, prompt versions, test call | PRD F-58 | M4-14, M8a-09 | Test call uses the fake in preview; change is audited | M | Sonnet | yes | 16 | todo | - |
 | M8b-05 | Backups: nightly encrypted dump to R2, retention, restore test job, backups page, manual backup | PRD F-63; ARCH Operations | M0-28, M8a-09 | Dump appears in R2; restore into scratch passes SEC-T-01 and SEC-T-02 | L | Opus | yes | 16 | todo | - |
 | M8b-06 | Flagged-call review queue (admin side of F-28) | PRD F-28 | M4-14, M8a-09 | Flag appears; admin marks reviewed | S | Haiku | yes | 16 | todo | - |
-| M8b-07 | Operations tools: kill switch, webhook replay, job viewer, suspend, 2FA reset, demo reseed (proposal F-101) | PRD F-101; SEC Appendix D | M8a-09, M0-18 | Kill switch stops sends; replay processes once | L | Opus | yes | 16 | todo | - |
+| M8b-07 | Operations tools: kill switch, webhook replay, job viewer, suspend, 2FA reset, demo reseed | PRD F-101; SEC Appendix D | M8a-09, M0-18 | Kill switch stops sends; replay processes once | L | Opus | yes | 16 | todo | - |
 | M8b-08 | M8b gate | AGENTS; T | M8b-01..M8b-07 | All M8b rows pass | S | Haiku | no | 26 | todo | - |
 
 ## M9 Search, import, export, branding, settings, polish
@@ -242,7 +242,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M9-09 | Business settings: hours, service area, services, transfer number, team | PRD F-41 | M0-28 | Hours feed availability and call windows | M | Sonnet | yes | 12 | todo | - |
 | M9-10 | Client Alex settings: pause and call hours only | PRD F-42; PRD decision 8 | M4-13 | Other fields are not writable; change audited | S | Sonnet | yes | 14 | todo | - |
 | M9-11 | Settings pages: tags and notification preferences (Lite) | PRD F-43 | M2-05, M7-04 | Preferences honored by `notify()` | M | Haiku | yes | 15 | todo | - |
-| M9-12 | Documents page and admin upload (proposal F-103) | PRD F-103; DB tenant_documents | M4-03, M8a-09 | Signed URL; other tenant 404 | M | Haiku | yes | 16 | todo | - |
+| M9-12 | Documents page and admin upload | PRD F-103; DB tenant_documents | M4-03, M8a-09 | Signed URL; other tenant 404 | M | Haiku | yes | 16 | todo | - |
 | M9-13 | Mobile polish pass on daily-use pages | PRD F-44; DS responsive | M1-09, M2-06, M3-05, M5-05 | Playwright 390px passes; 44px touch targets | M | Sonnet | yes | 20 | todo | - |
 | M9-14 | M9 gate | AGENTS; T | M9-01..M9-13 | All M9 rows pass | S | Haiku | no | 21 | todo | - |
 
@@ -270,9 +270,8 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 
 ## Open items that can block tasks
 These come from `docs/DECISIONS.md` (Still UNRESOLVED and gap-check proposals).
-- Metric definitions (PRD decision 15) gate M6-01 and M6-02 and everything that reads `metrics_daily`: Abdullah decides before M6 starts.
 - Delivery date: no task is blocked, but the plan cannot be dated until Abdullah gives it.
-- Gap-check proposals GP-01 to GP-05 (F-99, F-100, F-101, F-102, F-103) gate tasks M0-25, M8a-07, M8a-08, M8b-07, M9-12 (and the gap tables in M0-05). Ask Abdullah before starting them.
+- Gap-check items GP-01 to GP-12 are approved for v1 (DECISIONS DC-047); no task is blocked on them.
 - Twilio A2P approval gates going live with SMS (M4-08, M7-07, M7-08), not building them against fakes.
 - Counsel answers gate the state rule table and consent wording (M4-07). Build to the decided defaults with the table as versioned config.
 - ElevenLabs paid plan and phone import gate real calls (M4-01 live check, M10-08), not the adapter.

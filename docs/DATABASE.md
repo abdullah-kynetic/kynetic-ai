@@ -710,7 +710,7 @@ CREATE TABLE metrics_daily (                                            -- rebui
   contacts_reached integer NOT NULL DEFAULT 0 CHECK (contacts_reached >= 0),
   estimates_booked integer NOT NULL DEFAULT 0 CHECK (estimates_booked >= 0),
   booked_value_cents bigint NOT NULL DEFAULT 0,
-  won_revenue_cents bigint NOT NULL DEFAULT 0,                          -- "revenue recovered" definition is UNRESOLVED (PRD proposal: Won deal value with an Alex call or booking)
+  won_revenue_cents bigint NOT NULL DEFAULT 0,                          -- "revenue recovered" per PRD Metric definitions (Won deal value with an Alex call or booking)
   avg_speed_to_lead_s numeric(10,2),
   speed_to_lead_samples integer NOT NULL DEFAULT 0,
   computed_at timestamptz NOT NULL DEFAULT now(),
@@ -871,7 +871,7 @@ CREATE INDEX contacts_import_batch_idx ON contacts (tenant_id, import_batch_id) 
 -- activities.type gains 'import' (timeline entry for imported history and for batch events).
 ```
 
-### Gap-check additions (2026-10-25; UNRESOLVED (proposal: create in the M0 baseline) until Abdullah says yes)
+### Gap-check additions (2026-10-25; approved for v1, created in the M0 baseline)
 
 ```sql
 ALTER TABLE tenants ADD COLUMN twenty_company_id text UNIQUE;           -- F-106 reference only; no sync in v1
@@ -1227,8 +1227,8 @@ Seed data (synthetic only; no real client data in preview, spec s6):
   - reactivation: one_time 4000 (T1), 6000 (T2), 9000 (T3).
   - opm: T1 1000 / 2500; T2 1500 / 3500; T3 2000 / 5000.
   - followup_bundle: T1 1600 / 4500; T2 2400 / 6500; T3 3800 / 9000.
-  - crm: tier ALL. Lite setup 3500, monthly 500. Full setup 6500, monthly 750.
-  - Founding clients: fixed setup 6500, then 3 months, then monthly 1500. 25% off add-on setups. Stored as reference text in the admin UI (F-86), not as a row, until billing (F-66).
+  - crm: tier ALL. Lite setup 1000, monthly 500. Full setup 2000, monthly 750 (on top of the main system; updated 2026-10-25).
+  - Founding clients: fixed setup 6500 covering 3 months, then monthly 1500. No founding discount on add-on setups (dropped 2026-10-25). Stored as reference text in the admin UI (F-86), not as a row, until billing (F-66).
 - `automation_templates`: six rows, keys from F-31. `module_key` as in the PRD, except `appointment_reminders` and `no_show_recovery` = `alex_core` (recommended option, PRD decision 6).
 - `pipelines` and `pipeline_stages`: created per tenant at onboarding (F-55), not as global seed. Default stages in order: New, Contacted, Qualified, Estimate Booked, Estimate Done, Quoted, Won (is_won), Lost (is_lost).
 - Sales demo tenant (F-88): one seeded synthetic tenant (`demo-sales`) built from the same fictional generator as the test tenants. It is never built from real CRM records. Production does not receive test or demo seeds except this one.
@@ -1336,10 +1336,10 @@ Contradictions between sources:
 3. Session variables. The existing portal sets `app.client_id` and `app.role` (with `admin`, `client`, `ingest`, `system`). This doc uses `app.tenant_id`, `app.user_id`, `app.role` (`owner`, `staff`, `admin`, `va`, `system`) and `app.impersonator_id` (ARCHITECTURE). The same name `app.role` has different values in the two systems. Two RLS models will exist during migration.
 4. Onboarding vs tier. The onboarding form (F-55) has no average job value, but tier is chosen at onboarding (F-86). `avg_job_value_cents` is therefore nullable and `pricing_tier` is nullable until someone enters it.
 5. Auth. Spec stack says Better-Auth with Google and magic link. Decisions say Better-Auth or Auth.js. The existing portal uses its own password and TOTP, not a library. Decided: Better-Auth (PRD decision 2); auth tables come from its migration.
-6. Price format. Decisions write "Monthly (setup)", for example "Alex core $2.5K($10K)". The PRD reads the parenthetical as setup. CRM build-out is written as "$3.5K + $500/mo", a different shape from the other modules. `module_prices` follows the PRD reading.
+6. Price format. Decisions write "Monthly (setup)", for example "Alex core $2.5K($10K)". The PRD reads the parenthetical as setup. CRM build-out was written as "$3.5K + $500/mo" in the locked decisions and is now $1,000 setup + $500/mo (Lite) and $2,000 setup + $750/mo (Full), the same shape as the other modules. `module_prices` follows the PRD reading.
 7. Base product vs upsell. Spec section 1 sells the CRM as the product ("a CRM good enough that clients drop their old one"). Decisions list "CRM build-out (Lite/Full)" as a module. Schema treats the core CRM tables as always present and `crm` as a level flag (PRD F-85). PRD decision 1 settles what Alex-only clients get any CRM.
 8. Reviews. Spec feature F-48 ("Reviews add-on", Later) has no matching decision module. PRD maps it to `opm` (decided, recommended option).
-9. "Revenue recovered" (F-01) has no definition in any source. UNRESOLVED: Abdullah decides before M6 (PRD proposal: Won deal value with an Alex call or booking). `metrics_daily` columns follow the proposal until then.
+9. "Revenue recovered" (F-01) had no definition in any source. Decided 2026-10-25: PRD "Metric definitions" (Won deal value with an Alex call or booking); `metrics_daily` columns follow it.
 10. Module-off behavior. PRD says data is kept when a module is off. Automation templates and runs under a disabled module move to `stopped_module_off` (kept). Consistent, but the spec does not say so; this doc adds the status.
 11. Milestone order vs writes. Spec wave 2 runs M4 in parallel with M1, but M4 writes `activities`, `contacts` and `calls`. Resolved: the M0 baseline creates every table, so no milestone waits on another's migration (ARCHITECTURE section 1). Feature code still follows the milestone's dependency rules.
 12. Pipeline stage names. Spec default stages match PRD F-17. No conflict. Recorded so nobody renames them in the seed.

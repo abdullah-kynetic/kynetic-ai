@@ -349,35 +349,35 @@ crm/
 
 
 ### Server and deployment setup (gap check 2026-10-25)
-Each item is UNRESOLVED (proposal: ...) until Abdullah says yes, except where it restates a confirmed decision.
-- **Host.** Separate Docker Compose project on the OVH VPS (Decided, section "Hosting"): `app`, `worker`, `postgres`, `caddy`. Own Docker network and own Postgres, never shared with `portal/`, n8n or Twenty. Sizing: UNRESOLVED (proposal: at least 4 vCPU and 8 GB RAM, with Postgres data on its own volume; revisit after the M10 load test).
-- **Network.** Caddy terminates TLS; only ports 80 and 443 are open, and 443 only to Cloudflare ranges (Confirmed: nothing exposed except through Cloudflare). SSH by key only, no root login, fail2ban, unattended security updates, host firewall on. UNRESOLVED (proposal: as written).
+Approved by Abdullah 2026-10-25 (GP-06 to GP-11, DECISIONS DC-047). Items that need an action or outside information are marked UNRESOLVED.
+- **Host.** Separate Docker Compose project on the OVH VPS (Decided, section "Hosting"): `app`, `worker`, `postgres`, `caddy`. Own Docker network and own Postgres, never shared with `portal/`, n8n or Twenty. Sizing: Decided 2026-10-25 (approved: at least 4 vCPU and 8 GB RAM, with Postgres data on its own volume; revisit after the M10 load test).
+- **Network.** Caddy terminates TLS; only ports 80 and 443 are open, and 443 only to Cloudflare ranges (Confirmed: nothing exposed except through Cloudflare). SSH by key only, no root login, fail2ban, unattended security updates, host firewall on. Decided 2026-10-25 (approved: as written).
 - **Secrets on the server.** An `.env` file owned by the deploy user with mode 600, outside the repo; never printed or committed. Per-environment values (F-87).
-- **Image build and registry.** CI builds one image per commit and pushes it to GitHub Container Registry; the server pulls by tag. UNRESOLVED (proposal: GHCR, private).
+- **Image build and registry.** CI builds one image per commit and pushes it to GitHub Container Registry; the server pulls by tag. Decided 2026-10-25 (approved: GHCR, private).
 - **Deploy.** A restricted `portal-deploy`-style script on the server (same pattern as D-022 for `portal/`): pull tag, run migrations as the owner role, start the new containers, call `/api/health`, roll back to the previous tag on failure. Production deploys happen only after Abdullah's yes.
-- **Preview environments.** Per branch, own database, synthetic seed only (no real client data). UNRESOLVED (proposal: ephemeral Compose projects on the same VPS behind `*.preview.kyneticai.com`, protected by Cloudflare Access, at most two alive at once, torn down when the branch merges). Needs the Cloudflare DNS move below.
+- **Preview environments.** Per branch, own database, synthetic seed only (no real client data). Decided 2026-10-25 (approved: ephemeral Compose projects on the same VPS behind `*.preview.kyneticai.com`, protected by Cloudflare Access, at most two alive at once, torn down when the branch merges). Needs the Cloudflare DNS move below.
 - **Recording and file storage.** R2 bucket, private, tenant-prefixed keys, versioning on, lifecycle rule that matches retention (PRD decision 9). The backup job also records the bucket's object counts so a restore drill can verify them.
 
 ### Domain, DNS and email domain (gap check 2026-10-25)
-- **Portal domain.** `portal.kyneticai.com` for everyone (PRD decision 11). Today `kyneticai.com` DNS is at Squarespace and the bare domain does not resolve (project memory, 2026-10-22). Cloudflare in front of the portal needs the zone, or at least the `portal` and `*.preview` records, on Cloudflare. UNRESOLVED (needs Abdullah; proposal: move the nameservers to Cloudflare and recreate the Squarespace records first, so the site keeps working). This is pending question 9 in the project notes.
+- **Portal domain.** `portal.kyneticai.com` for everyone (PRD decision 11). Today `kyneticai.com` DNS is at Squarespace and the bare domain does not resolve (project memory, 2026-10-22). Cloudflare in front of the portal needs the zone, or at least the `portal` and `*.preview` records, on Cloudflare. Approved (GP-07); needs Abdullah's action: move the nameservers to Cloudflare and recreate the Squarespace records first, so the site keeps working. This is pending question 9 in the project notes.
 - **TLS.** Cloudflare edge certificate plus a Caddy origin certificate (Cloudflare Origin CA), full-strict mode. Certificate expiry is alerted at 14 days.
-- **Email domain.** Resend sending domain on a subdomain, `mail.kyneticai.com`, with SPF, DKIM and DMARC (start at `p=none`, tighten to `quarantine` after a clean month). UNRESOLVED (proposal: as written; needs DNS access). Sender display name is the tenant's business name (F-39); the address stays Kynetic's verified domain; Reply-To is the owner's email.
+- **Email domain.** Resend sending domain on a subdomain, `mail.kyneticai.com`, with SPF, DKIM and DMARC (start at `p=none`, tighten to `quarantine` after a clean month). Decided 2026-10-25 (approved: as written; needs DNS access). Sender display name is the tenant's business name (F-39); the address stays Kynetic's verified domain; Reply-To is the owner's email.
 - **Per-client custom domains** stay Later (F-40).
 
 ### Monitoring and alerting (gap check 2026-10-25)
-UNRESOLVED (proposal: as written). Alert channel is email through Resend (Decided).
+Approved 2026-10-25 as written. Alert channel is email through Resend (Decided).
 - `/api/health` checks database and queue. An external uptime monitor (proposal: a free hosted one) hits it every minute.
-- Error tracking: Sentry optional (spec). UNRESOLVED (proposal: Sentry cloud free tier, with message bodies and PII scrubbed).
-- Host metrics (CPU, memory, disk): UNRESOLVED (proposal: a small self-hosted agent such as Netdata or Uptime Kuma on the same VPS).
+- Error tracking: Sentry optional (spec). Decided 2026-10-25 (approved: Sentry cloud free tier, with message bodies and PII scrubbed).
+- Host metrics (CPU, memory, disk): Decided 2026-10-25 (approved: a small self-hosted agent such as Netdata or Uptime Kuma on the same VPS).
 - Alerts: health failing 2 checks in a row; oldest queued job older than 10 minutes; more than 5 failed jobs in 15 minutes; more than 20 webhook signature failures in 10 minutes; newest backup older than 26 hours; disk above 80%; certificate within 14 days of expiry; 5xx rate above 2% for 5 minutes; Twilio or voice provider error spike (F-62).
-- Logs: JSON to stdout, rotated by Docker (10 MB, 5 files), shipped nowhere in v1. UNRESOLVED (proposal: add a log shipper only if the load test shows a need).
+- Logs: JSON to stdout, rotated by Docker (10 MB, 5 files), shipped nowhere in v1. Decided 2026-10-25 (approved: add a log shipper only if the load test shows a need).
 
 ### Provider integration details (gap check 2026-10-25)
 Details to confirm against each provider's docs when M4 starts; the adapter interfaces in section 7 do not change.
 
 | Provider | What we use | Inbound | Outbound | Keys (names only) | Open items |
 | --- | --- | --- | --- | --- | --- |
-| ElevenLabs (primary voice) | One agent per tenant (`alex_configs.agent_id`); outbound call API; agent tools call our availability and booking endpoints with the tenant tool token; recording and transcript fetched after the call and copied to R2 | `POST /api/hooks/voice/elevenlabs`, HMAC verified, stored in `webhook_events`, processed by a job that writes `calls`, `activities`, `appointments` | Start call with dynamic variables: contact first name, service, business name, disclosure text, call-window rules | `ELEVENLABS_API_KEY`, `ELEVENLABS_WEBHOOK_SECRET` | The account is on the free tier, demos only. UNRESOLVED (needs Abdullah: paid plan, and how real calls get a phone number, since phone import is not available on free). Concurrency cap per account to be set at M4. |
+| ElevenLabs (primary voice) | One agent per tenant (`alex_configs.agent_id`); outbound call API; agent tools call our availability and booking endpoints with the tenant tool token; recording and transcript fetched after the call and copied to R2 | `POST /api/hooks/voice/elevenlabs`, HMAC verified, stored in `webhook_events`, processed by a job that writes `calls`, `activities`, `appointments` | Start call with dynamic variables: contact first name, service, business name, disclosure text, call-window rules | `ELEVENLABS_API_KEY`, `ELEVENLABS_WEBHOOK_SECRET` | The account is on the free tier, demos only. UNRESOLVED (needs Abdullah: the paid plan, and how real calls get a phone number, since phone import is not available on free). Concurrency cap per account to be set at M4. |
 | Retell (fallback) | Same adapter shape | `POST /api/hooks/voice/retell` | Same | `RETELL_API_KEY` | Parked; kept so the provider is a config choice. |
 | Twilio | One Kynetic account; one number per tenant bought by an admin and stored in `phone_numbers` (auto-provision is F-56, Later); SMS through a Messaging Service | `POST /api/hooks/twilio/status` and `/inbound`, `X-Twilio-Signature` verified | `SmsProvider.send` through `OutboundGate` | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` | A2P campaign not approved (error 30034). UNRESOLVED (needs Twilio): approval and per-tenant numbers. Opt-out wording is lowercase natural ("just reply stop"). STOP and HELP are mirrored into `consents` (F-74). |
 | Resend | App email only (invites, magic links, notifications, reports) | `POST /api/hooks/resend`, signature verified; bounce and complaint mark the address suppressed and show in F-62 | `EmailProvider.send` | `RESEND_API_KEY`, `RESEND_WEBHOOK_SECRET` | Domain verification (above). Templates: invite, magic link, new lead, booked, task due, hot-lead alert, deal won, report ready, backup or security alert. Non-transactional mail carries an unsubscribe link. |
@@ -414,7 +414,7 @@ Abdullah approved these explicitly or told us to take the recommended option. De
 5. Hosting: separate compose project, own network and database on the OVH VPS; Caddy. Domain: portal.kyneticai.com for everyone.
 6. Files: recordings copied to R2, signed URLs. Backups to R2.
 7. Retention: recordings and transcripts 12 months, messages 24, audit 24, consent 5 years after revocation, webhook payloads 30 days, raw import files 30 days after commit.
-8. Client-editable Alex settings: pause and call hours only. Health score and guarantee target as in the PRD. Metric definitions are UNRESOLVED (proposal in the PRD; Abdullah decides before M6).
+8. Client-editable Alex settings: pause and call hours only. Health score and guarantee target as in the PRD.  Metric definitions are decided (PRD decision 15).
 9. Sequences: pg-boss in the app; n8n for cross-system workflows.
 10. Lite/Full split and the follow-up bundle membership as in PRD decisions 1 and 7. Staff permission toggles (exports, bulk delete) live on `memberships`. Service tokens live in `service_tokens` (hashed); the n8n webhook URL and token live in n8n credentials, never in the repo.
 11. Closed: no migration of the old portal; clean launch with a synthetic demo tenant (F-88).
@@ -428,7 +428,6 @@ Abdullah approved these explicitly or told us to take the recommended option. De
 2. Which F-97 direct connectors, and OPM vendors or connectors beyond status records.
 3. State calling and recording rules and consent wording (counsel). The 8am-9pm lead-local window is decided; the per-state table is not.
 4. Delivery date.
-5. Metric definitions (PRD decision 15): Abdullah decides before M6 starts.
 
 ### Contradictions found
 

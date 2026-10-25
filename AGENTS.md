@@ -8,7 +8,7 @@ Kynetic Client CRM & Portal. This file applies to every coding session (Cursor o
 Read these before implementing a feature: `docs/PRD.md`, `docs/DESIGN_SYSTEM.md`, `docs/ARCHITECTURE.md`, `docs/DATABASE.md`, `docs/SECURITY.md`, `docs/CODE_STYLE.md`, `docs/TESTING.md`, `docs/DECISIONS.md` (dated decision log) and `docs/BUILD_PLAN.md` (tasks, waves, status). Then summarize the requirements that touch your milestone and the unresolved decisions that block you. Wait for an answer before building on a blocker.
 
 Document ownership, so each fact has one home:
-- `PRD.md`: features, F-xx IDs, module catalog, decisions log and proposed metric definitions (UNRESOLVED until Abdullah decides).
+- `PRD.md`: features, F-xx IDs, module catalog, decisions log and metric definitions.
 - `ARCHITECTURE.md`: milestones, waves, and interfaces/contracts between milestones.
 - `DATABASE.md`: schema, RLS, migrations.
 - `SECURITY.md`: roles and permission matrix, consent, secrets handling.
@@ -95,7 +95,6 @@ Follow the layout in `docs/ARCHITECTURE.md`: server code in `src/server/...`, fe
 - **Sensitive systems (names only):** production Postgres, Abdullah's server, Cloudflare, offsite backup storage, Twenty (Kynetic-internal, no client data), Twilio, the voice provider, n8n, Resend, Google OAuth.
 - **Blocking unknowns:** none block M0. Every product and technical decision is closed in the PRD "Decisions log" (approved by Abdullah, 2026-10-25). These stay UNRESOLVED because they need outside information; ask Abdullah one at a time if your milestone touches one:
   - Delivery date (all milestones).
-  - Metric definitions (F-01, F-49): Abdullah decides before M6 starts. Do not build M6 until he does.
   - Twilio A2P campaign approval and per-tenant sending numbers (blocks SMS going live, M4 and M7).
   - State calling and recording rules and consent wording, which need counsel (M4). Build to the decided defaults: 8:00 am to 9:00 pm lead-local, disclosure on every call, state table as versioned config.
   - Which Phase 2 direct connectors F-97 covers (Later, not v1).

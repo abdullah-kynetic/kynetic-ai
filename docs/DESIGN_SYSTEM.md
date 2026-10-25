@@ -468,7 +468,7 @@ Abdullah approved these explicitly or told us to take the recommended option.
 UNRESOLVED (needs outside information): OPM vendor connectors and F-97 connectors, which affect UI only if they are chosen.
 
 ## Gap-check screens and rules (2026-10-25)
-Each is UNRESOLVED (proposal: as written) until Abdullah says yes.
+Approved by Abdullah 2026-10-25 (GP-01 to GP-05).
 - **Sign-in and magic-link pages are Kynetic-branded.** The tenant is not known before sign-in, so tenant branding (logo, primary color, name) starts after sign-in. Emails use the tenant's name and logo in the header and a small Kynetic footer. Favicon and app icon stay Kynetic's. With no logo uploaded, the sidebar shows a chip with the business initial.
 - **Terms acceptance (F-102)** is a full-page step after sign-in with the document text, a version label and one Accept button.
 - **Setup progress (F-100)**: owners see a card on the dashboard until go-live: a short list of steps with done, doing and waiting states and no internal detail. Admins get a checklist tab on the tenant page with owner, due date and status per step.
