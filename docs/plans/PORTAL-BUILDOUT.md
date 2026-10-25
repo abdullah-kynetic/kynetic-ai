@@ -48,7 +48,7 @@ A **service catalog** in the database drives everything: each service has a name
 
 Flow: admin opens "New proposal" -> picks client -> ticks services from a dropdown -> sees the generated package: scope list, total price, the three-invoice schedule, timeline -> previews -> approves. Only then is a proposal PDF/page produced; nothing is sent automatically (hard rule: customer-facing text is drafted for Abdullah's approval).
 
-- **Priced today:** Plan 1 only. D-017: $4,675 for clients 1-3, $8,500 for client 4+, invoices 50/25/25. **Prices for every other system are undecided** (Plan 2 pricing is open), so the catalog ships with Plan 1 priced and the rest as "price: to be set" that blocks proposal generation until you fill them in. I will not invent numbers.
+- **Priced today:** Plan 1 only. D-024 (supersedes D-017): $6,500 founding for clients 1-3 (50/50, then $1,500/mo), $10,000 standard after (50/25/25, then $2,000/mo); upsells priced in D-024. **Prices for every other system are undecided** (Plan 2 pricing is open), so the catalog ships with Plan 1 priced and the rest as "price: to be set" that blocks proposal generation until you fill them in. I will not invent numbers.
 - **Selecting services creates the work:** each selected service expands to its scope items, milestones and a checklist of build tasks (for Alex: Retell agent, n8n workflow, Cal event, form, A2P, test).
 - **Agreement text** comes from the attorney-reviewed template (tasks 4.7, 4.8); until then proposals say "agreement to follow".
 

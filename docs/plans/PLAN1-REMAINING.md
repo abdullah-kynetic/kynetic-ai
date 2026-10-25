@@ -20,7 +20,7 @@ Source: Twenty tasks not DONE, read 2026-10-22 (read-only; 51 tasks). Task statu
 | Task | Best way |
 |---|---|
 | 4.1 / 4.2 Opener, demo script, objections, voicemail, Google Voice | Draft in repo for approval; calculator as a small static page or Twenty note (no Google Sheets) |
-| 4.3 Unit economics | CSV/markdown model from real costs (Retell minutes, Twilio, n8n, VPS) vs $4,675 / $8,500 |
+| 4.3 Unit economics | CSV/markdown model from real costs (Retell minutes, Twilio, n8n, VPS) vs D-024 $6,500 founding / $10,000 standard (software included, no minute charges) |
 | 4.4 Guarantee terms | Decision for you and Quentin; I can lay out 2-3 options with the cost of each |
 | 4.5 Proposal template | One page, drafted for your approval, never sent |
 | 4.6 Stripe 3 milestone invoices | Live (Stripe). Most effective: n8n workflow triggered when the Twenty opportunity moves to CLOSED_WON that creates invoice 1 (50%) and schedules/creates 2 and 3 by milestone. Build inactive, test in Stripe test mode |
