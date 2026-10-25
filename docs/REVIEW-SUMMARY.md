@@ -14,16 +14,16 @@ Reviewed the 8 docs against each other, `SPEC_client_crm_portal.md` and `DECISIO
 - Milestones: M0 baseline migration (all tables, shared contracts), M1 to M10, M8 split into M8a/M8b, M11 = Online Presence Management. One thread owns one milestone.
 - **Alex-only clients get the base portal** (leads, pipeline kanban, appointments, Alex call logs, reports). CRM Lite and CRM Full are paid per-tenant upsells on top; M0 builds the base portal and the module mechanism (PRD decision 1, DC-041).
 - Admin 2FA (TOTP) is in v1 (F-98). Clients edit only pause and call hours. Quiet hours 8am to 9pm lead-local with stricter state rules on top; the 60-second promise yields to them.
-- Founding price $6,500 setup + 3 months, then $1,500/mo (the $4,675 figure is dropped). Accessibility WCAG 2.2 AA. Design tokens (success green, input border) approved.
+- Founding price $6,500 setup covering 3 months, then $1,500/mo (the $4,675 figure is dropped). Add-ons: CRM Lite $1,000 setup + $500/mo, CRM Full $2,000 setup + $750/mo, with no founding discount on add-on setup (DC-049). Accessibility WCAG 2.2 AA. Design tokens (success green, input border) approved.
 - Import (F-90 to F-97): admin-only wizard, `.csv`/`.xlsx` up to 10 MB / 50,000 rows, dry run before commit, skip duplicates by default with optional fill-blanks, undo lists records edited after import, raw files deleted 30 days after commit, imports never start outreach. Existing portal users: none, clean launch, synthetic demo tenant only.
-- Health score (five inputs at 20%, green 70+, yellow 40 to 69, red below 40) is in the PRD. Metric definitions are a proposal only; Abdullah decides them before M6.
+- Health score (five inputs at 20%, green 70+, yellow 40 to 69, red below 40) is in the PRD. Metric definitions are decided (approved as written, DC-048).
 - Commits are authored only as abdullah-kynetic, with no AI co-author trailer and no "Generated with" footer (AGENTS, CODE_STYLE).
 
 ## What I changed
 Fixed cross-doc contradictions (session variables, table names, module keys, 403 vs 404, error codes, layout, baseline migration model, roll-up role design, RLS FORCE), added the import feature set across PRD, DATABASE, ARCHITECTURE, SECURITY, TESTING, AGENTS, added F-98 and the metric definitions, and converted every proposal into a decision in all eight docs.
 
 ## Gap check (2026-10-25) and what was added
-Asked: list anything the portal needs that no doc covers. New items are marked `UNRESOLVED (proposal: ...)` in the docs and tracked as GP-01 to GP-12 in `docs/DECISIONS.md` until Abdullah says yes.
+Asked: list anything the portal needs that no doc covers. The new items were tracked as GP-01 to GP-12 and all approved for v1 on 2026-10-25 (DC-047).
 
 | Gap | Where it was added |
 | --- | --- |
@@ -50,7 +50,6 @@ Re-run against the real `SPEC_client_crm_portal.md` and `DECISIONS_locked.md` (n
 
 ## Still UNRESOLVED (needs outside information)
 1. Delivery date.
-1a. Metric definitions (speed-to-lead, contact rate, booking rate, revenue recovered): Abdullah decides before M6 starts.
 2. Which F-97 direct connectors to build (Jobber, ServiceTitan, Housecall Pro, HubSpot, Google Sheets export), in what order, and their API access. Later, not v1.
 3. State-by-state calling and recording rules and the consent wording, which need counsel. The app builds to the decided defaults with the state table as versioned config.
 4. Twilio A2P campaign approval and per-tenant sending numbers. SMS modules cannot go live until then.
