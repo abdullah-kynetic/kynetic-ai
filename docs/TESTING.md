@@ -309,7 +309,7 @@ Cross-module rules to test (release-blocking, recommended option wherever marked
   - Search fixture: 10,000 contacts in one tenant (F-37).
   - Import fixtures (F-90 to F-96): 1,000-row CSV with mapped and duplicate rows, 50 bad rows, mixed phone formats, a consent column, an XLSX with formulas, and an open-jobs file. All fictional.
   - Phone numbers use fictional `555-01XX` style ranges.
-- **Expected values.** Dashboard and report expected numbers are computed by hand, or by a script separate from the code under test. They are stored beside the fixture. Who writes them is `Decided 2026-10-25 (recommended option approved: the M6 thread writes them with the seed, and Abdullah signs off)`. The metric definitions for speed-to-lead, contact rate, booking rate and revenue recovered are a PRD proposal and UNRESOLVED until Abdullah decides before M6; expected values cannot be written until then.
+- **Expected values.** Dashboard and report expected numbers are computed by hand, or by a script separate from the code under test. They are stored beside the fixture. Who writes them is `Decided 2026-10-25 (recommended option approved: the M6 thread writes them with the seed, and Abdullah signs off)`. The metric definitions for speed-to-lead, contact rate, booking rate and revenue recovered are in the PRD "Metric definitions" section (decided 2026-10-25).
 - **External services (fakes).**
   - Retell and ElevenLabs: fake adapter that returns scripted call-ended events. ElevenLabs is primary and Retell the fallback (PRD decision 3).
   - Twilio: fake adapter for SMS send, status callbacks and inbound STOP and HELP. Real SMS is not tested until A2P approval; project memory (Oct 22, 2026) says sends fail with 30034.
@@ -405,7 +405,7 @@ Keep `Not run` distinct from `Passed`. Record each run here in this form:
 
 Regression policy: every important bug fix adds a regression test named with the F-ID it touches, before the fix merges.
 
-### Gap-check rows (2026-10-25; UNRESOLVED (proposal: as written) until approved)
+### Gap-check rows (2026-10-25; approved for v1)
 
 | ID, milestone, module | Scenario | Expected | Layer | Status |
 | --- | --- | --- | --- | --- |
@@ -444,7 +444,7 @@ Abdullah approved these explicitly or told us to take the recommended option. Te
 12. Founding price: $6,500 setup + 3 months, then $1,500/mo (the $4,675 figure is dropped).
 13. Performance and accessibility numbers as above (WCAG 2.2 AA).
 14. D-007 governs Kynetic's own prospecting only.
-15. Metric definitions: UNRESOLVED (PRD proposal; Abdullah decides before M6). Expected dashboard values are written by the M6 thread with the seed and signed off by Abdullah after that.
+15. Metric definitions: decided 2026-10-25 (PRD decision 15). Expected dashboard values are written by the M6 thread with the seed and signed off by Abdullah.
 16. Quiet hours 08:00 to 21:00 lead-local; stricter state rules layered on top (F-74, F-75).
 17. Duplicate phone/email normalisation: E.164 phones, lower-cased emails (F-07).
 18. Missed-call text-back is sent only to callers with consent or a permitted basis recorded by the compliance gate (F-81).
