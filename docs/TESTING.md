@@ -171,7 +171,8 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-22 (M3, crm) | Note body with a script tag | Sanitized on save | Unit | Not run |
 | F-24 (M5, alex_core) | Alex booking inside hours | Appears on the right day, status scheduled | Integration | Not run |
 | F-24 (M5, alex_core) | Staff reschedules; staff enters time outside hours | Timeline records reschedule; UI warns on out-of-hours time | E2E | Not run |
-| F-26 (M4, alex_core) | Call with outcome "booked" | Green Booked chip; contact link; outcome and date filters work | E2E | Not run |
+| F-26 (M4, alex_core) | Call with outcome "booked" | Green Booked chip; contact link; outcome and date filters work | E2E | Not run (filters, tenant-timezone dates, paging and isolation covered by `calls-list.test.ts`; chip tones by `calls-list-format.test.ts`) |
+| F-26 (M4, alex_core) | List 10,000 calls with and without filters | p95 under 500 ms | Integration | Pass (`calls-list.test.ts`) |
 | F-27 (M4, alex_core) | Open call with recording and transcript | Player, transcript, summary and fields render | E2E | Not run |
 | F-27 (M4, alex_core) | Mint a recording URL as the owner, as another tenant's owner, and as a user with no membership | Signed 5-minute URL; 404; 403; object key never returned | Integration | Pass (`call-end.test.ts`) |
 | F-27 (M4, alex_core) | Recording URL after expiry | Expired signed URL refused | Integration | Adapter part written, passing locally (M4-03, `tests/unit/storage/r2.test.ts`: 5-minute expiry, wrong tenant 404, SigV4 vector); real route test waits for M4-11 |

@@ -17,6 +17,14 @@ export const navGroups: NavGroup[] = [
         items: []
       },
       {
+        title: 'Calls',
+        url: '/dashboard/calls',
+        icon: 'phone',
+        isActive: false,
+        module: 'alex_core',
+        items: []
+      },
+      {
         title: 'Alex settings',
         url: '/dashboard/settings/alex',
         icon: 'settings',
