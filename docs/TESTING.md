@@ -334,7 +334,7 @@ All run from `crm/` with bun (Node 22). Verified locally on 2026-10-26 (M0-02); 
 - Typecheck: `bun run typecheck`.
 - Format check: `bun run format:check` (oxfmt).
 - Unit tests (Vitest): `bun run test` (files in `crm/tests/unit/`).
-- Integration tests (Vitest against Postgres): `bun run test:integration` (files in `crm/tests/integration/`, config `vitest.integration.config.ts`; empty until M0-04). Needs `DATABASE_URL_TEST` once tests exist (Decided 2026-10-26).
+- Integration tests (Vitest against Postgres): `bun run test:integration` (files in `crm/tests/integration/`, config `vitest.integration.config.ts`). Needs `TEST_DATABASE_ADMIN_URL`, a superuser URL of a throwaway Postgres 16; each test file creates and drops its own database (Decided 2026-10-26, M0-04). Verified locally against Postgres 16.15.
 - End-to-end (Playwright): `bun run test:e2e` (builds first with `bun run build`; starts `bun run start`). Locally set `PLAYWRIGHT_CHROMIUM_PATH` if the Playwright browser is not installed.
 - Accessibility scan: `@axe-core/playwright` is installed; the first axe test arrives with the app shell (M0-23).
 - Build: `bun run build`.

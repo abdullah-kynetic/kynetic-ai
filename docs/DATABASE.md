@@ -966,18 +966,19 @@ CREATE OR REPLACE FUNCTION app_module_enabled(p_key text) RETURNS boolean LANGUA
                  WHERE m.tenant_id = app_tenant_id() AND m.module_key = p_key AND m.enabled) $$;
 
 -- Standard policies for a tenant table T that has tenant_id. No staff clause.
+-- DC-050: policies are TO kynetic_app, kynetic_worker (the worker sets tenant context per job).
 CREATE OR REPLACE FUNCTION app_enable_tenant_rls(t regclass) RETURNS void LANGUAGE plpgsql AS $$
 BEGIN
   EXECUTE format('ALTER TABLE %s ENABLE ROW LEVEL SECURITY', t);
   EXECUTE format('ALTER TABLE %s FORCE ROW LEVEL SECURITY', t);
-  EXECUTE format($p$CREATE POLICY tenant_select ON %1$s FOR SELECT TO kynetic_app
+  EXECUTE format($p$CREATE POLICY tenant_select ON %1$s FOR SELECT TO kynetic_app, kynetic_worker
     USING (tenant_id = app_tenant_id())$p$, t);
-  EXECUTE format($p$CREATE POLICY tenant_insert ON %1$s FOR INSERT TO kynetic_app
+  EXECUTE format($p$CREATE POLICY tenant_insert ON %1$s FOR INSERT TO kynetic_app, kynetic_worker
     WITH CHECK (tenant_id = app_tenant_id() AND NOT app_read_only())$p$, t);
-  EXECUTE format($p$CREATE POLICY tenant_update ON %1$s FOR UPDATE TO kynetic_app
+  EXECUTE format($p$CREATE POLICY tenant_update ON %1$s FOR UPDATE TO kynetic_app, kynetic_worker
     USING (tenant_id = app_tenant_id() AND NOT app_read_only())
     WITH CHECK (tenant_id = app_tenant_id() AND NOT app_read_only())$p$, t);
-  EXECUTE format($p$CREATE POLICY tenant_delete ON %1$s FOR DELETE TO kynetic_app
+  EXECUTE format($p$CREATE POLICY tenant_delete ON %1$s FOR DELETE TO kynetic_app, kynetic_worker
     USING (tenant_id = app_tenant_id() AND NOT app_read_only())$p$, t);
 END $$;
 
@@ -1188,7 +1189,7 @@ Index rule for every table: each tenant table has an index led by `tenant_id`, e
 ## Migrations and seed data
 
 Tool and review (Drizzle confirmed, Decided 2026-10-25):
-- Drizzle ORM and `drizzle-kit`, as the existing portal already uses (`portal/drizzle.config.ts`, SQL migrations in `portal/drizzle/`). Migration files are plain SQL, reviewed in the PR. Migration command: Not configured for the new repo.
+- Drizzle ORM and `drizzle-kit`, as the existing portal already uses (`portal/drizzle.config.ts`, SQL migrations in `portal/drizzle/`). Migration files are plain SQL, reviewed in the PR. Migration command: `bun run db:migrate` in `crm/` (needs `DATABASE_URL_MIGRATE`, run as `kynetic_owner`; M0-04). Roles are created first, once per cluster, by `crm/deploy/db/bootstrap.sql` run by a superuser (DC-050).
 - Each migration reviewed for: RLS on new tenant tables, composite FK, a `CHECK` on every enum-like column, index on `tenant_id`, no `DROP` without a two-step plan.
 - Expand then contract for any rename or drop. Two deploys minimum.
 - CI runs migrations against an empty Postgres 16 and against a seeded preview database, then runs the RLS test suite. Failure blocks merge.
@@ -1197,7 +1198,7 @@ Ownership and file ranges (so parallel milestone threads do not collide on numbe
 
 | Range | Milestone | Creates |
 | --- | --- | --- |
-| 0001 | M0 | Baseline: extensions, helpers, every table in the Schema section in dependency order, RLS, grants, audit trigger, SECURITY DEFINER functions, module_catalog and module_prices seed |
+| 0000 to 0003 | M0 | Baseline, split by task (DC-050): 0000 roles check, extensions, helpers, `app_enable_tenant_rls` (M0-04); 0001 to 0003 tables (M0-05 to M0-07). Baseline contents: extensions, helpers, every table in the Schema section in dependency order, RLS, grants, audit trigger, SECURITY DEFINER functions, module_catalog and module_prices seed |
 | 0002 to 0099 | M0 | Reserved for M0 follow-ups (hardening found in review) |
 | 0100 to 0199 | M1 | Additive: contacts and companies indexes, trigram indexes once data exists |
 | 0200 to 0299 | M2 | Additive: deal board indexes |
