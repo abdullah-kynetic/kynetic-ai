@@ -1,4 +1,15 @@
-export { contactsScope } from './scope';
+export { contactsScope, contactsActorScope } from './scope';
+export {
+  BULK_MAX_CONTACTS,
+  bulkActionSchema,
+  bulkCapabilities,
+  bulkContactsSchema,
+  bulkUpdateContacts,
+  type BulkAction,
+  type BulkCapabilities,
+  type BulkContactsInput,
+  type BulkContactsResult
+} from './bulk';
 export { normalizePhone, normalizePhones } from './phone';
 export { CONTACT_STATUSES, type ContactStatus } from './schemas';
 export {

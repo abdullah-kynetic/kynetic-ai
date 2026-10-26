@@ -1,5 +1,10 @@
 import PageContainer from '@/components/layout/page-container';
-import { contactFacets, contactsScope, searchContacts } from '@/server/contacts';
+import {
+  bulkCapabilities,
+  contactFacets,
+  contactsActorScope,
+  searchContacts
+} from '@/server/contacts';
 import { ContactsTable } from '@/features/contacts/list/contacts-table';
 import {
   isFiltered,
@@ -17,16 +22,21 @@ export default async function ContactsPage({
 }: {
   searchParams: Promise<RawSearchParams>;
 }) {
-  const ctx = await contactsScope(await headers());
-  if (!ctx) {
+  const scope = await contactsActorScope(await headers());
+  if (!scope) {
     return (
       <PageContainer pageTitle='Leads' access={false}>
         {null}
       </PageContainer>
     );
   }
+  const { ctx, actor } = scope;
   const { hidden, ...view } = readListView(await searchParams);
-  const [result, facets] = await Promise.all([searchContacts(ctx, view), contactFacets(ctx)]);
+  const [result, facets, bulk] = await Promise.all([
+    searchContacts(ctx, view),
+    contactFacets(ctx),
+    bulkCapabilities(ctx, actor)
+  ]);
   return (
     <PageContainer
       pageTitle='Leads'
@@ -39,6 +49,7 @@ export default async function ContactsPage({
         perPage={result.perPage}
         facets={facets}
         hidden={hidden}
+        bulk={bulk}
         filtered={isFiltered({ hidden, ...view })}
       />
     </PageContainer>
