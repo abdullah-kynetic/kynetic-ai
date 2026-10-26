@@ -147,8 +147,6 @@ describe('M0-07 constraints', () => {
   });
 
   it('an active automation run needs next_run_at; a template automation needs a template key', async () => {
-    await db.admin`insert into module_catalog (module_key, label) values ('alex_core', 'Alex')`;
-    await db.admin`insert into automation_templates (key, module_key, label) values ('speed_to_lead', 'alex_core', 'Speed to lead')`;
     const [auto] =
       await db.admin`insert into automations (tenant_id, kind, template_key, name) values (${A}, 'template', 'speed_to_lead', 'S') returning id`;
     await expect(

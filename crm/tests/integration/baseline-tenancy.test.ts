@@ -15,8 +15,6 @@ beforeAll(async () => {
     (${A}, 'tenant-a', 'Tenant A', 'founding', 'America/Los_Angeles'),
     (${B}, 'tenant-b', 'Tenant B', 'value', 'America/Chicago')`;
   await db.admin`insert into users (id, email) values (${UA}, 'a@example.test'), (${UB}, 'b@example.test')`;
-  await db.admin`insert into module_catalog (module_key, label, always_on) values
-    ('platform','Platform',true), ('crm','CRM',false), ('alex_core','Alex',false)`;
   await db.admin`insert into memberships (tenant_id, user_id, role) values (${A}, ${UA}, 'owner'), (${B}, ${UB}, 'owner')`;
   await db.admin`insert into tenant_modules (tenant_id, module_key, enabled) values (${A}, 'platform', true), (${B}, 'platform', true)`;
   await db.admin`insert into tenant_secrets (tenant_id, provider, name, ciphertext, nonce) values (${A}, 'twilio', 'token', '\\x01', '\\x02')`;

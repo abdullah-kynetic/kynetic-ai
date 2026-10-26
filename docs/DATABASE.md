@@ -1208,6 +1208,7 @@ Ownership and file ranges (so parallel milestone threads do not collide on numbe
 | --- | --- | --- |
 | 0000 to 0003 | M0 | Baseline, split by task (DC-050): 0000 roles check, extensions, helpers, `app_enable_tenant_rls` (M0-04); 0001 to 0003 tables (M0-05 to M0-07). Baseline contents: extensions, helpers, every table in the Schema section in dependency order, RLS, grants, audit trigger, SECURITY DEFINER functions, module_catalog and module_prices seed |
 | 0002 to 0099 | M0 | Reserved for M0 follow-ups (hardening found in review) |
+| 0012 | M0-26 | Reference seed: module_catalog, module_prices, automation_templates (idempotent, `ON CONFLICT DO NOTHING`; lifts and restores FORCE RLS on those three tables inside the migration, policies and grants unchanged) |
 | 0100 to 0199 | M1 | Additive: contacts and companies indexes, trigram indexes once data exists |
 | 0200 to 0299 | M2 | Additive: deal board indexes |
 | 0300 to 0399 | M3 | Additive: task and note indexes |
@@ -1245,6 +1246,7 @@ Seed data (synthetic only; no real client data in preview, spec s6):
 - `automation_templates`: six rows, keys from F-31. `module_key` as in the PRD, except `appointment_reminders` and `no_show_recovery` = `alex_core` (recommended option, PRD decision 6).
 - `pipelines` and `pipeline_stages`: created per tenant at onboarding (F-55), not as global seed. Default stages in order: New, Contacted, Qualified, Estimate Booked, Estimate Done, Quoted, Won (is_won), Lost (is_lost).
 - Sales demo tenant (F-88): one seeded synthetic tenant (`demo-sales`) built from the same fictional generator as the test tenants. It is never built from real CRM records. Production does not receive test or demo seeds except this one.
+- Built (M0-26): `crm/src/server/db/seed/demo.ts` seeds `demo-a`, `demo-b` and `demo-sales` (`bun run db:seed` in `crm/`, needs `DATABASE_URL_SEED` for a role that bypasses RLS; dev, test and preview only). A tenant whose slug exists is skipped. `SEED_TENANT_SLUGS` is the allow-list the preview start check (M0-27) uses.
 - Demo tenants for tests: two synthetic tenants (slugs `demo-a`, `demo-b`), with fictional contacts on 555-01xx numbers and no real names. Owners and staff with test emails on a reserved test domain.
 
 Backups and restore:
