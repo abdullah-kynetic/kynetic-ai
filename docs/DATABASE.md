@@ -64,6 +64,8 @@ Retention and classification are per table. Retention values are the PRD decisio
 | reports | Monthly ROI report records and stored PDF keys | System | 24 months | Internal | M6 | alex_core (F-49) |
 | automations, automation_steps, automation_runs | Templates, sequences, and their runs | Tenant | Runs: 12 months after completion | Personal | M7 | per template |
 | notifications | Bell items per user | System | 90 days | Internal | M7 | platform (F-35) |
+| notification_preferences | Per-user email on or off per notification type; no row means on | Tenant (the user) | Until the membership is removed | Internal | M9 | platform (F-36) |
+| tags | Tag registry: tags created in settings before any contact has them; `contacts.tags` stays the source of what is applied | Tenant | Until deleted | Internal | M9 | crm (Lite, F-43) |
 | import_batches, import_batch_records | Onboarding data imports: one row per upload, with mapping, dry-run report, counts, status and undo; records created per batch | Tenant (Kynetic admin runs it) | Batch row kept for the life of the tenant. Raw file deleted 30 days after commit (SECURITY 6.1; decided) | Personal | M9 | platform (F-90 to F-94) |
 
 Module-specific tables not yet defined (PRD F-83 opm, F-82 reactivation, F-84 followup_bundle): see Schema section "Not yet in the schema".
@@ -943,7 +945,7 @@ Access: `tenant_billing` and `tenant_billing_modules` have the standard RLS enab
 - Reactivation batches (F-82): a one-time campaign needs a `reactivation_batches` record (audience filter, launched_at, counts). Created in M7 with the reactivation module.
 - Follow-up bundle (F-84): modeled as flags on `tenant_modules` only. Contents are fixed by PRD decision 7; no table.
 - CRM Lite vs Full surfaces (F-85): gated by `tenant_modules.level`. No extra tables (PRD decision 1).
-- Notification preferences (F-36), saved views (F-09), recurring tasks (F-21), attachments (F-23), multiple pipelines (F-18), prompt history (F-59), usage (F-64), Phase 2 tables (F-65 to F-69): Later. Not created in v1.
+- Saved views (F-09), recurring tasks (F-21), attachments (F-23), multiple pipelines (F-18), prompt history (F-59), usage (F-64), Phase 2 tables (F-65 to F-69): Later. Not created in v1.
 
 ### Row-level security and privileges (M0)
 
@@ -1086,6 +1088,8 @@ Implemented in migration 0005 (M0-09, DC-054). Signatures: `create_tenant(slug, 
 
 Migration 0010 (M0-20, DC-060) adds `service_token_lookup(prefix)` and `service_token_touch(id)`, owned by `kynetic_rollup`, executable by `kynetic_app` and `kynetic_worker`. They exist because a bearer request has no tenant context yet. They take no tenant argument and cannot list tokens.
 
+Migration 0054 (M9-11, DC-115) creates `tags` (id, tenant_id, name 1 to 50 characters, unique per tenant ignoring case) and `notification_preferences` (primary key tenant_id, user_id, kind; `email_enabled`; foreign key to `memberships` with cascade). Both use `app_enable_tenant_rls`. A user reads and writes only their own preference rows, enforced in the service (RLS scopes to the tenant).
+
 Functions that aggregate across tenants must never take a tenant id the caller could not otherwise see: they check the role, then compute.
 
 Audit immutability and grants:
@@ -1151,6 +1155,8 @@ Roles (PRD F-73): Kynetic admin (`app.role = admin`), Kynetic VA (`va`), client 
 | automations, automation_steps | W | R | W (template toggles subject to module guard) | R | RLS helper; module guard |
 | automation_runs | R | R | R | R | Worker writes |
 | notifications | Own only | Own only | Own only (plus rows with user_id NULL) | Own only | Server filter on user_id |
+| notification_preferences | Own only | Own only | Own only | Own only | RLS helper; server filter on user_id |
+| tags | W (F-43) | R | W (F-43) | R | RLS helper; server check `settings.business` |
 | metrics_daily, reports | R | R | R | R | Worker writes |
 | import_batches, import_batch_records | RW (F-94) | R | R (client-side import is Later, F-95) | - | RLS helper; server role check (admin only to write) |
 | audit_log | R via `audit_search` | R via `audit_search` (SECURITY 2.2) | - | - | No SELECT grant to `kynetic_app` |
