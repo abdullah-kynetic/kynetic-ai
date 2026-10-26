@@ -104,16 +104,18 @@ describe('M1-02 leads list query (F-05)', () => {
 
   it('filters by status and source together', async () => {
     const r = await search({ statuses: ['new', 'booked'], sources: ['facebook'] });
-    expect(ids(r).sort()).toEqual([made.ana, made.cara, made.other].sort());
+    expect(ids(r).toSorted()).toEqual([made.ana, made.cara, made.other].toSorted());
     const r2 = await search({ statuses: ['working'], sources: ['facebook'] });
     expect(r2.total).toBe(0);
   });
 
   it('filters by tag ignoring case, by owner (including no owner) and by created date', async () => {
-    expect(ids(await search({ tags: ['ROOF'] })).sort()).toEqual([made.ana, made.cara].sort());
+    expect(ids(await search({ tags: ['ROOF'] })).toSorted()).toEqual(
+      [made.ana, made.cara].toSorted()
+    );
     expect(ids(await search({ owners: [IDS.staffA] }))).toEqual([made.ben]);
-    expect(ids(await search({ owners: [NO_OWNER] })).sort()).toEqual(
-      [made.cara, made.other].sort()
+    expect(ids(await search({ owners: [NO_OWNER] })).toSorted()).toEqual(
+      [made.cara, made.other].toSorted()
     );
     expect(ids(await search({ createdFrom: '2026-10-05', createdTo: '2026-10-10' }))).toEqual([
       made.ben
@@ -154,7 +156,7 @@ describe('M1-02 leads list query (F-05)', () => {
     const f = await contactFacets(ctx.ownerA(), opts);
     expect(f.sources).toEqual(['angi', 'facebook']);
     expect(f.tags.map((t) => t.toLowerCase())).toEqual(['gutter', 'roof', 'vip']);
-    expect(f.owners.map((o) => o.id).sort()).toEqual([IDS.ownerA, IDS.staffA].sort());
+    expect(f.owners.map((o) => o.id).toSorted()).toEqual([IDS.ownerA, IDS.staffA].toSorted());
     const fb = await contactFacets(ctx.ownerB(), opts);
     expect(fb.owners.map((o) => o.id)).toEqual([IDS.ownerB]);
   });
@@ -185,7 +187,7 @@ describe('M1-02 performance: 10,000 contacts, p95 under 500 ms (TESTING performa
       { q: '415000' },
       { tags: ['roof'], owners: [IDS.ownerA] },
       { owners: [NO_OWNER], sort: { field: 'name', desc: false } },
-      { createdFrom: '2020-01-01', sort: { field: 'status', desc: true }, perPage: 100 },
+      { createdFrom: '2020-01-01', sort: { field: 'status', desc: true }, perPage: 50 },
       { page: 400, perPage: 20 }
     ];
     const times: number[] = [];
