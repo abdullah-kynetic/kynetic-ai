@@ -20,16 +20,36 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icons } from '../icons';
 
-export default function AppSidebar() {
+export type SidebarTenant = { name: string; logoUrl: string | null } | null;
+
+// Active item: 3px primary marker on the left edge (DESIGN_SYSTEM shell chrome).
+const ACTIVE_MARKER =
+  "relative data-active:before:absolute data-active:before:inset-y-1 data-active:before:left-0 data-active:before:w-[3px] data-active:before:rounded-full data-active:before:bg-sidebar-primary data-active:before:content-['']";
+
+export default function AppSidebar({ tenant }: { tenant: SidebarTenant }) {
   const pathname = usePathname();
   const filteredGroups = useFilteredNavGroups(navGroups);
 
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader className='group-data-[collapsible=icon]:pt-4'>
-        <span className='px-2 text-sm font-semibold group-data-[collapsible=icon]:hidden'>
-          Kynetic
-        </span>
+        <div className='flex items-center gap-2 px-2'>
+          {/* Logo sits on a cream chip so any client logo stays legible on the espresso band. */}
+          <span
+            aria-hidden
+            className='bg-sidebar-foreground text-sidebar flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-md text-sm font-semibold'
+          >
+            {tenant?.logoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element -- tenant logo, arbitrary origin
+              <img src={tenant.logoUrl} alt='' className='size-full object-contain p-0.5' />
+            ) : (
+              tenant?.name.trim().charAt(0).toUpperCase() || 'K'
+            )}
+          </span>
+          <span className='truncate text-sm font-semibold group-data-[collapsible=icon]:hidden'>
+            {tenant?.name ?? 'Kynetic'}
+          </span>
+        </div>
       </SidebarHeader>
       <SidebarContent className='overflow-x-hidden'>
         {filteredGroups.map((group) => (
@@ -49,7 +69,7 @@ export default function AppSidebar() {
                         <SidebarMenuButton
                           tooltip={item.title}
                           isActive={pathname === item.url}
-                          className='group/collapsible'
+                          className={`group/collapsible ${ACTIVE_MARKER}`}
                         />
                       }
                     >
@@ -78,6 +98,7 @@ export default function AppSidebar() {
                       render={<Link href={item.url} aria-label={item.title} />}
                       tooltip={item.title}
                       isActive={pathname === item.url}
+                      className={ACTIVE_MARKER}
                     >
                       <Icon />
                       <span>{item.title}</span>
