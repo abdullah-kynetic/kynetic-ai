@@ -5,6 +5,7 @@ import { memberships, notifications, tenants, users } from '../db/schema';
 import { getEnv } from '../env';
 import { registerWorker } from '../jobs';
 import { withTenant } from '../tenancy';
+import { usersWithEmailOff } from './preferences';
 
 export type NotificationEmailJob = { tenantId: string; notificationId: string };
 
@@ -39,8 +40,8 @@ export function renderNotificationEmail(
 /**
  * Emails one notification to its recipient (user_id) or to every owner of the tenant (user_id NULL),
  * through the EmailProvider. Idempotent per notification and recipient, so a retry never double-sends.
- * Every type is emailed: per-user preferences are F-36 (M9-11) and have no table in v1 (DC-078).
- * Returns the number of addresses sent to.
+ * Users who turned email off for the notification's type are skipped (F-36, DC-115). Returns the
+ * number of addresses sent to.
  */
 export async function deliverNotificationEmail(
   job: NotificationEmailJob,
@@ -74,7 +75,17 @@ export async function deliverNotificationEmail(
             ? and(eq(memberships.tenantId, job.tenantId), eq(memberships.userId, n.userId))
             : and(eq(memberships.tenantId, job.tenantId), eq(memberships.role, 'owner'))
         );
-      return { n, tenantName: tenant?.name ?? 'Kynetic', recipients };
+      // F-36: a user who turned email off for this type is skipped. The bell still shows it.
+      const off = await usersWithEmailOff(
+        tx,
+        recipients.map((r) => r.id),
+        n.kind
+      );
+      return {
+        n,
+        tenantName: tenant?.name ?? 'Kynetic',
+        recipients: recipients.filter((r) => !off.has(r.id))
+      };
     },
     deps.db ? { db: deps.db } : { db: getWorkerDb() }
   );
