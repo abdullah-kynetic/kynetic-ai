@@ -5,6 +5,7 @@ import { ModulesProvider } from '@/components/modules/module-gate';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { loadShellContext, roleLabel } from '@/server/shell';
 import { pendingDocuments } from '@/server/terms';
+import { brandingCss } from '@/lib/branding/color';
 import type { Metadata } from 'next';
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -27,6 +28,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const defaultOpen = cookieStore.get('sidebar_state')?.value !== 'false';
   return (
     <ModulesProvider modules={shell.modules}>
+      {/* F-39: tenant color, server-rendered so there is no flash. Admin sessions keep Kynetic orange. */}
+      {shell.tenant?.primaryColor && shell.role !== 'admin' && shell.role !== 'va' && (
+        <style>{brandingCss(shell.tenant.primaryColor)}</style>
+      )}
       <KBar>
         <SidebarProvider defaultOpen={defaultOpen}>
           <a

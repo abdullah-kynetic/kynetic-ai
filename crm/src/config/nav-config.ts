@@ -17,5 +17,17 @@ export const navGroups: NavGroup[] = [
         items: []
       }
     ]
+  },
+  {
+    label: 'Settings',
+    items: [
+      {
+        title: 'Branding',
+        url: '/dashboard/settings/branding',
+        icon: 'settings',
+        isActive: false,
+        items: []
+      }
+    ]
   }
 ];
