@@ -6,18 +6,20 @@ import { parseAsString, useQueryState, useQueryStates } from 'nuqs';
 import * as React from 'react';
 import { IconSearch, IconUsers } from '@tabler/icons-react';
 
-import type { ContactFacets, ContactListRow } from '@/server/contacts';
+import type { BulkCapabilities, ContactFacets, ContactListRow } from '@/server/contacts';
 import { CONTACT_STATUSES, NO_OWNER } from '@/server/contacts/constants';
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar';
 import { Badge, StatusBadge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { EmptyState } from '@/components/ui/states';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 import type { DataTableFeatures } from '@/lib/data-table-features';
+import { BulkBar } from './bulk-bar';
 import { DEFAULT_SORT, HIDEABLE_COLUMNS, type ListColumn } from './search-params';
 import {
   formatDay,
@@ -36,13 +38,51 @@ type Props = {
   facets: ContactFacets;
   hidden: ListColumn[];
   filtered: boolean;
+  /** What the caller may do in bulk (F-08). All false hides the selection column and the bar. */
+  bulk: BulkCapabilities;
 };
 
 const contactHref = (id: string) => `/dashboard/contacts/${id}`;
 
-function buildColumns(facets: ContactFacets): ColumnDef<DataTableFeatures, ContactListRow>[] {
+type TableInstance = ReturnType<typeof useDataTable<ContactListRow>>['table'];
+
+const selectColumn: ColumnDef<DataTableFeatures, ContactListRow> = {
+  id: 'select',
+  header: ({ table }) => (
+    <Subscribe source={table.atoms.rowSelection} selector={() => table.getIsAllPageRowsSelected()}>
+      {(all) => (
+        <Checkbox
+          aria-label='Select all contacts on this page'
+          checked={all}
+          indeterminate={!all && table.getIsSomePageRowsSelected()}
+          onCheckedChange={(v) => table.toggleAllPageRowsSelected(Boolean(v))}
+        />
+      )}
+    </Subscribe>
+  ),
+  cell: ({ row }) => (
+    <Subscribe source={row.table.atoms.rowSelection} selector={() => row.getIsSelected()}>
+      {(selected) => (
+        <Checkbox
+          aria-label={`Select ${fullName(row.original)}`}
+          checked={selected}
+          onCheckedChange={(v) => row.toggleSelected(Boolean(v))}
+        />
+      )}
+    </Subscribe>
+  ),
+  enableSorting: false,
+  enableHiding: false,
+  size: 40
+};
+
+function buildColumns(
+  facets: ContactFacets,
+  selectable: boolean
+): ColumnDef<DataTableFeatures, ContactListRow>[] {
   const tz = facets.timezone;
   return [
+    ...(selectable ? [selectColumn] : []),
     {
       id: 'name',
       accessorFn: (r) => fullName(r),
@@ -227,16 +267,38 @@ function SyncHidden({ hidden }: { hidden: string }) {
   return null;
 }
 
-function MobileCards({ rows, tz }: { rows: ContactListRow[]; tz: string }) {
+function MobileCards({
+  rows,
+  tz,
+  table
+}: {
+  rows: ContactListRow[];
+  tz: string;
+  /** Present when bulk actions are on: each card gets a 44px checkbox. */
+  table?: TableInstance;
+}) {
   return (
     <ul className='flex flex-col gap-2 md:hidden' aria-label='Contacts'>
       {rows.map((r) => {
         const s = r.status as keyof typeof STATUS_LABELS;
         return (
-          <li key={r.id}>
+          <li key={r.id} className='flex items-stretch gap-2'>
+            {table ? (
+              <Subscribe source={table.atoms.rowSelection} selector={(sel) => sel[r.id] === true}>
+                {(selected) => (
+                  <div className='flex min-h-11 min-w-11 items-center justify-center'>
+                    <Checkbox
+                      aria-label={`Select ${fullName(r)}`}
+                      checked={selected}
+                      onCheckedChange={(v) => table.getRow(r.id).toggleSelected(Boolean(v))}
+                    />
+                  </div>
+                )}
+              </Subscribe>
+            ) : null}
             <Link
               href={contactHref(r.id)}
-              className='bg-card hover:bg-muted focus-visible:ring-ring flex min-h-11 flex-col gap-1 rounded-lg border p-3 focus-visible:ring-2 focus-visible:outline-none'
+              className='bg-card hover:bg-muted focus-visible:ring-ring flex min-h-11 flex-1 flex-col gap-1 rounded-lg border p-3 focus-visible:ring-2 focus-visible:outline-none'
             >
               <span className='font-medium'>{fullName(r)}</span>
               <span className='flex flex-wrap items-center gap-2 text-sm'>
@@ -292,6 +354,12 @@ function MobilePager({
   );
 }
 
+/** Only rows on the current page count, so an action never reaches rows the user cannot see. */
+function visibleSelectedIds(table: TableInstance, rows: ContactListRow[]): string[] {
+  const sel = table.atoms.rowSelection.get();
+  return rows.filter((r) => sel[r.id] === true).map((r) => r.id);
+}
+
 export function ContactsTable({
   rows,
   total,
@@ -299,9 +367,11 @@ export function ContactsTable({
   perPage,
   facets,
   hidden,
-  filtered
+  filtered,
+  bulk
 }: Props) {
-  const columns = React.useMemo(() => buildColumns(facets), [facets]);
+  const selectable = bulk.edit;
+  const columns = React.useMemo(() => buildColumns(facets, selectable), [facets, selectable]);
   const [, startTransition] = React.useTransition();
 
   const { table } = useDataTable({
@@ -311,6 +381,7 @@ export function ContactsTable({
     shallow: false,
     startTransition,
     getRowId: (r) => r.id,
+    enableRowSelection: selectable,
     initialState: {
       sorting: [DEFAULT_SORT],
       pagination: { pageIndex: 0, pageSize: perPage },
@@ -355,6 +426,23 @@ export function ContactsTable({
       <p className='sr-only' role='status' aria-live='polite'>
         {total === 1 ? '1 contact' : `${total.toLocaleString('en-US')} contacts`}
       </p>
+      {selectable ? (
+        <Subscribe
+          source={table.atoms.rowSelection}
+          selector={() => visibleSelectedIds(table, rows)}
+        >
+          {(ids) =>
+            ids.length ? (
+              <BulkBar
+                ids={ids}
+                owners={facets.owners}
+                caps={bulk}
+                onDone={() => table.resetRowSelection(true)}
+              />
+            ) : null
+          }
+        </Subscribe>
+      ) : null}
       {total === 0 ? (
         <>
           <EmptyState
@@ -371,7 +459,7 @@ export function ContactsTable({
       ) : (
         <>
           <div className='flex flex-col gap-3 md:hidden'>
-            <MobileCards rows={rows} tz={facets.timezone} />
+            <MobileCards rows={rows} tz={facets.timezone} table={selectable ? table : undefined} />
             <MobilePager table={table} pageCount={pageCount} />
           </div>
           <DataTable table={table} aria-label='Contacts' className='hidden min-h-[60vh] md:flex' />
