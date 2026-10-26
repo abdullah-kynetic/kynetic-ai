@@ -159,7 +159,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M4-10 | Calls list page | PRD F-26; DS calls | M4-05 | Filters and outcome chips; 10,000-call list under 500 ms p95 | M | Sonnet | yes | 14 | todo | - |
 | M4-11 | Call detail page: player, transcript, summary, extracted fields, flag for review | PRD F-27, F-28 | M4-05, M4-03 | Flag sets `calls.flagged` and notifies Kynetic | M | Sonnet | yes | 14 | todo | - |
 | M4-12 | Messages log page (SMS and email, delivery status) | PRD F-30 | M4-08, M4-09 | Delivery status updates on webhook | S | Haiku | yes | 13 | todo | - |
-| M4-13 | `alex_configs` service and read-only Alex settings view | PRD F-42, F-58 (data) | M4-01 | Owner sees settings; raw prompt never returned | S | Sonnet | yes | 13 | done | PR pending |
+| M4-13 | `alex_configs` service and read-only Alex settings view | PRD F-42, F-58 (data) | M4-01 | Owner sees settings; raw prompt never returned | S | Sonnet | yes | 13 | done | [#86](https://github.com/abdullah-kynetic/kynetic-ai/pull/86) |
 | M4-14 | M4 gate | AGENTS; T | M4-01..M4-13 | All M4 rows pass; no real call or text in any test | S | Haiku | no | 15 | todo | - |
 
 ## M5 Appointments and booking
