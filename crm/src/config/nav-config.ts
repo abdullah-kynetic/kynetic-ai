@@ -15,6 +15,14 @@ export const navGroups: NavGroup[] = [
         isActive: false,
         shortcut: ['d', 'd'],
         items: []
+      },
+      {
+        title: 'Calls',
+        url: '/dashboard/calls',
+        icon: 'phone',
+        isActive: false,
+        module: 'alex_core',
+        items: []
       }
     ]
   }
