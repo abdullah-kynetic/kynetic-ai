@@ -15,6 +15,16 @@ export const navGroups: NavGroup[] = [
         isActive: false,
         shortcut: ['d', 'd'],
         items: []
+      },
+      {
+        title: 'My Tasks',
+        url: '/dashboard/tasks',
+        icon: 'circleCheck',
+        isActive: false,
+        shortcut: ['t', 't'],
+        module: 'crm',
+        level: 'lite',
+        items: []
       }
     ]
   }
