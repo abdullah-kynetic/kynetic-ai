@@ -1054,7 +1054,8 @@ ALTER TABLE audit_log ENABLE ROW LEVEL SECURITY;
 ALTER TABLE audit_log FORCE ROW LEVEL SECURITY;
 REVOKE ALL ON audit_log FROM kynetic_app;
 GRANT INSERT ON audit_log TO kynetic_app;
-CREATE POLICY audit_insert ON audit_log FOR INSERT TO kynetic_app WITH CHECK (true);
+CREATE POLICY audit_insert ON audit_log FOR INSERT TO kynetic_app, kynetic_worker
+  WITH CHECK (tenant_id IS NULL OR tenant_id = app_tenant_id());   -- DC-053
 
 -- Global tables with no tenant_id: no runtime grant.
 REVOKE ALL ON backup_runs FROM kynetic_app;
