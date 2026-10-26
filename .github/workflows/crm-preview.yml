@@ -1,0 +1,63 @@
+name: crm-preview
+
+# Per-branch preview on the VPS (M0-27). Off until Abdullah sets the repository variable
+# PREVIEW_ENABLED=true and adds the secrets below; until then every job is skipped.
+# Secrets: PREVIEW_SSH_HOST, PREVIEW_SSH_USER, PREVIEW_SSH_KEY, PREVIEW_SSH_KNOWN_HOSTS.
+# The key is restricted on the server to a forced command that only runs deploy/preview/preview.sh
+# (same pattern as portal-deploy, D-022). Preview databases hold synthetic seed data only.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    paths: ['crm/**', '.github/workflows/crm-preview.yml']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: crm-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+env:
+  BRANCH: ${{ github.event.pull_request.head.ref }}
+
+jobs:
+  up:
+    if: >-
+      vars.PREVIEW_ENABLED == 'true' && github.event.action != 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate branch name
+        run: echo "$BRANCH" | grep -Eq '^[A-Za-z0-9._/-]{1,100}$'
+      - name: Deploy preview
+        env:
+          SSH_KEY: ${{ secrets.PREVIEW_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.PREVIEW_SSH_KNOWN_HOSTS }}
+          TARGET: ${{ secrets.PREVIEW_SSH_USER }}@${{ secrets.PREVIEW_SSH_HOST }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" >~/.ssh/id_preview && chmod 600 ~/.ssh/id_preview
+          printf '%s\n' "$KNOWN_HOSTS" >~/.ssh/known_hosts
+          tar -C crm -czf - . | ssh -i ~/.ssh/id_preview "$TARGET" "up $BRANCH"
+
+  down:
+    if: >-
+      vars.PREVIEW_ENABLED == 'true' && github.event.action == 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Validate branch name
+        run: echo "$BRANCH" | grep -Eq '^[A-Za-z0-9._/-]{1,100}$'
+      - name: Tear down preview
+        env:
+          SSH_KEY: ${{ secrets.PREVIEW_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.PREVIEW_SSH_KNOWN_HOSTS }}
+          TARGET: ${{ secrets.PREVIEW_SSH_USER }}@${{ secrets.PREVIEW_SSH_HOST }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" >~/.ssh/id_preview && chmod 600 ~/.ssh/id_preview
+          printf '%s\n' "$KNOWN_HOSTS" >~/.ssh/known_hosts
+          ssh -i ~/.ssh/id_preview "$TARGET" "down $BRANCH"
