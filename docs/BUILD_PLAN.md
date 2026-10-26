@@ -147,7 +147,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M4-01 | ElevenLabs voice adapter: start outbound call, verify webhook, parse call result | PRD F-77, F-78; ARCH 7; ARCH Provider integration details | M0-28 | Contract test passes against the fake and recorded fixtures; bad signature rejected | L | Opus | no | 12 | todo | - |
+| M4-01 | ElevenLabs voice adapter: start outbound call, verify webhook, parse call result | PRD F-77, F-78; ARCH 7; ARCH Provider integration details | M0-28 | Contract test passes against the fake and recorded fixtures; bad signature rejected | L | Opus | no | 12 | done | [PR #76](https://github.com/abdullah-kynetic/kynetic-ai/pull/76). Fixtures follow the documented payload shape, not a live recording; re-record at M10-08. |
 | M4-02 | Retell fallback adapter | ARCH 7 | M4-01 | Same contract test passes | M | Sonnet | yes | 13 | todo | - |
 | M4-03 | R2 storage adapter and signed URL minting | PRD F-27; SEC 2.3 item 10 | M0-28 | Private bucket; URL expires in 5 minutes; wrong tenant 404 | M | Sonnet | yes | 12 | todo | - |
 | M4-04 | Lead intake endpoint `/api/hooks/leads/:tenantKey` (signed token) | PRD F-76 | M0-28 | Creates contact and deal and emits `lead.created`; bad token refused | M | Sonnet | yes | 12 | todo | - |
