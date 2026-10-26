@@ -4,6 +4,7 @@ export {
   endViewAs,
   listViewAsTenants,
   resolveViewAs,
+  withViewAs,
   startViewAs,
   type ActiveViewAs,
   type RequestMeta,

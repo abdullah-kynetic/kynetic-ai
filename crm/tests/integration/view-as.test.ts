@@ -9,6 +9,7 @@ import {
   resolveViewAs,
   startViewAs,
   VIEW_AS,
+  withViewAs,
   type ViewAsUser
 } from '@/server/impersonation';
 import { withTenant } from '@/server/tenancy';
@@ -199,6 +200,44 @@ describe('resolve, read-only and audit', () => {
     expect(await endViewAs({ user: admin, cookie }, { db, now: at(6000) })).toBe(false);
     expect((await resolveViewAs({ user: admin, cookie }, { db, now: at(7000) })).kind).toBe('none');
     expect(await auditRows('viewas.end', sessionId)).toHaveLength(1);
+  });
+});
+
+describe('READ ONLY transaction (SECURITY 2.6)', () => {
+  it('makes update, delete and insert raise while read-only, and allows reads', async () => {
+    const { cookie } = await start(admin);
+    const s = await resolveViewAs({ user: admin, cookie }, { db, now: T0 });
+    if (s.kind !== 'active') throw new Error('expected active');
+    const run = (q: string) => withViewAs(s, (tx) => tx.execute(q as never), { db });
+    await expect(
+      run(`update tasks set title = 'x' where tenant_id = '${IDS.tenantA}'`)
+    ).rejects.toMatchObject({ cause: { code: '25006' } });
+    await expect(run(`delete from tasks where tenant_id = '${IDS.tenantA}'`)).rejects.toMatchObject(
+      { cause: { code: '25006' } }
+    );
+    await expect(
+      run(`insert into tasks (tenant_id, title) values ('${IDS.tenantA}', 'x')`)
+    ).rejects.toMatchObject({ cause: { code: '25006' } });
+    expect(await run(`select id from tasks`)).toHaveLength(1);
+    const [t] = await tdb.admin`select title from tasks where tenant_id = ${IDS.tenantA}`;
+    expect(t.title).not.toBe('x');
+  });
+
+  it('does not restrict an admin in write mode', async () => {
+    const { cookie } = await start(admin);
+    await enableWriteMode({ user: admin, cookie, reason }, { db, now: T0 });
+    const s = await resolveViewAs({ user: admin, cookie }, { db, now: at(1000) });
+    if (s.kind !== 'active') throw new Error('expected active');
+    await withViewAs(
+      s,
+      (tx) =>
+        tx.execute(
+          `update tasks set title = 'Support edit' where tenant_id = '${IDS.tenantA}'` as never
+        ),
+      { db }
+    );
+    const [t] = await tdb.admin`select title from tasks where tenant_id = ${IDS.tenantA}`;
+    expect(t.title).toBe('Support edit');
   });
 });
 

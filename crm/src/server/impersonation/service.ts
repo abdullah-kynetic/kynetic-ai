@@ -397,3 +397,24 @@ export async function listViewAsTenants(
     .filter((r) => r.status !== 'offboarded')
     .map((r) => ({ id: r.tenant_id, name: r.name, status: r.status }));
 }
+
+/**
+ * Runs tenant work for a view-as session. When the session is read-only the transaction is also
+ * `READ ONLY` (SECURITY 2.6), so any write, including UPDATE and DELETE that RLS would turn into a
+ * silent no-op, raises 25006. Audit rows are written by the session service in its own transaction,
+ * not here. `withTenant` is unchanged for every other caller.
+ */
+export async function withViewAs<T>(
+  session: Pick<ActiveViewAs, 'ctx'>,
+  fn: (tx: Tx) => Promise<T>,
+  opts: { db?: Db } = {}
+): Promise<T> {
+  return withTenant(
+    session.ctx,
+    async (tx) => {
+      if (session.ctx.readOnly) await tx.execute(sql`set transaction read only`);
+      return fn(tx);
+    },
+    opts
+  );
+}
