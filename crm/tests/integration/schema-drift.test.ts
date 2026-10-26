@@ -28,10 +28,7 @@ describe('Drizzle schema matches the migrated database', () => {
         return [cfg.name, cfg.columns.map((c) => c.name).sort()] as const;
       })
     );
-    const authTables = new Set<string>(); // auth-library tables arrive with M0-10
-    expect([...declared.keys()].sort()).toEqual(
-      [...actual.keys()].filter((n) => !authTables.has(n)).sort()
-    );
+    expect([...declared.keys()].sort()).toEqual([...actual.keys()].sort());
     for (const [name, cols] of declared) {
       expect(cols, name).toEqual([...(actual.get(name) ?? [])].sort());
     }

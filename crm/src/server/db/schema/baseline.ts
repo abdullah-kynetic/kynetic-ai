@@ -326,16 +326,13 @@ export const users = pgTable(
     email: text().notNull(),
     name: text(),
     image: text(),
+    emailVerified: boolean('email_verified').default(false).notNull(),
     kyneticRole: text('kynetic_role'),
     twoFactorEnabled: boolean('two_factor_enabled').default(false).notNull(),
-    disabledAt: timestamp('disabled_at', { withTimezone: true, mode: 'string' }),
-    lastLoginAt: timestamp('last_login_at', { withTimezone: true, mode: 'string' }),
-    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
-      .defaultNow()
-      .notNull()
+    disabledAt: timestamp('disabled_at', { withTimezone: true, mode: 'date' }),
+    lastLoginAt: timestamp('last_login_at', { withTimezone: true, mode: 'date' }),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull()
   },
   (table) => [
     uniqueIndex('users_email_uq').using('btree', table.email.asc().nullsLast().op('text_ops')),

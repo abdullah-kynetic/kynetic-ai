@@ -1224,7 +1224,7 @@ Rules:
 - Each milestone's additive migration must not change RLS or grants without the security review.
 Lock order: 0001 runs before any other migration. Milestone threads merge in wave order (ARCHITECTURE).
 
-Auth tables (library-owned, not defined here): the auth library creates its session, account and verification tables (Better-Auth names: `sessions`, `accounts`, `verification`; Auth.js names differ). Those tables are global, carry no `tenant_id`, and get RLS enabled with a `kynetic_app` policy that allows only the auth code path. Library choice is PRD decision 2, so this doc does not pick one. Which table names exist depends on that choice.
+Auth tables (library-owned, not defined here): the auth library creates its session, account and verification tables (Better-Auth names: `sessions`, `accounts`, `verification`; Auth.js names differ). Those tables are global, carry no `tenant_id`, and get RLS enabled and forced with a policy for the `kynetic_auth` role only (DC-055); `kynetic_app` and `kynetic_worker` have no grant. Added by migration 0006 together with `users.email_verified`. Library choice is PRD decision 2, so this doc does not pick one. Which table names exist depends on that choice.
 
 Seed data (synthetic only; no real client data in preview, spec s6):
 - `module_catalog`: nine rows, the module keys listed in the PRD. `platform` has `always_on = true`.

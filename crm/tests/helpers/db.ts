@@ -7,7 +7,12 @@ import postgres from 'postgres';
 
 // Integration tests need a superuser URL for a throwaway Postgres 16 (TEST_DATABASE_ADMIN_URL).
 // Each run creates its own database owned by kynetic_owner and drops it afterwards.
-const ROLE_PASSWORDS = { owner: 'owner-test-pw', app: 'app-test-pw', worker: 'worker-test-pw' };
+const ROLE_PASSWORDS = {
+  owner: 'owner-test-pw',
+  app: 'app-test-pw',
+  worker: 'worker-test-pw',
+  auth: 'auth-test-pw'
+};
 const bootstrapSql = fileURLToPath(new URL('../../deploy/db/bootstrap.sql', import.meta.url));
 const migrationsFolder = fileURLToPath(new URL('../../drizzle', import.meta.url));
 
@@ -18,6 +23,10 @@ export type TestDatabase = {
   owner: postgres.Sql;
   app: postgres.Sql;
   worker: postgres.Sql;
+  /** The Better-Auth connection (kynetic_auth). */
+  auth: postgres.Sql;
+  /** Connection URL for kynetic_auth, for code that builds its own client. */
+  authUrl: string;
   drop: () => Promise<void>;
 };
 
@@ -53,6 +62,8 @@ export async function createTestDatabase(opts: { migrate?: boolean } = {}): Prom
       `app_pw=${ROLE_PASSWORDS.app}`,
       '-v',
       `worker_pw=${ROLE_PASSWORDS.worker}`,
+      '-v',
+      `auth_pw=${ROLE_PASSWORDS.auth}`,
       '-f',
       bootstrapSql
     ],
@@ -69,14 +80,19 @@ export async function createTestDatabase(opts: { migrate?: boolean } = {}): Prom
   const app = postgres(withDb(base, name, 'kynetic_app', ROLE_PASSWORDS.app), { max: 2 });
   const worker = postgres(withDb(base, name, 'kynetic_worker', ROLE_PASSWORDS.worker), { max: 2 });
 
+  const authUrl = withDb(base, name, 'kynetic_auth', ROLE_PASSWORDS.auth);
+  const auth = postgres(authUrl, { max: 2 });
+
   return {
     name,
+    auth,
+    authUrl,
     admin,
     owner,
     app,
     worker,
     drop: async () => {
-      await Promise.all([admin.end(), owner.end(), app.end(), worker.end()]);
+      await Promise.all([admin.end(), owner.end(), app.end(), worker.end(), auth.end()]);
       const m = postgres(base, { max: 1 });
       await m.unsafe(`DROP DATABASE IF EXISTS ${name} WITH (FORCE)`);
       await m.end();

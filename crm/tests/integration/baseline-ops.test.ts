@@ -13,7 +13,11 @@ const EXTRA_TABLES = [
   'tenant_billing',
   'tenant_billing_modules',
   'onboarding_steps',
-  'tenant_documents'
+  'tenant_documents',
+  // Better-Auth tables (M0-10); global, no tenant_id.
+  'sessions',
+  'accounts',
+  'verifications'
 ];
 
 function entitiesFromDoc(): string[] {
@@ -68,7 +72,7 @@ describe('M0-07 schema', () => {
     const rows = await db.admin`select tablename from pg_tables where schemaname = 'public'`;
     const actual = rows.map((r) => r.tablename).sort();
     const expected = [...new Set([...entitiesFromDoc(), ...EXTRA_TABLES])].sort();
-    // `users` is shared with the auth library and is in both lists; auth-library tables arrive with M0-10.
+    // `users` is shared with the auth library and is in both lists;.
     expect(actual).toEqual(expected);
   });
 

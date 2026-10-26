@@ -5,6 +5,7 @@ const valid = {
   NODE_ENV: 'test',
   APP_BASE_URL: 'http://localhost:3000',
   DATABASE_URL: 'postgres://u:p@localhost:5432/db',
+  DATABASE_URL_AUTH: 'postgres://a:p@localhost:5432/db',
   BETTER_AUTH_SECRET: 'x'.repeat(32),
   APP_ENCRYPTION_KEY: 'y'.repeat(32)
 };
@@ -28,5 +29,10 @@ describe('F-87 env validation', () => {
       expect(String(e)).toMatch(/BETTER_AUTH_SECRET/);
       expect(String(e)).not.toContain('short');
     }
+  });
+
+  it('requires the two Google credentials together', () => {
+    expect(() => parseEnv({ ...valid, GOOGLE_CLIENT_ID: 'id' })).toThrow(/GOOGLE_CLIENT_ID/);
+    expect(parseEnv({ ...valid, GOOGLE_CLIENT_ID: 'id', GOOGLE_CLIENT_SECRET: 's' })).toBeTruthy();
   });
 });

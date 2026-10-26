@@ -126,7 +126,7 @@ M0 delivers these with real code for tenancy, RLS, audit and module guards, and 
 ```
 src/server/tenancy/withTenant.ts    withTenant(ctx, fn): Promise<T>           // transaction + set_config
 src/server/tenancy/withPlatform.ts  withPlatform(ctx, fn): Promise<T>         // wrapper for SECURITY DEFINER roll-ups only (SECURITY 2.3.6); no RLS bypass; audited
-src/server/auth/index.ts            getSession(), requireUser(), requireRole(ctx, roles[]), requireKynetic(role?)
+src/server/auth/index.ts            getSessionUser(headers), requireUser(headers), requireRole(ctx, roles[]), requireKynetic(role?)   // M0-10 ships the first two (DC-055)
 src/server/modules/index.ts         requireModule(ctx, key), isModuleEnabled(ctx, key), listEnabledModules(ctx)
 src/server/audit/index.ts           audit(tx, { action, entity, entityId, before, after })
 src/server/events/index.ts          emitEvent(tx, envelope), subscribe(name, handler)

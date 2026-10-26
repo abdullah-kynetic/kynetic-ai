@@ -21,6 +21,8 @@ export default defineConfig({
     env: {
       APP_BASE_URL: `http://localhost:${port}`,
       DATABASE_URL: process.env.DATABASE_URL ?? 'postgres://test:test@127.0.0.1:5432/test',
+      DATABASE_URL_AUTH:
+        process.env.DATABASE_URL_AUTH ?? 'postgres://test:test@127.0.0.1:5432/test',
       BETTER_AUTH_SECRET: 'e2e-only-secret-not-for-real-use-0000',
       APP_ENCRYPTION_KEY: 'e2e-only-key-not-for-real-use-00000'
     },

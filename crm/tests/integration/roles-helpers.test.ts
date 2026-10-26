@@ -10,19 +10,20 @@ afterAll(async () => {
 });
 
 describe('M0-04 roles and helpers (SEC-T-01 setup)', () => {
-  it('creates the four roles with the right attributes', async () => {
+  it('creates the five roles with the right attributes', async () => {
     const rows = await db.admin`
       select rolname, rolbypassrls, rolsuper, rolcanlogin from pg_roles
-      where rolname in ('kynetic_owner','kynetic_rollup','kynetic_app','kynetic_worker') order by rolname`;
+      where rolname in ('kynetic_auth','kynetic_owner','kynetic_rollup','kynetic_app','kynetic_worker') order by rolname`;
     expect(rows.map((r) => r.rolname)).toEqual([
       'kynetic_app',
+      'kynetic_auth',
       'kynetic_owner',
       'kynetic_rollup',
       'kynetic_worker'
     ]);
     const by = Object.fromEntries(rows.map((r) => [r.rolname, r]));
     expect(by.kynetic_rollup).toMatchObject({ rolbypassrls: true, rolcanlogin: false });
-    for (const n of ['kynetic_app', 'kynetic_worker', 'kynetic_owner']) {
+    for (const n of ['kynetic_app', 'kynetic_auth', 'kynetic_worker', 'kynetic_owner']) {
       expect(by[n]).toMatchObject({ rolbypassrls: false, rolsuper: false });
     }
   });

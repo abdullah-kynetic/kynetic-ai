@@ -82,6 +82,7 @@ Client data never goes to Twenty (locked decision). Twenty receives at most an o
 - **Staff sign-in.** Kynetic admin and VA accounts sign in with Google accounts on an explicit allowlist, plus app-level TOTP (F-98, below).
 - **Account linking.** Link a Google identity only when Google reports the email as verified. Never link by unverified email.
 - **Sessions.** Server-side sessions in Postgres, not self-contained tokens, so revocation is immediate. Cookie: `HttpOnly`, `Secure`, `SameSite=Lax`, `__Host-` prefix.
+- **Auth connection (DC-055).** Better-Auth connects as `kynetic_auth`, a separate role with grants on the global auth tables and a column-limited slice of `users`, `memberships` and `invitations`. Sign-in needs staff status, a membership, or a pending invitation; staff get no email link.
 - **Lifetimes.** Decided 2026-10-25 (recommended option approved: Kynetic staff 12 h idle and 7 days absolute; client users 30 days sliding and 90 days absolute; re-auth before exports, role changes and view-as write mode).
 - **Live checks.** Role, tenant membership and module state are read from the database on each request (or cached at most 60 s with invalidation). Nothing is trusted from a cookie claim.
 - **CSRF.** `SameSite=Lax`, Origin check on every state-changing route and server action, no permissive CORS on `/api`.
