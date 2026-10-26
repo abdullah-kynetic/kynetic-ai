@@ -17,6 +17,8 @@ export const envSchema = z.object({
   // Key rotation (SECURITY 4.2): bump the version with a new key and list old ones as "v:key,...".
   APP_ENCRYPTION_KEY_VERSION: z.coerce.number().int().min(1).default(1),
   APP_ENCRYPTION_KEYS_RETIRED: z.string().optional(),
+  // Verified sending address for app email (ARCHITECTURE: Domain, DNS and email domain).
+  EMAIL_FROM_ADDRESS: z.string().min(3).default('notifications@mail.kyneticai.com'),
   OUTBOUND_ENABLED: booleanString.default(false)
 });
 
