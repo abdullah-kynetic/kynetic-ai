@@ -15,3 +15,15 @@ export {
 export { INDUSTRY_TEMPLATES, type IndustryTemplateKey } from './industry-templates';
 export { buildChecklist, type ChecklistStep } from './onboarding-steps';
 export { setInviteMailer, getInviteMailer, type InviteMailer } from './invite-mailer';
+export {
+  getAdminChecklist,
+  updateChecklistStep,
+  markGoLive,
+  loadSetupProgress,
+  STEP_STATUSES,
+  type AdminChecklist,
+  type AdminChecklistStep,
+  type SetupProgress,
+  type StepPatch,
+  type StepStatus
+} from './checklist';

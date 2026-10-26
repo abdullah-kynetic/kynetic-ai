@@ -92,6 +92,13 @@
       "when": 1792990000000,
       "tag": "0030_owner_invite_functions",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1793000480000,
+      "tag": "0048_onboarding_checklist",
+      "breakpoints": true
     }
   ]
 }
