@@ -107,7 +107,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-16 (M2, crm) | Server rejects a drag | Card rolls back; error toast | E2E | Not run |
 | F-16 (M2, crm) | Undo within toast window after a drag | Previous stage restored | E2E | Not run |
 | F-19 (M3, crm) | Any write to a covered entity | `activities` row created and shown on timeline; actor shown | Integration | Pass |
-| F-20 (M3, crm) | Task past due and incomplete | Under Overdue; assignee gets notification | Integration | Not run |
+| F-20 (M3, crm) | Task past due and incomplete | Under Overdue; assignee gets notification | Integration | List, completion undo, tenant-day grouping, module gating and isolation: Pass (`tasks.test.ts`, M3-02). Notification: Not run (M3-04) |
 | F-76 (M4, alex_core) | Duplicate lead webhook (same source and external id) | Second call is a no-op; one contact, one deal | Integration | Not run |
 | F-77 (M4, platform) | Same Retell or ElevenLabs call-ended event (same source and external id) replayed 10 times | One effect (one call row, one timeline entry) | Integration | Not run |
 | F-77 (M4, platform) | Same external id arriving from a different source | Not a duplicate; processed as its own event (uniqueness is on source and external id) | Integration | Not run |
