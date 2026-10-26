@@ -255,7 +255,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-85 (M0 flag; M1 to M9 gating, crm) | No `crm` (Alex-only tenant) | Base portal works (leads, kanban, appointments, calls, reports); Lite and Full routes 403 and are absent from nav | E2E and Integration | Not run |
 | F-85 (M0 flag; M1 to M9 gating, crm) | crm Lite | Companies, tasks, notes, stage settings available; Full-only surfaces hidden and their routes 403 | E2E and Integration | Not run |
 | F-85 (M0 flag, crm) | Upgrade Lite to Full | Full surfaces appear; data intact | Integration | Not run |
-| F-86 (M0 columns, M8 UI, platform) | Tenant created with plan and tier | Stored and shown in All clients | Integration | Not run |
+| F-86 (M0 columns, M8 UI, platform) | Tenant created with plan and tier | Stored and shown in All clients | Integration | Pass: `tests/integration/admin-billing.test.ts` (M8a-07; Postgres 16, 2026-10-26) |
 | F-86 (M8, platform) | Founding plan reference text | Shows $6,500 setup and 3 months then $1,500/mo (price decided, PRD decision 12) | E2E | Not run |
 | F-87 (M0, platform) | Scan responses of a browser session | No provider key in any response | Integration | Not run |
 | F-87 (M0, platform) | Burst of login, webhook and API requests | 429 once the limit is hit | Integration | Not run |
@@ -414,9 +414,9 @@ Regression policy: every important bug fix adds a regression test named with the
 
 | ID, milestone, module | Scenario | Expected | Layer | Status |
 | --- | --- | --- | --- | --- |
-| F-99 (M8a, platform) | Admin enables a module | Price snapshot row created from `module_prices`; totals correct | Integration | Not run |
-| F-99 (M8a, platform) | `module_prices` changes later | Existing snapshots unchanged | Integration | Not run |
-| F-99 (M8a, platform) | Owner, staff and VA request the billing profile | 403 | Integration | Not run |
+| F-99 (M8a, platform) | Admin enables a module | Price snapshot row created from `module_prices`; totals correct | Integration | Pass: `tests/integration/admin-billing.test.ts` (M8a-07; Postgres 16, 2026-10-26) |
+| F-99 (M8a, platform) | `module_prices` changes later | Existing snapshots unchanged | Integration | Pass: `tests/integration/admin-billing.test.ts` (M8a-07; Postgres 16, 2026-10-26) |
+| F-99 (M8a, platform) | Owner, staff and VA request the billing profile | 403 | Integration | Pass: `tests/integration/admin-billing.test.ts` (M8a-07; Postgres 16, 2026-10-26) |
 | F-100 (M8a, platform) | New tenant with `alex_core` | Checklist created with the module's steps | Integration | Pass (`tests/integration/admin-onboarding.test.ts`) |
 | F-100 (M8a, platform) | Owner opens the dashboard before go-live | Setup progress shows only `client_visible` steps; none after go-live | E2E | Not run |
 | F-101 (M8b, platform) | Kill switch on, a call job runs | No call or text sent; job waits; resumes after off | Integration | Not run |
