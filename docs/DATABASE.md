@@ -1082,6 +1082,8 @@ SECURITY DEFINER functions (owned by `kynetic_rollup`, `SET search_path = public
 | `admin_tenant_overview()` | admin, va | One row per tenant: plan, status, leads 30d, booking rate, guarantee status, health inputs, last login (F-53, F-54) |
 | `audit_search(p_tenant, p_actor, p_action, p_from, p_to)` | admin | Filtered read of `audit_log` (F-60) |
 
+Implemented in migration 0005 (M0-09, DC-054). Signatures: `create_tenant(slug, name, plan, timezone, owner_email, invite_token_hash, invite_expires_at) returns uuid`; `set_tenant_module(tenant, module, enabled, level default '')`; `admin_update_tenant_commercial(tenant, patch jsonb)` with an allowlist of fields; `admin_set_kynetic_role(user, role or null)`; `admin_tenant_overview()`; `audit_search(tenant, actor, action, from, to, limit)`. `admin_tenant_overview` and `audit_search` allow admin and VA (SECURITY 2.2: VA reads); the others are admin only. Only `kynetic_app` may execute them.
+
 Functions that aggregate across tenants must never take a tenant id the caller could not otherwise see: they check the role, then compute.
 
 Audit immutability and grants:
