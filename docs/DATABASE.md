@@ -1122,7 +1122,7 @@ Test requirements (M0 acceptance, written with the schema):
 - contacts 1 to many calls, messages, consents, appointments, tasks, notes, activities, automation_runs. Contact delete is soft (`deleted_at`). Hard delete only through the merge routine (F-07), which repoints children in one transaction and then soft-deletes the loser.
 - automations 1 to many automation_steps (`CASCADE`) and automation_runs (`RESTRICT`; a run is never dropped while active).
 - activities, audit_log and webhook_events use polymorphic or loose references (`ref_table`, `ref_id`, `entity_id`, `external_id`). They have no FK, because an FK would cascade an UPDATE or DELETE into an append-only table or block cleanup of an external reference.
-- Merge (F-07): `contacts.merged_into_id` points to the survivor. Children move to the survivor in one transaction. The loser keeps `deleted_at`. The `activities` row for the merge records both ids.
+- Merge (F-07): `contacts.merged_into_id` points to the survivor. Children move to the survivor in one transaction. The loser keeps `deleted_at`. The `activities` row for the merge records both ids. Consent rows stay on the loser (append-only); opt-outs and DNC are copied to the survivor as new rows (DC-112).
 
 ## Access rules
 

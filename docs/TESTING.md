@@ -99,7 +99,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-20 and F-22 notification path (M0 `notify`, M3, crm) | Overdue task and @mention each notify the right user | One row per recipient; delivered through `notify` | Integration | Not run |
 | M0 CI and preview (platform) | Preview deploys from CI; shell and empty states render with no seed data and no console errors | Preview URL serves the shell | E2E | Not run |
 | F-07 (M1, crm) | Create a contact with a phone already on contact P | Duplicate warning shows and offers merge | E2E | Partly run (2026-10-26, M1-04): integration covers the warning data, "create anyway" and edit (`tests/integration/contacts.test.ts`, M1-04 block). Merge is not offered yet (M1-08); the automated E2E needs the signed-in fixture |
-| F-07 (M1, crm) | Merge two contacts | Deals, notes and activities move to the survivor; loser soft-removed; audit row written | Integration | Not run |
+| F-07 (M1, crm) | Merge two contacts | Deals, notes and activities move to the survivor; loser soft-removed; audit row written | Integration | Run (2026-10-26, M1-08): `tests/integration/contacts-merge.test.ts` covers moves, deal-link dedupe, folded fields, activity, audit, `contact.merged`, opt-out carry-over, refusals and a read-only session |
 | F-12 (M1, crm) | Custom field "Roof type" select: filter, table and CSV import | Value shows in table, filters, and CSV import accepts it | E2E | Not run |
 | F-08 (M1, crm) | Assign owner to 20 selected contacts | All 20 updated in one audited operation | Integration | Not run |
 | F-14 (M2, crm) | Save a deal in Lost without a lost reason | Save refused, message names the field | Unit | Not run |
