@@ -10,3 +10,16 @@ export {
 } from './process';
 export { getVoiceProvider, isVoiceProviderId } from './provider';
 export { getCallRecordingUrl } from './recording';
+export {
+  KILL_SWITCH_RECHECK_MS,
+  MAX_LEAD_AGE_MS,
+  OUTBOUND_CALL_QUEUE,
+  outboundIdempotencyKey,
+  registerOutboundCallSubscriber,
+  registerOutboundCallWorker,
+  runOutboundCall,
+  type OutboundCallDeps,
+  type OutboundCallJob,
+  type OutboundCallResult
+} from './outbound';
+export { DEFAULT_RETRY_DELAYS_MIN, parseCallWindow, parseRetryDelays } from './outbound-config';

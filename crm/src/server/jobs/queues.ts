@@ -21,7 +21,9 @@ export const QUEUES = {
   /** One job per (event, subscriber), so a failing subscriber retries alone. */
   'event.subscriber': { ...retrying, policy: 'short' },
   /** One job per stored webhook_events row. */
-  'webhook.process': { ...retrying, policy: 'short' }
+  'webhook.process': { ...retrying, policy: 'short' },
+  /** One job per outbound call attempt (F-78). A queued attempt is unique per tenant, contact, trigger and attempt. */
+  'call.outbound': { ...retrying, policy: 'short' }
 } as const satisfies Record<string, QueueDef>;
 
 export type QueueName = keyof typeof QUEUES;
