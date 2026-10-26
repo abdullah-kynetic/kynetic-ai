@@ -11,6 +11,9 @@ export const envSchema = z.object({
   DATABASE_URL_WORKER: z.string().startsWith('postgres').optional(),
   BETTER_AUTH_SECRET: z.string().min(32),
   APP_ENCRYPTION_KEY: z.string().min(32),
+  // Key rotation (SECURITY 4.2): bump the version with a new key and list old ones as "v:key,...".
+  APP_ENCRYPTION_KEY_VERSION: z.coerce.number().int().min(1).default(1),
+  APP_ENCRYPTION_KEYS_RETIRED: z.string().optional(),
   OUTBOUND_ENABLED: booleanString.default(false)
 });
 
