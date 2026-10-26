@@ -17,6 +17,8 @@ export const envSchema = z.object({
   // Key rotation (SECURITY 4.2): bump the version with a new key and list old ones as "v:key,...".
   APP_ENCRYPTION_KEY_VERSION: z.coerce.number().int().min(1).default(1),
   APP_ENCRYPTION_KEYS_RETIRED: z.string().optional(),
+  RESEND_API_KEY: z.string().min(1).optional(),
+  RESEND_WEBHOOK_SECRET: z.string().min(1).optional(),
   OUTBOUND_ENABLED: booleanString.default(false),
   // Twilio (M4-08). Optional so preview and tests run on the fake; the real provider needs both.
   TWILIO_ACCOUNT_SID: z.string().min(1).optional(),

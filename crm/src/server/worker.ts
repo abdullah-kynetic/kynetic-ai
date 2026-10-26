@@ -3,6 +3,7 @@ import { registerEventWorkers } from './events';
 import { stopJobs } from './jobs';
 import { getSmsProvider } from './messaging/provider';
 import { registerTwilioProcessor } from './messaging';
+import { registerResendProcessor } from './email';
 import { registerWebhookWorker } from './webhooks';
 
 // Worker entry (kynetic_worker). Feature milestones register their subscribers and webhook
@@ -10,6 +11,7 @@ import { registerWebhookWorker } from './webhooks';
 getEnv();
 registerTwilioProcessor({ provider: getSmsProvider() });
 await registerEventWorkers();
+registerResendProcessor();
 await registerWebhookWorker();
 console.log(JSON.stringify({ level: 'info', msg: 'worker started' }));
 
