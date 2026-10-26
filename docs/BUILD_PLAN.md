@@ -104,7 +104,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M0-23 | App shell: rebrand tokens, layout, sidebar, header, dark-mode toggle, Kynetic-branded sign-in page | DS tokens, layout, sign-in rules; PRD F-44 | M0-01, M0-13 | Renders per role; keyboard path works; axe passes | M | Sonnet | yes | 8 | todo | - |
 | M0-24 | Base UI components (buttons, inputs, table, dialog, toast, badge, empty and error states) | DS components | M0-23 | Components match tokens; focus rings visible; axe passes | M | Haiku | yes | 9 | todo | - |
 | M0-25 | Terms and Privacy acceptance page | PRD F-102; DB terms_acceptances | M0-10, M0-24 | Unaccepted user redirected; accepted once, not asked again | S | Haiku | yes | 10 | todo | - |
-| M0-26 | Seed data: module catalog and prices, automation templates, two synthetic demo tenants | DB Migrations and seed data | M0-07 | Seed is idempotent; demo data is synthetic (555-01xx numbers) | S | Sonnet | yes | 6 | todo | - |
+| M0-26 | Seed data: module catalog and prices, automation templates, two synthetic demo tenants | DB Migrations and seed data | M0-07 | Seed is idempotent; demo data is synthetic (555-01xx numbers) | S | Sonnet | yes | 6 | in-progress | branch: claude/project-thread-enu0nh (stacked on m0/rollups, PR #54) |
 | M0-27 | Preview environment pipeline: per branch, own database, synthetic seed only | ARCH Operations | M0-02, M0-03, M0-26 | Preview deploys with no real data; torn down on merge | M | Sonnet | yes | 7 | todo | - |
 | M0-28 | M0 gate: run all M0 acceptance tests, update TESTING statuses, confirm docs match, record resume notes | AGENTS; T | M0-01..M0-27 | All M0 rows pass in CI; PR ready for review | S | Sonnet | no | 11 | todo | - |
 
