@@ -1,13 +1,14 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { APIError } from 'better-auth/api';
-import { magicLink } from 'better-auth/plugins';
+import { magicLink, twoFactor } from 'better-auth/plugins';
 import { eq } from 'drizzle-orm';
 import type { Db } from '../db/client';
 import * as schema from '../db/schema';
 import { authUsers } from './auth-schema';
 import { evaluateGate, isStaffEmail } from './gate';
 import { SESSION_EXPIRES_IN_SECONDS, SESSION_UPDATE_AGE_SECONDS } from './lifetimes';
+import { recoveryCodeStorage, twoFactorHooks } from './two-factor';
 
 export const MAGIC_LINK_TTL_SECONDS = 15 * 60;
 
@@ -34,6 +35,7 @@ export function createAuth(deps: AuthDeps) {
       schema: {
         user: authUsers,
         session: schema.sessions,
+        twoFactor: schema.twoFactors,
         account: schema.accounts,
         verification: schema.verifications
       }
@@ -65,7 +67,14 @@ export function createAuth(deps: AuthDeps) {
           }
         }
       : {},
+    hooks: twoFactorHooks(deps.db, deps.secret),
     plugins: [
+      twoFactor({
+        issuer: 'Kynetic',
+        // Staff sign in with Google and have no password to confirm with.
+        allowPasswordless: true,
+        backupCodeOptions: { storeBackupCodes: recoveryCodeStorage(deps.secret) }
+      }),
       magicLink({
         expiresIn: MAGIC_LINK_TTL_SECONDS,
         storeToken: 'hashed',

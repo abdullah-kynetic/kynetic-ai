@@ -8,6 +8,7 @@ import { sessionExpired } from './lifetimes';
 export { createAuth, type Auth, type AuthDeps } from './create-auth';
 export { evaluateGate } from './gate';
 export { LIFETIMES, sessionExpired } from './lifetimes';
+export { resetStaffTwoFactor } from './reset-two-factor';
 
 export type AuthUser = {
   id: string;
@@ -15,7 +16,21 @@ export type AuthUser = {
   name: string | null;
   /** Kynetic staff role, if any. Read from the database on each call (SECURITY 2.1 live checks). */
   kyneticRole: 'admin' | 'va' | null;
+  /**
+   * Second-factor state (F-98). Client users are 'not_required'. Staff are 'enrol' until TOTP is set
+   * up, 'challenge' until this session passes a code, then 'verified'.
+   */
+  twoFactor: TwoFactorState;
 };
+
+export type TwoFactorState = 'not_required' | 'enrol' | 'challenge' | 'verified';
+
+export class SecondFactorRequiredError extends Error {
+  constructor(readonly state: 'enrol' | 'challenge') {
+    super(`Second factor required: ${state}`);
+    this.name = 'SecondFactorRequiredError';
+  }
+}
 
 export class UnauthenticatedError extends Error {
   constructor() {
@@ -73,6 +88,8 @@ export async function getSessionUser(
       name: schema.users.name,
       kyneticRole: schema.users.kyneticRole,
       disabledAt: schema.users.disabledAt,
+      twoFactorEnabled: schema.users.twoFactorEnabled,
+      twoFactorVerifiedAt: schema.sessions.twoFactorVerifiedAt,
       createdAt: schema.sessions.createdAt,
       updatedAt: schema.sessions.updatedAt
     })
@@ -91,13 +108,32 @@ export async function getSessionUser(
     id: found.user.id,
     email: row.email,
     name: row.name,
-    kyneticRole: row.kyneticRole as AuthUser['kyneticRole']
+    kyneticRole: row.kyneticRole as AuthUser['kyneticRole'],
+    twoFactor: !staff
+      ? 'not_required'
+      : !row.twoFactorEnabled
+        ? 'enrol'
+        : row.twoFactorVerifiedAt
+          ? 'verified'
+          : 'challenge'
   };
 }
 
-/** The signed-in user for a server action or route, or throws UnauthenticatedError. */
-export async function requireUser(headers: Headers): Promise<AuthUser> {
-  const user = await getSessionUser(headers);
+/**
+ * The signed-in user for a server action or route, or throws UnauthenticatedError. A staff member who
+ * has not finished TOTP gets SecondFactorRequiredError, so by default they reach nothing. Only the
+ * enrolment and challenge pages pass `allowPendingSecondFactor`.
+ */
+export async function requireUser(
+  headers: Headers,
+  opts: { allowPendingSecondFactor?: boolean; deps?: Parameters<typeof getSessionUser>[1] } = {}
+): Promise<AuthUser> {
+  const user = await getSessionUser(headers, opts.deps);
   if (!user) throw new UnauthenticatedError();
+  if (
+    !opts.allowPendingSecondFactor &&
+    (user.twoFactor === 'enrol' || user.twoFactor === 'challenge')
+  )
+    throw new SecondFactorRequiredError(user.twoFactor);
   return user;
 }

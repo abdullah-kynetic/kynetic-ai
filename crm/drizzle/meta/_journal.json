@@ -50,6 +50,13 @@
       "when": 1792978578647,
       "tag": "0006_auth_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792979100000,
+      "tag": "0013_staff_two_factor",
+      "breakpoints": true
     }
   ]
 }
