@@ -65,15 +65,15 @@ describe('M0-06 schema', () => {
     const keyed = new Set(['deal_contacts_pkey', 'note_mentions_pkey']);
     for (const i of idx) {
       if (allowed.has(i.indexname) || keyed.has(i.indexname)) continue;
-      if (/pkey$/.test(i.indexname)) continue;
+      if (i.indexname.endsWith('pkey')) continue;
       const cols = /\((.*)\)/.exec(i.indexdef)?.[1] ?? '';
       const first = cols.split(',')[0].trim();
       const ok =
         first === 'tenant_id' ||
-        (/_key$/.test(i.indexname) && /tenant_id/.test(cols)) ||
+        (i.indexname.endsWith('_key') && /tenant_id/.test(cols)) ||
         /pipeline_id/.test(first) ||
-        /^pipelines_one_default/.test(i.indexname) ||
-        /^pipeline_stages_pipeline_id_name_key/.test(i.indexname);
+        i.indexname.startsWith('pipelines_one_default') ||
+        i.indexname.startsWith('pipeline_stages_pipeline_id_name_key');
       expect(ok, `${i.indexname}: ${i.indexdef}`).toBe(true);
     }
   });
