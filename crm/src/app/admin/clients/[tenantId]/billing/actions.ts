@@ -29,11 +29,20 @@ async function run(
   }
 }
 
-export const savePlanTier = (input: Parameters<typeof setTenantPlanTier>[1]) =>
-  run(input.tenantId, (actor) => setTenantPlanTier(actor, input));
+export async function savePlanTier(
+  input: Parameters<typeof setTenantPlanTier>[1]
+): Promise<BillingResult> {
+  return run(input.tenantId, (actor) => setTenantPlanTier(actor, input));
+}
 
-export const saveBillingProfile = (input: Parameters<typeof updateBillingProfile>[1]) =>
-  run(input.tenantId, (actor) => updateBillingProfile(actor, input));
+export async function saveBillingProfile(
+  input: Parameters<typeof updateBillingProfile>[1]
+): Promise<BillingResult> {
+  return run(input.tenantId, (actor) => updateBillingProfile(actor, input));
+}
 
-export const resnapshotModule = (input: Parameters<typeof snapshotModulePrice>[1]) =>
-  run(input.tenantId, (actor) => snapshotModulePrice(actor, input));
+export async function resnapshotModule(
+  input: Parameters<typeof snapshotModulePrice>[1]
+): Promise<BillingResult> {
+  return run(input.tenantId, (actor) => snapshotModulePrice(actor, input));
+}
