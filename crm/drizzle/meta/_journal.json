@@ -113,6 +113,13 @@
       "when": 1793200000000,
       "tag": "0047_billing_profile",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1793300000000,
+      "tag": "0048_onboarding_checklist",
+      "breakpoints": true
     }
   ]
 }

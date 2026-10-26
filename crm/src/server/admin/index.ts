@@ -39,3 +39,15 @@ export {
   type AuditRow,
   type TenantOption
 } from './audit-viewer';
+export {
+  getAdminChecklist,
+  updateChecklistStep,
+  markGoLive,
+  loadSetupProgress,
+  STEP_STATUSES,
+  type AdminChecklist,
+  type AdminChecklistStep,
+  type SetupProgress,
+  type StepPatch,
+  type StepStatus
+} from './checklist';

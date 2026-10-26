@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -260,6 +261,12 @@ function Created({ state }: { state: Extract<OnboardState, { status: 'created' }
           {send.message}
         </p>
       )}
+      <Link
+        href={`/admin/clients/${state.tenantId}/checklist`}
+        className='text-primary-text text-sm underline-offset-4 hover:underline'
+      >
+        Open the setup checklist
+      </Link>
     </div>
   );
 }

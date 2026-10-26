@@ -418,7 +418,9 @@ Regression policy: every important bug fix adds a regression test named with the
 | F-99 (M8a, platform) | `module_prices` changes later | Existing snapshots unchanged | Integration | Pass: `tests/integration/admin-billing.test.ts` (M8a-07; Postgres 16, 2026-10-26) |
 | F-99 (M8a, platform) | Owner, staff and VA request the billing profile | 403 | Integration | Pass: `tests/integration/admin-billing.test.ts` (M8a-07; Postgres 16, 2026-10-26) |
 | F-100 (M8a, platform) | New tenant with `alex_core` | Checklist created with the module's steps | Integration | Pass (`tests/integration/admin-onboarding.test.ts`) |
-| F-100 (M8a, platform) | Owner opens the dashboard before go-live | Setup progress shows only `client_visible` steps; none after go-live | E2E | Not run |
+| F-100 (M8a, platform) | Owner opens the dashboard before go-live | Setup progress shows only `client_visible` steps; none after go-live | E2E | Not run in a browser; integration covers the data and the card query (`tests/integration/onboarding-checklist.test.ts`) |
+| F-100 (M8a, platform) | Owner or staff queries or updates internal steps | Internal rows invisible; no writes | Integration | Pass (`tests/integration/onboarding-checklist.test.ts`) |
+| F-100 (M8a, platform) | Admin marks go-live with open steps; VA tries go-live | Refused; admin succeeds once all steps done or n/a, audited | Integration | Pass (`tests/integration/onboarding-checklist.test.ts`) |
 | F-101 (M8b, platform) | Kill switch on, a call job runs | No call or text sent; job waits; resumes after off | Integration | Not run |
 | F-101 (M8b, platform) | Replay a failed webhook twice | Processed once | Integration | Not run |
 | F-101 (M8b, platform) | Suspend a tenant | Its users cannot sign in; its jobs no-op | Integration | Not run |
