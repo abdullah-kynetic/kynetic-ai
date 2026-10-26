@@ -21,7 +21,8 @@
     "check": "bun run typecheck && bun run lint && bun run format:check && bun run test",
     "db:generate-custom": "drizzle-kit generate --custom",
     "db:migrate": "bun src/server/db/migrate.ts",
-    "db:seed": "bun src/server/db/seed/index.ts"
+    "db:seed": "bun src/server/db/seed/index.ts",
+    "preview:check": "bun src/server/preview/check.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

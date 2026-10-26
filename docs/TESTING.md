@@ -273,7 +273,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | Idempotency | Same event (same source and external id) replayed 10 times: lead, call-ended, Twilio, Resend | 1 effect | Integration | Not run |
 | Consent | STOP, then HELP, then a new Alex call attempt | STOP revokes; HELP responds; call blocked | Integration | Not run |
 | Consent | Webhook processing fails during STOP | Contact blocked from sending until processed (fail closed) | Integration | Not run |
-| Preview | Preview database after seed | Contains only seeded synthetic tenants; no real client data | Integration | Not run |
+| Preview | Preview database after seed | Contains only seeded synthetic tenants; no real client data | Integration | Written, passing locally (M0-27, `preview-guard.test.ts`) |
 | Secrets | Build output and logs | No provider key, `.env` value or token present | Manual (recommended option: CI grep) | Not run |
 | Backups | Restore drill (see Release criteria) | Restored copy passes RLS and smoke tests | Manual | Not run |
 

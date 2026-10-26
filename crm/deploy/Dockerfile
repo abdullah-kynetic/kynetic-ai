@@ -35,3 +35,13 @@ RUN useradd --system --uid 1001 app
 COPY --from=build --chown=app /app/dist/worker.js ./worker.js
 USER app
 CMD ["node", "worker.js"]
+
+# One-shot tools for preview environments: migrate, seed, and the synthetic-only check.
+FROM node:${NODE_VERSION} AS tools
+WORKDIR /app
+RUN npm install -g bun
+COPY --from=deps /app/node_modules ./node_modules
+COPY package.json tsconfig.json ./
+COPY drizzle ./drizzle
+COPY src ./src
+CMD ["bun", "run", "db:migrate"]

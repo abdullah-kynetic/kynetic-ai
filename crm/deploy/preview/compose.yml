@@ -1,0 +1,98 @@
+# One ephemeral preview per branch: its own Postgres, roles, migrations and synthetic seed.
+# Run through deploy/preview/preview.sh, which sets the project name and generates throwaway
+# secrets. No provider keys and OUTBOUND_ENABLED=false: a preview can never contact anyone.
+name: ${COMPOSE_PROJECT_NAME:?set by preview.sh}
+
+x-app-env: &app-env
+  APP_BASE_URL: ${APP_BASE_URL:?set APP_BASE_URL}
+  DATABASE_URL: postgres://kynetic_app:${APP_PW}@postgres:5432/kynetic
+  DATABASE_URL_WORKER: postgres://kynetic_worker:${WORKER_PW}@postgres:5432/kynetic
+  BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?}
+  APP_ENCRYPTION_KEY: ${APP_ENCRYPTION_KEY:?}
+  OUTBOUND_ENABLED: 'false'
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${PG_SUPER_PW:?}
+      POSTGRES_DB: kynetic
+    labels: &label
+      com.kynetic.preview: 'true'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d kynetic']
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    networks: [internal]
+
+  # Roles, migrations, seed, then the gate. The app and worker start only if this exits 0.
+  prepare:
+    build:
+      context: ../..
+      dockerfile: deploy/Dockerfile
+      target: tools
+    labels: *label
+    entrypoint: ['sh', '-ec']
+    command:
+      - |
+        apt-get update -qq && apt-get install -y -qq postgresql-client >/dev/null
+        su_url=postgres://postgres:$${PG_SUPER_PW}@postgres:5432/kynetic
+        psql "$$su_url" -q -v owner_pw="$${OWNER_PW}" -v app_pw="$${APP_PW}" -v worker_pw="$${WORKER_PW}" -f deploy/db/bootstrap.sql
+        psql "$$su_url" -q -c 'ALTER DATABASE kynetic OWNER TO kynetic_owner'
+        DATABASE_URL_MIGRATE=postgres://kynetic_owner:$${OWNER_PW}@postgres:5432/kynetic bun run db:migrate
+        DATABASE_URL_SEED=$$su_url bun run db:seed
+        DATABASE_URL_SEED=$$su_url bun run preview:check
+    environment:
+      PG_SUPER_PW: ${PG_SUPER_PW}
+      OWNER_PW: ${OWNER_PW}
+      APP_PW: ${APP_PW}
+      WORKER_PW: ${WORKER_PW}
+    volumes:
+      - ../db:/app/deploy/db:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [internal]
+
+  app:
+    build:
+      context: ../..
+      dockerfile: deploy/Dockerfile
+      target: app
+    labels: *label
+    environment:
+      <<: *app-env
+    depends_on:
+      prepare:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ['CMD', 'node', '-e', "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+    networks:
+      internal:
+      edge:
+        # The host Caddy routes <slug>.preview.kyneticai.com to this alias.
+        aliases: ['${PREVIEW_SLUG:?}']
+
+  worker:
+    build:
+      context: ../..
+      dockerfile: deploy/Dockerfile
+      target: worker
+    labels: *label
+    environment:
+      <<: *app-env
+    depends_on:
+      prepare:
+        condition: service_completed_successfully
+    networks: [internal]
+
+networks:
+  internal:
+  edge:
+    external: true
+    name: kynetic-preview-edge

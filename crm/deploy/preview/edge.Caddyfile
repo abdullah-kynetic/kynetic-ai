@@ -1,0 +1,8 @@
+# Host-level Caddy for all previews, started once (see README). It joins the kynetic-preview-edge
+# network and routes <slug>.preview.kyneticai.com to the container aliased <slug>. TLS is the
+# Cloudflare origin certificate; Cloudflare Access sits in front and only its ranges reach 443.
+*.preview.kyneticai.com {
+	tls /etc/caddy/origin.pem /etc/caddy/origin.key
+	encode zstd gzip
+	reverse_proxy {http.request.host.labels.3}:3000
+}
