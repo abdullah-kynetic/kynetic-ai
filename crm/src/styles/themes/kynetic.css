@@ -19,6 +19,12 @@
   --destructive: #b3261e;
   --destructive-foreground: #ffffff;
   --border: #e8e2d8;
+  /* Status tones (DESIGN_SYSTEM "not in the base tokens"). Text-safe values; chips tint them to 12%. */
+  --primary-text: #a8461a;
+  --success: #1e7a46;
+  --warning: #7a5c26;
+  --info: #a8461a;
+  --scrim: rgb(20 16 12 / 50%);
   /* 3:1 against the surface, for form-control borders (WCAG 1.4.11). */
   --input: #857d72;
   --ring: #a8461a;
@@ -74,6 +80,10 @@
   --destructive: #ff8a80;
   --destructive-foreground: #14100c;
   --border: #3a332b;
+  --primary-text: #e07a3f;
+  --success: #6fbf8e;
+  --warning: #c9a96e;
+  --info: #e07a3f;
   --input: #8a8379;
   --ring: #e07a3f;
   --chart-1: #e07a3f;
@@ -102,6 +112,11 @@
     --color-destructive: var(--destructive);
     --color-destructive-foreground: var(--destructive-foreground);
     --color-border: var(--border);
+    --color-primary-text: var(--primary-text);
+    --color-success: var(--success);
+    --color-warning: var(--warning);
+    --color-info: var(--info);
+    --color-scrim: var(--scrim);
     --color-input: var(--input);
     --color-ring: var(--ring);
     --color-chart-1: var(--chart-1);

@@ -24,7 +24,8 @@ export default defineConfig({
       DATABASE_URL_AUTH:
         process.env.DATABASE_URL_AUTH ?? 'postgres://test:test@127.0.0.1:5432/test',
       BETTER_AUTH_SECRET: 'e2e-only-secret-not-for-real-use-0000',
-      APP_ENCRYPTION_KEY: 'e2e-only-key-not-for-real-use-00000'
+      APP_ENCRYPTION_KEY: 'e2e-only-key-not-for-real-use-00000',
+      COMPONENT_GALLERY: '1'
     },
     reuseExistingServer: !process.env.CI,
     timeout: 120_000

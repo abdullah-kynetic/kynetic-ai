@@ -17,7 +17,10 @@ const Toaster = ({ ...props }: ToasterProps) => {
           '--normal-border': 'var(--border)'
         } as React.CSSProperties
       }
-      position='top-center'
+      position='bottom-right'
+      mobileOffset={16}
+      duration={4000}
+      toastOptions={{ classNames: { toast: 'rounded-xl! border! shadow-none!' } }}
       {...props}
     />
   );
