@@ -13,13 +13,26 @@ export {
   type Pipeline,
   type Stage
 } from './pipelines';
+export {
+  createStage,
+  deleteStage,
+  listStagesWithCounts,
+  MAX_STAGES,
+  reorderStages,
+  updateStage,
+  type StageRow
+} from './stages';
 export { DEAL_ROLES } from './schemas';
 export type {
   BoardFilters,
   CreateDealInput,
+  CreateStageInput,
+  DeleteStageInput,
   ListDealsInput,
   MoveDealInput,
-  UpdateDealInput
+  ReorderStagesInput,
+  UpdateDealInput,
+  UpdateStageInput
 } from './schemas';
 export {
   createDeal,
@@ -31,3 +44,4 @@ export {
   updateDeal,
   type Deal
 } from './service';
+export { stageScope } from './scope';
