@@ -129,7 +129,7 @@ src/server/tenancy/withPlatform.ts  withPlatform(ctx, fn): Promise<T>         //
 src/server/auth/index.ts            getSessionUser(headers), requireUser(headers), authorize(actor, action, tenantId?), resolveActor(user, tenantId?), requireRole(ctx, roles[]), requireKynetic(user, role?)   // DC-055, DC-056
 src/server/modules/index.ts         requireModule(ctx, key), isModuleEnabled(ctx, key), listEnabledModules(ctx)
 src/server/audit/index.ts           audit(tx, { action, entity, entityId, before, after })
-src/server/events/index.ts          emitEvent(tx, envelope), subscribe(name, handler)
+src/server/events/index.ts          emitEvent(tx, envelope), subscribe(name, id, handler, { module? })   // DC-059
 src/server/activity/index.ts        recordActivity(tx, { contactId, dealId, type, refTable, refId, summary, actor })
 src/server/jobs/index.ts            enqueue(queue, payload, opts), registerWorker(queue, handler)
 src/server/webhooks/index.ts        ingestWebhook({ source, externalId, payload, verify })   // idempotent insert + enqueue
