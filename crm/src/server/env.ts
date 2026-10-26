@@ -28,7 +28,9 @@ export const envSchema = z.object({
   STORAGE_ACCESS_KEY_ID: z.string().min(1).optional(),
   STORAGE_SECRET_ACCESS_KEY: z.string().min(1).optional(),
   STORAGE_BUCKET: z.string().min(1).optional(),
-  STORAGE_REGION: z.string().min(1).optional()
+  STORAGE_REGION: z.string().min(1).optional(),
+  RESEND_API_KEY: z.string().min(1).optional(),
+  RESEND_WEBHOOK_SECRET: z.string().min(1).optional(),
 });
 
 const STORAGE_KEYS = [
