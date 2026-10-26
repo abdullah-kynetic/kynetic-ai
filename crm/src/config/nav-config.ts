@@ -25,5 +25,19 @@ export const navGroups: NavGroup[] = [
         items: []
       }
     ]
+  },
+  {
+    label: 'Settings',
+    items: [
+      {
+        title: 'Custom fields',
+        url: '/dashboard/settings/custom-fields',
+        icon: 'settings',
+        isActive: false,
+        module: 'crm',
+        level: 'full',
+        items: []
+      }
+    ]
   }
 ];

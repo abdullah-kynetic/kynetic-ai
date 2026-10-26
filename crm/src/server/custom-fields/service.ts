@@ -57,7 +57,11 @@ async function defsIn(tx: Tx, entity?: CustomFieldEntity): Promise<CustomFieldDe
     .select()
     .from(customFieldDefs)
     .where(entity ? eq(customFieldDefs.entity, entity) : undefined)
-    .orderBy(asc(customFieldDefs.entity), asc(customFieldDefs.position), asc(customFieldDefs.label));
+    .orderBy(
+      asc(customFieldDefs.entity),
+      asc(customFieldDefs.position),
+      asc(customFieldDefs.label)
+    );
   return rows.map(toDef);
 }
 

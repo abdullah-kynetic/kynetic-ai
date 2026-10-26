@@ -100,7 +100,9 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | M0 CI and preview (platform) | Preview deploys from CI; shell and empty states render with no seed data and no console errors | Preview URL serves the shell | E2E | Not run |
 | F-07 (M1, crm) | Create a contact with a phone already on contact P | Duplicate warning shows and offers merge | E2E | Not run |
 | F-07 (M1, crm) | Merge two contacts | Deals, notes and activities move to the survivor; loser soft-removed; audit row written | Integration | Not run |
-| F-12 (M1, crm) | Custom field "Roof type" select: filter, table and CSV import | Value shows in table, filters, and CSV import accepts it | E2E | Not run |
+| F-12 (M1, crm) | Custom field "Roof type" select: filter, table and CSV import | Value shows in table, filters, and CSV import accepts it | E2E | Partly run: filter and values covered by `tests/integration/custom-fields.test.ts`; table, settings UI and CSV import not run in a browser |
+| F-12 (M1, crm) | Each type (text, number, money, date, select, multi-select, checkbox) given a valid and an invalid value; unknown key | Valid saved, invalid and unknown refused | Unit, Integration | Run (`tests/unit/custom-fields.test.ts`, `tests/integration/custom-fields.test.ts`) |
+| F-85 (M1, crm) | Lite tenant calls any custom field function or saves a custom value | 403 MODULE_DISABLED, nothing written | Integration | Run |
 | F-08 (M1, crm) | Assign owner to 20 selected contacts | All 20 updated in one audited operation | Integration | Not run |
 | F-14 (M2, crm) | Save a deal in Lost without a lost reason | Save refused, message names the field | Unit | Not run |
 | F-16 (M2, crm) | Drag a card from Contacted to Qualified, then reload | Card stays in Qualified; column totals updated | E2E | Not run |
@@ -162,7 +164,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-07 (M1, crm) | Two contacts share an email | Duplicate detection on email as well as phone | Integration | Pass (2026-10-26, M1-01) |
 | F-08 (M1, crm) | Staff without bulk-delete permission | Delete hidden in UI; server refuses | Integration | Not run |
 | F-10 (M1, crm) | Company with 3 contacts and 2 deals | Roll-ups and totals correct | Integration | Not run |
-| F-12 (M1, crm) | Tenant B reads tenant A field definitions | Zero rows (API and SQL) | Integration | Not run |
+| F-12 (M1, crm) | Tenant B reads tenant A field definitions | Zero rows (API and SQL) | Integration | Run (`custom-fields.test.ts`) |
 | F-14 (M2, crm) | $12,500 value entered | `value_cents` = 1250000; displays as $12,500 | Unit | Not run |
 | F-15 (M2, crm) | Add spouse to deal with role | Role on deal and deal on contact page; cross-tenant link refused | Integration | Not run |
 | F-16 (M2, crm) | Server rejects a drag; undo within toast | Rollback and error toast; undo restores previous stage | E2E | Not run |

@@ -379,7 +379,10 @@ export function ContactsTable({
     initialState: {
       sorting: [DEFAULT_SORT],
       pagination: { pageIndex: 0, pageSize: perPage },
-      columnVisibility: Object.fromEntries([...filterOnly, ...hidden.map((c) => [c, false] as const)])
+      columnVisibility: Object.fromEntries([
+        ...filterOnly,
+        ...hidden.map((c) => [c, false] as const)
+      ])
     }
   });
 

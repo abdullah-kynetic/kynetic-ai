@@ -83,10 +83,7 @@ const textArray = (values: string[]) =>
     sql`, `
   )}]::text[]`;
 
-function whereFor(
-  v: z.output<typeof searchContactsSchema>,
-  customParts: SQL[] = []
-): SQL {
+function whereFor(v: z.output<typeof searchContactsSchema>, customParts: SQL[] = []): SQL {
   const parts: (SQL | undefined)[] = [isNull(contacts.deletedAt), isNull(contacts.mergedIntoId)];
 
   if (v.q) {

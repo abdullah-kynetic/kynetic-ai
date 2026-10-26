@@ -18,3 +18,4 @@ export {
   type CustomFieldType,
   type CustomValue
 } from './types';
+export { customFieldsScope } from './scope';

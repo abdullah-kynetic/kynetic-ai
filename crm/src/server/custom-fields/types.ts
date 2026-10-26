@@ -64,7 +64,9 @@ const SAFE = Number.MAX_SAFE_INTEGER;
  * The Zod schema for one definition's value (SECURITY 5.1: values must match the declared type and
  * options). Money is whole cents; number may be fractional; date is a calendar day (YYYY-MM-DD).
  */
-export function valueSchemaFor(def: Pick<CustomFieldDef, 'type' | 'options'>): z.ZodType<CustomValue> {
+export function valueSchemaFor(
+  def: Pick<CustomFieldDef, 'type' | 'options'>
+): z.ZodType<CustomValue> {
   const allowed = new Set(def.options);
   switch (def.type) {
     case 'text':
@@ -115,7 +117,8 @@ export function checkCustomValues(
     if (isEmptyValue(value)) continue;
     const parsed = valueSchemaFor(def).safeParse(value);
     if (parsed.success) values[key] = parsed.data;
-    else errors[`custom.${key}`] = [...new Set(parsed.error.issues.map((i) => i.message || i.code))];
+    else
+      errors[`custom.${key}`] = [...new Set(parsed.error.issues.map((i) => i.message || i.code))];
   }
   return Object.keys(errors).length ? { ok: false, errors } : { ok: true, values };
 }
