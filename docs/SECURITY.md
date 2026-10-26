@@ -283,6 +283,7 @@ Decided 2026-10-25 (recommended option approved: these names; M0 fixes the final
 | `LEAD_WEBHOOK_MASTER_SECRET` | Derive per-tenant lead secrets, if derived | No |
 | `N8N_TOKEN_SIGNING_KEY` | Mint and verify tenant n8n tokens | No |
 | `APP_ENCRYPTION_KEY` | Encrypt provider and OAuth tokens at rest | No |
+| `APP_ENCRYPTION_KEY_VERSION`, `APP_ENCRYPTION_KEYS_RETIRED` | Key version for new ciphertext (default 1); older versions as `2:key,3:key` so rows can still be read until re-encrypted (DC-064) | No |
 | `STORAGE_ENDPOINT`, `STORAGE_ACCESS_KEY_ID`, `STORAGE_SECRET_ACCESS_KEY`, `STORAGE_BUCKET` | R2/B2 recordings and backups | No |
 | `BACKUP_ENCRYPTION_KEY` | Encrypt `pg_dump` before upload | No. Stored apart from bucket credentials |
 | `SENTRY_DSN` (optional) | Error reporting | Server-only anyway |
@@ -292,7 +293,7 @@ Existing Kynetic keys used by agency tooling are **not** reused. The portal gets
 
 ### 4.2 Storage and rotation
 - **Storage.** Production secrets live in the production host's environment (Docker secrets or an env file readable only by root and the service user), never in the repo, images or committed Compose files. Decided 2026-10-25 (recommended option approved: Docker secrets for v1; revisit at 25+ clients).
-- **Encrypted per-tenant values** (OPM OAuth tokens, any tenant-specific provider credential): AES-256-GCM with a random nonce per value and the key ID stored with the ciphertext, so keys can rotate. The key comes from `APP_ENCRYPTION_KEY`. Decryption happens only in server code that needs it. No API returns values, including to admins, who see "set" and "last rotated" only.
+- **Encrypted per-tenant values** (OPM OAuth tokens, any tenant-specific provider credential): AES-256-GCM with a random nonce per value and the key ID stored with the ciphertext, so keys can rotate. The key comes from `APP_ENCRYPTION_KEY`; the ciphertext is bound to its tenant, provider and name, and `src/server/secrets/` is the only code that seals or opens it (DC-064). Decryption happens only in server code that needs it. No API returns values, including to admins, who see "set" and "last rotated" only.
 - **Owner.** Abdullah.
 - **Rotation.** Decided 2026-10-25 (recommended option approved: 90 days for API keys and signing secrets; immediately on suspected exposure, when someone with access leaves, or when a secret was committed even if reverted). A runbook is `Not configured`. Rotation cadence and escrow: PRD OD-n not listed; see Appendix B.
 - **Exposure response.** Revoke at the provider first, rotate, redeploy, then clean history if needed. Record the date in `docs/known-issues.md` with no values.

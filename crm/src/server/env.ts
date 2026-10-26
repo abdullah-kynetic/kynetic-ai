@@ -14,6 +14,9 @@ export const envSchema = z.object({
   APP_ENCRYPTION_KEY: z.string().min(32),
   GOOGLE_CLIENT_ID: z.string().min(1).optional(),
   GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
+  // Key rotation (SECURITY 4.2): bump the version with a new key and list old ones as "v:key,...".
+  APP_ENCRYPTION_KEY_VERSION: z.coerce.number().int().min(1).default(1),
+  APP_ENCRYPTION_KEYS_RETIRED: z.string().optional(),
   OUTBOUND_ENABLED: booleanString.default(false)
 });
 
