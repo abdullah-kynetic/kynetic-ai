@@ -35,6 +35,14 @@ export const adminNavGroups: NavGroup[] = [
         isActive: false,
         shortcut: ['a', 'c'],
         items: []
+      },
+      {
+        title: 'View as client',
+        url: '/admin/view-as',
+        icon: 'user',
+        isActive: false,
+        shortcut: ['a', 'v'],
+        items: []
       }
     ]
   }
