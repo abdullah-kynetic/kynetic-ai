@@ -38,3 +38,10 @@ export {
   type DuplicateMatch
 } from './service';
 export { loadContactForPanel, saveContactFromPanel, type PanelSaveResult } from './panel';
+export {
+  mergeContacts,
+  previewMerge,
+  type MergeContactsInput,
+  type MergeCounts,
+  type MergeResult
+} from './merge';
