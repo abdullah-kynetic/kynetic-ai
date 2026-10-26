@@ -1,0 +1,6 @@
+# TLS terminates at Cloudflare and Caddy (origin certificate) in production; see ARCHITECTURE
+# "Server and deployment setup". Locally Caddy serves plain HTTP on :80.
+{$SITE_ADDRESS::80} {
+	encode zstd gzip
+	reverse_proxy app:3000
+}
