@@ -11,6 +11,7 @@ import {
 } from '@/server/admin';
 import { requireUser } from '@/server/auth';
 import { AppError } from '@/server/errors';
+import { refuseDuringViewAs } from '../view-as-guard';
 import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
@@ -21,6 +22,7 @@ export type ActionResult = { ok: true; message: string } | { ok: false; message:
 
 async function caller(): Promise<StaffCaller> {
   const user = await requireUser(await headers());
+  await refuseDuringViewAs(user);
   return { id: user.id, kyneticRole: user.kyneticRole };
 }
 
@@ -57,7 +59,10 @@ export async function inviteUserAction(formData: FormData): Promise<ActionResult
     delivered = (await inviteUser(who, input)).delivered;
   });
   return result.ok && !delivered
-    ? { ok: true, message: 'Invitation created. The invite email is not sent yet from this build.' }
+    ? {
+        ok: true,
+        message: 'Invitation created. The invite email is not sent yet from this build.'
+      }
     : result;
 }
 

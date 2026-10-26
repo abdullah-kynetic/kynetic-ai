@@ -5,6 +5,7 @@ import { setTenantModule } from '@/server/modules/admin';
 import { decideAdminAccess } from '@/server/admin';
 import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
+import { isViewingAs } from '../../../view-as-guard';
 
 export type ToggleResult = { ok: true; changed: boolean } | { ok: false; message: string };
 
@@ -22,6 +23,8 @@ export async function toggleModule(input: {
   const access = await decideAdminAccess(requestHeaders);
   if (access.kind !== 'ok' || access.role !== 'admin')
     return { ok: false, message: 'Only a Kynetic admin can change modules.' };
+  if (await isViewingAs(access.user))
+    return { ok: false, message: 'Exit view-as before changing modules.' };
   try {
     const result = await setTenantModule(
       { id: access.user.id, kyneticRole: access.role },

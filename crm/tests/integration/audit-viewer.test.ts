@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { listTenantOptions, searchAuditLog } from '@/server/admin';
+import { listAuditTenantOptions, searchAuditLog } from '@/server/admin';
 import { createDb, type Db } from '@/server/db/client';
 import { withTenant } from '@/server/tenancy';
 import { audit } from '@/server/audit';
@@ -86,7 +86,7 @@ describe('M8a-05 audit log viewer (F-60)', () => {
   it('VA can read the log and the tenant list (SECURITY 2.2)', async () => {
     const r = await searchAuditLog(va, { tenant: IDS.tenantA, action: 'export.csv' }, { db });
     expect(r.rows.length).toBe(1);
-    expect((await listTenantOptions(va, { db })).map((t) => t.id)).toContain(IDS.tenantA);
+    expect((await listAuditTenantOptions(va, { db })).map((t) => t.id)).toContain(IDS.tenantA);
   });
 
   it('a client role is refused, by the app and by the database', async () => {

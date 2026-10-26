@@ -5,6 +5,7 @@ import { decideAdminAccess } from '@/server/admin';
 import { AppError } from '@/server/errors';
 import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
+import { isViewingAs } from '../../../view-as-guard';
 
 export type BillingResult = { ok: true } | { ok: false; message: string };
 
@@ -19,6 +20,8 @@ async function run(
   const access = await decideAdminAccess(await headers());
   if (access.kind !== 'ok' || access.role !== 'admin')
     return { ok: false, message: 'Only a Kynetic admin can change billing.' };
+  if (await isViewingAs(access.user))
+    return { ok: false, message: 'Exit view-as before changing billing.' };
   try {
     await fn({ id: access.user.id, kyneticRole: 'admin' });
     revalidatePath(`/admin/clients/${tenantId}/billing`);

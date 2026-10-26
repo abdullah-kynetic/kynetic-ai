@@ -3,6 +3,7 @@
 import { markGoLive, STEP_STATUSES, updateChecklistStep, type StepStatus } from '@/server/admin';
 import { authorize, ForbiddenError, requireUser, resolveActor } from '@/server/auth';
 import { AppError } from '@/server/errors';
+import { refuseDuringViewAs } from '../../../view-as-guard';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 
@@ -15,6 +16,7 @@ export type ChecklistState = { status: 'idle' | 'saved' } | { status: 'error'; m
  */
 async function staffCtx(action: 'admin.clients.read' | 'admin.onboard') {
   const user = await requireUser(await headers());
+  await refuseDuringViewAs(user);
   const actor = await resolveActor(user);
   authorize(actor, action);
   return { userId: user.id, role: actor.kyneticRole! };
@@ -25,7 +27,10 @@ function failure(err: unknown): ChecklistState {
   if (err instanceof ForbiddenError)
     return { status: 'error', message: 'You do not have access to this.' };
   console.error('Checklist action failed', err instanceof Error ? err.name : 'unknown');
-  return { status: 'error', message: 'Something went wrong. Nothing was changed. Try again.' };
+  return {
+    status: 'error',
+    message: 'Something went wrong. Nothing was changed. Try again.'
+  };
 }
 
 const text = (f: FormData, k: string) => String(f.get(k) ?? '').trim();
