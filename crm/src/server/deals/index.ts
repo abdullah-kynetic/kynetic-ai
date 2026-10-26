@@ -26,7 +26,15 @@ export {
 } from './stages';
 export { getBoardView, type BoardView } from './board';
 export { dealsScope, stageScope } from './scope';
-export { DEAL_ROLES } from './schemas';
+export {
+  addDealContact,
+  listDealContacts,
+  listDealsForContact,
+  removeDealContact,
+  setDealContactRole,
+  type DealContact
+} from './contacts';
+export { DEAL_ROLES, type DealRole } from './schemas';
 export type {
   BoardFilters,
   CreateDealInput,
