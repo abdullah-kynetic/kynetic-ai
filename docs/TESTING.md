@@ -223,7 +223,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | --- | --- | --- | --- | --- |
 | F-70 (M0, platform) | Module X off; call any X route or action directly | 403 `MODULE_DISABLED`; nothing written | Integration | Not run |
 | F-70 (M0, platform) | Module X off, then on | X's data intact | Integration | Not run |
-| F-70 (M0 and M8, platform) | Module toggled | `audit_log` row written | Integration | Not run |
+| F-70 (M0 and M8, platform) | Module toggled | `audit_log` row written | Integration | Pass: `tests/integration/admin-modules.test.ts` (M8a-06; Postgres 16, 2026-10-26) |
 | F-73 (M0, platform) | Each role against each protected action | Matches the permission matrix in `SECURITY.md`; UI hides what role cannot do | Integration and E2E | Not run |
 | F-74 (M4, alex_core) | No consent; Alex or automation tries to call or text | Blocked and logged | Integration | Not run |
 | F-74 (M4, alex_core) | Contact in quiet hours (contact timezone) | Call or SMS deferred (fixed clock) | Integration | Not run (window 08:00 to 21:00 lead-local, decided; per-state table UNRESOLVED) |
