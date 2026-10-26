@@ -3,6 +3,13 @@ import { and, count, eq, gte, isNull, sql } from 'drizzle-orm';
 import { ProviderError } from '../adapters/errors';
 import type { VoiceProvider } from '../adapters/voice/types';
 import { recordActivity } from '../activity';
+import {
+  cleanDisclosure,
+  contactState,
+  disclosureVersion,
+  isTwoPartyState,
+  STATE_RULES
+} from '../compliance';
 import { checkWindow, isValidTimeZone } from '../consent/quiet-hours';
 import { getWorkerDb, type Db, type Tx } from '../db/client';
 import { alexConfigs, calls, contacts, tenants } from '../db/schema';
@@ -109,7 +116,10 @@ export async function runOutboundCall(
     async (tx) => {
       const [alex] = await tx.select().from(alexConfigs).limit(1);
       const [tenant] = await tx
-        .select({ timezone: tenants.timezone })
+        .select({
+          timezone: tenants.timezone,
+          recordingDisclosure: tenants.recordingDisclosure
+        })
         .from(tenants)
         .where(eq(tenants.id, job.tenantId))
         .limit(1);
@@ -146,6 +156,19 @@ export async function runOutboundCall(
   if (!alex || !alex.agentRef || !provider) {
     await note(ctx, db, job, 'Alex call not started: no voice agent is configured', 'no_agent');
     return stop('no_agent');
+  }
+
+  // F-75: no call goes out without the tenant's disclosure text, since Alex must say it first.
+  const disclosure = cleanDisclosure(tenant?.recordingDisclosure);
+  if (!disclosure) {
+    await note(
+      ctx,
+      db,
+      job,
+      'Alex call not started: no recording disclosure is set for this business',
+      'no_disclosure'
+    );
+    return stop('no_disclosure');
   }
 
   if (prior.some((c) => c.outcome && !UNREACHED.includes(c.outcome))) return stop('reached');
@@ -192,6 +215,9 @@ export async function runOutboundCall(
   // racing on one attempt lose cleanly (advisory lock plus recount), and a crash after the dial leaves a visible pending row
   // rather than a second call.
   const callId = randomUUID();
+  // F-75: a contact in a two-party-consent state has the call marked for review from the start.
+  const state = contactState(contact.address);
+  const twoParty = isTwoPartyState(state);
   const inserted = await withTenant(
     ctx,
     async (tx) => {
@@ -219,7 +245,16 @@ export async function runOutboundCall(
           provider: provider.id,
           providerCallId: pendingId(key),
           direction: 'outbound',
-          startedAt: now.toISOString()
+          startedAt: now.toISOString(),
+          // `disclosure_given` stays false until call-end processing finds the words in the transcript.
+          disclosureVersion: disclosureVersion(disclosure),
+          ...(twoParty
+            ? {
+                flagged: true,
+                flaggedAt: now.toISOString(),
+                flagNote: `Two-party recording state ${state} (state rules ${STATE_RULES.version}, not yet reviewed by counsel)`
+              }
+            : {})
         })
         .onConflictDoNothing()
         .returning({ id: calls.id });
@@ -255,6 +290,8 @@ export async function runOutboundCall(
       context: {
         lead_first_name: contact.firstName,
         call_reason: 'new_lead',
+        // The agent prompt must open with this line before anything is recorded (SECURITY 3.5).
+        recording_disclosure: disclosure,
         attempt: job.attempt
       },
       idempotencyKey: key

@@ -1,4 +1,5 @@
 import { and, desc, eq, inArray, isNull } from 'drizzle-orm';
+import { contactState } from '../compliance/state-rules';
 import type { Tx } from '../db/client';
 import { activities, consents, contacts, dncEntries, tenants } from '../db/schema';
 import type { TenantContextInput } from '../tenancy';
@@ -89,7 +90,10 @@ async function decide(
     .limit(1);
   // Another tenant's contact is invisible under RLS, so it reads as having no consent.
   if (!contact) return { decision: deny('no_consent'), found: false };
-  return { decision: await decideFor(tx, tenantId, contact, channel, now, opts), found: true };
+  return {
+    decision: await decideFor(tx, tenantId, contact, channel, now, opts),
+    found: true
+  };
 }
 
 async function decideFor(
@@ -141,9 +145,8 @@ async function decideFor(
     const tz = [contact.timezone, tenant?.timezone].find(isValidTimeZone);
     if (!tz) return deny('unknown_timezone');
 
-    const state = (contact.address as { state?: unknown } | null)?.state;
-    const stateWindow =
-      typeof state === 'string' ? opts.stateWindows?.[state.toUpperCase()] : undefined;
+    const state = contactState(contact.address);
+    const stateWindow = state ? opts.stateWindows?.[state] : undefined;
     const window = stateWindow ? intersect(DEFAULT_WINDOW, stateWindow) : DEFAULT_WINDOW;
     const check = checkWindow(now, tz, window);
     if (!check.open) return deny('quiet_hours', check.nextOpen);
