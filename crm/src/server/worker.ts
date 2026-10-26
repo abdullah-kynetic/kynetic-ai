@@ -1,3 +1,4 @@
+import { getVoiceProvider, registerVoiceProcessor } from './calls';
 import { getEnv } from './env';
 import { registerEventWorkers } from './events';
 import { stopJobs } from './jobs';
@@ -12,6 +13,7 @@ import { registerWebhookWorker } from './webhooks';
 getEnv();
 registerLeadProcessor();
 registerTwilioProcessor({ provider: getSmsProvider() });
+registerVoiceProcessor({ provider: getVoiceProvider('elevenlabs')! });
 await registerEventWorkers();
 registerResendProcessor();
 await registerWebhookWorker();
