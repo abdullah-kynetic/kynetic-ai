@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import type postgres from 'postgres';
 import { createTestDatabase, type TestDatabase } from '../helpers/db';
 
 const A = '11111111-1111-1111-1111-111111111111';
@@ -26,17 +27,17 @@ afterAll(async () => {
 });
 
 /** Runs fn inside a transaction as the app role with the given session context. */
-async function asApp<T>(
+async function asApp(
   ctx: { tenant?: string; user?: string; role?: string; readOnly?: boolean },
-  fn: (tx: any) => Promise<T>
-) {
+  fn: (tx: postgres.TransactionSql) => postgres.PendingQuery<postgres.Row[]>
+): Promise<postgres.RowList<postgres.Row[]>> {
   return db.app.begin(async (tx) => {
     await tx`select set_config('app.tenant_id', ${ctx.tenant ?? ''}, true),
                     set_config('app.user_id', ${ctx.user ?? ''}, true),
                     set_config('app.role', ${ctx.role ?? ''}, true),
                     set_config('app.read_only', ${ctx.readOnly ? 'on' : 'off'}, true)`;
     return fn(tx);
-  }) as Promise<T>;
+  });
 }
 
 describe('M0-05 schema', () => {
@@ -101,13 +102,13 @@ describe('M0-05 isolation and privileges', () => {
       const own = await asApp({ tenant: A }, (tx) => tx.unsafe(`select tenant_id from ${t}`));
       expect(own.length, t).toBeGreaterThan(0);
       expect(
-        own.every((r: any) => r.tenant_id === A),
+        own.every((r) => r.tenant_id === A),
         t
       ).toBe(true);
       expect(await asApp({}, (tx) => tx.unsafe(`select 1 from ${t}`)), t).toHaveLength(0);
     }
     const tenants = await asApp({ tenant: A }, (tx) => tx`select id from tenants`);
-    expect(tenants.map((r: any) => r.id)).toEqual([A]);
+    expect(tenants.map((r) => r.id)).toEqual([A]);
     expect(await asApp({}, (tx) => tx`select id from tenants`)).toHaveLength(0);
   });
 
@@ -133,7 +134,7 @@ describe('M0-05 isolation and privileges', () => {
       asApp(
         { tenant: A, readOnly: true },
         (tx) => tx`update onboarding_steps set title = 'z' where tenant_id = ${A}`
-      ).then((r: any) => {
+      ).then((r) => {
         if (r.count > 0) throw new Error('updated under read_only');
       })
     ).resolves.toBeUndefined();
@@ -169,7 +170,7 @@ describe('M0-05 isolation and privileges', () => {
       { tenant: A },
       (tx) => tx`update tenants set name = 'hijack' where id = ${B}`
     );
-    expect((r as any).count).toBe(0);
+    expect(r.count).toBe(0);
   });
 
   it('only the worker reads tenant_secrets', async () => {
@@ -198,8 +199,8 @@ describe('M0-05 isolation and privileges', () => {
       { tenant: A, user: UA },
       (tx) => tx`select id from users order by email`
     );
-    expect(rows.map((r: any) => r.id)).toContain(UA);
-    expect(rows.map((r: any) => r.id)).not.toContain(UB);
+    expect(rows.map((r) => r.id)).toContain(UA);
+    expect(rows.map((r) => r.id)).not.toContain(UB);
   });
 
   it('SEC-T-35: audit_log accepts inserts and refuses update, delete and truncate for every role', async () => {
