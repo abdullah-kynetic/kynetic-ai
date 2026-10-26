@@ -319,7 +319,7 @@ CREATE INDEX contacts_name_trgm ON contacts USING gin ((first_name || ' ' || coa
 CREATE INDEX contacts_owner_idx ON contacts (tenant_id, owner_id) WHERE deleted_at IS NULL;
 ```
 
-Note on `phones` and `emails` GIN indexes: a GIN index on `(tenant_id, phones)` needs the `btree_gin` extension. Decided (recommended option): enable `btree_gin` in M0 as well, or drop the tenant column from the GIN and filter on tenant with the array index. Decide during M1.
+Note on `phones` and `emails` GIN indexes: a GIN index on `(tenant_id, phones)` needs the `btree_gin` extension. Decided (recommended option): enable `btree_gin` in M0 as well, or drop the tenant column from the GIN and filter on tenant with the array index. Decided 2026-10-26 (M0-06, DC-052): `btree_gin` is enabled in migration 0002 and the indexes keep the tenant column.
 
 ### Pipelines and deals (M2; F-14 to F-17)
 
