@@ -227,9 +227,9 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-70 (M0 and M8, platform) | Module toggled | `audit_log` row written | Integration | Not run |
 | F-73 (M0, platform) | Each role against each protected action | Matches the permission matrix in `SECURITY.md`; UI hides what role cannot do | Integration and E2E | Not run |
 | F-74 (M4, alex_core) | No consent; Alex or automation tries to call or text | Blocked and logged | Integration | Not run |
-| F-74 (M4, alex_core) | Contact in quiet hours (contact timezone) | Call or SMS deferred (fixed clock) | Integration | Not run (window 08:00 to 21:00 lead-local, decided; per-state table UNRESOLVED) |
-| F-75 (M4, alex_core) | Call starts | Disclosure line in agent config and transcript | Integration | Not run |
-| F-75 (M4, alex_core) | Contact in a two-party-consent state | Call marked for review | Integration | Not run (state list is a versioned config; content UNRESOLVED, needs counsel) |
+| F-74 (M4, alex_core) | Contact in quiet hours (contact timezone) | Call or SMS deferred (fixed clock) | Integration | Pass (2026-10-26, M4-06/M4-07: DST table in `quiet-hours.test.ts`, FL window in `outbound-call.test.ts`; per-state table is a draft for counsel, DC-116) |
+| F-75 (M4, alex_core) | Call starts | Disclosure line in agent config and transcript | Integration | Pass (2026-10-26, M4-07: sent to the agent, `disclosure_given` set from the transcript; the live agent prompt is not edited) |
+| F-75 (M4, alex_core) | Contact in a two-party-consent state | Call marked for review | Integration | Pass (2026-10-26, M4-07; state list is a draft versioned config, content UNRESOLVED, needs counsel) |
 | F-76 (M4, alex_core) | Valid signed lead request | Contact and deal exist; Alex triggered | Integration | Pass for contact, deal, consent and `lead.created` (2026-10-26, M4-04); the call start is M4-06 |
 | F-76 (M4, alex_core) | Bad token | 401; nothing written | Integration | Pass (2026-10-26, M4-04) |
 | F-76 (M4, alex_core) | Rate-limit breach | 429 | Integration | Pass (2026-10-26, M4-04) |
