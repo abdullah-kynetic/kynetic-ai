@@ -85,6 +85,13 @@
       "when": 1792980001000,
       "tag": "0015_auth_membership_resolution",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1792990000000,
+      "tag": "0031_admin_user_management",
+      "breakpoints": true
     }
   ]
 }
