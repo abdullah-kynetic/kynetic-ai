@@ -15,6 +15,14 @@ export const navGroups: NavGroup[] = [
         isActive: false,
         shortcut: ['d', 'd'],
         items: []
+      },
+      {
+        title: 'Pipeline',
+        url: '/dashboard/pipeline',
+        icon: 'kanban',
+        isActive: false,
+        shortcut: ['p', 'p'],
+        items: []
       }
     ]
   }
