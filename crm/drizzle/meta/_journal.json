@@ -8,6 +8,13 @@
       "when": 1792977441452,
       "tag": "0000_roles_helpers",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792977609699,
+      "tag": "0001_baseline_tenancy",
+      "breakpoints": true
     }
   ]
 }

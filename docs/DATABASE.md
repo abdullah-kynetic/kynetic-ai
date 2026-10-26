@@ -93,6 +93,7 @@ CREATE TABLE tenants (
   services jsonb NOT NULL DEFAULT '[]',                                 -- F-41
   transfer_number_e164 text CHECK (transfer_number_e164 ~ '^\+[1-9][0-9]{7,14}$'),
   recording_disclosure text,                                            -- spec s8: disclosure text per tenant
+  email_sender_name text,                                               -- F-39 sender display name (DC-051)
   baseline jsonb NOT NULL DEFAULT '{}',                                 -- F-01: captured at signup
   guarantee_target_bookings integer CHECK (guarantee_target_bookings >= 0),  -- F-03; location chosen here (PRD decision 10)
   guarantee_start_date date,                                            -- F-03
@@ -1088,7 +1089,9 @@ Audit immutability and grants:
 CREATE OR REPLACE FUNCTION audit_log_immutable() RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN RAISE EXCEPTION 'audit_log is append-only'; END $$;
 CREATE TRIGGER audit_log_no_update_delete BEFORE UPDATE OR DELETE ON audit_log
-  FOR EACH ROW EXECUTE FUNCTION audit_log_immutable();
+  FOR EACH STATEMENT EXECUTE FUNCTION audit_log_immutable();   -- statement level (DC-051)
+CREATE TRIGGER audit_log_no_truncate BEFORE TRUNCATE ON audit_log
+  FOR EACH STATEMENT EXECUTE FUNCTION audit_log_immutable();
 REVOKE UPDATE, DELETE, TRUNCATE ON audit_log FROM kynetic_app, kynetic_worker;
 ```
 
