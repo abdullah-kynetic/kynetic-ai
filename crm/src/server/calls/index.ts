@@ -10,3 +10,10 @@ export {
 } from './process';
 export { getVoiceProvider, isVoiceProviderId } from './provider';
 export { getCallRecordingUrl } from './recording';
+export {
+  flagCall,
+  getCallDetail,
+  transcriptLines,
+  type CallDetail,
+  type TranscriptLine
+} from './detail';
