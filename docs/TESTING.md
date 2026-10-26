@@ -109,8 +109,8 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-19 (M3, crm) | Any write to a covered entity | `activities` row created and shown on timeline; actor shown | Integration | Not run |
 | F-20 (M3, crm) | Task past due and incomplete | Under Overdue; assignee gets notification | Integration | Not run |
 | F-76 (M4, alex_core) | Duplicate lead webhook (same source and external id) | Second call is a no-op; one contact, one deal | Integration | Not run |
-| F-77 (M4, platform) | Same Retell or ElevenLabs call-ended event (same source and external id) replayed 10 times | One effect (one call row, one timeline entry) | Integration | Not run |
-| F-77 (M4, platform) | Same external id arriving from a different source | Not a duplicate; processed as its own event (uniqueness is on source and external id) | Integration | Not run |
+| F-77 (M4, platform) | Same Retell or ElevenLabs call-ended event (same source and external id) replayed 10 times | One effect (one call row, one timeline entry) | Integration | Pass (`call-end.test.ts`) |
+| F-77 (M4, platform) | Same external id arriving from a different source | Not a duplicate; processed as its own event (uniqueness is on source and external id) | Integration | Pass (`call-end.test.ts`) |
 | F-74 (M4, alex_core) | STOP inbound SMS (fake Twilio) | Consent revoked; confirmation on timeline; no further SMS or calls | Integration | Not run |
 | F-26 (M4, alex_core) | Fake call-ended webhook with outcome "booked" | Test call lands on timeline; green Booked chip | E2E | Not run |
 | F-78 (M5, alex_core) | Booking request inside business hours | Appointment created, status scheduled | Integration | Not run |
@@ -173,6 +173,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-24 (M5, alex_core) | Staff reschedules; staff enters time outside hours | Timeline records reschedule; UI warns on out-of-hours time | E2E | Not run |
 | F-26 (M4, alex_core) | Call with outcome "booked" | Green Booked chip; contact link; outcome and date filters work | E2E | Not run |
 | F-27 (M4, alex_core) | Open call with recording and transcript | Player, transcript, summary and fields render | E2E | Not run |
+| F-27 (M4, alex_core) | Mint a recording URL as the owner, as another tenant's owner, and as a user with no membership | Signed 5-minute URL; 404; 403; object key never returned | Integration | Pass (`call-end.test.ts`) |
 | F-27 (M4, alex_core) | Recording URL after expiry | Expired signed URL refused | Integration | Adapter part written, passing locally (M4-03, `tests/unit/storage/r2.test.ts`: 5-minute expiry, wrong tenant 404, SigV4 vector); real route test waits for M4-11 |
 | F-27 (M4, alex_core) | Staff without call access requests call | Refused server-side | Integration | Not run |
 | F-28 (M4, alex_core) | Owner flags a call with reason | `calls.flagged` true; review item exists; audit row written | Integration | Not run |
