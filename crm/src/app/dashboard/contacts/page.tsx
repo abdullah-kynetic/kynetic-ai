@@ -25,6 +25,7 @@ export default async function ContactsPage({
       </PageContainer>
     );
   }
+  const canWrite = (await contactsScope(await headers(), 'tenant_data.write')) !== null;
   const { hidden, ...view } = readListView(await searchParams);
   const [result, facets] = await Promise.all([searchContacts(ctx, view), contactFacets(ctx)]);
   return (
@@ -40,6 +41,7 @@ export default async function ContactsPage({
         facets={facets}
         hidden={hidden}
         filtered={isFiltered({ hidden, ...view })}
+        canWrite={canWrite}
       />
     </PageContainer>
   );

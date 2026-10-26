@@ -37,3 +37,4 @@ export {
   type CreateOpts,
   type DuplicateMatch
 } from './service';
+export { loadContactForPanel, saveContactFromPanel, type PanelSaveResult } from './panel';

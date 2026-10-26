@@ -4,7 +4,7 @@ import { type ColumnDef, Subscribe } from '@tanstack/react-table';
 import Link from 'next/link';
 import { parseAsString, useQueryState, useQueryStates } from 'nuqs';
 import * as React from 'react';
-import { IconSearch, IconUsers } from '@tabler/icons-react';
+import { IconPencil, IconPlus, IconSearch, IconUsers } from '@tabler/icons-react';
 
 import type { ContactFacets, ContactListRow } from '@/server/contacts';
 import { CONTACT_STATUSES, NO_OWNER } from '@/server/contacts/constants';
@@ -18,6 +18,7 @@ import { EmptyState } from '@/components/ui/states';
 import { useDataTable } from '@/hooks/use-data-table';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 import type { DataTableFeatures } from '@/lib/data-table-features';
+import { ContactPanel, type PanelTarget } from '../panel/contact-panel';
 import { DEFAULT_SORT, HIDEABLE_COLUMNS, type ListColumn } from './search-params';
 import {
   formatDay,
@@ -36,12 +37,38 @@ type Props = {
   facets: ContactFacets;
   hidden: ListColumn[];
   filtered: boolean;
+  /** The actor has `tenant_data.write`: shows Add and Edit. */
+  canWrite: boolean;
 };
 
 const contactHref = (id: string) => `/dashboard/contacts/${id}`;
 
-function buildColumns(facets: ContactFacets): ColumnDef<DataTableFeatures, ContactListRow>[] {
+function buildColumns(
+  facets: ContactFacets,
+  onEdit: ((id: string) => void) | null
+): ColumnDef<DataTableFeatures, ContactListRow>[] {
   const tz = facets.timezone;
+  const edit: ColumnDef<DataTableFeatures, ContactListRow>[] = onEdit
+    ? [
+        {
+          id: 'actions',
+          header: () => <span className='sr-only'>Actions</span>,
+          cell: ({ row }) => (
+            <Button
+              variant='ghost'
+              size='icon'
+              aria-label={`Edit ${fullName(row.original)}`}
+              onClick={() => onEdit(row.original.id)}
+            >
+              <IconPencil aria-hidden='true' />
+            </Button>
+          ),
+          meta: { label: 'Actions' },
+          enableSorting: false,
+          enableHiding: false
+        }
+      ]
+    : [];
   return [
     {
       id: 'name',
@@ -168,7 +195,8 @@ function buildColumns(facets: ContactFacets): ColumnDef<DataTableFeatures, Conta
         <span className='tabular-nums'>{formatDay(row.original.updatedAt, tz)}</span>
       ),
       meta: { label: 'Updated' }
-    }
+    },
+    ...edit
   ];
 }
 
@@ -292,6 +320,15 @@ function MobilePager({
   );
 }
 
+function AddButton({ onClick }: { onClick: () => void }) {
+  return (
+    <Button className='min-h-11 sm:min-h-0' onClick={onClick}>
+      <IconPlus aria-hidden='true' />
+      Add contact
+    </Button>
+  );
+}
+
 export function ContactsTable({
   rows,
   total,
@@ -299,9 +336,14 @@ export function ContactsTable({
   perPage,
   facets,
   hidden,
-  filtered
+  filtered,
+  canWrite
 }: Props) {
-  const columns = React.useMemo(() => buildColumns(facets), [facets]);
+  const [panel, setPanel] = React.useState<PanelTarget>(null);
+  const columns = React.useMemo(
+    () => buildColumns(facets, canWrite ? (id) => setPanel({ mode: 'edit', id }) : null),
+    [facets, canWrite]
+  );
   const [, startTransition] = React.useTransition();
 
   const { table } = useDataTable({
@@ -330,16 +372,24 @@ export function ContactsTable({
   const toolbar = (
     <DataTableToolbar table={table} className='flex-col gap-2 sm:flex-row'>
       <ContactSearch />
+      {canWrite ? <AddButton onClick={() => setPanel({ mode: 'create' })} /> : null}
     </DataTableToolbar>
   );
+  const panelEl = canWrite ? (
+    <ContactPanel target={panel} onClose={() => setPanel(null)} owners={facets.owners} />
+  ) : null;
 
   if (total === 0 && !filtered) {
     return (
-      <EmptyState
-        icon={<IconUsers aria-hidden='true' />}
-        title='No contacts yet'
-        description='No contacts yet. Add one, import a CSV, or wait for your first lead.'
-      />
+      <>
+        <EmptyState
+          icon={<IconUsers aria-hidden='true' />}
+          title='No contacts yet'
+          description='No contacts yet. Add one, import a CSV, or wait for your first lead.'
+          action={canWrite ? <AddButton onClick={() => setPanel({ mode: 'create' })} /> : undefined}
+        />
+        {panelEl}
+      </>
     );
   }
 
@@ -352,6 +402,7 @@ export function ContactsTable({
         {(h) => <SyncHidden hidden={h} />}
       </Subscribe>
       {toolbar}
+      {panelEl}
       <p className='sr-only' role='status' aria-live='polite'>
         {total === 1 ? '1 contact' : `${total.toLocaleString('en-US')} contacts`}
       </p>
