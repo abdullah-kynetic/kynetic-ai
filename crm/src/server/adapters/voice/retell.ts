@@ -35,6 +35,9 @@ const str = (v: unknown): string | undefined => (typeof v === 'string' && v ? v 
 const num = (v: unknown): number | undefined =>
   typeof v === 'number' && Number.isFinite(v) ? v : undefined;
 
+const e164 = (v: unknown): string | undefined =>
+  typeof v === 'string' && /^\+[1-9]\d{6,14}$/.test(v) ? v : undefined;
+
 function kindForStatus(status: number): 'transient' | 'permanent' | 'config' {
   if (status === 401 || status === 403) return 'config';
   if (status === 408 || status === 429 || status >= 500) return 'transient';
@@ -143,6 +146,9 @@ export class RetellVoiceProvider implements VoiceProvider {
     return {
       externalId: callId,
       providerCallId: callId,
+      agentId: str(call.agent_id),
+      // The lead is the callee on outbound calls and the caller on inbound ones.
+      counterpartE164: e164(direction === 'inbound' ? call.from_number : call.to_number),
       kind: direction === 'inbound' ? 'inbound' : 'call.ended',
       direction,
       startedAt: new Date(num(call.start_timestamp) ?? this.now().getTime()),
@@ -169,6 +175,25 @@ export class RetellVoiceProvider implements VoiceProvider {
     const url = isDict(json) ? str(json.recording_url) : undefined;
     if (!url) throw new ProviderError('permanent', 'no_recording', 'Retell has no recording');
     return url;
+  }
+
+  /** The recording URL is pre-signed, so the download carries no API key. */
+  async fetchRecording(providerCallId: string): Promise<Uint8Array> {
+    const url = await this.getRecordingUrl(providerCallId);
+    let res: Response;
+    try {
+      res = await this.fetchImpl(url);
+    } catch {
+      throw new ProviderError('transient', 'network', 'Could not reach Retell recording');
+    }
+    if (!res.ok) {
+      throw new ProviderError(
+        kindForStatus(res.status),
+        `http_${res.status}`,
+        `Retell recording returned ${res.status}`
+      );
+    }
+    return new Uint8Array(await res.arrayBuffer());
   }
 
   placeTestCall(i: { agentId: string; toE164: string }) {
