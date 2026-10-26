@@ -345,7 +345,7 @@ crm/
 - **Backups:** nightly encrypted `pg_dump` offsite (R2; B2 only as a later second copy). 30 daily and 12 monthly kept. Monthly restore into a scratch database. Manual backup button (F-63). The Backups page shows last backup and last drill.
 - **Logs and monitoring:** structured JSON logs with `tenantId`, `requestId`, `jobId`; never secrets or message bodies. Uptime check. Sentry optional (spec). Alert thresholds: Not configured.
 - **Scale:** target is 25+ clients (project goal). Numeric limits (rows per tenant, concurrent calls, webhook throughput) are not in any source; M10's load test sets them.
-- **Commands:** none verified for the new app. Install, dev, build, lint, typecheck, test, migrate, seed: Not configured until M0 creates the package. `portal/` today has `npm run lint`, `typecheck`, `test`, `db:migrate`, `db:seed`.
+- **Commands:** `crm/` exists as of M0-01 (Decided 2026-10-26: pins inherited from the starter, per CODE_STYLE). Node 22 (`engines` `>=22`, `.nvmrc`), bun (`bun.lock`), Next.js 16.4.2, React 19.3.0, TypeScript 7.0.2, Tailwind 4, oxlint and oxfmt. Verified in `crm/` on M0-01: `bun install`, `bun run build`, `bun run typecheck`, `bun run lint`, `bun run format:check`. Test, migrate and seed: Not configured until M0-02 and later tasks; M0-02 records the final commands in TESTING and CODE_STYLE. Sentry was removed with the starter's other demo dependencies (optional per spec; re-add under a later task if wanted). `portal/` today has `npm run lint`, `typecheck`, `test`, `db:migrate`, `db:seed`.
 
 
 ### Server and deployment setup (gap check 2026-10-25)
