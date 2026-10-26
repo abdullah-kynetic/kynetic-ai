@@ -11,6 +11,9 @@ import { registerLeadProcessor } from './leads';
 import { registerResendProcessor } from './email';
 import { getSmsProvider } from './messaging/provider';
 import { registerTwilioProcessor } from './messaging';
+import { getSmsProvider } from './messaging/provider';
+import { registerTwilioProcessor } from './messaging';
+import { registerResendProcessor } from './email';
 import { registerWebhookWorker } from './webhooks';
 
 // Worker entry (kynetic_worker). Feature milestones register their subscribers and webhook
