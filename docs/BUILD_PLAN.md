@@ -79,7 +79,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M0-01 | Create the repo app from the starter; remove Clerk, chat and demo pages | PRD F-52; ARCH Project structure; CS layout |  | App boots; no Clerk dependency; demo routes return 404; `npm run build` passes | S | Sonnet | no | 1 | todo | - |
+| M0-01 | Create the repo app from the starter; remove Clerk, chat and demo pages | PRD F-52; ARCH Project structure; CS layout |  | App boots; no Clerk dependency; demo routes return 404; `npm run build` passes | S | Sonnet | no | 1 | done | PR #45, branch: m0/app-from-starter |
 | M0-02 | CI and tooling: lint, typecheck, Vitest, Playwright scaffold, GitHub Actions; record the real commands in TESTING and CODE_STYLE | CS tooling; T commands | M0-01 | CI green on an empty change; commands documented (replaces "Not configured") | M | Sonnet | yes | 2 | todo | - |
 | M0-03 | Docker Compose (app, worker, postgres, caddy), Zod env validation, `/api/health` | ARCH Operations, Server and deployment setup; SEC 6.2 | M0-01 | `docker compose up` serves health; a missing env var stops boot | M | Sonnet | yes | 2 | todo | - |
 | M0-04 | Database roles, extensions, session-variable helper functions, `app_enable_tenant_rls` | DB RLS and privileges; SEC 2.3 | M0-03 | Roles exist; app role is not owner and has no BYPASSRLS; helpers return NULL when unset | M | Opus | no | 3 | todo | - |
