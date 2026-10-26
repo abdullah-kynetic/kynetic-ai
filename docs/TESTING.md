@@ -421,7 +421,7 @@ Regression policy: every important bug fix adds a regression test named with the
 | F-101 (M8b, platform) | Suspend a tenant | Its users cannot sign in; its jobs no-op | Integration | Not run |
 | F-102 (M0, platform) | User has not accepted the current version | Redirect to acceptance; accepted once, not asked again | E2E | Not run |
 | F-103 (M9, platform) | Owner downloads a document; another tenant's id | Signed URL; 404 | Integration | Not run |
-| F-98 (M0, platform) | Staff account without TOTP | Reaches only enrolment; sign-in with TOTP works; reset by another admin is audited | E2E | Not run |
+| F-98 (M0, platform) | Staff account without TOTP | Reaches only enrolment; sign-in with TOTP works; reset by another admin is audited | E2E | Integration pass (M0-12, `staff-two-factor.test.ts`); E2E not run |
 | F-85 (M0, crm) | Alex-only tenant opens Leads, Kanban, Appointments, Calls, Reports | All work; Companies, Tasks, Notes, Search, Export are absent and 403 | E2E | Not run |
 
 ---
