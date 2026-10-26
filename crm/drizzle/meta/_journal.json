@@ -54,12 +54,19 @@
     {
       "idx": 7,
       "version": "7",
+      "when": 1792978579647,
+      "tag": "0010_service_token_lookup",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
       "when": 1792979100000,
       "tag": "0013_staff_two_factor",
       "breakpoints": true
     },
     {
-      "idx": 8,
+      "idx": 9,
       "version": "7",
       "when": 1792979101000,
       "tag": "0015_auth_membership_resolution",
