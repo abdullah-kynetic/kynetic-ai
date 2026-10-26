@@ -61,6 +61,19 @@ export const adminNavGroups: NavGroup[] = [
         items: []
       }
     ]
+  },
+  {
+    label: 'Platform',
+    items: [
+      {
+        title: 'Audit log',
+        url: '/admin/audit',
+        icon: 'post',
+        isActive: false,
+        shortcut: ['a', 'l'],
+        items: []
+      }
+    ]
   }
 ];
 
