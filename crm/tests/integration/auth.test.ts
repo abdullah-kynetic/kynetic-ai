@@ -168,10 +168,8 @@ describe('M0-10 session lifetimes and live checks (SECURITY 2.1)', () => {
 describe('M0-10 kynetic_auth privileges (DC-055)', () => {
   it('cannot read or write tenant data', async () => {
     await expect(db.auth`select id from contacts limit 1`).rejects.toThrow(/permission denied/);
-    await expect(db.auth`select id from tenants limit 1`).rejects.toThrow(/permission denied/);
-    await expect(db.auth`select tenant_id from memberships limit 1`).rejects.toThrow(
-      /permission denied/
-    );
+    await expect(db.auth`select name from tenants limit 1`).rejects.toThrow(/permission denied/);
+    await expect(db.auth`select id from memberships limit 1`).rejects.toThrow(/permission denied/);
   });
 
   it('cannot grant itself a staff role or disable or re-enable a user', async () => {

@@ -117,6 +117,7 @@ Roles from spec section 2: Kynetic admin and Kynetic VA (`users.kynetic_role`), 
 | Billing, delete tenant, manage admin accounts | Yes | No | No | No |
 
 Implementation rules:
+0. The matrix is encoded in `src/server/auth/permissions.ts` (DC-056) and tested row by row in `tests/unit/auth/permissions.test.ts`.
 1. One `authorize(actor, action, resource)` function, called by every route handler, server action and job. No ad hoc role checks in components.
 2. Client DTOs are built from allowlists in the query layer, so fields clients must not see (`calls.cost_cents` in v1, provider IDs, raw prompt, anything from another tenant) are never fetched. Hiding them in the UI is not enough.
 3. A route that takes an `id` loads the row under the caller's tenant context. A foreign `id` returns `NOT_FOUND`, not `FORBIDDEN`, so existence is not leaked. This matches `docs/CODE_STYLE.md`.

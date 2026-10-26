@@ -4,6 +4,9 @@ import { getEnv } from '../env';
 import * as schema from '../db/schema';
 import { createAuth, type Auth } from './create-auth';
 import { sessionExpired } from './lifetimes';
+import { ForbiddenError } from './errors';
+import { can, type Action, type Actor, type KyneticRole } from './permissions';
+import type { AppRole, TenantContext } from '../tenancy/context';
 
 export { createAuth, type Auth, type AuthDeps } from './create-auth';
 export { evaluateGate } from './gate';
@@ -100,4 +103,33 @@ export async function requireUser(headers: Headers): Promise<AuthUser> {
   const user = await getSessionUser(headers);
   if (!user) throw new UnauthenticatedError();
   return user;
+}
+
+export { ForbiddenError } from './errors';
+export {
+  can,
+  MATRIX,
+  type Action,
+  type Actor,
+  type KyneticRole,
+  type TenantRole
+} from './permissions';
+export { resolveActor } from './actor';
+
+/** Throws ForbiddenError unless the actor may do `action` (in `tenantId`, when the action is tenant-scoped). */
+export function authorize(actor: Actor, action: Action, tenantId?: string): void {
+  if (!can(actor, action, tenantId)) throw new ForbiddenError();
+}
+
+/** For code that already holds a TenantContext: the context role must be one of `roles`. */
+export function requireRole(ctx: Pick<TenantContext, 'role'>, roles: readonly AppRole[]): void {
+  if (!roles.includes(ctx.role)) throw new ForbiddenError();
+}
+
+/** The caller must be Kynetic staff, and that specific role when one is named. */
+export function requireKynetic(
+  user: Pick<AuthUser, 'kyneticRole'>,
+  role?: KyneticRole
+): asserts user is { kyneticRole: KyneticRole } {
+  if (!user.kyneticRole || (role && user.kyneticRole !== role)) throw new ForbiddenError();
 }
