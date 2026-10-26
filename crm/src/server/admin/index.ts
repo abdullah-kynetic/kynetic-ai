@@ -15,3 +15,17 @@ export {
 export { INDUSTRY_TEMPLATES, type IndustryTemplateKey } from './industry-templates';
 export { buildChecklist, type ChecklistStep } from './onboarding-steps';
 export { setInviteMailer, getInviteMailer, type InviteMailer } from './invite-mailer';
+export {
+  changeMembershipRole,
+  changeStaffRole,
+  deactivateUser,
+  INVITE_TTL_MS,
+  inviteUser,
+  listTenantOptions,
+  listUsers,
+  reactivateUser,
+  resetClientUser,
+  type InviteDelivery,
+  type StaffCaller,
+  type UserRow
+} from './users';

@@ -206,7 +206,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | M8a-01 | Admin layout and navigation, all-clients entry point | PRD F-53 (shell); DS admin | M0-28 | Only Kynetic roles reach admin routes | S | Haiku | no | 12 | done | PR: https://github.com/abdullah-kynetic/kynetic-ai/pull/77; stacked on m0/gate (#72); DC-079; no migration |
 | M8a-02 | 30-second onboarding form: tenant, owner invite, modules, templates, branding | PRD F-55; SEC invites | M8a-01, M0-28 | Form creates tenant, invite and checklist in one action; invite email on approval | L | Sonnet | yes | 13 | done | [PR #93](https://github.com/abdullah-kynetic/kynetic-ai/pull/93) |
-| M8a-03 | User management across tenants: invite, deactivate, reset, roles | PRD F-61 | M8a-01 | Deactivated user loses all sessions | M | Sonnet | yes | 13 | todo | - |
+| M8a-03 | User management across tenants: invite, deactivate, reset, roles | PRD F-61 | M8a-01 | Deactivated user loses all sessions | M | Sonnet | yes | 13 | done | [#91](https://github.com/abdullah-kynetic/kynetic-ai/pull/91) |
 | M8a-04 | View as client with banner, read-only default, logged sessions | PRD F-57; SEC 2.6 | M8a-01 | Writes fail in read-only; every write stamps the impersonator | L | Opus | yes | 13 | todo | - |
 | M8a-05 | Audit log viewer with filters | PRD F-60 | M8a-01 | Filter by tenant, user, action; VA read per SEC 2.2 | M | Sonnet | yes | 13 | todo | - |
 | M8a-06 | Modules panel: toggle per tenant, CRM level, history | PRD F-70, F-85 | M8a-01 | Toggle audited; flag change takes effect on next request | M | Sonnet | yes | 13 | todo | - |
