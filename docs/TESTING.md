@@ -328,17 +328,19 @@ Cross-module rules to test (release-blocking, recommended option wherever marked
 
 No command has been run against this repo's CI in any source. Each line stays `Not configured` until M0 sets up CI and the command has run.
 
-- Lint: Not configured.
-- Typecheck: Not configured.
-- Unit tests (Vitest): Not configured.
-- Integration tests (Vitest against Postgres): Not configured.
-- End-to-end (Playwright): Not configured.
-- Build: Not configured.
+All run from `crm/` with bun (Node 22). Verified locally on 2026-10-26 (M0-02); CI workflow `.github/workflows/crm-ci.yml` runs them on every PR touching `crm/`.
+
+- Lint: `bun run lint` (oxlint).
+- Typecheck: `bun run typecheck`.
+- Format check: `bun run format:check` (oxfmt).
+- Unit tests (Vitest): `bun run test` (files in `crm/tests/unit/`).
+- Integration tests (Vitest against Postgres): `bun run test:integration` (files in `crm/tests/integration/`, config `vitest.integration.config.ts`; empty until M0-04). Needs `DATABASE_URL_TEST` once tests exist (Decided 2026-10-26).
+- End-to-end (Playwright): `bun run test:e2e` (builds first with `bun run build`; starts `bun run start`). Locally set `PLAYWRIGHT_CHROMIUM_PATH` if the Playwright browser is not installed.
+- Accessibility scan: `@axe-core/playwright` is installed; the first axe test arrives with the app shell (M0-23).
+- Build: `bun run build`.
 - Load test: Not configured.
 - Backup restore drill: Not configured.
-- Accessibility scan: Not configured.
 
-The starter (Kiranism next-shadcn-dashboard-starter) may ship scripts with similar names. They are not verified here, so they are not recorded as commands.
 
 ---
 

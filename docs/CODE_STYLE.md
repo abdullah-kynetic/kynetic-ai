@@ -23,7 +23,7 @@ Kynetic Client CRM & Portal. Applies to every coding session and every milestone
   - Database: tables plural `snake_case` (`deal_contacts`), columns `snake_case`, primary key `id`, tenant column always `tenant_id`, timestamps `*_at`, money `*_cents` (integer), durations `*_s`. Booleans read as predicates (`is_won`, `pinned`).
   - Module keys: `snake_case` strings from one TypeScript union, exactly as the PRD module catalog names them: `platform`, `alex_core`, `quote_followup`, `after_hours`, `missed_call_textback`, `reactivation`, `opm`, `followup_bundle`, `crm`. `crm` carries a level (`lite` or `full`) rather than separate keys. The union is exported from `src/server/modules/`; no string literals elsewhere.
   - Branches: `m<N>/<short-topic>`, e.g. `m2/kanban-board`. Decided 2026-10-25 (recommended option approved, not in sources).
-- **Formatting/linting:** Not configured. The starter is expected to ship ESLint and Prettier, but this is not verified. Decided 2026-10-25 (recommended option approved: M0 confirms the starter's configs, pins them, and records the real commands under Verified commands; do not add Biome or another tool without approval).
+- **Formatting/linting:** the starter ships oxlint and oxfmt (not ESLint/Prettier); M0-02 kept them. Decided 2026-10-25 (recommended option approved: M0 confirms the starter's configs, pins them, and records the real commands under Verified commands; do not add Biome or another tool without approval).
 - **Type safety**
   - `strict: true`. No `any`; use `unknown` and narrow with Zod. No `@ts-ignore`; `@ts-expect-error` only with a reason comment and an issue reference.
   - No non-null assertions (`!`) on external data.
@@ -174,12 +174,13 @@ There is no `src/lib/` and no `modules/<key>/` folder. Module code lives in the 
 
 ## Verified commands
 
-None of these has been run, because the application repo does not exist yet.
+Run from `crm/` with bun. Verified 2026-10-26 (M0-02).
 
-- Format: Not configured
-- Lint: Not configured
-- Type check: Not configured
-- Migrations: Not configured
+- Format: `bun run format` (write), `bun run format:check` (oxfmt)
+- Lint: `bun run lint` (oxlint)
+- Type check: `bun run typecheck`
+- All quick checks: `bun run check`
+- Migrations: Not configured (M0-04 onward)
 
 Test commands (Vitest, Playwright, load test, restore drill) are owned by `TESTING.md`, not this file. M0 replaces each line above with the real command after running it, and records the date it was verified.
 

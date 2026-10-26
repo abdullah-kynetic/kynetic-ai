@@ -43,3 +43,7 @@ next-env.d.ts
 .cursorrules
 /memory-bank
 
+
+# tests
+/test-results/
+/playwright-report/
