@@ -796,7 +796,7 @@ CREATE TABLE notifications (                                            -- F-35
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid NOT NULL REFERENCES tenants(id) ON DELETE RESTRICT,
   user_id uuid,                                                         -- NULL = every owner of the tenant
-  kind text NOT NULL CHECK (kind IN ('new_lead','booked','task_due','report_ready','action_needed','deal_won','hot_lead')),
+  kind text NOT NULL CHECK (kind IN ('new_lead','booked','task_due','report_ready','action_needed','deal_won','hot_lead','mention')),
   title text NOT NULL,
   body text,
   link text,
@@ -809,6 +809,7 @@ CREATE INDEX notifications_unread_idx ON notifications (tenant_id, user_id, crea
 
 Notes on this group:
 - `deal_won` and `hot_lead` are added to the spec's list of types because F-33 requires them as alerts. This needs confirmation.
+- `mention` is added (DC-114, migration 0053) so a note @mention can notify the teammate through `notify()` (F-22).
 - Module gating for automations is applied in the worker and API. When a module is turned off, its active runs move to `stopped_module_off`, not deleted (PRD F-70, module off: data retained).
 - `automation_templates.module_key` for `appointment_reminders` and `no_show_recovery` is `alex_core` (PRD decision 6).
 

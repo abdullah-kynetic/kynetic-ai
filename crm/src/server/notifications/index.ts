@@ -10,7 +10,8 @@ export const NOTIFICATION_TYPES = [
   'report_ready',
   'action_needed',
   'deal_won',
-  'hot_lead'
+  'hot_lead',
+  'mention'
 ] as const;
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
 
