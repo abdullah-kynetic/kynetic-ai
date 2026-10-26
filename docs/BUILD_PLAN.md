@@ -204,7 +204,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M8a-01 | Admin layout and navigation, all-clients entry point | PRD F-53 (shell); DS admin | M0-28 | Only Kynetic roles reach admin routes | S | Haiku | no | 12 | todo | - |
+| M8a-01 | Admin layout and navigation, all-clients entry point | PRD F-53 (shell); DS admin | M0-28 | Only Kynetic roles reach admin routes | S | Haiku | no | 12 | done | PR: (see below); stacked on m0/gate (#72); DC-079; no migration |
 | M8a-02 | 30-second onboarding form: tenant, owner invite, modules, templates, branding | PRD F-55; SEC invites | M8a-01, M0-28 | Form creates tenant, invite and checklist in one action; invite email on approval | L | Sonnet | yes | 13 | todo | - |
 | M8a-03 | User management across tenants: invite, deactivate, reset, roles | PRD F-61 | M8a-01 | Deactivated user loses all sessions | M | Sonnet | yes | 13 | todo | - |
 | M8a-04 | View as client with banner, read-only default, logged sessions | PRD F-57; SEC 2.6 | M8a-01 | Writes fail in read-only; every write stamps the impersonator | L | Opus | yes | 13 | todo | - |
