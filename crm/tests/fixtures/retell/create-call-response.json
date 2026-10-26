@@ -1,0 +1,9 @@
+{
+  "call_id": "conv_01test",
+  "call_type": "phone_call",
+  "call_status": "registered",
+  "agent_id": "agent_test",
+  "direction": "outbound",
+  "from_number": "+15555550100",
+  "to_number": "+15555550101"
+}
