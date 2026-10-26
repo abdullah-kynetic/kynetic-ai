@@ -1,4 +1,5 @@
 import { and, count, eq, gte, isNull } from 'drizzle-orm';
+import { STATE_RULES } from '../compliance';
 import { canContact } from '../consent';
 import type { Tx } from '../db/client';
 import {
@@ -48,7 +49,7 @@ export async function checkOutbound(
     return canContact(ctx, req.contactId, req.channel, now, {
       tx,
       purpose: req.purpose,
-      stateWindows: opts.stateWindows
+      stateWindows: opts.stateWindows ?? STATE_RULES.quietWindows
     });
   };
   return opts.tx ? body(opts.tx) : withTenant(ctx, body, { db: opts.db });

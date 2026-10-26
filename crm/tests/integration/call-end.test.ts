@@ -352,3 +352,71 @@ describe('M4-05 recording access', () => {
     });
   });
 });
+
+describe('M4-07 disclosure check at call end (F-75)', () => {
+  const TEXT = 'This call may be recorded for quality and training.';
+
+  async function end(over: Record<string, unknown>) {
+    const provider = setup();
+    const ev = event(over);
+    await post(provider, ev);
+    await run(ev.externalId);
+    return (await callsFor(ev.providerCallId))[0]!;
+  }
+
+  beforeEach(async () => {
+    await db.admin`update tenants set recording_disclosure = ${TEXT} where id = ${IDS.tenantA}`;
+  });
+  afterAll(async () => {
+    await db.admin`update tenants set recording_disclosure = null where id = ${IDS.tenantA}`;
+  });
+
+  it('marks the disclosure given when the words are in the transcript', async () => {
+    const call = await end({
+      transcript: 'Alex: Hi, this CALL may be recorded for quality and training!\nLead: Fine.'
+    });
+    expect(call).toMatchObject({ disclosure_given: true, flagged: false });
+    expect(call.disclosure_version).toMatch(/^sha256:[0-9a-f]{12}$/);
+  });
+
+  it('flags a conversation whose transcript lacks the disclosure', async () => {
+    const call = await end({ transcript: 'Alex: Hi\nLead: Yes' });
+    expect(call).toMatchObject({ disclosure_given: false, flagged: true });
+    expect(call.flagged_at).not.toBeNull();
+    expect(call.flag_note).toBe('Recording disclosure not found in the transcript');
+  });
+
+  it('does not check a call nobody answered', async () => {
+    const call = await end({ outcome: 'no_answer', durationS: 0, transcript: '' });
+    expect(call).toMatchObject({ disclosure_given: false, flagged: false });
+  });
+
+  it('does not check when the tenant has no disclosure text', async () => {
+    await db.admin`update tenants set recording_disclosure = null where id = ${IDS.tenantA}`;
+    const call = await end({ transcript: 'Alex: Hi' });
+    expect(call).toMatchObject({ disclosure_given: false, flagged: false });
+  });
+
+  it('keeps a two-party flag set at dial time and does not overwrite its note', async () => {
+    const provider = setup();
+    const ev = event({ transcript: 'Alex: Hi' });
+    await db.admin`insert into calls (tenant_id, contact_id, provider, provider_call_id, direction, started_at, disclosure_version, flagged, flagged_at, flag_note)
+      values (${IDS.tenantA}, ${a.contactId}, 'elevenlabs', ${ev.providerCallId}, 'outbound', now(), 'sha256:000000000000', true, now(), 'Two-party recording state CA')`;
+    await post(provider, ev);
+    await run(ev.externalId);
+    const [call] = await callsFor(ev.providerCallId);
+    expect(call).toMatchObject({ flagged: true, flag_note: 'Two-party recording state CA' });
+  });
+
+  it('flags a call whose disclosure text changed since it was placed', async () => {
+    const provider = setup();
+    const ev = event({ transcript: `Alex: ${TEXT}` });
+    await db.admin`insert into calls (tenant_id, contact_id, provider, provider_call_id, direction, started_at, disclosure_version)
+      values (${IDS.tenantA}, ${a.contactId}, 'elevenlabs', ${ev.providerCallId}, 'outbound', now(), 'sha256:000000000000')`;
+    await post(provider, ev);
+    await run(ev.externalId);
+    const [call] = await callsFor(ev.providerCallId);
+    expect(call).toMatchObject({ disclosure_given: false, flagged: true });
+    expect(call.flag_note).toContain('changed since this call was placed');
+  });
+});
