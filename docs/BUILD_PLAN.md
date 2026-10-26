@@ -106,7 +106,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M0-25 | Terms and Privacy acceptance page | PRD F-102; DB terms_acceptances | M0-10, M0-24 | Unaccepted user redirected; accepted once, not asked again | S | Haiku | yes | 10 | done | PR #71, branch: claude/project-thread-zoyqu2 (stacked on PR #70) |
 | M0-26 | Seed data: module catalog and prices, automation templates, two synthetic demo tenants | DB Migrations and seed data | M0-07 | Seed is idempotent; demo data is synthetic (555-01xx numbers) | S | Sonnet | yes | 6 | done | PR #61, branch: claude/project-thread-enu0nh (stacked on m0/rollups, PR #54) |
 | M0-27 | Preview environment pipeline: per branch, own database, synthetic seed only | ARCH Operations | M0-02, M0-03, M0-26 | Preview deploys with no real data; torn down on merge | M | Sonnet | yes | 7 | done | PR #65, branch: m0/preview-env (stacked on PR #61 / M0-26). Not deployed: needs the Cloudflare move, server setup and PREVIEW_ENABLED (crm/deploy/preview/README.md). `docker compose up` not run (no daemon) |
-| M0-28 | M0 gate: run all M0 acceptance tests, update TESTING statuses, confirm docs match, record resume notes | AGENTS; T | M0-01..M0-27 | All M0 rows pass in CI; PR ready for review | S | Sonnet | no | 11 | todo | - |
+| M0-28 | M0 gate: run all M0 acceptance tests, update TESTING statuses, confirm docs match, record resume notes | AGENTS; T | M0-01..M0-27 | All M0 rows pass in CI; PR ready for review | S | Sonnet | no | 11 | done | branch: m0/gate (combines PRs #47–#71; see resume notes in the PR) |
 
 ## M1 Leads and contacts (base portal) plus companies (Lite) and custom fields and bulk actions (Full)
 
@@ -276,3 +276,14 @@ These come from `docs/DECISIONS.md` (Still UNRESOLVED and approved gap-check ite
 - Counsel answers gate the state rule table and consent wording (M4-07). Build to the decided defaults with the table as versioned config.
 - ElevenLabs paid plan and phone import gate real calls (M4-01 live check, M10-08), not the adapter.
 - F-97 connectors and OPM vendors are not planned until chosen.
+
+## M0 gate resume notes (2026-10-26)
+
+Branch `m0/gate` combines every M0 PR (#47 to #71) and is the base to build M1 on until the stack is merged. Combined results: 105 unit, 244 integration, 15 Playwright E2E, `bun run check`, `bun run build` all pass.
+
+- **Merge order.** The M0 PRs are stacked and share files. Merge them in task order; expect conflicts in `crm/drizzle/meta/_journal.json` (keep every entry, sort by tag, renumber `idx`, keep `when` increasing), `docs/DECISIONS.md` and `docs/BUILD_PLAN.md` (keep both sides). Merging `m0/gate` itself avoids this.
+- **Migration numbers** used: 0000 to 0006, 0010, 0012, 0013, 0014, 0015. 0007 to 0009 and 0011 were reserved and not needed. Gaps are harmless. Next free: 0016.
+- **DC numbers** used: DC-055 to DC-060, DC-062, DC-064, DC-066 to DC-069. DC-061, DC-063 and DC-065 were not used. Next free: DC-070.
+- **Not verified anywhere:** `docker compose up`, live Google OAuth, real email delivery (call `setMagicLinkSender` with the M0-19 adapter at boot), the worker container under compose, pg-boss behind PgBouncer, and signed-in E2E (no sign-in fixture yet, so the signed-in redirect, `/accept-terms` axe check and signed-in shell axe check are untested).
+- **Open follow-ups:** call `audit()` for M0-22 secret writes and the M0-16 manual consent entry; M0-16 uses channel `phone_call` where SECURITY.md says "voice" (DC-062); M0-25 copy is placeholder text.
+- **Needs from Abdullah before live use:** `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`, and an email provider key.

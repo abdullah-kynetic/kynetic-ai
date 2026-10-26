@@ -4,7 +4,7 @@ Kynetic Client CRM & Portal. Target path in the build repo: `docs/TESTING.md`.
 
 Source order: `DECISIONS_locked.md` (Oct 25, 2026) wins over `SPEC_client_crm_portal.md`. `PRD.md` supplies the F-IDs (F-01 to F-106) and the milestone and module tags. Anything in none of these is marked `Decided 2026-10-25 (recommended option: ...)` or, if it needs outside information, `UNRESOLVED`. Commands not verified in a running repo are marked `Not configured`.
 
-Status of this document: draft. No test has been executed. Every row in the acceptance matrix is `Not run`.
+Status of this document: draft. The M0 gate (M0-28, 2026-10-26) ran the M0 suites on branch `m0/gate`: 105 unit, 244 integration, 15 Playwright E2E, `bun run check` and `bun run build` all pass. Matrix rows that an M0 test covers are marked `Pass`; every other row is still `Not run`. Not exercised anywhere yet: live Google sign-in, real email delivery, `docker compose up`, and signed-in E2E (no sign-in fixture).
 
 ---
 
@@ -90,12 +90,12 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | Feature/risk | Scenario | Expected result | Layer | Status |
 | --- | --- | --- | --- | --- |
 | F-72 (M0, platform) | Tenant A user reads tenant B contact by ID through the API | 404 or empty result; no tenant B data in any response | Integration | Not run |
-| F-72 (M0, platform) | Same read run as the app role in SQL with `app.tenant_id` set to tenant A | Zero rows for tenant B | Integration | Not run |
+| F-72 (M0, platform) | Same read run as the app role in SQL with `app.tenant_id` set to tenant A | Zero rows for tenant B | Integration | Pass (2026-10-26, m0/gate) |
 | F-71 (M0, platform) | Login with Google as a user with a membership | Lands in own tenant | E2E | Not run |
-| F-71 (M0, platform) | Login with Google as a user with no membership | Access refused; no session with tenant | Integration | Not run |
+| F-71 (M0, platform) | Login with Google as a user with no membership | Access refused; no session with tenant | Integration | Pass (2026-10-26, m0/gate) |
 | F-71 (M0, platform) | Static search for Clerk imports, packages and env vars | None remain | Unit (static) | Not run |
-| F-74 (M0 consent service; M4 enforces, platform) | `canContact` with no consent row, then with a revoked consent | Returns false both times; `recordConsent` and `revokeConsent` write rows | Unit | Not run |
-| notify() (M0, platform) | `notify` writes a `notifications` row for the target user only | Other users cannot read it | Integration | Not run |
+| F-74 (M0 consent service; M4 enforces, platform) | `canContact` with no consent row, then with a revoked consent | Returns false both times; `recordConsent` and `revokeConsent` write rows | Unit | Pass (2026-10-26, m0/gate) |
+| notify() (M0, platform) | `notify` writes a `notifications` row for the target user only | Other users cannot read it | Integration | Pass (2026-10-26, m0/gate) |
 | F-20 and F-22 notification path (M0 `notify`, M3, crm) | Overdue task and @mention each notify the right user | One row per recipient; delivered through `notify` | Integration | Not run |
 | M0 CI and preview (platform) | Preview deploys from CI; shell and empty states render with no seed data and no console errors | Preview URL serves the shell | E2E | Not run |
 | F-07 (M1, crm) | Create a contact with a phone already on contact P | Duplicate warning shows and offers merge | E2E | Not run |

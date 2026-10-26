@@ -12,6 +12,7 @@ function user(over: Partial<AuthUser> = {}): AuthUser {
     email: 'a@b.test',
     name: 'Ana',
     kyneticRole: null,
+    twoFactor: 'not_required',
     ...over
   };
 }

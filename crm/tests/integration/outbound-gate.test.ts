@@ -105,6 +105,7 @@ describe('OutboundGate', () => {
     Object.assign(process.env, {
       APP_BASE_URL: 'http://localhost:3000',
       DATABASE_URL: 'postgres://x',
+      DATABASE_URL_AUTH: 'postgres://x',
       BETTER_AUTH_SECRET: 'x'.repeat(32),
       APP_ENCRYPTION_KEY: 'y'.repeat(32)
     });
