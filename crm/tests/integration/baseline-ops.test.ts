@@ -17,7 +17,9 @@ const EXTRA_TABLES = [
   // Better-Auth tables (M0-10); global, no tenant_id.
   'sessions',
   'accounts',
-  'verifications'
+  'verifications',
+  // Rate limiter counters (M0-21); global, no tenant_id.
+  'rate_limits'
 ];
 
 function entitiesFromDoc(): string[] {
