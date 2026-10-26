@@ -5,6 +5,7 @@ import { ModulesProvider } from '@/components/modules/module-gate';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { adminNavGroups } from '@/config/nav-config';
 import { decideAdminAccess } from '@/server/admin';
+import { resolveViewAs, VIEW_AS_COOKIE } from '@/server/impersonation';
 import { roleLabel } from '@/server/shell';
 import { pendingDocuments } from '@/server/terms';
 import type { Metadata } from 'next';
@@ -29,6 +30,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (access.kind === 'forbidden') forbidden();
   if (access.kind !== 'ok') return null;
   if ((await pendingDocuments(access.user.id)).length > 0) redirect('/accept-terms');
+  // Impersonation cannot reach the admin side (SECURITY 2.6): exit first.
+  const viewAs = await resolveViewAs({
+    user: access.user,
+    cookie: cookieStore.get(VIEW_AS_COOKIE)?.value,
+    touch: false
+  });
+  if (viewAs.kind === 'active') redirect('/dashboard');
 
   const defaultOpen = cookieStore.get('sidebar_state')?.value !== 'false';
   const { user, role } = access;
