@@ -1084,6 +1084,8 @@ SECURITY DEFINER functions (owned by `kynetic_rollup`, `SET search_path = public
 
 Implemented in migration 0005 (M0-09, DC-054). Signatures: `create_tenant(slug, name, plan, timezone, owner_email, invite_token_hash, invite_expires_at) returns uuid`; `set_tenant_module(tenant, module, enabled, level default '')`; `admin_update_tenant_commercial(tenant, patch jsonb)` with an allowlist of fields; `admin_set_kynetic_role(user, role or null)`; `admin_tenant_overview()`; `audit_search(tenant, actor, action, from, to, limit)`. `admin_tenant_overview` and `audit_search` allow admin and VA (SECURITY 2.2: VA reads); the others are admin only. Only `kynetic_app` may execute them.
 
+Migration 0010 (M0-20, DC-055) adds `service_token_lookup(prefix)` and `service_token_touch(id)`, owned by `kynetic_rollup`, executable by `kynetic_app` and `kynetic_worker`. They exist because a bearer request has no tenant context yet. They take no tenant argument and cannot list tokens.
+
 Functions that aggregate across tenants must never take a tenant id the caller could not otherwise see: they check the role, then compute.
 
 Audit immutability and grants:

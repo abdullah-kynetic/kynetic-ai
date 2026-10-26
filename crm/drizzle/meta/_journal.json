@@ -43,6 +43,13 @@
       "when": 1792978353543,
       "tag": "0005_rollup_functions",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792978354543,
+      "tag": "0010_service_token_lookup",
+      "breakpoints": true
     }
   ]
 }
