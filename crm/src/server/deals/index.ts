@@ -24,6 +24,8 @@ export {
   updateStage,
   type StageRow
 } from './stages';
+export { getBoardView, type BoardView } from './board';
+export { dealsScope, stageScope } from './scope';
 export { DEAL_ROLES } from './schemas';
 export type {
   BoardFilters,
@@ -46,4 +48,3 @@ export {
   updateDeal,
   type Deal
 } from './service';
-export { stageScope } from './scope';
