@@ -30,6 +30,23 @@ export const navGroups: NavGroup[] = [
         level: 'lite',
         access: { role: 'owner' },
         items: []
+      },
+      {
+        title: 'Tags',
+        url: '/dashboard/settings/tags',
+        icon: 'settings',
+        isActive: false,
+        module: 'crm',
+        level: 'lite',
+        access: { role: 'owner' },
+        items: []
+      },
+      {
+        title: 'Notification preferences',
+        url: '/dashboard/settings/notifications',
+        icon: 'settings',
+        isActive: false,
+        items: []
       }
     ]
   }
