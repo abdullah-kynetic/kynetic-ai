@@ -935,7 +935,7 @@ CREATE TABLE tenant_documents (                                          -- F-10
 CREATE INDEX tenant_documents_idx ON tenant_documents (tenant_id, created_at DESC);
 ```
 
-Access: `tenant_billing` and `tenant_billing_modules` have the standard RLS enabled but no policy for owner or staff roles in application code; only admin routes read them, through `withTenant` while viewing a tenant as admin, and the audit trigger records every write. `onboarding_steps` rows are readable by owners only where `client_visible`. `tenant_documents` is readable by owners and written by admins. `terms_acceptances` is a global table: users read and insert their own rows.
+Access: `tenant_billing` and `tenant_billing_modules` have RLS enabled and forced with one admin-only SELECT policy (`app_role() = 'admin'`, migration 0047) and no write grant for the app roles; writes go through `set_tenant_module()`, `admin_snapshot_module_price()` and `admin_set_tenant_billing()`; only admin routes read them, through `withTenant` while viewing a tenant as admin, and the audit trigger records every write. `onboarding_steps` rows are readable by owners only where `client_visible`. `tenant_documents` is readable by owners and written by admins. `terms_acceptances` is a global table: users read and insert their own rows.
 
 ### Not in the baseline schema (decided by the PRD decisions log)
 
