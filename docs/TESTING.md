@@ -181,8 +181,8 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-30 (M4, platform) | Failed SMS callback (fake) | Error text shows; counted in integration health | Integration | Not run |
 | F-31 (M7, per template) | `quote_followup` module off | Template hidden; API refuses enablement | Integration | Not run |
 | F-31 (M7, per template) | Module on; deal enters Quoted | Step 1 scheduled | Integration | Not run |
-| F-35 (M7, platform) | New lead | Bell count +1; email sent per preference; open marks read | E2E | Not run |
-| F-35 (M7, platform) | User A requests notifications of user B | Refused | Integration | Not run |
+| F-35 (M7, platform) | New lead | Bell count +1; email sent per preference; open marks read | E2E | Integration pass (2026-10-26, M7-04); signed-in E2E Not run (no sign-in fixture) |
+| F-35 (M7, platform) | User A requests notifications of user B | Refused | Integration | Pass (2026-10-26, M7-04) |
 | F-37 (M9, crm) | Phone fragment on 10,000-contact seeded tenant | Matching contact returned; p95 under 500 ms (decided, recommended option) | Integration | Not run |
 | F-37 (M9, crm) | Tenant A searches for tenant B's record | Zero results | Integration | Not run |
 | F-38 (M9, crm) | Staff without export permission | Export hidden; server refuses | Integration | Not run |

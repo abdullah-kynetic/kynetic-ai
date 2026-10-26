@@ -190,7 +190,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M7-01 | Automation templates, toggles per tenant and settings UI | PRD F-31 | M4-14, M2-06 | Template on creates runs; off cancels pending runs | M | Sonnet | no | 16 | todo | - |
 | M7-02 | Sequence engine: steps, delays, stop on reply or booking; `enrollInSequence` | PRD F-32; ARCH 2 | M7-01 | Reply stops the sequence; every send goes through `OutboundGate` | L | Opus | no | 17 | todo | - |
 | M7-03 | Stage-move rules and alerts (deal won email, hot-lead SMS to owner) | PRD F-33 | M7-01 | Booked call moves the deal; alert sent once | M | Sonnet | yes | 17 | todo | - |
-| M7-04 | Notifications UI: bell, popover, full page with tabs, email delivery | PRD F-35; DS notifications | M0-28 | Unread count correct; email sent through the adapter | M | Sonnet | yes | 12 | todo | - |
+| M7-04 | Notifications UI: bell, popover, full page with tabs, email delivery | PRD F-35; DS notifications | M0-28 | Unread count correct; email sent through the adapter | M | Sonnet | yes | 12 | done | PR #83 (https://github.com/abdullah-kynetic/kynetic-ai/pull/83), stacked on #72; DC-078; no migration |
 | M7-05 | `quote_followup` module | PRD F-79 | M7-02 | Deal entering Quoted starts the sequence; module off no-ops | M | Sonnet | yes | 18 | todo | - |
 | M7-06 | `after_hours` module | PRD F-80 | M7-02, M4-14 | Inbound outside hours creates contact, logs call, notifies staff | M | Sonnet | yes | 18 | todo | - |
 | M7-07 | `missed_call_textback` module | PRD F-81 | M7-02, M4-08 | One text to a consented or permitted caller; none otherwise | M | Sonnet | yes | 18 | todo | - |
