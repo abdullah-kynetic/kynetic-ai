@@ -4,6 +4,7 @@ import Header from '@/components/layout/header';
 import { ModulesProvider } from '@/components/modules/module-gate';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { loadShellContext, roleLabel } from '@/server/shell';
+import { pendingDocuments } from '@/server/terms';
 import type { Metadata } from 'next';
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -20,6 +21,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const [cookieStore, requestHeaders] = await Promise.all([cookies(), headers()]);
   const shell = await loadShellContext(requestHeaders, cookieStore.get('tenant_id')?.value);
   if (!shell) redirect('/sign-in');
+  // F-102: nothing in the portal until the current Terms and Privacy Policy are accepted.
+  if ((await pendingDocuments(shell.user.id)).length > 0) redirect('/accept-terms');
 
   const defaultOpen = cookieStore.get('sidebar_state')?.value !== 'false';
   return (

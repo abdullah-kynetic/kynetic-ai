@@ -105,3 +105,8 @@ test('M0-24: focus ring shows on keyboard focus and Esc closes the dialog', asyn
     .evaluate((el) => getComputedStyle(el).boxShadow);
   expect(ring).not.toBe('none');
 });
+
+test('F-102: the acceptance page is not reachable signed out', async ({ page }) => {
+  await page.goto('/accept-terms');
+  await expect(page).toHaveURL(/\/sign-in$/);
+});

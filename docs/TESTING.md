@@ -419,7 +419,7 @@ Regression policy: every important bug fix adds a regression test named with the
 | F-101 (M8b, platform) | Kill switch on, a call job runs | No call or text sent; job waits; resumes after off | Integration | Not run |
 | F-101 (M8b, platform) | Replay a failed webhook twice | Processed once | Integration | Not run |
 | F-101 (M8b, platform) | Suspend a tenant | Its users cannot sign in; its jobs no-op | Integration | Not run |
-| F-102 (M0, platform) | User has not accepted the current version | Redirect to acceptance; accepted once, not asked again | E2E | Not run |
+| F-102 (M0, platform) | User has not accepted the current version | Redirect to acceptance; accepted once, not asked again | E2E | Partly run: integration covers pending, accept, not asked again, new version, RLS (`tests/integration/terms.test.ts`); E2E covers the signed-out redirect only. The signed-in redirect needs an E2E sign-in fixture, not built yet |
 | F-103 (M9, platform) | Owner downloads a document; another tenant's id | Signed URL; 404 | Integration | Not run |
 | F-98 (M0, platform) | Staff account without TOTP | Reaches only enrolment; sign-in with TOTP works; reset by another admin is audited | E2E | Not run |
 | F-85 (M0, crm) | Alex-only tenant opens Leads, Kanban, Appointments, Calls, Reports | All work; Companies, Tasks, Notes, Search, Export are absent and 403 | E2E | Not run |
