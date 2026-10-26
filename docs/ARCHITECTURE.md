@@ -169,7 +169,7 @@ Server rules:
 - Turning a module off cancels its pending `automation_runs` (M7 handles `module.disabled`). Turning it on emits `module.enabled` and does not backfill.
 - Gating is in the application layer. Data stays in the tenant and is hidden, not deleted (PRD F-70).
 
-Client rules: the layout loads `listEnabledModules(ctx)` once. Nav entries and dashboard cards declare `module?: ModuleKey`, and `<ModuleGate module="...">` renders nothing when off. Stat cards that depend on a module hide rather than show zeros. The server check is the real gate.
+Client rules (implemented in M0-13: `src/components/modules/module-gate.tsx`, `src/config/nav-registry.ts`; layout wiring lands with M0-23): the layout loads `listEnabledModules(ctx)` once. Nav entries and dashboard cards declare `module?: ModuleKey`, and `<ModuleGate module="...">` renders nothing when off. Stat cards that depend on a module hide rather than show zeros. The server check is the real gate.
 
 Core versus gated, as decided in PRD decision 1: `platform` is always on. The base portal (leads, pipeline kanban with default stages, appointments, call logs, messages log, reports, notifications, settings) belongs to `platform` and `alex_core` and needs no `crm` flag. `crm` is a paid upsell whose level controls Lite versus Full (PRD F-85, decision 1): Lite adds companies, tasks, rich notes, configurable stages and settings pages; Full adds custom fields, bulk actions, multi-contact deals, search, export and sequence enrollment. M0 builds the base portal and the module mechanism so Lite and Full ship gated. `alex_core` gates calls, call logs, the booking tool and Alex settings.
 

@@ -1,16 +1,23 @@
 'use client';
 
 import { useMemo } from 'react';
+import { visibleNavGroups } from '@/config/nav-registry';
+import { useModules } from '@/components/modules/module-gate';
 import type { NavGroup, NavItem } from '@/types';
 
 /**
- * Returns nav items for the shell. Role and module filtering is added by
- * M0-11 and M0-13; until then nothing is filtered.
+ * Returns nav items for the shell, filtered by the tenant's modules (M0-13). Role filtering joins in
+ * with the first role-specific entries; the server still decides access on every route.
  */
 export function useFilteredNavItems(items: NavItem[]) {
-  return useMemo(() => items, [items]);
+  const modules = useModules();
+  return useMemo(
+    () => visibleNavGroups([{ label: '', items }], modules)[0]?.items ?? [],
+    [items, modules]
+  );
 }
 
 export function useFilteredNavGroups(groups: NavGroup[]) {
-  return useMemo(() => groups, [groups]);
+  const modules = useModules();
+  return useMemo(() => visibleNavGroups(groups, modules), [groups, modules]);
 }

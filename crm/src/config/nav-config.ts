@@ -1,8 +1,8 @@
 import { NavGroup } from '@/types';
 
 /**
- * Sidebar and Cmd+K navigation. M0-13 replaces this with the module-aware
- * nav registry; until then the shell has one placeholder entry.
+ * Sidebar and Cmd+K navigation registry. Entries that belong to a module declare `module` (and `level`
+ * for crm); `visibleNavGroups` filters them per tenant. Feature tasks add their entries here.
  */
 export const navGroups: NavGroup[] = [
   {

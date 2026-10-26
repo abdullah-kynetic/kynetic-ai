@@ -1,4 +1,5 @@
 import { Icons } from '@/components/icons';
+import type { CrmLevel, ModuleKey } from '@/server/modules/keys';
 
 export interface PermissionCheck {
   permission?: string;
@@ -20,6 +21,10 @@ export interface NavItem {
   isActive?: boolean;
   items?: NavItem[];
   access?: PermissionCheck;
+  /** Module that must be on for this entry to show (PRD F-70). Omit for base-portal entries. */
+  module?: ModuleKey;
+  /** For `crm` entries: `full` hides the entry from Lite tenants. */
+  level?: CrmLevel;
 }
 
 export interface NavGroup {
