@@ -155,7 +155,8 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-02 (M6, alex_core) | Activity created | Appears in feed within one refresh | E2E | Not run |
 | F-03 (M6, alex_core) | Target N bookings, start date set | Progress shows booked/N and days remaining | Unit | Not run |
 | F-03 (M6, alex_core) | No target set | Tracker hidden; admin sees prompt to set one | E2E | Not run |
-| F-05 (M1, crm) | 1,000 contacts; filter by status and source | Only matches show; pasted URL reproduces view | E2E | Not run |
+| F-05 (M1, crm) | 1,000 contacts; filter by status and source | Only matches show; pasted URL reproduces view | E2E | Partly run (2026-10-26, M1-02): integration covers the filters (`tests/integration/contacts-list.test.ts`), unit covers URL parsing (`tests/unit/contacts-list-params.test.ts`), and a hand-run Playwright check against a seeded session confirmed filters, search, sort, hidden columns and paging survive reload and a pasted URL, with cards and no horizontal scroll at 390px. The automated E2E needs the signed-in fixture, not built yet |
+| F-05 (M1, platform) | 10,000 contacts; every list shape the page issues | p95 under 500 ms | Integration | Pass (2026-10-26, M1-02): p95 66 ms locally |
 | F-05 (M1, crm) | Staff user lists contacts | Only own tenant's rows | Integration | Pass (2026-10-26, M1-01) |
 | F-06 (M1, crm) | Contact with a deal, a call and a note | All sections render; consent status matches latest `consents` row | E2E | Not run |
 | F-07 (M1, crm) | Two contacts share an email | Duplicate detection on email as well as phone | Integration | Pass (2026-10-26, M1-01) |
