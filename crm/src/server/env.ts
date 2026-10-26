@@ -17,16 +17,21 @@ export const envSchema = z.object({
   // Key rotation (SECURITY 4.2): bump the version with a new key and list old ones as "v:key,...".
   APP_ENCRYPTION_KEY_VERSION: z.coerce.number().int().min(1).default(1),
   APP_ENCRYPTION_KEYS_RETIRED: z.string().optional(),
-  OUTBOUND_ENABLED: booleanString.default(false)
+  OUTBOUND_ENABLED: booleanString.default(false),
+  // Twilio (M4-08). Optional so preview and tests run on the fake; the real provider needs both.
+  TWILIO_ACCOUNT_SID: z.string().min(1).optional(),
+  TWILIO_AUTH_TOKEN: z.string().min(1).optional()
 });
 
-export const refinedEnvSchema = envSchema.refine(
-  (e) => Boolean(e.GOOGLE_CLIENT_ID) === Boolean(e.GOOGLE_CLIENT_SECRET),
-  {
+export const refinedEnvSchema = envSchema
+  .refine((e) => Boolean(e.GOOGLE_CLIENT_ID) === Boolean(e.GOOGLE_CLIENT_SECRET), {
     message: 'GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must be set together',
     path: ['GOOGLE_CLIENT_ID']
-  }
-);
+  })
+  .refine((e) => Boolean(e.TWILIO_ACCOUNT_SID) === Boolean(e.TWILIO_AUTH_TOKEN), {
+    message: 'TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN must be set together',
+    path: ['TWILIO_ACCOUNT_SID']
+  });
 
 export type Env = z.infer<typeof envSchema>;
 
