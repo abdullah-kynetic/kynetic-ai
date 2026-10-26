@@ -68,7 +68,14 @@
     {
       "idx": 9,
       "version": "7",
-      "when": 1792979101000,
+      "when": 1792980000000,
+      "tag": "0014_rate_limits",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1792980001000,
       "tag": "0015_auth_membership_resolution",
       "breakpoints": true
     }

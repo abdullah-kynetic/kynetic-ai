@@ -19,7 +19,9 @@ const EXTRA_TABLES = [
   'accounts',
   'verifications',
   // Staff TOTP (M0-12); global, auth role only.
-  'two_factors'
+  'two_factors',
+  // Rate limiter counters (M0-21); global, no tenant_id.
+  'rate_limits'
 ];
 
 function entitiesFromDoc(): string[] {

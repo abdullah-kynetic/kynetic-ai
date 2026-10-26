@@ -3,6 +3,7 @@ import {
   index,
   integer,
   pgTable,
+  primaryKey,
   text,
   timestamp,
   unique,
@@ -85,3 +86,19 @@ export const twoFactors = pgTable('two_factors', {
   failedVerificationCount: integer('failed_verification_count').default(0).notNull(),
   lockedUntil: ts('locked_until')
 });
+
+// Fixed-window counters for the Postgres rate limiter (M0-21, SECURITY 5.4). Global, no tenant_id.
+// `key` is a rule name plus a hash of the subject, so no IP or email is stored.
+export const rateLimits = pgTable(
+  'rate_limits',
+  {
+    key: text().notNull(),
+    windowStart: ts('window_start').notNull(),
+    count: integer().notNull().default(0),
+    expiresAt: ts('expires_at').notNull()
+  },
+  (t) => [
+    primaryKey({ columns: [t.key, t.windowStart] }),
+    index('rate_limits_expires_idx').on(t.expiresAt)
+  ]
+);

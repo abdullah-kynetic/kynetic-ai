@@ -110,3 +110,26 @@ test('F-102: the acceptance page is not reachable signed out', async ({ page }) 
   await page.goto('/accept-terms');
   await expect(page).toHaveURL(/\/sign-in$/);
 });
+
+test('M0-21: security headers are set and the CSP blocks nothing the sign-in page needs', async ({
+  page
+}) => {
+  const violations: string[] = [];
+  page.on('console', (m) => {
+    if (/content security policy/i.test(m.text())) violations.push(m.text());
+  });
+  const res = await page.goto('/sign-in');
+  const h = res!.headers();
+  expect(h['content-security-policy']).toMatch(/script-src [^;]*'nonce-[^']+'/);
+  expect(h['content-security-policy']).toContain("frame-ancestors 'none'");
+  expect(h['strict-transport-security']).toContain('max-age=');
+  expect(h['x-content-type-options']).toBe('nosniff');
+  await expect(page.getByRole('heading', { level: 1, name: 'Sign in' })).toBeVisible();
+  expect(violations).toEqual([]);
+});
+
+test('M0-21: a state-changing request without Origin is refused', async ({ request }) => {
+  const res = await request.post('/api/health');
+  expect(res.status()).toBe(403);
+  expect((await res.json()).error.code).toBe('FORBIDDEN');
+});

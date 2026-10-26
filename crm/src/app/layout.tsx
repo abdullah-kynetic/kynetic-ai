@@ -4,6 +4,7 @@ import { fontVariables } from '@/components/themes/font.config';
 import { THEME } from '@/components/themes/theme.config';
 import ThemeProvider from '@/components/themes/theme-provider';
 import type { Metadata, Viewport } from 'next';
+import { headers } from 'next/headers';
 import NextTopLoader from 'nextjs-toploader';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import '../styles/globals.css';
@@ -24,7 +25,9 @@ export const viewport: Viewport = {
   themeColor: '#faf8f5'
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Set by src/proxy.ts; the theme script needs it to run under the nonce-based CSP.
+  const nonce = (await headers()).get('x-nonce') ?? undefined;
   return (
     <html lang='en' suppressHydrationWarning data-theme={THEME} className={fontVariables}>
       <body className='bg-background overflow-x-hidden overscroll-none font-sans antialiased'>
@@ -37,6 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             enableSystem={false}
             disableTransitionOnChange
             enableColorScheme
+            nonce={nonce}
           >
             <Providers>
               <Toaster />
