@@ -17,6 +17,9 @@ export const envSchema = z.object({
   // Key rotation (SECURITY 4.2): bump the version with a new key and list old ones as "v:key,...".
   APP_ENCRYPTION_KEY_VERSION: z.coerce.number().int().min(1).default(1),
   APP_ENCRYPTION_KEYS_RETIRED: z.string().optional(),
+  ELEVENLABS_API_KEY: z.string().min(1).optional(),
+  ELEVENLABS_WEBHOOK_SECRET: z.string().min(1).optional(),
+  ELEVENLABS_AGENT_PHONE_NUMBER_ID: z.string().min(1).optional(),
   OUTBOUND_ENABLED: booleanString.default(false)
 });
 
