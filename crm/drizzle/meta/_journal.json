@@ -54,7 +54,14 @@
     {
       "idx": 7,
       "version": "7",
-      "when": 1792979088417,
+      "when": 1792979100000,
+      "tag": "0013_staff_two_factor",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1792979101000,
       "tag": "0015_auth_membership_resolution",
       "breakpoints": true
     }

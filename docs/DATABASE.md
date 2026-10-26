@@ -108,7 +108,7 @@ CREATE TABLE users (
   name text,
   image text,
   kynetic_role text CHECK (kynetic_role IN ('admin','va')),             -- NULL for client users (F-73)
-  two_factor_enabled boolean NOT NULL DEFAULT false,                    -- spec s8: TOTP for Kynetic staff first (Later)
+  two_factor_enabled boolean NOT NULL DEFAULT false,                    -- F-98: TOTP for Kynetic admin and VA (M0-12)
   disabled_at timestamptz,                                              -- F-61: deactivate ends sessions
   last_login_at timestamptz,                                            -- F-53 last login
   created_at timestamptz NOT NULL DEFAULT now(),
@@ -1224,7 +1224,7 @@ Rules:
 - Each milestone's additive migration must not change RLS or grants without the security review.
 Lock order: 0001 runs before any other migration. Milestone threads merge in wave order (ARCHITECTURE).
 
-Auth tables (library-owned, not defined here): the auth library creates its session, account and verification tables (Better-Auth names: `sessions`, `accounts`, `verification`; Auth.js names differ). Those tables are global, carry no `tenant_id`, and get RLS enabled and forced with a policy for the `kynetic_auth` role only (DC-055); `kynetic_app` and `kynetic_worker` have no grant. Added by migration 0006 together with `users.email_verified`. Library choice is PRD decision 2, so this doc does not pick one. Which table names exist depends on that choice.
+Auth tables (library-owned, not defined here): the auth library creates its session, account and verification tables (Better-Auth names: `sessions`, `accounts`, `verification`; Auth.js names differ). Those tables are global, carry no `tenant_id`, and get RLS enabled and forced with a policy for the `kynetic_auth` role only (DC-055); `kynetic_app` and `kynetic_worker` have no grant. Added by migration 0006 together with `users.email_verified`. Migration 0013 (M0-12, DC-066) adds `two_factors` (secret, recovery-code hashes and failure counters; one row per staff user; `kynetic_auth` only) and `sessions.two_factor_verified_at`, grants `kynetic_auth` insert and update on `users.two_factor_enabled` only, and adds two SECURITY DEFINER functions owned by `kynetic_rollup`: `auth_record_event` (the auth role's only way into `audit_log`, a fixed list of `auth.2fa_*` actions) and `admin_reset_staff_two_factor` (admin only, another admin only, executable by `kynetic_app`). Library choice is PRD decision 2, so this doc does not pick one. Which table names exist depends on that choice.
 
 Seed data (synthetic only; no real client data in preview, spec s6):
 - `module_catalog`: nine rows, the module keys listed in the PRD. `platform` has `always_on = true`.

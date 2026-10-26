@@ -17,7 +17,9 @@ const EXTRA_TABLES = [
   // Better-Auth tables (M0-10); global, no tenant_id.
   'sessions',
   'accounts',
-  'verifications'
+  'verifications',
+  // Staff TOTP (M0-12); global, auth role only.
+  'two_factors'
 ];
 
 function entitiesFromDoc(): string[] {

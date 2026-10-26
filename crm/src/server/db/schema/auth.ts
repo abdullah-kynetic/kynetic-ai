@@ -1,4 +1,13 @@
-import { index, pgTable, text, timestamp, unique, uuid } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  index,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+  unique,
+  uuid
+} from 'drizzle-orm/pg-core';
 import { users } from './baseline';
 
 // Better-Auth tables (M0-10, DC-055). Global: no tenant_id. Only the kynetic_auth role can touch
@@ -17,7 +26,9 @@ export const sessions = pgTable(
     ipAddress: text('ip_address'),
     userAgent: text('user_agent'),
     createdAt: ts('created_at').defaultNow().notNull(),
-    updatedAt: ts('updated_at').defaultNow().notNull()
+    updatedAt: ts('updated_at').defaultNow().notNull(),
+    /** Set once a staff member passes TOTP or a recovery code on this session (M0-12). */
+    twoFactorVerifiedAt: ts('two_factor_verified_at')
   },
   (t) => [index('sessions_user_idx').on(t.userId)]
 );
@@ -59,3 +70,18 @@ export const verifications = pgTable(
   },
   (t) => [index('verifications_identifier_idx').on(t.identifier)]
 );
+
+// Two-factor secret and recovery-code hashes (M0-12, F-98). The secret is encrypted by the library;
+// recovery codes are stored as keyed hashes. Failure counters back our own lockout.
+export const twoFactors = pgTable('two_factors', {
+  id: uuid().defaultRandom().primaryKey().notNull(),
+  userId: uuid('user_id')
+    .notNull()
+    .unique()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  secret: text().notNull(),
+  backupCodes: text('backup_codes').notNull(),
+  verified: boolean().default(true).notNull(),
+  failedVerificationCount: integer('failed_verification_count').default(0).notNull(),
+  lockedUntil: ts('locked_until')
+});
