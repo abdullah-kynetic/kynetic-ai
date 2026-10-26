@@ -1214,6 +1214,8 @@ Ownership and file ranges (so parallel milestone threads do not collide on numbe
 | 0900 to 0999 | M9 | Import and search indexes |
 | 1000 to 1099 | M10 | Restore helpers; any hardening changes |
 
+TypeScript schema: `crm/src/server/db/schema/baseline.ts` is generated from the migrated database with `drizzle-kit pull` and stripped of policy entries (DC-051). A test (`schema-drift.test.ts`) fails if it differs from Postgres, so regenerate it in any PR that changes columns.
+
 Rules:
 - Only M0 creates tables, policies and functions. A feature thread that needs a new table opens a question to the M0 owner first.
 - Each milestone's additive migration must not change RLS or grants without the security review.
