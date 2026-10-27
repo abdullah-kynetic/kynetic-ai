@@ -156,9 +156,9 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-03 (M6, alex_core) | Target N bookings, start date set | Progress shows booked/N and days remaining | Unit | Not run |
 | F-03 (M6, alex_core) | No target set | Tracker hidden; admin sees prompt to set one | E2E | Not run |
 | F-05 (M1, crm) | 1,000 contacts; filter by status and source | Only matches show; pasted URL reproduces view | E2E | Not run |
-| F-05 (M1, crm) | Staff user lists contacts | Only own tenant's rows | Integration | Not run |
+| F-05 (M1, crm) | Staff user lists contacts | Only own tenant's rows | Integration | Pass (2026-10-26, M1-01) |
 | F-06 (M1, crm) | Contact with a deal, a call and a note | All sections render; consent status matches latest `consents` row | E2E | Not run |
-| F-07 (M1, crm) | Two contacts share an email | Duplicate detection on email as well as phone | Integration | Not run |
+| F-07 (M1, crm) | Two contacts share an email | Duplicate detection on email as well as phone | Integration | Pass (2026-10-26, M1-01) |
 | F-08 (M1, crm) | Staff without bulk-delete permission | Delete hidden in UI; server refuses | Integration | Not run |
 | F-10 (M1, crm) | Company with 3 contacts and 2 deals | Roll-ups and totals correct | Integration | Not run |
 | F-12 (M1, crm) | Tenant B reads tenant A field definitions | Zero rows (API and SQL) | Integration | Not run |
