@@ -1,3 +1,4 @@
+import { MESSAGING_MODULES } from '@/server/modules/keys';
 import { NavGroup } from '@/types';
 
 /**
@@ -17,11 +18,103 @@ export const navGroups: NavGroup[] = [
         items: []
       },
       {
+        title: 'Pipeline',
+        url: '/dashboard/pipeline',
+        icon: 'kanban',
+        isActive: false,
+        shortcut: ['p', 'p'],
+        items: []
+      },
+      {
         title: 'Leads',
         url: '/dashboard/contacts',
         icon: 'teams',
         isActive: false,
         shortcut: ['l', 'l'],
+        items: []
+      },
+      {
+        title: 'Calls',
+        url: '/dashboard/calls',
+        icon: 'phone',
+        isActive: false,
+        module: 'alex_core',
+        items: []
+      },
+      {
+        title: 'Alex settings',
+        url: '/dashboard/settings/alex',
+        icon: 'settings',
+        isActive: false,
+        module: 'alex_core',
+        items: []
+      }
+    ]
+  },
+  {
+    label: 'Settings',
+    items: [
+      {
+        title: 'Business',
+        url: '/dashboard/settings/business',
+        icon: 'settings',
+        isActive: false,
+        items: []
+      },
+      {
+        title: 'Team',
+        url: '/dashboard/settings/team',
+        icon: 'settings',
+        isActive: false,
+        access: { role: 'owner' },
+        items: []
+      },
+      {
+        title: 'Branding',
+        url: '/dashboard/settings/branding',
+        icon: 'settings',
+        isActive: false,
+        items: []
+      }
+    ]
+  },
+  {
+    label: 'CRM',
+    items: [
+      {
+        title: 'Companies',
+        url: '/dashboard/companies',
+        icon: 'teams',
+        isActive: false,
+        module: 'crm',
+        items: []
+      }
+    ]
+  },
+  {
+    label: 'Activity',
+    items: [
+      {
+        title: 'Messages',
+        url: '/dashboard/messages',
+        icon: 'chat',
+        isActive: false,
+        anyModule: [...MESSAGING_MODULES],
+        items: []
+      }
+    ]
+  },
+  {
+    label: 'Settings',
+    items: [
+      {
+        title: 'Pipeline stages',
+        url: '/dashboard/settings/pipeline',
+        icon: 'settings',
+        isActive: false,
+        module: 'crm',
+        level: 'lite',
+        access: { role: 'owner' },
         items: []
       }
     ]
@@ -41,3 +134,75 @@ export const navGroups: NavGroup[] = [
     ]
   }
 ];
+
+/**
+ * Admin-side registry (M8a-01). Every `/admin` page is reachable only by Kynetic staff (SECURITY 2.2);
+ * M8a and M8b tasks add their entries here. Entries carry no `module`: the admin side is `platform`.
+ */
+export const adminNavGroups: NavGroup[] = [
+  {
+    label: 'Clients',
+    items: [
+      {
+        title: 'All clients',
+        url: '/admin',
+        icon: 'teams',
+        isActive: false,
+        shortcut: ['a', 'c'],
+        items: []
+      },
+      {
+        title: 'View as client',
+        url: '/admin/view-as',
+        icon: 'user',
+        isActive: false,
+        shortcut: ['a', 'v'],
+        items: []
+      },
+      {
+        title: 'Onboard a client',
+        url: '/admin/clients/new',
+        icon: 'add',
+        isActive: false,
+        shortcut: ['a', 'n'],
+        items: []
+      },
+      {
+        title: 'Users',
+        url: '/admin/users',
+        icon: 'user',
+        isActive: false,
+        shortcut: ['a', 'u'],
+        items: []
+      }
+    ]
+  },
+  {
+    label: 'Platform',
+    items: [
+      {
+        title: 'Audit log',
+        url: '/admin/audit',
+        icon: 'post',
+        isActive: false,
+        shortcut: ['a', 'l'],
+        items: []
+      }
+    ]
+  }
+];
+
+/** The way into the admin side from the client shell. Only Kynetic staff are given this group. */
+export const adminEntryGroup: NavGroup = {
+  label: 'Kynetic',
+  items: [
+    {
+      title: 'Admin',
+      url: '/admin',
+      icon: 'settings',
+      isActive: false,
+      shortcut: ['a', 'd'],
+      items: []
+    }
+  ]
+};

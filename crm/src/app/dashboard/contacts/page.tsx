@@ -27,6 +27,7 @@ export default async function ContactsPage({
       </PageContainer>
     );
   }
+  const canWrite = (await contactsScope(await headers(), 'tenant_data.write')) !== null;
   // Custom fields are CRM Full (F-12); the base portal and Lite show the list without them.
   const customFields = (await isModuleEnabled(ctx, 'crm', { level: 'full' }))
     ? await listFieldDefs(ctx, 'contact')
@@ -47,6 +48,7 @@ export default async function ContactsPage({
         customFields={customFields}
         hidden={hidden}
         filtered={isFiltered({ hidden, ...view })}
+        canWrite={canWrite}
       />
     </PageContainer>
   );

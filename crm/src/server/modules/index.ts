@@ -4,6 +4,8 @@ import { tenantModules } from '../db/schema';
 import { withTenant } from '../tenancy';
 import type { TenantContextInput } from '../tenancy';
 import {
+  anyModuleSatisfied,
+  MESSAGING_MODULES,
   moduleSatisfied,
   MODULE_KEYS,
   type CrmLevel,
@@ -13,6 +15,8 @@ import {
 } from './keys';
 
 export {
+  anyModuleSatisfied,
+  MESSAGING_MODULES,
   MODULE_KEYS,
   moduleSatisfied,
   type CrmLevel,
@@ -87,6 +91,17 @@ export async function requireModule(
   opts: { level?: CrmLevel; db?: Db; tx?: Tx } = {}
 ): Promise<void> {
   if (!(await isModuleEnabled(ctx, key, opts))) throw new ModuleDisabledError(key, opts.level);
+}
+
+/** Like `requireModule` for surfaces shared by several modules (the messages log). Reports the first key. */
+export async function requireAnyModule(
+  ctx: TenantContextInput,
+  keys: readonly ModuleKey[],
+  opts: { db?: Db } = {}
+): Promise<void> {
+  if (!anyModuleSatisfied(await loadEnabledModules(ctx, opts), keys)) {
+    throw new ModuleDisabledError(keys[0]!);
+  }
 }
 
 /** The 403 body routes return when a module is off. Nothing was written. */
