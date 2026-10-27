@@ -1,9 +1,11 @@
 import { eq } from 'drizzle-orm';
-import type { Db } from '../db/client';
+import type { Db, Tx } from '../db/client';
 import { tenantModules } from '../db/schema';
 import { withTenant } from '../tenancy';
 import type { TenantContextInput } from '../tenancy';
 import {
+  anyModuleSatisfied,
+  MESSAGING_MODULES,
   moduleSatisfied,
   MODULE_KEYS,
   type CrmLevel,
@@ -13,6 +15,8 @@ import {
 } from './keys';
 
 export {
+  anyModuleSatisfied,
+  MESSAGING_MODULES,
   MODULE_KEYS,
   moduleSatisfied,
   type CrmLevel,
@@ -40,17 +44,15 @@ export class ModuleDisabledError extends Error {
  */
 export async function loadEnabledModules(
   ctx: TenantContextInput,
-  opts: { db?: Db } = {}
+  opts: { db?: Db; tx?: Tx } = {}
 ): Promise<EnabledModules> {
-  const rows = await withTenant(
-    ctx,
-    (tx) =>
-      tx
-        .select({ key: tenantModules.moduleKey, level: tenantModules.level })
-        .from(tenantModules)
-        .where(eq(tenantModules.enabled, true)),
-    opts
-  );
+  const read = (tx: Tx) =>
+    tx
+      .select({ key: tenantModules.moduleKey, level: tenantModules.level })
+      .from(tenantModules)
+      .where(eq(tenantModules.enabled, true));
+  // Pass `tx` from a service already inside withTenant, so the check reads in the same transaction.
+  const rows = opts.tx ? await read(opts.tx) : await withTenant(ctx, read, { db: opts.db });
   const keys = new Set<ModuleKey>(['platform']);
   let crmLevel: CrmLevel | null = null;
   for (const r of rows) {
@@ -64,7 +66,7 @@ export async function loadEnabledModules(
 export async function isModuleEnabled(
   ctx: TenantContextInput,
   key: ModuleKey,
-  opts: { level?: CrmLevel; db?: Db } = {}
+  opts: { level?: CrmLevel; db?: Db; tx?: Tx } = {}
 ): Promise<boolean> {
   if (key === 'platform') return true;
   return moduleSatisfied(await loadEnabledModules(ctx, opts), { module: key, level: opts.level });
@@ -86,9 +88,20 @@ export async function listEnabledModules(
 export async function requireModule(
   ctx: TenantContextInput,
   key: ModuleKey,
-  opts: { level?: CrmLevel; db?: Db } = {}
+  opts: { level?: CrmLevel; db?: Db; tx?: Tx } = {}
 ): Promise<void> {
   if (!(await isModuleEnabled(ctx, key, opts))) throw new ModuleDisabledError(key, opts.level);
+}
+
+/** Like `requireModule` for surfaces shared by several modules (the messages log). Reports the first key. */
+export async function requireAnyModule(
+  ctx: TenantContextInput,
+  keys: readonly ModuleKey[],
+  opts: { db?: Db } = {}
+): Promise<void> {
+  if (!anyModuleSatisfied(await loadEnabledModules(ctx, opts), keys)) {
+    throw new ModuleDisabledError(keys[0]!);
+  }
 }
 
 /** The 403 body routes return when a module is off. Nothing was written. */

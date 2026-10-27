@@ -7,7 +7,11 @@ import {
 import { getEnv } from './env';
 import { registerEventWorkers } from './events';
 import { stopJobs } from './jobs';
+import { getSmsProvider } from './messaging/provider';
+import { registerTwilioProcessor } from './messaging';
+import { registerNotificationEmailWorker } from './notifications';
 import { registerLeadProcessor } from './leads';
+import { registerResendProcessor } from './email';
 import { registerWebhookWorker } from './webhooks';
 
 // Worker entry (kynetic_worker). Feature milestones register their subscribers and webhook
@@ -16,9 +20,12 @@ getEnv();
 registerVoiceProcessor({ provider: getVoiceProvider('elevenlabs')! });
 registerLeadProcessor();
 registerOutboundCallSubscriber();
+registerTwilioProcessor({ provider: getSmsProvider() });
 await registerEventWorkers();
+registerResendProcessor();
 await registerWebhookWorker();
 await registerOutboundCallWorker();
+await registerNotificationEmailWorker();
 console.log(JSON.stringify({ level: 'info', msg: 'worker started' }));
 
 for (const signal of ['SIGTERM', 'SIGINT'] as const) {
