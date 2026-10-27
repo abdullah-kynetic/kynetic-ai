@@ -15,7 +15,7 @@ import {
   AUDIT_PAGE_SIZE,
   auditFiltersSchema,
   decideAdminAccess,
-  listTenantOptions,
+  listAuditTenantOptions,
   searchAuditLog,
   type AuditRow
 } from '@/server/admin';
@@ -105,7 +105,7 @@ export default async function AuditLogPage({
     page: first(params.page)
   });
   const ctx = { userId: access.user.id, role: access.role };
-  const tenants = await listTenantOptions(ctx);
+  const tenants = await listAuditTenantOptions(ctx);
   const tenantNames = new Map(tenants.map((t) => [t.id, t.name]));
   const result = parsed.success ? await searchAuditLog(ctx, parsed.data) : null;
   const f = parsed.success ? parsed.data : null;
