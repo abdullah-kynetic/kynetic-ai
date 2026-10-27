@@ -391,11 +391,7 @@ export function ContactsTable({
   const [panel, setPanel] = React.useState<PanelTarget>(null);
   const columns = React.useMemo(
     () =>
-      buildColumns(
-        facets,
-        customFields,
-        canWrite ? (id) => setPanel({ mode: 'edit', id }) : null
-      ),
+      buildColumns(facets, customFields, canWrite ? (id) => setPanel({ mode: 'edit', id }) : null),
     [facets, customFields, canWrite]
   );
   // Fields used only as a filter have no column of their own: they start hidden and stay out of `hide`.
