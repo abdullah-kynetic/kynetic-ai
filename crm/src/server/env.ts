@@ -25,9 +25,6 @@ export const envSchema = z.object({
   OUTBOUND_ENABLED: booleanString.default(false),
   // Verified sending address for app email (ARCHITECTURE: Domain, DNS and email domain).
   EMAIL_FROM_ADDRESS: z.string().min(3).default('notifications@mail.kyneticai.com'),
-  ELEVENLABS_API_KEY: z.string().min(1).optional(),
-  ELEVENLABS_WEBHOOK_SECRET: z.string().min(1).optional(),
-  ELEVENLABS_AGENT_PHONE_NUMBER_ID: z.string().min(1).optional(),
   // Object storage (R2). All four are set together; see refinedEnvSchema.
   STORAGE_ENDPOINT: z.url().optional(),
   STORAGE_ACCESS_KEY_ID: z.string().min(1).optional(),
