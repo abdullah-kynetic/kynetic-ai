@@ -103,6 +103,21 @@ export const navGroups: NavGroup[] = [
         items: []
       }
     ]
+  },
+  {
+    label: 'Settings',
+    items: [
+      {
+        title: 'Pipeline stages',
+        url: '/dashboard/settings/pipeline',
+        icon: 'settings',
+        isActive: false,
+        module: 'crm',
+        level: 'lite',
+        access: { role: 'owner' },
+        items: []
+      }
+    ]
   }
 ];
 

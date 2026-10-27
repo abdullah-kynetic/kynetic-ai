@@ -130,9 +130,8 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M2-02 | Kanban board page: drag between stages, counts and totals, optimistic move with undo, filters | PRD F-16; DS kanban | M2-01 | Move persists and emits `deal.stage_changed`; undo restores | L | Sonnet | yes | 14 | done | PR pending, stacked on #89. No migration, no new DC. Browser drag check and E2E not run (no sign-in fixture). |
 | M2-03 | Deal detail and slide-out (value, service type, expected close, source, lost reason) | PRD F-14 | M2-01 | Money stored in cents; lost reason enforced | M | Sonnet | yes | 14 | done | [PR #107](https://github.com/abdullah-kynetic/kynetic-ai/pull/107) |
 | M2-04 | Multi-contact deals with roles (CRM Full) | PRD F-15 | M2-01 | `lite` tenant gets 403; roles saved | S | Sonnet | yes | 14 | done | [#102](https://github.com/abdullah-kynetic/kynetic-ai/pull/102) |
-| M2-05 | Configurable stages settings page (CRM Lite) | PRD F-17, F-43 | M2-01 | Rename, reorder, add stage; deals keep their stage | M | Sonnet | yes | 14 | todo | - |
+| M2-05 | Configurable stages settings page (CRM Lite) | PRD F-17, F-43 | M2-01 | Rename, reorder, add stage; deals keep their stage | M | Sonnet | yes | 14 | done | [PR #108](https://github.com/abdullah-kynetic/kynetic-ai/pull/108), stacked on #89. No migration; DC-105. |
 | M2-06 | M2 gate | AGENTS; T | M2-01..M2-05 | All M2 rows pass | S | Haiku | no | 15 | todo | - |
-
 ## M3 Timeline, tasks and notes
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
@@ -287,3 +286,4 @@ Branch `m0/gate` combines every M0 PR (#47 to #71) and is the base to build M1 o
 - **Not verified anywhere:** `docker compose up`, live Google OAuth, real email delivery (call `setMagicLinkSender` with the M0-19 adapter at boot), the worker container under compose, pg-boss behind PgBouncer, and signed-in E2E (no sign-in fixture yet, so the signed-in redirect, `/accept-terms` axe check and signed-in shell axe check are untested).
 - **Open follow-ups:** call `audit()` for M0-22 secret writes and the M0-16 manual consent entry; M0-16 uses channel `phone_call` where SECURITY.md says "voice" (DC-062); M0-25 copy is placeholder text.
 - **Needs from Abdullah before live use:** `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`, and an email provider key.
+

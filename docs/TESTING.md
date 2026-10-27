@@ -167,7 +167,8 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-15 (M2, crm) | Add spouse to deal with role | Role on deal and deal on contact page; cross-tenant link refused | Integration | Pass (`deal-contacts.test.ts`; lite and no-crm tenants get 403) |
 | F-16 (M2, crm) | Server rejects a drag; undo within toast | Rollback and error toast; undo restores previous stage | E2E | Not run |
 | F-17 (M2, crm) | New tenant | Eight default stages exist | Integration | Pass (2026-10-26, M2-01) |
-| F-17 (M2, crm) | Delete stage that has deals | Owner must pick target stage; Won and Lost flagged | Integration | Not run |
+| F-17 (M2, crm) | Delete stage that has deals | Owner must pick target stage; Won and Lost flagged | Integration | Pass (2026-10-26, M2-05) |
+| F-17, F-43 (M2, crm) | Rename, reorder, add a stage; tenant without `crm` Lite; staff; other tenant | Deals keep their stage; MODULE_DISABLED writes nothing; staff FORBIDDEN; cross-tenant 404; all changes audited | Integration | Pass (2026-10-26, M2-05) |
 | F-22 (M3, crm) | Note mentions a teammate; note pinned | Teammate notified; pinned note sorts first | Integration | Not run |
 | F-22 (M3, crm) | Note body with a script tag | Sanitized on save | Unit | Not run |
 | F-24 (M5, alex_core) | Alex booking inside hours | Appears on the right day, status scheduled | Integration | Not run |
