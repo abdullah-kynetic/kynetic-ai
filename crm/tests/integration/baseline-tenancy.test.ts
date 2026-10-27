@@ -18,7 +18,7 @@ beforeAll(async () => {
   await db.admin`insert into memberships (tenant_id, user_id, role) values (${A}, ${UA}, 'owner'), (${B}, ${UB}, 'owner')`;
   await db.admin`insert into tenant_modules (tenant_id, module_key, enabled) values (${A}, 'platform', true), (${B}, 'platform', true)`;
   await db.admin`insert into tenant_secrets (tenant_id, provider, name, ciphertext, nonce) values (${A}, 'twilio', 'token', '\\x01', '\\x02')`;
-  await db.admin`insert into onboarding_steps (tenant_id, step_key, title) values (${A}, 's1', 'one'), (${B}, 's1', 'one')`;
+  await db.admin`insert into onboarding_steps (tenant_id, step_key, title, client_visible) values (${A}, 's1', 'one', true), (${B}, 's1', 'one', true)`;
 });
 afterAll(async () => {
   await db?.drop();

@@ -18,19 +18,23 @@ function cookie(headers: Headers, name: string): string | undefined {
  * membership row and the actor is rebuilt from the database. Kynetic staff outside a view-as session
  * get null, so the page shows no client data.
  */
-export async function contactsScope(headers: Headers): Promise<TenantContextInput | null> {
-  return (await contactsActorScope(headers))?.ctx ?? null;
+export async function contactsScope(
+  headers: Headers,
+  permission: 'tenant_data.read' | 'tenant_data.write' = 'tenant_data.read'
+): Promise<TenantContextInput | null> {
+  return (await contactsActorScope(headers, permission))?.ctx ?? null;
 }
 
 /** The same scope plus the actor, for writes that check the permission matrix (bulk actions, F-08). */
 export async function contactsActorScope(
-  headers: Headers
+  headers: Headers,
+  permission: 'tenant_data.read' | 'tenant_data.write' = 'tenant_data.read'
 ): Promise<{ ctx: TenantContextInput; actor: Actor } | null> {
   const user = await requireUser(headers);
   const shell = await loadShellContext(headers, cookie(headers, 'tenant_id'));
   if (!shell?.tenant) return null;
   const actor = await resolveActor(user, shell.tenant.id);
-  if (!can(actor, 'tenant_data.read', shell.tenant.id)) return null;
+  if (!can(actor, permission, shell.tenant.id)) return null;
   return {
     ctx: { tenantId: shell.tenant.id, userId: user.id, role: shell.role },
     actor

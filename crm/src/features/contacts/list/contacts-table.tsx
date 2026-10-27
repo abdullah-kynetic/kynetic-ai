@@ -4,9 +4,10 @@ import { type ColumnDef, Subscribe } from '@tanstack/react-table';
 import Link from 'next/link';
 import { parseAsString, useQueryState, useQueryStates } from 'nuqs';
 import * as React from 'react';
-import { IconSearch, IconUsers } from '@tabler/icons-react';
+import { IconPencil, IconPlus, IconSearch, IconUsers } from '@tabler/icons-react';
 
 import type { BulkCapabilities, ContactFacets, ContactListRow } from '@/server/contacts';
+import { formatCustomValue, type CustomFieldDef } from '@/server/custom-fields/types';
 import { CONTACT_STATUSES, NO_OWNER } from '@/server/contacts/constants';
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
@@ -20,7 +21,14 @@ import { useDataTable } from '@/hooks/use-data-table';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 import type { DataTableFeatures } from '@/lib/data-table-features';
 import { BulkBar } from './bulk-bar';
-import { DEFAULT_SORT, HIDEABLE_COLUMNS, type ListColumn } from './search-params';
+import { ContactPanel, type PanelTarget } from '../panel/contact-panel';
+import {
+  customColumnId,
+  customFilterVariant,
+  DEFAULT_SORT,
+  HIDEABLE_COLUMNS,
+  type ListColumn
+} from './search-params';
 import {
   formatDay,
   formatPhone,
@@ -36,10 +44,14 @@ type Props = {
   pageCount: number;
   perPage: number;
   facets: ContactFacets;
-  hidden: ListColumn[];
+  /** CRM Full only; empty otherwise, so a Lite tenant sees no custom columns or filters. */
+  customFields: CustomFieldDef[];
+  hidden: string[];
   filtered: boolean;
   /** What the caller may do in bulk (F-08). All false hides the selection column and the bar. */
   bulk: BulkCapabilities;
+  /** The actor has `tenant_data.write`: shows Add and Edit. */
+  canWrite: boolean;
 };
 
 const contactHref = (id: string) => `/dashboard/contacts/${id}`;
@@ -76,11 +88,71 @@ const selectColumn: ColumnDef<DataTableFeatures, ContactListRow> = {
   size: 40
 };
 
+/** One column per custom field shown in the table or used as a filter (F-12). Sorting is not offered. */
+function customColumn(def: CustomFieldDef): ColumnDef<DataTableFeatures, ContactListRow> {
+  const variant = def.filterable ? customFilterVariant(def.type) : undefined;
+  const options =
+    def.type === 'checkbox'
+      ? [
+          { label: 'Yes', value: 'true' },
+          { label: 'No', value: 'false' }
+        ]
+      : def.options.map((o) => ({ label: o, value: o }));
+  return {
+    id: customColumnId(def.key),
+    accessorFn: (r) => r.custom[def.key],
+    header: () => def.label,
+    cell: ({ row }) => {
+      const text = formatCustomValue(def, row.original.custom[def.key]);
+      const numeric = def.type === 'number' || def.type === 'money';
+      return (
+        <span
+          className={numeric ? 'tabular-nums' : 'block max-w-56 truncate'}
+          title={numeric ? undefined : text}
+        >
+          {text}
+        </span>
+      );
+    },
+    meta: {
+      label: def.label,
+      variant,
+      options: variant === 'multiSelect' ? options : undefined,
+      unit: def.type === 'money' ? '$' : undefined
+    },
+    enableColumnFilter: Boolean(variant),
+    enableSorting: false
+  };
+}
+
 function buildColumns(
   facets: ContactFacets,
-  selectable: boolean
+  customFields: CustomFieldDef[],
+  selectable: boolean,
+  onEdit: ((id: string) => void) | null
 ): ColumnDef<DataTableFeatures, ContactListRow>[] {
   const tz = facets.timezone;
+  const edit: ColumnDef<DataTableFeatures, ContactListRow>[] = onEdit
+    ? [
+        {
+          id: 'actions',
+          header: () => <span className='sr-only'>Actions</span>,
+          cell: ({ row }) => (
+            <Button
+              variant='ghost'
+              size='icon'
+              aria-label={`Edit ${fullName(row.original)}`}
+              onClick={() => onEdit(row.original.id)}
+            >
+              <IconPencil aria-hidden='true' />
+            </Button>
+          ),
+          meta: { label: 'Actions' },
+          enableSorting: false,
+          enableHiding: false
+        }
+      ]
+    : [];
   return [
     ...(selectable ? [selectColumn] : []),
     {
@@ -208,7 +280,9 @@ function buildColumns(
         <span className='tabular-nums'>{formatDay(row.original.updatedAt, tz)}</span>
       ),
       meta: { label: 'Updated' }
-    }
+    },
+    ...customFields.filter((d) => d.showInTable || d.filterable).map(customColumn),
+    ...edit
   ];
 }
 
@@ -360,18 +434,54 @@ function visibleSelectedIds(table: TableInstance, rows: ContactListRow[]): strin
   return rows.filter((r) => sel[r.id] === true).map((r) => r.id);
 }
 
+function AddButton({ onClick }: { onClick: () => void }) {
+  return (
+    <Button className='min-h-11 sm:min-h-0' onClick={onClick}>
+      <IconPlus aria-hidden='true' />
+      Add contact
+    </Button>
+  );
+}
+
 export function ContactsTable({
   rows,
   total,
   pageCount,
   perPage,
   facets,
+  customFields,
   hidden,
   filtered,
-  bulk
+  bulk,
+  canWrite
 }: Props) {
+  const [panel, setPanel] = React.useState<PanelTarget>(null);
   const selectable = bulk.edit;
-  const columns = React.useMemo(() => buildColumns(facets, selectable), [facets, selectable]);
+  const columns = React.useMemo(
+    () =>
+      buildColumns(
+        facets,
+        customFields,
+        selectable,
+        canWrite ? (id) => setPanel({ mode: 'edit', id }) : null
+      ),
+    [facets, customFields, selectable, canWrite]
+  );
+  // Fields used only as a filter have no column of their own: they start hidden and stay out of `hide`.
+  const hideable = React.useMemo(
+    () => [
+      ...HIDEABLE_COLUMNS,
+      ...customFields.filter((d) => d.showInTable).map((d) => customColumnId(d.key))
+    ],
+    [customFields]
+  );
+  const filterOnly = React.useMemo(
+    () =>
+      customFields
+        .filter((d) => d.filterable && !d.showInTable)
+        .map((d) => [customColumnId(d.key), false] as const),
+    [customFields]
+  );
   const [, startTransition] = React.useTransition();
 
   const { table } = useDataTable({
@@ -385,7 +495,10 @@ export function ContactsTable({
     initialState: {
       sorting: [DEFAULT_SORT],
       pagination: { pageIndex: 0, pageSize: perPage },
-      columnVisibility: Object.fromEntries(hidden.map((c) => [c, false]))
+      columnVisibility: Object.fromEntries([
+        ...filterOnly,
+        ...hidden.map((c) => [c, false] as const)
+      ])
     }
   });
 
@@ -401,16 +514,24 @@ export function ContactsTable({
   const toolbar = (
     <DataTableToolbar table={table} className='flex-col gap-2 sm:flex-row'>
       <ContactSearch />
+      {canWrite ? <AddButton onClick={() => setPanel({ mode: 'create' })} /> : null}
     </DataTableToolbar>
   );
+  const panelEl = canWrite ? (
+    <ContactPanel target={panel} onClose={() => setPanel(null)} owners={facets.owners} />
+  ) : null;
 
   if (total === 0 && !filtered) {
     return (
-      <EmptyState
-        icon={<IconUsers aria-hidden='true' />}
-        title='No contacts yet'
-        description='No contacts yet. Add one, import a CSV, or wait for your first lead.'
-      />
+      <>
+        <EmptyState
+          icon={<IconUsers aria-hidden='true' />}
+          title='No contacts yet'
+          description='No contacts yet. Add one, import a CSV, or wait for your first lead.'
+          action={canWrite ? <AddButton onClick={() => setPanel({ mode: 'create' })} /> : undefined}
+        />
+        {panelEl}
+      </>
     );
   }
 
@@ -418,11 +539,12 @@ export function ContactsTable({
     <div className='flex flex-1 flex-col gap-4'>
       <Subscribe
         source={table.atoms.columnVisibility}
-        selector={(v) => HIDEABLE_COLUMNS.filter((c) => v[c] === false).join(',')}
+        selector={(v) => hideable.filter((c) => v[c] === false).join(',')}
       >
         {(h) => <SyncHidden hidden={h} />}
       </Subscribe>
       {toolbar}
+      {panelEl}
       <p className='sr-only' role='status' aria-live='polite'>
         {total === 1 ? '1 contact' : `${total.toLocaleString('en-US')} contacts`}
       </p>

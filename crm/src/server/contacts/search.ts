@@ -1,6 +1,8 @@
 import { and, asc, desc, eq, isNull, sql, type SQL } from 'drizzle-orm';
 import { z } from 'zod';
 import type { Tx } from '../db/client';
+import { checkCustomFilters, customFilterSql, customFilterSchema } from '../custom-fields/filters';
+import { listFieldDefs } from '../custom-fields';
 import { contacts, memberships, tenants, users } from '../db/schema';
 import { withTenant, type TenantContextInput } from '../tenancy';
 import { FIELD_LIMITS, parseInput, uuidSchema } from '../validation';
@@ -34,6 +36,8 @@ export const searchContactsSchema = z.strictObject({
   /** Calendar dates, read in the tenant's timezone; `createdTo` is inclusive. */
   createdFrom: calendarDate.optional(),
   createdTo: calendarDate.optional(),
+  /** Custom field filters by field key (CRM Full; only `filterable` fields). See custom-fields/filters. */
+  custom: z.record(z.string(), customFilterSchema).optional(),
   sort: z
     .strictObject({ field: z.enum(CONTACT_SORT_FIELDS), desc: z.boolean() })
     .default({ field: 'updatedAt', desc: true }),
@@ -59,7 +63,7 @@ export type ContactListRow = Pick<
   | 'ownerId'
   | 'createdAt'
   | 'updatedAt'
-> & { ownerName: string | null };
+> & { ownerName: string | null; custom: Record<string, unknown> };
 
 export type ContactSearchResult = {
   rows: ContactListRow[];
@@ -79,7 +83,7 @@ const textArray = (values: string[]) =>
     sql`, `
   )}]::text[]`;
 
-function whereFor(v: z.output<typeof searchContactsSchema>): SQL {
+function whereFor(v: z.output<typeof searchContactsSchema>, customParts: SQL[] = []): SQL {
   const parts: (SQL | undefined)[] = [isNull(contacts.deletedAt), isNull(contacts.mergedIntoId)];
 
   if (v.q) {
@@ -121,6 +125,7 @@ function whereFor(v: z.output<typeof searchContactsSchema>): SQL {
       sql`${contacts.createdAt} < ((${v.createdTo}::date + 1)::timestamp AT TIME ZONE ${tz})`
     );
   }
+  parts.push(...customParts);
   return and(...parts)!;
 }
 
@@ -142,9 +147,16 @@ function orderFor(sort: { field: ContactSortField; desc: boolean }): SQL[] {
 
 async function searchIn(
   tx: Tx,
+  ctx: TenantContextInput,
   v: z.output<typeof searchContactsSchema>
 ): Promise<ContactSearchResult> {
-  const where = whereFor(v);
+  let customParts: SQL[] = [];
+  if (v.custom && Object.keys(v.custom).length) {
+    // Throws 403 for a Lite tenant, 400 for an unknown or non-filterable key.
+    const defs = await listFieldDefs(ctx, 'contact', { tx });
+    customParts = checkCustomFilters(defs, v.custom).map(customFilterSql(contacts.custom));
+  }
+  const where = whereFor(v, customParts);
   const [{ total }] = await tx
     .select({ total: sql<number>`count(*)::int` })
     .from(contacts)
@@ -163,7 +175,8 @@ async function searchIn(
       ownerId: contacts.ownerId,
       ownerName: sql<string | null>`coalesce(${users.name}, ${users.email})`,
       createdAt: contacts.createdAt,
-      updatedAt: contacts.updatedAt
+      updatedAt: contacts.updatedAt,
+      custom: contacts.custom
     })
     .from(contacts)
     .leftJoin(users, eq(users.id, contacts.ownerId))
@@ -171,7 +184,7 @@ async function searchIn(
     .orderBy(...orderFor(v.sort))
     .limit(v.perPage)
     .offset((v.page - 1) * v.perPage);
-  return { rows, total, page: v.page, perPage: v.perPage, pageCount };
+  return { rows: rows as ContactListRow[], total, page: v.page, perPage: v.perPage, pageCount };
 }
 
 /** One page of the tenant's live contacts (not deleted, not merged away) and the matching total. */
@@ -181,7 +194,9 @@ export async function searchContacts(
   opts: ContactOpts = {}
 ): Promise<ContactSearchResult> {
   const v = parseInput(searchContactsSchema, input);
-  return opts.tx ? searchIn(opts.tx, v) : withTenant(ctx, (tx) => searchIn(tx, v), { db: opts.db });
+  return opts.tx
+    ? searchIn(opts.tx, ctx, v)
+    : withTenant(ctx, (tx) => searchIn(tx, ctx, v), { db: opts.db });
 }
 
 export type ContactFacets = {
