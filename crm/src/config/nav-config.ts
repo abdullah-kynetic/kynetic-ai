@@ -18,13 +18,14 @@ export const navGroups: NavGroup[] = [
         items: []
       },
       {
-<<<<<<< ours
         title: 'Leads',
         url: '/dashboard/contacts',
         icon: 'teams',
         isActive: false,
         shortcut: ['l', 'l'],
-=======
+        items: []
+      },
+      {
         title: 'Alex settings',
         url: '/dashboard/settings/alex',
         icon: 'settings',
@@ -83,7 +84,6 @@ export const navGroups: NavGroup[] = [
         icon: 'chat',
         isActive: false,
         anyModule: [...MESSAGING_MODULES],
->>>>>>> theirs
         items: []
       }
     ]
