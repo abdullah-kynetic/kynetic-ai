@@ -11,6 +11,7 @@ import {
   setMyPreferences
 } from '@/server/notifications';
 import { stopJobs } from '@/server/jobs';
+import { NOTIFICATION_TYPES } from '@/server/notifications';
 import { createTag, deleteTag, listTags, renameTag } from '@/server/settings';
 import { withTenant } from '@/server/tenancy';
 import { ctx, IDS, seedTwoTenants } from '../helpers/fixtures';
@@ -146,7 +147,7 @@ describe('M9-11 notification preferences (F-36)', () => {
 
   it('defaults to email on for every type', async () => {
     const prefs = await listMyPreferences(ctx.staffA(), opts);
-    expect(prefs.length).toBe(7);
+    expect(prefs.length).toBe(NOTIFICATION_TYPES.length);
     expect(prefs.every((p) => p.emailEnabled)).toBe(true);
   });
 

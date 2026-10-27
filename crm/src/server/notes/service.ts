@@ -5,7 +5,7 @@ import type { Db, Tx } from '../db/client';
 import { companies, contacts, deals, memberships, noteMentions, notes, users } from '../db/schema';
 import { AppError, ValidationError } from '../errors';
 import { requireModule } from '../modules';
-import { notify } from '../notifications';
+import { notify, type EnqueueEmail } from '../notifications';
 import { withTenant, type TenantContextInput } from '../tenancy';
 import { parseInput, uuidSchema } from '../validation';
 import {
@@ -24,7 +24,7 @@ import { mentionedIds, noteText, sanitizeNoteHtml } from './sanitize';
 // isolation and a read-only view-as session cannot write); pass `tx` to join a caller's transaction.
 // The editor sends HTML, which is sanitized on save and again on read (SECURITY section 5).
 
-export type NoteOpts = { db?: Db; tx?: Tx };
+export type NoteOpts = { db?: Db; tx?: Tx; enqueueEmail?: EnqueueEmail };
 
 export type NoteView = {
   id: string;
@@ -167,19 +167,24 @@ async function notifyMentions(
   ctx: TenantContextInput,
   note: { id: string; contactId: string | null; companyId: string | null; dealId: string | null },
   userIds: string[],
-  text: string
+  text: string,
+  enqueueEmail?: EnqueueEmail
 ) {
   const targets = userIds.filter((id) => id !== ctx.userId);
   if (!targets.length) return;
   const who = await authorName(tx, ctx.userId);
   for (const userId of targets) {
-    await notify(tx, {
-      userId,
-      type: 'mention',
-      title: `${who} mentioned you in a note`,
-      body: text.length > EXCERPT ? `${text.slice(0, EXCERPT - 1)}…` : text,
-      link: parentLink(note)
-    });
+    await notify(
+      tx,
+      {
+        userId,
+        type: 'mention',
+        title: `${who} mentioned you in a note`,
+        body: text.length > EXCERPT ? `${text.slice(0, EXCERPT - 1)}…` : text,
+        link: parentLink(note)
+      },
+      { enqueueEmail }
+    );
   }
 }
 
@@ -221,7 +226,7 @@ export async function createNote(
       summary: 'Note added',
       actor: { type: ctx.userId ? 'user' : 'system', id: ctx.userId }
     });
-    await notifyMentions(tx, ctx, row, p.mentions, p.text);
+    await notifyMentions(tx, ctx, row, p.mentions, p.text, opts.enqueueEmail);
     await audit(tx, {
       action: 'note.create',
       entity: 'note',
@@ -293,7 +298,7 @@ export async function updateNote(
         await tx
           .insert(noteMentions)
           .values(added.map((userId) => ({ tenantId: before.tenantId, noteId: id, userId })));
-        await notifyMentions(tx, ctx, before, added, p.text);
+        await notifyMentions(tx, ctx, before, added, p.text, opts.enqueueEmail);
       }
     }
     await tx.update(notes).set(set).where(eq(notes.id, id));
