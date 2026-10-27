@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { toSettingsView, type AlexConfig } from '@/server/alex';
+import { clientAlexUpdateSchema, toSettingsView, type AlexConfig } from '@/server/alex';
 
 const row: AlexConfig = {
   tenantId: 't',
@@ -35,5 +35,22 @@ describe('toSettingsView', () => {
     const view = toSettingsView({ ...row, questions: {}, callWindows: [] } as AlexConfig);
     expect(view.questions).toEqual([]);
     expect(view.callWindows).toEqual({});
+  });
+});
+
+describe('clientAlexUpdateSchema', () => {
+  it('accepts pause and call hours only', () => {
+    expect(clientAlexUpdateSchema.safeParse({ paused: true }).success).toBe(true);
+    expect(
+      clientAlexUpdateSchema.safeParse({ callWindows: { start: '09:00', end: '17:00' } }).success
+    ).toBe(true);
+    for (const bad of [
+      {},
+      { greeting: 'x' },
+      { paused: true, provider: 'x' },
+      { callWindows: { start: '18:00', end: '09:00' } }
+    ]) {
+      expect(clientAlexUpdateSchema.safeParse(bad).success).toBe(false);
+    }
   });
 });
