@@ -3,6 +3,8 @@ import { registerEventWorkers } from './events';
 import { stopJobs } from './jobs';
 import { getSmsProvider } from './messaging/provider';
 import { registerTwilioProcessor } from './messaging';
+import { registerNotificationEmailWorker } from './notifications';
+import { registerLeadProcessor } from './leads';
 import { registerResendProcessor } from './email';
 import { registerWebhookWorker } from './webhooks';
 
@@ -10,9 +12,11 @@ import { registerWebhookWorker } from './webhooks';
 // processors before this point; the fan-out workers below deliver to them.
 getEnv();
 registerTwilioProcessor({ provider: getSmsProvider() });
+registerLeadProcessor();
 await registerEventWorkers();
 registerResendProcessor();
 await registerWebhookWorker();
+await registerNotificationEmailWorker();
 console.log(JSON.stringify({ level: 'info', msg: 'worker started' }));
 
 for (const signal of ['SIGTERM', 'SIGINT'] as const) {
