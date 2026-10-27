@@ -1,3 +1,4 @@
+import { MESSAGING_MODULES } from '@/server/modules/keys';
 import { NavGroup } from '@/types';
 
 /**
@@ -14,6 +15,67 @@ export const navGroups: NavGroup[] = [
         icon: 'dashboard',
         isActive: false,
         shortcut: ['d', 'd'],
+        items: []
+      },
+      {
+        title: 'Alex settings',
+        url: '/dashboard/settings/alex',
+        icon: 'settings',
+        isActive: false,
+        module: 'alex_core',
+        items: []
+      }
+    ]
+  },
+  {
+    label: 'Settings',
+    items: [
+      {
+        title: 'Business',
+        url: '/dashboard/settings/business',
+        icon: 'settings',
+        isActive: false,
+        items: []
+      },
+      {
+        title: 'Team',
+        url: '/dashboard/settings/team',
+        icon: 'settings',
+        isActive: false,
+        access: { role: 'owner' },
+        items: []
+      },
+      {
+        title: 'Branding',
+        url: '/dashboard/settings/branding',
+        icon: 'settings',
+        isActive: false,
+        items: []
+      }
+    ]
+  },
+  {
+    label: 'CRM',
+    items: [
+      {
+        title: 'Companies',
+        url: '/dashboard/companies',
+        icon: 'teams',
+        isActive: false,
+        module: 'crm',
+        items: []
+      }
+    ]
+  },
+  {
+    label: 'Activity',
+    items: [
+      {
+        title: 'Messages',
+        url: '/dashboard/messages',
+        icon: 'chat',
+        isActive: false,
+        anyModule: [...MESSAGING_MODULES],
         items: []
       }
     ]
@@ -42,6 +104,35 @@ export const adminNavGroups: NavGroup[] = [
         icon: 'user',
         isActive: false,
         shortcut: ['a', 'v'],
+        items: []
+      },
+      {
+        title: 'Onboard a client',
+        url: '/admin/clients/new',
+        icon: 'add',
+        isActive: false,
+        shortcut: ['a', 'n'],
+        items: []
+      },
+      {
+        title: 'Users',
+        url: '/admin/users',
+        icon: 'user',
+        isActive: false,
+        shortcut: ['a', 'u'],
+        items: []
+      }
+    ]
+  },
+  {
+    label: 'Platform',
+    items: [
+      {
+        title: 'Audit log',
+        url: '/admin/audit',
+        icon: 'post',
+        isActive: false,
+        shortcut: ['a', 'l'],
         items: []
       }
     ]

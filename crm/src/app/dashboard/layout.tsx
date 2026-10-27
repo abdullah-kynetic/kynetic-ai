@@ -9,6 +9,7 @@ import { ViewAsBanner, VIEW_AS_BANNER_HEIGHT } from '@/components/view-as/view-a
 import { VIEW_AS_COOKIE } from '@/server/impersonation';
 import { loadShellContext, roleLabel } from '@/server/shell';
 import { pendingDocuments } from '@/server/terms';
+import { brandingCss } from '@/lib/branding/color';
 import type { Metadata } from 'next';
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -44,6 +45,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const viewAs = shell.viewAs;
   return (
     <ModulesProvider modules={shell.modules}>
+      {/* F-39: tenant color, server-rendered so there is no flash. Admin sessions keep Kynetic orange. */}
+      {shell.tenant?.primaryColor && shell.role !== 'admin' && shell.role !== 'va' && (
+        <style>{brandingCss(shell.tenant.primaryColor)}</style>
+      )}
       <ViewAsProvider
         value={viewAs ? { tenantName: viewAs.tenantName, readOnly: viewAs.readOnly } : null}
       >
