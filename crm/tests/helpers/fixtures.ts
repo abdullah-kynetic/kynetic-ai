@@ -78,6 +78,7 @@ async function seedTenant(
   await admin`insert into impersonation_sessions (tenant_id, impersonator_user_id) values (${t}, ${IDS.admin})`;
   await admin`insert into tenant_billing (tenant_id) values (${t})`;
   await admin`insert into tenant_billing_modules (tenant_id, module_key, setup_cents, monthly_cents) values (${t}, 'alex_core', 650000, 150000)`;
+  await admin`insert into email_suppressions (tenant_id, address, reason) values (${t}, ${`bounce-${key}@example.test`}, 'bounced')`;
   await admin`insert into onboarding_steps (tenant_id, step_key, title) values (${t}, 'kickoff', 'Kickoff')`;
   await admin`insert into tenant_documents (tenant_id, kind, title, file_key) values (${t}, 'agreement', 'Agreement', ${`${t}/agreement.pdf`})`;
   await admin`insert into audit_log (tenant_id, action, entity) values (${t}, 'fixture.seed', 'tenant')`;
