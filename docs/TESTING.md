@@ -343,6 +343,7 @@ No command has been run against this repo's CI in any source. Each line stays `N
 
 All run from `crm/` with bun (Node 22). Verified locally on 2026-10-26 (M0-02); CI workflow `.github/workflows/crm-ci.yml` runs them on every PR touching `crm/`.
 
+- Production deploy scripts (M10-05): `bash deploy/prod/tests/rehearse.sh` from `crm/` (stubbed docker, curl, df and openssl; 25 checks covering deploy, failed health check, failed migration, rollback, forced command, alert test, de-duplication, recovery, disk and certificate). Also `bash -n` on every script and `docker compose -f deploy/prod/compose.yml --profile tools config -q` with dummy values; both run in `crm-ci.yml`. The rehearsal on a real server is still owed.
 - Lint: `bun run lint` (oxlint).
 - Typecheck: `bun run typecheck`.
 - Format check: `bun run format:check` (oxfmt).
