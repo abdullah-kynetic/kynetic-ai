@@ -1,0 +1,27 @@
+{
+  "type": "post_call_transcription",
+  "event_timestamp": 1792990000,
+  "data": {
+    "agent_id": "agent_test",
+    "conversation_id": "conv_01test",
+    "status": "done",
+    "has_audio": true,
+    "transcript": [
+      { "role": "agent", "message": "Hi, this is Alex calling for Test Roofing." },
+      { "role": "user", "message": "Yes, tomorrow morning works." }
+    ],
+    "metadata": {
+      "start_time_unix_secs": 1792989900,
+      "call_duration_secs": 84,
+      "phone_call": { "direction": "outbound", "external_number": "+15555550101" }
+    },
+    "analysis": {
+      "call_successful": "success",
+      "transcript_summary": "Lead agreed to an estimate tomorrow morning.",
+      "data_collection_results": {
+        "outcome": { "data_collection_id": "outcome", "value": "booked" },
+        "service": { "data_collection_id": "service", "value": "roof repair" }
+      }
+    }
+  }
+}
