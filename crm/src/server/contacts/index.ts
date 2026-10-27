@@ -37,3 +37,4 @@ export {
   type CreateOpts,
   type DuplicateMatch
 } from './service';
+export { currentConsent, getContactDetail, type ConsentStatus, type ContactDetail } from './detail';
