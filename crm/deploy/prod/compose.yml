@@ -1,0 +1,118 @@
+# Production Compose project on the OVH VPS (ARCHITECTURE "Server and deployment setup"). Own network and
+# own Postgres, never shared with portal/, n8n or Twenty. Images come from GHCR by commit tag; nothing is
+# built on the server. Secrets live in /opt/kynetic-crm/.env (mode 600, outside the repo), never in this file.
+# Run through deploy.sh. Base images should be pinned by digest before the first real deploy (SECURITY 6.3).
+name: kynetic-crm
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: '10m'
+    max-file: '5'
+
+x-app-env: &app-env
+  APP_BASE_URL: ${APP_BASE_URL:?set APP_BASE_URL}
+  DATABASE_URL: ${DATABASE_URL:?set DATABASE_URL}
+  DATABASE_URL_AUTH: ${DATABASE_URL_AUTH:?set DATABASE_URL_AUTH}
+  DATABASE_URL_WORKER: ${DATABASE_URL_WORKER:?set DATABASE_URL_WORKER}
+  BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET}
+  APP_ENCRYPTION_KEY: ${APP_ENCRYPTION_KEY:?set APP_ENCRYPTION_KEY}
+  GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+  GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+  OUTBOUND_ENABLED: ${OUTBOUND_ENABLED:-false}
+
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB}
+    volumes:
+      # Own volume: a host path on the dedicated data disk (sizing: at least 4 vCPU and 8 GB RAM).
+      - ${PGDATA_HOST_PATH:?set PGDATA_HOST_PATH}:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    logging: *logging
+    networks: [internal]
+
+  # One-shot migration step run by deploy.sh as the owner role, before the new app starts.
+  migrate:
+    image: ${IMAGE_REPO:?set IMAGE_REPO}/tools:${IMAGE_TAG:?set IMAGE_TAG}
+    profiles: [tools]
+    environment:
+      DATABASE_URL_MIGRATE: ${DATABASE_URL_MIGRATE:?set DATABASE_URL_MIGRATE}
+    command: ['bun', 'run', 'db:migrate']
+    depends_on:
+      postgres:
+        condition: service_healthy
+    logging: *logging
+    networks: [internal]
+
+  app:
+    image: ${IMAGE_REPO:?set IMAGE_REPO}/app:${IMAGE_TAG:?set IMAGE_TAG}
+    restart: unless-stopped
+    environment:
+      <<: *app-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'node', '-e', "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+    logging: *logging
+    networks: [internal]
+
+  worker:
+    image: ${IMAGE_REPO:?set IMAGE_REPO}/worker:${IMAGE_TAG:?set IMAGE_TAG}
+    restart: unless-stopped
+    environment:
+      <<: *app-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    logging: *logging
+    networks: [internal]
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:?set SITE_ADDRESS}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./cloudflare-ips.caddy:/etc/caddy/cloudflare-ips.caddy:ro
+      - ./certs:/certs:ro
+      - caddy_data:/data
+    depends_on:
+      app:
+        condition: service_healthy
+    logging: *logging
+    networks: [internal]
+
+  # Host/uptime dashboard (approved: a small self-hosted agent). Loopback only; reach it through an SSH tunnel.
+  kuma:
+    image: louislam/uptime-kuma:1
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:3001:3001'
+    volumes:
+      - kuma_data:/app/data
+    logging: *logging
+    networks: [internal]
+
+volumes:
+  caddy_data:
+  kuma_data:
+
+networks:
+  internal:

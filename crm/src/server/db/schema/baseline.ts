@@ -111,7 +111,14 @@ export const impersonationSessions = pgTable(
       .notNull(),
     endedAt: timestamp('ended_at', { withTimezone: true, mode: 'string' }),
     ip: inet(),
-    userAgent: text('user_agent')
+    userAgent: text('user_agent'),
+    reason: text(),
+    lastSeenAt: timestamp('last_seen_at', { withTimezone: true, mode: 'string' })
+      .defaultNow()
+      .notNull(),
+    writeReason: text('write_reason'),
+    writeUntil: timestamp('write_until', { withTimezone: true, mode: 'string' }),
+    endedReason: text('ended_reason')
   },
   (table) => [
     index('impersonation_tenant_idx').using(
@@ -1670,7 +1677,7 @@ export const notifications = pgTable(
     }).onDelete('cascade'),
     check(
       'notifications_kind_check',
-      sql`kind = ANY (ARRAY['new_lead'::text, 'booked'::text, 'task_due'::text, 'report_ready'::text, 'action_needed'::text, 'deal_won'::text, 'hot_lead'::text])`
+      sql`kind = ANY (ARRAY['new_lead'::text, 'booked'::text, 'task_due'::text, 'report_ready'::text, 'action_needed'::text, 'deal_won'::text, 'hot_lead'::text, 'mention'::text])`
     )
   ]
 );

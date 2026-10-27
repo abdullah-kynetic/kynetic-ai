@@ -1,4 +1,4 @@
-import type { Env } from '../../env';
+import { getEnv, type Env } from '../../env';
 import { ProviderError } from '../errors';
 import { FakeStorage } from './fake';
 import { R2Storage } from './r2';
@@ -24,4 +24,15 @@ export function createStorage(env: Env): StorageAdapter {
   }
   if (env.NODE_ENV === 'test') return new FakeStorage();
   throw new ProviderError('config', 'storage_not_configured', 'Object storage is not configured');
+}
+
+let instance: StorageAdapter | undefined;
+
+/** Process-wide adapter built from the environment on first use; tests replace it with setStorage. */
+export function getStorage(): StorageAdapter {
+  return (instance ??= createStorage(getEnv()));
+}
+
+export function setStorage(adapter: StorageAdapter | undefined): void {
+  instance = adapter;
 }

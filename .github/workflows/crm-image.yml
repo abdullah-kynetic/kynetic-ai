@@ -1,0 +1,38 @@
+name: crm-image
+
+# Builds the app, worker and tools images for a merged main commit and pushes them to GHCR (private),
+# tagged with the full commit hash. Off until Abdullah sets the repository variable IMAGE_PUSH_ENABLED=true.
+# This only publishes images. Deploying a tag to production is a separate, manual step after his yes
+# (crm/deploy/prod/README.md).
+on:
+  push:
+    branches: [main]
+    paths: ['crm/**', '.github/workflows/crm-image.yml']
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  push:
+    if: vars.IMAGE_PUSH_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        target: [app, worker, tools]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: crm
+          file: crm/deploy/Dockerfile
+          target: ${{ matrix.target }}
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/kynetic-crm/${{ matrix.target }}:${{ github.sha }}
