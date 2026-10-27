@@ -15,14 +15,14 @@ import { ctx, IDS, seedTwoTenants, type SeededTenant } from '../helpers/fixtures
 import { createTestDatabase, type TestDatabase } from '../helpers/db';
 
 let tdb: TestDatabase;
-let opts: { db: Db };
+let opts: { db: Db; enqueueEmail: () => Promise<undefined> };
 let a: SeededTenant;
 let b: SeededTenant;
 
 beforeAll(async () => {
   tdb = await createTestDatabase();
   ({ a, b } = await seedTwoTenants(tdb.admin));
-  opts = { db: createDb(tdb.app) };
+  opts = { db: createDb(tdb.app), enqueueEmail: async () => undefined };
   await setCrm(true);
   await setCrm(true, IDS.tenantB);
 });
