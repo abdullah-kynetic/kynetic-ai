@@ -25,7 +25,7 @@ What must work before the first founding client goes live (PRD success measures,
 
 Out of v1 test scope (Later or Skip in the PRD; tests exist only to prove absence for Skip items):
 
-- Later, not tested in v1: F-04, F-09, F-11, F-18, F-21, F-23, F-25, F-29, F-36, F-40, F-45, F-46, F-47, F-48, F-50, F-51, F-56, F-59, F-64 to F-69, F-95, F-97.
+- Later, not tested in v1: F-04, F-09, F-11, F-18, F-21, F-23, F-25, F-29, F-40, F-45, F-46, F-47, F-48, F-50, F-51, F-56, F-59, F-64 to F-69, F-95, F-97.
 - Skip, absence check only: F-13 (no conditional or computed fields), F-34 (no workflow builder), F-52 (no starter chat or AI demo routes).
 
 Performance and accessibility targets are PRD decisions, not sourced numbers. Approved by Abdullah on 2026-10-25 (PRD decision 13):
@@ -195,7 +195,9 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-38 (M9, crm) | Staff without export permission | Export hidden; server refuses | Integration | Not run |
 | F-41 (M9, platform) | Staff opens team settings | Refused (403) | Integration | Pass (M9-09, `business-settings.test.ts`) |
 | F-42 (M9, alex_core) | Owner pauses Alex | No outbound calls start for tenant; dashboard shows "Paused"; raw prompt absent from every response | Integration | Not run |
-| F-43 (M9, crm) | Create tag, apply it, filter by it | Works end to end | E2E | Not run |
+| F-43 (M9, crm) | Create tag, apply it, filter by it | Works end to end | E2E | Create, apply, count, rename, merge, delete: integration pass (2026-10-26, M9-11); signed-in E2E and contact-list filter by tag Not run (list filter is M1-02) |
+| F-43 (M9, crm) | Tag settings as staff; tenant without `crm`; duplicate tag name | FORBIDDEN; MODULE_DISABLED; duplicate refused ignoring case | Integration | Pass (2026-10-26, M9-11) |
+| F-36 (M9, platform) | Turn email off for one type, then raise that type; other users and other types | No email for that user and type; the bell still lists it; others unaffected; owner-wide notices skip only opted-out owners | Integration | Pass (2026-10-26, M9-11) |
 | F-44 (M9, platform) | 390px viewport on daily-use pages | No horizontal scroll; touch targets at least 44px; tap-to-call uses `tel:` link | E2E and Manual | Not run |
 | F-49 (M6, alex_core) | Report delivery fails (fake Resend) | Retry runs; failure shown in integration health | Integration | Not run |
 | F-13 (Skip) | Look for conditional or computed field code and routes | None exist | Unit (static) | Not run |

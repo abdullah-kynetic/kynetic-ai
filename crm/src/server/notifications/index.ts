@@ -115,3 +115,9 @@ export async function markNotificationRead(tx: Tx, id: string): Promise<boolean>
 }
 
 export { deliverNotificationEmail, registerNotificationEmailWorker } from './email';
+export {
+  listMyPreferences,
+  setMyPreferences,
+  type NotificationPreference,
+  type SetPreferencesInput
+} from './preferences';

@@ -148,6 +148,13 @@
       "when": 1793100003000,
       "tag": "0048_onboarding_checklist",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1793100004000,
+      "tag": "0054_tags_notification_prefs",
+      "breakpoints": true
     }
   ]
 }
