@@ -22,6 +22,21 @@ export const navGroups: NavGroup[] = [
     label: 'Settings',
     items: [
       {
+        title: 'Business',
+        url: '/dashboard/settings/business',
+        icon: 'settings',
+        isActive: false,
+        items: []
+      },
+      {
+        title: 'Team',
+        url: '/dashboard/settings/team',
+        icon: 'settings',
+        isActive: false,
+        access: { role: 'owner' },
+        items: []
+      },
+      {
         title: 'Branding',
         url: '/dashboard/settings/branding',
         icon: 'settings',
