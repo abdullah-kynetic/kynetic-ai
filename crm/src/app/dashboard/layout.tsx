@@ -36,7 +36,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
       {shell.tenant?.primaryColor && shell.role !== 'admin' && shell.role !== 'va' && (
         <style>{brandingCss(shell.tenant.primaryColor)}</style>
       )}
-      <KBar>
       <KBar groups={groups}>
         <SidebarProvider defaultOpen={defaultOpen}>
           <a
