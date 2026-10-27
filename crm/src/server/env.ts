@@ -20,9 +20,11 @@ export const envSchema = z.object({
   ELEVENLABS_API_KEY: z.string().min(1).optional(),
   ELEVENLABS_WEBHOOK_SECRET: z.string().min(1).optional(),
   ELEVENLABS_AGENT_PHONE_NUMBER_ID: z.string().min(1).optional(),
+  RETELL_API_KEY: z.string().min(1).optional(),
+  RETELL_FROM_NUMBER: z.string().min(1).optional(),
+  OUTBOUND_ENABLED: booleanString.default(false),
   RESEND_API_KEY: z.string().min(1).optional(),
   RESEND_WEBHOOK_SECRET: z.string().min(1).optional(),
-  OUTBOUND_ENABLED: booleanString.default(false),
   // Verified sending address for app email (ARCHITECTURE: Domain, DNS and email domain).
   EMAIL_FROM_ADDRESS: z.string().min(3).default('notifications@mail.kyneticai.com'),
   // Object storage (R2). All four are set together; see refinedEnvSchema.
