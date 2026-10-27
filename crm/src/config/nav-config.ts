@@ -43,8 +43,13 @@ export const navGroups: NavGroup[] = [
         isActive: false,
         access: { role: 'owner' },
         items: []
+      },
+      {
         title: 'Branding',
         url: '/dashboard/settings/branding',
+        icon: 'settings',
+        isActive: false,
+        items: []
       }
     ]
   },
