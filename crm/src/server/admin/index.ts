@@ -13,7 +13,9 @@ export {
   type StaffCaller,
   type UserRow
 } from './users';
+export {
   searchAuditLog,
+  listTenantOptions as listAuditTenantOptions,
   auditFiltersSchema,
   AUDIT_PAGE_SIZE,
   type AuditFilters,
