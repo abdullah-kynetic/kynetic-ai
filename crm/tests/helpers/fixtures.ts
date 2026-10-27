@@ -108,6 +108,7 @@ async function seedTenant(
   await admin`insert into consents (tenant_id, contact_id, channel, kind, source) values (${t}, ${contact.id}, 'sms', 'express_written', 'form')`;
   await admin`insert into dnc_entries (tenant_id, e164, source) values (${t}, ${`+1555555019${n}`}, 'staff')`;
   await admin`insert into webhook_events (source, external_id, tenant_id, payload) values ('fake', ${`evt-${key}`}, ${t}, '{}')`;
+  await admin`insert into email_suppressions (tenant_id, address, reason) values (${t}, ${`bounced-${key}@example.test`}, 'bounced')`;
   await admin`insert into integrations (tenant_id, kind) values (${t}, 'voice')`;
   await admin`insert into phone_numbers (tenant_id, e164, provider, provider_sid, purpose) values (${t}, ${`+1555555000${n}`}, 'twilio', ${`PN${n}`}, 'sms')`;
   await admin`insert into alex_configs (tenant_id, provider) values (${t}, 'fake')`;
