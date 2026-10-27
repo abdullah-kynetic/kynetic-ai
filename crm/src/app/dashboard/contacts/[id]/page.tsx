@@ -13,7 +13,11 @@ import {
   type ContactDetail
 } from '@/server/contacts';
 import { ValidationError } from '@/server/errors';
+import { moduleSatisfied } from '@/server/modules/keys';
 import { loadShellContext } from '@/server/shell';
+import { getTenantTimezone, listAssignees, listEntityTasks } from '@/server/tasks';
+import { presentTasks } from '@/components/tasks/present';
+import { TaskList } from '@/components/tasks/task-list';
 import type { Metadata } from 'next';
 import { cookies, headers } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
@@ -104,6 +108,12 @@ export default async function ContactPage({
     if (err instanceof ValidationError) return listActivities(ctx, { contactId: id, types });
     throw err;
   });
+  // Tasks are CRM Lite (F-20): without the module the section is not rendered at all.
+  const tasksOn = moduleSatisfied(
+    { keys: new Set(shell.modules.keys), crmLevel: shell.modules.crmLevel },
+    { module: 'crm', level: 'lite' }
+  );
+  const tasksSection = tasksOn ? await renderTasks(ctx, id) : null;
   const name = [contact.firstName, contact.lastName].filter(Boolean).join(' ') || 'Unnamed contact';
   const phones = present(contact.phones);
   const emails = present(contact.emails);
@@ -189,9 +199,10 @@ export default async function ContactPage({
             </CardContent>
           </Card>
 
+          {tasksSection}
+
           {(
             [
-              ['Tasks', 'No tasks', 'Follow-ups for this contact will show here.'],
               ['Notes', 'No notes', 'Notes about this contact will show here.'],
               ['Deals', 'No deals', 'Deals linked to this contact will show here.']
             ] as const
@@ -282,5 +293,38 @@ function ContactPoints({
         <p className='text-muted-foreground mt-1'>None on file</p>
       )}
     </div>
+  );
+}
+
+async function renderTasks(
+  ctx: { tenantId: string; userId: string; role: Parameters<typeof listAssignees>[0]['role'] },
+  contactId: string
+) {
+  const at = currentTime();
+  const [timezone, assignees, { open, completed }] = await Promise.all([
+    getTenantTimezone(ctx),
+    listAssignees(ctx),
+    listEntityTasks(ctx, { contactId })
+  ]);
+  const text = presentTasks([...open, ...completed], timezone, at);
+  return (
+    <Card id='tasks' aria-labelledby='section-Tasks'>
+      <CardHeader>
+        <CardTitle id='section-Tasks'>Tasks</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <TaskList
+          groups={[{ key: 'contact-open', label: 'Open', tasks: open }]}
+          completed={completed}
+          assignees={assignees}
+          timezone={timezone}
+          currentUserId={ctx.userId}
+          link={{ contactId }}
+          emptyTitle='No tasks'
+          emptyDescription='Add a follow-up for this contact.'
+          {...text}
+        />
+      </CardContent>
+    </Card>
   );
 }
