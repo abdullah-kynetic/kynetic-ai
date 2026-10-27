@@ -2,6 +2,7 @@ import PageContainer from '@/components/layout/page-container';
 import { StatusBadge, Badge, type StatusTone } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/states';
+import { NotesSection } from '@/components/notes/notes-section';
 import { currentTime } from '@/components/timeline/format';
 import { Timeline } from '@/components/timeline/timeline';
 import { parseTimelineParams } from '@/components/timeline/params';
@@ -13,7 +14,8 @@ import {
   type ContactDetail
 } from '@/server/contacts';
 import { ValidationError } from '@/server/errors';
-import { moduleSatisfied } from '@/server/modules/keys';
+import { loadEnabledModules, moduleSatisfied } from '@/server/modules';
+import { listNotes, listTeammates } from '@/server/notes';
 import { loadShellContext } from '@/server/shell';
 import { getTenantTimezone, listAssignees, listEntityTasks } from '@/server/tasks';
 import { presentTasks } from '@/components/tasks/present';
@@ -21,6 +23,7 @@ import { TaskList } from '@/components/tasks/task-list';
 import type { Metadata } from 'next';
 import { cookies, headers } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
+import { addNote, editNote, pinNote, removeNote } from './note-actions';
 
 export const metadata: Metadata = {
   title: 'Contact',
@@ -108,6 +111,11 @@ export default async function ContactPage({
     if (err instanceof ValidationError) return listActivities(ctx, { contactId: id, types });
     throw err;
   });
+  // Notes are a CRM Lite surface: a base-portal tenant sees no Notes card (F-85).
+  const showNotes = moduleSatisfied(await loadEnabledModules(ctx), { module: 'crm' });
+  const [notes, teammates] = showNotes
+    ? await Promise.all([listNotes(ctx, { contactId: id }), listTeammates(ctx)])
+    : [[], []];
   // Tasks are CRM Lite (F-20): without the module the section is not rendered at all.
   const tasksOn = moduleSatisfied(
     { keys: new Set(shell.modules.keys), crmLevel: shell.modules.crmLevel },
@@ -199,23 +207,34 @@ export default async function ContactPage({
             </CardContent>
           </Card>
 
+          {showNotes && (
+            <NotesSection
+              notes={notes}
+              teammates={teammates}
+              viewer={{ id: shell.user.id, role: shell.role }}
+              actions={{
+                add: addNote.bind(null, id),
+                edit: editNote.bind(null, id),
+                pin: pinNote.bind(null, id),
+                remove: removeNote.bind(null, id)
+              }}
+            />
+          )}
+
           {tasksSection}
 
-          {(
-            [
-              ['Notes', 'No notes', 'Notes about this contact will show here.'],
-              ['Deals', 'No deals', 'Deals linked to this contact will show here.']
-            ] as const
-          ).map(([title, empty, hint]) => (
-            <Card key={title} aria-labelledby={`section-${title}`}>
-              <CardHeader>
-                <CardTitle id={`section-${title}`}>{title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <EmptyState title={empty} description={hint} />
-              </CardContent>
-            </Card>
-          ))}
+          {([['Deals', 'No deals', 'Deals linked to this contact will show here.']] as const).map(
+            ([title, empty, hint]) => (
+              <Card key={title} aria-labelledby={`section-${title}`}>
+                <CardHeader>
+                  <CardTitle id={`section-${title}`}>{title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <EmptyState title={empty} description={hint} />
+                </CardContent>
+              </Card>
+            )
+          )}
         </div>
 
         <Card className='h-fit'>

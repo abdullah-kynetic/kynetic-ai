@@ -1677,7 +1677,7 @@ export const notifications = pgTable(
     }).onDelete('cascade'),
     check(
       'notifications_kind_check',
-      sql`kind = ANY (ARRAY['new_lead'::text, 'booked'::text, 'task_due'::text, 'report_ready'::text, 'action_needed'::text, 'deal_won'::text, 'hot_lead'::text])`
+      sql`kind = ANY (ARRAY['new_lead'::text, 'booked'::text, 'task_due'::text, 'report_ready'::text, 'action_needed'::text, 'deal_won'::text, 'hot_lead'::text, 'mention'::text])`
     )
   ]
 );

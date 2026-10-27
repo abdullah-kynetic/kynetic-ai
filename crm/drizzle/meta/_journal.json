@@ -153,6 +153,13 @@
       "idx": 21,
       "version": "7",
       "when": 1793100004000,
+      "tag": "0053_notification_mention_kind",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1793100005000,
       "tag": "0054_tags_notification_prefs",
       "breakpoints": true
     }
