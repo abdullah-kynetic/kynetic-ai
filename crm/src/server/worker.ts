@@ -1,4 +1,9 @@
-import { getVoiceProvider, registerVoiceProcessor } from './calls';
+import {
+  getVoiceProvider,
+  registerOutboundCallSubscriber,
+  registerOutboundCallWorker,
+  registerVoiceProcessor
+} from './calls';
 import { getEnv } from './env';
 import { registerEventWorkers } from './events';
 import { stopJobs } from './jobs';
@@ -13,11 +18,13 @@ import { registerWebhookWorker } from './webhooks';
 // processors before this point; the fan-out workers below deliver to them.
 getEnv();
 registerVoiceProcessor({ provider: getVoiceProvider('elevenlabs')! });
-registerTwilioProcessor({ provider: getSmsProvider() });
 registerLeadProcessor();
+registerOutboundCallSubscriber();
+registerTwilioProcessor({ provider: getSmsProvider() });
 await registerEventWorkers();
 registerResendProcessor();
 await registerWebhookWorker();
+await registerOutboundCallWorker();
 await registerNotificationEmailWorker();
 console.log(JSON.stringify({ level: 'info', msg: 'worker started' }));
 

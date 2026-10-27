@@ -23,7 +23,9 @@ export const QUEUES = {
   /** One job per notification row, to email its recipients. */
   'notification.email': { ...retrying, policy: 'short' },
   /** One job per stored webhook_events row. */
-  'webhook.process': { ...retrying, policy: 'short' }
+  'webhook.process': { ...retrying, policy: 'short' },
+  /** One job per outbound call attempt (F-78). A queued attempt is unique per tenant, contact, trigger and attempt. */
+  'call.outbound': { ...retrying, policy: 'short' }
 } as const satisfies Record<string, QueueDef>;
 
 export type QueueName = keyof typeof QUEUES;

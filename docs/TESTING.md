@@ -247,7 +247,9 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-76 (M4, alex_core) | Rate-limit breach | 429 | Integration | Pass (2026-10-26, M4-04) |
 | F-77 (M4, platform) | Bad signature on any provider webhook | Rejected before storage; no `webhook_events` row | Integration | Not run |
 | F-77 (M4, platform) | Processing error | Job retries; error count rises | Integration | Not run |
-| F-78 (M4, alex_core) | New lead with consent inside call window | Outbound call starts (fake provider) | Integration | Not run |
+| F-78 (M4, alex_core) | New lead with consent inside call window | Outbound call starts (fake provider) | Integration | Pass (2026-10-26, M4-06, `outbound-call.test.ts`) |
+| F-78 (M4, alex_core) | Lead outside the call window, in quiet hours, or with no consent | No call; waits for the opening (or stops with a logged reason); never dials early | Integration | Pass (2026-10-26, M4-06) |
+| F-78 (M4, alex_core) | Retry cadence on a fake clock, redelivered or concurrent attempt, reached lead | Attempts at the configured delays; one dial per attempt; stops once reached or at the daily cap | Integration | Pass (2026-10-26, M4-06) |
 | F-79 (M7, quote_followup) | Module on; deal enters Quoted | Step 1 scheduled | Integration | Not run |
 | F-79 (M7, quote_followup) | Module off | No run created | Integration | Not run |
 | F-79 (M7, quote_followup) | Reply during run | Run stops | Integration | Not run |
@@ -430,9 +432,9 @@ Regression policy: every important bug fix adds a regression test named with the
 | F-99 (M8a, platform) | Owner, staff and VA request the billing profile | 403 | Integration | Pass: `tests/integration/admin-billing.test.ts` (M8a-07; Postgres 16, 2026-10-26) |
 | F-100 (M8a, platform) | New tenant with `alex_core` | Checklist created with the module's steps | Integration | Pass (`tests/integration/admin-onboarding.test.ts`) |
 | F-100 (M8a, platform) | Owner opens the dashboard before go-live | Setup progress shows only `client_visible` steps; none after go-live | E2E | Not run in a browser; integration covers the data and the card query (`tests/integration/onboarding-checklist.test.ts`) |
+| F-101 (M8b, platform) | Kill switch on, a call job runs | No call or text sent; job waits; resumes after off | Integration | Pass for calls (2026-10-26, M4-06); texts and the admin switch not run |
 | F-100 (M8a, platform) | Owner or staff queries or updates internal steps | Internal rows invisible; no writes | Integration | Pass (`tests/integration/onboarding-checklist.test.ts`) |
 | F-100 (M8a, platform) | Admin marks go-live with open steps; VA tries go-live | Refused; admin succeeds once all steps done or n/a, audited | Integration | Pass (`tests/integration/onboarding-checklist.test.ts`) |
-| F-101 (M8b, platform) | Kill switch on, a call job runs | No call or text sent; job waits; resumes after off | Integration | Not run |
 | F-101 (M8b, platform) | Replay a failed webhook twice | Processed once | Integration | Not run |
 | F-101 (M8b, platform) | Suspend a tenant | Its users cannot sign in; its jobs no-op | Integration | Not run |
 | F-102 (M0, platform) | User has not accepted the current version | Redirect to acceptance; accepted once, not asked again | E2E | Partly run: integration covers pending, accept, not asked again, new version, RLS (`tests/integration/terms.test.ts`); E2E covers the signed-out redirect only. The signed-in redirect needs an E2E sign-in fixture, not built yet |
