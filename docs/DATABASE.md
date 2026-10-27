@@ -56,6 +56,7 @@ Retention and classification are per table. Retention values are the PRD decisio
 | dnc_entries | Per-tenant do-not-call list (SECURITY C10) | Tenant (system adds on opt-out) | Kept after removal for audit | Personal | M4 | platform |
 | webhook_events | Verified inbound webhooks, idempotent by (source, external_id) | System | Payload purged after 30 days, id and status kept (SECURITY 6.1; decided) | Internal | M4 | platform |
 | integrations | Health per tenant and provider | System | Latest state only | Internal | M4 | platform (F-62) |
+| email_suppressions | Addresses that bounced or complained, per tenant (M4-09, DC-077) | System | Until an admin lifts it (tool not built) | Personal | M4 | platform (F-30, F-35) |
 | phone_numbers | Provider numbers and routing; global uniqueness of E.164 | Kynetic | Until released | Internal | M4 | alex_core, after_hours, missed_call_textback |
 | alex_configs | Alex settings per tenant | Kynetic and owner (limited fields) | Current version; history in audit_log | Internal | M4 | alex_core (F-58) |
 | alex_prompts | Raw prompt bodies, versioned | Kynetic admin only | Permanent (F-59 Later: rollback) | Internal | M4 | alex_core |

@@ -13,3 +13,13 @@ export {
   type StaffCaller,
   type UserRow
 } from './users';
+export {
+  searchAuditLog,
+  listTenantOptions as listAuditTenantOptions,
+  auditFiltersSchema,
+  AUDIT_PAGE_SIZE,
+  type AuditFilters,
+  type AuditPage,
+  type AuditRow,
+  type TenantOption
+} from './audit-viewer';
