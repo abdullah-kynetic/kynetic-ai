@@ -238,7 +238,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M9-05 | Import history page and undo UI | PRD F-93 | M9-03 | Undo removes batch records; edited records listed | M | Sonnet | yes | 20 | todo | - |
 | M9-06 | Global search and Cmd+K (CRM Full) | PRD F-37 | M1-09, M2-06 | Phone fragment finds the contact; search under 500 ms p95 | M | Sonnet | yes | 17 | todo | - |
 | M9-07 | CSV export per table view (CRM Full, permissioned) | PRD F-38; SEC export rules | M1-09 | Export honors filters and the staff permission; audited | M | Sonnet | yes | 17 | todo | - |
-| M9-08 | Branding settings: logo upload, color with contrast check, business name | PRD F-39; SEC uploads; DS client color rules | M0-28 | Bad file refused; low-contrast color refused | M | Sonnet | yes | 12 | todo | - |
+| M9-08 | Branding settings: logo upload, color with contrast check, business name | PRD F-39; SEC uploads; DS client color rules | M0-28 | Bad file refused; low-contrast color refused | M | Sonnet | yes | 12 | done | [PR #80](https://github.com/abdullah-kynetic/kynetic-ai/pull/80), stacked on #72; DC-080; no migration needed (0020 unused) |
 | M9-09 | Business settings: hours, service area, services, transfer number, team | PRD F-41 | M0-28 | Hours feed availability and call windows | M | Sonnet | yes | 12 | todo | - |
 | M9-10 | Client Alex settings: pause and call hours only | PRD F-42; PRD decision 8 | M4-13 | Other fields are not writable; change audited | S | Sonnet | yes | 14 | todo | - |
 | M9-11 | Settings pages: tags and notification preferences (Lite) | PRD F-43 | M2-05, M7-04 | Preferences honored by `notify()` | M | Haiku | yes | 15 | todo | - |
