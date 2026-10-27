@@ -2,6 +2,7 @@ import { getEnv } from './env';
 import { registerEventWorkers } from './events';
 import { stopJobs } from './jobs';
 import { registerLeadProcessor } from './leads';
+import { registerResendProcessor } from './email';
 import { registerWebhookWorker } from './webhooks';
 
 // Worker entry (kynetic_worker). Feature milestones register their subscribers and webhook
@@ -9,6 +10,7 @@ import { registerWebhookWorker } from './webhooks';
 getEnv();
 registerLeadProcessor();
 await registerEventWorkers();
+registerResendProcessor();
 await registerWebhookWorker();
 console.log(JSON.stringify({ level: 'info', msg: 'worker started' }));
 

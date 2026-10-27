@@ -133,3 +133,8 @@ test('M0-21: a state-changing request without Origin is refused', async ({ reque
   expect(res.status()).toBe(403);
   expect((await res.json()).error.code).toBe('FORBIDDEN');
 });
+
+test('M8a-01: a signed-out visitor cannot load the admin side', async ({ page }) => {
+  await page.goto('/admin');
+  await expect(page).toHaveURL(/\/sign-in$/);
+});
