@@ -1,3 +1,4 @@
+import { MESSAGING_MODULES } from '@/server/modules/keys';
 import { NavGroup } from '@/types';
 
 /**
@@ -14,6 +15,120 @@ export const navGroups: NavGroup[] = [
         icon: 'dashboard',
         isActive: false,
         shortcut: ['d', 'd'],
+        items: []
+      },
+      {
+        title: 'Pipeline',
+        url: '/dashboard/pipeline',
+        icon: 'kanban',
+        isActive: false,
+        shortcut: ['p', 'p'],
+        items: []
+      },
+      {
+        title: 'Leads',
+        url: '/dashboard/contacts',
+        icon: 'teams',
+        isActive: false,
+        shortcut: ['l', 'l'],
+        items: []
+      },
+      {
+        title: 'Calls',
+        url: '/dashboard/calls',
+        icon: 'phone',
+        isActive: false,
+        module: 'alex_core',
+        items: []
+      },
+      {
+        title: 'Alex settings',
+        url: '/dashboard/settings/alex',
+        icon: 'settings',
+        isActive: false,
+        module: 'alex_core',
+        items: []
+      }
+    ]
+  },
+  {
+    label: 'Settings',
+    items: [
+      {
+        title: 'Business',
+        url: '/dashboard/settings/business',
+        icon: 'settings',
+        isActive: false,
+        items: []
+      },
+      {
+        title: 'Team',
+        url: '/dashboard/settings/team',
+        icon: 'settings',
+        isActive: false,
+        access: { role: 'owner' },
+        items: []
+      },
+      {
+        title: 'Branding',
+        url: '/dashboard/settings/branding',
+        icon: 'settings',
+        isActive: false,
+        items: []
+      }
+    ]
+  },
+  {
+    label: 'CRM',
+    items: [
+      {
+        title: 'Companies',
+        url: '/dashboard/companies',
+        icon: 'teams',
+        isActive: false,
+        module: 'crm',
+        items: []
+      }
+    ]
+  },
+  {
+    label: 'Activity',
+    items: [
+      {
+        title: 'Messages',
+        url: '/dashboard/messages',
+        icon: 'chat',
+        isActive: false,
+        anyModule: [...MESSAGING_MODULES],
+        items: []
+      }
+    ]
+  },
+  {
+    label: 'Settings',
+    items: [
+      {
+        title: 'Pipeline stages',
+        url: '/dashboard/settings/pipeline',
+        icon: 'settings',
+        isActive: false,
+        module: 'crm',
+        level: 'lite',
+        access: { role: 'owner' },
+        items: []
+      }
+    ]
+  },
+  {
+    label: 'Settings',
+    items: [
+      {
+        title: 'Custom fields',
+        url: '/dashboard/settings/custom-fields',
+        icon: 'settings',
+        isActive: false,
+        module: 'crm',
+        level: 'full',
         items: []
       }
     ]
@@ -37,6 +152,14 @@ export const adminNavGroups: NavGroup[] = [
         items: []
       },
       {
+        title: 'View as client',
+        url: '/admin/view-as',
+        icon: 'user',
+        isActive: false,
+        shortcut: ['a', 'v'],
+        items: []
+      },
+      {
         title: 'Onboard a client',
         url: '/admin/clients/new',
         icon: 'add',
@@ -50,14 +173,6 @@ export const adminNavGroups: NavGroup[] = [
         icon: 'user',
         isActive: false,
         shortcut: ['a', 'u'],
-        items: []
-      },
-      {
-        title: 'View as client',
-        url: '/admin/view-as',
-        icon: 'user',
-        isActive: false,
-        shortcut: ['a', 'v'],
         items: []
       }
     ]

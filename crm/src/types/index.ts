@@ -23,6 +23,8 @@ export interface NavItem {
   access?: PermissionCheck;
   /** Module that must be on for this entry to show (PRD F-70). Omit for base-portal entries. */
   module?: ModuleKey;
+  /** Shows when any one of these modules is on (shared surfaces such as the messages log). */
+  anyModule?: ModuleKey[];
   /** For `crm` entries: `full` hides the entry from Lite tenants. */
   level?: CrmLevel;
 }

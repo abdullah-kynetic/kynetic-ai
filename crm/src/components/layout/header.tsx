@@ -4,6 +4,7 @@ import { Separator } from '../ui/separator';
 import { Breadcrumbs } from '../breadcrumbs';
 import SearchInput from '../search-input';
 import { UserMenu, type ShellUser } from './user-menu';
+import { NotificationBell } from '../notifications/notification-bell';
 import { ThemeModeToggle } from '../themes/theme-mode-toggle';
 
 export default function Header({ user }: { user: ShellUser }) {
@@ -19,6 +20,7 @@ export default function Header({ user }: { user: ShellUser }) {
         <div className='hidden md:flex'>
           <SearchInput />
         </div>
+        <NotificationBell />
         <ThemeModeToggle />
         <UserMenu user={user} />
       </div>
