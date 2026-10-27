@@ -1,3 +1,4 @@
+import { MESSAGING_MODULES } from '@/server/modules/keys';
 import { NavGroup } from '@/types';
 
 /**
@@ -62,6 +63,19 @@ export const navGroups: NavGroup[] = [
         icon: 'teams',
         isActive: false,
         module: 'crm',
+        items: []
+      }
+    ]
+  },
+  {
+    label: 'Activity',
+    items: [
+      {
+        title: 'Messages',
+        url: '/dashboard/messages',
+        icon: 'chat',
+        isActive: false,
+        anyModule: [...MESSAGING_MODULES],
         items: []
       }
     ]

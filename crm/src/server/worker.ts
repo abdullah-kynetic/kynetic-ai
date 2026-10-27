@@ -1,9 +1,9 @@
 import { getEnv } from './env';
 import { registerEventWorkers } from './events';
 import { stopJobs } from './jobs';
-import { registerNotificationEmailWorker } from './notifications';
 import { getSmsProvider } from './messaging/provider';
 import { registerTwilioProcessor } from './messaging';
+import { registerNotificationEmailWorker } from './notifications';
 import { registerLeadProcessor } from './leads';
 import { registerResendProcessor } from './email';
 import { registerWebhookWorker } from './webhooks';

@@ -177,7 +177,9 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-27 (M4, alex_core) | Staff without call access requests call | Refused server-side | Integration | Not run |
 | F-28 (M4, alex_core) | Owner flags a call with reason | `calls.flagged` true; review item exists; audit row written | Integration | Not run |
 | F-30 (M4, platform) | Twilio delivered callback for automation SMS (fake) | Log and timeline status update | Integration | Passing (M4-08, tests/integration/twilio-sms.test.ts) |
+| F-30 (M4, platform) | Resend bounced, complained and delivered events (fake and signed fixtures) | Message status updates; bounce suppresses the address; complaint also opts the contact out of email; integration health shows `email` degraded | Integration | Pass (M4-09: `tests/integration/resend-events.test.ts`, `tests/unit/adapters/resend.test.ts`) |
 | F-30 (M4, platform) | Failed SMS callback (fake) | Error text shows; counted in integration health | Integration | Passing (M4-08, tests/integration/twilio-sms.test.ts) |
+| F-30 (M4, platform) | Messages log lists both channels, filters, pages, isolates tenants, refuses with no messaging module | Newest first; error text on failed rows; other tenant invisible; `MODULE_DISABLED` | Integration | Passing (M4-12, tests/integration/message-log.test.ts) |
 | F-30 (M4, platform) | Resend bounced, complained and delivered events (fake and signed fixtures) | Message status updates; bounce suppresses the address; complaint also opts the contact out of email; integration health shows `email` degraded | Integration | Pass (M4-09: `tests/integration/resend-events.test.ts`, `tests/unit/adapters/resend.test.ts`) |
 | F-31 (M7, per template) | `quote_followup` module off | Template hidden; API refuses enablement | Integration | Not run |
 | F-31 (M7, per template) | Module on; deal enters Quoted | Step 1 scheduled | Integration | Not run |
