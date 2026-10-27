@@ -1,3 +1,5 @@
+export { getDealDetail, type DealDetail, type DealPerson } from './detail';
+export { centsToInput, parseDealForm, type DealFormInput, type ParsedDealForm } from './form';
 export { formatCents, MAX_VALUE_CENTS, parseMoneyToCents } from './money';
 export { positionBetween } from './position';
 export {
