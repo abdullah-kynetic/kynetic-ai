@@ -6,7 +6,10 @@ import {
   type ContactSortField,
   type ContactStatus
 } from '@/server/contacts/constants';
+import type { CustomFilter } from '@/server/custom-fields/filters';
+import type { CustomFieldDef } from '@/server/custom-fields/types';
 import { parseColumnFilter, getSortingStateParser } from '@/lib/data-table-parsers';
+import { getPlainFilterOperator } from '@/lib/data-table-utils';
 import type { FilterVariant } from '@/lib/data-table-types';
 
 // URL state for the leads list (F-05, DESIGN_SYSTEM data table: "view state lives in the URL query so
@@ -29,6 +32,27 @@ export type ListColumn = (typeof LIST_COLUMNS)[number];
 
 /** Columns a user may hide. Name stays, so every row keeps its link. */
 export const HIDEABLE_COLUMNS = LIST_COLUMNS.filter((c) => c !== 'name');
+
+/** Column and URL key of a custom field: `cf_<key>` (F-12). Keys are lower-case snake_case, so the prefix cannot collide with a built-in. */
+export const customColumnId = (key: string) => `cf_${key}`;
+const CUSTOM_COLUMN = /^cf_[a-z][a-z0-9_]{1,40}$/;
+
+/** The toolbar filter each field type uses; only plain operators are honoured, as for the built-in filters. */
+export function customFilterVariant(type: CustomFieldDef['type']): FilterVariant {
+  switch (type) {
+    case 'select':
+    case 'multi_select':
+    case 'checkbox':
+      return 'multiSelect';
+    case 'number':
+    case 'money':
+      return 'number';
+    case 'date':
+      return 'dateRange';
+    case 'text':
+      return 'text';
+  }
+}
 
 export const FILTER_VARIANTS = {
   status: 'multiSelect',
@@ -55,7 +79,9 @@ export type ListView = {
   sort: { field: ContactSortField; desc: boolean };
   page: number;
   perPage: number;
-  hidden: ListColumn[];
+  /** Built-in and custom (`cf_<key>`) column ids. */
+  hidden: string[];
+  custom?: Record<string, CustomFilter>;
 };
 
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
@@ -72,8 +98,50 @@ function listFilter(params: RawSearchParams, id: keyof typeof FILTER_VARIANTS): 
 
 const sortParser = getSortingStateParser<ContactSortField>(CONTACT_SORT_FIELDS);
 
-/** Reads the page's search params into the list query. Never throws. */
-export function readListView(params: RawSearchParams): ListView {
+function readCustomFilter(def: CustomFieldDef, params: RawSearchParams): CustomFilter | null {
+  const id = customColumnId(def.key);
+  const raw = first(params[id]);
+  if (!raw) return null;
+  const variant = customFilterVariant(def.type);
+  const f = parseColumnFilter(id, variant, raw);
+  if (f.operator !== getPlainFilterOperator(variant)) return null;
+  const list = Array.isArray(f.value) ? f.value : [f.value];
+  const one = typeof f.value === 'string' ? f.value.trim() : '';
+  switch (def.type) {
+    case 'select':
+    case 'multi_select': {
+      const any = list.filter((v) => def.options.includes(v));
+      return any.length ? { any } : null;
+    }
+    case 'checkbox': {
+      const any = list.filter((v) => v === 'true' || v === 'false');
+      return any.length ? { any } : null;
+    }
+    case 'text':
+      return one ? { contains: one.slice(0, 200) } : null;
+    case 'number':
+    case 'money': {
+      const n = one === '' ? NaN : Number(one);
+      if (!Number.isFinite(n)) return null;
+      // Money is typed in dollars and stored as cents.
+      return { eq: def.type === 'money' ? Math.round(n * 100) : n };
+    }
+    case 'date': {
+      const [from, to] = list;
+      const ok = (d?: string) => (d && DATE.test(d) ? d : undefined);
+      return ok(from) || ok(to) ? { from: ok(from), to: ok(to) } : null;
+    }
+  }
+}
+
+/**
+ * Reads the page's search params into the list query. Never throws. Pass the tenant's custom field
+ * definitions (CRM Full) so `cf_<key>` filters are read; without them those params are ignored.
+ */
+export function readListView(
+  params: RawSearchParams,
+  customFields: readonly CustomFieldDef[] = []
+): ListView {
   const view: ListView = {
     sort: { field: DEFAULT_SORT.id, desc: DEFAULT_SORT.desc },
     page: 1,
@@ -111,8 +179,16 @@ export function readListView(params: RawSearchParams): ListView {
   if (hide) {
     view.hidden = hide
       .split(',')
-      .filter((c): c is ListColumn => (HIDEABLE_COLUMNS as readonly string[]).includes(c));
+      .filter((c) => (HIDEABLE_COLUMNS as readonly string[]).includes(c) || CUSTOM_COLUMN.test(c));
   }
+
+  const custom: Record<string, CustomFilter> = {};
+  for (const def of customFields) {
+    if (!def.filterable) continue;
+    const f = readCustomFilter(def, params);
+    if (f) custom[def.key] = f;
+  }
+  if (Object.keys(custom).length) view.custom = custom;
   return view;
 }
 
@@ -125,6 +201,7 @@ export function isFiltered(view: ListView): boolean {
     view.tags ||
     view.owners ||
     view.createdFrom ||
-    view.createdTo
+    view.createdTo ||
+    view.custom
   );
 }

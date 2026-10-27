@@ -7,6 +7,7 @@ import * as React from 'react';
 import { IconPencil, IconPlus, IconSearch, IconUsers } from '@tabler/icons-react';
 
 import type { ContactFacets, ContactListRow } from '@/server/contacts';
+import { formatCustomValue, type CustomFieldDef } from '@/server/custom-fields/types';
 import { CONTACT_STATUSES, NO_OWNER } from '@/server/contacts/constants';
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
@@ -19,7 +20,13 @@ import { useDataTable } from '@/hooks/use-data-table';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 import type { DataTableFeatures } from '@/lib/data-table-features';
 import { ContactPanel, type PanelTarget } from '../panel/contact-panel';
-import { DEFAULT_SORT, HIDEABLE_COLUMNS, type ListColumn } from './search-params';
+import {
+  customColumnId,
+  customFilterVariant,
+  DEFAULT_SORT,
+  HIDEABLE_COLUMNS,
+  type ListColumn
+} from './search-params';
 import {
   formatDay,
   formatPhone,
@@ -35,7 +42,9 @@ type Props = {
   pageCount: number;
   perPage: number;
   facets: ContactFacets;
-  hidden: ListColumn[];
+  /** CRM Full only; empty otherwise, so a Lite tenant sees no custom columns or filters. */
+  customFields: CustomFieldDef[];
+  hidden: string[];
   filtered: boolean;
   /** The actor has `tenant_data.write`: shows Add and Edit. */
   canWrite: boolean;
@@ -43,8 +52,46 @@ type Props = {
 
 const contactHref = (id: string) => `/dashboard/contacts/${id}`;
 
+/** One column per custom field shown in the table or used as a filter (F-12). Sorting is not offered. */
+function customColumn(def: CustomFieldDef): ColumnDef<DataTableFeatures, ContactListRow> {
+  const variant = def.filterable ? customFilterVariant(def.type) : undefined;
+  const options =
+    def.type === 'checkbox'
+      ? [
+          { label: 'Yes', value: 'true' },
+          { label: 'No', value: 'false' }
+        ]
+      : def.options.map((o) => ({ label: o, value: o }));
+  return {
+    id: customColumnId(def.key),
+    accessorFn: (r) => r.custom[def.key],
+    header: () => def.label,
+    cell: ({ row }) => {
+      const text = formatCustomValue(def, row.original.custom[def.key]);
+      const numeric = def.type === 'number' || def.type === 'money';
+      return (
+        <span
+          className={numeric ? 'tabular-nums' : 'block max-w-56 truncate'}
+          title={numeric ? undefined : text}
+        >
+          {text}
+        </span>
+      );
+    },
+    meta: {
+      label: def.label,
+      variant,
+      options: variant === 'multiSelect' ? options : undefined,
+      unit: def.type === 'money' ? '$' : undefined
+    },
+    enableColumnFilter: Boolean(variant),
+    enableSorting: false
+  };
+}
+
 function buildColumns(
   facets: ContactFacets,
+  customFields: CustomFieldDef[],
   onEdit: ((id: string) => void) | null
 ): ColumnDef<DataTableFeatures, ContactListRow>[] {
   const tz = facets.timezone;
@@ -196,6 +243,7 @@ function buildColumns(
       ),
       meta: { label: 'Updated' }
     },
+    ...customFields.filter((d) => d.showInTable || d.filterable).map(customColumn),
     ...edit
   ];
 }
@@ -335,14 +383,35 @@ export function ContactsTable({
   pageCount,
   perPage,
   facets,
+  customFields,
   hidden,
   filtered,
   canWrite
 }: Props) {
   const [panel, setPanel] = React.useState<PanelTarget>(null);
   const columns = React.useMemo(
-    () => buildColumns(facets, canWrite ? (id) => setPanel({ mode: 'edit', id }) : null),
-    [facets, canWrite]
+    () =>
+      buildColumns(
+        facets,
+        customFields,
+        canWrite ? (id) => setPanel({ mode: 'edit', id }) : null
+      ),
+    [facets, customFields, canWrite]
+  );
+  // Fields used only as a filter have no column of their own: they start hidden and stay out of `hide`.
+  const hideable = React.useMemo(
+    () => [
+      ...HIDEABLE_COLUMNS,
+      ...customFields.filter((d) => d.showInTable).map((d) => customColumnId(d.key))
+    ],
+    [customFields]
+  );
+  const filterOnly = React.useMemo(
+    () =>
+      customFields
+        .filter((d) => d.filterable && !d.showInTable)
+        .map((d) => [customColumnId(d.key), false] as const),
+    [customFields]
   );
   const [, startTransition] = React.useTransition();
 
@@ -356,7 +425,10 @@ export function ContactsTable({
     initialState: {
       sorting: [DEFAULT_SORT],
       pagination: { pageIndex: 0, pageSize: perPage },
-      columnVisibility: Object.fromEntries(hidden.map((c) => [c, false]))
+      columnVisibility: Object.fromEntries([
+        ...filterOnly,
+        ...hidden.map((c) => [c, false] as const)
+      ])
     }
   });
 
@@ -397,7 +469,7 @@ export function ContactsTable({
     <div className='flex flex-1 flex-col gap-4'>
       <Subscribe
         source={table.atoms.columnVisibility}
-        selector={(v) => HIDEABLE_COLUMNS.filter((c) => v[c] === false).join(',')}
+        selector={(v) => hideable.filter((c) => v[c] === false).join(',')}
       >
         {(h) => <SyncHidden hidden={h} />}
       </Subscribe>
