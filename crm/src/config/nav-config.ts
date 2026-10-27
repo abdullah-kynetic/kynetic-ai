@@ -15,6 +15,14 @@ export const navGroups: NavGroup[] = [
         isActive: false,
         shortcut: ['d', 'd'],
         items: []
+      },
+      {
+        title: 'Alex settings',
+        url: '/dashboard/settings/alex',
+        icon: 'settings',
+        isActive: false,
+        module: 'alex_core',
+        items: []
       }
     ]
   },
