@@ -1,5 +1,5 @@
 import type { NavGroup, NavItem } from '@/types';
-import { moduleSatisfied, type EnabledModules } from '@/server/modules/keys';
+import { anyModuleSatisfied, moduleSatisfied, type EnabledModules } from '@/server/modules/keys';
 
 /**
  * Drops nav entries (and groups left empty) for modules the tenant does not have. Entries declare
@@ -11,6 +11,7 @@ export function visibleNavGroups(groups: NavGroup[], enabled: EnabledModules): N
     if (item.module && !moduleSatisfied(enabled, { module: item.module, level: item.level })) {
       return null;
     }
+    if (item.anyModule && !anyModuleSatisfied(enabled, item.anyModule)) return null;
     const children = (item.items ?? []).map(keep).filter((i): i is NavItem => i !== null);
     return { ...item, items: children };
   };

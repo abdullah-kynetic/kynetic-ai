@@ -112,13 +112,13 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M1-01 | Contacts service: CRUD, E.164 normalisation, duplicate detection, soft delete, tags, owner, `contact.*` and manual `lead.created` events | PRD F-05, F-07; DB contacts | M0-28 | Duplicate phone/email flagged; tenant isolation test; events emitted | L | Sonnet | no | 12 | todo | - |
-| M1-02 | Leads list page: table, search, filters, sort, column toggle, paging, URL-saved state | PRD F-05; DS lists | M1-01 | Given 10,000 contacts the list reads under 500 ms p95; filters survive reload | M | Sonnet | yes | 13 | todo | - |
-| M1-03 | Contact detail page: details, phones and emails, consent status, slots for timeline and deals | PRD F-06; DS detail | M1-01 | Page loads all sections; other tenant's id returns 404 | M | Sonnet | yes | 13 | todo | - |
-| M1-04 | Slide-out create and edit panel with duplicate warning | PRD F-07 | M1-01, M1-02 | Creating a duplicate shows the match and blocks silent duplicates | S | Haiku | yes | 14 | todo | - |
-| M1-05 | Companies service and pages (CRM Lite) | PRD F-10 | M1-01 | Module off returns 403; rollup of contacts and deals correct | M | Sonnet | yes | 13 | todo | - |
-| M1-06 | Custom fields: definitions, values, settings UI, list and detail rendering (CRM Full) | PRD F-12 | M1-01, M1-02 | Each field type validates; `lite` tenant gets 403 | L | Sonnet | yes | 14 | todo | - |
-| M1-07 | Bulk actions: tag, assign, status, delete; enrol-in-sequence stub (CRM Full) | PRD F-08 | M1-02 | 20 selected rows updated in one action and audited | M | Sonnet | yes | 14 | todo | - |
+| M1-01 | Contacts service: CRUD, E.164 normalisation, duplicate detection, soft delete, tags, owner, `contact.*` and manual `lead.created` events | PRD F-05, F-07; DB contacts | M0-28 | Duplicate phone/email flagged; tenant isolation test; events emitted | L | Sonnet | no | 12 | done | [PR #79](https://github.com/abdullah-kynetic/kynetic-ai/pull/79), stacked on #72. No migration; DC-070 to DC-072. |
+| M1-02 | Leads list page: table, search, filters, sort, column toggle, paging, URL-saved state | PRD F-05; DS lists | M1-01 | Given 10,000 contacts the list reads under 500 ms p95; filters survive reload | M | Sonnet | yes | 13 | done | [PR #95](https://github.com/abdullah-kynetic/kynetic-ai/pull/95), stacked on #79. No migration; DC-085. |
+| M1-03 | Contact detail page: details, phones and emails, consent status, slots for timeline and deals | PRD F-06; DS detail | M1-01 | Page loads all sections; other tenant's id returns 404 | M | Sonnet | yes | 13 | done | [PR #85](https://github.com/abdullah-kynetic/kynetic-ai/pull/85), stacked on #79. Page at `/dashboard/contacts/[id]`; deals, timeline, tasks, notes sections are empty slots until M2 and M3. |
+| M1-04 | Slide-out create and edit panel with duplicate warning | PRD F-07 | M1-01, M1-02 | Creating a duplicate shows the match and blocks silent duplicates | S | Haiku | yes | 14 | done | [PR #99](https://github.com/abdullah-kynetic/kynetic-ai/pull/99), stacked on #95. No migration, no DC. Merge offer waits for M1-08. |
+| M1-05 | Companies service and pages (CRM Lite) | PRD F-10 | M1-01 | Module off returns 403; rollup of contacts and deals correct | M | Sonnet | yes | 13 | done | [PR #90](https://github.com/abdullah-kynetic/kynetic-ai/pull/90), stacked on #79. No migration; DC-087. |
+| M1-06 | Custom fields: definitions, values, settings UI, list and detail rendering (CRM Full) | PRD F-12 | M1-01, M1-02 | Each field type validates; `lite` tenant gets 403 | L | Sonnet | yes | 14 | done | [PR #109](https://github.com/abdullah-kynetic/kynetic-ai/pull/109), stacked on #95 (M1-01, M1-02). No migration; DC-100. |
+| M1-07 | Bulk actions: tag, assign, status, delete; enrol-in-sequence stub (CRM Full) | PRD F-08 | M1-02 | 20 selected rows updated in one action and audited | M | Sonnet | yes | 14 | done | [PR #111](https://github.com/abdullah-kynetic/kynetic-ai/pull/111), stacked on #95. No migration; DC-101. |
 | M1-08 | Merge duplicate contacts: survivor selection, move deals, notes and activities, soft-remove the loser, `contact.merged` | PRD F-07 | M1-01, M1-04 | Merge moves all linked records and is audited; loser is soft-removed | M | Sonnet | yes | 15 | todo | - |
 | M1-09 | M1 gate: acceptance, TESTING statuses, docs | AGENTS; T | M1-01..M1-08 | All M1 rows pass | S | Haiku | no | 16 | todo | - |
 
@@ -126,20 +126,20 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M2-01 | Pipelines, stages and deals services; default stages seeded per tenant; `deal.*` events | PRD F-14, F-17; DB deals | M0-28, M1-01 | Default stages exist; Lost requires a reason | L | Sonnet | no | 13 | todo | - |
-| M2-02 | Kanban board page: drag between stages, counts and totals, optimistic move with undo, filters | PRD F-16; DS kanban | M2-01 | Move persists and emits `deal.stage_changed`; undo restores | L | Sonnet | yes | 14 | todo | - |
-| M2-03 | Deal detail and slide-out (value, service type, expected close, source, lost reason) | PRD F-14 | M2-01 | Money stored in cents; lost reason enforced | M | Sonnet | yes | 14 | todo | - |
-| M2-04 | Multi-contact deals with roles (CRM Full) | PRD F-15 | M2-01 | `lite` tenant gets 403; roles saved | S | Sonnet | yes | 14 | todo | - |
-| M2-05 | Configurable stages settings page (CRM Lite) | PRD F-17, F-43 | M2-01 | Rename, reorder, add stage; deals keep their stage | M | Sonnet | yes | 14 | todo | - |
-| M2-06 | M2 gate | AGENTS; T | M2-01..M2-05 | All M2 rows pass | S | Haiku | no | 15 | todo | - |
+| M2-01 | Pipelines, stages and deals services; default stages seeded per tenant; `deal.*` events | PRD F-14, F-17; DB deals | M0-28, M1-01 | Default stages exist; Lost requires a reason | L | Sonnet | no | 13 | done | [PR #89](https://github.com/abdullah-kynetic/kynetic-ai/pull/89), stacked on #79. No migration; DC-096. |
+| M2-02 | Kanban board page: drag between stages, counts and totals, optimistic move with undo, filters | PRD F-16; DS kanban | M2-01 | Move persists and emits `deal.stage_changed`; undo restores | L | Sonnet | yes | 14 | done | [PR #98](https://github.com/abdullah-kynetic/kynetic-ai/pull/98), stacked on #89. No migration. Browser drag check and E2E not run (no sign-in fixture). |
+| M2-03 | Deal detail and slide-out (value, service type, expected close, source, lost reason) | PRD F-14 | M2-01 | Money stored in cents; lost reason enforced | M | Sonnet | yes | 14 | done | [PR #107](https://github.com/abdullah-kynetic/kynetic-ai/pull/107) |
+| M2-04 | Multi-contact deals with roles (CRM Full) | PRD F-15 | M2-01 | `lite` tenant gets 403; roles saved | S | Sonnet | yes | 14 | done | [PR #102](https://github.com/abdullah-kynetic/kynetic-ai/pull/102) |
+| M2-05 | Configurable stages settings page (CRM Lite) | PRD F-17, F-43 | M2-01 | Rename, reorder, add stage; deals keep their stage | M | Sonnet | yes | 14 | done | [PR #108](https://github.com/abdullah-kynetic/kynetic-ai/pull/108), stacked on #89. No migration; DC-105. |
+| M2-06 | M2 gate | AGENTS; T | M2-01..M2-05 | All M2 rows pass | S | Haiku | no | 15 | done | PR pending, stacked on #108 with #98, #107 and #102 merged in. Merged scope helper (DC-117). typecheck, test (unit) and test:integration (297) pass. No migration. |
 
 ## M3 Timeline, tasks and notes
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M3-01 | Activities read API and timeline UI on contact and deal | PRD F-19; DS timeline | M0-28, M2-01 | Calls, messages, stage changes and notes appear in order; type filter works | M | Sonnet | no | 14 | todo | - |
-| M3-02 | Tasks service, My Tasks view (overdue, today, upcoming), task slide-out (CRM Lite) | PRD F-20 | M3-01 | Overdue task listed; completion undo | M | Sonnet | yes | 15 | todo | - |
-| M3-03 | Rich-text notes with @mentions and pin (CRM Lite) | PRD F-22 | M3-01 | Mention notifies teammate through `notify()` | M | Sonnet | yes | 15 | todo | - |
+| M3-01 | Activities read API and timeline UI on contact and deal | PRD F-19; DS timeline | M0-28, M2-01 | Calls, messages, stage changes and notes appear in order; type filter works | M | Sonnet | no | 14 | done | [PR #110](https://github.com/abdullah-kynetic/kynetic-ai/pull/110), stacked on #89 with the M1-03 branch merged in. `listActivities` service plus `Timeline` component, live on the contact page; deal page mounts it in M2-03. No DC or migration used. |
+| M3-02 | Tasks service, My Tasks view (overdue, today, upcoming), task slide-out (CRM Lite) | PRD F-20 | M3-01 | Overdue task listed; completion undo | M | Sonnet | yes | 15 | done | PR (see thread), stacked on #110. `server/tasks` service (create, edit, complete, reopen as undo, soft delete and restore, My Tasks grouped by the tenant's day), My Tasks page at `/dashboard/tasks`, task slide-out, live Tasks section on the contact page, nav entry. All gated on `crm` Lite. Task-due notification is M3-04. No DC or migration used. |
+| M3-03 | Rich-text notes with @mentions and pin (CRM Lite) | PRD F-22 | M3-01 | Mention notifies teammate through `notify()` | M | Sonnet | yes | 15 | done | [PR #118](https://github.com/abdullah-kynetic/kynetic-ai/pull/118), stacked on #110. Notes service (create, edit, pin, soft delete, list), sanitizer, `note_mentions`, `mention` notification kind (migration 0053, DC-114), Notes card with Tiptap editor on the contact page. Company and deal pages mount `NotesSection` when they exist. |
 | M3-04 | Task-due job and notifications | PRD F-20, F-35 | M3-02 | Due task creates a notification once | S | Sonnet | yes | 16 | todo | - |
 | M3-05 | M3 gate | AGENTS; T | M3-01, M3-02, M3-03, M3-04 | All M3 rows pass | S | Haiku | no | 17 | todo | - |
 
@@ -148,18 +148,18 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | M4-01 | ElevenLabs voice adapter: start outbound call, verify webhook, parse call result | PRD F-77, F-78; ARCH 7; ARCH Provider integration details | M0-28 | Contract test passes against the fake and recorded fixtures; bad signature rejected | L | Opus | no | 12 | done | [PR #76](https://github.com/abdullah-kynetic/kynetic-ai/pull/76). Fixtures follow the documented payload shape, not a live recording; re-record at M10-08. |
-| M4-02 | Retell fallback adapter | ARCH 7 | M4-01 | Same contract test passes | M | Sonnet | yes | 13 | todo | - |
+| M4-02 | Retell fallback adapter | ARCH 7 | M4-01 | Same contract test passes | M | Sonnet | yes | 13 | done | [PR #84](https://github.com/abdullah-kynetic/kynetic-ai/pull/84), stacked on #76. Retell adapter, DC-088 |
 | M4-03 | R2 storage adapter and signed URL minting | PRD F-27; SEC 2.3 item 10 | M0-28 | Private bucket; URL expires in 5 minutes; wrong tenant 404 | M | Sonnet | yes | 12 | done | PR: https://github.com/abdullah-kynetic/kynetic-ai/pull/73 (stacked on #72, m0/gate). Live R2 check needs bucket credentials |
 | M4-04 | Lead intake endpoint `/api/hooks/leads/:tenantKey` (signed token) | PRD F-76 | M0-28 | Creates contact and deal and emits `lead.created`; bad token refused | M | Sonnet | yes | 12 | done | PR #78 (stacked on #72); branch: claude/project-thread-osl58l |
 | M4-05 | Call-end processing job: write `calls`, `activities`, copy recording to R2, store transcript and summary | PRD F-26, F-27 | M4-01, M4-03 | Duplicate webhook creates one call; recording reachable only by signed URL | L | Opus | no | 13 | done | PR: https://github.com/abdullah-kynetic/kynetic-ai/pull/96 (stacked on #76 and #73). Live ElevenLabs and R2 checks need credentials. |
 | M4-06 | Outbound call start on `lead.created`: call windows, retries, real `OutboundGate` | PRD F-78; SEC 3.4 | M4-01, M4-04 | No call outside the window; kill switch honored; retry cadence tested with a fake clock | L | Opus | no | 13 | done | PR: https://github.com/abdullah-kynetic/kynetic-ai/pull/100 (stacked on #96, with #78 merged in). Live ElevenLabs call needs the paid plan and phone import. |
 | M4-07 | Compliance enforcement: quiet hours 8am to 9pm lead-local, DNC, disclosure, recording flag | PRD F-74, F-75; SEC 3 | M4-06 | Table-driven tests incl. DST; two-party state flagged from config | L | Opus | no | 14 | done | PR: https://github.com/abdullah-kynetic/kynetic-ai/pull/114 (stacked on #100). State table is a draft for counsel (DC-116). |
-| M4-08 | Twilio SMS adapter, status and inbound webhooks, STOP and HELP into consents | PRD F-74, F-30; ARCH Provider integration details | M0-28 | Signature verified; STOP revokes SMS only; sends gated by A2P status | L | Opus | yes | 12 | todo | - |
-| M4-09 | Resend adapter, webhook, bounce and complaint suppression | PRD F-30, F-35 | M0-28 | Bounce marks the address; shows in integration health data | M | Sonnet | yes | 12 | todo | - |
-| M4-10 | Calls list page | PRD F-26; DS calls | M4-05 | Filters and outcome chips; 10,000-call list under 500 ms p95 | M | Sonnet | yes | 14 | todo | - |
-| M4-11 | Call detail page: player, transcript, summary, extracted fields, flag for review | PRD F-27, F-28 | M4-05, M4-03 | Flag sets `calls.flagged` and notifies Kynetic | M | Sonnet | yes | 14 | todo | - |
-| M4-12 | Messages log page (SMS and email, delivery status) | PRD F-30 | M4-08, M4-09 | Delivery status updates on webhook | S | Haiku | yes | 13 | todo | - |
-| M4-13 | `alex_configs` service and read-only Alex settings view | PRD F-42, F-58 (data) | M4-01 | Owner sees settings; raw prompt never returned | S | Sonnet | yes | 13 | todo | - |
+| M4-08 | Twilio SMS adapter, status and inbound webhooks, STOP and HELP into consents | PRD F-74, F-30; ARCH Provider integration details | M0-28 | Signature verified; STOP revokes SMS only; sends gated by A2P status | L | Opus | yes | 12 | done | branch: m4-08/twilio-sms, stacked on #72, PR https://github.com/abdullah-kynetic/kynetic-ai/pull/81 |
+| M4-09 | Resend adapter, webhook, bounce and complaint suppression | PRD F-30, F-35 | M0-28 | Bounce marks the address; shows in integration health data | M | Sonnet | yes | 12 | done | PR #74 (stacked on #72); migration 0019, DC-077 |
+| M4-10 | Calls list page | PRD F-26; DS calls | M4-05 | Filters and outcome chips; 10,000-call list under 500 ms p95 | M | Sonnet | yes | 14 | done | [PR #106](https://github.com/abdullah-kynetic/kynetic-ai/pull/106), stacked on #96 (M4-05). Page at `/dashboard/calls`; no migration, no new decision. Contact links go to `/dashboard/contacts/[id]` (M1-03, #85). |
+| M4-11 | Call detail page: player, transcript, summary, extracted fields, flag for review | PRD F-27, F-28 | M4-05, M4-03 | Flag sets `calls.flagged` and notifies Kynetic | M | Sonnet | yes | 14 | done | [#104](https://github.com/abdullah-kynetic/kynetic-ai/pull/104) |
+| M4-12 | Messages log page (SMS and email, delivery status) | PRD F-30 | M4-08, M4-09 | Delivery status updates on webhook | S | Haiku | yes | 13 | done | branch: m4-12/messages-log, PR https://github.com/abdullah-kynetic/kynetic-ai/pull/92 |
+| M4-13 | `alex_configs` service and read-only Alex settings view | PRD F-42, F-58 (data) | M4-01 | Owner sees settings; raw prompt never returned | S | Sonnet | yes | 13 | done | [#86](https://github.com/abdullah-kynetic/kynetic-ai/pull/86) |
 | M4-14 | M4 gate | AGENTS; T | M4-01..M4-13 | All M4 rows pass; no real call or text in any test | S | Haiku | no | 15 | todo | - |
 
 ## M5 Appointments and booking
@@ -191,7 +191,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M7-01 | Automation templates, toggles per tenant and settings UI | PRD F-31 | M4-14, M2-06 | Template on creates runs; off cancels pending runs | M | Sonnet | no | 16 | todo | - |
 | M7-02 | Sequence engine: steps, delays, stop on reply or booking; `enrollInSequence` | PRD F-32; ARCH 2 | M7-01 | Reply stops the sequence; every send goes through `OutboundGate` | L | Opus | no | 17 | todo | - |
 | M7-03 | Stage-move rules and alerts (deal won email, hot-lead SMS to owner) | PRD F-33 | M7-01 | Booked call moves the deal; alert sent once | M | Sonnet | yes | 17 | todo | - |
-| M7-04 | Notifications UI: bell, popover, full page with tabs, email delivery | PRD F-35; DS notifications | M0-28 | Unread count correct; email sent through the adapter | M | Sonnet | yes | 12 | todo | - |
+| M7-04 | Notifications UI: bell, popover, full page with tabs, email delivery | PRD F-35; DS notifications | M0-28 | Unread count correct; email sent through the adapter | M | Sonnet | yes | 12 | done | PR #83 (https://github.com/abdullah-kynetic/kynetic-ai/pull/83), stacked on #72; DC-078; no migration |
 | M7-05 | `quote_followup` module | PRD F-79 | M7-02 | Deal entering Quoted starts the sequence; module off no-ops | M | Sonnet | yes | 18 | todo | - |
 | M7-06 | `after_hours` module | PRD F-80 | M7-02, M4-14 | Inbound outside hours creates contact, logs call, notifies staff | M | Sonnet | yes | 18 | todo | - |
 | M7-07 | `missed_call_textback` module | PRD F-81 | M7-02, M4-08 | One text to a consented or permitted caller; none otherwise | M | Sonnet | yes | 18 | todo | - |
@@ -204,15 +204,15 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M8a-01 | Admin layout and navigation, all-clients entry point | PRD F-53 (shell); DS admin | M0-28 | Only Kynetic roles reach admin routes | S | Haiku | no | 12 | todo | - |
-| M8a-02 | 30-second onboarding form: tenant, owner invite, modules, templates, branding | PRD F-55; SEC invites | M8a-01, M0-28 | Form creates tenant, invite and checklist in one action; invite email on approval | L | Sonnet | yes | 13 | todo | - |
-| M8a-03 | User management across tenants: invite, deactivate, reset, roles | PRD F-61 | M8a-01 | Deactivated user loses all sessions | M | Sonnet | yes | 13 | todo | - |
-| M8a-04 | View as client with banner, read-only default, logged sessions | PRD F-57; SEC 2.6 | M8a-01 | Writes fail in read-only; every write stamps the impersonator | L | Opus | yes | 13 | todo | - |
-| M8a-05 | Audit log viewer with filters | PRD F-60 | M8a-01 | Filter by tenant, user, action; VA read per SEC 2.2 | M | Sonnet | yes | 13 | todo | - |
-| M8a-06 | Modules panel: toggle per tenant, CRM level, history | PRD F-70, F-85 | M8a-01 | Toggle audited; flag change takes effect on next request | M | Sonnet | yes | 13 | todo | - |
-| M8a-07 | Plan and tier fields and billing tab | PRD F-86, F-99; DB tenant_billing | M8a-06 | Price snapshot per module; owner and VA get 403 | M | Sonnet | yes | 14 | todo | - |
-| M8a-08 | Onboarding checklist and owner setup progress card | PRD F-100; DB onboarding_steps | M8a-02 | Checklist created per module; owner sees only client-visible steps | M | Sonnet | yes | 14 | todo | - |
-| M8a-09 | M8a gate | AGENTS; T | M8a-01..M8a-08 | All M8a rows pass | S | Haiku | no | 15 | todo | - |
+| M8a-01 | Admin layout and navigation, all-clients entry point | PRD F-53 (shell); DS admin | M0-28 | Only Kynetic roles reach admin routes | S | Haiku | no | 12 | done | PR: https://github.com/abdullah-kynetic/kynetic-ai/pull/77; stacked on m0/gate (#72); DC-079; no migration |
+| M8a-02 | 30-second onboarding form: tenant, owner invite, modules, templates, branding | PRD F-55; SEC invites | M8a-01, M0-28 | Form creates tenant, invite and checklist in one action; invite email on approval | L | Sonnet | yes | 13 | done | [PR #93](https://github.com/abdullah-kynetic/kynetic-ai/pull/93) |
+| M8a-03 | User management across tenants: invite, deactivate, reset, roles | PRD F-61 | M8a-01 | Deactivated user loses all sessions | M | Sonnet | yes | 13 | done | [#91](https://github.com/abdullah-kynetic/kynetic-ai/pull/91) |
+| M8a-04 | View as client with banner, read-only default, logged sessions | PRD F-57; SEC 2.6 | M8a-01 | Writes fail in read-only; every write stamps the impersonator | L | Opus | yes | 13 | done | PR: https://github.com/abdullah-kynetic/kynetic-ai/pull/94; stacked on M8a-01 (#77); DC-093; migration 0032 |
+| M8a-05 | Audit log viewer with filters | PRD F-60 | M8a-01 | Filter by tenant, user, action; VA read per SEC 2.2 | M | Sonnet | yes | 13 | done | PR: https://github.com/abdullah-kynetic/kynetic-ai/pull/88; stacked on M8a-01 (#77); DC-094; no migration |
+| M8a-06 | Modules panel: toggle per tenant, CRM level, history | PRD F-70, F-85 | M8a-01 | Toggle audited; flag change takes effect on next request | M | Sonnet | yes | 13 | done | PR: https://github.com/abdullah-kynetic/kynetic-ai/pull/87; stacked on #77 (M8a-01); DC-095; no migration |
+| M8a-07 | Plan and tier fields and billing tab | PRD F-86, F-99; DB tenant_billing | M8a-06 | Price snapshot per module; owner and VA get 403 | M | Sonnet | yes | 14 | done | [PR #101](https://github.com/abdullah-kynetic/kynetic-ai/pull/101) |
+| M8a-08 | Onboarding checklist and owner setup progress card | PRD F-100; DB onboarding_steps | M8a-02 | Checklist created per module; owner sees only client-visible steps | M | Sonnet | yes | 14 | done | PR #105 |
+| M8a-09 | M8a gate | AGENTS; T | M8a-01..M8a-08 | All M8a rows pass | S | Haiku | no | 15 | done | PR: https://github.com/abdullah-kynetic/kynetic-ai/pull/115; combines #77, #93, #91, #94, #88, #87, #101, #105; DC-118; no migration |
 
 ## M8b Admin operations
 
@@ -238,10 +238,10 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M9-05 | Import history page and undo UI | PRD F-93 | M9-03 | Undo removes batch records; edited records listed | M | Sonnet | yes | 20 | todo | - |
 | M9-06 | Global search and Cmd+K (CRM Full) | PRD F-37 | M1-09, M2-06 | Phone fragment finds the contact; search under 500 ms p95 | M | Sonnet | yes | 17 | todo | - |
 | M9-07 | CSV export per table view (CRM Full, permissioned) | PRD F-38; SEC export rules | M1-09 | Export honors filters and the staff permission; audited | M | Sonnet | yes | 17 | todo | - |
-| M9-08 | Branding settings: logo upload, color with contrast check, business name | PRD F-39; SEC uploads; DS client color rules | M0-28 | Bad file refused; low-contrast color refused | M | Sonnet | yes | 12 | todo | - |
-| M9-09 | Business settings: hours, service area, services, transfer number, team | PRD F-41 | M0-28 | Hours feed availability and call windows | M | Sonnet | yes | 12 | todo | - |
-| M9-10 | Client Alex settings: pause and call hours only | PRD F-42; PRD decision 8 | M4-13 | Other fields are not writable; change audited | S | Sonnet | yes | 14 | todo | - |
-| M9-11 | Settings pages: tags and notification preferences (Lite) | PRD F-43 | M2-05, M7-04 | Preferences honored by `notify()` | M | Haiku | yes | 15 | todo | - |
+| M9-08 | Branding settings: logo upload, color with contrast check, business name | PRD F-39; SEC uploads; DS client color rules | M0-28 | Bad file refused; low-contrast color refused | M | Sonnet | yes | 12 | done | [PR #80](https://github.com/abdullah-kynetic/kynetic-ai/pull/80), stacked on #72; DC-080; no migration needed (0020 unused) |
+| M9-09 | Business settings: hours, service area, services, transfer number, team | PRD F-41 | M0-28 | Hours feed availability and call windows | M | Sonnet | yes | 12 | done | [PR #82](https://github.com/abdullah-kynetic/kynetic-ai/pull/82); migration 0021, DC-081 |
+| M9-10 | Client Alex settings: pause and call hours only | PRD F-42; PRD decision 8 | M4-13 | Other fields are not writable; change audited | S | Sonnet | yes | 14 | done | [#103](https://github.com/abdullah-kynetic/kynetic-ai/pull/103) |
+| M9-11 | Settings pages: tags and notification preferences (Lite) | PRD F-43 | M2-05, M7-04 | Preferences honored by `notify()` | M | Haiku | yes | 15 | done | [PR #116](https://github.com/abdullah-kynetic/kynetic-ai/pull/116) |
 | M9-12 | Documents page and admin upload | PRD F-103; DB tenant_documents | M4-03, M8a-09 | Signed URL; other tenant 404 | M | Haiku | yes | 16 | todo | - |
 | M9-13 | Mobile polish pass on daily-use pages | PRD F-44; DS responsive | M1-09, M2-06, M3-05, M5-05 | Playwright 390px passes; 44px touch targets | M | Sonnet | yes | 20 | todo | - |
 | M9-14 | M9 gate | AGENTS; T | M9-01..M9-13 | All M9 rows pass | S | Haiku | no | 21 | todo | - |
@@ -254,7 +254,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M10-02 | Load test and set numeric limits | ARCH Operations Scale; PRD decision 13 | M9-12 | p95 targets met; limits recorded in ARCH | M | Sonnet | yes | 17 | todo | - |
 | M10-03 | Restore drill on the production-like stack | ARCH Operations; T restore drill | M8b-05 | Scratch restore passes isolation tests | M | Opus | yes | 17 | todo | - |
 | M10-04 | WCAG 2.2 AA audit: axe plus manual keyboard and screen-reader pass | DS Accessibility; PRD decision 13 | M9-12 | No AA failures on daily-use pages | M | Sonnet | yes | 17 | todo | - |
-| M10-05 | Production server setup: compose project, Cloudflare, Caddy, deploy script, monitoring and alerts | ARCH Server and deployment setup, Monitoring | M0-27, M0-28 | Health check green; alert test fires; deploy and rollback rehearsed | L | Opus | yes | 12 | todo | - |
+| M10-05 | Production server setup: compose project, Cloudflare, Caddy, deploy script, monitoring and alerts | ARCH Server and deployment setup, Monitoring | M0-27, M0-28 | Health check green; alert test fires; deploy and rollback rehearsed | L | Opus | yes | 12 | blocked | branch: m10-05/prod-server (stacked on m0/gate, PR #72). Code, scripts, CI rehearsal and runbook done; live acceptance (health green, alert test, real deploy and rollback on the VPS) needs Abdullah's yes per step in crm/deploy/prod/README.md. PR: https://github.com/abdullah-kynetic/kynetic-ai/pull/75 |
 | M10-06 | Email domain and DNS records (SPF, DKIM, DMARC) | ARCH Domain, DNS and email domain | M10-05 | Resend domain verified | S | Sonnet | yes | 13 | todo | - |
 | M10-07 | Pre-go-live gates checklist, synthetic demo tenant script, old portal and `/api/ingest/results` fate recorded | ARCH Pre-go-live gates; PRD F-88 | M10-01..M10-06 | Every gate ticked; demo tenant seeded with synthetic data only | M | Sonnet | no | 28 | todo | - |
 | M10-08 | Pilot client onboarding using the real flow (with Abdullah's yes) | PRD F-55, F-90; AGENTS Live systems | M10-07 | Pilot live and used daily | L | Sonnet | no | 29 | todo | - |
@@ -287,3 +287,4 @@ Branch `m0/gate` combines every M0 PR (#47 to #71) and is the base to build M1 o
 - **Not verified anywhere:** `docker compose up`, live Google OAuth, real email delivery (call `setMagicLinkSender` with the M0-19 adapter at boot), the worker container under compose, pg-boss behind PgBouncer, and signed-in E2E (no sign-in fixture yet, so the signed-in redirect, `/accept-terms` axe check and signed-in shell axe check are untested).
 - **Open follow-ups:** call `audit()` for M0-22 secret writes and the M0-16 manual consent entry; M0-16 uses channel `phone_call` where SECURITY.md says "voice" (DC-062); M0-25 copy is placeholder text.
 - **Needs from Abdullah before live use:** `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`, and an email provider key.
+

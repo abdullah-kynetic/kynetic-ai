@@ -20,6 +20,8 @@ export const QUEUES = {
   'event.dispatch': retrying,
   /** One job per (event, subscriber), so a failing subscriber retries alone. */
   'event.subscriber': { ...retrying, policy: 'short' },
+  /** One job per notification row, to email its recipients. */
+  'notification.email': { ...retrying, policy: 'short' },
   /** One job per stored webhook_events row. */
   'webhook.process': { ...retrying, policy: 'short' },
   /** One job per outbound call attempt (F-78). A queued attempt is unique per tenant, contact, trigger and attempt. */

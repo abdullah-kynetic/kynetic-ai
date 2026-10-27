@@ -1,18 +1,13 @@
-import { and, desc, eq, isNull, or, sql } from 'drizzle-orm';
+import { and, desc, eq, inArray, isNull, lt, or, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import type { Tx } from '../db/client';
 import { notifications } from '../db/schema';
+import { enqueue } from '../jobs';
 
-export const NOTIFICATION_TYPES = [
-  'new_lead',
-  'booked',
-  'task_due',
-  'report_ready',
-  'action_needed',
-  'deal_won',
-  'hot_lead'
-] as const;
-export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
+import { NOTIFICATION_TYPES, type NotificationType } from './types';
+
+export { NOTIFICATION_TYPES, type NotificationType };
+export { NOTIFICATION_TABS, type NotificationTab } from './tabs';
 
 const inputSchema = z.object({
   /** Omit or null to notify every owner of the tenant (the row has user_id NULL). */
@@ -24,12 +19,26 @@ const inputSchema = z.object({
 });
 export type NotifyInput = z.input<typeof inputSchema>;
 
+/** Queues the email for a notification in the caller's transaction (DC-078). */
+export type EnqueueEmail = (
+  tx: Tx,
+  n: { tenantId: string; notificationId: string }
+) => Promise<unknown>;
+
+const enqueueNotificationEmail: EnqueueEmail = (tx, n) =>
+  enqueue('notification.email', n, { tx, singletonKey: n.notificationId });
+
 /**
  * Creates one notification row inside the caller's transaction (ARCHITECTURE section 2), so it
  * commits or rolls back with the write that caused it. The tenant comes from the transaction's
- * context. The email and bell delivery belong to M7; this is the row.
+ * context. The email job joins the same transaction, so it exists only if the row commits; the bell
+ * reads the row. `opts.enqueueEmail` is a seam for tests that run without the job queue.
  */
-export async function notify(tx: Tx, input: NotifyInput): Promise<{ id: string }> {
+export async function notify(
+  tx: Tx,
+  input: NotifyInput,
+  opts: { enqueueEmail?: EnqueueEmail } = {}
+): Promise<{ id: string }> {
   const i = inputSchema.parse(input);
   const [row] = await tx
     .insert(notifications)
@@ -41,21 +50,50 @@ export async function notify(tx: Tx, input: NotifyInput): Promise<{ id: string }
       body: i.body ?? null,
       link: i.link ?? null
     })
-    .returning({ id: notifications.id });
-  return row;
+    .returning({ id: notifications.id, tenantId: notifications.tenantId });
+  await (opts.enqueueEmail ?? enqueueNotificationEmail)(tx, {
+    tenantId: row.tenantId,
+    notificationId: row.id
+  });
+  return { id: row.id };
 }
 
 // RLS scopes rows to the tenant only, so "own notifications only" is enforced here: reads and
 // updates filter on the session user, which comes from the verified context and not a parameter.
 const mine = or(eq(notifications.userId, sql`app_user_id()`), isNull(notifications.userId));
 
-export function listMyNotifications(tx: Tx, opts: { unreadOnly?: boolean; limit?: number } = {}) {
+export function listMyNotifications(
+  tx: Tx,
+  opts: {
+    unreadOnly?: boolean;
+    kinds?: readonly NotificationType[];
+    limit?: number;
+    before?: string;
+  } = {}
+) {
   return tx
     .select()
     .from(notifications)
-    .where(opts.unreadOnly ? and(mine, isNull(notifications.readAt)) : mine)
-    .orderBy(desc(notifications.createdAt))
+    .where(
+      and(
+        mine,
+        opts.unreadOnly ? isNull(notifications.readAt) : undefined,
+        opts.kinds ? inArray(notifications.kind, [...opts.kinds]) : undefined,
+        opts.before ? lt(notifications.createdAt, opts.before) : undefined
+      )
+    )
+    .orderBy(desc(notifications.createdAt), desc(notifications.id))
     .limit(opts.limit ?? 50);
+}
+
+/** Marks every unread notification of the caller read; returns how many changed. */
+export async function markAllMyNotificationsRead(tx: Tx): Promise<number> {
+  const rows = await tx
+    .update(notifications)
+    .set({ readAt: sql`now()` })
+    .where(and(mine, isNull(notifications.readAt)))
+    .returning({ id: notifications.id });
+  return rows.length;
 }
 
 export async function countMyUnread(tx: Tx): Promise<number> {
@@ -75,3 +113,11 @@ export async function markNotificationRead(tx: Tx, id: string): Promise<boolean>
     .returning({ id: notifications.id });
   return rows.length > 0;
 }
+
+export { deliverNotificationEmail, registerNotificationEmailWorker } from './email';
+export {
+  listMyPreferences,
+  setMyPreferences,
+  type NotificationPreference,
+  type SetPreferencesInput
+} from './preferences';
