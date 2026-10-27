@@ -214,6 +214,8 @@ Envelope (Decided): `{ id, name, version: 1, tenantId, occurredAt, actor: { type
 | `lead.created` | M4 (webhook), M1 (manual) | Spec | M4 voice start, M7, n8n |
 | `deal.stage_changed` | M2 | Spec | M3, M7 (rules, alerts), M6, n8n |
 | `call.completed` | M4 | Spec | M3, M5, M6, M7, n8n |
+| `call.flagged` | M4 (F-28) | Decided | M7, M8b (Kynetic review list and alert) |
+| `contact.created`, `contact.updated`, `contact.merged` | M1 | Decided | M3, M7 |
 | `contact.created`, `contact.updated`, `contact.deleted`, `contact.merged` | M1 | Decided (`contact.deleted` added, DC-072) | M3, M7 |
 | `deal.created`, `deal.won`, `deal.lost` | M2 | Decided | M3, M6, M7 (won alert, F-33) |
 | `message.received`, `message.status_changed` | M4 | Decided | M3, M7 (stop on reply, F-32) |

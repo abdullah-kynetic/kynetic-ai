@@ -2,8 +2,9 @@ import { z } from 'zod';
 import { emailSchema, FIELD_LIMITS, nameSchema, uuidSchema } from '../validation';
 import { normalizePhone } from './phone';
 
-export const CONTACT_STATUSES = ['new', 'working', 'booked', 'won', 'lost', 'dead'] as const;
-export type ContactStatus = (typeof CONTACT_STATUSES)[number];
+import { CONTACT_STATUSES } from './constants';
+
+export { CONTACT_STATUSES, type ContactStatus } from './constants';
 
 /** A phone as typed by a person or sent by a form. Output is E.164. */
 export const phoneInputSchema = z

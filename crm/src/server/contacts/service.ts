@@ -3,6 +3,7 @@ import { audit } from '../audit';
 import type { Db, Tx } from '../db/client';
 import { contacts, memberships } from '../db/schema';
 import { AppError, ValidationError } from '../errors';
+import { validateCustomValues } from '../custom-fields';
 import { emitEvent } from '../events';
 import { withTenant, type TenantContextInput } from '../tenancy';
 import { parseInput, uuidSchema } from '../validation';
@@ -132,6 +133,7 @@ export async function createContact(
       if (dupes.length) throw new DuplicateContactError(dupes);
     }
     await assertOwner(tx, v.ownerId);
+    const custom = await validateCustomValues(ctx, tx, 'contact', v.custom);
     const [row] = await tx
       .insert(contacts)
       .values({
@@ -149,7 +151,7 @@ export async function createContact(
         status: v.status,
         tags: v.tags,
         ownerId: v.ownerId ?? null,
-        custom: v.custom
+        custom
       })
       .returning();
     await audit(tx, {
@@ -249,6 +251,7 @@ export async function updateContact(
       if (dupes.length) throw new DuplicateContactError(dupes);
     }
     if (v.ownerId !== undefined) await assertOwner(tx, v.ownerId);
+    if (v.custom !== undefined) v.custom = await validateCustomValues(ctx, tx, 'contact', v.custom);
 
     const set: Partial<typeof contacts.$inferInsert> = {
       updatedAt: sql`now()` as unknown as string

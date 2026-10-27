@@ -98,20 +98,22 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | notify() (M0, platform) | `notify` writes a `notifications` row for the target user only | Other users cannot read it | Integration | Pass (2026-10-26, m0/gate) |
 | F-20 and F-22 notification path (M0 `notify`, M3, crm) | Overdue task and @mention each notify the right user | One row per recipient; delivered through `notify` | Integration | Not run |
 | M0 CI and preview (platform) | Preview deploys from CI; shell and empty states render with no seed data and no console errors | Preview URL serves the shell | E2E | Not run |
-| F-07 (M1, crm) | Create a contact with a phone already on contact P | Duplicate warning shows and offers merge | E2E | Not run |
+| F-07 (M1, crm) | Create a contact with a phone already on contact P | Duplicate warning shows and offers merge | E2E | Partly run (2026-10-26, M1-04): integration covers the warning data, "create anyway" and edit (`tests/integration/contacts.test.ts`, M1-04 block). Merge is not offered yet (M1-08); the automated E2E needs the signed-in fixture |
 | F-07 (M1, crm) | Merge two contacts | Deals, notes and activities move to the survivor; loser soft-removed; audit row written | Integration | Not run |
-| F-12 (M1, crm) | Custom field "Roof type" select: filter, table and CSV import | Value shows in table, filters, and CSV import accepts it | E2E | Not run |
-| F-08 (M1, crm) | Assign owner to 20 selected contacts | All 20 updated in one audited operation | Integration | Not run |
+| F-12 (M1, crm) | Custom field "Roof type" select: filter, table and CSV import | Value shows in table, filters, and CSV import accepts it | E2E | Partly run: filter and values covered by `tests/integration/custom-fields.test.ts`; table, settings UI and CSV import not run in a browser |
+| F-08 (M1, crm) | Assign owner to 20 selected contacts | All 20 updated in one audited operation | Integration | Pass (2026-10-26, M1-07, `contacts-bulk.test.ts`) |
 | F-14 (M2, crm) | Save a deal in Lost without a lost reason | Save refused, message names the field | Integration | Pass (2026-10-26, M2-01) |
 | F-16 (M2, crm) | Drag a card from Contacted to Qualified, then reload | Card stays in Qualified; column totals updated | E2E | Not run (no signed-in E2E fixture yet). Move, order, totals and `deal.stage_changed` covered by integration (`pipeline-board.test.ts`, M2-02) and unit (`pipeline-board-state.test.ts`) tests, which Pass 2026-10-26 |
+| F-12 (M1, crm) | Each type (text, number, money, date, select, multi-select, checkbox) given a valid and an invalid value; unknown key | Valid saved, invalid and unknown refused | Unit, Integration | Run (`tests/unit/custom-fields.test.ts`, `tests/integration/custom-fields.test.ts`) |
+| F-85 (M1, crm) | Lite tenant calls any custom field function or saves a custom value | 403 MODULE_DISABLED, nothing written | Integration | Run |
 | F-16 (M2, crm) | Server rejects a drag | Card rolls back; error toast | E2E | Not run |
 | F-16 (M2, crm) | Undo within toast window after a drag | Previous stage restored | E2E | Not run |
-| F-19 (M3, crm) | Any write to a covered entity | `activities` row created and shown on timeline; actor shown | Integration | Not run |
+| F-19 (M3, crm) | Any write to a covered entity | `activities` row created and shown on timeline; actor shown | Integration | Pass |
 | F-20 (M3, crm) | Task past due and incomplete | Under Overdue; assignee gets notification | Integration | Not run |
-| F-76 (M4, alex_core) | Duplicate lead webhook (same source and external id) | Second call is a no-op; one contact, one deal | Integration | Not run |
-| F-77 (M4, platform) | Same Retell or ElevenLabs call-ended event (same source and external id) replayed 10 times | One effect (one call row, one timeline entry) | Integration | Not run |
-| F-77 (M4, platform) | Same external id arriving from a different source | Not a duplicate; processed as its own event (uniqueness is on source and external id) | Integration | Not run |
-| F-74 (M4, alex_core) | STOP inbound SMS (fake Twilio) | Consent revoked; confirmation on timeline; no further SMS or calls | Integration | Not run |
+| F-76 (M4, alex_core) | Duplicate lead webhook (same source and external id) | Second call is a no-op; one contact, one deal | Integration | Pass (2026-10-26, M4-04; replayed 10 times) |
+| F-77 (M4, platform) | Same Retell or ElevenLabs call-ended event (same source and external id) replayed 10 times | One effect (one call row, one timeline entry) | Integration | Pass (`call-end.test.ts`) |
+| F-77 (M4, platform) | Same external id arriving from a different source | Not a duplicate; processed as its own event (uniqueness is on source and external id) | Integration | Pass (`call-end.test.ts`) |
+| F-74 (M4, alex_core) | STOP inbound SMS (fake Twilio) | Consent revoked; confirmation on timeline; no further SMS or calls | Integration | Passing (M4-08, tests/integration/twilio-sms.test.ts) |
 | F-26 (M4, alex_core) | Fake call-ended webhook with outcome "booked" | Test call lands on timeline; green Booked chip | E2E | Not run |
 | F-78 (M5, alex_core) | Booking request inside business hours | Appointment created, status scheduled | Integration | Not run |
 | F-78 (M5, alex_core) | Booking request outside business hours | API refuses; Alex offers another time | Integration | Not run |
@@ -120,8 +122,8 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-49 (M6, alex_core) | Monthly ROI report, full month of fixture data | Report totals equal dashboard totals for the same range | Integration | Not run |
 | F-32 (M7, per template) | Sequence in progress; contact replies | Remaining steps cancel; run status "stopped" | Integration | Not run |
 | F-33 (M7, platform) | Deal marked Won | Owner gets email (fake Resend) | Integration | Not run |
-| F-55 (M8, platform) | Complete onboarding form | Tenant, invite, pipeline, automations, Alex draft exist within 30 s; audited | E2E | Not run |
-| F-57 (M8, platform) | View-as started by admin | Banner shown; writes refused; `audit_log` has impersonator and tenant | E2E | Not run |
+| F-55 (M8, platform) | Complete onboarding form | Tenant, invite, pipeline, automations, Alex draft exist within 30 s; audited | E2E | Partly run: integration covers tenant, invite, modules, pipeline, Alex draft and audit in under 30 s; the page is not exercised in a browser (no sign-in fixture). Default automations are M7 |
+| F-57 (M8, platform) | View-as started by admin | Banner shown; writes refused; `audit_log` has impersonator and tenant | E2E | Not run (no signed-in fixture). Audit rows with impersonator and tenant, and refused writes, pass as integration in `tests/integration/view-as.test.ts` (M8a-04) |
 | F-90 (M9, platform) | Admin uploads a CSV with unusual headers, maps columns, previews | Preview shows how rows will land; saved mapping pre-fills the next file from that source | E2E | Not run |
 | F-90 (M9, platform) | Upload an `.xlsm`, an oversize file, and a CSV renamed from a binary | Refused before parsing, with a message | Integration | Not run |
 | F-90 (M9, platform) | XLSX with formulas and an external link | Cached values imported as text; nothing evaluated or fetched | Integration | Not run |
@@ -141,7 +143,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-96 (M9, platform) | Import with mapped consent date and source | Consent record with source `import` exists | Integration | Not run |
 | F-96 (M9 and M4, platform) | Imported contact in quiet hours with consent | Send deferred | Integration | Not run |
 | F-38 (M9, crm) | Export a view containing a cell starting with `=` | Cell neutralized | Unit | Not run |
-| F-39 (M9, platform) | Set logo, color and name for tenant | Visible on every page for that tenant; other tenant unaffected | E2E | Not run |
+| F-39 (M9, platform) | Set logo, color and name for tenant | Visible on every page for that tenant; other tenant unaffected | E2E | Partial: integration (save, audit, other tenant untouched, bad file, low contrast, owner only) and unit (color table, logo rules) pass (2026-10-26, m9-08); E2E Not run |
 | F-63 (M10, platform) | Monthly restore drill | Drill passes (see Release criteria); result and date shown on backups page | Manual | Not run |
 | F-88 (M10, platform) | Fresh production database and demo tenant | Production holds only the pilot tenant's real data; demo tenant is synthetic only; no migration script exists | Integration | Not run |
 
@@ -155,13 +157,14 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-02 (M6, alex_core) | Activity created | Appears in feed within one refresh | E2E | Not run |
 | F-03 (M6, alex_core) | Target N bookings, start date set | Progress shows booked/N and days remaining | Unit | Not run |
 | F-03 (M6, alex_core) | No target set | Tracker hidden; admin sees prompt to set one | E2E | Not run |
-| F-05 (M1, crm) | 1,000 contacts; filter by status and source | Only matches show; pasted URL reproduces view | E2E | Not run |
+| F-05 (M1, crm) | 1,000 contacts; filter by status and source | Only matches show; pasted URL reproduces view | E2E | Partly run (2026-10-26, M1-02): integration covers the filters (`tests/integration/contacts-list.test.ts`), unit covers URL parsing (`tests/unit/contacts-list-params.test.ts`), and a hand-run Playwright check against a seeded session confirmed filters, search, sort, hidden columns and paging survive reload and a pasted URL, with cards and no horizontal scroll at 390px. The automated E2E needs the signed-in fixture, not built yet |
+| F-05 (M1, platform) | 10,000 contacts; every list shape the page issues | p95 under 500 ms | Integration | Pass (2026-10-26, M1-02): p95 66 ms locally |
 | F-05 (M1, crm) | Staff user lists contacts | Only own tenant's rows | Integration | Pass (2026-10-26, M1-01) |
 | F-06 (M1, crm) | Contact with a deal, a call and a note | All sections render; consent status matches latest `consents` row | E2E | Not run |
 | F-07 (M1, crm) | Two contacts share an email | Duplicate detection on email as well as phone | Integration | Pass (2026-10-26, M1-01) |
-| F-08 (M1, crm) | Staff without bulk-delete permission | Delete hidden in UI; server refuses | Integration | Not run |
-| F-10 (M1, crm) | Company with 3 contacts and 2 deals | Roll-ups and totals correct | Integration | Not run |
-| F-12 (M1, crm) | Tenant B reads tenant A field definitions | Zero rows (API and SQL) | Integration | Not run |
+| F-08 (M1, crm) | Staff without bulk-delete permission | Delete hidden in UI; server refuses | Integration | Pass (2026-10-26, M1-07; server refusal tested, UI hiding by `bulkCapabilities`) |
+| F-10 (M1, crm) | Company with 3 contacts and 2 deals | Roll-ups and totals correct | Integration | Pass (M1-05, `crm/tests/integration/companies.test.ts`) |
+| F-12 (M1, crm) | Tenant B reads tenant A field definitions | Zero rows (API and SQL) | Integration | Run (`custom-fields.test.ts`) |
 | F-14 (M2, crm) | $12,500 value entered | `value_cents` = 1250000; displays as $12,500 | Unit | Pass (2026-10-26, M2-01) |
 | F-15 (M2, crm) | Add spouse to deal with role | Role on deal and deal on contact page; cross-tenant link refused | Integration | Pass (`deal-contacts.test.ts`; lite and no-crm tenants get 403) |
 | F-16 (M2, crm) | Server rejects a drag; undo within toast | Rollback and error toast; undo restores previous stage | E2E | Not run |
@@ -172,21 +175,25 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-22 (M3, crm) | Note body with a script tag | Sanitized on save | Unit | Not run |
 | F-24 (M5, alex_core) | Alex booking inside hours | Appears on the right day, status scheduled | Integration | Not run |
 | F-24 (M5, alex_core) | Staff reschedules; staff enters time outside hours | Timeline records reschedule; UI warns on out-of-hours time | E2E | Not run |
-| F-26 (M4, alex_core) | Call with outcome "booked" | Green Booked chip; contact link; outcome and date filters work | E2E | Not run |
+| F-26 (M4, alex_core) | Call with outcome "booked" | Green Booked chip; contact link; outcome and date filters work | E2E | Not run (filters, tenant-timezone dates, paging and isolation covered by `calls-list.test.ts`; chip tones by `calls-list-format.test.ts`) |
+| F-26 (M4, alex_core) | List 10,000 calls with and without filters | p95 under 500 ms | Integration | Pass (`calls-list.test.ts`) |
 | F-27 (M4, alex_core) | Open call with recording and transcript | Player, transcript, summary and fields render | E2E | Not run |
-| F-27 (M4, alex_core) | Recording URL after expiry | Expired signed URL refused | Integration | Not run |
+| F-27 (M4, alex_core) | Mint a recording URL as the owner, as another tenant's owner, and as a user with no membership | Signed 5-minute URL; 404; 403; object key never returned | Integration | Pass (`call-end.test.ts`) |
+| F-27 (M4, alex_core) | Recording URL after expiry | Expired signed URL refused | Integration | Adapter part written, passing locally (M4-03, `tests/unit/storage/r2.test.ts`: 5-minute expiry, wrong tenant 404, SigV4 vector); real route test waits for M4-11 |
 | F-27 (M4, alex_core) | Staff without call access requests call | Refused server-side | Integration | Not run |
-| F-28 (M4, alex_core) | Owner flags a call with reason | `calls.flagged` true; review item exists; audit row written | Integration | Not run |
-| F-30 (M4, platform) | Twilio delivered callback for automation SMS (fake) | Log and timeline status update | Integration | Not run |
-| F-30 (M4, platform) | Failed SMS callback (fake) | Error text shows; counted in integration health | Integration | Not run |
+| F-28 (M4, alex_core) | Owner flags a call with reason | `calls.flagged` true; review item exists; audit row written | Integration | Covered: crm/tests/integration/call-detail.test.ts |
+| F-30 (M4, platform) | Twilio delivered callback for automation SMS (fake) | Log and timeline status update | Integration | Passing (M4-08, tests/integration/twilio-sms.test.ts) |
+| F-30 (M4, platform) | Failed SMS callback (fake) | Error text shows; counted in integration health | Integration | Passing (M4-08, tests/integration/twilio-sms.test.ts) |
+| F-30 (M4, platform) | Resend bounced, complained and delivered events (fake and signed fixtures) | Message status updates; bounce suppresses the address; complaint also opts the contact out of email; integration health shows `email` degraded | Integration | Pass (M4-09: `tests/integration/resend-events.test.ts`, `tests/unit/adapters/resend.test.ts`) |
+| F-30 (M4, platform) | Messages log lists both channels, filters, pages, isolates tenants, refuses with no messaging module | Newest first; error text on failed rows; other tenant invisible; `MODULE_DISABLED` | Integration | Passing (M4-12, tests/integration/message-log.test.ts) |
 | F-31 (M7, per template) | `quote_followup` module off | Template hidden; API refuses enablement | Integration | Not run |
 | F-31 (M7, per template) | Module on; deal enters Quoted | Step 1 scheduled | Integration | Not run |
-| F-35 (M7, platform) | New lead | Bell count +1; email sent per preference; open marks read | E2E | Not run |
-| F-35 (M7, platform) | User A requests notifications of user B | Refused | Integration | Not run |
+| F-35 (M7, platform) | New lead | Bell count +1; email sent per preference; open marks read | E2E | Integration pass (2026-10-26, M7-04); signed-in E2E Not run (no sign-in fixture) |
+| F-35 (M7, platform) | User A requests notifications of user B | Refused | Integration | Pass (2026-10-26, M7-04) |
 | F-37 (M9, crm) | Phone fragment on 10,000-contact seeded tenant | Matching contact returned; p95 under 500 ms (decided, recommended option) | Integration | Not run |
 | F-37 (M9, crm) | Tenant A searches for tenant B's record | Zero results | Integration | Not run |
 | F-38 (M9, crm) | Staff without export permission | Export hidden; server refuses | Integration | Not run |
-| F-41 (M9, platform) | Staff opens team settings | Refused (403) | Integration | Not run |
+| F-41 (M9, platform) | Staff opens team settings | Refused (403) | Integration | Pass (M9-09, `business-settings.test.ts`) |
 | F-42 (M9, alex_core) | Owner pauses Alex | No outbound calls start for tenant; dashboard shows "Paused"; raw prompt absent from every response | Integration | Not run |
 | F-43 (M9, crm) | Create tag, apply it, filter by it | Works end to end | E2E | Not run |
 | F-44 (M9, platform) | 390px viewport on daily-use pages | No horizontal scroll; touch targets at least 44px; tap-to-call uses `tel:` link | E2E and Manual | Not run |
@@ -202,16 +209,19 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-53 (M8, platform) | Three tenants in All clients | Table correct, sorts work; client owner gets 403 | Integration | Not run |
 | F-54 (M8, platform) | Fixture inputs | Score equals documented formula; chip matches thresholds | Unit | Not run |
 | F-54 (M8, platform) | Thresholds not set | Default values apply and are shown in admin | E2E | Not run |
-| F-55 (M8, platform) | Failure injected midway through onboarding | Nothing partially created | Integration | Not run |
-| F-55 (M8, platform) | Duplicate slug or owner email | Rejected with clear message | Integration | Not run |
+| F-55 (M8, platform) | Failure injected midway through onboarding | Nothing partially created | Integration | Pass (`tests/integration/admin-onboarding.test.ts`) |
+| F-55 (M8, platform) | Duplicate slug or owner email | Rejected with clear message | Integration | Pass (`tests/integration/admin-onboarding.test.ts`) |
 | F-57 (M8, platform) | Admin starts view-as, tries a write | Write refused unless explicitly escalated; banner visible | E2E | Not run |
-| F-57 (M8, platform) | VA tries a write while impersonating | Refused and logged | Integration | Not run |
+| F-57 (M8, platform) | VA tries a write while impersonating | Refused and logged | Integration | Pass (`tests/integration/view-as.test.ts`, M8a-04) |
 | F-58 (M8, alex_core) | Change Alex config | Saved; audited with before and after; VA cannot change prompts | Integration | Not run |
 | F-58 (M8, alex_core) | Test call button with entered number | Starts a call to that number only (fake provider in CI) | Integration | Not run |
 | F-60 (M0, platform) | Write, login, export, impersonation | One `audit_log` row each | Integration | Not run |
 | F-60 (M0, platform) | UPDATE or DELETE on `audit_log` | Database refuses | Integration | Not run |
-| F-61 (M8, platform) | Deactivate a user with an open session | Cannot sign in; session ends | Integration | Not run |
-| F-61 (M8, platform) | VA tries to manage an admin | Refused | Integration | Not run |
+| F-61 (M8, platform) | Deactivate a user with an open session | Cannot sign in; session ends | Integration | Pass (2026-10-26, M8a-03; `tests/integration/admin-users.test.ts`) |
+| F-61 (M8, platform) | VA tries to manage an admin | Refused | Integration | Pass (2026-10-26, M8a-03; `tests/integration/admin-users.test.ts`) |
+| F-60 (M8a, platform) | Admin filters the viewer by tenant, user, action and date range | Only matching rows return; the end day is included | Integration | Passing (`crm/tests/integration/audit-viewer.test.ts`) |
+| F-60 (M8a, platform) | VA reads the viewer; a client role calls it | VA reads; client refused by the app and by `audit_search` (42501); web role cannot select `audit_log` | Integration | Passing (`crm/tests/integration/audit-viewer.test.ts`) |
+| F-60 (M8a, platform) | Filter input is not a UUID or a date | Rejected before any query | Unit | Passing (`crm/tests/unit/admin/audit-viewer.test.ts`) |
 | F-62 (M8, platform) | Webhook failing | Error count rises; integration red; recovery returns to green | Integration | Not run |
 | F-63 (M8, platform) | Nightly job completes | Backups page shows time and size | Integration | Not run |
 | F-63 (M8, platform) | Manual backup button | Runs and is audited | Integration | Not run |
@@ -224,15 +234,15 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | --- | --- | --- | --- | --- |
 | F-70 (M0, platform) | Module X off; call any X route or action directly | 403 `MODULE_DISABLED`; nothing written | Integration | Not run |
 | F-70 (M0, platform) | Module X off, then on | X's data intact | Integration | Not run |
-| F-70 (M0 and M8, platform) | Module toggled | `audit_log` row written | Integration | Not run |
+| F-70 (M0 and M8, platform) | Module toggled | `audit_log` row written | Integration | Pass: `tests/integration/admin-modules.test.ts` (M8a-06; Postgres 16, 2026-10-26) |
 | F-73 (M0, platform) | Each role against each protected action | Matches the permission matrix in `SECURITY.md`; UI hides what role cannot do | Integration and E2E | Not run |
-| F-74 (M4, alex_core) | No consent; Alex or automation tries to call or text | Blocked and logged | Integration | Not run |
+| F-74 (M4, alex_core) | No consent; Alex or automation tries to call or text | Blocked and logged | Integration | Passing for SMS (M4-08); calls in M4-01 |
 | F-74 (M4, alex_core) | Contact in quiet hours (contact timezone) | Call or SMS deferred (fixed clock) | Integration | Not run (window 08:00 to 21:00 lead-local, decided; per-state table UNRESOLVED) |
 | F-75 (M4, alex_core) | Call starts | Disclosure line in agent config and transcript | Integration | Not run |
 | F-75 (M4, alex_core) | Contact in a two-party-consent state | Call marked for review | Integration | Not run (state list is a versioned config; content UNRESOLVED, needs counsel) |
-| F-76 (M4, alex_core) | Valid signed lead request | Contact and deal exist; Alex triggered | Integration | Not run |
-| F-76 (M4, alex_core) | Bad token | 401; nothing written | Integration | Not run |
-| F-76 (M4, alex_core) | Rate-limit breach | 429 | Integration | Not run |
+| F-76 (M4, alex_core) | Valid signed lead request | Contact and deal exist; Alex triggered | Integration | Pass for contact, deal, consent and `lead.created` (2026-10-26, M4-04); the call start is M4-06 |
+| F-76 (M4, alex_core) | Bad token | 401; nothing written | Integration | Pass (2026-10-26, M4-04) |
+| F-76 (M4, alex_core) | Rate-limit breach | 429 | Integration | Pass (2026-10-26, M4-04) |
 | F-77 (M4, platform) | Bad signature on any provider webhook | Rejected before storage; no `webhook_events` row | Integration | Not run |
 | F-77 (M4, platform) | Processing error | Job retries; error count rises | Integration | Not run |
 | F-78 (M4, alex_core) | New lead with consent inside call window | Outbound call starts (fake provider) | Integration | Not run |
@@ -253,7 +263,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-85 (M0 flag; M1 to M9 gating, crm) | No `crm` (Alex-only tenant) | Base portal works (leads, kanban, appointments, calls, reports); Lite and Full routes 403 and are absent from nav | E2E and Integration | Not run |
 | F-85 (M0 flag; M1 to M9 gating, crm) | crm Lite | Companies, tasks, notes, stage settings available; Full-only surfaces hidden and their routes 403 | E2E and Integration | Not run |
 | F-85 (M0 flag, crm) | Upgrade Lite to Full | Full surfaces appear; data intact | Integration | Not run |
-| F-86 (M0 columns, M8 UI, platform) | Tenant created with plan and tier | Stored and shown in All clients | Integration | Not run |
+| F-86 (M0 columns, M8 UI, platform) | Tenant created with plan and tier | Stored and shown in All clients | Integration | Pass: `tests/integration/admin-billing.test.ts` (M8a-07; Postgres 16, 2026-10-26) |
 | F-86 (M8, platform) | Founding plan reference text | Shows $6,500 setup and 3 months then $1,500/mo (price decided, PRD decision 12) | E2E | Not run |
 | F-87 (M0, platform) | Scan responses of a browser session | No provider key in any response | Integration | Not run |
 | F-87 (M0, platform) | Burst of login, webhook and API requests | 429 once the limit is hit | Integration | Not run |
@@ -412,11 +422,13 @@ Regression policy: every important bug fix adds a regression test named with the
 
 | ID, milestone, module | Scenario | Expected | Layer | Status |
 | --- | --- | --- | --- | --- |
-| F-99 (M8a, platform) | Admin enables a module | Price snapshot row created from `module_prices`; totals correct | Integration | Not run |
-| F-99 (M8a, platform) | `module_prices` changes later | Existing snapshots unchanged | Integration | Not run |
-| F-99 (M8a, platform) | Owner, staff and VA request the billing profile | 403 | Integration | Not run |
-| F-100 (M8a, platform) | New tenant with `alex_core` | Checklist created with the module's steps | Integration | Not run |
-| F-100 (M8a, platform) | Owner opens the dashboard before go-live | Setup progress shows only `client_visible` steps; none after go-live | E2E | Not run |
+| F-99 (M8a, platform) | Admin enables a module | Price snapshot row created from `module_prices`; totals correct | Integration | Pass: `tests/integration/admin-billing.test.ts` (M8a-07; Postgres 16, 2026-10-26) |
+| F-99 (M8a, platform) | `module_prices` changes later | Existing snapshots unchanged | Integration | Pass: `tests/integration/admin-billing.test.ts` (M8a-07; Postgres 16, 2026-10-26) |
+| F-99 (M8a, platform) | Owner, staff and VA request the billing profile | 403 | Integration | Pass: `tests/integration/admin-billing.test.ts` (M8a-07; Postgres 16, 2026-10-26) |
+| F-100 (M8a, platform) | New tenant with `alex_core` | Checklist created with the module's steps | Integration | Pass (`tests/integration/admin-onboarding.test.ts`) |
+| F-100 (M8a, platform) | Owner opens the dashboard before go-live | Setup progress shows only `client_visible` steps; none after go-live | E2E | Not run in a browser; integration covers the data and the card query (`tests/integration/onboarding-checklist.test.ts`) |
+| F-100 (M8a, platform) | Owner or staff queries or updates internal steps | Internal rows invisible; no writes | Integration | Pass (`tests/integration/onboarding-checklist.test.ts`) |
+| F-100 (M8a, platform) | Admin marks go-live with open steps; VA tries go-live | Refused; admin succeeds once all steps done or n/a, audited | Integration | Pass (`tests/integration/onboarding-checklist.test.ts`) |
 | F-101 (M8b, platform) | Kill switch on, a call job runs | No call or text sent; job waits; resumes after off | Integration | Not run |
 | F-101 (M8b, platform) | Replay a failed webhook twice | Processed once | Integration | Not run |
 | F-101 (M8b, platform) | Suspend a tenant | Its users cannot sign in; its jobs no-op | Integration | Not run |

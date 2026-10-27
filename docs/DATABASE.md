@@ -56,6 +56,7 @@ Retention and classification are per table. Retention values are the PRD decisio
 | dnc_entries | Per-tenant do-not-call list (SECURITY C10) | Tenant (system adds on opt-out) | Kept after removal for audit | Personal | M4 | platform |
 | webhook_events | Verified inbound webhooks, idempotent by (source, external_id) | System | Payload purged after 30 days, id and status kept (SECURITY 6.1; decided) | Internal | M4 | platform |
 | integrations | Health per tenant and provider | System | Latest state only | Internal | M4 | platform (F-62) |
+| email_suppressions | Addresses that bounced or complained, per tenant (M4-09, DC-077) | System | Until an admin lifts it (tool not built) | Personal | M4 | platform (F-30, F-35) |
 | phone_numbers | Provider numbers and routing; global uniqueness of E.164 | Kynetic | Until released | Internal | M4 | alex_core, after_hours, missed_call_textback |
 | alex_configs | Alex settings per tenant | Kynetic and owner (limited fields) | Current version; history in audit_log | Internal | M4 | alex_core (F-58) |
 | alex_prompts | Raw prompt bodies, versioned | Kynetic admin only | Permanent (F-59 Later: rollback) | Internal | M4 | alex_core |
@@ -227,8 +228,14 @@ CREATE TABLE impersonation_sessions (                                   -- F-57:
   ended_at timestamptz,
   ip inet,
   user_agent text,
+  reason text,                                                          -- 0032 (M8a-04, DC-093): required at start
+  last_seen_at timestamptz NOT NULL DEFAULT now(),                      -- 0032: 30-minute idle expiry
+  write_reason text,                                                    -- 0032: second reason for write mode
+  write_until timestamptz,                                              -- 0032: write mode ends here (30 minutes)
+  ended_reason text,                                                    -- 0032: exit, idle or role_lost
   CHECK (ended_at IS NULL OR ended_at >= started_at)
 );
+-- 0032: runtime roles cannot DELETE; UPDATE only on read_only, last_seen_at, write_*, ended_*.
 CREATE INDEX impersonation_tenant_idx ON impersonation_sessions (tenant_id, started_at DESC);
 
 CREATE TABLE backup_runs (                                              -- F-63: global, no tenant_id
@@ -935,7 +942,7 @@ CREATE TABLE tenant_documents (                                          -- F-10
 CREATE INDEX tenant_documents_idx ON tenant_documents (tenant_id, created_at DESC);
 ```
 
-Access: `tenant_billing` and `tenant_billing_modules` have the standard RLS enabled but no policy for owner or staff roles in application code; only admin routes read them, through `withTenant` while viewing a tenant as admin, and the audit trigger records every write. `onboarding_steps` rows are readable by owners only where `client_visible`. `tenant_documents` is readable by owners and written by admins. `terms_acceptances` is a global table: users read and insert their own rows.
+Access: `tenant_billing` and `tenant_billing_modules` have RLS enabled and forced with one admin-only SELECT policy (`app_role() = 'admin'`, migration 0047) and no write grant for the app roles; writes go through `set_tenant_module()`, `admin_snapshot_module_price()` and `admin_set_tenant_billing()`; only admin routes read them, through `withTenant` while viewing a tenant as admin, and the audit trigger records every write. `onboarding_steps` rows are readable by owners only where `client_visible`. `tenant_documents` is readable by owners and written by admins. `terms_acceptances` is a global table: users read and insert their own rows.
 
 ### Not in the baseline schema (decided by the PRD decisions log)
 
@@ -1083,6 +1090,9 @@ SECURITY DEFINER functions (owned by `kynetic_rollup`, `SET search_path = public
 | `audit_search(p_tenant, p_actor, p_action, p_from, p_to)` | admin | Filtered read of `audit_log` (F-60) |
 
 Implemented in migration 0005 (M0-09, DC-054). Signatures: `create_tenant(slug, name, plan, timezone, owner_email, invite_token_hash, invite_expires_at) returns uuid`; `set_tenant_module(tenant, module, enabled, level default '')`; `admin_update_tenant_commercial(tenant, patch jsonb)` with an allowlist of fields; `admin_set_kynetic_role(user, role or null)`; `admin_tenant_overview()`; `audit_search(tenant, actor, action, from, to, limit)`. `admin_tenant_overview` and `audit_search` allow admin and VA (SECURITY 2.2: VA reads); the others are admin only. Only `kynetic_app` may execute them.
+
+Migration 0030 (M8a-02, DC-091) adds `owner_email_in_use(p_email)` (admin; true when a user or a pending invite holds the email) and `reissue_owner_invite(p_tenant, p_token_hash, p_expires_at)` (admin; revokes the pending owner invite, inserts a new one, marks the `owner_invited` checklist step done, returns the owner email and tenant name; audit action `invite.send` carries no token).
+Migration 0031 (M8a-03, DC-092) adds the user-management functions for F-61: `admin_list_users(tenant, search, limit)` (admin, va), `admin_invite_user(tenant, email, role, token_hash, expires_at)` (admin, va; client users only), `admin_reset_client_user(user)` (admin, va; client users only), and, admin only, `admin_deactivate_user(user)`, `admin_reactivate_user(user)`, `admin_set_membership_role(tenant, user, role)` and `admin_change_staff_role(user, role or null)`. The helper `rollup_active_staff()` confirms the session user is an active Kynetic user with the claimed role. Deactivation sets `users.disabled_at`, deletes all sessions and revokes pending invitations for the email in one transaction; every function audits in the same transaction. Only `kynetic_app` may execute them. New roll-up grants: `UPDATE (role)` on `memberships`, `UPDATE (revoked_at)` on `invitations`.
 
 Migration 0010 (M0-20, DC-060) adds `service_token_lookup(prefix)` and `service_token_touch(id)`, owned by `kynetic_rollup`, executable by `kynetic_app` and `kynetic_worker`. They exist because a bearer request has no tenant context yet. They take no tenant argument and cannot list tokens.
 
