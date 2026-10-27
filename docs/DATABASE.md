@@ -228,8 +228,14 @@ CREATE TABLE impersonation_sessions (                                   -- F-57:
   ended_at timestamptz,
   ip inet,
   user_agent text,
+  reason text,                                                          -- 0032 (M8a-04, DC-093): required at start
+  last_seen_at timestamptz NOT NULL DEFAULT now(),                      -- 0032: 30-minute idle expiry
+  write_reason text,                                                    -- 0032: second reason for write mode
+  write_until timestamptz,                                              -- 0032: write mode ends here (30 minutes)
+  ended_reason text,                                                    -- 0032: exit, idle or role_lost
   CHECK (ended_at IS NULL OR ended_at >= started_at)
 );
+-- 0032: runtime roles cannot DELETE; UPDATE only on read_only, last_seen_at, write_*, ended_*.
 CREATE INDEX impersonation_tenant_idx ON impersonation_sessions (tenant_id, started_at DESC);
 
 CREATE TABLE backup_runs (                                              -- F-63: global, no tenant_id

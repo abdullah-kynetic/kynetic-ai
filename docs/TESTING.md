@@ -121,7 +121,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-32 (M7, per template) | Sequence in progress; contact replies | Remaining steps cancel; run status "stopped" | Integration | Not run |
 | F-33 (M7, platform) | Deal marked Won | Owner gets email (fake Resend) | Integration | Not run |
 | F-55 (M8, platform) | Complete onboarding form | Tenant, invite, pipeline, automations, Alex draft exist within 30 s; audited | E2E | Partly run: integration covers tenant, invite, modules, pipeline, Alex draft and audit in under 30 s; the page is not exercised in a browser (no sign-in fixture). Default automations are M7 |
-| F-57 (M8, platform) | View-as started by admin | Banner shown; writes refused; `audit_log` has impersonator and tenant | E2E | Not run |
+| F-57 (M8, platform) | View-as started by admin | Banner shown; writes refused; `audit_log` has impersonator and tenant | E2E | Not run (no signed-in fixture). Audit rows with impersonator and tenant, and refused writes, pass as integration in `tests/integration/view-as.test.ts` (M8a-04) |
 | F-90 (M9, platform) | Admin uploads a CSV with unusual headers, maps columns, previews | Preview shows how rows will land; saved mapping pre-fills the next file from that source | E2E | Not run |
 | F-90 (M9, platform) | Upload an `.xlsm`, an oversize file, and a CSV renamed from a binary | Refused before parsing, with a message | Integration | Not run |
 | F-90 (M9, platform) | XLSX with formulas and an external link | Cached values imported as text; nothing evaluated or fetched | Integration | Not run |
@@ -207,7 +207,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-55 (M8, platform) | Failure injected midway through onboarding | Nothing partially created | Integration | Pass (`tests/integration/admin-onboarding.test.ts`) |
 | F-55 (M8, platform) | Duplicate slug or owner email | Rejected with clear message | Integration | Pass (`tests/integration/admin-onboarding.test.ts`) |
 | F-57 (M8, platform) | Admin starts view-as, tries a write | Write refused unless explicitly escalated; banner visible | E2E | Not run |
-| F-57 (M8, platform) | VA tries a write while impersonating | Refused and logged | Integration | Not run |
+| F-57 (M8, platform) | VA tries a write while impersonating | Refused and logged | Integration | Pass (`tests/integration/view-as.test.ts`, M8a-04) |
 | F-58 (M8, alex_core) | Change Alex config | Saved; audited with before and after; VA cannot change prompts | Integration | Not run |
 | F-58 (M8, alex_core) | Test call button with entered number | Starts a call to that number only (fake provider in CI) | Integration | Not run |
 | F-60 (M0, platform) | Write, login, export, impersonation | One `audit_log` row each | Integration | Not run |

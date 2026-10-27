@@ -99,6 +99,14 @@ export const adminNavGroups: NavGroup[] = [
         items: []
       },
       {
+        title: 'View as client',
+        url: '/admin/view-as',
+        icon: 'user',
+        isActive: false,
+        shortcut: ['a', 'v'],
+        items: []
+      },
+      {
         title: 'Onboard a client',
         url: '/admin/clients/new',
         icon: 'add',

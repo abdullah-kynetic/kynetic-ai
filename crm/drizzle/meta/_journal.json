@@ -120,6 +120,13 @@
       "when": 1792990001000,
       "tag": "0031_admin_user_management",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1793100000000,
+      "tag": "0032_view_as_sessions",
+      "breakpoints": true
     }
   ]
 }
