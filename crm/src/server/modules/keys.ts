@@ -37,3 +37,15 @@ export function moduleSatisfied(enabled: EnabledModules, need: ModuleNeed): bool
   }
   return enabled.keys.has(module);
 }
+
+/** Modules that send SMS or email. The messages log (F-30) shows whenever any of them is on. */
+export const MESSAGING_MODULES = [
+  'alex_core',
+  'missed_call_textback',
+  'followup_bundle',
+  'reactivation'
+] as const satisfies readonly ModuleKey[];
+
+export function anyModuleSatisfied(enabled: EnabledModules, keys: readonly ModuleKey[]): boolean {
+  return keys.some((module) => moduleSatisfied(enabled, { module }));
+}
