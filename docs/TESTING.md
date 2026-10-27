@@ -210,11 +210,11 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-58 (M8, alex_core) | Test call button with entered number | Starts a call to that number only (fake provider in CI) | Integration | Not run |
 | F-60 (M0, platform) | Write, login, export, impersonation | One `audit_log` row each | Integration | Not run |
 | F-60 (M0, platform) | UPDATE or DELETE on `audit_log` | Database refuses | Integration | Not run |
+| F-61 (M8, platform) | Deactivate a user with an open session | Cannot sign in; session ends | Integration | Pass (2026-10-26, M8a-03; `tests/integration/admin-users.test.ts`) |
+| F-61 (M8, platform) | VA tries to manage an admin | Refused | Integration | Pass (2026-10-26, M8a-03; `tests/integration/admin-users.test.ts`) |
 | F-60 (M8a, platform) | Admin filters the viewer by tenant, user, action and date range | Only matching rows return; the end day is included | Integration | Passing (`crm/tests/integration/audit-viewer.test.ts`) |
 | F-60 (M8a, platform) | VA reads the viewer; a client role calls it | VA reads; client refused by the app and by `audit_search` (42501); web role cannot select `audit_log` | Integration | Passing (`crm/tests/integration/audit-viewer.test.ts`) |
 | F-60 (M8a, platform) | Filter input is not a UUID or a date | Rejected before any query | Unit | Passing (`crm/tests/unit/admin/audit-viewer.test.ts`) |
-| F-61 (M8, platform) | Deactivate a user with an open session | Cannot sign in; session ends | Integration | Not run |
-| F-61 (M8, platform) | VA tries to manage an admin | Refused | Integration | Not run |
 | F-62 (M8, platform) | Webhook failing | Error count rises; integration red; recovery returns to green | Integration | Not run |
 | F-63 (M8, platform) | Nightly job completes | Backups page shows time and size | Integration | Not run |
 | F-63 (M8, platform) | Manual backup button | Runs and is audited | Integration | Not run |
