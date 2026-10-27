@@ -83,6 +83,14 @@ export const adminNavGroups: NavGroup[] = [
         isActive: false,
         shortcut: ['a', 'c'],
         items: []
+      },
+      {
+        title: 'Users',
+        url: '/admin/users',
+        icon: 'user',
+        isActive: false,
+        shortcut: ['a', 'u'],
+        items: []
       }
     ]
   },

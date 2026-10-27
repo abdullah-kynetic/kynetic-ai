@@ -1,7 +1,21 @@
 export { decideAdminAccess, type AdminAccess } from './guard';
 export {
-  searchAuditLog,
+  changeMembershipRole,
+  changeStaffRole,
+  deactivateUser,
+  INVITE_TTL_MS,
+  inviteUser,
   listTenantOptions,
+  listUsers,
+  reactivateUser,
+  resetClientUser,
+  type InviteDelivery,
+  type StaffCaller,
+  type UserRow
+} from './users';
+export {
+  searchAuditLog,
+  listTenantOptions as listAuditTenantOptions,
   auditFiltersSchema,
   AUDIT_PAGE_SIZE,
   type AuditFilters,
