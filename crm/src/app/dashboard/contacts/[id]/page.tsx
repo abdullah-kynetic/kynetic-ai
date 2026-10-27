@@ -2,6 +2,10 @@ import PageContainer from '@/components/layout/page-container';
 import { StatusBadge, Badge, type StatusTone } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/states';
+import { currentTime } from '@/components/timeline/format';
+import { Timeline } from '@/components/timeline/timeline';
+import { parseTimelineParams } from '@/components/timeline/params';
+import { listActivities, type TimelinePage } from '@/server/activity';
 import {
   getContactDetail,
   NotFoundError,
@@ -14,9 +18,16 @@ import type { Metadata } from 'next';
 import { cookies, headers } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
 
-export const metadata: Metadata = { title: 'Contact', robots: { index: false, follow: false } };
+export const metadata: Metadata = {
+  title: 'Contact',
+  robots: { index: false, follow: false }
+};
 
-const CHANNEL_LABEL = { phone_call: 'Phone calls', sms: 'Text messages', email: 'Email' } as const;
+const CHANNEL_LABEL = {
+  phone_call: 'Phone calls',
+  sms: 'Text messages',
+  email: 'Email'
+} as const;
 
 const CONSENT_TONE: Record<ConsentStatus['state'], { tone: StatusTone; label: string }> = {
   none: { tone: 'neutral', label: 'No consent recorded' },
@@ -44,8 +55,22 @@ const when = (iso: string) =>
 
 const present = (values: string[]) => values.filter((v) => v.trim() !== '');
 
-export default async function ContactPage({ params }: { params: Promise<{ id: string }> }) {
-  const [{ id }, cookieStore, requestHeaders] = await Promise.all([params, cookies(), headers()]);
+export default async function ContactPage({
+  params,
+  searchParams
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{
+    type?: string | string[];
+    cursor?: string | string[];
+  }>;
+}) {
+  const [{ id }, sp, cookieStore, requestHeaders] = await Promise.all([
+    params,
+    searchParams,
+    cookies(),
+    headers()
+  ]);
   const shell = await loadShellContext(requestHeaders, cookieStore.get('tenant_id')?.value);
   if (!shell) redirect('/sign-in');
   // A Kynetic user outside any tenant has no contacts to show.
@@ -64,6 +89,21 @@ export default async function ContactPage({ params }: { params: Promise<{ id: st
   }
 
   const { contact, company, owner, consent } = detail;
+  const { types, cursor } = parseTimelineParams(sp);
+  const ctx = {
+    tenantId: shell.tenant.id,
+    userId: shell.user.id,
+    role: shell.role
+  };
+  // A bad cursor in the URL falls back to the first page rather than failing the whole contact page.
+  const timeline: TimelinePage = await listActivities(ctx, {
+    contactId: id,
+    types,
+    cursor
+  }).catch((err) => {
+    if (err instanceof ValidationError) return listActivities(ctx, { contactId: id, types });
+    throw err;
+  });
   const name = [contact.firstName, contact.lastName].filter(Boolean).join(' ') || 'Unnamed contact';
   const phones = present(contact.phones);
   const emails = present(contact.emails);
@@ -135,13 +175,22 @@ export default async function ContactPage({ params }: { params: Promise<{ id: st
             </CardContent>
           </Card>
 
+          <Card id='timeline' aria-labelledby='section-Timeline'>
+            <CardHeader>
+              <CardTitle id='section-Timeline'>Timeline</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Timeline
+                page={timeline}
+                basePath={`/dashboard/contacts/${id}`}
+                activeTypes={types}
+                now={currentTime()}
+              />
+            </CardContent>
+          </Card>
+
           {(
             [
-              [
-                'Timeline',
-                'No activity yet',
-                'Calls, texts and emails with this contact will show here.'
-              ],
               ['Tasks', 'No tasks', 'Follow-ups for this contact will show here.'],
               ['Notes', 'No notes', 'Notes about this contact will show here.'],
               ['Deals', 'No deals', 'Deals linked to this contact will show here.']
