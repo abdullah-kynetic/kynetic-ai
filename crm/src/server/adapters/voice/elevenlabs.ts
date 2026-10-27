@@ -33,6 +33,9 @@ const str = (v: unknown): string | undefined => (typeof v === 'string' && v ? v 
 const num = (v: unknown): number | undefined =>
   typeof v === 'number' && Number.isFinite(v) ? v : undefined;
 
+const e164 = (v: unknown): string | undefined =>
+  typeof v === 'string' && /^\+[1-9]\d{6,14}$/.test(v) ? v : undefined;
+
 function kindForStatus(status: number): 'transient' | 'permanent' | 'config' {
   if (status === 401 || status === 403) return 'config';
   if (status === 408 || status === 429 || status >= 500) return 'transient';
@@ -129,6 +132,7 @@ export class ElevenLabsVoiceProvider implements VoiceProvider {
       return {
         externalId: `${conversationId}:call_initiation_failure`,
         providerCallId: conversationId,
+        agentId: str(data.agent_id),
         kind: 'call.ended',
         direction: 'outbound',
         startedAt: new Date((at ?? this.now().getTime() / 1000) * 1000),
@@ -148,6 +152,8 @@ export class ElevenLabsVoiceProvider implements VoiceProvider {
     return {
       externalId: conversationId,
       providerCallId: conversationId,
+      agentId: str(data.agent_id),
+      counterpartE164: e164(phoneCall.external_number),
       kind: direction === 'inbound' ? 'inbound' : 'call.ended',
       direction,
       startedAt: new Date(startSecs * 1000),
