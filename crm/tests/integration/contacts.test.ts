@@ -9,9 +9,11 @@ import {
   findDuplicates,
   getContact,
   listContacts,
+  loadContactForPanel,
   NotFoundError,
   removeContactTags,
   restoreContact,
+  saveContactFromPanel,
   setContactOwner,
   updateContact
 } from '@/server/contacts';
@@ -228,5 +230,73 @@ describe('M1-01 contacts service', () => {
     await expect(
       createContact({ ...ctx.adminViewingA(), readOnly: true }, { phones: ['415-555-0900'] }, opts)
     ).rejects.toThrow();
+  });
+});
+
+describe('M1-04 contact panel save', () => {
+  it('F-07: a duplicate phone comes back as a match, not a silent second contact', async () => {
+    const first = await saveContactFromPanel(
+      ctx.ownerA(),
+      { values: { firstName: 'Dup', phones: ['(415) 555-0177'] } },
+      opts
+    );
+    expect(first.ok).toBe(true);
+    const second = await saveContactFromPanel(
+      ctx.ownerA(),
+      { values: { firstName: 'Dup Two', phones: ['415-555-0177'] } },
+      opts
+    );
+    expect(second).toMatchObject({
+      ok: false,
+      kind: 'duplicate',
+      matches: [{ matchedPhones: ['+14155550177'] }]
+    });
+    const count = await listContacts(ctx.ownerA(), { limit: 100 }, opts);
+    expect(count.filter((c) => c.primaryPhoneE164 === '+14155550177')).toHaveLength(1);
+  });
+
+  it('F-07: "create anyway" saves the second contact after the warning', async () => {
+    const res = await saveContactFromPanel(
+      ctx.ownerA(),
+      { values: { firstName: 'Dup Three', phones: ['415-555-0177'] }, acknowledgeDuplicates: true },
+      opts
+    );
+    expect(res.ok).toBe(true);
+  });
+
+  it('F-07: a panel create is a manual lead, and field errors come back by path', async () => {
+    const bad = await saveContactFromPanel(
+      ctx.ownerA(),
+      { values: { firstName: 'Bad', phones: ['not a phone'] } },
+      opts
+    );
+    expect(bad).toMatchObject({ ok: false, kind: 'invalid' });
+    const ok = await saveContactFromPanel(
+      ctx.ownerA(),
+      { values: { firstName: 'Lead', emails: ['lead@example.test'] } },
+      opts
+    );
+    expect(ok.ok).toBe(true);
+    expect((await events('lead.created')).length).toBeGreaterThan(0);
+  });
+
+  it('F-07: editing does not flag the contact as its own duplicate; another tenant id is not found', async () => {
+    const made = await saveContactFromPanel(
+      ctx.ownerA(),
+      { values: { firstName: 'Edit', phones: ['415-555-0188'] } },
+      opts
+    );
+    if (!made.ok) throw new Error('setup failed');
+    const saved = await saveContactFromPanel(
+      ctx.ownerA(),
+      { id: made.id, values: { firstName: 'Edited', phones: ['415-555-0188'] } },
+      opts
+    );
+    expect(saved.ok).toBe(true);
+    expect(await loadContactForPanel(ctx.ownerB(), made.id, opts)).toBeNull();
+    expect((await loadContactForPanel(ctx.ownerA(), made.id, opts))?.firstName).toBe('Edited');
+    expect(
+      await saveContactFromPanel(ctx.ownerB(), { id: made.id, values: { firstName: 'X' } }, opts)
+    ).toMatchObject({ ok: false, kind: 'not_found' });
   });
 });
