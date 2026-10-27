@@ -164,7 +164,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-10 (M1, crm) | Company with 3 contacts and 2 deals | Roll-ups and totals correct | Integration | Pass (M1-05, `crm/tests/integration/companies.test.ts`) |
 | F-12 (M1, crm) | Tenant B reads tenant A field definitions | Zero rows (API and SQL) | Integration | Not run |
 | F-14 (M2, crm) | $12,500 value entered | `value_cents` = 1250000; displays as $12,500 | Unit | Pass (2026-10-26, M2-01) |
-| F-15 (M2, crm) | Add spouse to deal with role | Role on deal and deal on contact page; cross-tenant link refused | Integration | Not run |
+| F-15 (M2, crm) | Add spouse to deal with role | Role on deal and deal on contact page; cross-tenant link refused | Integration | Pass (`deal-contacts.test.ts`; lite and no-crm tenants get 403) |
 | F-16 (M2, crm) | Server rejects a drag; undo within toast | Rollback and error toast; undo restores previous stage | E2E | Not run |
 | F-17 (M2, crm) | New tenant | Eight default stages exist | Integration | Pass (2026-10-26, M2-01) |
 | F-17 (M2, crm) | Delete stage that has deals | Owner must pick target stage; Won and Lost flagged | Integration | Not run |
