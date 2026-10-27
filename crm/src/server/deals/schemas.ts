@@ -6,6 +6,13 @@ const text = (max: number) => z.string().trim().min(1).max(max);
 
 export const DEAL_ROLES = ['homeowner', 'spouse', 'tenant', 'property_manager', 'other'] as const;
 
+export type DealRole = (typeof DEAL_ROLES)[number];
+
+export const dealContactRoleSchema = z.strictObject({
+  contactId: uuidSchema,
+  role: z.enum(DEAL_ROLES)
+});
+
 const fields = {
   title: text(FIELD_LIMITS.name),
   valueCents: z.number().int().min(0).max(MAX_VALUE_CENTS),
