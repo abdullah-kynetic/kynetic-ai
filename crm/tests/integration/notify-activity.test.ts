@@ -6,7 +6,8 @@ import {
   countMyUnread,
   listMyNotifications,
   markNotificationRead,
-  notify
+  notify as notifyWithEmail,
+  type NotifyInput
 } from '@/server/notifications';
 import { withTenant } from '@/server/tenancy';
 import { ctx, IDS, seedTwoTenants, type SeededTenant } from '../helpers/fixtures';
@@ -27,6 +28,10 @@ afterAll(async () => {
 });
 
 class Rollback extends Error {}
+
+// These tests run without the job queue; the email job has its own tests.
+const notify = (tx: Parameters<typeof notifyWithEmail>[0], input: NotifyInput) =>
+  notifyWithEmail(tx, input, { enqueueEmail: async () => undefined });
 
 describe('notify', () => {
   it('writes the row for the tenant in the context, in the caller transaction', async () => {
