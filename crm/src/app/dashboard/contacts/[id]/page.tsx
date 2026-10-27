@@ -223,20 +223,18 @@ export default async function ContactPage({
 
           {tasksSection}
 
-          {(
-            [
-              ['Deals', 'No deals', 'Deals linked to this contact will show here.']
-            ] as const
-          ).map(([title, empty, hint]) => (
-            <Card key={title} aria-labelledby={`section-${title}`}>
-              <CardHeader>
-                <CardTitle id={`section-${title}`}>{title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <EmptyState title={empty} description={hint} />
-              </CardContent>
-            </Card>
-          ))}
+          {([['Deals', 'No deals', 'Deals linked to this contact will show here.']] as const).map(
+            ([title, empty, hint]) => (
+              <Card key={title} aria-labelledby={`section-${title}`}>
+                <CardHeader>
+                  <CardTitle id={`section-${title}`}>{title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <EmptyState title={empty} description={hint} />
+                </CardContent>
+              </Card>
+            )
+          )}
         </div>
 
         <Card className='h-fit'>
