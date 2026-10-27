@@ -75,7 +75,7 @@ async function seedTenant(
     values (${t}, ${`invitee-${key}@example.test`}, 'staff', ${`hash-${key}`}, now() + interval '7 days')`;
   await admin`insert into tenant_modules (tenant_id, module_key, enabled) values (${t}, 'platform', true), (${t}, 'alex_core', true)`;
   await admin`insert into tenant_secrets (tenant_id, provider, name, ciphertext, nonce) values (${t}, 'twilio', 'token', '\\x01', '\\x02')`;
-  await admin`insert into impersonation_sessions (tenant_id, impersonator_user_id) values (${t}, ${IDS.admin})`;
+  await admin`insert into impersonation_sessions (tenant_id, impersonator_user_id, reason) values (${t}, ${IDS.admin}, 'fixture session')`;
   await admin`insert into tenant_billing (tenant_id) values (${t})`;
   await admin`insert into tenant_billing_modules (tenant_id, module_key, setup_cents, monthly_cents) values (${t}, 'alex_core', 650000, 150000)`;
   await admin`insert into onboarding_steps (tenant_id, step_key, title) values (${t}, 'kickoff', 'Kickoff')`;
@@ -123,6 +123,8 @@ async function seedTenant(
   await admin`insert into automation_steps (tenant_id, automation_id, position, channel) values (${t}, ${auto.id}, 1, 'sms')`;
   await admin`insert into automation_runs (tenant_id, automation_id, contact_id, next_run_at) values (${t}, ${auto.id}, ${contact.id}, now())`;
   await admin`insert into notifications (tenant_id, kind, title) values (${t}, 'new_lead', 'New lead')`;
+  await admin`insert into tags (tenant_id, name) values (${t}, 'VIP')`;
+  await admin`insert into notification_preferences (tenant_id, user_id, kind, email_enabled) values (${t}, ${owner}, 'booked', false)`;
   const [batch] =
     await admin`insert into import_batches (tenant_id, entity, imported_source, file_name, file_type) values (${t}, 'contact', 'csv_other', 'x.csv', 'csv') returning id`;
   await admin`insert into import_batch_records (tenant_id, batch_id, entity, record_id, action) values (${t}, ${batch.id}, 'contact', ${contact.id}, 'created')`;

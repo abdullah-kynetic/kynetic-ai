@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { can, getSessionUser, resolveActor } from '@/server/auth';
 import { getAlexSettingsView } from '@/server/alex';
+import { AlexControls } from './alex-controls';
 import { requireModule } from '@/server/modules';
 import { loadShellContext } from '@/server/shell';
 import { withTenant } from '@/server/tenancy';
@@ -57,7 +58,7 @@ export default async function AlexSettingsPage() {
   return (
     <PageContainer
       pageTitle='Alex settings'
-      pageDescription='How Alex answers and when Alex calls. To change anything other than pause and call hours, ask Kynetic.'
+      pageDescription='How Alex answers and when Alex calls. You can pause Alex and set call hours here. To change anything else, ask Kynetic.'
     >
       {!settings ? (
         <p className='text-muted-foreground text-sm'>Alex is not set up for this account yet.</p>
@@ -65,12 +66,21 @@ export default async function AlexSettingsPage() {
         <div className='grid gap-4'>
           <Card>
             <CardHeader>
-              <CardTitle>Status</CardTitle>
+              <CardTitle>Status and call hours</CardTitle>
+              <CardDescription>
+                Currently{' '}
+                <Badge variant={settings.paused ? 'secondary' : 'default'}>
+                  {settings.paused ? 'Paused' : 'Active'}
+                </Badge>
+                . Quiet-hours and state rules also apply.
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <Badge variant={settings.paused ? 'secondary' : 'default'}>
-                {settings.paused ? 'Paused' : 'Active'}
-              </Badge>
+              <AlexControls
+                paused={settings.paused}
+                start={String(settings.callWindows.start ?? '09:00')}
+                end={String(settings.callWindows.end ?? '17:00')}
+              />
             </CardContent>
           </Card>
           <Card>
@@ -78,15 +88,6 @@ export default async function AlexSettingsPage() {
               <CardTitle>Greeting</CardTitle>
             </CardHeader>
             <CardContent className='text-sm'>{settings.greeting ?? 'Not set.'}</CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Call hours</CardTitle>
-              <CardDescription>Quiet-hours and state rules also apply.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Rows data={settings.callWindows} />
-            </CardContent>
           </Card>
           <Card>
             <CardHeader>
