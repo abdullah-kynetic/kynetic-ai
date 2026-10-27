@@ -111,9 +111,9 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-19 (M3, crm) | Any write to a covered entity | `activities` row created and shown on timeline; actor shown | Integration | Pass |
 | F-20 (M3, crm) | Task past due and incomplete | Under Overdue; assignee gets notification | Integration | List, completion undo, tenant-day grouping, module gating and isolation: Pass (`tasks.test.ts`, M3-02). Notification: Not run (M3-04) |
 | F-76 (M4, alex_core) | Duplicate lead webhook (same source and external id) | Second call is a no-op; one contact, one deal | Integration | Pass (2026-10-26, M4-04; replayed 10 times) |
+| F-74 (M4, alex_core) | STOP inbound SMS (fake Twilio) | Consent revoked; confirmation on timeline; no further SMS or calls | Integration | Passing (M4-08, tests/integration/twilio-sms.test.ts) |
 | F-77 (M4, platform) | Same Retell or ElevenLabs call-ended event (same source and external id) replayed 10 times | One effect (one call row, one timeline entry) | Integration | Pass (`call-end.test.ts`) |
 | F-77 (M4, platform) | Same external id arriving from a different source | Not a duplicate; processed as its own event (uniqueness is on source and external id) | Integration | Pass (`call-end.test.ts`) |
-| F-74 (M4, alex_core) | STOP inbound SMS (fake Twilio) | Consent revoked; confirmation on timeline; no further SMS or calls | Integration | Passing (M4-08, tests/integration/twilio-sms.test.ts) |
 | F-26 (M4, alex_core) | Fake call-ended webhook with outcome "booked" | Test call lands on timeline; green Booked chip | E2E | Not run |
 | F-78 (M5, alex_core) | Booking request inside business hours | Appointment created, status scheduled | Integration | Not run |
 | F-78 (M5, alex_core) | Booking request outside business hours | API refuses; Alex offers another time | Integration | Not run |
@@ -181,10 +181,10 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-27 (M4, alex_core) | Mint a recording URL as the owner, as another tenant's owner, and as a user with no membership | Signed 5-minute URL; 404; 403; object key never returned | Integration | Pass (`call-end.test.ts`) |
 | F-27 (M4, alex_core) | Recording URL after expiry | Expired signed URL refused | Integration | Adapter part written, passing locally (M4-03, `tests/unit/storage/r2.test.ts`: 5-minute expiry, wrong tenant 404, SigV4 vector); real route test waits for M4-11 |
 | F-27 (M4, alex_core) | Staff without call access requests call | Refused server-side | Integration | Not run |
-| F-28 (M4, alex_core) | Owner flags a call with reason | `calls.flagged` true; review item exists; audit row written | Integration | Covered: crm/tests/integration/call-detail.test.ts |
+| F-30 (M4, platform) | Resend bounced, complained and delivered events (fake and signed fixtures) | Message status updates; bounce suppresses the address; complaint also opts the contact out of email; integration health shows `email` degraded | Integration | Pass (M4-09: `tests/integration/resend-events.test.ts`, `tests/unit/adapters/resend.test.ts`) |
 | F-30 (M4, platform) | Twilio delivered callback for automation SMS (fake) | Log and timeline status update | Integration | Passing (M4-08, tests/integration/twilio-sms.test.ts) |
 | F-30 (M4, platform) | Failed SMS callback (fake) | Error text shows; counted in integration health | Integration | Passing (M4-08, tests/integration/twilio-sms.test.ts) |
-| F-30 (M4, platform) | Resend bounced, complained and delivered events (fake and signed fixtures) | Message status updates; bounce suppresses the address; complaint also opts the contact out of email; integration health shows `email` degraded | Integration | Pass (M4-09: `tests/integration/resend-events.test.ts`, `tests/unit/adapters/resend.test.ts`) |
+| F-28 (M4, alex_core) | Owner flags a call with reason | `calls.flagged` true; review item exists; audit row written | Integration | Covered: crm/tests/integration/call-detail.test.ts |
 | F-30 (M4, platform) | Messages log lists both channels, filters, pages, isolates tenants, refuses with no messaging module | Newest first; error text on failed rows; other tenant invisible; `MODULE_DISABLED` | Integration | Passing (M4-12, tests/integration/message-log.test.ts) |
 | F-31 (M7, per template) | `quote_followup` module off | Template hidden; API refuses enablement | Integration | Not run |
 | F-31 (M7, per template) | Module on; deal enters Quoted | Step 1 scheduled | Integration | Not run |
@@ -239,9 +239,9 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-70 (M0 and M8, platform) | Module toggled | `audit_log` row written | Integration | Pass: `tests/integration/admin-modules.test.ts` (M8a-06; Postgres 16, 2026-10-26) |
 | F-73 (M0, platform) | Each role against each protected action | Matches the permission matrix in `SECURITY.md`; UI hides what role cannot do | Integration and E2E | Not run |
 | F-74 (M4, alex_core) | No consent; Alex or automation tries to call or text | Blocked and logged | Integration | Passing for SMS (M4-08); calls in M4-01 |
-| F-74 (M4, alex_core) | Contact in quiet hours (contact timezone) | Call or SMS deferred (fixed clock) | Integration | Pass (2026-10-26, M4-06/M4-07: DST table in `quiet-hours.test.ts`, FL window in `outbound-call.test.ts`; per-state table is a draft for counsel, DC-116) |
+| F-74 (M4, alex_core) | Contact in quiet hours (contact timezone) | Call or SMS deferred (fixed clock) | Integration | Pass (M4-06/M4-07, `tests/integration/outbound-call.test.ts`, incl. the Florida 20:00 state window; per-state table content still needs counsel) |
+| F-75 (M4, alex_core) | Contact in a two-party-consent state | Call marked for review | Integration | Pass (M4-07, `tests/integration/outbound-call.test.ts`; state list is a versioned config, content needs counsel) |
 | F-75 (M4, alex_core) | Call starts | Disclosure line in agent config and transcript | Integration | Pass (2026-10-26, M4-07: sent to the agent, `disclosure_given` set from the transcript; the live agent prompt is not edited) |
-| F-75 (M4, alex_core) | Contact in a two-party-consent state | Call marked for review | Integration | Pass (2026-10-26, M4-07; state list is a draft versioned config, content UNRESOLVED, needs counsel) |
 | F-76 (M4, alex_core) | Valid signed lead request | Contact and deal exist; Alex triggered | Integration | Pass for contact, deal, consent and `lead.created` (2026-10-26, M4-04); the call start is M4-06 |
 | F-76 (M4, alex_core) | Bad token | 401; nothing written | Integration | Pass (2026-10-26, M4-04) |
 | F-76 (M4, alex_core) | Rate-limit breach | 429 | Integration | Pass (2026-10-26, M4-04) |

@@ -40,6 +40,12 @@ export const MAX_LEAD_AGE_MS = 24 * 3_600_000;
 /** A previous attempt with no end report is treated as lost after this long. */
 const CALL_IN_PROGRESS_MS = 30 * 60_000;
 const IN_PROGRESS_RECHECK_MS = 2 * 60_000;
+/**
+ * A row still holding the pending marker this long after it was written means the worker died
+ * between dialing and saving the provider call id. Longer than any one attempt takes, shorter than
+ * pg-boss's redelivery of an expired job.
+ */
+const PENDING_STALE_MS = 10 * 60_000;
 /** Outcomes where nobody was reached, so the next scheduled attempt still makes sense. */
 const UNREACHED = ['no_answer', 'voicemail', 'other'];
 
@@ -135,7 +141,12 @@ export async function runOutboundCall(
         )
         .limit(1);
       const prior = await tx
-        .select({ outcome: calls.outcome, startedAt: calls.startedAt })
+        .select({
+          id: calls.id,
+          outcome: calls.outcome,
+          startedAt: calls.startedAt,
+          providerCallId: calls.providerCallId
+        })
         .from(calls)
         .where(
           and(
@@ -150,6 +161,73 @@ export async function runOutboundCall(
   );
   const { alex, tenant, contact, prior } = snap;
 
+  const delays = parseRetryDelays(alex?.retry);
+  const next = job.attempt <= delays.length ? delays[job.attempt - 1] : undefined;
+  const scheduleNext = (tx: Tx) =>
+    next === undefined
+      ? Promise.resolve(null)
+      : queue(
+          OUTBOUND_CALL_QUEUE,
+          { ...job, attempt: job.attempt + 1 },
+          {
+            tx,
+            startAfter: new Date(now.getTime() + next * 60_000),
+            singletonKey: outboundIdempotencyKey({
+              ...job,
+              attempt: job.attempt + 1
+            })
+          }
+        );
+
+  // A row still holding this attempt's pending marker means a worker died after writing it: before
+  // dialing, or after dialing and before saving the provider call id. Which one is unknowable, so the
+  // attempt counts as spent (never dial it again) and the cadence moves on instead of stalling.
+  const lost = prior.find((c) => c.providerCallId === pendingId(key));
+  if (lost) {
+    if (now.getTime() - new Date(lost.startedAt).getTime() < PENDING_STALE_MS) {
+      return { status: 'duplicate' }; // the first worker is probably still running
+    }
+    const recovered = await withTenant(
+      ctx,
+      async (tx) => {
+        const rows = await tx
+          .update(calls)
+          .set({
+            outcome: 'other',
+            endedAt: now.toISOString(),
+            durationS: 0,
+            extracted: { startError: 'lost:provider_call_id_not_saved' },
+            updatedAt: now.toISOString()
+          })
+          .where(
+            and(
+              eq(calls.id, lost.id),
+              eq(calls.providerCallId, pendingId(key)),
+              isNull(calls.outcome)
+            )
+          )
+          .returning({ id: calls.id });
+        if (rows.length === 0) return false; // another worker recovered it first
+        await recordActivity(tx, {
+          contactId: job.contactId,
+          dealId: job.dealId,
+          type: 'system',
+          summary: 'Alex call status unknown: it may have been placed but was never confirmed',
+          actor: { type: 'system' },
+          meta: {
+            check: 'outbound_call',
+            reason: 'lost_attempt',
+            callId: lost.id,
+            attempt: job.attempt
+          }
+        });
+        await scheduleNext(tx);
+        return true;
+      },
+      { db }
+    );
+    return recovered ? stop('attempt_unconfirmed') : { status: 'duplicate' };
+  }
   if (prior.length >= job.attempt) return { status: 'duplicate' };
   if (!contact || !contact.primaryPhoneE164) return stop('no_phone');
   const provider = alex?.agentRef ? resolveProvider(alex.provider, deps) : null;
@@ -212,8 +290,9 @@ export async function runOutboundCall(
   }
 
   // Write the row first: the unique key on (tenant, provider, provider call id) makes two workers
-  // racing on one attempt lose cleanly (advisory lock plus recount), and a crash after the dial leaves a visible pending row
-  // rather than a second call.
+  // racing on one attempt lose cleanly (advisory lock plus recount), and a crash after the dial leaves a
+  // pending row rather than a second call; a later run of the same attempt closes that row and moves
+  // the cadence on (see PENDING_STALE_MS).
   const callId = randomUUID();
   // F-75: a contact in a two-party-consent state has the call marked for review from the start.
   const state = contactState(contact.address);
@@ -262,24 +341,6 @@ export async function runOutboundCall(
     { db }
   );
   if (inserted.length === 0) return { status: 'duplicate' };
-
-  const delays = parseRetryDelays(alex.retry);
-  const next = job.attempt <= delays.length ? delays[job.attempt - 1] : undefined;
-  const scheduleNext = (tx: Tx) =>
-    next === undefined
-      ? Promise.resolve(null)
-      : queue(
-          OUTBOUND_CALL_QUEUE,
-          { ...job, attempt: job.attempt + 1 },
-          {
-            tx,
-            startAfter: new Date(now.getTime() + next * 60_000),
-            singletonKey: outboundIdempotencyKey({
-              ...job,
-              attempt: job.attempt + 1
-            })
-          }
-        );
 
   try {
     const { providerCallId } = await provider.startOutboundCall({
