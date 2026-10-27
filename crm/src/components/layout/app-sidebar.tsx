@@ -14,7 +14,8 @@ import {
   SidebarMenuSubItem,
   SidebarRail
 } from '@/components/ui/sidebar';
-import { navGroups } from '@/config/nav-config';
+import { navGroups as clientNavGroups } from '@/config/nav-config';
+import type { NavGroup } from '@/types';
 import { useFilteredNavGroups } from '@/hooks/use-nav';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -26,9 +27,16 @@ export type SidebarTenant = { name: string; logoUrl: string | null } | null;
 const ACTIVE_MARKER =
   "relative data-active:before:absolute data-active:before:inset-y-1 data-active:before:left-0 data-active:before:w-[3px] data-active:before:rounded-full data-active:before:bg-sidebar-primary data-active:before:content-['']";
 
-export default function AppSidebar({ tenant }: { tenant: SidebarTenant }) {
+export default function AppSidebar({
+  tenant,
+  groups = clientNavGroups
+}: {
+  tenant: SidebarTenant;
+  /** Defaults to the client portal registry; the admin shell passes its own (M8a-01). */
+  groups?: NavGroup[];
+}) {
   const pathname = usePathname();
-  const filteredGroups = useFilteredNavGroups(navGroups);
+  const filteredGroups = useFilteredNavGroups(groups);
 
   return (
     <Sidebar collapsible='icon'>
