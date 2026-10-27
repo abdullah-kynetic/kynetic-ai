@@ -112,7 +112,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M1-01 | Contacts service: CRUD, E.164 normalisation, duplicate detection, soft delete, tags, owner, `contact.*` and manual `lead.created` events | PRD F-05, F-07; DB contacts | M0-28 | Duplicate phone/email flagged; tenant isolation test; events emitted | L | Sonnet | no | 12 | todo | - |
+| M1-01 | Contacts service: CRUD, E.164 normalisation, duplicate detection, soft delete, tags, owner, `contact.*` and manual `lead.created` events | PRD F-05, F-07; DB contacts | M0-28 | Duplicate phone/email flagged; tenant isolation test; events emitted | L | Sonnet | no | 12 | done | [PR #79](https://github.com/abdullah-kynetic/kynetic-ai/pull/79), stacked on #72. No migration; DC-070 to DC-072. |
 | M1-02 | Leads list page: table, search, filters, sort, column toggle, paging, URL-saved state | PRD F-05; DS lists | M1-01 | Given 10,000 contacts the list reads under 500 ms p95; filters survive reload | M | Sonnet | yes | 13 | todo | - |
 | M1-03 | Contact detail page: details, phones and emails, consent status, slots for timeline and deals | PRD F-06; DS detail | M1-01 | Page loads all sections; other tenant's id returns 404 | M | Sonnet | yes | 13 | todo | - |
 | M1-04 | Slide-out create and edit panel with duplicate warning | PRD F-07 | M1-01, M1-02 | Creating a duplicate shows the match and blocks silent duplicates | S | Haiku | yes | 14 | todo | - |
