@@ -1,6 +1,7 @@
 import { ProviderError } from '../errors';
 import { verifyFakeSignature } from '../fake-signature';
 import type { WebhookHeaders } from '../voice/types';
+import { isHelpKeyword, isStopKeyword } from './keywords';
 import type {
   A2pStatus,
   SendSmsInput,
@@ -35,11 +36,10 @@ export class FakeSmsProvider implements SmsProvider {
   parseInbound(headers: WebhookHeaders, rawBody: string): VerifiedInboundSms {
     verifyFakeSignature(headers);
     const raw = JSON.parse(rawBody) as Omit<VerifiedInboundSms, 'isStop' | 'isHelp'>;
-    const word = raw.body.trim().toLowerCase();
     return {
       ...raw,
-      isStop: ['stop', 'stopall', 'unsubscribe', 'cancel', 'end', 'quit'].includes(word),
-      isHelp: word === 'help'
+      isStop: isStopKeyword(raw.body),
+      isHelp: isHelpKeyword(raw.body)
     };
   }
 

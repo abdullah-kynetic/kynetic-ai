@@ -23,7 +23,8 @@ function deps(over: Partial<ShellDeps> = {}): ShellDeps {
     listMemberships: async () => [{ tenantId: T1, role: 'owner' }],
     loadTenant: async (ctx) => ({
       name: ctx.tenantId === T1 ? 'Acme Roofing' : 'Other Co',
-      logoUrl: null
+      logoUrl: null,
+      primaryColor: null
     }),
     loadModules: async () => ({ keys: ['platform', 'alex_core'], crmLevel: null }),
     ...over

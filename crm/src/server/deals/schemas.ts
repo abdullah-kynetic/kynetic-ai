@@ -6,6 +6,13 @@ const text = (max: number) => z.string().trim().min(1).max(max);
 
 export const DEAL_ROLES = ['homeowner', 'spouse', 'tenant', 'property_manager', 'other'] as const;
 
+export type DealRole = (typeof DEAL_ROLES)[number];
+
+export const dealContactRoleSchema = z.strictObject({
+  contactId: uuidSchema,
+  role: z.enum(DEAL_ROLES)
+});
+
 const fields = {
   title: text(FIELD_LIMITS.name),
   valueCents: z.number().int().min(0).max(MAX_VALUE_CENTS),
@@ -78,3 +85,29 @@ export const boardFiltersSchema = z.strictObject({
   source: text(100).optional()
 });
 export type BoardFilters = z.input<typeof boardFiltersSchema>;
+
+const stageName = z.string().trim().min(1).max(60);
+
+export const createStageSchema = z.strictObject({
+  name: stageName,
+  probability: z.number().int().min(0).max(100).default(20),
+  pipelineId: uuidSchema.optional()
+});
+export type CreateStageInput = z.input<typeof createStageSchema>;
+
+export const updateStageSchema = z
+  .strictObject({ name: stageName, probability: z.number().int().min(0).max(100) })
+  .partial();
+export type UpdateStageInput = z.input<typeof updateStageSchema>;
+
+export const reorderStagesSchema = z.strictObject({
+  pipelineId: uuidSchema.optional(),
+  stageIds: z.array(uuidSchema).min(1).max(50)
+});
+export type ReorderStagesInput = z.input<typeof reorderStagesSchema>;
+
+export const deleteStageSchema = z.strictObject({
+  /** Required when the stage still has deals; they move here, in their current order. */
+  moveToStageId: uuidSchema.optional()
+});
+export type DeleteStageInput = z.input<typeof deleteStageSchema>;

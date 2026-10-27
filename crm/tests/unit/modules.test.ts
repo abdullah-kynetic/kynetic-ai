@@ -72,3 +72,25 @@ describe('F-70 nav registry', () => {
     expect(full[1].items[1].items?.map((i) => i.title)).toEqual(['Custom fields']);
   });
 });
+
+describe('F-30 messages nav entry', () => {
+  const messages: NavGroup[] = [
+    {
+      label: 'Activity',
+      items: [
+        {
+          title: 'Messages',
+          url: '/dashboard/messages',
+          anyModule: ['alex_core', 'reactivation'],
+          items: []
+        }
+      ]
+    }
+  ];
+  it('shows when any messaging module is on and hides otherwise', () => {
+    expect(visibleNavGroups(messages, on([]))).toEqual([]);
+    expect(visibleNavGroups(messages, on(['quote_followup']))).toEqual([]);
+    expect(visibleNavGroups(messages, on(['reactivation']))[0]?.items).toHaveLength(1);
+    expect(visibleNavGroups(messages, on(['alex_core']))[0]?.items).toHaveLength(1);
+  });
+});
