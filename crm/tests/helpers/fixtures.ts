@@ -80,6 +80,7 @@ async function seedTenant(
   await admin`insert into tenant_billing_modules (tenant_id, module_key, setup_cents, monthly_cents) values (${t}, 'alex_core', 650000, 150000)`;
   await admin`insert into onboarding_steps (tenant_id, step_key, title) values (${t}, 'kickoff', 'Kickoff')`;
   await admin`insert into tenant_documents (tenant_id, kind, title, file_key) values (${t}, 'agreement', 'Agreement', ${`${t}/agreement.pdf`})`;
+  await admin`insert into email_suppressions (tenant_id, address, reason) values (${t}, ${`bounced-${key}@example.test`}, 'bounced')`;
   await admin`insert into audit_log (tenant_id, action, entity) values (${t}, 'fixture.seed', 'tenant')`;
 
   const [company] =
