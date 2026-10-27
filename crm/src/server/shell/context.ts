@@ -5,6 +5,7 @@ import * as schema from '../db/schema';
 import { getSessionUser, type AuthUser } from '../auth';
 import { loadEnabledModules, MODULE_KEYS, moduleSatisfied, type ModuleKey } from '../modules';
 import type { CrmLevel } from '../modules/keys';
+import { logoUrl } from '../branding';
 import { withTenant } from '../tenancy';
 import type { AppRole, TenantContextInput } from '../tenancy';
 
@@ -15,7 +16,7 @@ export type ShellContext = {
   /** Kynetic staff keep their Kynetic role; client users carry their tenant role. */
   role: ShellRole;
   /** Null for Kynetic staff who are not acting inside a tenant. */
-  tenant: { id: string; name: string; logoUrl: string | null } | null;
+  tenant: { id: string; name: string; logoUrl: string | null; primaryColor: string | null } | null;
   /** Plain data for ModulesProvider (DC-057). */
   modules: { keys: ModuleKey[]; crmLevel: CrmLevel | null };
 };
@@ -24,7 +25,9 @@ export type ShellDeps = {
   getUser: (headers: Headers) => Promise<AuthUser | null>;
   /** The tenants the user belongs to, active ones only, in a stable order. */
   listMemberships: (userId: string) => Promise<{ tenantId: string; role: 'owner' | 'staff' }[]>;
-  loadTenant: (ctx: TenantContextInput) => Promise<{ name: string; logoUrl: string | null } | null>;
+  loadTenant: (
+    ctx: TenantContextInput
+  ) => Promise<{ name: string; logoUrl: string | null; primaryColor: string | null } | null>;
   loadModules: (ctx: TenantContextInput) => Promise<ShellContext['modules']>;
 };
 
@@ -54,12 +57,16 @@ const defaultDeps: ShellDeps = {
   loadTenant: async (ctx) => {
     const [row] = await withTenant(ctx, (tx) =>
       tx
-        .select({ name: schema.tenants.name, logoUrl: schema.tenants.logoUrl })
+        .select({
+          name: schema.tenants.name,
+          logoUrl: schema.tenants.logoUrl,
+          primaryColor: schema.tenants.primaryColor
+        })
         .from(schema.tenants)
         .where(eq(schema.tenants.id, ctx.tenantId))
         .limit(1)
     );
-    return row ?? null;
+    return row ? { ...row, logoUrl: logoUrl(row.logoUrl) } : null;
   },
   loadModules: async (ctx) => {
     const enabled = await loadEnabledModules(ctx);
