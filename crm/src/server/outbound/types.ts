@@ -29,6 +29,12 @@ export type OutboundGateOpts = Pick<CanContactOpts, 'tx' | 'db' | 'stateWindows'
    * so nothing is enforced until the caller supplies one.
    */
   tenantHourlyCallCap?: number;
+  /**
+   * Only for the one confirmation or HELP reply that answers an inbound SMS (SECURITY 3.3). Keeps
+   * the kill switch, tenant, module, pause and A2P checks, and skips consent, DNC and quiet hours,
+   * which a STOP has just made unsatisfiable. Never set for a send the business starts.
+   */
+  replyToInbound?: boolean;
 };
 
 /** Same shape as `canContact`: allow, or one deny reason (and `retryAt` for quiet hours). */
