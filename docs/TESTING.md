@@ -173,10 +173,11 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-24 (M5, alex_core) | Staff reschedules; staff enters time outside hours | Timeline records reschedule; UI warns on out-of-hours time | E2E | Not run |
 | F-26 (M4, alex_core) | Call with outcome "booked" | Green Booked chip; contact link; outcome and date filters work | E2E | Not run |
 | F-27 (M4, alex_core) | Open call with recording and transcript | Player, transcript, summary and fields render | E2E | Not run |
-| F-27 (M4, alex_core) | Recording URL after expiry | Expired signed URL refused | Integration | Not run |
+| F-27 (M4, alex_core) | Recording URL after expiry | Expired signed URL refused | Integration | Adapter part written, passing locally (M4-03, `tests/unit/storage/r2.test.ts`: 5-minute expiry, wrong tenant 404, SigV4 vector); real route test waits for M4-11 |
 | F-27 (M4, alex_core) | Staff without call access requests call | Refused server-side | Integration | Not run |
 | F-28 (M4, alex_core) | Owner flags a call with reason | `calls.flagged` true; review item exists; audit row written | Integration | Not run |
 | F-30 (M4, platform) | Twilio delivered callback for automation SMS (fake) | Log and timeline status update | Integration | Not run |
+| F-30 (M4, platform) | Resend bounced, complained and delivered events (fake and signed fixtures) | Message status updates; bounce suppresses the address; complaint also opts the contact out of email; integration health shows `email` degraded | Integration | Pass (M4-09: `tests/integration/resend-events.test.ts`, `tests/unit/adapters/resend.test.ts`) |
 | F-30 (M4, platform) | Failed SMS callback (fake) | Error text shows; counted in integration health | Integration | Not run |
 | F-31 (M7, per template) | `quote_followup` module off | Template hidden; API refuses enablement | Integration | Not run |
 | F-31 (M7, per template) | Module on; deal enters Quoted | Step 1 scheduled | Integration | Not run |
