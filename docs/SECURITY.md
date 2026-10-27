@@ -233,7 +233,7 @@ Verification per source. Header names and algorithms are checked against current
 
 | Source | Verification | Notes |
 |---|---|---|
-| Lead webhook `/api/hooks/leads/:tenantKey` (F-76) | Per-tenant signed token (spec). Decided 2026-10-25 (recommended option approved: HMAC-SHA256 over the raw body with a per-tenant secret, plus timestamp; revocable and rotatable from admin) | Rate limited (F-87). A leaked `tenantKey` alone must not be enough |
+| Lead webhook `/api/hooks/leads/:tenantKey` (F-76) | Per-tenant signed token (spec). Decided 2026-10-25 (recommended option approved: HMAC-SHA256 over the raw body with a per-tenant secret, plus timestamp; revocable and rotatable from admin) | Rate limited (F-87). A leaked `tenantKey` alone must not be enough. Built in M4-04: header names, window, secret storage and rotation in DC-073 |
 | Retell | Provider signature header | Verify per Retell docs. Tenant mapped by agent ID |
 | ElevenLabs | Provider HMAC signature with timestamp | Verify per ElevenLabs docs. Per-environment secret |
 | Twilio | `X-Twilio-Signature` against the exact public URL and params | Test behind Cloudflare with the forwarded host |
