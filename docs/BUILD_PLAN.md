@@ -211,7 +211,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M8a-05 | Audit log viewer with filters | PRD F-60 | M8a-01 | Filter by tenant, user, action; VA read per SEC 2.2 | M | Sonnet | yes | 13 | done | PR: https://github.com/abdullah-kynetic/kynetic-ai/pull/88; stacked on M8a-01 (#77); DC-094; no migration |
 | M8a-06 | Modules panel: toggle per tenant, CRM level, history | PRD F-70, F-85 | M8a-01 | Toggle audited; flag change takes effect on next request | M | Sonnet | yes | 13 | done | PR: https://github.com/abdullah-kynetic/kynetic-ai/pull/87; stacked on #77 (M8a-01); DC-095; no migration |
 | M8a-07 | Plan and tier fields and billing tab | PRD F-86, F-99; DB tenant_billing | M8a-06 | Price snapshot per module; owner and VA get 403 | M | Sonnet | yes | 14 | done | [PR #101](https://github.com/abdullah-kynetic/kynetic-ai/pull/101) |
-| M8a-08 | Onboarding checklist and owner setup progress card | PRD F-100; DB onboarding_steps | M8a-02 | Checklist created per module; owner sees only client-visible steps | M | Sonnet | yes | 14 | todo | - |
+| M8a-08 | Onboarding checklist and owner setup progress card | PRD F-100; DB onboarding_steps | M8a-02 | Checklist created per module; owner sees only client-visible steps | M | Sonnet | yes | 14 | done | PR #105 |
 | M8a-09 | M8a gate | AGENTS; T | M8a-01..M8a-08 | All M8a rows pass | S | Haiku | no | 15 | todo | - |
 
 ## M8b Admin operations
