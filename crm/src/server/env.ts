@@ -19,16 +19,32 @@ export const envSchema = z.object({
   APP_ENCRYPTION_KEYS_RETIRED: z.string().optional(),
   RESEND_API_KEY: z.string().min(1).optional(),
   RESEND_WEBHOOK_SECRET: z.string().min(1).optional(),
-  OUTBOUND_ENABLED: booleanString.default(false)
+  OUTBOUND_ENABLED: booleanString.default(false),
+  // Object storage (R2). All four are set together; see refinedEnvSchema.
+  STORAGE_ENDPOINT: z.url().optional(),
+  STORAGE_ACCESS_KEY_ID: z.string().min(1).optional(),
+  STORAGE_SECRET_ACCESS_KEY: z.string().min(1).optional(),
+  STORAGE_BUCKET: z.string().min(1).optional(),
+  STORAGE_REGION: z.string().min(1).optional()
 });
 
-export const refinedEnvSchema = envSchema.refine(
-  (e) => Boolean(e.GOOGLE_CLIENT_ID) === Boolean(e.GOOGLE_CLIENT_SECRET),
-  {
+const STORAGE_KEYS = [
+  'STORAGE_ENDPOINT',
+  'STORAGE_ACCESS_KEY_ID',
+  'STORAGE_SECRET_ACCESS_KEY',
+  'STORAGE_BUCKET'
+] as const;
+
+export const refinedEnvSchema = envSchema
+  .refine((e) => Boolean(e.GOOGLE_CLIENT_ID) === Boolean(e.GOOGLE_CLIENT_SECRET), {
     message: 'GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must be set together',
     path: ['GOOGLE_CLIENT_ID']
-  }
-);
+  })
+  .refine((e) => STORAGE_KEYS.every((k) => Boolean(e[k])) || STORAGE_KEYS.every((k) => !e[k]), {
+    message:
+      'STORAGE_ENDPOINT, STORAGE_ACCESS_KEY_ID, STORAGE_SECRET_ACCESS_KEY and STORAGE_BUCKET must be set together',
+    path: ['STORAGE_ENDPOINT']
+  });
 
 export type Env = z.infer<typeof envSchema>;
 
