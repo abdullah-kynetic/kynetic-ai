@@ -99,6 +99,14 @@ export const adminNavGroups: NavGroup[] = [
         items: []
       },
       {
+        title: 'Onboard a client',
+        url: '/admin/clients/new',
+        icon: 'add',
+        isActive: false,
+        shortcut: ['a', 'n'],
+        items: []
+      },
+      {
         title: 'Users',
         url: '/admin/users',
         icon: 'user',

@@ -120,7 +120,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-49 (M6, alex_core) | Monthly ROI report, full month of fixture data | Report totals equal dashboard totals for the same range | Integration | Not run |
 | F-32 (M7, per template) | Sequence in progress; contact replies | Remaining steps cancel; run status "stopped" | Integration | Not run |
 | F-33 (M7, platform) | Deal marked Won | Owner gets email (fake Resend) | Integration | Not run |
-| F-55 (M8, platform) | Complete onboarding form | Tenant, invite, pipeline, automations, Alex draft exist within 30 s; audited | E2E | Not run |
+| F-55 (M8, platform) | Complete onboarding form | Tenant, invite, pipeline, automations, Alex draft exist within 30 s; audited | E2E | Partly run: integration covers tenant, invite, modules, pipeline, Alex draft and audit in under 30 s; the page is not exercised in a browser (no sign-in fixture). Default automations are M7 |
 | F-57 (M8, platform) | View-as started by admin | Banner shown; writes refused; `audit_log` has impersonator and tenant | E2E | Not run |
 | F-90 (M9, platform) | Admin uploads a CSV with unusual headers, maps columns, previews | Preview shows how rows will land; saved mapping pre-fills the next file from that source | E2E | Not run |
 | F-90 (M9, platform) | Upload an `.xlsm`, an oversize file, and a CSV renamed from a binary | Refused before parsing, with a message | Integration | Not run |
@@ -204,8 +204,8 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-53 (M8, platform) | Three tenants in All clients | Table correct, sorts work; client owner gets 403 | Integration | Not run |
 | F-54 (M8, platform) | Fixture inputs | Score equals documented formula; chip matches thresholds | Unit | Not run |
 | F-54 (M8, platform) | Thresholds not set | Default values apply and are shown in admin | E2E | Not run |
-| F-55 (M8, platform) | Failure injected midway through onboarding | Nothing partially created | Integration | Not run |
-| F-55 (M8, platform) | Duplicate slug or owner email | Rejected with clear message | Integration | Not run |
+| F-55 (M8, platform) | Failure injected midway through onboarding | Nothing partially created | Integration | Pass (`tests/integration/admin-onboarding.test.ts`) |
+| F-55 (M8, platform) | Duplicate slug or owner email | Rejected with clear message | Integration | Pass (`tests/integration/admin-onboarding.test.ts`) |
 | F-57 (M8, platform) | Admin starts view-as, tries a write | Write refused unless explicitly escalated; banner visible | E2E | Not run |
 | F-57 (M8, platform) | VA tries a write while impersonating | Refused and logged | Integration | Not run |
 | F-58 (M8, alex_core) | Change Alex config | Saved; audited with before and after; VA cannot change prompts | Integration | Not run |
@@ -420,7 +420,7 @@ Regression policy: every important bug fix adds a regression test named with the
 | F-99 (M8a, platform) | Admin enables a module | Price snapshot row created from `module_prices`; totals correct | Integration | Not run |
 | F-99 (M8a, platform) | `module_prices` changes later | Existing snapshots unchanged | Integration | Not run |
 | F-99 (M8a, platform) | Owner, staff and VA request the billing profile | 403 | Integration | Not run |
-| F-100 (M8a, platform) | New tenant with `alex_core` | Checklist created with the module's steps | Integration | Not run |
+| F-100 (M8a, platform) | New tenant with `alex_core` | Checklist created with the module's steps | Integration | Pass (`tests/integration/admin-onboarding.test.ts`) |
 | F-100 (M8a, platform) | Owner opens the dashboard before go-live | Setup progress shows only `client_visible` steps; none after go-live | E2E | Not run |
 | F-101 (M8b, platform) | Kill switch on, a call job runs | No call or text sent; job waits; resumes after off | Integration | Not run |
 | F-101 (M8b, platform) | Replay a failed webhook twice | Processed once | Integration | Not run |
