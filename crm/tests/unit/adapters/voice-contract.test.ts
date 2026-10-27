@@ -346,6 +346,8 @@ describe('RetellVoiceProvider', () => {
     expect(e.extracted).toEqual({ outcome: 'booked', service: 'roof repair' });
     expect(e.recordingUrl).toBe('https://retell-recordings.example/conv_01test.wav');
     expect(e.costCents).toBe(13);
+    expect(e.agentId).toBe('agent_test');
+    expect(e.counterpartE164).toBe('+15555550101');
     expect(e.startedAt.toISOString()).toBe(new Date(1792989900000).toISOString());
   });
 
@@ -375,5 +377,17 @@ describe('RetellVoiceProvider', () => {
     expect((f.mock.calls[0] as unknown as [string])[0]).toBe(
       'https://api.retellai.com/v2/get-call/conv_01test'
     );
+  });
+
+  it('downloads the recording from the pre-signed URL without the API key', async () => {
+    const f = vi.fn(async (url: string) =>
+      url.includes('/v2/get-call/')
+        ? jsonResponse({ recording_url: 'https://r.example/a.wav' })
+        : new Response(new Uint8Array([1, 2, 3]))
+    );
+    const bytes = await makeRetell(f as unknown as typeof fetch).fetchRecording('conv_01test');
+    expect(bytes).toEqual(new Uint8Array([1, 2, 3]));
+    const init = (f.mock.calls[1] as unknown as [string, RequestInit?])[1];
+    expect(init).toBeUndefined();
   });
 });
