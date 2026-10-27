@@ -45,6 +45,16 @@ function localToUtc(year: number, month: number, day: number, minuteOfDay: numbe
   const guess = Date.UTC(year, month - 1, day, 0, minuteOfDay);
   let utc = guess - offsetMs(new Date(guess), tz);
   utc = guess - offsetMs(new Date(utc), tz); // second pass lands correctly across a DST change
+  const landed = localParts(new Date(utc), tz);
+  if (landed.day !== day || landed.minuteOfDay !== minuteOfDay) {
+    // The wall-clock time was skipped (spring forward). Use the offset from before the change, which
+    // is the instant the clock first reads at or after it, rather than an hour early.
+    const before = Math.min(
+      offsetMs(new Date(guess - 12 * 3_600_000), tz),
+      offsetMs(new Date(guess + 12 * 3_600_000), tz)
+    );
+    utc = guess - before;
+  }
   return new Date(utc);
 }
 

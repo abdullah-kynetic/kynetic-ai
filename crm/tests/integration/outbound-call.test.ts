@@ -12,6 +12,7 @@ import {
   type OutboundCallDeps,
   type OutboundCallJob
 } from '@/server/calls';
+import { disclosureVersion } from '@/server/compliance';
 import { recordConsent } from '@/server/consent';
 import { createDb, type Db } from '@/server/db/client';
 import { contacts } from '@/server/db/schema';
@@ -26,6 +27,7 @@ let db: Db;
 let a: SeededTenant;
 
 // Tenant A is America/Los_Angeles (PDT, UTC-7 on this date).
+const DISCLOSURE = 'This call may be recorded for quality and training purposes.';
 const MIDDAY = new Date('2026-10-26T18:00:00Z'); // 11:00 local
 const minutes = (d: Date, n: number) => new Date(d.getTime() + n * 60_000);
 
@@ -145,6 +147,7 @@ afterAll(async () => {
   await tdb?.drop();
 });
 beforeEach(async () => {
+  await tdb.admin`update tenants set recording_disclosure = ${DISCLOSURE} where id = ${IDS.tenantA}`;
   await tdb.admin`update tenant_modules set enabled = true where tenant_id = ${IDS.tenantA} and module_key = 'alex_core'`;
   await tdb.admin`update alex_configs set provider = 'elevenlabs', agent_ref = 'agent_a', paused = false,
     call_windows = '{}'::jsonb, retry = '{}'::jsonb where tenant_id = ${IDS.tenantA}`;
@@ -467,5 +470,61 @@ describe('M4-06 lead.created subscriber', () => {
     registerOutboundCallSubscriber({ queue: q.fn });
     await deliver(envelope({ source: 'angi' }), 'alex-outbound-call');
     expect(q.items).toHaveLength(0);
+  });
+});
+
+describe('M4-07 compliance on the call path (F-74, F-75)', () => {
+  it('stops and logs when the tenant has no recording disclosure', async () => {
+    await tdb.admin`update tenants set recording_disclosure = '  ' where id = ${IDS.tenantA}`;
+    const lead = await newLead();
+    const h = harness();
+    expect(await h.run(job(lead.id))).toEqual({ status: 'stopped', reason: 'no_disclosure' });
+    expect(h.provider.calls).toHaveLength(0);
+    expect(await callRows(lead.id)).toHaveLength(0);
+    expect((await activityRows(lead.id)).map((r) => r.summary)).toContain(
+      'Alex call not started: no recording disclosure is set for this business'
+    );
+  });
+
+  it('sends the disclosure to the agent and records its version, not yet as heard', async () => {
+    const lead = await newLead({ state: 'TX' });
+    const h = harness();
+    expect((await h.run(job(lead.id))).status).toBe('started');
+    expect(h.provider.calls[0]?.context).toMatchObject({ recording_disclosure: DISCLOSURE });
+    const [call] = await callRows(lead.id);
+    expect(call).toMatchObject({
+      disclosure_version: disclosureVersion(DISCLOSURE),
+      disclosure_given: false,
+      flagged: false
+    });
+  });
+
+  it('marks the call for review for a contact in a two-party recording state', async () => {
+    const lead = await newLead({ state: 'ca' });
+    const h = harness();
+    expect((await h.run(job(lead.id))).status).toBe('started');
+    expect(h.provider.calls).toHaveLength(1); // still dialed: the disclosure plays on every call
+    const [call] = await callRows(lead.id);
+    expect(call.flagged).toBe(true);
+    expect(call.flagged_by).toBeNull();
+    expect(call.flag_note).toContain('CA');
+    expect(call.flag_note).toContain('2026-10-26-draft');
+  });
+
+  it('applies the state table by default: Florida closes at 20:00 lead-local', async () => {
+    const lead = await newLead({ state: 'FL' });
+    const evening = new Date('2026-10-27T03:30:00Z'); // 20:30 in tenant A's zone
+    const h = harness({ now: evening });
+    const res = await h.run(job(lead.id, { leadAt: evening.toISOString() }));
+    expect(res).toMatchObject({
+      status: 'deferred',
+      reason: 'quiet_hours',
+      until: new Date('2026-10-27T15:00:00Z')
+    });
+    expect(h.provider.calls).toHaveLength(0);
+    // The same hour is fine for a state with no extra rule.
+    const tx = await newLead({ state: 'TX' });
+    const h2 = harness({ now: evening });
+    expect((await h2.run(job(tx.id, { leadAt: evening.toISOString() }))).status).toBe('started');
   });
 });

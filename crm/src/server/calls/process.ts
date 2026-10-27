@@ -4,9 +4,10 @@ import { ProviderError } from '../adapters/errors';
 import { createStorage, tenantKey, type StorageAdapter } from '../adapters/storage';
 import type { VerifiedVoiceEvent, VoiceProvider, VoiceProviderId } from '../adapters/voice/types';
 import { recordActivity } from '../activity';
+import { cleanDisclosure, disclosureHeard, disclosureVersion } from '../compliance';
 import { addDncEntry } from '../consent';
 import { getWorkerDb, type Db, type Tx } from '../db/client';
-import { activities, calls, contacts } from '../db/schema';
+import { activities, calls, contacts, tenants } from '../db/schema';
 import { getEnv } from '../env';
 import { emitEvent } from '../events';
 import { ModuleDisabledError, requireModule } from '../modules';
@@ -21,7 +22,9 @@ import { normalizeOutcome, normalizeSentiment, outcomeLabel, type CallOutcome } 
 // written once, and the recording is copied only while the row has none.
 
 /** The stored webhook payload: the verified event with its date as an ISO string. */
-export type VoiceEventPayload = Omit<VerifiedVoiceEvent, 'startedAt'> & { startedAt: string };
+export type VoiceEventPayload = Omit<VerifiedVoiceEvent, 'startedAt'> & {
+  startedAt: string;
+};
 
 /** PRD decision 9 (recommended option): recordings and transcripts are cleared after 12 months. */
 export const RETENTION_MONTHS = 12;
@@ -106,6 +109,37 @@ export function registerVoiceProcessor(deps: VoiceProcessorDeps): void {
   registerWebhookProcessor(deps.provider.id, createVoiceProcessor(deps));
 }
 
+// F-75: the call is only marked as disclosed once the words are in the transcript. A conversation
+// with no sign of them is flagged for review (never unflagged here; a human clears a flag).
+async function checkDisclosure(
+  tx: Tx,
+  ev: VoiceEventPayload,
+  outcome: string,
+  existing: { disclosureVersion: string | null; flagged: boolean } | undefined
+): Promise<Partial<typeof calls.$inferInsert>> {
+  const spoke = ev.durationS > 0 && !['no_answer', 'voicemail'].includes(outcome);
+  if (!spoke || !ev.transcript?.trim()) return {};
+  const [tenant] = await tx.select({ text: tenants.recordingDisclosure }).from(tenants).limit(1);
+  const text = cleanDisclosure(tenant?.text);
+  if (!text) return {};
+
+  const current = disclosureVersion(text);
+  // A different version at dial time means the text changed mid-call-cycle, so these words are not the ones sent.
+  const sameText = !existing?.disclosureVersion || existing.disclosureVersion === current;
+  if (sameText && disclosureHeard(ev.transcript, text)) {
+    return { disclosureGiven: true, disclosureVersion: current };
+  }
+  if (existing?.flagged) return { disclosureGiven: false };
+  return {
+    disclosureGiven: false,
+    flagged: true,
+    flaggedAt: new Date().toISOString(),
+    flagNote: sameText
+      ? 'Recording disclosure not found in the transcript'
+      : 'Recording disclosure changed since this call was placed; could not verify it was said'
+  };
+}
+
 async function writeCall(
   ctx: TenantContextInput,
   ev: VoiceEventPayload,
@@ -125,7 +159,9 @@ async function writeCall(
           id: calls.id,
           contactId: calls.contactId,
           dealId: calls.dealId,
-          recordingKey: calls.recordingKey
+          recordingKey: calls.recordingKey,
+          disclosureVersion: calls.disclosureVersion,
+          flagged: calls.flagged
         })
         .from(calls)
         .where(
@@ -137,6 +173,7 @@ async function writeCall(
         )
         .limit(1);
 
+      const disclosure = await checkDisclosure(tx, ev, outcome, existing);
       const contactId = existing?.contactId ?? (await contactForNumber(tx, ev.counterpartE164));
       const values = {
         direction: ev.direction,
@@ -151,6 +188,7 @@ async function writeCall(
         costCents: ev.costCents ?? null,
         purgeAfter: addMonths(endedAt, RETENTION_MONTHS).toISOString(),
         contactId,
+        ...disclosure,
         updatedAt: new Date().toISOString()
       };
 
@@ -208,7 +246,13 @@ async function writeCall(
           name: 'call.completed',
           tenantId: ctx.tenantId,
           actor: { type: 'alex' },
-          payload: { callId, contactId, outcome, direction: ev.direction, durationS }
+          payload: {
+            callId,
+            contactId,
+            outcome,
+            direction: ev.direction,
+            durationS
+          }
         });
         if (outcome === 'dnc') await honourDnc(ctx, tx, contactId, ev.counterpartE164);
       }
@@ -312,7 +356,12 @@ async function copyRecording(
   } catch (e) {
     if (e instanceof ProviderError && e.kind === 'permanent') {
       console.error(
-        JSON.stringify({ level: 'error', msg: 'recording unavailable', callId, code: e.code })
+        JSON.stringify({
+          level: 'error',
+          msg: 'recording unavailable',
+          callId,
+          code: e.code
+        })
       );
       return;
     }
@@ -321,7 +370,9 @@ async function copyRecording(
   if (!audio || audio.body.byteLength === 0 || audio.body.byteLength > MAX_RECORDING_BYTES) return;
   const storage = deps.storage ?? createStorage(getEnv());
   const key = recordingKey(ctx.tenantId, callId);
-  await storage.put(key, audio.body, { contentType: audio.contentType ?? 'audio/mpeg' });
+  await storage.put(key, audio.body, {
+    contentType: audio.contentType ?? 'audio/mpeg'
+  });
   await withTenant(
     ctx,
     async (tx) => {
