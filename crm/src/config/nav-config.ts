@@ -52,6 +52,19 @@ export const navGroups: NavGroup[] = [
         items: []
       }
     ]
+  },
+  {
+    label: 'CRM',
+    items: [
+      {
+        title: 'Companies',
+        url: '/dashboard/companies',
+        icon: 'teams',
+        isActive: false,
+        module: 'crm',
+        items: []
+      }
+    ]
   }
 ];
 
