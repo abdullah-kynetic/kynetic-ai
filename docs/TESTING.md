@@ -102,7 +102,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-07 (M1, crm) | Merge two contacts | Deals, notes and activities move to the survivor; loser soft-removed; audit row written | Integration | Not run |
 | F-12 (M1, crm) | Custom field "Roof type" select: filter, table and CSV import | Value shows in table, filters, and CSV import accepts it | E2E | Not run |
 | F-08 (M1, crm) | Assign owner to 20 selected contacts | All 20 updated in one audited operation | Integration | Not run |
-| F-14 (M2, crm) | Save a deal in Lost without a lost reason | Save refused, message names the field | Unit | Not run |
+| F-14 (M2, crm) | Save a deal in Lost without a lost reason | Save refused, message names the field | Integration | Pass (2026-10-26, M2-01) |
 | F-16 (M2, crm) | Drag a card from Contacted to Qualified, then reload | Card stays in Qualified; column totals updated | E2E | Not run |
 | F-16 (M2, crm) | Server rejects a drag | Card rolls back; error toast | E2E | Not run |
 | F-16 (M2, crm) | Undo within toast window after a drag | Previous stage restored | E2E | Not run |
@@ -162,10 +162,10 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-08 (M1, crm) | Staff without bulk-delete permission | Delete hidden in UI; server refuses | Integration | Not run |
 | F-10 (M1, crm) | Company with 3 contacts and 2 deals | Roll-ups and totals correct | Integration | Not run |
 | F-12 (M1, crm) | Tenant B reads tenant A field definitions | Zero rows (API and SQL) | Integration | Not run |
-| F-14 (M2, crm) | $12,500 value entered | `value_cents` = 1250000; displays as $12,500 | Unit | Not run |
+| F-14 (M2, crm) | $12,500 value entered | `value_cents` = 1250000; displays as $12,500 | Unit | Pass (2026-10-26, M2-01) |
 | F-15 (M2, crm) | Add spouse to deal with role | Role on deal and deal on contact page; cross-tenant link refused | Integration | Not run |
 | F-16 (M2, crm) | Server rejects a drag; undo within toast | Rollback and error toast; undo restores previous stage | E2E | Not run |
-| F-17 (M2, crm) | New tenant | Eight default stages exist | Integration | Not run |
+| F-17 (M2, crm) | New tenant | Eight default stages exist | Integration | Pass (2026-10-26, M2-01) |
 | F-17 (M2, crm) | Delete stage that has deals | Owner must pick target stage; Won and Lost flagged | Integration | Not run |
 | F-22 (M3, crm) | Note mentions a teammate; note pinned | Teammate notified; pinned note sorts first | Integration | Not run |
 | F-22 (M3, crm) | Note body with a script tag | Sanitized on save | Unit | Not run |

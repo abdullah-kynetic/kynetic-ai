@@ -126,7 +126,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M2-01 | Pipelines, stages and deals services; default stages seeded per tenant; `deal.*` events | PRD F-14, F-17; DB deals | M0-28, M1-01 | Default stages exist; Lost requires a reason | L | Sonnet | no | 13 | todo | - |
+| M2-01 | Pipelines, stages and deals services; default stages seeded per tenant; `deal.*` events | PRD F-14, F-17; DB deals | M0-28, M1-01 | Default stages exist; Lost requires a reason | L | Sonnet | no | 13 | done | [PR #89](https://github.com/abdullah-kynetic/kynetic-ai/pull/89), stacked on #79. No migration; DC-096. |
 | M2-02 | Kanban board page: drag between stages, counts and totals, optimistic move with undo, filters | PRD F-16; DS kanban | M2-01 | Move persists and emits `deal.stage_changed`; undo restores | L | Sonnet | yes | 14 | todo | - |
 | M2-03 | Deal detail and slide-out (value, service type, expected close, source, lost reason) | PRD F-14 | M2-01 | Money stored in cents; lost reason enforced | M | Sonnet | yes | 14 | todo | - |
 | M2-04 | Multi-contact deals with roles (CRM Full) | PRD F-15 | M2-01 | `lite` tenant gets 403; roles saved | S | Sonnet | yes | 14 | todo | - |
