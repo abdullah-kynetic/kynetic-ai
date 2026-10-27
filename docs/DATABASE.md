@@ -93,6 +93,7 @@ CREATE TABLE tenants (
   services jsonb NOT NULL DEFAULT '[]',                                 -- F-41
   transfer_number_e164 text CHECK (transfer_number_e164 ~ '^\+[1-9][0-9]{7,14}$'),
   recording_disclosure text,                                            -- spec s8: disclosure text per tenant
+  email_sender_name text,                                               -- F-39 sender display name (DC-051)
   baseline jsonb NOT NULL DEFAULT '{}',                                 -- F-01: captured at signup
   guarantee_target_bookings integer CHECK (guarantee_target_bookings >= 0),  -- F-03; location chosen here (PRD decision 10)
   guarantee_start_date date,                                            -- F-03
@@ -107,7 +108,7 @@ CREATE TABLE users (
   name text,
   image text,
   kynetic_role text CHECK (kynetic_role IN ('admin','va')),             -- NULL for client users (F-73)
-  two_factor_enabled boolean NOT NULL DEFAULT false,                    -- spec s8: TOTP for Kynetic staff first (Later)
+  two_factor_enabled boolean NOT NULL DEFAULT false,                    -- F-98: TOTP for Kynetic admin and VA (M0-12)
   disabled_at timestamptz,                                              -- F-61: deactivate ends sessions
   last_login_at timestamptz,                                            -- F-53 last login
   created_at timestamptz NOT NULL DEFAULT now(),
@@ -318,7 +319,7 @@ CREATE INDEX contacts_name_trgm ON contacts USING gin ((first_name || ' ' || coa
 CREATE INDEX contacts_owner_idx ON contacts (tenant_id, owner_id) WHERE deleted_at IS NULL;
 ```
 
-Note on `phones` and `emails` GIN indexes: a GIN index on `(tenant_id, phones)` needs the `btree_gin` extension. Decided (recommended option): enable `btree_gin` in M0 as well, or drop the tenant column from the GIN and filter on tenant with the array index. Decide during M1.
+Note on `phones` and `emails` GIN indexes: a GIN index on `(tenant_id, phones)` needs the `btree_gin` extension. Decided (recommended option): enable `btree_gin` in M0 as well, or drop the tenant column from the GIN and filter on tenant with the array index. Decided 2026-10-26 (M0-06, DC-052): `btree_gin` is enabled in migration 0002 and the indexes keep the tenant column.
 
 ### Pipelines and deals (M2; F-14 to F-17)
 
@@ -966,18 +967,19 @@ CREATE OR REPLACE FUNCTION app_module_enabled(p_key text) RETURNS boolean LANGUA
                  WHERE m.tenant_id = app_tenant_id() AND m.module_key = p_key AND m.enabled) $$;
 
 -- Standard policies for a tenant table T that has tenant_id. No staff clause.
+-- DC-050: policies are TO kynetic_app, kynetic_worker (the worker sets tenant context per job).
 CREATE OR REPLACE FUNCTION app_enable_tenant_rls(t regclass) RETURNS void LANGUAGE plpgsql AS $$
 BEGIN
   EXECUTE format('ALTER TABLE %s ENABLE ROW LEVEL SECURITY', t);
   EXECUTE format('ALTER TABLE %s FORCE ROW LEVEL SECURITY', t);
-  EXECUTE format($p$CREATE POLICY tenant_select ON %1$s FOR SELECT TO kynetic_app
+  EXECUTE format($p$CREATE POLICY tenant_select ON %1$s FOR SELECT TO kynetic_app, kynetic_worker
     USING (tenant_id = app_tenant_id())$p$, t);
-  EXECUTE format($p$CREATE POLICY tenant_insert ON %1$s FOR INSERT TO kynetic_app
+  EXECUTE format($p$CREATE POLICY tenant_insert ON %1$s FOR INSERT TO kynetic_app, kynetic_worker
     WITH CHECK (tenant_id = app_tenant_id() AND NOT app_read_only())$p$, t);
-  EXECUTE format($p$CREATE POLICY tenant_update ON %1$s FOR UPDATE TO kynetic_app
+  EXECUTE format($p$CREATE POLICY tenant_update ON %1$s FOR UPDATE TO kynetic_app, kynetic_worker
     USING (tenant_id = app_tenant_id() AND NOT app_read_only())
     WITH CHECK (tenant_id = app_tenant_id() AND NOT app_read_only())$p$, t);
-  EXECUTE format($p$CREATE POLICY tenant_delete ON %1$s FOR DELETE TO kynetic_app
+  EXECUTE format($p$CREATE POLICY tenant_delete ON %1$s FOR DELETE TO kynetic_app, kynetic_worker
     USING (tenant_id = app_tenant_id() AND NOT app_read_only())$p$, t);
 END $$;
 
@@ -1052,7 +1054,8 @@ ALTER TABLE audit_log ENABLE ROW LEVEL SECURITY;
 ALTER TABLE audit_log FORCE ROW LEVEL SECURITY;
 REVOKE ALL ON audit_log FROM kynetic_app;
 GRANT INSERT ON audit_log TO kynetic_app;
-CREATE POLICY audit_insert ON audit_log FOR INSERT TO kynetic_app WITH CHECK (true);
+CREATE POLICY audit_insert ON audit_log FOR INSERT TO kynetic_app, kynetic_worker
+  WITH CHECK (tenant_id IS NULL OR tenant_id = app_tenant_id());   -- DC-053
 
 -- Global tables with no tenant_id: no runtime grant.
 REVOKE ALL ON backup_runs FROM kynetic_app;
@@ -1079,6 +1082,10 @@ SECURITY DEFINER functions (owned by `kynetic_rollup`, `SET search_path = public
 | `admin_tenant_overview()` | admin, va | One row per tenant: plan, status, leads 30d, booking rate, guarantee status, health inputs, last login (F-53, F-54) |
 | `audit_search(p_tenant, p_actor, p_action, p_from, p_to)` | admin | Filtered read of `audit_log` (F-60) |
 
+Implemented in migration 0005 (M0-09, DC-054). Signatures: `create_tenant(slug, name, plan, timezone, owner_email, invite_token_hash, invite_expires_at) returns uuid`; `set_tenant_module(tenant, module, enabled, level default '')`; `admin_update_tenant_commercial(tenant, patch jsonb)` with an allowlist of fields; `admin_set_kynetic_role(user, role or null)`; `admin_tenant_overview()`; `audit_search(tenant, actor, action, from, to, limit)`. `admin_tenant_overview` and `audit_search` allow admin and VA (SECURITY 2.2: VA reads); the others are admin only. Only `kynetic_app` may execute them.
+
+Migration 0010 (M0-20, DC-060) adds `service_token_lookup(prefix)` and `service_token_touch(id)`, owned by `kynetic_rollup`, executable by `kynetic_app` and `kynetic_worker`. They exist because a bearer request has no tenant context yet. They take no tenant argument and cannot list tokens.
+
 Functions that aggregate across tenants must never take a tenant id the caller could not otherwise see: they check the role, then compute.
 
 Audit immutability and grants:
@@ -1087,7 +1094,9 @@ Audit immutability and grants:
 CREATE OR REPLACE FUNCTION audit_log_immutable() RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN RAISE EXCEPTION 'audit_log is append-only'; END $$;
 CREATE TRIGGER audit_log_no_update_delete BEFORE UPDATE OR DELETE ON audit_log
-  FOR EACH ROW EXECUTE FUNCTION audit_log_immutable();
+  FOR EACH STATEMENT EXECUTE FUNCTION audit_log_immutable();   -- statement level (DC-051)
+CREATE TRIGGER audit_log_no_truncate BEFORE TRUNCATE ON audit_log
+  FOR EACH STATEMENT EXECUTE FUNCTION audit_log_immutable();
 REVOKE UPDATE, DELETE, TRUNCATE ON audit_log FROM kynetic_app, kynetic_worker;
 ```
 
@@ -1188,7 +1197,7 @@ Index rule for every table: each tenant table has an index led by `tenant_id`, e
 ## Migrations and seed data
 
 Tool and review (Drizzle confirmed, Decided 2026-10-25):
-- Drizzle ORM and `drizzle-kit`, as the existing portal already uses (`portal/drizzle.config.ts`, SQL migrations in `portal/drizzle/`). Migration files are plain SQL, reviewed in the PR. Migration command: Not configured for the new repo.
+- Drizzle ORM and `drizzle-kit`, as the existing portal already uses (`portal/drizzle.config.ts`, SQL migrations in `portal/drizzle/`). Migration files are plain SQL, reviewed in the PR. Migration command: `bun run db:migrate` in `crm/` (needs `DATABASE_URL_MIGRATE`, run as `kynetic_owner`; M0-04). Roles are created first, once per cluster, by `crm/deploy/db/bootstrap.sql` run by a superuser (DC-050).
 - Each migration reviewed for: RLS on new tenant tables, composite FK, a `CHECK` on every enum-like column, index on `tenant_id`, no `DROP` without a two-step plan.
 - Expand then contract for any rename or drop. Two deploys minimum.
 - CI runs migrations against an empty Postgres 16 and against a seeded preview database, then runs the RLS test suite. Failure blocks merge.
@@ -1197,8 +1206,9 @@ Ownership and file ranges (so parallel milestone threads do not collide on numbe
 
 | Range | Milestone | Creates |
 | --- | --- | --- |
-| 0001 | M0 | Baseline: extensions, helpers, every table in the Schema section in dependency order, RLS, grants, audit trigger, SECURITY DEFINER functions, module_catalog and module_prices seed |
+| 0000 to 0003 | M0 | Baseline, split by task (DC-050): 0000 roles check, extensions, helpers, `app_enable_tenant_rls` (M0-04); 0001 to 0003 tables (M0-05 to M0-07). Baseline contents: extensions, helpers, every table in the Schema section in dependency order, RLS, grants, audit trigger, SECURITY DEFINER functions, module_catalog and module_prices seed |
 | 0002 to 0099 | M0 | Reserved for M0 follow-ups (hardening found in review) |
+| 0012 | M0-26 | Reference seed: module_catalog, module_prices, automation_templates (idempotent, `ON CONFLICT DO NOTHING`; lifts and restores FORCE RLS on those three tables inside the migration, policies and grants unchanged) |
 | 0100 to 0199 | M1 | Additive: contacts and companies indexes, trigram indexes once data exists |
 | 0200 to 0299 | M2 | Additive: deal board indexes |
 | 0300 to 0399 | M3 | Additive: task and note indexes |
@@ -1210,12 +1220,16 @@ Ownership and file ranges (so parallel milestone threads do not collide on numbe
 | 0900 to 0999 | M9 | Import and search indexes |
 | 1000 to 1099 | M10 | Restore helpers; any hardening changes |
 
+TypeScript schema: `crm/src/server/db/schema/baseline.ts` is generated from the migrated database with `drizzle-kit pull` and stripped of policy entries (DC-051). A test (`schema-drift.test.ts`) fails if it differs from Postgres, so regenerate it in any PR that changes columns.
+
 Rules:
 - Only M0 creates tables, policies and functions. A feature thread that needs a new table opens a question to the M0 owner first.
 - Each milestone's additive migration must not change RLS or grants without the security review.
 Lock order: 0001 runs before any other migration. Milestone threads merge in wave order (ARCHITECTURE).
 
-Auth tables (library-owned, not defined here): the auth library creates its session, account and verification tables (Better-Auth names: `sessions`, `accounts`, `verification`; Auth.js names differ). Those tables are global, carry no `tenant_id`, and get RLS enabled with a `kynetic_app` policy that allows only the auth code path. Library choice is PRD decision 2, so this doc does not pick one. Which table names exist depends on that choice.
+Auth tables (library-owned, not defined here): the auth library creates its session, account and verification tables (Better-Auth names: `sessions`, `accounts`, `verification`; Auth.js names differ). Those tables are global, carry no `tenant_id`, and get RLS enabled and forced with a policy for the `kynetic_auth` role only (DC-055); `kynetic_app` and `kynetic_worker` have no grant. Added by migration 0006 together with `users.email_verified`. Migration 0013 (M0-12, DC-066) adds `two_factors` (secret, recovery-code hashes and failure counters; one row per staff user; `kynetic_auth` only) and `sessions.two_factor_verified_at`, grants `kynetic_auth` insert and update on `users.two_factor_enabled` only, and adds two SECURITY DEFINER functions owned by `kynetic_rollup`: `auth_record_event` (the auth role's only way into `audit_log`, a fixed list of `auth.2fa_*` actions) and `admin_reset_staff_two_factor` (admin only, another admin only, executable by `kynetic_app`). Library choice is PRD decision 2, so this doc does not pick one. Which table names exist depends on that choice.
+
+Rate limiter table (M0-21, DC-067, migration 0014): `rate_limits(key text, window_start timestamptz, count int, expires_at timestamptz, PRIMARY KEY (key, window_start))`. Global, no `tenant_id`, RLS enabled and forced with a policy for `kynetic_app` and `kynetic_worker`; `kynetic_auth` has no grant. `key` is the rule name plus a hash of the subject, so no IP or email is stored. Expired rows are purged by `purgeExpiredRateLimits` (scheduled once the M0-15 job runner exists).
 
 Seed data (synthetic only; no real client data in preview, spec s6):
 - `module_catalog`: nine rows, the module keys listed in the PRD. `platform` has `always_on = true`.
@@ -1232,6 +1246,7 @@ Seed data (synthetic only; no real client data in preview, spec s6):
 - `automation_templates`: six rows, keys from F-31. `module_key` as in the PRD, except `appointment_reminders` and `no_show_recovery` = `alex_core` (recommended option, PRD decision 6).
 - `pipelines` and `pipeline_stages`: created per tenant at onboarding (F-55), not as global seed. Default stages in order: New, Contacted, Qualified, Estimate Booked, Estimate Done, Quoted, Won (is_won), Lost (is_lost).
 - Sales demo tenant (F-88): one seeded synthetic tenant (`demo-sales`) built from the same fictional generator as the test tenants. It is never built from real CRM records. Production does not receive test or demo seeds except this one.
+- Built (M0-26): `crm/src/server/db/seed/demo.ts` seeds `demo-a`, `demo-b` and `demo-sales` (`bun run db:seed` in `crm/`, needs `DATABASE_URL_SEED` for a role that bypasses RLS; dev, test and preview only). A tenant whose slug exists is skipped. `SEED_TENANT_SLUGS` is the allow-list the preview start check (M0-27) uses.
 - Demo tenants for tests: two synthetic tenants (slugs `demo-a`, `demo-b`), with fictional contacts on 555-01xx numbers and no real names. Owners and staff with test emails on a reserved test domain.
 
 Backups and restore:

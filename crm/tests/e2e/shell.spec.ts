@@ -1,0 +1,135 @@
+import AxeBuilder from '@axe-core/playwright';
+import { expect, test } from '@playwright/test';
+
+test('F-52: the root sends a signed-out visitor to the Kynetic sign-in page', async ({ page }) => {
+  await page.goto('/');
+  await expect(page).toHaveURL(/\/sign-in$/);
+  await expect(page.getByRole('heading', { level: 1, name: 'Sign in' })).toBeVisible();
+  await expect(page.getByAltText('Kynetic').first()).toBeAttached();
+});
+
+test('F-52: a signed-out visitor cannot load the dashboard', async ({ page }) => {
+  await page.goto('/dashboard');
+  await expect(page).toHaveURL(/\/sign-in$/);
+});
+
+test('F-52: starter demo routes are gone', async ({ request }) => {
+  for (const path of ['/dashboard/kanban', '/dashboard/chat', '/auth/sign-in', '/api/users']) {
+    const res = await request.get(path);
+    expect(res.status(), path).toBe(404);
+  }
+});
+
+test('M0-23: sign-in works from the keyboard', async ({ page }) => {
+  await page.goto('/sign-in');
+  // The theme toggle comes first in the tab order, then the email field, then the submit button.
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('button', { name: 'Toggle theme' })).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(page.getByLabel('Work email')).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('button', { name: 'Email me a sign-in link' })).toBeFocused();
+});
+
+test('M0-23: light by default, dark on request, and the choice sticks', async ({ page }) => {
+  await page.goto('/sign-in');
+  const html = page.locator('html');
+  await expect(html).toHaveAttribute('data-theme', 'kynetic');
+  await expect(html).not.toHaveClass(/dark/);
+  await page.getByRole('button', { name: 'Toggle theme' }).click();
+  await expect(html).toHaveClass(/dark/);
+  await page.reload();
+  await expect(html).toHaveClass(/dark/);
+});
+
+test('M0-23: the system color scheme is never followed', async ({ browser }) => {
+  const context = await browser.newContext({ colorScheme: 'dark' });
+  const page = await context.newPage();
+  await page.goto('/sign-in');
+  await expect(page.locator('html')).not.toHaveClass(/dark/);
+  await context.close();
+});
+
+for (const mode of ['light', 'dark'] as const) {
+  test(`M0-23: sign-in has no axe violations (${mode})`, async ({ page }) => {
+    await page.goto('/sign-in');
+    if (mode === 'dark') {
+      await page.getByRole('button', { name: 'Toggle theme' }).click();
+      await expect(page.locator('html')).toHaveClass(/dark/);
+    }
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
+}
+
+test('M0-23: sign-in fits a 390px phone with no horizontal scroll', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/sign-in');
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+  );
+  expect(overflow).toBe(0);
+});
+
+// M0-24: base components on the test-only gallery (COMPONENT_GALLERY=1 in playwright.config.ts).
+for (const mode of ['light', 'dark'] as const) {
+  test(`M0-24: base components have no axe violations (${mode})`, async ({ page }) => {
+    await page.goto('/dev/components');
+    if (mode === 'dark') {
+      await page.evaluate(() => document.documentElement.classList.add('dark'));
+    }
+    await page.getByRole('button', { name: 'Error toast' }).click();
+    await page.getByRole('button', { name: 'Open dialog' }).click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+      .analyze();
+    expect(
+      results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`)
+    ).toEqual([]);
+  });
+}
+
+test('M0-24: focus ring shows on keyboard focus and Esc closes the dialog', async ({ page }) => {
+  await page.goto('/dev/components');
+  await page.getByRole('button', { name: 'Open dialog' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Open dialog' })).toBeFocused();
+  const ring = await page
+    .getByRole('button', { name: 'Open dialog' })
+    .evaluate((el) => getComputedStyle(el).boxShadow);
+  expect(ring).not.toBe('none');
+});
+
+test('F-102: the acceptance page is not reachable signed out', async ({ page }) => {
+  await page.goto('/accept-terms');
+  await expect(page).toHaveURL(/\/sign-in$/);
+});
+
+test('M0-21: security headers are set and the CSP blocks nothing the sign-in page needs', async ({
+  page
+}) => {
+  const violations: string[] = [];
+  page.on('console', (m) => {
+    if (/content security policy/i.test(m.text())) violations.push(m.text());
+  });
+  const res = await page.goto('/sign-in');
+  const h = res!.headers();
+  expect(h['content-security-policy']).toMatch(/script-src [^;]*'nonce-[^']+'/);
+  expect(h['content-security-policy']).toContain("frame-ancestors 'none'");
+  expect(h['strict-transport-security']).toContain('max-age=');
+  expect(h['x-content-type-options']).toBe('nosniff');
+  await expect(page.getByRole('heading', { level: 1, name: 'Sign in' })).toBeVisible();
+  expect(violations).toEqual([]);
+});
+
+test('M0-21: a state-changing request without Origin is refused', async ({ request }) => {
+  const res = await request.post('/api/health');
+  expect(res.status()).toBe(403);
+  expect((await res.json()).error.code).toBe('FORBIDDEN');
+});

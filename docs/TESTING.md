@@ -4,7 +4,7 @@ Kynetic Client CRM & Portal. Target path in the build repo: `docs/TESTING.md`.
 
 Source order: `DECISIONS_locked.md` (Oct 25, 2026) wins over `SPEC_client_crm_portal.md`. `PRD.md` supplies the F-IDs (F-01 to F-106) and the milestone and module tags. Anything in none of these is marked `Decided 2026-10-25 (recommended option: ...)` or, if it needs outside information, `UNRESOLVED`. Commands not verified in a running repo are marked `Not configured`.
 
-Status of this document: draft. No test has been executed. Every row in the acceptance matrix is `Not run`.
+Status of this document: draft. The M0 gate (M0-28, 2026-10-26) ran the M0 suites on branch `m0/gate`: 105 unit, 244 integration, 15 Playwright E2E, `bun run check` and `bun run build` all pass. Matrix rows that an M0 test covers are marked `Pass`; every other row is still `Not run`. Not exercised anywhere yet: live Google sign-in, real email delivery, `docker compose up`, and signed-in E2E (no sign-in fixture).
 
 ---
 
@@ -90,12 +90,12 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | Feature/risk | Scenario | Expected result | Layer | Status |
 | --- | --- | --- | --- | --- |
 | F-72 (M0, platform) | Tenant A user reads tenant B contact by ID through the API | 404 or empty result; no tenant B data in any response | Integration | Not run |
-| F-72 (M0, platform) | Same read run as the app role in SQL with `app.tenant_id` set to tenant A | Zero rows for tenant B | Integration | Not run |
+| F-72 (M0, platform) | Same read run as the app role in SQL with `app.tenant_id` set to tenant A | Zero rows for tenant B | Integration | Pass (2026-10-26, m0/gate) |
 | F-71 (M0, platform) | Login with Google as a user with a membership | Lands in own tenant | E2E | Not run |
-| F-71 (M0, platform) | Login with Google as a user with no membership | Access refused; no session with tenant | Integration | Not run |
+| F-71 (M0, platform) | Login with Google as a user with no membership | Access refused; no session with tenant | Integration | Pass (2026-10-26, m0/gate) |
 | F-71 (M0, platform) | Static search for Clerk imports, packages and env vars | None remain | Unit (static) | Not run |
-| F-74 (M0 consent service; M4 enforces, platform) | `canContact` with no consent row, then with a revoked consent | Returns false both times; `recordConsent` and `revokeConsent` write rows | Unit | Not run |
-| notify() (M0, platform) | `notify` writes a `notifications` row for the target user only | Other users cannot read it | Integration | Not run |
+| F-74 (M0 consent service; M4 enforces, platform) | `canContact` with no consent row, then with a revoked consent | Returns false both times; `recordConsent` and `revokeConsent` write rows | Unit | Pass (2026-10-26, m0/gate) |
+| notify() (M0, platform) | `notify` writes a `notifications` row for the target user only | Other users cannot read it | Integration | Pass (2026-10-26, m0/gate) |
 | F-20 and F-22 notification path (M0 `notify`, M3, crm) | Overdue task and @mention each notify the right user | One row per recipient; delivered through `notify` | Integration | Not run |
 | M0 CI and preview (platform) | Preview deploys from CI; shell and empty states render with no seed data and no console errors | Preview URL serves the shell | E2E | Not run |
 | F-07 (M1, crm) | Create a contact with a phone already on contact P | Duplicate warning shows and offers merge | E2E | Not run |
@@ -273,7 +273,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | Idempotency | Same event (same source and external id) replayed 10 times: lead, call-ended, Twilio, Resend | 1 effect | Integration | Not run |
 | Consent | STOP, then HELP, then a new Alex call attempt | STOP revokes; HELP responds; call blocked | Integration | Not run |
 | Consent | Webhook processing fails during STOP | Contact blocked from sending until processed (fail closed) | Integration | Not run |
-| Preview | Preview database after seed | Contains only seeded synthetic tenants; no real client data | Integration | Not run |
+| Preview | Preview database after seed | Contains only seeded synthetic tenants; no real client data | Integration | Written, passing locally (M0-27, `preview-guard.test.ts`) |
 | Secrets | Build output and logs | No provider key, `.env` value or token present | Manual (recommended option: CI grep) | Not run |
 | Backups | Restore drill (see Release criteria) | Restored copy passes RLS and smoke tests | Manual | Not run |
 
@@ -328,17 +328,19 @@ Cross-module rules to test (release-blocking, recommended option wherever marked
 
 No command has been run against this repo's CI in any source. Each line stays `Not configured` until M0 sets up CI and the command has run.
 
-- Lint: Not configured.
-- Typecheck: Not configured.
-- Unit tests (Vitest): Not configured.
-- Integration tests (Vitest against Postgres): Not configured.
-- End-to-end (Playwright): Not configured.
-- Build: Not configured.
+All run from `crm/` with bun (Node 22). Verified locally on 2026-10-26 (M0-02); CI workflow `.github/workflows/crm-ci.yml` runs them on every PR touching `crm/`.
+
+- Lint: `bun run lint` (oxlint).
+- Typecheck: `bun run typecheck`.
+- Format check: `bun run format:check` (oxfmt).
+- Unit tests (Vitest): `bun run test` (files in `crm/tests/unit/`).
+- Integration tests (Vitest against Postgres): `bun run test:integration` (files in `crm/tests/integration/`, config `vitest.integration.config.ts`). Needs `TEST_DATABASE_ADMIN_URL`, a superuser URL of a throwaway Postgres 16; each test file creates and drops its own database (Decided 2026-10-26, M0-04). Verified locally against Postgres 16.15.
+- End-to-end (Playwright): `bun run test:e2e` (builds first with `bun run build`; starts `bun run start`). Locally set `PLAYWRIGHT_CHROMIUM_PATH` if the Playwright browser is not installed.
+- Accessibility scan: `@axe-core/playwright` is installed; the first axe tests came with the app shell (M0-23): the sign-in page in light and dark, run by `bun run test:e2e`. The base components (M0-24) are scanned in light and dark, with a dialog and an error toast open, on a test-only page `/dev/components` that answers 404 unless `COMPONENT_GALLERY=1` (set only in `playwright.config.ts`). The signed-in shell was checked with axe by hand (light, dark, 390px) during M0-23; its automated version needs a seeded session and arrives with the E2E seed helper (M0-26/M0-27).
+- Build: `bun run build`.
 - Load test: Not configured.
 - Backup restore drill: Not configured.
-- Accessibility scan: Not configured.
 
-The starter (Kiranism next-shadcn-dashboard-starter) may ship scripts with similar names. They are not verified here, so they are not recorded as commands.
 
 ---
 
@@ -417,9 +419,9 @@ Regression policy: every important bug fix adds a regression test named with the
 | F-101 (M8b, platform) | Kill switch on, a call job runs | No call or text sent; job waits; resumes after off | Integration | Not run |
 | F-101 (M8b, platform) | Replay a failed webhook twice | Processed once | Integration | Not run |
 | F-101 (M8b, platform) | Suspend a tenant | Its users cannot sign in; its jobs no-op | Integration | Not run |
-| F-102 (M0, platform) | User has not accepted the current version | Redirect to acceptance; accepted once, not asked again | E2E | Not run |
+| F-102 (M0, platform) | User has not accepted the current version | Redirect to acceptance; accepted once, not asked again | E2E | Partly run: integration covers pending, accept, not asked again, new version, RLS (`tests/integration/terms.test.ts`); E2E covers the signed-out redirect only. The signed-in redirect needs an E2E sign-in fixture, not built yet |
 | F-103 (M9, platform) | Owner downloads a document; another tenant's id | Signed URL; 404 | Integration | Not run |
-| F-98 (M0, platform) | Staff account without TOTP | Reaches only enrolment; sign-in with TOTP works; reset by another admin is audited | E2E | Not run |
+| F-98 (M0, platform) | Staff account without TOTP | Reaches only enrolment; sign-in with TOTP works; reset by another admin is audited | E2E | Integration pass (M0-12, `staff-two-factor.test.ts`); E2E not run |
 | F-85 (M0, crm) | Alex-only tenant opens Leads, Kanban, Appointments, Calls, Reports | All work; Companies, Tasks, Notes, Search, Export are absent and 403 | E2E | Not run |
 
 ---

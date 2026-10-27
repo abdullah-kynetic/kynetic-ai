@@ -126,10 +126,10 @@ M0 delivers these with real code for tenancy, RLS, audit and module guards, and 
 ```
 src/server/tenancy/withTenant.ts    withTenant(ctx, fn): Promise<T>           // transaction + set_config
 src/server/tenancy/withPlatform.ts  withPlatform(ctx, fn): Promise<T>         // wrapper for SECURITY DEFINER roll-ups only (SECURITY 2.3.6); no RLS bypass; audited
-src/server/auth/index.ts            getSession(), requireUser(), requireRole(ctx, roles[]), requireKynetic(role?)
+src/server/auth/index.ts            getSessionUser(headers), requireUser(headers), authorize(actor, action, tenantId?), resolveActor(user, tenantId?), requireRole(ctx, roles[]), requireKynetic(user, role?)   // DC-055, DC-056
 src/server/modules/index.ts         requireModule(ctx, key), isModuleEnabled(ctx, key), listEnabledModules(ctx)
 src/server/audit/index.ts           audit(tx, { action, entity, entityId, before, after })
-src/server/events/index.ts          emitEvent(tx, envelope), subscribe(name, handler)
+src/server/events/index.ts          emitEvent(tx, envelope), subscribe(name, id, handler, { module? })   // DC-059
 src/server/activity/index.ts        recordActivity(tx, { contactId, dealId, type, refTable, refId, summary, actor })
 src/server/jobs/index.ts            enqueue(queue, payload, opts), registerWorker(queue, handler)
 src/server/webhooks/index.ts        ingestWebhook({ source, externalId, payload, verify })   // idempotent insert + enqueue
@@ -169,7 +169,7 @@ Server rules:
 - Turning a module off cancels its pending `automation_runs` (M7 handles `module.disabled`). Turning it on emits `module.enabled` and does not backfill.
 - Gating is in the application layer. Data stays in the tenant and is hidden, not deleted (PRD F-70).
 
-Client rules: the layout loads `listEnabledModules(ctx)` once. Nav entries and dashboard cards declare `module?: ModuleKey`, and `<ModuleGate module="...">` renders nothing when off. Stat cards that depend on a module hide rather than show zeros. The server check is the real gate.
+Client rules (implemented in M0-13: `src/components/modules/module-gate.tsx`, `src/config/nav-registry.ts`; layout wiring lands with M0-23): the layout loads `listEnabledModules(ctx)` once. Nav entries and dashboard cards declare `module?: ModuleKey`, and `<ModuleGate module="...">` renders nothing when off. Stat cards that depend on a module hide rather than show zeros. The server check is the real gate.
 
 Core versus gated, as decided in PRD decision 1: `platform` is always on. The base portal (leads, pipeline kanban with default stages, appointments, call logs, messages log, reports, notifications, settings) belongs to `platform` and `alex_core` and needs no `crm` flag. `crm` is a paid upsell whose level controls Lite versus Full (PRD F-85, decision 1): Lite adds companies, tasks, rich notes, configurable stages and settings pages; Full adds custom fields, bulk actions, multi-contact deals, search, export and sequence enrollment. M0 builds the base portal and the module mechanism so Lite and Full ship gated. `alex_core` gates calls, call logs, the booking tool and Alex settings.
 
@@ -340,12 +340,12 @@ crm/
 ## Operations
 
 - **Environments:** preview per branch with its own database and seed data, and production. Secrets per environment. No real client data in preview (spec). Deploy to production only after Abdullah approves (decisions). The existing `portal/` rule (D-022: deploy only through server-side `portal-deploy` of a merged `main` commit) applies to `portal/`; the production path for the new app is Decided 2026-10-25 (recommended option approved: the same restricted-key, health-check and rollback pattern).
-- **Configuration:** environment variables validated at boot by a Zod schema. Names are not defined here. Provider keys are encrypted at rest and never reach the browser (F-87).
+- **Configuration:** environment variables validated at boot by a Zod schema (`crm/src/server/env.ts`; a bad environment exits the process at boot, M0-03). Required now: `APP_BASE_URL`, `DATABASE_URL`, `BETTER_AUTH_SECRET`, `APP_ENCRYPTION_KEY`; optional: `DATABASE_URL_WORKER`; `OUTBOUND_ENABLED` defaults to false. Provider keys are added by the task that first uses them. Compose project in `crm/deploy/` (app, worker, postgres, caddy); `docker compose config` verified, `docker compose up` not run (no Docker daemon in the build sandbox, 2026-10-26). Names are not defined here. Provider keys are encrypted at rest and never reach the browser (F-87).
 - **Deploy and rollback:** images tagged per commit; rollback is redeploying the previous tag. Migrations are additive first (expand, then contract) so the previous image works against the new schema. Migrations run in CI, then as a separate production step with the owner role.
 - **Backups:** nightly encrypted `pg_dump` offsite (R2; B2 only as a later second copy). 30 daily and 12 monthly kept. Monthly restore into a scratch database. Manual backup button (F-63). The Backups page shows last backup and last drill.
 - **Logs and monitoring:** structured JSON logs with `tenantId`, `requestId`, `jobId`; never secrets or message bodies. Uptime check. Sentry optional (spec). Alert thresholds: Not configured.
 - **Scale:** target is 25+ clients (project goal). Numeric limits (rows per tenant, concurrent calls, webhook throughput) are not in any source; M10's load test sets them.
-- **Commands:** none verified for the new app. Install, dev, build, lint, typecheck, test, migrate, seed: Not configured until M0 creates the package. `portal/` today has `npm run lint`, `typecheck`, `test`, `db:migrate`, `db:seed`.
+- **Commands:** `crm/` exists as of M0-01 (Decided 2026-10-26: pins inherited from the starter, per CODE_STYLE). Node 22 (`engines` `>=22`, `.nvmrc`), bun (`bun.lock`), Next.js 16.4.2, React 19.3.0, TypeScript 7.0.2, Tailwind 4, oxlint and oxfmt. Verified in `crm/` on M0-01: `bun install`, `bun run build`, `bun run typecheck`, `bun run lint`, `bun run format:check`. Tests and CI: see TESTING "Verified commands" (M0-02). Migrate and seed: Not configured until M0-04 and M0-26. Sentry was removed with the starter's other demo dependencies (optional per spec; re-add under a later task if wanted). `portal/` today has `npm run lint`, `typecheck`, `test`, `db:migrate`, `db:seed`.
 
 
 ### Server and deployment setup (gap check 2026-10-25)
@@ -355,7 +355,7 @@ Approved by Abdullah 2026-10-25 (GP-06 to GP-11, DECISIONS DC-047). Items that n
 - **Secrets on the server.** An `.env` file owned by the deploy user with mode 600, outside the repo; never printed or committed. Per-environment values (F-87).
 - **Image build and registry.** CI builds one image per commit and pushes it to GitHub Container Registry; the server pulls by tag. Decided 2026-10-25 (approved: GHCR, private).
 - **Deploy.** A restricted `portal-deploy`-style script on the server (same pattern as D-022 for `portal/`): pull tag, run migrations as the owner role, start the new containers, call `/api/health`, roll back to the previous tag on failure. Production deploys happen only after Abdullah's yes.
-- **Preview environments.** Per branch, own database, synthetic seed only (no real client data). Decided 2026-10-25 (approved: ephemeral Compose projects on the same VPS behind `*.preview.kyneticai.com`, protected by Cloudflare Access, at most two alive at once, torn down when the branch merges). Needs the Cloudflare DNS move below.
+- **Preview environments.** Per branch, own database, synthetic seed only (no real client data). Decided 2026-10-25 (approved: ephemeral Compose projects on the same VPS behind `*.preview.kyneticai.com`, protected by Cloudflare Access, at most two alive at once, torn down when the branch merges). Needs the Cloudflare DNS move below. Built in M0-27 (`crm/deploy/preview/`, workflow `crm-preview.yml`, off until repository variable `PREVIEW_ENABLED=true`): own Postgres per preview, the `prepare` step runs roles, migrations, seed and `bun run preview:check`, which exits 1 if any tenant is not a seed tenant, and the app and worker start only after it passes. Third live preview is refused. Not yet run on a server.
 - **Recording and file storage.** R2 bucket, private, tenant-prefixed keys, versioning on, lifecycle rule that matches retention (PRD decision 9). The backup job also records the bucket's object counts so a restore drill can verify them.
 
 ### Domain, DNS and email domain (gap check 2026-10-25)

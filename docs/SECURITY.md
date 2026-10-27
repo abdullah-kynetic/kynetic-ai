@@ -82,10 +82,11 @@ Client data never goes to Twenty (locked decision). Twenty receives at most an o
 - **Staff sign-in.** Kynetic admin and VA accounts sign in with Google accounts on an explicit allowlist, plus app-level TOTP (F-98, below).
 - **Account linking.** Link a Google identity only when Google reports the email as verified. Never link by unverified email.
 - **Sessions.** Server-side sessions in Postgres, not self-contained tokens, so revocation is immediate. Cookie: `HttpOnly`, `Secure`, `SameSite=Lax`, `__Host-` prefix.
+- **Auth connection (DC-055).** Better-Auth connects as `kynetic_auth`, a separate role with grants on the global auth tables and a column-limited slice of `users`, `memberships` and `invitations`. Sign-in needs staff status, a membership, or a pending invitation; staff get no email link.
 - **Lifetimes.** Decided 2026-10-25 (recommended option approved: Kynetic staff 12 h idle and 7 days absolute; client users 30 days sliding and 90 days absolute; re-auth before exports, role changes and view-as write mode).
 - **Live checks.** Role, tenant membership and module state are read from the database on each request (or cached at most 60 s with invalidation). Nothing is trusted from a cookie claim.
-- **CSRF.** `SameSite=Lax`, Origin check on every state-changing route and server action, no permissive CORS on `/api`.
-- **2FA (F-98).** In v1 for Kynetic admin and VA (Decided 2026-10-25): TOTP via the Better-Auth two-factor plugin, enforced at sign-in on top of Google, with single-use recovery codes and a logged reset by another admin. A staff account without TOTP enrolled can reach only the enrolment page. Owner and staff TOTP stays Later.
+- **CSRF.** `SameSite=Lax`, Origin check on every state-changing route and server action, no permissive CORS on `/api`. Implemented in `src/proxy.ts` (M0-21): a missing or foreign Origin on a state-changing request returns 403 `FORBIDDEN`; `/api/hooks/*` and `/api/service/*` are exempt (signature and bearer auth).
+- **2FA (F-98).** In v1 for Kynetic admin and VA (Decided 2026-10-25): TOTP via the Better-Auth two-factor plugin, enforced at sign-in on top of Google, with single-use recovery codes and a logged reset by another admin. A staff account without TOTP enrolled can reach only the enrolment page. Owner and staff TOTP stays Later. Built in M0-12 (DC-066): the plugin's own sign-in challenge does not cover Google sign-in, so a staff session is fully signed in only once `sessions.two_factor_verified_at` is set by a passing code, and `requireUser` refuses a staff session that is not (states `enrol` and `challenge`). Five wrong codes lock the account's verification for 15 minutes. A TOTP code works once. Recovery codes (10) are stored as keyed hashes and each works once. Staff cannot disable their own 2FA; only another admin can reset it (`admin_reset_staff_two_factor`), which removes the secret and codes, signs the person out everywhere and audits before and after. Enrol, failed and locked attempts, recovery-code use and resets all write `audit_log`.
 
 ### 2.2 Roles and permissions matrix (F-73)
 Roles from spec section 2: Kynetic admin and Kynetic VA (`users.kynetic_role`), client owner and client staff (`memberships.role`). **Deny by default**: a cell that is not "Yes" is a denial. Enforcement is server-side on every action. The UI hides what the server would refuse.
@@ -116,6 +117,7 @@ Roles from spec section 2: Kynetic admin and Kynetic VA (`users.kynetic_role`), 
 | Billing, delete tenant, manage admin accounts | Yes | No | No | No |
 
 Implementation rules:
+0. The matrix is encoded in `src/server/auth/permissions.ts` (DC-056) and tested row by row in `tests/unit/auth/permissions.test.ts`.
 1. One `authorize(actor, action, resource)` function, called by every route handler, server action and job. No ad hoc role checks in components.
 2. Client DTOs are built from allowlists in the query layer, so fields clients must not see (`calls.cost_cents` in v1, provider IDs, raw prompt, anything from another tenant) are never fetched. Hiding them in the UI is not enough.
 3. A route that takes an `id` loads the row under the caller's tenant context. A foreign `id` returns `NOT_FOUND`, not `FORBIDDEN`, so existence is not leaked. This matches `docs/CODE_STYLE.md`.
@@ -281,6 +283,7 @@ Decided 2026-10-25 (recommended option approved: these names; M0 fixes the final
 | `LEAD_WEBHOOK_MASTER_SECRET` | Derive per-tenant lead secrets, if derived | No |
 | `N8N_TOKEN_SIGNING_KEY` | Mint and verify tenant n8n tokens | No |
 | `APP_ENCRYPTION_KEY` | Encrypt provider and OAuth tokens at rest | No |
+| `APP_ENCRYPTION_KEY_VERSION`, `APP_ENCRYPTION_KEYS_RETIRED` | Key version for new ciphertext (default 1); older versions as `2:key,3:key` so rows can still be read until re-encrypted (DC-064) | No |
 | `STORAGE_ENDPOINT`, `STORAGE_ACCESS_KEY_ID`, `STORAGE_SECRET_ACCESS_KEY`, `STORAGE_BUCKET` | R2/B2 recordings and backups | No |
 | `BACKUP_ENCRYPTION_KEY` | Encrypt `pg_dump` before upload | No. Stored apart from bucket credentials |
 | `SENTRY_DSN` (optional) | Error reporting | Server-only anyway |
@@ -290,7 +293,7 @@ Existing Kynetic keys used by agency tooling are **not** reused. The portal gets
 
 ### 4.2 Storage and rotation
 - **Storage.** Production secrets live in the production host's environment (Docker secrets or an env file readable only by root and the service user), never in the repo, images or committed Compose files. Decided 2026-10-25 (recommended option approved: Docker secrets for v1; revisit at 25+ clients).
-- **Encrypted per-tenant values** (OPM OAuth tokens, any tenant-specific provider credential): AES-256-GCM with a random nonce per value and the key ID stored with the ciphertext, so keys can rotate. The key comes from `APP_ENCRYPTION_KEY`. Decryption happens only in server code that needs it. No API returns values, including to admins, who see "set" and "last rotated" only.
+- **Encrypted per-tenant values** (OPM OAuth tokens, any tenant-specific provider credential): AES-256-GCM with a random nonce per value and the key ID stored with the ciphertext, so keys can rotate. The key comes from `APP_ENCRYPTION_KEY`; the ciphertext is bound to its tenant, provider and name, and `src/server/secrets/` is the only code that seals or opens it (DC-064). Decryption happens only in server code that needs it. No API returns values, including to admins, who see "set" and "last rotated" only.
 - **Owner.** Abdullah.
 - **Rotation.** Decided 2026-10-25 (recommended option approved: 90 days for API keys and signing secrets; immediately on suspected exposure, when someone with access leaves, or when a secret was committed even if reverted). A runbook is `Not configured`. Rotation cadence and escrow: PRD OD-n not listed; see Appendix B.
 - **Exposure response.** Revoke at the provider first, rotate, redeploy, then clean history if needed. Record the date in `docs/known-issues.md` with no values.
@@ -320,6 +323,7 @@ Existing Kynetic keys used by agency tooling are **not** reused. The portal gets
 - **XSS.** React escapes by default. `dangerouslySetInnerHTML` is banned except in the one audited rich-text component for notes (F-22), which sanitizes on write and on render with an allowlist (basic formatting, lists, links with `rel="noopener noreferrer"`, mention spans). Scripts, event handlers, iframes, `javascript:` URLs and CSS are stripped.
 - Transcripts, summaries, SMS and email bodies, lead fields and extracted fields render as plain text.
 - **CSP.** Nonce-based, no `unsafe-inline` scripts, `frame-ancestors 'none'`, `object-src 'none'`, `base-uri 'self'`. Also HSTS, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, and a restrictive `Permissions-Policy`. Final values verified in M0 and M10 (`Not configured`).
+- **Implemented (M0-21, DC-067).** `src/proxy.ts` sets the CSP with a per-request nonce plus `Strict-Transport-Security` (2 years, includeSubDomains), `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin` and `Permissions-Policy` (camera, microphone, geolocation, payment, usb off). Styles allow `'unsafe-inline'` for component-library inline style attributes; scripts do not. `unsafe-eval` is development only. Values are re-verified in M10.
 - **CSV formula injection (F-38 export).** Cells starting with `=`, `+`, `-`, `@`, tab or CR are prefixed with a single quote.
 - **Email headers.** Subject and header fields are stripped of CR and LF. Branded sender name (F-39) is limited to safe characters. The sending domain is Kynetic's verified domain in v1; a custom sender is "Later" (PRD PRD 11 covers domains).
 - **SSRF.** The server never fetches arbitrary URLs. Recording copies fetch only from allowlisted provider HTTPS hosts, with limited redirects, and private IP ranges are blocked.

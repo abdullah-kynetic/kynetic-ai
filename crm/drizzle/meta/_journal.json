@@ -1,0 +1,90 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1792977441452,
+      "tag": "0000_roles_helpers",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792977609699,
+      "tag": "0001_baseline_tenancy",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792977717907,
+      "tag": "0002_baseline_crm",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792977784915,
+      "tag": "0003_baseline_ops",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792978249646,
+      "tag": "0004_audit_insert_tenant_check",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792978353543,
+      "tag": "0005_rollup_functions",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792978578647,
+      "tag": "0006_auth_tables",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792978579647,
+      "tag": "0010_service_token_lookup",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1792979000000,
+      "tag": "0012_seed_reference",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1792979100000,
+      "tag": "0013_staff_two_factor",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1792980000000,
+      "tag": "0014_rate_limits",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1792980001000,
+      "tag": "0015_auth_membership_resolution",
+      "breakpoints": true
+    }
+  ]
+}
