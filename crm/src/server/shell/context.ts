@@ -5,6 +5,8 @@ import * as schema from '../db/schema';
 import { getSessionUser, type AuthUser } from '../auth';
 import { loadEnabledModules, MODULE_KEYS, moduleSatisfied, type ModuleKey } from '../modules';
 import type { CrmLevel } from '../modules/keys';
+import { resolveViewAs, type ActiveViewAs } from '../impersonation';
+import { logoUrl } from '../branding';
 import { withTenant } from '../tenancy';
 import type { AppRole, TenantContextInput } from '../tenancy';
 
@@ -15,17 +17,23 @@ export type ShellContext = {
   /** Kynetic staff keep their Kynetic role; client users carry their tenant role. */
   role: ShellRole;
   /** Null for Kynetic staff who are not acting inside a tenant. */
-  tenant: { id: string; name: string; logoUrl: string | null } | null;
+  tenant: { id: string; name: string; logoUrl: string | null; primaryColor: string | null } | null;
   /** Plain data for ModulesProvider (DC-057). */
   modules: { keys: ModuleKey[]; crmLevel: CrmLevel | null };
+  /** Set while a Kynetic user is viewing this tenant as the client (F-57); drives the banner. */
+  viewAs: Pick<ActiveViewAs, 'tenantName' | 'readOnly' | 'writeUntil'> | null;
 };
 
 export type ShellDeps = {
   getUser: (headers: Headers) => Promise<AuthUser | null>;
   /** The tenants the user belongs to, active ones only, in a stable order. */
   listMemberships: (userId: string) => Promise<{ tenantId: string; role: 'owner' | 'staff' }[]>;
-  loadTenant: (ctx: TenantContextInput) => Promise<{ name: string; logoUrl: string | null } | null>;
+  loadTenant: (
+    ctx: TenantContextInput
+  ) => Promise<{ name: string; logoUrl: string | null; primaryColor: string | null } | null>;
   loadModules: (ctx: TenantContextInput) => Promise<ShellContext['modules']>;
+  /** The caller's open view-as session for this cookie, if any. */
+  resolveViewAs?: (user: AuthUser, cookie: string | undefined) => Promise<ActiveViewAs | null>;
 };
 
 /** Memberships through the auth connection, the same grants `resolveActor` uses. */
@@ -49,17 +57,25 @@ async function listMemberships(
 }
 
 const defaultDeps: ShellDeps = {
+  resolveViewAs: async (user, cookie) => {
+    const state = await resolveViewAs({ user, cookie });
+    return state.kind === 'active' ? state : null;
+  },
   getUser: (headers) => getSessionUser(headers),
   listMemberships: (userId) => listMemberships(userId),
   loadTenant: async (ctx) => {
     const [row] = await withTenant(ctx, (tx) =>
       tx
-        .select({ name: schema.tenants.name, logoUrl: schema.tenants.logoUrl })
+        .select({
+          name: schema.tenants.name,
+          logoUrl: schema.tenants.logoUrl,
+          primaryColor: schema.tenants.primaryColor
+        })
         .from(schema.tenants)
         .where(eq(schema.tenants.id, ctx.tenantId))
         .limit(1)
     );
-    return row ?? null;
+    return row ? { ...row, logoUrl: logoUrl(row.logoUrl) } : null;
   },
   loadModules: async (ctx) => {
     const enabled = await loadEnabledModules(ctx);
@@ -78,23 +94,49 @@ const PLATFORM_ONLY: ShellContext['modules'] = { keys: ['platform'], crmLevel: n
  * only a claim: it counts when a membership row backs it, otherwise the user's first active tenant
  * is used. Module flags are read from the database for that tenant (SECURITY 2.4), never from the
  * request. Returns null when nobody is signed in or the user has no way into the portal; the caller redirects to sign-in.
+ *
+ * A Kynetic user with an open view-as session (`viewAsCookie`) gets that tenant instead, with the
+ * session's own context: read-only unless an admin has write mode on. Their Kynetic role is kept.
  */
 export async function loadShellContext(
   headers: Headers,
   claimedTenantId?: string,
-  deps: ShellDeps = defaultDeps
+  deps: ShellDeps = defaultDeps,
+  viewAsCookie?: string
 ): Promise<ShellContext | null> {
   const user = await deps.getUser(headers);
   if (!user) return null;
+  const person = { id: user.id, name: user.name, email: user.email };
+
+  if (user.kyneticRole && viewAsCookie) {
+    const session = await deps.resolveViewAs?.(user, viewAsCookie);
+    if (session) {
+      const [tenant, modules] = await Promise.all([
+        deps.loadTenant(session.ctx),
+        deps.loadModules(session.ctx)
+      ]);
+      return {
+        user: person,
+        role: user.kyneticRole,
+        tenant: tenant ? { id: session.tenantId, ...tenant } : null,
+        modules,
+        viewAs: {
+          tenantName: session.tenantName,
+          readOnly: session.readOnly,
+          writeUntil: session.writeUntil
+        }
+      };
+    }
+  }
 
   const memberships = await deps.listMemberships(user.id);
   const membership = memberships.find((m) => m.tenantId === claimedTenantId) ?? memberships[0];
-  const person = { id: user.id, name: user.name, email: user.email };
 
   const role: ShellRole | undefined = user.kyneticRole ?? membership?.role;
   // No Kynetic role and no active tenant (for example the only tenant is suspended): nothing to show.
   if (!role) return null;
-  if (!membership) return { user: person, role, tenant: null, modules: PLATFORM_ONLY };
+  if (!membership)
+    return { user: person, role, tenant: null, modules: PLATFORM_ONLY, viewAs: null };
 
   const ctx: TenantContextInput = { tenantId: membership.tenantId, userId: user.id, role };
   const [tenant, modules] = await Promise.all([deps.loadTenant(ctx), deps.loadModules(ctx)]);
@@ -102,7 +144,8 @@ export async function loadShellContext(
     user: person,
     role,
     tenant: tenant ? { id: membership.tenantId, ...tenant } : null,
-    modules
+    modules,
+    viewAs: null
   };
 }
 

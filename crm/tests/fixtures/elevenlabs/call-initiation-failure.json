@@ -1,0 +1,9 @@
+{
+  "type": "call_initiation_failure",
+  "event_timestamp": 1792990100,
+  "data": {
+    "agent_id": "agent_test",
+    "conversation_id": "conv_02test",
+    "failure_reason": "no-answer"
+  }
+}

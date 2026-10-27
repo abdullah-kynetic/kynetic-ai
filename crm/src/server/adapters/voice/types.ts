@@ -12,6 +12,10 @@ export type StartOutboundCallInput = {
 export type VerifiedVoiceEvent = {
   externalId: string;
   providerCallId: string;
+  /** The provider's id for the agent that took the call. Tenant resolution maps it (SECURITY 3.6 item 6). */
+  agentId?: string;
+  /** The lead's number in E.164 when the provider reports one; used to link calls we did not start. */
+  counterpartE164?: string;
   kind: 'call.started' | 'call.ended' | 'inbound';
   direction: 'inbound' | 'outbound';
   startedAt: Date;
@@ -33,5 +37,7 @@ export interface VoiceProvider {
   /** Verifies the signature; throws ProviderError on failure. */
   parseWebhook(headers: WebhookHeaders, rawBody: string): VerifiedVoiceEvent;
   getRecordingUrl?(providerCallId: string): Promise<string>;
+  /** Downloads the audio with the provider's own credentials, for providers whose URL needs them. */
+  fetchRecording?(providerCallId: string): Promise<Uint8Array>;
   placeTestCall?(i: { agentId: string; toE164: string }): Promise<{ providerCallId: string }>;
 }
