@@ -2,23 +2,13 @@ import { sql } from 'drizzle-orm';
 import { z } from 'zod';
 import type { Tx } from '../db/client';
 import { activities } from '../db/schema';
+import { ACTIVITY_TYPES, ACTOR_TYPES } from './types';
 
-export const ACTIVITY_TYPES = [
-  'call',
-  'sms',
-  'email',
-  'stage_change',
-  'note',
-  'task',
-  'appointment',
-  'automation',
-  'system',
-  'import'
-] as const;
-export const ACTOR_TYPES = ['user', 'alex', 'automation', 'system'] as const;
-
-export type ActivityType = (typeof ACTIVITY_TYPES)[number];
-export type ActivityActor = { type: (typeof ACTOR_TYPES)[number]; id?: string | null };
+export { ACTIVITY_TYPES, ACTOR_TYPES, type ActivityType } from './types';
+export type ActivityActor = {
+  type: (typeof ACTOR_TYPES)[number];
+  id?: string | null;
+};
 
 const uuid = z.string().uuid();
 const inputSchema = z.object({
@@ -62,3 +52,11 @@ export async function recordActivity(tx: Tx, input: RecordActivityInput): Promis
     .returning({ id: activities.id });
   return row;
 }
+
+export {
+  listActivities,
+  listActivitiesSchema,
+  type ListActivitiesInput,
+  type TimelineItem,
+  type TimelinePage
+} from './timeline';
