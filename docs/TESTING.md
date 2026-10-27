@@ -101,11 +101,11 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-07 (M1, crm) | Create a contact with a phone already on contact P | Duplicate warning shows and offers merge | E2E | Partly run (2026-10-26, M1-04): integration covers the warning data, "create anyway" and edit (`tests/integration/contacts.test.ts`, M1-04 block). Merge is not offered yet (M1-08); the automated E2E needs the signed-in fixture |
 | F-07 (M1, crm) | Merge two contacts | Deals, notes and activities move to the survivor; loser soft-removed; audit row written | Integration | Not run |
 | F-12 (M1, crm) | Custom field "Roof type" select: filter, table and CSV import | Value shows in table, filters, and CSV import accepts it | E2E | Partly run: filter and values covered by `tests/integration/custom-fields.test.ts`; table, settings UI and CSV import not run in a browser |
-| F-12 (M1, crm) | Each type (text, number, money, date, select, multi-select, checkbox) given a valid and an invalid value; unknown key | Valid saved, invalid and unknown refused | Unit, Integration | Run (`tests/unit/custom-fields.test.ts`, `tests/integration/custom-fields.test.ts`) |
-| F-85 (M1, crm) | Lite tenant calls any custom field function or saves a custom value | 403 MODULE_DISABLED, nothing written | Integration | Run |
-| F-08 (M1, crm) | Assign owner to 20 selected contacts | All 20 updated in one audited operation | Integration | Not run |
+| F-08 (M1, crm) | Assign owner to 20 selected contacts | All 20 updated in one audited operation | Integration | Pass (2026-10-26, M1-07, `contacts-bulk.test.ts`) |
 | F-14 (M2, crm) | Save a deal in Lost without a lost reason | Save refused, message names the field | Integration | Pass (2026-10-26, M2-01) |
 | F-16 (M2, crm) | Drag a card from Contacted to Qualified, then reload | Card stays in Qualified; column totals updated | E2E | Not run (no signed-in E2E fixture yet). Move, order, totals and `deal.stage_changed` covered by integration (`pipeline-board.test.ts`, M2-02) and unit (`pipeline-board-state.test.ts`) tests, which Pass 2026-10-26 |
+| F-12 (M1, crm) | Each type (text, number, money, date, select, multi-select, checkbox) given a valid and an invalid value; unknown key | Valid saved, invalid and unknown refused | Unit, Integration | Run (`tests/unit/custom-fields.test.ts`, `tests/integration/custom-fields.test.ts`) |
+| F-85 (M1, crm) | Lite tenant calls any custom field function or saves a custom value | 403 MODULE_DISABLED, nothing written | Integration | Run |
 | F-16 (M2, crm) | Server rejects a drag | Card rolls back; error toast | E2E | Not run |
 | F-16 (M2, crm) | Undo within toast window after a drag | Previous stage restored | E2E | Not run |
 | F-19 (M3, crm) | Any write to a covered entity | `activities` row created and shown on timeline; actor shown | Integration | Pass |
@@ -162,7 +162,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-05 (M1, crm) | Staff user lists contacts | Only own tenant's rows | Integration | Pass (2026-10-26, M1-01) |
 | F-06 (M1, crm) | Contact with a deal, a call and a note | All sections render; consent status matches latest `consents` row | E2E | Not run |
 | F-07 (M1, crm) | Two contacts share an email | Duplicate detection on email as well as phone | Integration | Pass (2026-10-26, M1-01) |
-| F-08 (M1, crm) | Staff without bulk-delete permission | Delete hidden in UI; server refuses | Integration | Not run |
+| F-08 (M1, crm) | Staff without bulk-delete permission | Delete hidden in UI; server refuses | Integration | Pass (2026-10-26, M1-07; server refusal tested, UI hiding by `bulkCapabilities`) |
 | F-10 (M1, crm) | Company with 3 contacts and 2 deals | Roll-ups and totals correct | Integration | Pass (M1-05, `crm/tests/integration/companies.test.ts`) |
 | F-12 (M1, crm) | Tenant B reads tenant A field definitions | Zero rows (API and SQL) | Integration | Run (`custom-fields.test.ts`) |
 | F-14 (M2, crm) | $12,500 value entered | `value_cents` = 1250000; displays as $12,500 | Unit | Pass (2026-10-26, M2-01) |

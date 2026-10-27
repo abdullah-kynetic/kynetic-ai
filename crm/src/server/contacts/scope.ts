@@ -1,6 +1,6 @@
 import { requireUser } from '../auth';
 import { resolveActor } from '../auth/actor';
-import { can } from '../auth/permissions';
+import { can, type Actor } from '../auth/permissions';
 import { loadShellContext } from '../shell';
 import type { TenantContextInput } from '../tenancy';
 
@@ -22,10 +22,21 @@ export async function contactsScope(
   headers: Headers,
   permission: 'tenant_data.read' | 'tenant_data.write' = 'tenant_data.read'
 ): Promise<TenantContextInput | null> {
+  return (await contactsActorScope(headers, permission))?.ctx ?? null;
+}
+
+/** The same scope plus the actor, for writes that check the permission matrix (bulk actions, F-08). */
+export async function contactsActorScope(
+  headers: Headers,
+  permission: 'tenant_data.read' | 'tenant_data.write' = 'tenant_data.read'
+): Promise<{ ctx: TenantContextInput; actor: Actor } | null> {
   const user = await requireUser(headers);
   const shell = await loadShellContext(headers, cookie(headers, 'tenant_id'));
   if (!shell?.tenant) return null;
   const actor = await resolveActor(user, shell.tenant.id);
   if (!can(actor, permission, shell.tenant.id)) return null;
-  return { tenantId: shell.tenant.id, userId: user.id, role: shell.role };
+  return {
+    ctx: { tenantId: shell.tenant.id, userId: user.id, role: shell.role },
+    actor
+  };
 }

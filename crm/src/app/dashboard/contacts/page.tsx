@@ -1,5 +1,11 @@
 import PageContainer from '@/components/layout/page-container';
-import { contactFacets, contactsScope, searchContacts } from '@/server/contacts';
+import {
+  bulkCapabilities,
+  contactFacets,
+  contactsActorScope,
+  contactsScope,
+  searchContacts
+} from '@/server/contacts';
 import { listFieldDefs } from '@/server/custom-fields';
 import { isModuleEnabled } from '@/server/modules';
 import { ContactsTable } from '@/features/contacts/list/contacts-table';
@@ -19,21 +25,26 @@ export default async function ContactsPage({
 }: {
   searchParams: Promise<RawSearchParams>;
 }) {
-  const ctx = await contactsScope(await headers());
-  if (!ctx) {
+  const scope = await contactsActorScope(await headers());
+  if (!scope) {
     return (
       <PageContainer pageTitle='Leads' access={false}>
         {null}
       </PageContainer>
     );
   }
+  const { ctx, actor } = scope;
   const canWrite = (await contactsScope(await headers(), 'tenant_data.write')) !== null;
   // Custom fields are CRM Full (F-12); the base portal and Lite show the list without them.
   const customFields = (await isModuleEnabled(ctx, 'crm', { level: 'full' }))
     ? await listFieldDefs(ctx, 'contact')
     : [];
   const { hidden, ...view } = readListView(await searchParams, customFields);
-  const [result, facets] = await Promise.all([searchContacts(ctx, view), contactFacets(ctx)]);
+  const [result, facets, bulk] = await Promise.all([
+    searchContacts(ctx, view),
+    contactFacets(ctx),
+    bulkCapabilities(ctx, actor)
+  ]);
   return (
     <PageContainer
       pageTitle='Leads'
@@ -47,6 +58,7 @@ export default async function ContactsPage({
         facets={facets}
         customFields={customFields}
         hidden={hidden}
+        bulk={bulk}
         filtered={isFiltered({ hidden, ...view })}
         canWrite={canWrite}
       />
