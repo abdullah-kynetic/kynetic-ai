@@ -1,3 +1,5 @@
+export { getDealDetail, type DealDetail, type DealPerson } from './detail';
+export { centsToInput, parseDealForm, type DealFormInput, type ParsedDealForm } from './form';
 export { formatCents, MAX_VALUE_CENTS, parseMoneyToCents } from './money';
 export { positionBetween } from './position';
 export {
@@ -22,7 +24,17 @@ export {
   updateStage,
   type StageRow
 } from './stages';
-export { DEAL_ROLES } from './schemas';
+export { getBoardView, type BoardView } from './board';
+export { dealsScope, stageScope } from './scope';
+export {
+  addDealContact,
+  listDealContacts,
+  listDealsForContact,
+  removeDealContact,
+  setDealContactRole,
+  type DealContact
+} from './contacts';
+export { DEAL_ROLES, type DealRole } from './schemas';
 export type {
   BoardFilters,
   CreateDealInput,
@@ -44,4 +56,3 @@ export {
   updateDeal,
   type Deal
 } from './service';
-export { stageScope } from './scope';

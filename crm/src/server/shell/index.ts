@@ -5,3 +5,4 @@ export {
   type ShellDeps,
   type ShellRole
 } from './context';
+export { requestScope } from './scope';
