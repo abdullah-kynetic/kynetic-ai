@@ -11,6 +11,15 @@ export {
 export { getVoiceProvider, isVoiceProviderId } from './provider';
 export { getCallRecordingUrl } from './recording';
 export {
+  CALL_DEFAULT_PAGE_SIZE,
+  CALL_PAGE_SIZES,
+  listCalls,
+  listCallsQuerySchema,
+  type CallList,
+  type CallListRow,
+  type ListCallsQuery
+} from './list';
+export {
   flagCall,
   getCallDetail,
   transcriptLines,
