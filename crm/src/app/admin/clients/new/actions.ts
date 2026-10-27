@@ -11,6 +11,7 @@ import { authorize, ForbiddenError, requireUser, resolveActor } from '@/server/a
 import { getEnv } from '@/server/env';
 import { AppError } from '@/server/errors';
 import { headers } from 'next/headers';
+import { refuseDuringViewAs } from '../../view-as-guard';
 
 export type OnboardState =
   | { status: 'idle' }
@@ -30,6 +31,7 @@ const text = (f: FormData, k: string) => String(f.get(k) ?? '').trim();
 /** The signed-in admin, checked against the matrix on this request (SECURITY 2.2: never trust the page). */
 async function adminCtx() {
   const user = await requireUser(await headers());
+  await refuseDuringViewAs(user);
   const actor = await resolveActor(user);
   authorize(actor, 'admin.onboard');
   return { userId: user.id, role: 'admin' as const };
@@ -41,12 +43,19 @@ function failure(err: unknown): {
   fieldErrors?: Record<string, string[]>;
 } {
   if (err instanceof AppError) {
-    return { status: 'error', message: err.message, fieldErrors: err.fieldErrors };
+    return {
+      status: 'error',
+      message: err.message,
+      fieldErrors: err.fieldErrors
+    };
   }
   if (err instanceof ForbiddenError)
     return { status: 'error', message: 'Only an admin can onboard a client.' };
   console.error('Onboarding failed', err instanceof Error ? err.name : 'unknown');
-  return { status: 'error', message: 'Something went wrong. Nothing was created. Try again.' };
+  return {
+    status: 'error',
+    message: 'Something went wrong. Nothing was created. Try again.'
+  };
 }
 
 /** Submits the 30-second form (F-55). The invite email is not sent here; see `approveInvite`. */
