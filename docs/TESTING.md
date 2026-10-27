@@ -103,7 +103,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-12 (M1, crm) | Custom field "Roof type" select: filter, table and CSV import | Value shows in table, filters, and CSV import accepts it | E2E | Not run |
 | F-08 (M1, crm) | Assign owner to 20 selected contacts | All 20 updated in one audited operation | Integration | Not run |
 | F-14 (M2, crm) | Save a deal in Lost without a lost reason | Save refused, message names the field | Integration | Pass (2026-10-26, M2-01) |
-| F-16 (M2, crm) | Drag a card from Contacted to Qualified, then reload | Card stays in Qualified; column totals updated | E2E | Not run |
+| F-16 (M2, crm) | Drag a card from Contacted to Qualified, then reload | Card stays in Qualified; column totals updated | E2E | Not run (no signed-in E2E fixture yet). Move, order, totals and `deal.stage_changed` covered by integration (`pipeline-board.test.ts`, M2-02) and unit (`pipeline-board-state.test.ts`) tests, which Pass 2026-10-26 |
 | F-16 (M2, crm) | Server rejects a drag | Card rolls back; error toast | E2E | Not run |
 | F-16 (M2, crm) | Undo within toast window after a drag | Previous stage restored | E2E | Not run |
 | F-19 (M3, crm) | Any write to a covered entity | `activities` row created and shown on timeline; actor shown | Integration | Not run |
