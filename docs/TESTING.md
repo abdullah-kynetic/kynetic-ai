@@ -141,7 +141,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-96 (M9, platform) | Import with mapped consent date and source | Consent record with source `import` exists | Integration | Not run |
 | F-96 (M9 and M4, platform) | Imported contact in quiet hours with consent | Send deferred | Integration | Not run |
 | F-38 (M9, crm) | Export a view containing a cell starting with `=` | Cell neutralized | Unit | Not run |
-| F-39 (M9, platform) | Set logo, color and name for tenant | Visible on every page for that tenant; other tenant unaffected | E2E | Not run |
+| F-39 (M9, platform) | Set logo, color and name for tenant | Visible on every page for that tenant; other tenant unaffected | E2E | Partial: integration (save, audit, other tenant untouched, bad file, low contrast, owner only) and unit (color table, logo rules) pass (2026-10-26, m9-08); E2E Not run |
 | F-63 (M10, platform) | Monthly restore drill | Drill passes (see Release criteria); result and date shown on backups page | Manual | Not run |
 | F-88 (M10, platform) | Fresh production database and demo tenant | Production holds only the pilot tenant's real data; demo tenant is synthetic only; no migration script exists | Integration | Not run |
 
