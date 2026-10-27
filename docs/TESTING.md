@@ -108,7 +108,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-16 (M2, crm) | Undo within toast window after a drag | Previous stage restored | E2E | Not run |
 | F-19 (M3, crm) | Any write to a covered entity | `activities` row created and shown on timeline; actor shown | Integration | Not run |
 | F-20 (M3, crm) | Task past due and incomplete | Under Overdue; assignee gets notification | Integration | Not run |
-| F-76 (M4, alex_core) | Duplicate lead webhook (same source and external id) | Second call is a no-op; one contact, one deal | Integration | Not run |
+| F-76 (M4, alex_core) | Duplicate lead webhook (same source and external id) | Second call is a no-op; one contact, one deal | Integration | Pass (2026-10-26, M4-04; replayed 10 times) |
 | F-77 (M4, platform) | Same Retell or ElevenLabs call-ended event (same source and external id) replayed 10 times | One effect (one call row, one timeline entry) | Integration | Not run |
 | F-77 (M4, platform) | Same external id arriving from a different source | Not a duplicate; processed as its own event (uniqueness is on source and external id) | Integration | Not run |
 | F-74 (M4, alex_core) | STOP inbound SMS (fake Twilio) | Consent revoked; confirmation on timeline; no further SMS or calls | Integration | Not run |
@@ -173,10 +173,11 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-24 (M5, alex_core) | Staff reschedules; staff enters time outside hours | Timeline records reschedule; UI warns on out-of-hours time | E2E | Not run |
 | F-26 (M4, alex_core) | Call with outcome "booked" | Green Booked chip; contact link; outcome and date filters work | E2E | Not run |
 | F-27 (M4, alex_core) | Open call with recording and transcript | Player, transcript, summary and fields render | E2E | Not run |
-| F-27 (M4, alex_core) | Recording URL after expiry | Expired signed URL refused | Integration | Not run |
+| F-27 (M4, alex_core) | Recording URL after expiry | Expired signed URL refused | Integration | Adapter part written, passing locally (M4-03, `tests/unit/storage/r2.test.ts`: 5-minute expiry, wrong tenant 404, SigV4 vector); real route test waits for M4-11 |
 | F-27 (M4, alex_core) | Staff without call access requests call | Refused server-side | Integration | Not run |
 | F-28 (M4, alex_core) | Owner flags a call with reason | `calls.flagged` true; review item exists; audit row written | Integration | Not run |
 | F-30 (M4, platform) | Twilio delivered callback for automation SMS (fake) | Log and timeline status update | Integration | Not run |
+| F-30 (M4, platform) | Resend bounced, complained and delivered events (fake and signed fixtures) | Message status updates; bounce suppresses the address; complaint also opts the contact out of email; integration health shows `email` degraded | Integration | Pass (M4-09: `tests/integration/resend-events.test.ts`, `tests/unit/adapters/resend.test.ts`) |
 | F-30 (M4, platform) | Failed SMS callback (fake) | Error text shows; counted in integration health | Integration | Not run |
 | F-31 (M7, per template) | `quote_followup` module off | Template hidden; API refuses enablement | Integration | Not run |
 | F-31 (M7, per template) | Module on; deal enters Quoted | Step 1 scheduled | Integration | Not run |
@@ -229,9 +230,9 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-74 (M4, alex_core) | Contact in quiet hours (contact timezone) | Call or SMS deferred (fixed clock) | Integration | Not run (window 08:00 to 21:00 lead-local, decided; per-state table UNRESOLVED) |
 | F-75 (M4, alex_core) | Call starts | Disclosure line in agent config and transcript | Integration | Not run |
 | F-75 (M4, alex_core) | Contact in a two-party-consent state | Call marked for review | Integration | Not run (state list is a versioned config; content UNRESOLVED, needs counsel) |
-| F-76 (M4, alex_core) | Valid signed lead request | Contact and deal exist; Alex triggered | Integration | Not run |
-| F-76 (M4, alex_core) | Bad token | 401; nothing written | Integration | Not run |
-| F-76 (M4, alex_core) | Rate-limit breach | 429 | Integration | Not run |
+| F-76 (M4, alex_core) | Valid signed lead request | Contact and deal exist; Alex triggered | Integration | Pass for contact, deal, consent and `lead.created` (2026-10-26, M4-04); the call start is M4-06 |
+| F-76 (M4, alex_core) | Bad token | 401; nothing written | Integration | Pass (2026-10-26, M4-04) |
+| F-76 (M4, alex_core) | Rate-limit breach | 429 | Integration | Pass (2026-10-26, M4-04) |
 | F-77 (M4, platform) | Bad signature on any provider webhook | Rejected before storage; no `webhook_events` row | Integration | Not run |
 | F-77 (M4, platform) | Processing error | Job retries; error count rises | Integration | Not run |
 | F-78 (M4, alex_core) | New lead with consent inside call window | Outbound call starts (fake provider) | Integration | Not run |
