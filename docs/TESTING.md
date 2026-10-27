@@ -186,7 +186,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-37 (M9, crm) | Phone fragment on 10,000-contact seeded tenant | Matching contact returned; p95 under 500 ms (decided, recommended option) | Integration | Not run |
 | F-37 (M9, crm) | Tenant A searches for tenant B's record | Zero results | Integration | Not run |
 | F-38 (M9, crm) | Staff without export permission | Export hidden; server refuses | Integration | Not run |
-| F-41 (M9, platform) | Staff opens team settings | Refused (403) | Integration | Not run |
+| F-41 (M9, platform) | Staff opens team settings | Refused (403) | Integration | Pass (M9-09, `business-settings.test.ts`) |
 | F-42 (M9, alex_core) | Owner pauses Alex | No outbound calls start for tenant; dashboard shows "Paused"; raw prompt absent from every response | Integration | Not run |
 | F-43 (M9, crm) | Create tag, apply it, filter by it | Works end to end | E2E | Not run |
 | F-44 (M9, platform) | 390px viewport on daily-use pages | No horizontal scroll; touch targets at least 44px; tap-to-call uses `tel:` link | E2E and Manual | Not run |
