@@ -45,6 +45,7 @@ export async function checkOutbound(
       await logBlocked(tx, ctx, req, now, early);
       return early;
     }
+    if (opts.replyToInbound && req.channel === 'sms') return { allowed: true };
     return canContact(ctx, req.contactId, req.channel, now, {
       tx,
       purpose: req.purpose,

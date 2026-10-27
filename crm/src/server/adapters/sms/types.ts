@@ -10,8 +10,12 @@ export type SendSmsInput = {
 
 export type VerifiedSmsStatus = {
   providerId: string;
-  status: 'delivered' | 'failed' | 'undelivered';
+  /** `sent` covers every non-final carrier state (queued, accepted, sending, sent). */
+  status: 'sent' | 'delivered' | 'failed' | 'undelivered';
   errorCode?: string;
+  /** Our number (from) and the contact's (to) on an outbound message; the tenant is mapped from ours. */
+  fromE164?: string;
+  toE164?: string;
 };
 
 export type VerifiedInboundSms = {
