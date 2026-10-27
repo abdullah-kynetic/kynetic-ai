@@ -4,16 +4,13 @@ import {
   registerOutboundCallWorker,
   registerVoiceProcessor
 } from './calls';
+import { registerResendProcessor } from './email';
 import { getEnv } from './env';
 import { registerEventWorkers } from './events';
 import { stopJobs } from './jobs';
 import { registerLeadProcessor } from './leads';
-import { registerResendProcessor } from './email';
-import { getSmsProvider } from './messaging/provider';
 import { registerTwilioProcessor } from './messaging';
 import { getSmsProvider } from './messaging/provider';
-import { registerTwilioProcessor } from './messaging';
-import { registerResendProcessor } from './email';
 import { registerWebhookWorker } from './webhooks';
 
 // Worker entry (kynetic_worker). Feature milestones register their subscribers and webhook
@@ -22,11 +19,9 @@ getEnv();
 registerLeadProcessor();
 registerTwilioProcessor({ provider: getSmsProvider() });
 registerVoiceProcessor({ provider: getVoiceProvider('elevenlabs')! });
-registerVoiceProcessor({ provider: getVoiceProvider('elevenlabs')! });
-registerLeadProcessor();
+registerResendProcessor();
 registerOutboundCallSubscriber();
 await registerEventWorkers();
-registerResendProcessor();
 await registerWebhookWorker();
 await registerOutboundCallWorker();
 console.log(JSON.stringify({ level: 'info', msg: 'worker started' }));

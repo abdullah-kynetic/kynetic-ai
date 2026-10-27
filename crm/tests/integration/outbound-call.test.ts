@@ -371,6 +371,44 @@ describe('M4-06 outbound call start (F-78)', () => {
     expect(await callRows(lead.id)).toHaveLength(1);
   });
 
+  it('a crash between dialing and saving the provider call id closes the attempt and moves on', async () => {
+    const lead = await newLead();
+    const h = harness();
+    // The worker dies after the call row is written (the dial may or may not have happened).
+    h.provider.startOutboundCall = async () => {
+      throw new Error('worker killed');
+    };
+    await expect(h.run(job(lead.id))).rejects.toThrow('worker killed');
+    const [pending] = await callRows(lead.id);
+    expect(pending!.provider_call_id).toBe(`pending:${outboundIdempotencyKey(job(lead.id))}`);
+    expect(h.queue.items).toHaveLength(0);
+
+    // Redelivered while the first worker could still be running: left alone.
+    h.state.now = minutes(MIDDAY, 1);
+    expect(await h.run(job(lead.id))).toEqual({ status: 'duplicate' });
+    expect((await callRows(lead.id))[0]!.outcome).toBeNull();
+
+    // Redelivered after it must be dead: the attempt is spent, never dialed again, and attempt 2 is queued.
+    h.state.now = minutes(MIDDAY, 16);
+    expect(await h.run(job(lead.id))).toEqual({ status: 'stopped', reason: 'attempt_unconfirmed' });
+    const [closed] = await callRows(lead.id);
+    expect(closed).toMatchObject({ outcome: 'other', duration_s: 0 });
+    expect(closed!.extracted).toEqual({ startError: 'lost:provider_call_id_not_saved' });
+    expect(h.queue.items).toHaveLength(1);
+    expect(h.queue.items[0]).toMatchObject({
+      payload: { attempt: 2 },
+      startAfter: minutes(MIDDAY, 21)
+    });
+    expect((await activityRows(lead.id)).map((r) => r.summary)).toContain(
+      'Alex call status unknown: it may have been placed but was never confirmed'
+    );
+
+    // A further redelivery changes nothing.
+    expect(await h.run(job(lead.id))).toEqual({ status: 'duplicate' });
+    expect(h.queue.items).toHaveLength(1);
+    expect(await callRows(lead.id)).toHaveLength(1);
+  });
+
   it('a transient provider failure spends the attempt and still schedules the next one', async () => {
     const lead = await newLead();
     const h = harness();

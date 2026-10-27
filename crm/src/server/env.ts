@@ -31,6 +31,9 @@ export const envSchema = z.object({
   STORAGE_REGION: z.string().min(1).optional(),
   RESEND_API_KEY: z.string().min(1).optional(),
   RESEND_WEBHOOK_SECRET: z.string().min(1).optional(),
+  // Twilio (M4-08). Optional so preview and tests run on the fake; the real provider needs both.
+  TWILIO_ACCOUNT_SID: z.string().min(1).optional(),
+  TWILIO_AUTH_TOKEN: z.string().min(1).optional()
 });
 
 const STORAGE_KEYS = [
@@ -39,11 +42,6 @@ const STORAGE_KEYS = [
   'STORAGE_SECRET_ACCESS_KEY',
   'STORAGE_BUCKET'
 ] as const;
-
-  // Twilio (M4-08). Optional so preview and tests run on the fake; the real provider needs both.
-  TWILIO_ACCOUNT_SID: z.string().min(1).optional(),
-  TWILIO_AUTH_TOKEN: z.string().min(1).optional()
-});
 
 export const refinedEnvSchema = envSchema
   .refine((e) => Boolean(e.GOOGLE_CLIENT_ID) === Boolean(e.GOOGLE_CLIENT_SECRET), {
@@ -54,6 +52,7 @@ export const refinedEnvSchema = envSchema
     message:
       'STORAGE_ENDPOINT, STORAGE_ACCESS_KEY_ID, STORAGE_SECRET_ACCESS_KEY and STORAGE_BUCKET must be set together',
     path: ['STORAGE_ENDPOINT']
+  })
   .refine((e) => Boolean(e.TWILIO_ACCOUNT_SID) === Boolean(e.TWILIO_AUTH_TOKEN), {
     message: 'TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN must be set together',
     path: ['TWILIO_ACCOUNT_SID']
