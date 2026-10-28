@@ -162,6 +162,27 @@
       "when": 1793100005000,
       "tag": "0054_tags_notification_prefs",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1793100006000,
+      "tag": "0055_reactivation_batches",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1793100007000,
+      "tag": "0056_admin_ops_rollups",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1793100008000,
+      "tag": "0057_admin_operations",
+      "breakpoints": true
     }
   ]
 }

@@ -1641,6 +1641,48 @@ export const automationRuns = pgTable(
   ]
 );
 
+export const reactivationBatches = pgTable(
+  'reactivation_batches',
+  {
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    tenantId: uuid('tenant_id').notNull(),
+    audienceFilter: jsonb('audience_filter').default({}).notNull(),
+    status: text().default('launched').notNull(),
+    requestedCount: integer('requested_count').default(0).notNull(),
+    eligibleCount: integer('eligible_count').default(0).notNull(),
+    enrolledCount: integer('enrolled_count').default(0).notNull(),
+    blockedCount: integer('blocked_count').default(0).notNull(),
+    launchedAt: timestamp('launched_at', { withTimezone: true, mode: 'string' }),
+    createdBy: uuid('created_by'),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .defaultNow()
+      .notNull()
+  },
+  (table) => [
+    index('reactivation_batches_tenant_idx').using(
+      'btree',
+      table.tenantId.asc().nullsLast().op('uuid_ops'),
+      table.createdAt.desc().nullsLast().op('timestamptz_ops')
+    ),
+    foreignKey({
+      columns: [table.tenantId],
+      foreignColumns: [tenants.id],
+      name: 'reactivation_batches_tenant_id_fkey'
+    }).onDelete('restrict'),
+    foreignKey({
+      columns: [table.tenantId, table.createdBy],
+      foreignColumns: [memberships.tenantId, memberships.userId],
+      name: 'reactivation_batches_created_by_fkey'
+    }).onDelete('set null'),
+    unique('reactivation_batches_tenant_id_id_key').on(table.id, table.tenantId),
+    check(
+      'reactivation_batches_status_check',
+      sql`status = ANY (ARRAY['launched'::text, 'completed'::text, 'failed'::text])`
+    ),
+    check('reactivation_batches_counts_check', sql`requested_count >= 0 AND eligible_count >= 0 AND enrolled_count >= 0 AND blocked_count >= 0`)
+  ]
+);
+
 export const notifications = pgTable(
   'notifications',
   {

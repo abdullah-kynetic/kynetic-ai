@@ -1,7 +1,7 @@
 'use server';
 
 import { AppError } from '@/server/errors';
-import { setTenantModule } from '@/server/modules/admin';
+import { setFollowupBundle, setTenantModule } from '@/server/modules/admin';
 import { decideAdminAccess } from '@/server/admin';
 import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
@@ -26,10 +26,16 @@ export async function toggleModule(input: {
   if (await isViewingAs(access.user))
     return { ok: false, message: 'Exit view-as before changing modules.' };
   try {
-    const result = await setTenantModule(
-      { id: access.user.id, kyneticRole: access.role },
-      input as Parameters<typeof setTenantModule>[1]
-    );
+    const result =
+      input.moduleKey === 'followup_bundle'
+        ? await setFollowupBundle(
+            { id: access.user.id, kyneticRole: access.role },
+            { tenantId: input.tenantId, enabled: input.enabled }
+          )
+        : await setTenantModule(
+            { id: access.user.id, kyneticRole: access.role },
+            input as Parameters<typeof setTenantModule>[1]
+          );
     revalidatePath(`/admin/clients/${input.tenantId}/modules`);
     return { ok: true, changed: result.changed };
   } catch (e) {
