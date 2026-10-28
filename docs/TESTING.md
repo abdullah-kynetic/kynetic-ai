@@ -203,7 +203,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-43 (M9, crm) | Create tag, apply it, filter by it | Works end to end | E2E | Create, apply, count, rename, merge, delete: integration pass (2026-10-26, M9-11); signed-in E2E and contact-list filter by tag Not run (list filter is M1-02) |
 | F-43 (M9, crm) | Tag settings as staff; tenant without `crm`; duplicate tag name | FORBIDDEN; MODULE_DISABLED; duplicate refused ignoring case | Integration | Pass (2026-10-26, M9-11) |
 | F-36 (M9, platform) | Turn email off for one type, then raise that type; other users and other types | No email for that user and type; the bell still lists it; others unaffected; owner-wide notices skip only opted-out owners | Integration | Pass (2026-10-26, M9-11) |
-| F-44 (M9, platform) | 390px viewport on daily-use pages | No horizontal scroll; touch targets at least 44px; tap-to-call uses `tel:` link | E2E and Manual | Not run |
+| F-44 (M9, platform) | 390px viewport on daily-use pages | No horizontal scroll; touch targets at least 44px; tap-to-call uses `tel:` link | E2E and Manual | Playwright 2026-10-28: no horizontal overflow on dashboard, contacts, appointments and tasks; touch targets and tap-to-call remain unverified |
 | F-49 (M6, alex_core) | Report delivery fails (fake Resend) | Retry runs; failure shown in integration health | Integration | Not run |
 | F-13 (Skip) | Look for conditional or computed field code and routes | None exist | Unit (static) | Not run |
 | F-34 (Skip) | Look for a visual workflow builder route | None exists | E2E | Not run |
