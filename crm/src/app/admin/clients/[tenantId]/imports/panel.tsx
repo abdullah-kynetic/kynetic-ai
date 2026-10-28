@@ -117,9 +117,10 @@ export function ImportPanel({
     setBusy(true);
     setMessage('');
     try {
-      await requestJson(`/api/imports/${batchId}/commit`, { tenantId });
+      const result = await requestJson(`/api/imports/${batchId}/commit`, { tenantId });
+      setReport(result.result ?? null);
       setMessage('Import committed.');
-      location.reload();
+      setBatches((old) => old.map((batch) => (batch.id === batchId ? { ...batch, status: 'done' } : batch)));
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'Commit failed.');
     } finally {
