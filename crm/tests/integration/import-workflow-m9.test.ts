@@ -177,4 +177,32 @@ describe('F-90 to F-96 contact import workflow', () => {
     const preview = await dryRunContactBatch(adminCtx, adminActor, batch.id, { firstName: 'first', phone: 'phone' }, { db: appDb });
     expect(preview).toMatchObject({ total: 2, ok: 1, duplicates: 1, failed: 0 });
   });
+
+  it('lists an imported contact edited after commit and leaves it intact on undo', async () => {
+    const batch = await createImportBatch(
+      adminCtx,
+      adminActor,
+      { fileName: 'edited.csv', fileType: 'csv', importedSource: 'synthetic-edited' },
+      new TextEncoder().encode('first,phone,external\nBefore,4155550177,edited-1'),
+      { db: appDb }
+    );
+    await dryRunContactBatch(
+      adminCtx,
+      adminActor,
+      batch.id,
+      { firstName: 'first', phone: 'phone', externalId: 'external' },
+      { db: appDb }
+    );
+    await commitContactBatch(adminCtx, adminActor, batch.id, { db: appDb });
+    const [imported] = await tdb.admin`select id from contacts where tenant_id = ${IDS.tenantA} and external_id = 'edited-1'`;
+    await tdb.admin`update contacts set first_name = 'Edited by owner', updated_at =
+      (select committed_at + interval '1 second' from import_batches where id = ${batch.id})
+      where id = ${imported!.id}`;
+
+    const result = await undoImportBatch(adminCtx, adminActor, batch.id, { db: appDb });
+    expect(result).toMatchObject({ removed: 0, skipped: [imported!.id] });
+    expect(await tdb.admin`select first_name, deleted_at from contacts where id = ${imported!.id}`).toMatchObject([
+      { first_name: 'Edited by owner', deleted_at: null }
+    ]);
+  });
 });

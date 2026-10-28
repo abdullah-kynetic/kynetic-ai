@@ -137,7 +137,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-92 (M9, platform) | Deal row with an open quote | Deal in the mapped stage; value stored in cents | Integration | Not run |
 | F-92 (M9, platform) | Failure injected midway through commit | Batch `failed`; written records listed and undoable | Integration | Not run |
 | F-93 (M9, platform) | Undo a committed batch | Records gone from lists and search; history shows undone with who and when; audited | E2E | Not run |
-| F-93 (M9, platform) | Undo when one record was edited after import | Record listed and not removed | Integration | Not run |
+| F-93 (M9, platform) | Undo when one record was edited after import | Record listed and not removed | Integration | Pass (2026-10-28, `tests/integration/import-workflow-m9.test.ts`; edited synthetic contact is returned in `skipped` and stays active) |
 | F-94 (M9, platform) | Admin imports on tenant A's page | All records in tenant A; `audit_log` has the admin as actor | Integration | Service-level pass for tenant A writes/admin audit actor: `tests/integration/import-workflow-m9.test.ts`; HTTP role matrix not run |
 | F-94 (M9, platform) | VA and client owner call the import endpoints | 403 | Integration | Not run |
 | F-94 (M9, platform) | Import file used with another tenant's id in the request | Refused; nothing written to either tenant | Integration | Not run |
