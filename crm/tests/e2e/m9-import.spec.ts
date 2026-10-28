@@ -47,3 +47,14 @@ test('F-90 admin can choose the company import record type and map its required 
   await adminPage.getByRole('button', { name: 'Run dry-run' }).click();
   await expect(adminPage.getByText(/"total": 1/)).toBeVisible();
 });
+
+test('F-90 reuses the last successful mapping for the same source system', async ({ adminPage }) => {
+  const reuseBatchId = '66666666-6666-4666-8666-666666666666';
+  await adminPage.route('**/api/imports', async (route) => route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify({ ok: true, batch: { id: reuseBatchId, fileName: 'same-source.csv' } }) }));
+  await adminPage.goto('/admin/clients/11111111-1111-4111-8111-111111111111/imports');
+  await adminPage.locator('input[type=file]').setInputFiles({ name: 'same-source.csv', mimeType: 'text/csv', buffer: Buffer.from('first_name,phone\nAda,4155550123') });
+  await adminPage.getByRole('button', { name: 'Upload file' }).click();
+  await expect(adminPage.getByRole('heading', { name: 'Map contact columns' })).toBeVisible();
+  await expect(adminPage.locator('select[aria-label="firstName"]')).toHaveValue('first_name');
+  await expect(adminPage.locator('select[aria-label="phone"]')).toHaveValue('phone');
+});

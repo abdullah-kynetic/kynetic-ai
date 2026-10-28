@@ -48,6 +48,7 @@ async function main(): Promise<void> {
   const [importBatch] =
     await db.admin`insert into import_batches (tenant_id, entity, imported_source, file_name, file_type, status, rows_total, rows_ok)
     values (${IDS.tenantA}, 'contact', 'csv_other', 'e2e.csv', 'csv', 'done', 1, 1) returning id`;
+  await db.admin`update import_batches set mapping = ${db.admin.json({ firstName: 'first_name', phone: 'phone' })} where id = ${importBatch.id}`;
   await db.admin`insert into import_batch_records (tenant_id, batch_id, entity, record_id, action)
     values (${IDS.tenantA}, ${importBatch.id}, 'contact', gen_random_uuid(), 'created')`;
   const [{ companyId }] = await db.admin`

@@ -32,6 +32,8 @@ export default async function AdminImportsPage({
           id: batch.id,
           fileName: batch.fileName,
           importedSource: batch.importedSource,
+          entity: batch.entity as 'contact' | 'company' | 'deal' | 'note',
+          mapping: batch.mapping,
           status: batch.status,
           rowsTotal: batch.rowsTotal,
           rowsOk: batch.rowsOk,

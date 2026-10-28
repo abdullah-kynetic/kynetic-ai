@@ -33,6 +33,7 @@ const ownerActor: Actor = {
   membership: { tenantId: IDS.tenantA, role: 'owner', canExport: false, canBulkDelete: false },
   viewAs: null
 };
+const vaActor: Actor = { userId: IDS.va, kyneticRole: 'va', membership: null, viewAs: null };
 
 beforeAll(async () => {
   tdb = await createTestDatabase();
@@ -79,6 +80,9 @@ describe('F-90 to F-96 contact import workflow', () => {
       { db: appDb }
     );
     expect(report).toMatchObject({ total: 2, ok: 1, failed: 1 });
+    expect(await tdb.admin`select mapping from import_batches where id = ${batch.id}`).toMatchObject([
+      { mapping: { firstName: 'first', lastName: 'last', phone: 'phone', email: 'email', externalId: 'external' } }
+    ]);
     const afterDryRun =
       await tdb.admin`select count(*)::int as n from contacts where tenant_id = ${IDS.tenantA}`;
     expect(afterDryRun[0]!.n).toBe(before[0]!.n);
@@ -161,6 +165,27 @@ describe('F-90 to F-96 contact import workflow', () => {
         { db: appDb }
       )
     ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+    await expect(createImportBatch(
+      adminCtx,
+      vaActor,
+      { fileName: 'va.csv', fileType: 'csv', importedSource: 'synthetic' },
+      new TextEncoder().encode('phone\n4155550199'),
+      { db: appDb }
+    )).rejects.toMatchObject({ code: 'FORBIDDEN' });
+  });
+
+  it('reports 50 invalid rows and 30 E.164 duplicates in a 1,000-row dry run without writes', async () => {
+    const rows = ['first,phone'];
+    for (let i = 0; i < 920; i++) rows.push(`Synthetic ${i},415555${String(1000 + i).slice(-4)}`);
+    for (let i = 0; i < 30; i++) rows.push(`Duplicate ${i},+1415555${String(1000 + i).slice(-4)}`);
+    for (let i = 0; i < 50; i++) rows.push(`Invalid ${i},not-a-phone`);
+    expect(rows).toHaveLength(1001);
+    const before = await tdb.admin`select count(*)::int as n from contacts where tenant_id = ${IDS.tenantA}`;
+    const batch = await createImportBatch(adminCtx, adminActor, { fileName: 'one-thousand.csv', fileType: 'csv', importedSource: 'synthetic-1000' }, new TextEncoder().encode(rows.join('\n')), { db: appDb });
+    const report = await dryRunContactBatch(adminCtx, adminActor, batch.id, { firstName: 'first', phone: 'phone' }, { db: appDb });
+    expect(report).toMatchObject({ total: 1000, ok: 920, failed: 50, duplicates: 30 });
+    expect(report.issues).toHaveLength(50);
+    expect(await tdb.admin`select count(*)::int as n from contacts where tenant_id = ${IDS.tenantA}`).toEqual(before);
   });
 
   it('rejects oversized, renamed-binary, malformed and over-limit CSV before storage writes', async () => {
@@ -228,6 +253,7 @@ describe('F-90 to F-96 contact import workflow', () => {
     const [note] = await tdb.admin`select id, body_text, deal_id, imported_source, import_batch_id, external_id from notes where tenant_id = ${IDS.tenantA} and external_id = 'n-1'`;
     expect(company).toMatchObject({ imported_source: 'synthetic-multi', import_batch_id: companyBatch, external_id: 'co-1' });
     expect(deal).toMatchObject({ value_cents: 123450, imported_source: 'synthetic-multi', import_batch_id: dealBatch, external_id: 'd-1' });
+    expect(await tdb.admin`select s.name from deals d join pipeline_stages s on s.id = d.stage_id where d.id = ${deal!.id}`).toEqual([{ name: 'New' }]);
     expect(note).toMatchObject({ body_text: 'Synthetic imported history', deal_id: deal!.id, imported_source: 'synthetic-multi', import_batch_id: noteBatch, external_id: 'n-1' });
 
     expect(await undoImportBatch(adminCtx, adminActor, companyBatch, { db: appDb })).toMatchObject({ removed: 1 });

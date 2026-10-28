@@ -6,6 +6,8 @@ type Batch = {
   id: string;
   fileName: string;
   importedSource: string;
+  entity: ImportEntity;
+  mapping: unknown;
   status: string;
   rowsTotal: number;
   rowsOk: number;
@@ -21,6 +23,11 @@ const entityFields: Record<ImportEntity, string[]> = {
   deal: ['title', 'valueCents', 'serviceType', 'expectedClose', 'stage', 'contactExternalId', 'externalId'],
   note: ['body', 'contactExternalId', 'companyExternalId', 'dealExternalId', 'externalId']
 };
+
+function savedMapping(batches: Batch[], entity: ImportEntity, source: string): Record<string, string> {
+  const saved = [...batches].reverse().find((batch) => batch.entity === entity && batch.importedSource === source && batch.mapping && Object.keys(batch.mapping as object).length > 0);
+  return saved ? saved.mapping as Record<string, string> : {};
+}
 
 async function requestJson(path: string, body: unknown) {
   const response = await fetch(path, {
@@ -49,8 +56,9 @@ export function ImportPanel({
   const [batches, setBatches] = useState(initial);
   const [headers, setHeaders] = useState<string[]>([]);
   const [batchId, setBatchId] = useState('');
-  const [entity, setEntity] = useState<ImportEntity>('contact');
-  const [mapping, setMapping] = useState<Record<string, string>>({});
+  const [entity, setEntity] = useState<ImportEntity>(initial.at(-1)?.entity ?? 'contact');
+  const [source, setSource] = useState(initial.at(-1)?.importedSource ?? 'csv_other');
+  const [mapping, setMapping] = useState<Record<string, string>>(() => savedMapping(initial, initial.at(-1)?.entity ?? 'contact', initial.at(-1)?.importedSource ?? 'csv_other'));
   const [duplicateRule, setDuplicateRule] = useState<'skip' | 'fill_empty'>('skip');
   const [report, setReport] = useState<unknown>(null);
   const [message, setMessage] = useState('');
@@ -66,7 +74,7 @@ export function ImportPanel({
       data.set('tenantId', tenantId);
       data.set('file', file);
       data.set('entity', entity);
-      data.set('importedSource', 'csv_other');
+      data.set('importedSource', source);
       data.set('duplicateRule', duplicateRule);
       const response = await fetch('/api/imports', { method: 'POST', body: data });
       const result = (await response.json()) as {
@@ -83,7 +91,9 @@ export function ImportPanel({
         {
           id: result.batch!.id,
           fileName: result.batch!.fileName,
-          importedSource: 'csv_other',
+          importedSource: source,
+          entity,
+          mapping: {},
           status: 'uploaded',
           rowsTotal: 0,
           rowsOk: 0,
@@ -111,7 +121,7 @@ export function ImportPanel({
       });
       setReport(result.report);
       setMessage('Dry run complete. Review the report before committing.');
-      setBatches((old) => old.map((b) => (b.id === batchId ? { ...b, status: 'dry_run_ok' } : b)));
+      setBatches((old) => old.map((b) => (b.id === batchId ? { ...b, status: 'dry_run_ok', mapping: values } : b)));
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'Dry run failed.');
     } finally {
@@ -154,12 +164,17 @@ export function ImportPanel({
         <label>
           Record type
           <select className='mt-1 block min-h-11 w-full rounded border p-2' value={entity}
-            onChange={(event) => { setEntity(event.target.value as ImportEntity); setMapping({}); setBatchId(''); setHeaders([]); setReport(null); }}>
+            onChange={(event) => { const next = event.target.value as ImportEntity; setEntity(next); setMapping(savedMapping(batches, next, source)); setBatchId(''); setHeaders([]); setReport(null); }}>
             <option value='contact'>Contacts</option>
             <option value='company'>Companies</option>
             <option value='deal'>Deals and quotes</option>
             <option value='note'>Notes and history</option>
           </select>
+        </label>
+        <label>
+          Source system
+          <input className='mt-1 block min-h-11 w-full rounded border px-3' value={source}
+            onChange={(event) => { const next = event.target.value; setSource(next); setMapping(savedMapping(batches, entity, next)); }} />
         </label>
         <label>
           CSV file (up to 10 MB)
