@@ -6,6 +6,7 @@ import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { forbidden, notFound } from 'next/navigation';
 import { ModulesPanel } from './modules-panel';
+import Link from 'next/link';
 
 export const metadata: Metadata = { title: 'Modules' };
 export const dynamic = 'force-dynamic';
@@ -37,6 +38,7 @@ export default async function ClientModulesPage({
       pageTitle={`${tenant.name}: modules`}
       pageDescription='Switch what this client has. A change applies on their next request. Turning a module off keeps its data.'
     >
+      {modules.some((module) => module.moduleKey === 'opm' && module.enabled) && <Link href={`/admin/clients/${tenant.id}/presence`} className='text-primary-text mb-4 inline-block underline'>Manage online presence</Link>}
       <ModulesPanel
         tenantId={tenant.id}
         modules={modules}

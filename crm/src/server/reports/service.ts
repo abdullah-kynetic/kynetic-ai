@@ -6,6 +6,8 @@ import { emitEvent } from '../events';
 import { withTenant, type TenantContextInput } from '../tenancy';
 import { parseInput } from '../validation';
 import { z } from 'zod';
+import { isModuleEnabled } from '../modules';
+import { presenceReport } from '../presence';
 
 export const reportPeriodSchema = z.string().regex(/^\d{4}-\d{2}-01$/, 'period_start');
 export type MonthlyReport = typeof reports.$inferSelect;
@@ -57,6 +59,13 @@ export async function generateMonthlyReport(
         { title: section.title, data: section.render(days) }
       ])
     );
+    if (await isModuleEnabled(ctx, 'opm', { tx })) {
+      const presence = await presenceReport(ctx, period, { tx });
+      sections.online_presence = {
+        title: 'Online Presence',
+        data: { snapshots: presence.snapshots.map(({ source, capturedOn, reviewCount, averageRating }) => ({ source, capturedOn, reviewCount, averageRating })) }
+      };
+    }
     const [row] = await tx
       .insert(reports)
       .values({
