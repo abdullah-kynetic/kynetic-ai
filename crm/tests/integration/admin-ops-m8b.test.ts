@@ -1,7 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createDb, type Db } from '@/server/db/client';
-import { calculateHealthScore, listAdminTenantOverview, listFlaggedCalls, listIntegrationHealth, markFlaggedCallReviewed, placeAdminTestCall, replayWebhook, setOutboundKillSwitch, suspendTenant, updateAdminAlexConfig } from '@/server/admin';
+import { calculateHealthScore, listAdminTenantOverview, listFailedWebhooks, listFlaggedCalls, listIntegrationHealth, listRecentJobs, markFlaggedCallReviewed, placeAdminTestCall, replayFailedWebhook, setOutboundKillSwitch, suspendTenant, updateAdminAlexConfig } from '@/server/admin';
 import { FakeVoiceProvider } from '@/server/adapters/voice/fake';
+import { checkOutbound } from '@/server/outbound';
+import { stopJobs } from '@/server/jobs';
 import { createTestDatabase, type TestDatabase } from '../helpers/db';
 import { IDS, seedTwoTenants } from '../helpers/fixtures';
 
@@ -11,16 +13,18 @@ const admin = { userId: IDS.admin, role: 'admin' as const };
 const platform = { userId: IDS.admin, role: 'admin' as const };
 
 beforeAll(async () => {
-  tdb = await createTestDatabase();
+  tdb = await createTestDatabase({ jobs: true });
   await seedTwoTenants(tdb.admin);
   db = createDb(tdb.app);
+  Object.assign(process.env, { DATABASE_URL: tdb.urls.app, DATABASE_URL_AUTH: tdb.authUrl, APP_BASE_URL: 'http://localhost:3000', BETTER_AUTH_SECRET: 'integration-only-secret-not-real-000000000000', APP_ENCRYPTION_KEY: 'integration-only-encryption-key-not-real' });
 });
-afterAll(async () => { await tdb?.drop(); });
+afterAll(async () => { await stopJobs(); await tdb?.drop(); });
 
 describe('M8b local admin operations acceptance', () => {
   it('F-53/F-54 lists tenant rollups and calculates hand-checked health scores and thresholds', async () => {
+    await tdb.admin`insert into tenants (id, slug, name, plan, timezone) values ('33333333-3333-4333-8333-333333333333', 'tenant-c', 'Tenant C', 'founding', 'UTC')`;
     const rows = await listAdminTenantOverview(platform, { db });
-    expect(rows.map((row) => row.tenantId).sort()).toEqual([IDS.tenantA, IDS.tenantB].sort());
+    expect(rows.map((row) => row.tenantId).sort()).toEqual([IDS.tenantA, IDS.tenantB, '33333333-3333-4333-8333-333333333333'].sort());
     expect(rows.every((row) => !('ownerEmail' in row))).toBe(true);
     expect(calculateHealthScore({ bookingRate: 0.5, leads30d: 10, integrationErrors: 2, lastLoginAt: '2026-10-27T12:00:00.000Z', now: new Date('2026-10-28T12:00:00.000Z') })).toBe(76);
     expect(calculateHealthScore({ bookingRate: 0, leads30d: 0, integrationErrors: 10, lastLoginAt: null, now: new Date('2026-10-28T12:00:00.000Z') })).toBe(0);
@@ -66,14 +70,21 @@ describe('M8b local admin operations acceptance', () => {
   it('F-101 applies the kill switch, replays a processed webhook once, and suspends/resumes a tenant', async () => {
     await setOutboundKillSwitch(admin, IDS.tenantA, true, { db });
     expect(await tdb.admin`select config->>'outbound_kill_switch' as enabled from tenant_modules where tenant_id = ${IDS.tenantA} and module_key = 'platform'`).toEqual([{ enabled: 'true' }]);
+    const [seededContact] = await tdb.admin`select id from contacts where tenant_id = ${IDS.tenantA} limit 1`;
+    await expect(checkOutbound({ tenantId: IDS.tenantA, userId: IDS.ownerA, role: 'owner' }, { contactId: seededContact!.id, channel: 'phone_call', module: 'alex_core' }, new Date(), { db, outboundEnabled: true })).resolves.toMatchObject({ allowed: false, reason: 'outbound_disabled' });
+    await expect(checkOutbound({ tenantId: IDS.tenantA, userId: IDS.ownerA, role: 'owner' }, { contactId: seededContact!.id, channel: 'sms', module: 'alex_core' }, new Date(), { db, outboundEnabled: true })).resolves.toMatchObject({ allowed: false, reason: 'outbound_disabled' });
     await setOutboundKillSwitch(admin, IDS.tenantA, false, { db });
-    const [{ id }] = await tdb.admin`insert into webhook_events (source, external_id, tenant_id, payload, processed_at, last_error)
-      values ('synthetic-m8b', 'event-replay-once', ${IDS.tenantA}, '{}'::jsonb, now(), 'synthetic failure') returning id`;
-    await expect(replayWebhook(admin, id, { db })).resolves.toEqual({ replayed: true });
-    await expect(replayWebhook(admin, id, { db })).rejects.toMatchObject({ code: 'NOT_FOUND' });
+    const [{ id }] = await tdb.admin`insert into webhook_events (source, external_id, tenant_id, payload, attempts, last_error)
+      values ('synthetic-m8b', 'event-replay-once', ${IDS.tenantA}, '{}'::jsonb, 2, 'synthetic failure') returning id`;
+    expect(await listFailedWebhooks(platform, { db })).toContainEqual(expect.objectContaining({ eventId: id, lastError: 'synthetic failure', attempts: 2 }));
+    await expect(replayFailedWebhook(admin, id, { db })).resolves.toEqual({ replayed: true });
+    await expect(replayFailedWebhook(admin, id, { db })).rejects.toMatchObject({ code: 'NOT_FOUND' });
     expect(await tdb.admin`select processed_at, last_error from webhook_events where id = ${id}`).toMatchObject([{ processed_at: null, last_error: null }]);
+    expect(await tdb.admin`select name, data from pgboss.job where name = 'webhook.process' and data->>'webhookEventId' = ${id}`).toHaveLength(1);
+    expect(await listRecentJobs(admin, { db })).toContainEqual(expect.objectContaining({ name: 'webhook.process', retryCount: 0 }));
     await suspendTenant(admin, IDS.tenantA, true, { db });
     expect(await tdb.admin`select status from tenants where id = ${IDS.tenantA}`).toEqual([{ status: 'suspended' }]);
+    await expect(checkOutbound({ tenantId: IDS.tenantA, userId: IDS.ownerA, role: 'owner' }, { contactId: seededContact!.id, channel: 'phone_call', module: 'alex_core' }, new Date(), { db, outboundEnabled: true })).resolves.toMatchObject({ allowed: false, reason: 'tenant_suspended' });
     await suspendTenant(admin, IDS.tenantA, false, { db });
     expect(await tdb.admin`select status from tenants where id = ${IDS.tenantA}`).toEqual([{ status: 'active' }]);
   });

@@ -40,7 +40,7 @@ export {
   type TenantOption
 } from './audit-viewer';
 export { calculateHealthScore, listAdminTenantOverview, type AdminTenantOverview } from './overview';
-export { listFlaggedCalls, listIntegrationHealth, markFlaggedCallReviewed, type FlaggedCallRow, type IntegrationHealthRow } from './operations';
+export { listFailedWebhooks, listFlaggedCalls, listIntegrationHealth, listRecentJobs, markFlaggedCallReviewed, replayFailedWebhook, type AdminJobRow, type FailedWebhookRow, type FlaggedCallRow, type IntegrationHealthRow } from './operations';
 export { placeAdminTestCall, updateAdminAlexConfig } from './alex-config';
 export { auditManualBackup, listBackups, runBackup, type BackupJob } from './backups';
 export { replayWebhook, setOutboundKillSwitch, suspendTenant } from './operations-tools';

@@ -19,7 +19,7 @@ export default async function AdminHomePage() {
   return (
     <PageContainer
       pageTitle='All clients'
-      pageDescription='Every client in one place, with performance and health signals.'
+      pageDescription='Every client in one place, with performance and health signals. Health: green ≥70, yellow ≥40, red <40.'
     >
       <Table>
         <TableHeader><TableRow><TableHead>Client</TableHead><TableHead>Plan</TableHead><TableHead>Leads (30d)</TableHead><TableHead>Bookings</TableHead><TableHead>MRR inputs</TableHead><TableHead>Health</TableHead><TableHead>Documents</TableHead></TableRow></TableHeader>

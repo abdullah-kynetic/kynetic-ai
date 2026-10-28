@@ -217,15 +217,14 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 
 | Feature/risk | Scenario | Expected result | Layer | Status |
 | --- | --- | --- | --- | --- |
-| F-53 (M8, platform) | Three tenants in All clients | Table correct, sorts work; client owner gets 403 | Integration | Not run |
-| F-54 (M8, platform) | Fixture inputs | Score equals documented formula; chip matches thresholds | Unit | Not run |
-| F-54 (M8, platform) | Thresholds not set | Default values apply and are shown in admin | E2E | Not run |
+| F-53 (M8b, platform) | Three synthetic tenants in All clients | Three-tenant rollups, owner denial, and admin thresholds | Integration + E2E | Pass (2026-10-28; `admin-ops-m8b.test.ts`, `m8b-admin.spec.ts`) |
+| F-54 (M8b, platform) | Hand-scored fixtures and default thresholds | Formula and 70/40 chips match; defaults shown in admin | Integration + E2E | Pass (2026-10-28; `admin-ops-m8b.test.ts`, `m8b-admin.spec.ts`) |
 | F-55 (M8, platform) | Failure injected midway through onboarding | Nothing partially created | Integration | Pass (`tests/integration/admin-onboarding.test.ts`) |
 | F-55 (M8, platform) | Duplicate slug or owner email | Rejected with clear message | Integration | Pass (`tests/integration/admin-onboarding.test.ts`) |
 | F-57 (M8, platform) | Admin starts view-as, tries a write | Write refused unless explicitly escalated; banner visible | E2E | Not run |
 | F-57 (M8, platform) | VA tries a write while impersonating | Refused and logged | Integration | Pass (`tests/integration/view-as.test.ts`, M8a-04) |
-| F-58 (M8, alex_core) | Change Alex config | Saved; audited with before and after; VA cannot change prompts | Integration | Not run |
-| F-58 (M8, alex_core) | Test call button with entered number | Starts a call to that number only (fake provider in CI) | Integration | Not run |
+| F-58 (M8b, alex_core) | Change Alex config and prompt | Admin-only update/version plus UI edit path | Integration + E2E | Pass (2026-10-28; fake voice provider only) |
+| F-58 (M8b, alex_core) | Test call button with synthetic number | Calls injected fake voice provider only | Integration | Pass (2026-10-28; no real provider call) |
 | F-60 (M0, platform) | Write, login, export, impersonation | One `audit_log` row each | Integration | Not run |
 | F-60 (M0, platform) | UPDATE or DELETE on `audit_log` | Database refuses | Integration | Not run |
 | F-61 (M8, platform) | Deactivate a user with an open session | Cannot sign in; session ends | Integration | Pass (2026-10-26, M8a-03; `tests/integration/admin-users.test.ts`) |
@@ -233,7 +232,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-60 (M8a, platform) | Admin filters the viewer by tenant, user, action and date range | Only matching rows return; the end day is included | Integration | Passing (`crm/tests/integration/audit-viewer.test.ts`) |
 | F-60 (M8a, platform) | VA reads the viewer; a client role calls it | VA reads; client refused by the app and by `audit_search` (42501); web role cannot select `audit_log` | Integration | Passing (`crm/tests/integration/audit-viewer.test.ts`) |
 | F-60 (M8a, platform) | Filter input is not a UUID or a date | Rejected before any query | Unit | Passing (`crm/tests/unit/admin/audit-viewer.test.ts`) |
-| F-62 (M8, platform) | Webhook failing | Error count rises; integration red; recovery returns to green | Integration | Not run |
+| F-62 (M8b, platform) | Synthetic provider failing | Error and A2P statuses appear in tenant/global admin views | Integration + E2E | Pass (2026-10-28; freshness under one minute not measured) |
 | F-63 (M8b, platform) | Encrypted backup restore test | Real `pg_dump`, AES-256-GCM, storage readback, scratch `pg_restore`, schema and contact-level tenant RLS checks, and scratch cleanup | Integration | Pass (2026-10-28, `tests/integration/backups-m8b.test.ts`; disposable PostgreSQL 17 and fake storage) |
 | F-63 (M8b, platform) | Retention prune | 30 daily and 12 monthly objects remain | Integration | Pass (2026-10-28, `tests/integration/backups-m8b.test.ts`; fake storage) |
 | F-63 (M8b, platform) | Manual backup request | Admin request is audited and queued; VA request refused | Integration | Pass (2026-10-28, `tests/integration/backups-m8b.test.ts`; disposable PostgreSQL and pg-boss) |
@@ -446,11 +445,11 @@ Regression policy: every important bug fix adds a regression test named with the
 | F-99 (M8a, platform) | Owner, staff and VA request the billing profile | 403 | Integration | Pass: `tests/integration/admin-billing.test.ts` (M8a-07; Postgres 16, 2026-10-26) |
 | F-100 (M8a, platform) | New tenant with `alex_core` | Checklist created with the module's steps | Integration | Pass (`tests/integration/admin-onboarding.test.ts`) |
 | F-100 (M8a, platform) | Owner opens the dashboard before go-live | Setup progress shows only `client_visible` steps; none after go-live | E2E | Not run in a browser; integration covers the data and the card query (`tests/integration/onboarding-checklist.test.ts`) |
-| F-101 (M8b, platform) | Kill switch on, a call job runs | No call or text sent; job waits; resumes after off | Integration | Pass for calls (2026-10-26, M4-06); texts and the admin switch not run |
+| F-101 (M8b, platform) | Kill switch on, synthetic call and SMS are requested | Both outbound fakes receive no send; tenant suspension blocks sends | Integration | Pass (2026-10-28; disposable PostgreSQL/fake providers) |
 | F-100 (M8a, platform) | Owner or staff queries or updates internal steps | Internal rows invisible; no writes | Integration | Pass (`tests/integration/onboarding-checklist.test.ts`) |
 | F-100 (M8a, platform) | Admin marks go-live with open steps; VA tries go-live | Refused; admin succeeds once all steps done or n/a, audited | Integration | Pass (`tests/integration/onboarding-checklist.test.ts`) |
-| F-101 (M8b, platform) | Replay a failed webhook twice | Processed once | Integration | Not run |
-| F-101 (M8b, platform) | Suspend a tenant | Its users cannot sign in; its jobs no-op | Integration | Not run |
+| F-101 (M8b, platform) | Replay a failed webhook twice | One replay job is queued; safe job viewer excludes payload/output | Integration + E2E | Pass (2026-10-28) |
+| F-101 (M8b, platform) | Suspend/reactivate a tenant | Outbound is blocked while suspended and restored after reactivation | Integration | Pass (2026-10-28; authentication denial and queued-job draining not independently asserted) |
 | F-102 (M0, platform) | User has not accepted the current version | Redirect to acceptance; accepted once, not asked again | E2E | Partly run: integration covers pending, accept, not asked again, new version, RLS (`tests/integration/terms.test.ts`); E2E covers the signed-out redirect only. The signed-in redirect needs an E2E sign-in fixture, not built yet |
 | F-103 (M9, platform) | Admin uploads PDF; owner downloads; another tenant's id | Signed URL; 404 | Integration | Pass (2026-10-28, `tests/integration/documents-m9.test.ts`; disposable PostgreSQL and FakeStorage, PDF-only validation, tenant-prefixed object, foreign tenant 404); E2E covers owner list/download link and synthetic admin upload UI (`tests/e2e/m9-documents.spec.ts`) |
 | F-98 (M0, platform) | Staff account without TOTP | Reaches only enrolment; sign-in with TOTP works; reset by another admin is audited | E2E | Integration pass (M0-12, `staff-two-factor.test.ts`); E2E not run |

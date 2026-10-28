@@ -1090,12 +1090,19 @@ SECURITY DEFINER functions (owned by `kynetic_rollup`, `SET search_path = public
 | `admin_update_tenant_commercial(...)` | admin | Writes plan, pricing_tier, status, baseline, guarantee fields |
 | `admin_set_kynetic_role(p_user, p_role)` | admin | Sets `users.kynetic_role`; VA cannot call it for `admin` (F-61) |
 | `admin_tenant_overview()` | admin, va | One row per tenant: plan, status, leads 30d, booking rate, guarantee status, health inputs, last login (F-53, F-54) |
+| `admin_integration_health()` | admin | Provider and phone-number A2P status rollups, with latest synthetic/recorded provider health data (F-62) |
+| `admin_flagged_calls(p_limit)` | admin | Unreviewed flagged call summaries; tenant data remains hidden (F-28) |
+| `admin_set_outbound_kill_switch(p_tenant, p_enabled)` | admin | Audited global or tenant outbound gate (F-101) |
+| `admin_replay_webhook(p_event)` | admin | Marks a failed webhook for one replay; processing job enqueue is transactionally coupled (F-101) |
+| `admin_list_failed_webhooks(p_limit)` | admin | Failed, unprocessed webhook summaries; excludes payloads and secrets (F-101) |
 | `audit_search(p_tenant, p_actor, p_action, p_from, p_to)` | admin | Filtered read of `audit_log` (F-60) |
 
 Implemented in migration 0005 (M0-09, DC-054). Signatures: `create_tenant(slug, name, plan, timezone, owner_email, invite_token_hash, invite_expires_at) returns uuid`; `set_tenant_module(tenant, module, enabled, level default '')`; `admin_update_tenant_commercial(tenant, patch jsonb)` with an allowlist of fields; `admin_set_kynetic_role(user, role or null)`; `admin_tenant_overview()`; `audit_search(tenant, actor, action, from, to, limit)`. `admin_tenant_overview` and `audit_search` allow admin and VA (SECURITY 2.2: VA reads); the others are admin only. Only `kynetic_app` may execute them.
 
 Migration 0030 (M8a-02, DC-091) adds `owner_email_in_use(p_email)` (admin; true when a user or a pending invite holds the email) and `reissue_owner_invite(p_tenant, p_token_hash, p_expires_at)` (admin; revokes the pending owner invite, inserts a new one, marks the `owner_invited` checklist step done, returns the owner email and tenant name; audit action `invite.send` carries no token).
 Migration 0031 (M8a-03, DC-092) adds the user-management functions for F-61: `admin_list_users(tenant, search, limit)` (admin, va), `admin_invite_user(tenant, email, role, token_hash, expires_at)` (admin, va; client users only), `admin_reset_client_user(user)` (admin, va; client users only), and, admin only, `admin_deactivate_user(user)`, `admin_reactivate_user(user)`, `admin_set_membership_role(tenant, user, role)` and `admin_change_staff_role(user, role or null)`. The helper `rollup_active_staff()` confirms the session user is an active Kynetic user with the claimed role. Deactivation sets `users.disabled_at`, deletes all sessions and revokes pending invitations for the email in one transaction; every function audits in the same transaction. Only `kynetic_app` may execute them. New roll-up grants: `UPDATE (role)` on `memberships`, `UPDATE (revoked_at)` on `invitations`.
+
+Migration 0060 repairs the M8b integration-health source to use `phone_numbers.a2p_status` and assigns admin rollup functions to `kynetic_rollup` so forced RLS cannot hide aggregates. Migration 0061 adds failed-webhook listing and idempotent replay functions, owned by `kynetic_rollup`; the application enqueues the replay job in the same transaction. The operations page reads only a limited, safe `pgboss.job_common` summary and never returns job payload/output. Replay and rollups were exercised against disposable PostgreSQL on port 55432.
 
 Migration 0010 (M0-20, DC-060) adds `service_token_lookup(prefix)` and `service_token_touch(id)`, owned by `kynetic_rollup`, executable by `kynetic_app` and `kynetic_worker`. They exist because a bearer request has no tenant context yet. They take no tenant argument and cannot list tokens.
 

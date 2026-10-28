@@ -33,8 +33,13 @@ async function signedCookie(token: string): Promise<string> {
 
 async function main(): Promise<void> {
   db = await createTestDatabase({ jobs: true });
-  await seedTwoTenants(db.admin);
+  const seeded = await seedTwoTenants(db.admin);
+  await db.admin`insert into tenants (id, slug, name, plan, timezone) values ('33333333-3333-4333-8333-333333333333', 'tenant-c', 'Tenant C', 'founding', 'UTC')`;
   await db.admin`update tenants set name = 'Synthetic Brand Co', primary_color = '#2563eb' where id = ${IDS.tenantA}`;
+  await db.admin`update alex_configs set provider = 'elevenlabs', agent_ref = 'synthetic-e2e-agent', greeting = 'Synthetic greeting', paused = false where tenant_id = ${IDS.tenantA}`;
+  await db.admin`insert into integrations (tenant_id, kind, status, last_error, last_error_at, error_count) values (${IDS.tenantA}, 'sms', 'degraded', 'Synthetic integration failure', now(), 2)`;
+  await db.admin`insert into calls (tenant_id, contact_id, provider, provider_call_id, direction, started_at, flagged, flagged_at, flag_note) values (${IDS.tenantA}, ${seeded.a.contactId}, 'fake', 'synthetic-admin-review', 'inbound', now(), true, now(), 'Synthetic flagged reason')`;
+  await db.admin`insert into webhook_events (source, external_id, tenant_id, payload, attempts, last_error) values ('synthetic-m8b', 'e2e-failed-event', ${IDS.tenantA}, '{}'::jsonb, 2, 'Synthetic webhook failure')`;
   await db.admin`
     insert into tenant_modules (tenant_id, module_key, enabled, level)
     values (${IDS.tenantA}, 'crm', true, 'full')
