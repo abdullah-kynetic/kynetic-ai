@@ -16,7 +16,7 @@ import { positionBetween } from '../deals/position';
 type Entity = 'company' | 'deal' | 'note';
 type Mapping = Record<string, string>;
 type Report = { total: number; ok: number; failed: number; duplicates: number; issues: { row: number; reason: string }[] };
-type Options = { db?: Db };
+type Options = { db?: Db; afterEntityRow?: (imported: number) => void | Promise<void> };
 
 const fields: Record<Entity, string[]> = {
   company: ['name', 'phone', 'website', 'externalId'],
@@ -100,6 +100,7 @@ export async function commitEntityBatch(ctx: TenantContextInput, actor: Actor, b
     const seen = new Set<string>();
     const created: { tenantId: string; batchId: string; entity: Entity; recordId: string; action: 'created' }[] = [];
     const entity = batch.entity as Entity;
+    let interrupted = false;
     for (const { value } of rows) {
       if (await entityRowIssue(tx, ctx.tenantId, entity, value)) { failed++; continue; }
       const externalId = value.externalId || null;
@@ -142,12 +143,18 @@ export async function commitEntityBatch(ctx: TenantContextInput, actor: Actor, b
       }
       created.push({ tenantId: ctx.tenantId, batchId: batch.id, entity, recordId: id, action: 'created' });
       imported++;
+      try {
+        await opts.afterEntityRow?.(imported);
+      } catch {
+        interrupted = true;
+        break;
+      }
     }
     if (created.length) await tx.insert(importBatchRecords).values(created);
     const finishedAt = new Date().toISOString();
     const report = { ...(batch.report as Record<string, unknown>), commit: { imported, failed, duplicates } };
-    await tx.update(importBatches).set({ status: 'done', committedAt: finishedAt, report }).where(eq(importBatches.id, batch.id));
-    await audit(tx, { action: 'import.commit', entity: 'import_batch', entityId: batch.id, after: { imported, failed, duplicates } });
+    await tx.update(importBatches).set({ status: interrupted ? 'failed' : 'done', committedAt: finishedAt, report }).where(eq(importBatches.id, batch.id));
+    await audit(tx, { action: interrupted ? 'import.commit_partial_failure' : 'import.commit', entity: 'import_batch', entityId: batch.id, after: { imported, failed, duplicates, interrupted } });
     return { imported, failed, duplicates };
   }, opts);
 }

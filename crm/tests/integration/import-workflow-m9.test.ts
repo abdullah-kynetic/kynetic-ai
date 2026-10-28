@@ -9,6 +9,7 @@ import {
   commitContactBatch,
   dryRunImportBatch,
   commitImportBatch,
+  commitEntityBatch,
   undoImportBatch,
   listImportBatches
 } from '@/server/imports';
@@ -235,5 +236,18 @@ describe('F-90 to F-96 contact import workflow', () => {
     expect(await tdb.admin`select deleted_at from companies where id = ${company!.id}`).not.toEqual([{ deleted_at: null }]);
     expect(await tdb.admin`select deleted_at from deals where id = ${deal!.id}`).not.toEqual([{ deleted_at: null }]);
     expect(await tdb.admin`select deleted_at from notes where id = ${note!.id}`).not.toEqual([{ deleted_at: null }]);
+  });
+
+  it('marks an interrupted entity batch failed and leaves completed rows listed and undoable', async () => {
+    const batch = await createImportBatch(adminCtx, adminActor, { fileName: 'partial-companies.csv', fileType: 'csv', entity: 'company', importedSource: 'synthetic-partial' }, new TextEncoder().encode('name,external\nWritten Co,p-1\nNot reached Co,p-2'), { db: appDb });
+    await dryRunImportBatch(adminCtx, adminActor, batch.id, { name: 'name', externalId: 'external' }, { db: appDb });
+    const result = await commitEntityBatch(adminCtx, adminActor, batch.id, {
+      db: appDb,
+      afterEntityRow: (imported) => { if (imported === 1) throw new Error('synthetic worker interruption'); }
+    });
+    expect(result).toMatchObject({ imported: 1 });
+    expect(await tdb.admin`select status from import_batches where id = ${batch.id}`).toEqual([{ status: 'failed' }]);
+    expect(await tdb.admin`select record_id from import_batch_records where batch_id = ${batch.id}`).toHaveLength(1);
+    expect(await undoImportBatch(adminCtx, adminActor, batch.id, { db: appDb })).toMatchObject({ removed: 1, skipped: [] });
   });
 });

@@ -303,7 +303,7 @@ export async function undoImportBatch(
         .where(eq(importBatches.id, batchId))
         .limit(1);
       if (!batch) throw new AppError('NOT_FOUND');
-      if (batch.status !== 'done' || !batch.committedAt) throw new AppError('CONFLICT');
+      if (!['done', 'failed'].includes(batch.status) || !batch.committedAt) throw new AppError('CONFLICT');
       const records = await tx
         .select()
         .from(importBatchRecords)
