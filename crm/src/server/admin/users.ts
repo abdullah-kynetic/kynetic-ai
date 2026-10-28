@@ -115,8 +115,8 @@ export async function listUsers(
     tenantId: (r.tenant_id as string | null) ?? null,
     tenantName: (r.tenant_name as string | null) ?? null,
     membershipRole: (r.membership_role as UserRow['membershipRole']) ?? null,
-    lastLoginAt: (r.last_login_at as Date | null) ?? null,
-    inviteExpiresAt: (r.invite_expires_at as Date | null) ?? null
+    lastLoginAt: r.last_login_at ? new Date(r.last_login_at as string | number | Date) : null,
+    inviteExpiresAt: r.invite_expires_at ? new Date(r.invite_expires_at as string | number | Date) : null
   }));
 }
 

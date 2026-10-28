@@ -96,23 +96,27 @@ export default async function AppointmentsPage({
         </CardHeader>
         <CardContent>
           <form action={createAppointmentAction} className='grid gap-3 md:grid-cols-4'>
+            <label className='grid gap-1 text-sm'>Contact ID (optional)
+              <input name='contactId' placeholder='Contact ID (optional)' className='min-h-11 rounded border px-3 py-2' />
+            </label>
+            <div className='grid gap-1 text-sm'><label htmlFor='book-starts-at'>Start time</label>
             <input
-              name='contactId'
-              placeholder='Contact ID (optional)'
-              className='min-h-11 rounded border px-3 py-2'
-            />
-            <input
+              id='book-starts-at'
               name='startsAt'
               type='datetime-local'
               required
               className='min-h-11 rounded border px-3 py-2'
             />
+            </div>
+            <div className='grid gap-1 text-sm'><label htmlFor='book-ends-at'>End time</label>
             <input
+              id='book-ends-at'
               name='endsAt'
               type='datetime-local'
               required
               className='min-h-11 rounded border px-3 py-2'
             />
+            </div>
             <button className='min-h-11 rounded bg-primary px-3 py-2 text-primary-foreground' type='submit'>
               Book
             </button>
@@ -149,18 +153,24 @@ export default async function AppointmentsPage({
                       action={rescheduleAppointmentForm.bind(null, appointment.id)}
                       className='flex flex-wrap gap-1'
                     >
+                      <div className='grid gap-1 text-xs'><label htmlFor={`reschedule-start-${appointment.id}`}>New start time</label>
                       <input
+                        id={`reschedule-start-${appointment.id}`}
                         name='startsAt'
                         type='datetime-local'
                         required
                         className='min-h-11 w-full rounded border px-2 py-1 text-xs sm:w-36'
                       />
+                      </div>
+                      <div className='grid gap-1 text-xs'><label htmlFor={`reschedule-end-${appointment.id}`}>New end time</label>
                       <input
+                        id={`reschedule-end-${appointment.id}`}
                         name='endsAt'
                         type='datetime-local'
                         required
                         className='min-h-11 w-full rounded border px-2 py-1 text-xs sm:w-36'
                       />
+                      </div>
                       <button className='min-h-11 rounded border px-3 py-2 text-xs' type='submit'>
                         Reschedule
                       </button>
