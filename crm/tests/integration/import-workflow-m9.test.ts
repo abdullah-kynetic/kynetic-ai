@@ -121,6 +121,7 @@ describe('F-90 to F-96 contact import workflow', () => {
   });
 
   it('refuses unsafe spreadsheets and owner-only import attempts', async () => {
+    const storedBefore = (await storage.list(`${IDS.tenantA}/imports/`)).length;
     await expect(
       createImportBatch(
         adminCtx,
@@ -133,7 +134,17 @@ describe('F-90 to F-96 contact import workflow', () => {
         new Uint8Array([0x50, 0x4b]),
         { db: appDb }
       )
-    ).rejects.toMatchObject({ code: 'VALIDATION_FAILED' });
+    ).rejects.toMatchObject({ code: 'VALIDATION_FAILED', fieldErrors: { file: ['xlsx_not_available'] } });
+    await expect(
+      createImportBatch(
+        adminCtx,
+        adminActor,
+        { fileName: 'active.xlsm', fileType: 'xlsx', importedSource: 'csv_other' },
+        new Uint8Array([0x50, 0x4b, 0x03, 0x04, 0x00, 0x00]),
+        { db: appDb }
+      )
+    ).rejects.toMatchObject({ code: 'VALIDATION_FAILED', fieldErrors: { file: ['xlsx_not_available'] } });
+    expect(await storage.list(`${IDS.tenantA}/imports/`)).toHaveLength(storedBefore);
     await expect(
       createImportBatch(
         ctx.ownerA(),
