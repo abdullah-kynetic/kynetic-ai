@@ -7,6 +7,8 @@ import { registerStageRuleSubscribers } from '@/server/automations/rules';
 import { FakeSmsProvider } from '@/server/adapters/sms/fake';
 import { FakeEmailProvider } from '@/server/adapters/email/fake';
 import { deliverNotificationEmail } from '@/server/notifications';
+import { listAutomationTemplates, setAutomationEnabled } from '@/server/automations/service';
+import { loadEnabledModules } from '@/server/modules';
 import { clearSubscribers, deliver, type EventEnvelope } from '@/server/events';
 import { stopJobs } from '@/server/jobs';
 import { createTestDatabase, type TestDatabase } from '../helpers/db';
@@ -43,11 +45,33 @@ afterAll(async () => {
 });
 
 describe('M7 F-79/F-80/F-81 module acceptance', () => {
+  it('F-31: automation toggle refuses a disabled module and stops active runs when disabled', async () => {
+    const [template] = await tdb.admin`insert into automation_templates (key, module_key, label)
+      values ('quote_followup', 'quote_followup', 'Quote follow-up') on conflict (key) do update set label = excluded.label returning key`;
+    await tdb.admin`insert into tenant_modules (tenant_id, module_key, enabled) values (${IDS.tenantA}, 'quote_followup', false)
+      on conflict (tenant_id, module_key) do update set enabled = false`;
+    expect(await listAutomationTemplates({ tenantId: IDS.tenantA, role: 'system' }, { db: worker })).not.toContainEqual(expect.objectContaining({ key: 'quote_followup' }));
+    const owner = { userId: IDS.ownerA, kyneticRole: null, membership: { tenantId: IDS.tenantA, role: 'owner' as const, canExport: true, canBulkDelete: true }, viewAs: null };
+    const disabledModules = await loadEnabledModules({ tenantId: IDS.tenantA, role: 'system' }, { db: worker });
+    await expect(setAutomationEnabled({ tenantId: IDS.tenantA, role: 'owner', userId: IDS.ownerA }, owner, template!.key as 'quote_followup', true, disabledModules, { db: worker })).rejects.toMatchObject({ code: 'MODULE_DISABLED' });
+    await tdb.admin`update tenant_modules set enabled = true where tenant_id = ${IDS.tenantA} and module_key = 'quote_followup'`;
+    expect(await listAutomationTemplates({ tenantId: IDS.tenantA, role: 'system' }, { db: worker })).toContainEqual(expect.objectContaining({ key: 'quote_followup' }));
+    const enabledModules = await loadEnabledModules({ tenantId: IDS.tenantA, role: 'system' }, { db: worker });
+    const automation = await setAutomationEnabled({ tenantId: IDS.tenantA, role: 'owner', userId: IDS.ownerA }, owner, template!.key as 'quote_followup', true, enabledModules, { db: worker });
+    const [run] = await tdb.admin`insert into automation_runs (tenant_id, automation_id, contact_id, next_run_at)
+      values (${IDS.tenantA}, ${automation.id}, ${a!.contactId}, now()) returning id`;
+    await setAutomationEnabled({ tenantId: IDS.tenantA, role: 'owner', userId: IDS.ownerA }, owner, template!.key as 'quote_followup', false, enabledModules, { db: worker });
+    const [stopped] = await tdb.admin`select status, stop_reason from automation_runs where id = ${run!.id}`;
+    expect(stopped).toMatchObject({ status: 'stopped_module_off', stop_reason: 'template_disabled' });
+    expect(await listAutomationTemplates({ tenantId: IDS.tenantA, role: 'system' }, { db: worker })).toContainEqual(expect.objectContaining({ key: 'quote_followup' }));
+  });
+
   it('F-79: quoted-stage event enrolls once when quote_followup is on and no-ops when off', async () => {
     const [quoted] = await tdb.admin`insert into pipeline_stages (tenant_id, pipeline_id, name, position)
       values (${IDS.tenantA}, ${a!.pipelineId}, 'Quoted', 1) returning id`;
     const [sequence] = await tdb.admin`insert into automations (tenant_id, kind, template_key, name, enabled)
-      values (${IDS.tenantA}, 'template', 'quote_followup', 'Synthetic quote follow-up', true) returning id`;
+      values (${IDS.tenantA}, 'template', 'quote_followup', 'Synthetic quote follow-up', true)
+      on conflict (tenant_id, template_key) where kind = 'template' do update set enabled = true returning id`;
     await tdb.admin`insert into automation_templates (key, module_key, label)
       values ('quote_followup', 'quote_followup', 'Synthetic quote follow-up') on conflict do nothing`;
     await tdb.admin`insert into automation_steps (tenant_id, automation_id, position, channel, body)
@@ -60,7 +84,7 @@ describe('M7 F-79/F-80/F-81 module acceptance', () => {
     await tdb.admin`update tenant_modules set enabled = true where tenant_id = ${IDS.tenantA} and module_key = 'quote_followup'`;
     await expect(deliver(env, 'automation-quote-followup')).resolves.toBe('ran');
     await expect(deliver(env, 'automation-quote-followup')).resolves.toBe('ran');
-    const runs = await tdb.admin`select id from automation_runs where tenant_id = ${IDS.tenantA} and automation_id = ${sequence!.id}`;
+    const runs = await tdb.admin`select id from automation_runs where tenant_id = ${IDS.tenantA} and automation_id = ${sequence!.id} and status = 'active'`;
     expect(runs).toHaveLength(1);
     const jobs = await tdb.admin`select id from pgboss.job where name = 'automation.step' and data->>'runId' = ${runs[0]!.id}`;
     expect(jobs).toHaveLength(1);

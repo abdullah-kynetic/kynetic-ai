@@ -189,8 +189,8 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-30 (M4, platform) | Failed SMS callback (fake) | Error text shows; counted in integration health | Integration | Passing (M4-08, tests/integration/twilio-sms.test.ts) |
 | F-28 (M4, alex_core) | Owner flags a call with reason | `calls.flagged` true; review item exists; audit row written | Integration | Covered: crm/tests/integration/call-detail.test.ts |
 | F-30 (M4, platform) | Messages log lists both channels, filters, pages, isolates tenants, refuses with no messaging module | Newest first; error text on failed rows; other tenant invisible; `MODULE_DISABLED` | Integration | Passing (M4-12, tests/integration/message-log.test.ts) |
-| F-31 (M7, per template) | `quote_followup` module off | Template hidden; API refuses enablement | Integration | Not run |
-| F-31 (M7, per template) | Module on; deal enters Quoted | Step 1 scheduled | Integration | Not run |
+| F-31 (M7, per template) | `quote_followup` module off | Template hidden; API refuses enablement | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
+| F-31 (M7, per template) | Module on; deal enters Quoted | Step 1 scheduled; disabling stops active runs | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
 | F-35 (M7, platform) | New lead | Bell count +1; email sent per preference; open marks read | E2E | Integration pass (2026-10-26, M7-04); signed-in E2E Not run (no sign-in fixture) |
 | F-35 (M7, platform) | User A requests notifications of user B | Refused | Integration | Pass (2026-10-26, M7-04) |
 | F-37 (M9, crm) | Phone fragment on 10,000-contact seeded tenant | Matching contact returned; p95 under 500 ms (decided, recommended option) | Integration | Pass: `tests/integration/search-m9.test.ts` (10,000 synthetic contacts; 20 searches; tenant-scoped) |

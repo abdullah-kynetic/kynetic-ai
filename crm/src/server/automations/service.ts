@@ -5,6 +5,7 @@ import { audit } from '../audit';
 import { automations, automationRuns, automationTemplates } from '../db/schema';
 import { AppError, ValidationError } from '../errors';
 import { moduleSatisfied, type EnabledModules } from '../modules/keys';
+import { loadEnabledModules } from '../modules';
 import { withTenant, type TenantContextInput } from '../tenancy';
 import { can, type Actor } from '../auth/permissions';
 
@@ -40,7 +41,9 @@ export async function listAutomationTemplates(
         and(eq(automations.templateKey, automationTemplates.key), eq(automations.kind, 'template'))
       )
       .orderBy(automationTemplates.key);
-  return opts.tx ? run(opts.tx) : withTenant(ctx, run, { db: opts.db });
+  const rows = opts.tx ? await run(opts.tx) : await withTenant(ctx, run, { db: opts.db });
+  const enabled = await loadEnabledModules(ctx, { db: opts.db, tx: opts.tx });
+  return rows.filter((row) => !row.moduleKey || moduleSatisfied(enabled, { module: row.moduleKey as never }));
 }
 
 export async function setAutomationEnabled(
@@ -75,6 +78,7 @@ export async function setAutomationEnabled(
       })
       .onConflictDoUpdate({
         target: [automations.tenantId, automations.templateKey],
+        targetWhere: eq(automations.kind, 'template'),
         set: { enabled, updatedAt: sql`now()` }
       })
       .returning();
