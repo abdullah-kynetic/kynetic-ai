@@ -11,17 +11,24 @@ import {
 } from '@/server/service-auth';
 import { ctx, IDS, seedTwoTenants } from '../helpers/fixtures';
 import { createTestDatabase, type TestDatabase } from '../helpers/db';
+import { GET as getServiceContact } from '@/app/api/service/contacts/[id]/route';
 
 let tdb: TestDatabase;
 let db: Db;
+let contactA: string;
+let contactB: string;
 const bearer = (t: string) => `Bearer ${t}`;
 
 beforeAll(async () => {
   tdb = await createTestDatabase();
-  await seedTwoTenants(tdb.admin);
+  const seeded = await seedTwoTenants(tdb.admin);
+  contactA = seeded.a.contactId;
+  contactB = seeded.b.contactId;
   db = createDb(tdb.app);
+  (globalThis as typeof globalThis & { __kyneticDb?: Db }).__kyneticDb = db;
 });
 afterAll(async () => {
+  delete (globalThis as typeof globalThis & { __kyneticDb?: Db }).__kyneticDb;
   await tdb?.drop();
 });
 
@@ -143,5 +150,24 @@ describe('M0-20 service tokens', () => {
       expect(ok.status).toBe(200);
       expect(await ok.json()).toEqual({ tenantId: IDS.tenantA });
     }
+  });
+
+  it('F-89 service contact route returns only the token tenant contact and refuses missing scope or token', async () => {
+    const scoped = await issueServiceToken(ctx.ownerA(), { label: 'route-test', scopes: ['contacts:read'] }, { db });
+    const route = (id: string, token?: string) => getServiceContact(
+      new Request(`http://localhost/api/service/contacts/${id}`, token ? { headers: { authorization: bearer(token) } } : undefined),
+      { params: Promise.resolve({ id }) }
+    );
+    const own = await route(contactA, scoped.token);
+    expect(own.status).toBe(200);
+    expect((await own.json()).contact.contact.id).toBe(contactA);
+    const foreign = await route(contactB, scoped.token);
+    expect(foreign.status).toBe(404);
+    expect(await route(contactA)).toMatchObject({ status: 401 });
+
+    const unscoped = await issueServiceToken(ctx.ownerA(), { label: 'no-scope', scopes: [] }, { db });
+    expect(await route(contactA, unscoped.token)).toMatchObject({ status: 401 });
+    await revokeServiceToken(ctx.ownerA(), scoped.id, { db });
+    expect(await route(contactA, scoped.token)).toMatchObject({ status: 401 });
   });
 });

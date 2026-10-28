@@ -280,9 +280,10 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-87 (M0, platform) | Scan responses of a browser session | No provider key in any response | Integration | Not run |
 | F-87 (M0, platform) | Burst of login, webhook and API requests | 429 once the limit is hit | Integration | Not run |
 | F-89 (M7, platform) | Lead created | `lead.created` emitted once | Integration | Not run |
-| F-89 (M7, platform) | Service token scoped to tenant A used on tenant B | Refused | Integration | Not run |
-| F-89 (M7, platform) | Revoked service token | 401 | Integration | Not run |
+| F-89 (M7, platform) | Service token scoped to tenant A used on tenant B through contact route | Own contact 200; tenant B contact 404 | Integration | Pass (2026-10-28, `tests/integration/service-tokens.test.ts`) |
+| F-89 (M7, platform) | Missing token, insufficient scope, and revoked token on service contact route | Generic 401 | Integration | Pass (2026-10-28, `tests/integration/service-tokens.test.ts`) |
 | F-89 (M7, platform) | Producer emits `lead.created` | n8n subscriber receives canonical event and sends a valid HMAC signature | Integration | Pass (2026-10-28, `tests/integration/n8n-events-m7.test.ts`; synthetic webhook endpoint, Postgres 17) |
+| F-89 (M7, platform) | n8n returns 503 then succeeds on retry | Same event ID and valid stable HMAC on retry | Integration | Pass (2026-10-28, `tests/integration/n8n-events-m7.test.ts`; synthetic fetcher) |
 
 ### Cross-cutting risk rows
 

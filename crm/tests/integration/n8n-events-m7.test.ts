@@ -52,4 +52,30 @@ describe('F-89 n8n event delivery', () => {
       verifyN8nEvent(String(init?.body), headers.get('x-kynetic-signature') ?? '', secret)
     ).toBe(true);
   });
+
+  it('F-89 retries a failed n8n delivery with the same event id and valid stable signature', async () => {
+    clearSubscribers();
+    const secret = 'synthetic-webhook-retry-secret';
+    await tdb.admin`update tenant_modules set config = ${tdb.admin.json({
+      n8nWebhookUrl: 'https://n8n.example.test/hooks/retry', n8nWebhookSecret: secret
+    })} where tenant_id = ${IDS.tenantA} and module_key = 'platform'`;
+    const fetcher = vi.fn()
+      .mockResolvedValueOnce(new Response(null, { status: 503 }))
+      .mockResolvedValueOnce(new Response(null, { status: 204 }));
+    registerN8nEventSubscribers({ db: workerDb, fetcher: fetcher as typeof fetch });
+    const event: EventEnvelope = {
+      id: '55555555-5555-4555-8555-555555555555', name: 'lead.created', version: 1,
+      tenantId: IDS.tenantA, occurredAt: '2026-10-28T12:00:00.000Z',
+      actor: { type: 'system' }, payload: { contactId: 'synthetic-contact' }
+    };
+    await expect(deliver(event, 'n8n-lead-created')).rejects.toThrow('503');
+    await expect(deliver(event, 'n8n-lead-created')).resolves.toBe('ran');
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    const firstHeaders = new Headers(fetcher.mock.calls[0]![1]?.headers);
+    const secondHeaders = new Headers(fetcher.mock.calls[1]![1]?.headers);
+    expect(firstHeaders.get('x-kynetic-event-id')).toBe(event.id);
+    expect(secondHeaders.get('x-kynetic-event-id')).toBe(event.id);
+    expect(firstHeaders.get('x-kynetic-signature')).toBe(secondHeaders.get('x-kynetic-signature'));
+    expect(verifyN8nEvent(String(fetcher.mock.calls[1]![1]?.body), secondHeaders.get('x-kynetic-signature')!, secret)).toBe(true);
+  });
 });
