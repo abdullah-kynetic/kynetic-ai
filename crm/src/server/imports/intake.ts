@@ -7,9 +7,10 @@ import { AppError, ValidationError } from '../errors';
 import { getStorage, tenantKey } from '../adapters/storage';
 import { withTenant, type TenantContextInput } from '../tenancy';
 import { can, type Actor } from '../auth/permissions';
+import { IMPORT_MAX_ROWS, parseImportCsv } from './csv';
 
 export const IMPORT_MAX_BYTES = 10 * 1024 * 1024;
-export const IMPORT_MAX_ROWS = 50_000;
+export { IMPORT_MAX_ROWS };
 const inputSchema = z.strictObject({ fileName: z.string().trim().min(1).max(255), fileType: z.enum(['csv', 'xlsx']), importedSource: z.string().trim().min(1).max(100), sourceLabel: z.string().trim().max(200).optional(), mapping: z.record(z.string(), z.string()).default({}), duplicateRule: z.enum(['skip', 'fill_empty']).default('skip') });
 export type ImportIntakeInput = z.input<typeof inputSchema>;
 
@@ -18,8 +19,13 @@ export async function createImportBatch(ctx: TenantContextInput, actor: Actor, i
   const parsed = inputSchema.safeParse(input);
   if (!parsed.success) throw new ValidationError({ import: ['invalid'] });
   if (file.byteLength > IMPORT_MAX_BYTES) throw new ValidationError({ file: ['too_large'] });
+  // XLSX is a ZIP container; reject it until its contents can be inspected safely.
+  if (parsed.data.fileType === 'xlsx') throw new ValidationError({ file: ['xlsx_not_available'] });
+  if (file.length === 0 || file.includes(0)) throw new ValidationError({ file: ['invalid_csv'] });
+  try { new TextDecoder('utf-8', { fatal: true }).decode(file); } catch { throw new ValidationError({ file: ['invalid_csv_encoding'] }); }
+  try { parseImportCsv(file); } catch { throw new ValidationError({ file: ['invalid_csv_or_row_limit'] }); }
   const lower = parsed.data.fileName.toLowerCase();
-  if ((parsed.data.fileType === 'csv' && !lower.endsWith('.csv')) || (parsed.data.fileType === 'xlsx' && !lower.endsWith('.xlsx')) || lower.endsWith('.xlsm') || lower.endsWith('.zip')) throw new ValidationError({ file: ['unsupported_type'] });
+  if (!lower.endsWith('.csv')) throw new ValidationError({ file: ['unsupported_type'] });
   return withTenant(ctx, async (tx) => {
     const id = crypto.randomUUID();
     const key = tenantKey(ctx.tenantId, 'imports', id, parsed.data.fileName);
