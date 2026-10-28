@@ -12,6 +12,7 @@ import {
 } from '@/server/imports';
 import { createTestDatabase, type TestDatabase } from '../helpers/db';
 import { ctx, IDS, seedTwoTenants } from '../helpers/fixtures';
+import { IMPORT_MAX_BYTES } from '@/server/imports';
 
 let tdb: TestDatabase;
 let appDb: Db;
@@ -146,5 +147,23 @@ describe('F-90 to F-96 contact import workflow', () => {
         { db: appDb }
       )
     ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+  });
+
+  it('rejects oversized, renamed-binary, malformed and over-limit CSV before storage writes', async () => {
+    const before = (await storage.list(`${IDS.tenantA}/imports/`)).length;
+    const base = { fileName: 'intake.csv', fileType: 'csv' as const, importedSource: 'synthetic' };
+    await expect(createImportBatch(adminCtx, adminActor, base, new Uint8Array(IMPORT_MAX_BYTES + 1), { db: appDb })).rejects.toMatchObject({ code: 'VALIDATION_FAILED' });
+    await expect(createImportBatch(adminCtx, adminActor, base, new Uint8Array([0, 1, 2]), { db: appDb })).rejects.toMatchObject({ code: 'VALIDATION_FAILED' });
+    await expect(createImportBatch(adminCtx, adminActor, base, new TextEncoder().encode('name\n"broken'), { db: appDb })).rejects.toMatchObject({ code: 'VALIDATION_FAILED' });
+    await expect(createImportBatch(adminCtx, adminActor, base, new TextEncoder().encode(`name\n${'Ada\n'.repeat(50_001)}`), { db: appDb })).rejects.toMatchObject({ code: 'VALIDATION_FAILED' });
+    expect(await storage.list(`${IDS.tenantA}/imports/`)).toHaveLength(before);
+  });
+
+  it('normalizes phone duplicates and refuses commit without a matching dry run', async () => {
+    const file = new TextEncoder().encode('first,phone\nNew,(415) 555-0198\nNew,+14155550198');
+    const batch = await createImportBatch(adminCtx, adminActor, { fileName: 'duplicates.csv', fileType: 'csv', importedSource: 'synthetic' }, file, { db: appDb });
+    await expect(commitContactBatch(adminCtx, adminActor, batch.id, { db: appDb })).rejects.toMatchObject({ code: 'CONFLICT' });
+    const preview = await dryRunContactBatch(adminCtx, adminActor, batch.id, { firstName: 'first', phone: 'phone' }, { db: appDb });
+    expect(preview).toMatchObject({ total: 2, ok: 1, duplicates: 1, failed: 0 });
   });
 });
