@@ -96,23 +96,25 @@ export default async function AppointmentsPage({
         </CardHeader>
         <CardContent>
           <form action={createAppointmentAction} className='grid gap-3 md:grid-cols-4'>
-            <input
-              name='contactId'
-              placeholder='Contact ID (optional)'
-              className='min-h-11 rounded border px-3 py-2'
-            />
+            <label className='grid gap-1 text-sm'>Contact ID (optional)
+              <input name='contactId' placeholder='Contact ID (optional)' className='min-h-11 rounded border px-3 py-2' />
+            </label>
+            <label className='grid gap-1 text-sm'>Start time
             <input
               name='startsAt'
               type='datetime-local'
               required
               className='min-h-11 rounded border px-3 py-2'
             />
+            </label>
+            <label className='grid gap-1 text-sm'>End time
             <input
               name='endsAt'
               type='datetime-local'
               required
               className='min-h-11 rounded border px-3 py-2'
             />
+            </label>
             <button className='min-h-11 rounded bg-primary px-3 py-2 text-primary-foreground' type='submit'>
               Book
             </button>
@@ -149,18 +151,22 @@ export default async function AppointmentsPage({
                       action={rescheduleAppointmentForm.bind(null, appointment.id)}
                       className='flex flex-wrap gap-1'
                     >
+                      <label className='grid gap-1 text-xs'>New start time
                       <input
                         name='startsAt'
                         type='datetime-local'
                         required
                         className='min-h-11 w-full rounded border px-2 py-1 text-xs sm:w-36'
                       />
+                      </label>
+                      <label className='grid gap-1 text-xs'>New end time
                       <input
                         name='endsAt'
                         type='datetime-local'
                         required
                         className='min-h-11 w-full rounded border px-2 py-1 text-xs sm:w-36'
                       />
+                      </label>
                       <button className='min-h-11 rounded border px-3 py-2 text-xs' type='submit'>
                         Reschedule
                       </button>

@@ -13,7 +13,7 @@ import { cookies, headers } from 'next/headers';
 import { forbidden, redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
-  title: { default: 'Admin', template: '%s | Admin' },
+  title: { default: 'Admin', template: '%s | Admin', absolute: 'Admin | Kynetic' },
   robots: { index: false, follow: false }
 };
 export const dynamic = 'force-dynamic';
