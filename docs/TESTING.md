@@ -4,7 +4,7 @@ Kynetic Client CRM & Portal. Target path in the build repo: `docs/TESTING.md`.
 
 Source order: `DECISIONS_locked.md` (Oct 25, 2026) wins over `SPEC_client_crm_portal.md`. `PRD.md` supplies the F-IDs (F-01 to F-106) and the milestone and module tags. Anything in none of these is marked `Decided 2026-10-25 (recommended option: ...)` or, if it needs outside information, `UNRESOLVED`. Commands not verified in a running repo are marked `Not configured`.
 
-Status of this document: draft. The M0 gate (M0-28, 2026-10-26) ran the M0 suites on branch `m0/gate`: 105 unit, 244 integration, 15 Playwright E2E, `bun run check` and `bun run build` all pass. Matrix rows that an M0 test covers are marked `Pass`; every other row is still `Not run`. Not exercised anywhere yet: live Google sign-in, real email delivery, `docker compose up`, and signed-in E2E (no sign-in fixture).
+Status of this document: draft. The M0 gate (M0-28, 2026-10-26) ran the M0 suites on branch `m0/gate`: 105 unit, 244 integration, 15 Playwright E2E, `bun run check` and `bun run build` all pass. M1-09 was completed on 2026-10-28 on the current work branch: focused M1 integration suites, build checks and 20 Playwright E2E tests pass. Not exercised anywhere yet: live Google sign-in, real email delivery, and `docker compose up`.
 
 ---
 
@@ -96,11 +96,11 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-71 (M0, platform) | Static search for Clerk imports, packages and env vars | None remain | Unit (static) | Not run |
 | F-74 (M0 consent service; M4 enforces, platform) | `canContact` with no consent row, then with a revoked consent | Returns false both times; `recordConsent` and `revokeConsent` write rows | Unit | Pass (2026-10-26, m0/gate) |
 | notify() (M0, platform) | `notify` writes a `notifications` row for the target user only | Other users cannot read it | Integration | Pass (2026-10-26, m0/gate) |
-| F-20 and F-22 notification path (M0 `notify`, M3, crm) | Overdue task and @mention each notify the right user | One row per recipient; delivered through `notify` | Integration | Partly run: @mention passes (2026-10-26, M3-03); overdue task is M3-04 |
+| F-20 and F-22 notification path (M0 `notify`, M3, crm) | Overdue task and @mention each notify the right user | One row per recipient; delivered through `notify` | Integration | M3-04 overdue-task path passes (2026-10-28, `tests/integration/task-due.test.ts`); @mention passes (2026-10-26, M3-03) |
 | M0 CI and preview (platform) | Preview deploys from CI; shell and empty states render with no seed data and no console errors | Preview URL serves the shell | E2E | Not run |
-| F-07 (M1, crm) | Create a contact with a phone already on contact P | Duplicate warning shows and offers merge | E2E | Partly run (2026-10-26, M1-04): integration covers the warning data, "create anyway" and edit (`tests/integration/contacts.test.ts`, M1-04 block). Merge is not offered yet (M1-08); the automated E2E needs the signed-in fixture |
-| F-07 (M1, crm) | Merge two contacts | Deals, notes and activities move to the survivor; loser soft-removed; audit row written | Integration | Not run |
-| F-12 (M1, crm) | Custom field "Roof type" select: filter, table and CSV import | Value shows in table, filters, and CSV import accepts it | E2E | Partly run: filter and values covered by `tests/integration/custom-fields.test.ts`; table, settings UI and CSV import not run in a browser |
+| F-07 (M1, crm) | Create a contact with a phone already on contact P | Duplicate warning shows and offers merge | E2E | Pass (2026-10-28): signed-in owner fixture and merge journey in `tests/e2e/merge.spec.ts`; duplicate detection and panel behavior remain covered by `tests/integration/contacts.test.ts` |
+| F-07 (M1, crm) | Merge two contacts | Deals, notes and activities move to the survivor; loser soft-removed; audit row written | Integration | Pass (2026-10-28, M1-08, `tests/integration/contacts.test.ts`) |
+| F-12 (M1, crm) | Custom field "Roof type" select: filter, table and CSV import | Value shows in table, filters, and CSV import accepts it | E2E | Partly run (2026-10-28): signed-in settings screen and seeded field render in `tests/e2e/m1.spec.ts`; field validation/filter coverage passes in `tests/integration/custom-fields.test.ts`; CSV import remains M9 |
 | F-08 (M1, crm) | Assign owner to 20 selected contacts | All 20 updated in one audited operation | Integration | Pass (2026-10-26, M1-07, `contacts-bulk.test.ts`) |
 | F-14 (M2, crm) | Save a deal in Lost without a lost reason | Save refused, message names the field | Integration | Pass (2026-10-26, M2-01) |
 | F-16 (M2, crm) | Drag a card from Contacted to Qualified, then reload | Card stays in Qualified; column totals updated | E2E | Not run (no signed-in E2E fixture yet). Move, order, totals and `deal.stage_changed` covered by integration (`pipeline-board.test.ts`, M2-02) and unit (`pipeline-board-state.test.ts`) tests, which Pass 2026-10-26 |
@@ -109,7 +109,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-16 (M2, crm) | Server rejects a drag | Card rolls back; error toast | E2E | Not run |
 | F-16 (M2, crm) | Undo within toast window after a drag | Previous stage restored | E2E | Not run |
 | F-19 (M3, crm) | Any write to a covered entity | `activities` row created and shown on timeline; actor shown | Integration | Pass |
-| F-20 (M3, crm) | Task past due and incomplete | Under Overdue; assignee gets notification | Integration | List, completion undo, tenant-day grouping, module gating and isolation: Pass (`tasks.test.ts`, M3-02). Notification: Not run (M3-04) |
+| F-20 (M3, crm) | Task past due and incomplete | Under Overdue; assignee gets notification | Integration | Pass (2026-10-28): grouping, completion undo, tenant-day grouping, module gating and isolation in `tasks.test.ts`; delayed job and idempotent notification in `task-due.test.ts` |
 | F-76 (M4, alex_core) | Duplicate lead webhook (same source and external id) | Second call is a no-op; one contact, one deal | Integration | Pass (2026-10-26, M4-04; replayed 10 times) |
 | F-74 (M4, alex_core) | STOP inbound SMS (fake Twilio) | Consent revoked; confirmation on timeline; no further SMS or calls | Integration | Passing (M4-08, tests/integration/twilio-sms.test.ts) |
 | F-77 (M4, platform) | Same Retell or ElevenLabs call-ended event (same source and external id) replayed 10 times | One effect (one call row, one timeline entry) | Integration | Pass (`call-end.test.ts`) |

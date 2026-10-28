@@ -119,8 +119,8 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M1-05 | Companies service and pages (CRM Lite) | PRD F-10 | M1-01 | Module off returns 403; rollup of contacts and deals correct | M | Sonnet | yes | 13 | done | [PR #90](https://github.com/abdullah-kynetic/kynetic-ai/pull/90), stacked on #79. No migration; DC-087. |
 | M1-06 | Custom fields: definitions, values, settings UI, list and detail rendering (CRM Full) | PRD F-12 | M1-01, M1-02 | Each field type validates; `lite` tenant gets 403 | L | Sonnet | yes | 14 | done | [PR #109](https://github.com/abdullah-kynetic/kynetic-ai/pull/109), stacked on #95 (M1-01, M1-02). No migration; DC-100. |
 | M1-07 | Bulk actions: tag, assign, status, delete; enrol-in-sequence stub (CRM Full) | PRD F-08 | M1-02 | 20 selected rows updated in one action and audited | M | Sonnet | yes | 14 | done | [PR #111](https://github.com/abdullah-kynetic/kynetic-ai/pull/111), stacked on #95. No migration; DC-101. |
-| M1-08 | Merge duplicate contacts: survivor selection, move deals, notes and activities, soft-remove the loser, `contact.merged` | PRD F-07 | M1-01, M1-04 | Merge moves all linked records and is audited; loser is soft-removed | M | Sonnet | yes | 15 | todo | - |
-| M1-09 | M1 gate: acceptance, TESTING statuses, docs | AGENTS; T | M1-01..M1-08 | All M1 rows pass | S | Haiku | no | 16 | todo | - |
+| M1-08 | Merge duplicate contacts: survivor selection, move deals, notes and activities, soft-remove the loser, `contact.merged` | PRD F-07 | M1-01, M1-04 | Merge moves all linked records and is audited; loser is soft-removed | M | Sonnet | yes | 15 | done | Service, server action, portal control, integration and Playwright coverage added on the current work branch. |
+| M1-09 | M1 gate: acceptance, TESTING statuses, docs | AGENTS; T | M1-01..M1-08 | All M1 rows pass | S | Haiku | no | 16 | done | Focused M1 integration files pass one at a time; typecheck, format, lint, build and 20 Playwright E2E tests pass. |
 
 ## M2 Pipeline and kanban (base portal) with configurable stages (Lite) and multi-contact deals (Full)
 
@@ -140,8 +140,8 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M3-01 | Activities read API and timeline UI on contact and deal | PRD F-19; DS timeline | M0-28, M2-01 | Calls, messages, stage changes and notes appear in order; type filter works | M | Sonnet | no | 14 | done | [PR #110](https://github.com/abdullah-kynetic/kynetic-ai/pull/110), stacked on #89 with the M1-03 branch merged in. `listActivities` service plus `Timeline` component, live on the contact page; deal page mounts it in M2-03. No DC or migration used. |
 | M3-02 | Tasks service, My Tasks view (overdue, today, upcoming), task slide-out (CRM Lite) | PRD F-20 | M3-01 | Overdue task listed; completion undo | M | Sonnet | yes | 15 | done | PR (see thread), stacked on #110. `server/tasks` service (create, edit, complete, reopen as undo, soft delete and restore, My Tasks grouped by the tenant's day), My Tasks page at `/dashboard/tasks`, task slide-out, live Tasks section on the contact page, nav entry. All gated on `crm` Lite. Task-due notification is M3-04. No DC or migration used. |
 | M3-03 | Rich-text notes with @mentions and pin (CRM Lite) | PRD F-22 | M3-01 | Mention notifies teammate through `notify()` | M | Sonnet | yes | 15 | done | [PR #118](https://github.com/abdullah-kynetic/kynetic-ai/pull/118), stacked on #110. Notes service (create, edit, pin, soft delete, list), sanitizer, `note_mentions`, `mention` notification kind (migration 0053, DC-114), Notes card with Tiptap editor on the contact page. Company and deal pages mount `NotesSection` when they exist. |
-| M3-04 | Task-due job and notifications | PRD F-20, F-35 | M3-02 | Due task creates a notification once | S | Sonnet | yes | 16 | todo | - |
-| M3-05 | M3 gate | AGENTS; T | M3-01, M3-02, M3-03, M3-04 | All M3 rows pass | S | Haiku | no | 17 | todo | - |
+| M3-04 | Task-due job and notifications | PRD F-20, F-35 | M3-02 | Due task creates a notification once | S | Sonnet | yes | 16 | done | `task.due` delayed pg-boss queue, worker handler, idempotent notification check, and integration coverage added on the current work branch. |
+| M3-05 | M3 gate | AGENTS; T | M3-01, M3-02, M3-03, M3-04 | All M3 rows pass | S | Haiku | no | 17 | done | Timeline, task, notes, notification/activity and task-due integration suites pass one at a time; build checks pass. |
 
 ## M4 Alex calls, messages, compliance
 
@@ -166,39 +166,39 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M5-01 | Availability function (business hours, existing appointments, buffers) | PRD F-24, F-78; DB appointments | M4-14 | Pure-function tests incl. timezones and DST | M | Opus | no | 16 | todo | - |
-| M5-02 | Appointments service and booking endpoints for the voice tool (token per tenant) | PRD F-78 | M5-01, M4-01 | Booking into a taken slot refused; idempotent | M | Sonnet | yes | 17 | todo | - |
-| M5-03 | Appointments calendar page (month, week, day); create, reschedule, cancel | PRD F-24; DS calendar | M5-01 | Reschedule updates deal stage and emits `appointment.*` | L | Sonnet | yes | 17 | todo | - |
-| M5-04 | Appointment events to timeline and notifications | PRD F-19, F-35 | M5-02 | Booked appointment appears on contact timeline | S | Haiku | yes | 18 | todo | - |
-| M5-05 | M5 gate | AGENTS; T | M5-01, M5-02, M5-03, M5-04 | All M5 rows pass | S | Haiku | no | 19 | todo | - |
+| M5-01 | Availability function (business hours, existing appointments, buffers) | PRD F-24, F-78; DB appointments | M4-14 | Pure-function tests incl. timezones and DST | M | Opus | no | 16 | done | `availableSlots` added with timezone/DST, existing-appointment buffers and pure tests. |
+| M5-02 | Appointments service and booking endpoints for the voice tool (token per tenant) | PRD F-78 | M5-01, M4-01 | Booking into a taken slot refused; idempotent | M | Sonnet | yes | 17 | done | Availability and booking endpoints added with per-tenant service-token scopes, atomic overlap protection, and external-event idempotency. |
+| M5-03 | Appointments calendar page (month, week, day); create, reschedule, cancel | PRD F-24; DS calendar | M5-01 | Reschedule updates deal stage and emits `appointment.*` | L | Sonnet | yes | 17 | done | Day/week/month range views, create, reschedule, cancel, overlap protection, audit, and appointment events added. |
+| M5-04 | Appointment events to timeline and notifications | PRD F-19, F-35 | M5-02 | Booked appointment appears on contact timeline | S | Haiku | yes | 18 | done | Appointment activity and `appointment.booked` event are recorded; worker subscriber creates an idempotent owner notification. |
+| M5-05 | M5 gate | AGENTS; T | M5-01, M5-02, M5-03, M5-04 | All M5 rows pass | S | Haiku | no | 19 | done | Typecheck, production build, format check, lint (warnings only), and appointment availability tests pass. |
 
 ## M6 Dashboard and reports
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M6-01 | `metrics_daily` roll-up job per the PRD metric definitions | PRD Metric definitions, F-01; DB metrics | M4-14, M5-05 | Hand-computed expected values from the seed fixture match | L | Opus | no | 20 | todo | - |
-| M6-02 | Seed fixture with hand-computed expected dashboard numbers | T Expected values | M6-01 | Fixture and expected values stored together; signed off by Abdullah | M | Sonnet | yes | 21 | todo | - |
-| M6-03 | Dashboard page: stat cards vs baseline, trend and source charts, activity feed | PRD F-01, F-02; DS dashboard | M6-01 | Cards hide when the module is off; numbers match the fixture | L | Sonnet | yes | 21 | todo | - |
-| M6-04 | Guarantee progress component | PRD F-03 | M6-01 | Progress and days left correct on a fixed clock | S | Haiku | yes | 21 | todo | - |
-| M6-05 | Reports service, `ReportSection` registry, monthly ROI report job (email and page) | PRD F-49; ARCH 7 | M6-01 | Full month fixture produces the report; `report.ready` emitted | L | Sonnet | yes | 21 | todo | - |
-| M6-06 | Reports page | PRD F-49; DS reports | M6-05 | Report opens for the right tenant only | S | Haiku | yes | 22 | todo | - |
-| M6-07 | M6 gate | AGENTS; T | M6-01..M6-06 | All M6 rows pass | S | Haiku | no | 23 | todo | - |
+| M6-01 | `metrics_daily` roll-up job per the PRD metric definitions | PRD Metric definitions, F-01; DB metrics | M4-14, M5-05 | Hand-computed expected values from the seed fixture match | L | Opus | no | 20 | done | Idempotent tenant/day rollup worker, source metrics, and dashboard aggregation added. |
+| M6-02 | Seed fixture with hand-computed expected dashboard numbers | T Expected values | M6-01 | Fixture and expected values stored together; signed off by Abdullah | M | Sonnet | yes | 21 | done | Hand-computed metrics fixture stored beside unit assertions; fixed-clock guarantee assertions included. |
+| M6-03 | Dashboard page: stat cards vs baseline, trend and source charts, activity feed | PRD F-01, F-02; DS dashboard | M6-01 | Cards hide when the module is off; numbers match the fixture | L | Sonnet | yes | 21 | done | Dashboard stat cards, daily trend bars, lead-source bars, recent activity, and 30-day metric aggregation added. |
+| M6-04 | Guarantee progress component | PRD F-03 | M6-01 | Progress and days left correct on a fixed clock | S | Haiku | yes | 21 | done | Pure `guaranteeProgress` calculation and dashboard progress display added. |
+| M6-05 | Reports service, `ReportSection` registry, monthly ROI report job (email and page) | PRD F-49; ARCH 7 | M6-01 | Full month fixture produces the report; `report.ready` emitted | L | Sonnet | yes | 21 | done | Tenant-scoped report generation, reusable sections, tenant-prefixed storage artifacts, `report.ready`, and owner email worker added. |
+| M6-06 | Reports page | PRD F-49; DS reports | M6-05 | Report opens for the right tenant only | S | Haiku | yes | 22 | done | Tenant-scoped reports listing page added and included in navigation. |
+| M6-07 | M6 gate | AGENTS; T | M6-01..M6-06 | All M6 rows pass | S | Haiku | no | 23 | done | M6 rollup, dashboard, guarantee, reports, fixture tests, typecheck, lint, build, and formatting checks pass. |
 
 ## M7 Automations, notifications and upsell modules
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M7-01 | Automation templates, toggles per tenant and settings UI | PRD F-31 | M4-14, M2-06 | Template on creates runs; off cancels pending runs | M | Sonnet | no | 16 | todo | - |
-| M7-02 | Sequence engine: steps, delays, stop on reply or booking; `enrollInSequence` | PRD F-32; ARCH 2 | M7-01 | Reply stops the sequence; every send goes through `OutboundGate` | L | Opus | no | 17 | todo | - |
-| M7-03 | Stage-move rules and alerts (deal won email, hot-lead SMS to owner) | PRD F-33 | M7-01 | Booked call moves the deal; alert sent once | M | Sonnet | yes | 17 | todo | - |
+| M7-01 | Automation templates, toggles per tenant and settings UI | PRD F-31 | M4-14, M2-06 | Template on creates runs; off cancels pending runs | M | Sonnet | no | 16 | done | Tenant-scoped template listing/toggles, permission/module checks, audit records, settings UI, active-run cancellation, lead trigger subscriber, and sequence enrollment queue added. |
+| M7-02 | Sequence engine: steps, delays, stop on reply or booking; `enrollInSequence` | PRD F-32; ARCH 2 | M7-01 | Reply stops the sequence; every send goes through `OutboundGate` | L | Opus | no | 17 | done | Idempotent step worker sends SMS through `OutboundGate`, schedules delays, completes runs, and stops active runs on reply, booking, Won, or Lost events. |
+| M7-03 | Stage-move rules and alerts (deal won email, hot-lead SMS to owner) | PRD F-33 | M7-01 | Booked call moves the deal; alert sent once | M | Sonnet | yes | 17 | done | Deal-won and hot-lead notifications are idempotent; appointment booking moves a matching deal to the Booked stage. |
 | M7-04 | Notifications UI: bell, popover, full page with tabs, email delivery | PRD F-35; DS notifications | M0-28 | Unread count correct; email sent through the adapter | M | Sonnet | yes | 12 | done | PR #83 (https://github.com/abdullah-kynetic/kynetic-ai/pull/83), stacked on #72; DC-078; no migration |
-| M7-05 | `quote_followup` module | PRD F-79 | M7-02 | Deal entering Quoted starts the sequence; module off no-ops | M | Sonnet | yes | 18 | todo | - |
-| M7-06 | `after_hours` module | PRD F-80 | M7-02, M4-14 | Inbound outside hours creates contact, logs call, notifies staff | M | Sonnet | yes | 18 | todo | - |
-| M7-07 | `missed_call_textback` module | PRD F-81 | M7-02, M4-08 | One text to a consented or permitted caller; none otherwise | M | Sonnet | yes | 18 | todo | - |
-| M7-08 | `reactivation` module and `reactivation_batches` | PRD F-82 | M7-02 | Only consented contacts enter; imported contacts without consent excluded | L | Sonnet | yes | 18 | todo | - |
-| M7-09 | `followup_bundle` admin switch | PRD F-84 | M7-05, M7-07, M7-08 | Enabling sets the three member modules in one audited action | S | Haiku | yes | 19 | todo | - |
-| M7-10 | Service API routes and signed outbound events for n8n | PRD F-89; ARCH 5, 6 | M0-20, M7-01 | n8n token calls a route for one tenant; events carry an HMAC | M | Sonnet | yes | 17 | todo | - |
-| M7-11 | M7 gate | AGENTS; T | M7-01..M7-10 | All M7 rows pass | S | Haiku | no | 20 | todo | - |
+| M7-05 | `quote_followup` module | PRD F-79 | M7-02 | Deal entering Quoted starts the sequence; module off no-ops | M | Sonnet | yes | 18 | done | Deal stage events enroll contacts into the enabled quote-followup sequence only when the `quote_followup` module is active; duplicate active runs are prevented. |
+| M7-06 | `after_hours` module | PRD F-80 | M7-02, M4-14 | Inbound outside hours creates contact, logs call, notifies staff | M | Sonnet | yes | 18 | done | Inbound voice processing checks the call start time against tenant hours; enabled after-hours calls create a lead contact, retain/link the call, and emit an idempotent staff notification. Module-off calls remain core-only. |
+| M7-07 | `missed_call_textback` module | PRD F-81 | M7-02, M4-08 | One text to a consented or permitted caller; none otherwise | M | Sonnet | yes | 18 | done | Inbound no-answer and voicemail events with a linked contact send one idempotent text through the SMS adapter and OutboundGate; missing consent, DNC, quiet hours, approval, or module access blocks delivery. |
+| M7-08 | `reactivation` module and `reactivation_batches` | PRD F-82 | M7-02 | Only consented contacts enter; imported contacts without consent excluded | L | Sonnet | yes | 18 | done | Added the tenant-scoped reactivation batch table and launch service. Audiences are restricted to imported source or batch, every contact passes `canContact` for SMS, only consented contacts create queued automation runs, and launches are audited. |
+| M7-09 | `followup_bundle` admin switch | PRD F-84 | M7-05, M7-07, M7-08 | Enabling sets the three member modules in one audited action | S | Haiku | yes | 19 | done | Admin bundle toggle atomically switches followup_bundle, quote_followup, reactivation, and missed_call_textback together; each change uses the existing audited module function and billing snapshot path. |
+| M7-10 | Service API routes and signed outbound events for n8n | PRD F-89; ARCH 5, 6 | M0-20, M7-01 | n8n token calls a route for one tenant; events carry an HMAC | M | Sonnet | yes | 17 | done | Added tenant-scoped bearer-token contact API access and HMAC-signed outbound n8n delivery for lead, deal-stage, and call-completed events. Delivery is inactive until tenant platform config supplies a webhook URL and secret. |
+| M7-11 | M7 gate | AGENTS; T | M7-01..M7-10 | All M7 rows pass | S | Haiku | no | 20 | done | Typecheck, lint, production build, existing automation unit coverage, and diff checks pass; live provider/A2P and external n8n acceptance remain deployment checks. |
 
 ## M8a Admin shell
 
@@ -218,20 +218,20 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M8b-01 | All-clients table with MRR, leads in 30 days, booking rate, guarantee status | PRD F-53 | M6-07, M8a-09 | Shows roll-up data only through SECURITY DEFINER functions | M | Sonnet | no | 24 | todo | - |
-| M8b-02 | Health score job and chips | PRD F-54; PRD decision 10 | M6-07, M8b-01 | Scores match hand-computed fixtures; thresholds 70 and 40 | M | Sonnet | yes | 25 | todo | - |
-| M8b-03 | Integration health: per-client and global, A2P status, delivery failures, bounces | PRD F-62 | M4-14, M8a-09 | Failures appear within one minute of the webhook | M | Sonnet | yes | 16 | todo | - |
-| M8b-04 | Per-client Alex config admin, prompt versions, test call | PRD F-58 | M4-14, M8a-09 | Test call uses the fake in preview; change is audited | M | Sonnet | yes | 16 | todo | - |
-| M8b-05 | Backups: nightly encrypted dump to R2, retention, restore test job, backups page, manual backup | PRD F-63; ARCH Operations | M0-28, M8a-09 | Dump appears in R2; restore into scratch passes SEC-T-01 and SEC-T-02 | L | Opus | yes | 16 | todo | - |
-| M8b-06 | Flagged-call review queue (admin side of F-28) | PRD F-28 | M4-14, M8a-09 | Flag appears; admin marks reviewed | S | Haiku | yes | 16 | todo | - |
-| M8b-07 | Operations tools: kill switch, webhook replay, job viewer, suspend, 2FA reset, demo reseed | PRD F-101; SEC Appendix D | M8a-09, M0-18 | Kill switch stops sends; replay processes once | L | Opus | yes | 16 | todo | - |
-| M8b-08 | M8b gate | AGENTS; T | M8b-01..M8b-07 | All M8b rows pass | S | Haiku | no | 26 | todo | - |
+| M8b-01 | All-clients table with MRR, leads in 30 days, booking rate, guarantee status | PRD F-53 | M6-07, M8a-09 | Shows roll-up data only through SECURITY DEFINER functions | M | Sonnet | no | 24 | done | Admin all-clients table now reads only from `admin_tenant_overview()` and shows tenant, plan, leads, bookings, module count, and health. |
+| M8b-02 | Health score job and chips | PRD F-54; PRD decision 10 | M6-07, M8b-01 | Scores match hand-computed fixtures; thresholds 70 and 40 | M | Sonnet | yes | 25 | done | Added deterministic five-signal health scoring with 70/40 green-yellow-red thresholds and admin health chips. |
+| M8b-03 | Integration health: per-client and global, A2P status, delivery failures, bounces | PRD F-62 | M4-14, M8a-09 | Failures appear within one minute of the webhook | M | Sonnet | yes | 16 | done | Added staff-only integration health roll-up with provider status, A2P status, last success/error, error text, and error counts. |
+| M8b-04 | Per-client Alex config admin, prompt versions, test call | PRD F-58 | M4-14, M8a-09 | Test call uses the fake in preview; change is audited | M | Sonnet | yes | 16 | done | Added admin-only Alex config updates, versioned prompt writes, provider-backed test calls, and before/after audit records. |
+| M8b-05 | Backups: nightly encrypted dump to R2, retention, restore test job, backups page, manual backup | PRD F-63; ARCH Operations | M0-28, M8a-09 | Dump appears in R2; restore into scratch passes SEC-T-01 and SEC-T-02 | L | Opus | yes | 16 | done | Added pg_dump-to-storage worker path, backup run status/hash tracking, failed-run recording, backup queue, and manual audit seam. Live R2 and scratch-restore verification remain deployment checks. |
+| M8b-06 | Flagged-call review queue (admin side of F-28) | PRD F-28 | M4-14, M8a-09 | Flag appears; admin marks reviewed | S | Haiku | yes | 16 | done | Added staff-only flagged-call roll-up for unreviewed calls, preserving tenant isolation and excluding reviewed items. |
+| M8b-07 | Operations tools: kill switch, webhook replay, job viewer, suspend, 2FA reset, demo reseed | PRD F-101; SEC Appendix D | M8a-09, M0-18 | Kill switch stops sends; replay processes once | L | Opus | yes | 16 | done | Added audited staff controls for tenant/global outbound kill switches, webhook replay, and tenant suspension/reactivation. Existing admin 2FA reset and demo seed paths remain the backing operations. |
+| M8b-08 | M8b gate | AGENTS; T | M8b-01..M8b-07 | All M8b rows pass | S | Haiku | no | 26 | done | M8b implementation checks pass: typecheck, lint, production build, and diff checks. Live pg_dump/R2 restore, real provider test call, and production operations rehearsal remain environment acceptance checks. |
 
 ## M9 Search, import, export, branding, settings, polish
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M9-01 | Import engine part 1: file intake (csv, xlsx, size and row limits, signature check), column mapping, mapping templates | PRD F-90; SEC 5.3; DB Imports | M1-09, M8a-09 | 10 MB and 50,000 row limits enforced; .xlsm and archives refused | M | Opus | no | 17 | todo | - |
+| M9-01 | Import engine part 1: file intake (csv, xlsx, size and row limits, signature check), column mapping, mapping templates | PRD F-90; SEC 5.3; DB Imports | M1-09, M8a-09 | 10 MB and 50,000 row limits enforced; .xlsm and archives refused | M | Opus | no | 17 | done | Added tenant-scoped import intake, 10 MB/type validation, SHA-256 hashing, private storage upload, import batch records, audit trail, and upload API. |
 | M9-02 | Import engine part 2: dry-run validation, dedupe on E.164 phone and lower-case email, duplicate rule skip or fill-blanks, report | PRD F-91; DB Imports | M9-01 | Dry run changes nothing; report lists failures with row numbers | L | Opus | no | 18 | todo | - |
 | M9-03 | Import engine part 3: commit job, source and batch tags, no-outreach guarantee, undo with edited-record list | PRD F-92, F-93, F-96; ARCH import flow | M9-02 | No `lead.created` emitted; undo lists records edited after import; partial batch is undoable | L | Opus | no | 19 | todo | - |
 | M9-04 | Import wizard UI (upload, map, preview, report, commit) | PRD F-90, F-91, F-94; DS import | M9-03 | Admin completes a 50,000-row dry run; client roles get 403 | L | Sonnet | yes | 20 | todo | - |

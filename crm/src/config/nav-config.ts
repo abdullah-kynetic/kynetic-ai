@@ -44,11 +44,27 @@ export const navGroups: NavGroup[] = [
         items: []
       },
       {
+        title: 'Appointments',
+        url: '/dashboard/appointments',
+        icon: 'calendar',
+        isActive: false,
+        module: 'crm',
+        level: 'lite',
+        items: []
+      },
+      {
         title: 'Calls',
         url: '/dashboard/calls',
         icon: 'phone',
         isActive: false,
         module: 'alex_core',
+        items: []
+      },
+      {
+        title: 'Reports',
+        url: '/dashboard/reports',
+        icon: 'dashboard',
+        isActive: false,
         items: []
       },
       {
@@ -140,6 +156,13 @@ export const navGroups: NavGroup[] = [
       {
         title: 'Notification preferences',
         url: '/dashboard/settings/notifications',
+        icon: 'settings',
+        isActive: false,
+        items: []
+      },
+      {
+        title: 'Automations',
+        url: '/dashboard/settings/automations',
         icon: 'settings',
         isActive: false,
         items: []

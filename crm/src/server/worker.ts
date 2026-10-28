@@ -13,6 +13,20 @@ import { registerNotificationEmailWorker } from './notifications';
 import { registerLeadProcessor } from './leads';
 import { registerResendProcessor } from './email';
 import { registerWebhookWorker } from './webhooks';
+import { registerTaskDueWorker } from './tasks';
+import { registerAppointmentSubscriber } from './appointments';
+import { registerMetricsWorker } from './metrics';
+import {
+  registerAutomationSubscribers,
+  registerAutomationWorker,
+  registerStageRuleSubscribers,
+  registerAfterHoursSubscriber,
+  registerMissedCallTextbackSubscriber
+} from './automations';
+import { registerReportWorker } from './reports';
+import { registerN8nEventSubscribers } from './integrations/n8n';
+import { registerWorker } from './jobs';
+import { runBackup, type BackupJob } from './admin/backups';
 
 // Worker entry (kynetic_worker). Feature milestones register their subscribers and webhook
 // processors before this point; the fan-out workers below deliver to them.
@@ -26,6 +40,17 @@ registerResendProcessor();
 await registerWebhookWorker();
 await registerOutboundCallWorker();
 await registerNotificationEmailWorker();
+await registerTaskDueWorker();
+registerAppointmentSubscriber();
+await registerMetricsWorker();
+registerAutomationSubscribers();
+registerStageRuleSubscribers();
+registerAfterHoursSubscriber();
+registerMissedCallTextbackSubscriber();
+registerN8nEventSubscribers();
+await registerWorker<BackupJob>('backup.run', runBackup);
+await registerAutomationWorker();
+await registerReportWorker();
 console.log(JSON.stringify({ level: 'info', msg: 'worker started' }));
 
 for (const signal of ['SIGTERM', 'SIGINT'] as const) {

@@ -25,7 +25,13 @@ export const QUEUES = {
   /** One job per stored webhook_events row. */
   'webhook.process': { ...retrying, policy: 'short' },
   /** One job per outbound call attempt (F-78). A queued attempt is unique per tenant, contact, trigger and attempt. */
-  'call.outbound': { ...retrying, policy: 'short' }
+  'call.outbound': { ...retrying, policy: 'short' },
+  /** One delayed job per task/due-date version; the handler rechecks the live task before notifying. */
+  'task.due': { ...retrying, policy: 'short' } /** One rebuildable tenant/day metrics rollup. */,
+  'metrics.daily': { ...retrying, policy: 'short' },
+  'automation.step': { ...retrying, policy: 'short' },
+  'report.monthly': { ...retrying, policy: 'short' }
+  , 'backup.run': { ...retrying, policy: 'short' }
 } as const satisfies Record<string, QueueDef>;
 
 export type QueueName = keyof typeof QUEUES;
