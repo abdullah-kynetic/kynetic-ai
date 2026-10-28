@@ -12,6 +12,8 @@ export const envSchema = z.object({
   DATABASE_URL_WORKER: z.string().startsWith('postgres').optional(),
   BETTER_AUTH_SECRET: z.string().min(32),
   APP_ENCRYPTION_KEY: z.string().min(32),
+  BACKUP_ENCRYPTION_KEY: z.string().min(32).optional(),
+  DATABASE_URL_BACKUP: z.string().startsWith('postgres').optional(),
   GOOGLE_CLIENT_ID: z.string().min(1).optional(),
   GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
   // Key rotation (SECURITY 4.2): bump the version with a new key and list old ones as "v:key,...".

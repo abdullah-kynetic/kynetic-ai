@@ -25,8 +25,8 @@ import {
 } from './automations';
 import { registerReportWorker } from './reports';
 import { registerN8nEventSubscribers } from './integrations/n8n';
-import { registerWorker } from './jobs';
-import { runBackup, type BackupJob } from './admin/backups';
+import { registerWorker, scheduleRecurring } from './jobs';
+import { handleBackupJob, type BackupJob } from './admin/backups';
 
 // Worker entry (kynetic_worker). Feature milestones register their subscribers and webhook
 // processors before this point; the fan-out workers below deliver to them.
@@ -48,7 +48,21 @@ registerStageRuleSubscribers();
 registerAfterHoursSubscriber();
 registerMissedCallTextbackSubscriber();
 registerN8nEventSubscribers();
-await registerWorker<BackupJob>('backup.run', runBackup);
+await registerWorker<BackupJob>('backup.run', handleBackupJob);
+await scheduleRecurring(
+  'worker',
+  'backup.run',
+  '0 2 * * *',
+  { kind: 'nightly' },
+  'encrypted-backup-nightly'
+);
+await scheduleRecurring(
+  'worker',
+  'backup.run',
+  '0 3 1 * *',
+  { kind: 'restore_test' },
+  'encrypted-backup-monthly-restore'
+);
 await registerAutomationWorker();
 await registerReportWorker();
 console.log(JSON.stringify({ level: 'info', msg: 'worker started' }));

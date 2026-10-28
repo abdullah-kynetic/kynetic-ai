@@ -19,6 +19,12 @@ export class FakeStorage implements StorageAdapter {
     this.objects.delete(key);
   }
 
+  async list(prefix: string) {
+    return [...this.objects.keys()]
+      .filter((key) => key.startsWith(prefix))
+      .map((key) => ({ key, lastModified: this.now() }));
+  }
+
   async signedGetUrl(key: string) {
     const expires = Math.floor(this.now().getTime() / 1000) + SIGNED_URL_TTL_S;
     return `${FAKE_ORIGIN}${encodeURI(key)}?expires=${expires}`;

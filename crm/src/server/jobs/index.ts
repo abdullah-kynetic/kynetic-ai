@@ -40,6 +40,17 @@ export async function getBoss(role: Role): Promise<PgBoss> {
   return boss[role]!;
 }
 
+export async function scheduleRecurring(
+  role: Role,
+  queue: QueueName,
+  cron: string,
+  payload: object,
+  key: string
+): Promise<void> {
+  const b = await getBoss(role);
+  await b.schedule(queue, cron, payload, { key });
+}
+
 export async function stopJobs(): Promise<void> {
   for (const role of Object.keys(boss) as Role[]) {
     await boss[role]?.stop({ graceful: true, close: true });

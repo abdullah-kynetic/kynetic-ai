@@ -7,8 +7,10 @@ x-app-env: &app-env
   APP_BASE_URL: ${APP_BASE_URL:?set APP_BASE_URL}
   DATABASE_URL: postgres://kynetic_app:${APP_PW}@postgres:5432/kynetic
   DATABASE_URL_WORKER: postgres://kynetic_worker:${WORKER_PW}@postgres:5432/kynetic
+  DATABASE_URL_BACKUP: postgres://kynetic_backup:${BACKUP_PW}@postgres:5432/kynetic
   BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?}
   APP_ENCRYPTION_KEY: ${APP_ENCRYPTION_KEY:?}
+  BACKUP_ENCRYPTION_KEY: ${BACKUP_ENCRYPTION_KEY:?}
   OUTBOUND_ENABLED: 'false'
 
 services:
@@ -39,7 +41,7 @@ services:
       - |
         apt-get update -qq && apt-get install -y -qq postgresql-client >/dev/null
         su_url=postgres://postgres:$${PG_SUPER_PW}@postgres:5432/kynetic
-        psql "$$su_url" -q -v owner_pw="$${OWNER_PW}" -v app_pw="$${APP_PW}" -v worker_pw="$${WORKER_PW}" -f deploy/db/bootstrap.sql
+        psql "$$su_url" -q -v owner_pw="$${OWNER_PW}" -v app_pw="$${APP_PW}" -v worker_pw="$${WORKER_PW}" -v auth_pw="$${OWNER_PW}" -v backup_pw="$${BACKUP_PW}" -f deploy/db/bootstrap.sql
         psql "$$su_url" -q -c 'ALTER DATABASE kynetic OWNER TO kynetic_owner'
         DATABASE_URL_MIGRATE=postgres://kynetic_owner:$${OWNER_PW}@postgres:5432/kynetic bun run db:migrate
         DATABASE_URL_SEED=$$su_url bun run db:seed
@@ -49,6 +51,7 @@ services:
       OWNER_PW: ${OWNER_PW}
       APP_PW: ${APP_PW}
       WORKER_PW: ${WORKER_PW}
+      BACKUP_PW: ${BACKUP_PW}
     volumes:
       - ../db:/app/deploy/db:ro
     depends_on:

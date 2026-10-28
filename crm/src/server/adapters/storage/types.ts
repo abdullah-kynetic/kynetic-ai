@@ -8,4 +8,5 @@ export interface StorageAdapter {
   remove(key: string): Promise<void>;
   /** Short-lived GET URL for the browser. Mint it only after authorize(); it grants access by itself. */
   signedGetUrl(key: string): Promise<string>;
+  list?(prefix: string): Promise<Array<{ key: string; lastModified: Date }>>;
 }

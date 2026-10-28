@@ -103,4 +103,33 @@ export class R2Storage implements StorageAdapter {
       now: this.now()
     });
   }
+
+  async list(prefix: string) {
+    const query = `list-type=2&prefix=${encodeURIComponent(prefix)}`;
+    const path = `/${this.config.bucket}`;
+    const headers = signRequestHeaders({
+      creds: this.config.credentials,
+      region: this.region,
+      method: 'GET',
+      origin: this.origin,
+      path: `${path}?${query}`,
+      body: undefined,
+      now: this.now()
+    });
+    const response = await this.http(`${this.origin}${encodePath(path)}?${query}`, {
+      method: 'GET',
+      headers
+    });
+    if (!response.ok) this.fail('LIST', response.status);
+    const xml = await response.text();
+    const objects = [
+      ...xml.matchAll(
+        /<Contents>[\s\S]*?<Key>([^<]+)<\/Key>[\s\S]*?<LastModified>([^<]+)<\/LastModified>[\s\S]*?<\/Contents>/g
+      )
+    ];
+    return objects.map((match) => ({
+      key: match[1]!.replaceAll('&amp;', '&'),
+      lastModified: new Date(match[2]!)
+    }));
+  }
 }

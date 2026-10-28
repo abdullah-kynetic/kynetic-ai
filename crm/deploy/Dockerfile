@@ -31,6 +31,7 @@ CMD ["node", "server.js"]
 FROM node:${NODE_VERSION} AS worker
 WORKDIR /app
 ENV NODE_ENV=production
+RUN apt-get update -qq && apt-get install -y -qq postgresql-client >/dev/null && rm -rf /var/lib/apt/lists/*
 RUN useradd --system --uid 1001 app
 COPY --from=build --chown=app /app/dist/worker.js ./worker.js
 USER app

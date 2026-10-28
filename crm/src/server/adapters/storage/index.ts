@@ -33,6 +33,14 @@ export function getStorage(): StorageAdapter {
   return (instance ??= createStorage(getEnv()));
 }
 
+export function getOptionalStorage(): StorageAdapter | null {
+  try {
+    return getStorage();
+  } catch {
+    return null;
+  }
+}
+
 export function setStorage(adapter: StorageAdapter | undefined): void {
   instance = adapter;
 }
