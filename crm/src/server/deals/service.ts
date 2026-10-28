@@ -108,14 +108,15 @@ async function primaryContactId(tx: Tx, dealId: string): Promise<string | null> 
 
 async function emitOutcome(tx: Tx, ctx: TenantContextInput, deal: Deal, stage: Stage) {
   const base = { tenantId: deal.tenantId, actor: actorOf(ctx) };
+  const contactId = await primaryContactId(tx, deal.id);
   if (stage.isWon) {
     await emitEvent(tx, {
       ...base,
       name: 'deal.won',
-      payload: { dealId: deal.id, valueCents: deal.valueCents }
+      payload: { dealId: deal.id, contactId, valueCents: deal.valueCents }
     });
   } else if (stage.isLost) {
-    await emitEvent(tx, { ...base, name: 'deal.lost', payload: { dealId: deal.id } });
+    await emitEvent(tx, { ...base, name: 'deal.lost', payload: { dealId: deal.id, contactId } });
   }
 }
 

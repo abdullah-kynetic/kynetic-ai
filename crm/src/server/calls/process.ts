@@ -6,11 +6,14 @@ import type { VerifiedVoiceEvent, VoiceProvider, VoiceProviderId } from '../adap
 import { recordActivity } from '../activity';
 import { cleanDisclosure, disclosureHeard, disclosureVersion } from '../compliance';
 import { addDncEntry } from '../consent';
+import { createContact } from '../contacts/service';
 import { getWorkerDb, type Db, type Tx } from '../db/client';
 import { activities, calls, contacts, tenants } from '../db/schema';
 import { getEnv } from '../env';
 import { emitEvent } from '../events';
 import { ModuleDisabledError, requireModule } from '../modules';
+import { isModuleEnabled } from '../modules';
+import { businessHoursSchema, isWithinBusinessHours } from '../settings/hours';
 import { withTenant, type TenantContextInput } from '../tenancy';
 import { registerWebhookProcessor, type WebhookProcessor } from '../webhooks';
 import { normalizeOutcome, normalizeSentiment, outcomeLabel, type CallOutcome } from './outcomes';
@@ -174,7 +177,37 @@ async function writeCall(
         .limit(1);
 
       const disclosure = await checkDisclosure(tx, ev, outcome, existing);
-      const contactId = existing?.contactId ?? (await contactForNumber(tx, ev.counterpartE164));
+      let contactId = existing?.contactId ?? (await contactForNumber(tx, ev.counterpartE164));
+      if (!contactId && ev.direction === 'inbound' && ev.counterpartE164) {
+        const [tenant] = await tx
+          .select({ timezone: tenants.timezone, businessHours: tenants.businessHours })
+          .from(tenants)
+          .limit(1);
+        const hours = businessHoursSchema.safeParse(tenant?.businessHours);
+        const hasConfiguredHours =
+          hours.success && Object.values(hours.data).some((windows) => (windows?.length ?? 0) > 0);
+        const afterHours =
+          hasConfiguredHours &&
+          !(isWithinBusinessHours(hours.data, tenant?.timezone ?? '', startedAt)) &&
+          (await isModuleEnabled(ctx, 'after_hours', { tx }));
+        if (afterHours) {
+          const contact = await createContact(
+            ctx,
+            {
+              firstName: '',
+              phones: [ev.counterpartE164],
+              emails: [],
+              source: 'after_hours',
+              status: 'new',
+              tags: ['after-hours'],
+              address: {},
+              custom: {}
+            },
+            { tx, acknowledgeDuplicates: true, asLead: true }
+          );
+          contactId = contact.id;
+        }
+      }
       const values = {
         direction: ev.direction,
         startedAt: startedAt.toISOString(),
@@ -251,7 +284,8 @@ async function writeCall(
             contactId,
             outcome,
             direction: ev.direction,
-            durationS
+            durationS,
+            startedAt: startedAt.toISOString()
           }
         });
         if (outcome === 'dnc') await honourDnc(ctx, tx, contactId, ev.counterpartE164);
