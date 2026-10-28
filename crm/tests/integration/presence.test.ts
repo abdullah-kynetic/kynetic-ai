@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createDb, type Db } from '@/server/db/client';
-import { listPresence, savePresenceItem } from '@/server/presence';
+import { listPresence, presenceReport, savePresenceItem, saveReviewSnapshot } from '@/server/presence';
 import { createTestDatabase, type TestDatabase } from '../helpers/db';
 import { ctx, IDS, seedTwoTenants } from '../helpers/fixtures';
 import type { Actor } from '@/server/auth/permissions';
@@ -33,5 +33,13 @@ describe('F-83 online presence tenant and module isolation', () => {
   it('refuses owner writes', async () => {
     const owner: Actor = { userId: IDS.ownerA, kyneticRole: null, membership: { tenantId: IDS.tenantA, role: 'owner', canExport: false, canBulkDelete: false }, viewAs: null };
     await expect(savePresenceItem(ctx.ownerA(), owner, item, undefined, { db: appDb })).rejects.toMatchObject({ code: 'FORBIDDEN' });
+  });
+  it('includes only this tenant and month in review reports', async () => {
+    await saveReviewSnapshot(adminCtx, admin, { source: 'Google', capturedOn: '2026-10-10', reviewCount: 12, averageRating: 4.5 }, { db: appDb });
+    await saveReviewSnapshot(adminCtx, admin, { source: 'Google', capturedOn: '2026-11-10', reviewCount: 13, averageRating: 4.6 }, { db: appDb });
+    const october = await presenceReport(ctx.ownerA(), '2026-10-01', { db: appDb });
+    expect(october.snapshots).toHaveLength(1);
+    expect(october.snapshots[0]).toMatchObject({ reviewCount: 12, averageRating: '4.50' });
+    expect((await presenceReport(ctx.ownerB(), '2026-10-01', { db: appDb })).snapshots).toHaveLength(0);
   });
 });

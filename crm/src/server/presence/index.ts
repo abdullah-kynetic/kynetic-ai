@@ -1,4 +1,4 @@
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, gte, lt } from 'drizzle-orm';
 import { z } from 'zod';
 import { audit } from '../audit';
 import type { Actor } from '../auth/permissions';
@@ -27,6 +27,20 @@ export async function listPresence(ctx: TenantContextInput, opts: Opts = {}) {
       tx.select().from(reviewSnapshots).orderBy(desc(reviewSnapshots.capturedOn))
     ]);
     return { items, reviews };
+  };
+  return opts.tx ? read(opts.tx) : withTenant(ctx, read, { db: opts.db });
+}
+
+/** Returns review observations captured during the report month. */
+export async function presenceReport(ctx: TenantContextInput, periodStart: string, opts: Opts = {}) {
+  const start = parseInput(z.iso.date().refine((v) => v.endsWith('-01')), periodStart);
+  const endDate = new Date(`${start}T00:00:00Z`);
+  endDate.setUTCMonth(endDate.getUTCMonth() + 1);
+  const end = endDate.toISOString().slice(0, 10);
+  const read = async (tx: Tx) => {
+    await requireModule(ctx, 'opm', { tx });
+    const snapshots = await tx.select().from(reviewSnapshots).where(and(gte(reviewSnapshots.capturedOn, start), lt(reviewSnapshots.capturedOn, end))).orderBy(desc(reviewSnapshots.capturedOn));
+    return { periodStart: start, snapshots };
   };
   return opts.tx ? read(opts.tx) : withTenant(ctx, read, { db: opts.db });
 }
