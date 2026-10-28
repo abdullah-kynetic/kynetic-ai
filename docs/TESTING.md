@@ -266,7 +266,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-81 (M7, missed_call_textback) | Module on; missed call from consented number | One SMS sent and logged (fake Twilio) | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
 | F-81 (M7, missed_call_textback) | after_hours on | Text-back enabled with no separate charge flag | Unit | Pass (`tests/unit/modules.test.ts`; 2026-10-28 rerun) |
 | F-81 (M7, missed_call_textback) | Missed call with no consent basis | No SMS | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
-| F-82 (M7, reactivation) | Launch with mixed audience | Only consented contacts enter run | Integration | Not run |
+| F-82 (M7, reactivation) | Launch with mixed audience | Only consented contacts enter run | Integration | Pass (2026-10-28, `tests/integration/automation-retries-m7.test.ts`; no-consent imported record is blocked, consented record alone enrolls) |
 | F-82 (M7, reactivation) | Module off; launch attempted | Refused with no batch/run written | Integration | Pass (2026-10-28, `tests/integration/automation-retries-m7.test.ts`) |
 | F-83 (M11, opm) | Module on | Online Presence section and monthly report visible | E2E | Pass (2026-10-28, `tests/e2e/m11-presence.spec.ts`; enabled owner page and report section) |
 | F-83 (M11, opm) | Module off | Section and routes absent (403) | Integration | Pass at service boundary (2026-10-28, `tests/integration/presence.test.ts`; module-off denial and retained data; route 403 is enforced by page guard but not separately requested over HTTP) |
@@ -279,7 +279,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-86 (M8, platform) | Founding plan reference text | Shows $6,500 setup and 3 months then $1,500/mo (price decided, PRD decision 12) | E2E | Not run |
 | F-87 (M0, platform) | Scan responses of a browser session | No provider key in any response | Integration | Not run |
 | F-87 (M0, platform) | Burst of login, webhook and API requests | 429 once the limit is hit | Integration | Not run |
-| F-89 (M7, platform) | Lead created | `lead.created` emitted once | Integration | Not run |
+| F-89 (M7, platform) | Lead created and replayed | `lead.created` emitted once | Integration | Pass (2026-10-28, `tests/integration/lead-intake.test.ts`; duplicate external ID and webhook processing replay produce one event) |
 | F-89 (M7, platform) | Service token scoped to tenant A used on tenant B through contact route | Own contact 200; tenant B contact 404 | Integration | Pass (2026-10-28, `tests/integration/service-tokens.test.ts`) |
 | F-89 (M7, platform) | Missing token, insufficient scope, and revoked token on service contact route | Generic 401 | Integration | Pass (2026-10-28, `tests/integration/service-tokens.test.ts`) |
 | F-89 (M7, platform) | Producer emits `lead.created` | n8n subscriber receives canonical event and sends a valid HMAC signature | Integration | Pass (2026-10-28, `tests/integration/n8n-events-m7.test.ts`; synthetic webhook endpoint, Postgres 17) |

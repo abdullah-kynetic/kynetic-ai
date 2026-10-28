@@ -115,6 +115,26 @@ describe('M7 automation module and retry acceptance', () => {
     expect(tenantBRun).toMatchObject({ status: 'active', stop_reason: null });
   });
 
+  it('stops the active sequence when the contact books an appointment', async () => {
+    const [run] = await tdb.admin`insert into automation_runs
+      (tenant_id, automation_id, contact_id, next_run_at)
+      values (${IDS.tenantA}, ${automationId}, ${contactId}, now()) returning id`;
+    clearSubscribers();
+    registerAutomationSubscribers();
+    const event: EventEnvelope = {
+      id: crypto.randomUUID(),
+      name: 'appointment.booked',
+      version: 1,
+      tenantId: IDS.tenantA,
+      occurredAt: MIDDAY.toISOString(),
+      actor: { type: 'system' },
+      payload: { contactId }
+    };
+
+    await expect(deliver(event, 'automation-stop-appointment.booked')).resolves.toBe('ran');
+    expect(await runStatus(run!.id)).toMatchObject({ status: 'stopped_booked', stopReason: 'booked' });
+  });
+
   it('enables all follow-up bundle modules atomically and rolls them back together', async () => {
     await setFollowupBundle(admin, { tenantId: IDS.tenantA, enabled: true }, { db });
     for (const key of ['followup_bundle', 'quote_followup', 'reactivation', 'missed_call_textback'] as const)
