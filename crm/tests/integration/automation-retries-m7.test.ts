@@ -6,7 +6,13 @@ import type { SendSmsInput } from '@/server/adapters/sms/types';
 import { recordConsent } from '@/server/consent';
 import { createDb, type Db } from '@/server/db/client';
 import { automationRuns, messages } from '@/server/db/schema';
-import { deliverAutomationStep } from '@/server/automations/worker';
+import { deliverAutomationStep, registerAutomationSubscribers } from '@/server/automations/worker';
+import { launchReactivation } from '@/server/automations/reactivation';
+import { setFollowupBundle, type ModuleActor } from '@/server/modules/admin';
+import { contacts } from '@/server/db/schema';
+import { isModuleEnabled } from '@/server/modules';
+import { canContact } from '@/server/consent';
+import { clearSubscribers, deliver, type EventEnvelope } from '@/server/events';
 import { stopJobs } from '@/server/jobs';
 import { withTenant } from '@/server/tenancy';
 import { ctx, IDS, seedTwoTenants } from '../helpers/fixtures';
@@ -28,12 +34,17 @@ let tdb: TestDatabase;
 let db: Db;
 let contactId: string;
 let automationId: string;
+let tenantBContactId: string;
+let tenantBAutomationId: string;
+const admin: ModuleActor = { id: IDS.admin, kyneticRole: 'admin' };
 
 beforeAll(async () => {
   tdb = await createTestDatabase({ jobs: true });
-  const { a } = await seedTwoTenants(tdb.admin);
+  const { a, b } = await seedTwoTenants(tdb.admin);
   contactId = a.contactId;
   automationId = a.automationId;
+  tenantBContactId = b.contactId;
+  tenantBAutomationId = b.automationId;
   db = createDb(tdb.app);
   Object.assign(process.env, {
     APP_BASE_URL: 'http://localhost:3000',
@@ -58,6 +69,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  clearSubscribers();
   await stopJobs();
   const globals = globalThis as typeof globalThis & { __kyneticDb?: Db; __kyneticWorkerDb?: Db };
   delete globals.__kyneticDb;
@@ -79,6 +91,61 @@ async function runStatus(runId: string) {
 }
 
 describe('M7 automation module and retry acceptance', () => {
+  it('stops only the replying tenant contact sequence on message.received', async () => {
+    const [runA] = await tdb.admin`insert into automation_runs
+      (tenant_id, automation_id, contact_id, next_run_at)
+      values (${IDS.tenantA}, ${automationId}, ${contactId}, now()) returning id`;
+    const [runB] = await tdb.admin`insert into automation_runs
+      (tenant_id, automation_id, contact_id, next_run_at)
+      values (${IDS.tenantB}, ${tenantBAutomationId}, ${tenantBContactId}, now()) returning id`;
+    registerAutomationSubscribers();
+    const event: EventEnvelope = {
+      id: crypto.randomUUID(),
+      name: 'message.received',
+      version: 1,
+      tenantId: IDS.tenantA,
+      occurredAt: MIDDAY.toISOString(),
+      actor: { type: 'system' },
+      payload: { contactId }
+    };
+
+    await expect(deliver(event, 'automation-stop-message.received')).resolves.toBe('ran');
+    expect(await runStatus(runA!.id)).toMatchObject({ status: 'stopped_reply', stopReason: 'reply' });
+    const [tenantBRun] = await tdb.admin`select status, stop_reason from automation_runs where id = ${runB!.id}`;
+    expect(tenantBRun).toMatchObject({ status: 'active', stop_reason: null });
+  });
+
+  it('enables all follow-up bundle modules atomically and rolls them back together', async () => {
+    await setFollowupBundle(admin, { tenantId: IDS.tenantA, enabled: true }, { db });
+    for (const key of ['followup_bundle', 'quote_followup', 'reactivation', 'missed_call_textback'] as const)
+      expect(await isModuleEnabled(system, key, { db })).toBe(true);
+    const rows = await tdb.admin`select action, after from audit_log where tenant_id = ${IDS.tenantA} and action = 'module.toggle' order by created_at desc limit 4`;
+    expect(rows).toHaveLength(4);
+    await setFollowupBundle(admin, { tenantId: IDS.tenantA, enabled: false }, { db });
+    for (const key of ['followup_bundle', 'quote_followup', 'reactivation', 'missed_call_textback'] as const)
+      expect(await isModuleEnabled(system, key, { db })).toBe(false);
+  });
+
+  it('reactivation only enrolls imported contacts with valid SMS consent', async () => {
+    await tdb.admin`insert into automation_templates (key, module_key, label) values ('reactivation', 'reactivation', 'Reactivation') on conflict do nothing`;
+    const [sequence] = await tdb.admin`insert into automations (tenant_id, kind, template_key, name, enabled)
+      values (${IDS.tenantA}, 'template', 'reactivation', 'Synthetic reactivation', true) returning id`;
+    await tdb.admin`insert into automation_steps (tenant_id, automation_id, position, channel, body)
+      values (${IDS.tenantA}, ${sequence!.id}, 1, 'sms', 'Synthetic reactivation')`;
+    await tdb.admin`update tenant_modules set enabled = true where tenant_id = ${IDS.tenantA} and module_key = 'reactivation'`;
+    const [eligible] = await tdb.admin`insert into contacts (tenant_id, first_name, primary_phone_e164, phones, imported_source)
+      values (${IDS.tenantA}, 'Imported eligible', '+15555550801', ARRAY['+15555550801'], 'synthetic-import') returning id`;
+    const [blocked] = await tdb.admin`insert into contacts (tenant_id, first_name, primary_phone_e164, phones, imported_source)
+      values (${IDS.tenantA}, 'Imported no consent', '+15555550802', ARRAY['+15555550802'], 'synthetic-import') returning id`;
+    await recordConsent(ctx.ownerA(), { contactId: eligible!.id, channel: 'sms', source: 'form', capturedText: 'Synthetic consent', capturedAt: new Date('2026-10-01T00:00:00Z') }, { db });
+
+    const result = await launchReactivation(ctx.ownerA(), { userId: IDS.ownerA, kyneticRole: null, membership: { tenantId: IDS.tenantA, role: 'owner', canExport: true, canBulkDelete: true }, viewAs: null }, { importedSource: 'synthetic-import' }, { db, now: MIDDAY });
+    expect(result).toMatchObject({ requested: 2, eligible: 1, enrolled: 1, blocked: 1 });
+    const active = await tdb.admin`select contact_id from automation_runs where tenant_id = ${IDS.tenantA} and automation_id = ${sequence!.id} and status = 'active'`;
+    expect(active).toEqual([{ contact_id: eligible!.id }]);
+    expect(await canContact(system, blocked!.id, 'sms', MIDDAY, { db })).toMatchObject({ allowed: false });
+  });
+
   it('stops an active run before sending when the template module is disabled', async () => {
     const runId = await newRun();
     await tdb.admin`update tenant_modules set enabled = false where tenant_id = ${IDS.tenantA} and module_key = 'alex_core'`;
