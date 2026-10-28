@@ -216,6 +216,16 @@ describe('F-90 to F-96 contact import workflow', () => {
     expect(preview).toMatchObject({ total: 2, ok: 1, duplicates: 1, failed: 0 });
   });
 
+  it('matches duplicate email addresses case-insensitively', async () => {
+    await tdb.admin`insert into contacts (tenant_id, first_name, emails, primary_email)
+      values (${IDS.tenantA}, 'Existing synthetic email', ARRAY['mixedcase@example.test'], 'mixedcase@example.test')`;
+    const batch = await createImportBatch(adminCtx, adminActor,
+      { fileName: 'email-duplicates.csv', fileType: 'csv', importedSource: 'synthetic-email-dedupe' },
+      new TextEncoder().encode('first,email\nNew, mixedcase@EXAMPLE.test'), { db: appDb });
+    await expect(dryRunContactBatch(adminCtx, adminActor, batch.id, { firstName: 'first', email: 'email' }, { db: appDb }))
+      .resolves.toMatchObject({ total: 1, ok: 0, duplicates: 1, failed: 0 });
+  });
+
   it('lists an imported contact edited after commit and leaves it intact on undo', async () => {
     const batch = await createImportBatch(
       adminCtx,
