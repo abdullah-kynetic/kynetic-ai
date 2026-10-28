@@ -255,6 +255,24 @@ describe('F-90 to F-96 contact import workflow', () => {
     expect(await tdb.admin`select first_name from contacts where id = ${existing!.id}`).toEqual([{ first_name: '' }]);
   });
 
+  it('imports only evidenced consent and revokes it when the batch is undone', async () => {
+    const batch = await createImportBatch(adminCtx, adminActor,
+      { fileName: 'consent.csv', fileType: 'csv', importedSource: 'synthetic-consent' },
+      new TextEncoder().encode('first,phone,channel,date,evidence\nConsented,4155550133,sms,2026-10-01,Synthetic web form\nNo evidence,4155550134,sms,,\nBad channel,4155550135,other,2026-10-01,Synthetic evidence'),
+      { db: appDb });
+    const mapping = { firstName: 'first', phone: 'phone', consentChannel: 'channel', consentDate: 'date', consentEvidence: 'evidence' };
+    await expect(dryRunContactBatch(adminCtx, adminActor, batch.id, mapping, { db: appDb })).resolves.toMatchObject({ total: 3, ok: 3, failed: 0 });
+    await expect(commitContactBatch(adminCtx, adminActor, batch.id, { db: appDb })).resolves.toMatchObject({ imported: 3, consents: 1, failed: 0 });
+    const consented = await tdb.admin`select c.first_name, co.source, co.captured_text, co.revoked_at from consents co join contacts c on c.id = co.contact_id where co.tenant_id = ${IDS.tenantA} and c.imported_source = 'synthetic-consent'`;
+    expect(consented).toEqual([{ first_name: 'Consented', source: 'import', captured_text: 'Synthetic web form', revoked_at: null }]);
+    await expect(undoImportBatch(adminCtx, adminActor, batch.id, { db: appDb })).resolves.toMatchObject({ removed: 3, restored: 1, skipped: [] });
+    const consentLedger = await tdb.admin`select kind, source from consents where tenant_id = ${IDS.tenantA} and contact_id = (select id from contacts where tenant_id = ${IDS.tenantA} and imported_source = 'synthetic-consent' and first_name = 'Consented') order by created_at`;
+    expect(consentLedger).toEqual([
+      { kind: 'express_written', source: 'import' },
+      { kind: 'opt_out', source: 'staff' }
+    ]);
+  });
+
   it('imports synthetic companies, deals and linked notes with traceable batch metadata and undo', async () => {
     const asyncImport = async (entity: 'company' | 'deal' | 'note', fileName: string, csv: string, mapping: Record<string, string>) => {
       const batch = await createImportBatch(adminCtx, adminActor, { fileName, fileType: 'csv', entity, importedSource: 'synthetic-multi' }, new TextEncoder().encode(csv), { db: appDb });
