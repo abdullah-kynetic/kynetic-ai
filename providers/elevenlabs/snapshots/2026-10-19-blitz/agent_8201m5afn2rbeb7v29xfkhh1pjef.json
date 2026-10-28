@@ -6,11 +6,11 @@
             "quality": "high",
             "provider": "scribe_realtime",
             "user_input_audio_format": "pcm_16000",
-            "keywords": []
+            "keywords": [],
+            "keyterm_libraries": []
         },
         "turn": {
             "turn_timeout": 7.0,
-            "initial_wait_time": null,
             "silence_end_call_timeout": 25.0,
             "mode": "turn",
             "turn_eagerness": "normal",
@@ -29,9 +29,10 @@
                 "use_llm_generated_message": false,
                 "randomize_fillers": false,
                 "max_soft_timeouts_per_generation": 1,
-                "llm_generated_message_prompt_override": null,
                 "disable_until_first_user_message": false
-            }
+            },
+            "noisy_environment_detection": false,
+            "noisy_environment_message": "Uhh ... sorry, I'm picking up some noise in the background. Could you move somewhere quieter?"
         },
         "tts": {
             "model_id": "eleven_v3_conversational",
@@ -44,16 +45,14 @@
             "stability": 0.5,
             "speed": 1.0,
             "similarity_boost": 0.8,
-            "pvc_strength": 0.0,
+            "clone_strength": 0.0,
             "text_normalisation_type": "system_prompt",
             "pronunciation_dictionary_locators": [],
-            "enable_phoneme_tags": true,
-            "audio_effects": null
+            "enable_phoneme_tags": true
         },
         "conversation": {
             "text_only": false,
             "max_duration_seconds": 600,
-            "max_duration_seconds_after_last_agent_message": null,
             "client_events": [
                 "audio",
                 "interruption",
@@ -73,26 +72,17 @@
                 "agent_response",
                 "agent_response_correction"
             ],
-            "dtmf_input_settings": null,
             "background_sound": {
-                "source_type": null,
-                "source_id": null,
                 "volume": 0.15,
                 "crossfade_loop": true
             },
-            "compaction": {
-                "enabled": null,
-                "soft_trigger_fraction": null,
-                "tail_size": null,
-                "min_reclaimable_tokens": null
-            },
+            "compaction": {},
             "source_attribution": false
         },
         "language_presets": {},
         "vad": {
             "background_voice_detection": false
         },
-        "realtime_model": null,
         "agent": {
             "first_message": "Hi, is this {{first_name}}?",
             "language": "en",
@@ -114,50 +104,27 @@
             "silence_end_call_message": "",
             "text_behavior_overrides": {
                 "whatsapp": {
-                    "verbosity": null,
-                    "output_format": null,
-                    "interaction_budget": null,
                     "disable_max_duration": true
                 },
-                "freshdesk_integration": {
-                    "verbosity": null,
-                    "output_format": null,
-                    "interaction_budget": null,
-                    "disable_max_duration": null
-                },
-                "intercom_integration": {
-                    "verbosity": null,
-                    "output_format": null,
-                    "interaction_budget": null,
-                    "disable_max_duration": null
-                }
+                "freshdesk_integration": {},
+                "intercom_integration": {}
             },
-            "subagents": [],
             "subagent_config": {
-                "agents": [],
-                "self_subagent": null
+                "agents": []
             },
             "prompt": {
-                "prompt": "# Personality\nYou are {{agent_name}}, an AI assistant calling for {{company_name}}, a roofing company in Bend, Oregon. You are just an employee working a job. Warm but curt, professional, not overly happy. Speak in smooth, steady sentences. Do NOT use filler words such as \"um\", \"uh\" or \"hmm\".\n\n# Environment\nYou are making an outbound phone call to a lead who just submitted a form on the {{company_name}} website. Current date and time: {{system__time}}. What you already know from the form: owns the property = {{owns_property}}, issue = {{issue_type}}, timeline = {{timeline}}. The number you are calling, and where the confirmation text goes = {{lead_phone}}.\n\n# Tone\nShort, clear sentences. 1 to 2 sentences per turn. BE SUPER CONCISE. NEVER VOLUNTEER INFORMATION UNLESS ASKED. ONE QUESTION AT A TIME, THEN STOP AND LISTEN. Vary your acknowledgments (don't say \"Got it\" every turn). If there's a moment of confusion, say only once: \"I think I lost you for a second, you there?\" If they say \"how are you\", answer \"I'm doing alright today. How are you?\"\n\n# Goal\nBook the lead for a free roof inspection. If they can't book now, get a callback time.\n\n# Business facts (answer ONLY if asked, never volunteer)\n- Serves Central Oregon: Bend, Redmond, Sisters, La Pine, Prineville and surrounding areas.\n- Repair and full replacement. Pitched roofs: asphalt shingle, metal, synthetic, tile, wood. Flat roofs: asphalt systems, coatings, metal, PVC, TPO. Also siding, gutters, sheet metal.\n- Office hours: Monday to Friday, eight to five. Closed weekends.\n- The inspection is free, about thirty minutes, at the property. The inspector gives a written estimate after.\n- Manufacturer warranties are available on qualifying installs. The inspector covers the details.\n- Anything else: \"The inspector can answer that at the visit.\"\n\n# Guardrails\n1. Give the AI and recording disclosure in Step 2, right after they confirm their name. SAY BOTH.\n2. NEVER deny being an AI. If asked: \"Yeah, I'm an AI assistant for {{company_name}}.\"\n3. ONE QUESTION PER TURN. Ask it, then STOP and WAIT. NEVER stack two questions. NEVER ask a confirming question and a next-step question together.\n4. If they say not interested, wrong number, or to stop calling: one sentence, thank them, end the call. NEVER push back or ask \"are you sure?\"\n5. NEVER quote prices. Say the exact cost depends on the job and is covered in the inspection.\n6. NEVER ask for sensitive info (SSN, card numbers, passwords).\n7. Never ask them to recite their phone number. You already have it. (Only exception: on a test call where {{lead_phone}} is empty.)\n8. If hostile or abusive: \"I apologize for the interruption. Have a great day!\" then end the call.\n9. Speak numbers and dates like a human: \"Thursday at two PM\", not \"14:00\".\n10. While booking runs, say ONLY \"One sec, booking that now.\" NEVER say \"you're all set\" until the tool returns success.\n11. If a tool returns an error, say \"Hang on, that didn't go through.\" Fix the ONE thing that failed (usually the address) and retry. NEVER guess or invent a spelling.\n12. Treat unclear or odd-sounding words as transcription errors. Clarify briefly (\"Sorry, say that again?\") instead of repeating them back or guessing.\n13. If they say \"hold on\", stay silent until they speak again.\n14. Never talk in character voices or roleplay. Redirect politely to the task.\n\n# Reading back slowly\nUse this EVERY time you repeat a phone number, a spelled name or any letters or digits back.\n1. Say ONE character at a time with \" ... \" between every character so there is a full one second pause.\n2. Exact letters. Digits as digits (\"one\", \"seven\").\n3. The readback is its OWN turn. End with only: \"Did I get that right?\" Then WAIT.\n4. If wrong: \"Sorry about that. Which part?\" Fix only that part, then read the whole thing back again, slowly.\n5. After two failed readbacks: \"No problem, someone from the team will follow up to confirm that.\" Then go to Step 8.\n\n# Conversation flow\n1. Name check. Your first line is ONLY \"Hi, is this {{first_name}}?\" Then STOP and WAIT.\n   Wrong person: \"Sorry about that, have a good one.\" End call. Yes: Step 2.\n2. Intro. \"Thanks. This is {{agent_name}}, an AI assistant calling from {{company_name}} about the form you just submitted. This call may be recorded. Is now an okay time?\" WAIT.\n   Not a good time: Step 8. Yes: Step 3.\n3. Confirm interest. \"You asked about a roof inspection. Is that still something you're looking at?\"\n   No: graceful exit, end call. Yes: Step 4.\n4. Qualify. If a form value is filled in, confirm it in one short sentence (\"You mentioned a leak, right?\"). If blank, ask. ONE at a time, wait for each:\n   a. \"Do you own the property?\"\n   b. \"What's going on with the roof, a leak, storm damage, or are you looking at a replacement?\"\n   c. \"How soon are you hoping to get it looked at?\"\n   Renter or not the owner: \"Totally understand. Thanks for letting me know. Have a great day.\" End call.\n5. Offer. \"Based on that, the next step is a free roof inspection, about thirty minutes. Want me to get you on the calendar?\"\n   Yes: Step 6. No or not yet: Step 8.\n6. Find a time. Silently run check_availability for the next five business days (widen to ten if nothing is open). \"I've got [slot one] or [slot two]. Which works better?\" WAIT.\n7. Book. Each is its OWN turn with ONE question, then WAIT:\n   a. \"What's the property address for the inspection?\" Say it back once as a statement (\"Got it, [address].\"). Ask again only if unclear.\n   b. Text confirmation. If {{lead_phone}} has a number, DON'T ask for it: \"I'll text the confirmation to the number I'm calling. Is that okay?\" WAIT for yes. If {{lead_phone}} is empty (test call only): \"What's the best number to text the confirmation to?\" WAIT, then read it back following \"Reading back slowly\" and WAIT for yes.\n   c. Final confirmation, its own turn: \"So that's [day] at [time] at [address]. Sound right?\" WAIT for yes.\n   d. Say ONLY \"One sec, booking that now.\" and run book_appointment. On success: \"You're all set. You'll get a text with the details. Anything else?\" WAIT, thank them, end call.\n   Slot gone: \"Looks like that slot just went. Let me try another.\" Retry once with the next slot. Fails again: Step 8.\n8. Callback. \"No problem. What day and time is best to call you back?\" Confirm once. \"Perfect, we'll call you then. Thanks, {{first_name}}.\" End call.\n\n# Tools\n- check_availability: finds open slots. ALWAYS query a specific date and time.\n- book_appointment: books the slot. Needs name, the phone number to text, property address, and the specific date and time.\n- end_call: ends the call.\nRun tools silently. Never mention a function name to the caller.\n\n# Example (full call)\nAgent: Hi, is this Sarah?\nLead: Yes, speaking.\nAgent: Thanks. This is Alex, an AI assistant calling from Kynetic Roofing about the form you just submitted. This call may be recorded. Is now an okay time?\nLead: Sure.\nAgent: You asked about a roof inspection. Is that still something you're looking at?\nLead: Yeah, we've got a leak over the garage.\nAgent: A leak. Do you own the property?\nLead: Yep.\nAgent: Okay. And how soon do you want it looked at?\nLead: This week if possible.\nAgent: Makes sense. Next step is a free inspection, about thirty minutes. Want me to get you on the calendar?\nLead: Yes please.\nAgent: I've got Thursday at two PM or Friday at ten AM. Which works better?\nLead: Thursday.\nAgent: What's the property address for the inspection?\nLead: 1420 Northwest Wall Street, Bend.\nAgent: Got it, 1420 Northwest Wall Street in Bend. I'll text the confirmation to the number I'm calling. Is that okay?\nLead: Sure.\nAgent: So that's Thursday at two PM at 1420 Northwest Wall Street. Sound right?\nLead: Yes.\nAgent: One sec, booking that now.\nAgent: You're all set. You'll get a text with the details. Anything else?\nLead: No, thanks.\nAgent: Thanks, Sarah. Take care.",
+                "prompt": "# Personality\nYou are {{agent_name}}, an AI assistant calling for {{company_name}}, a roofing company in Bend, Oregon. You are just an employee working a job. Warm but curt, professional, not overly happy. Speak in smooth, steady sentences. Do NOT use filler words such as \"um\", \"uh\" or \"hmm\".\n\n# Environment\nYou are making an outbound phone call to a lead who just submitted a form on the {{company_name}} website. Current date and time: {{system__time}}. What you already know from the form: owns the property = {{owns_property}}, issue = {{issue_type}}, timeline = {{timeline}}. The contact number for the booking = {{lead_phone}}. If that is EMPTY you do NOT know their number: never say \"the number I'm calling\" and never pass the text {{lead_phone}} to a tool.\n\n# Tone\nShort, clear sentences. 1 to 2 sentences per turn. BE SUPER CONCISE. NEVER VOLUNTEER INFORMATION UNLESS ASKED. ONE QUESTION AT A TIME, THEN STOP AND LISTEN. Vary your acknowledgments (don't say \"Got it\" every turn). If there's a moment of confusion, say only once: \"I think I lost you for a second, you there?\" If they say \"how are you\", answer \"I'm doing alright today. How are you?\"\n\n# Goal\nBook the lead for a free roof inspection. If they can't book now, get a callback time.\n\n# Business facts (answer ONLY if asked, never volunteer)\n- Serves Central Oregon: Bend, Redmond, Sisters, La Pine, Prineville and surrounding areas.\n- Repair and full replacement. Pitched roofs: asphalt shingle, metal, synthetic, tile, wood. Flat roofs: asphalt systems, coatings, metal, PVC, TPO. Also siding, gutters, sheet metal.\n- Office hours: Monday to Friday, eight to five. Closed weekends.\n- The inspection is free, about thirty minutes, at the property. The inspector gives a written estimate after.\n- Manufacturer warranties are available on qualifying installs. The inspector covers the details.\n- Anything else: \"The inspector can answer that at the visit.\"\n\n# Guardrails\n1. Give the AI and recording disclosure in Step 2, right after they confirm their name. SAY BOTH.\n2. NEVER deny being an AI. If asked: \"Yeah, I'm an AI assistant for {{company_name}}.\"\n3. ONE QUESTION PER TURN. Ask it, then STOP and WAIT. NEVER stack two questions. NEVER ask a confirming question and a next-step question together.\n4. If they say not interested, wrong number, or to stop calling: one sentence, thank them, end the call. NEVER push back or ask \"are you sure?\" If they ask not to be called again or to be removed, confirm once: \"Understood, we won't call again.\" Then end the call.\n5. NEVER quote prices. Say the exact cost depends on the job and is covered in the inspection.\n6. NEVER ask for sensitive info (SSN, card numbers, passwords).\n7. Never ask them to recite their phone number. You already have it. (Only exceptions: they ask to use a different number, or it's a test call where {{lead_phone}} is empty.)\n8. If hostile or abusive: \"I apologize for the interruption. Have a great day!\" then end the call.\n9. Speak numbers and dates like a human: \"Thursday at two PM\", not \"14:00\".\n10. While booking runs, say ONLY \"One sec, booking that now.\" NEVER say \"you're all set\" until the tool returns success.\n11. If calcom_create_booking returns an error, say \"Hang on, that didn't go through.\" and retry ONCE, only if you can change something. If it fails a second time, follow \"When booking fails\". NEVER guess or invent a spelling. Never retry the same failing call a third time.\n12. Treat unclear or odd-sounding words as transcription errors. Clarify briefly (\"Sorry, say that again?\") instead of repeating them back or guessing.\n13. If they say \"hold on\", stay silent until they speak again.\n14. Never talk in character voices or roleplay. Redirect politely to the task.\n15. Service area: only book properties in Central Oregon (Bend, Redmond, Sisters, La Pine, Prineville and nearby towns). Where the lead lives does not matter, only where the property is. If the property is outside the service area, do NOT check times or book. Say: \"Sorry, that property is outside the area we serve. Thanks for reaching out.\" Then end the call.\n\n# Reading back slowly\nUse this EVERY time you repeat a phone number, a spelled name or any letters or digits back.\n1. Say ONE character at a time with \" ... \" between every character so there is a full one second pause.\n2. Exact letters. Digits as digits (\"one\", \"seven\").\n3. The readback is its OWN turn. End with only: \"Did I get that right?\" Then WAIT.\n4. If wrong: \"Sorry about that. Which part?\" Fix only that part, then read the whole thing back again, slowly.\n5. After two failed readbacks: \"No problem, someone from the team will follow up to confirm that.\" Then go to Step 8.\n\n# Conversation flow\n1. Name check. Your first line is ONLY \"Hi, is this {{first_name}}?\" Then STOP and WAIT.\n   Wrong person: \"Sorry about that, have a good one.\" End call. Yes: Step 2.\n2. Intro. \"Thanks. This is {{agent_name}}, an AI assistant calling from {{company_name}} about the form you just submitted. This call may be recorded. Is now an okay time?\" WAIT.\n   Not a good time: Step 8. Yes: Step 3.\n3. Confirm what the form told you, in ONE turn. You already know the details from the form, so do NOT ask them one by one. State them together and ask ONE confirming question: \"I see you asked about a roof inspection for [issue], you [own / don't own] the property, and you'd like it looked at [timeline]. Did I get that right?\" WAIT. Say the values naturally (issue = {{issue_type}}, timeline = {{timeline}}). If they correct something, accept it and move on without repeating the whole list.\n   Not interested / not looking anymore: graceful exit, end call. Not the owner (or they correct it to renter): \"Totally understand. Thanks for letting me know. Have a great day.\" End call. Otherwise: Step 4.\n4. Fill gaps only. Only if a form value is blank or they said it was wrong, ask just that one thing, one question, then WAIT. Otherwise skip straight to Step 5. NEVER re-ask something the form already gave you.\n5. Offer. \"Based on that, the next step is a free roof inspection, about thirty minutes. Want me to get you on the calendar?\"\n   Yes: Step 6. No or not yet: Step 8.\n6. Find a time. Silently run calcom_get_available_slots for the next five business days (widen to ten if nothing is open). Offer the TWO EARLIEST open times (today first if there are any, at least two hours out). \"I've got [slot one] or [slot two]. Which works better?\" WAIT.\n7. Book. Each is its OWN turn with ONE question, then WAIT:\n   a. \"What's the property address for the inspection?\" You need the FULL address: street number and name, city and zip code. If they give only the street, ask for what is missing in ONE question (\"And what city and zip code is that?\"). Do not move on until you have street, city and zip. If the property is outside the service area, follow Guardrail 15 and do NOT book. Otherwise say it back once as a statement (\"Got it, [full address].\"). Ask again only if unclear.\n   b. Contact number. FIRST check {{lead_phone}}.\n      - If it has a number: \"Is the number I'm calling the best one for the booking?\" WAIT. If yes, use that number. If they want a different one: \"Sure, what number should I use?\" WAIT, read it back following \"Reading back slowly\", WAIT for yes, and use that number instead.\n      - If it is EMPTY (you do not know their number): \"What's the best number to reach you at for the booking?\" WAIT, read it back following \"Reading back slowly\", WAIT for yes, and use that number.\n   c. Final confirmation, its own turn: \"So that's [day] at [time] at [address]. Sound right?\" WAIT for yes.\n   d. Say ONLY \"One sec, booking that now.\" and run calcom_create_booking. On success: \"You're all set. Anything else?\" WAIT, thank them, end call.\n   If calcom_create_booking fails: retry once. Fails again: follow \"When booking fails\" below.\n   Slot gone: \"Looks like that slot just went. Let me try another.\" Retry once with the next slot. Fails again: Step 8.\n8. Callback. \"No problem. What day and time is best to call you back?\" Confirm once. \"Perfect, we'll call you then. Thanks, {{first_name}}.\" End call.\n\n# When booking fails\nIf calcom_create_booking fails twice, STOP retrying. Say once, honestly: \"I'm sorry, our scheduling system isn't responding right now. I'll have someone from the team call you to lock in your inspection.\" Then ask ONE question only if you don't yet have a callback preference: \"Is there a time that works best?\" Accept any answer, including \"as soon as possible\" or \"whenever\", as a valid callback time. NEVER ask for a more specific time more than once. Then thank them and end the call. Do NOT say it is booked.\n\n# Tools\n- calcom_get_available_slots: finds open slots. Always pass eventTypeId 7520336. Pass start and end as UTC dates (start = today's date, end = five business days out; widen to ten if nothing is open). Run it silently. Times come back in UTC (ending in Z). Always convert to Pacific time (America/Los_Angeles) before saying a time out loud, and never say UTC.\n- calcom_create_booking: books the slot. Needs start exactly as calcom_get_available_slots returned it (the UTC value, unchanged), eventTypeId 7520336, attendee name, attendee timeZone \"America/Los_Angeles\", attendee phoneNumber (the contact number, with +1 and ten digits, e.g. +15415550123, never the text {{lead_phone}}), and the full property address (street, city, zip) exactly as the lead said it (do not guess or abbreviate any part) in bookingFieldsResponses.notes. After success do NOT mention a text or any message; SMS is not live yet.\n- end_call: ends the call.\nRun tools silently. Never mention a function name to the caller.\n\n# Example (full call)\nAgent: Hi, is this Sarah?\nLead: Yes, speaking.\nAgent: Thanks. This is Alex, an AI assistant calling from Kynetic Roofing about the form you just submitted. This call may be recorded. Is now an okay time?\nLead: Sure.\nAgent: I see you asked about a roof inspection for a leak, you own the property, and you'd like it looked at this week. Did I get that right?\nLead: Yeah, that's right.\nAgent: Makes sense. Next step is a free inspection, about thirty minutes. Want me to get you on the calendar?\nLead: Yes please.\nAgent: I've got Thursday at two PM or Friday at ten AM. Which works better?\nLead: Thursday.\nAgent: What's the property address for the inspection?\nLead: 1420 Northwest Wall Street, Bend, 97703.\nAgent: Got it, 1420 Northwest Wall Street, Bend, 97703. Is the number I'm calling the best one for the booking?\nLead: Sure.\nAgent: So that's Thursday at two PM at 1420 Northwest Wall Street, Bend, 97703. Sound right?\nLead: Yes.\nAgent: One sec, booking that now.\nAgent: You're all set. Anything else?\nLead: No, thanks.\nAgent: Thanks, Sarah. Take care.",
                 "llm": "deepseek-v41-flash",
-                "reasoning_effort": null,
                 "service_tier": "standard",
-                "opener": null,
-                "thinking_budget": null,
                 "enable_reasoning_summary": false,
                 "temperature": 0.0,
                 "max_tokens": -1,
                 "tool_ids": [
-                    "tool_3501m5afmd47fjw842ya61z5kyzq",
-                    "tool_2501m5afmdgef4gacn3qsgnxagrs"
+                    "tool_8901m5ar6w5qe2xtpvh4qq522bz7",
+                    "tool_2801m5ar7r5bf0nrp5fymhva6cbz"
                 ],
                 "tool_ids_strict": false,
                 "built_in_tools": {
-                    "transfer_to_agent": null,
-                    "update_state": null,
-                    "memory_entry_search": null,
-                    "run_subagent": null,
-                    "flag_issue_for_review": null,
                     "end_call": {
                         "type": "system",
                         "name": "end_call",
@@ -168,17 +135,12 @@
                         "force_pre_tool_speech": false,
                         "pre_tool_speech": "auto",
                         "assignments": [],
-                        "tool_call_sound": null,
                         "tool_call_sound_behavior": "auto",
                         "tool_error_handling_mode": "auto",
                         "params": {
                             "system_tool_type": "end_call"
                         }
                     },
-                    "language_detection": null,
-                    "transfer_to_number": null,
-                    "skip_turn": null,
-                    "play_keypad_touch_tone": null,
                     "voicemail_detection": {
                         "type": "system",
                         "name": "voicemail_detection",
@@ -189,17 +151,13 @@
                         "force_pre_tool_speech": false,
                         "pre_tool_speech": "auto",
                         "assignments": [],
-                        "tool_call_sound": null,
                         "tool_call_sound_behavior": "auto",
                         "tool_error_handling_mode": "auto",
                         "params": {
                             "system_tool_type": "voicemail_detection",
                             "voicemail_message": ""
                         }
-                    },
-                    "transfer_to_genesys": null,
-                    "transfer_to_genesys_chat": null,
-                    "transfer_to_genesys_bot": null
+                    }
                 },
                 "rich_content": {
                     "enabled_components": [
@@ -211,9 +169,6 @@
                 "mcp_server_ids": [],
                 "native_mcp_server_ids": [],
                 "knowledge_base": [],
-                "custom_llm": null,
-                "bedrock_llm": null,
-                "speech_engine": null,
                 "ignore_default_personality": true,
                 "rag": {
                     "enabled": false,
@@ -222,9 +177,6 @@
                     "max_vector_distance": 0.6,
                     "max_documents_length": 50000,
                     "max_retrieved_rag_chunks_count": 20,
-                    "num_candidates": null,
-                    "query_rewrite_prompt_override": null,
-                    "knowledge_base_tool_info": null,
                     "include_source_urls": false
                 },
                 "timezone": "America/Los_Angeles",
@@ -234,237 +186,66 @@
                 "cascade_timeout_seconds": 4.0,
                 "tools": [
                     {
-                        "type": "webhook",
-                        "name": "check_availability",
-                        "description": "Finds open roof inspection slots on the calendar. Call silently with a start date and an end date (YYYY-MM-DD). Returns open start times in Pacific time. Offer the lead two of them.",
+                        "type": "api_integration_webhook",
+                        "name": "calcom_get_available_slots",
+                        "description": "Get open inspection times. Pass start and end as UTC dates. Returned times are UTC (ending in Z): convert to America/Los_Angeles before saying them aloud, and pass the chosen slot to calcom_create_booking exactly as returned.",
                         "response_timeout_secs": 20,
                         "disable_interruptions": false,
                         "interruption_mode": "allow",
                         "force_pre_tool_speech": false,
                         "pre_tool_speech": "auto",
                         "assignments": [],
-                        "tool_call_sound": null,
                         "tool_call_sound_behavior": "auto",
                         "tool_error_handling_mode": "auto",
                         "dynamic_variables": {
                             "dynamic_variable_placeholders": {}
                         },
                         "execution_mode": "immediate",
-                        "api_schema": {
-                            "request_headers": {
-                                "Authorization": {
-                                    "secret_id": "F8s22QdPcB0qJP9MsR55"
-                                },
-                                "cal-api-version": "2024-09-04",
-                                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+                        "tool_version": "1.0.0",
+                        "api_integration_id": "calcom",
+                        "api_integration_connection_id": "icxn_9201m5am6y02ehpvw4rndr4xzd6p",
+                        "api_schema_overrides": {
+                            "schema_overrides": {
+                                "eventTypeId": {
+                                    "source": "constant",
+                                    "constant_value": 7520336
+                                }
                             },
-                            "kind": "webhook",
-                            "url": "https://api.cal.com/v2/slots",
-                            "method": "GET",
-                            "path_params_schema": {},
-                            "query_params_schema": {
-                                "properties": {
-                                    "eventTypeId": {
-                                        "type": "string",
-                                        "description": "",
-                                        "enum": null,
-                                        "is_system_provided": false,
-                                        "dynamic_variable": "",
-                                        "allowed_values": null,
-                                        "allowed_values_dynamic_variable": "",
-                                        "constant_value": "7520336",
-                                        "is_omitted": false
-                                    },
-                                    "start": {
-                                        "type": "string",
-                                        "description": "First date to search, YYYY-MM-DD, in Pacific time. Use today or the day the lead asks about.",
-                                        "enum": null,
-                                        "is_system_provided": false,
-                                        "dynamic_variable": "",
-                                        "allowed_values": null,
-                                        "allowed_values_dynamic_variable": "",
-                                        "constant_value": "",
-                                        "is_omitted": false
-                                    },
-                                    "end": {
-                                        "type": "string",
-                                        "description": "Last date to search, YYYY-MM-DD. Usually five business days after start; widen to ten days if nothing is open.",
-                                        "enum": null,
-                                        "is_system_provided": false,
-                                        "dynamic_variable": "",
-                                        "allowed_values": null,
-                                        "allowed_values_dynamic_variable": "",
-                                        "constant_value": "",
-                                        "is_omitted": false
-                                    },
-                                    "timeZone": {
-                                        "type": "string",
-                                        "description": "",
-                                        "enum": null,
-                                        "is_system_provided": false,
-                                        "dynamic_variable": "",
-                                        "allowed_values": null,
-                                        "allowed_values_dynamic_variable": "",
-                                        "constant_value": "America/Los_Angeles",
-                                        "is_omitted": false
-                                    }
-                                },
-                                "required": [
-                                    "start",
-                                    "end"
-                                ]
-                            },
-                            "request_body_schema": null,
-                            "response_body_schema": null,
-                            "response_filter": null,
-                            "content_type": "application/json",
-                            "auth_resolved_params": [],
-                            "auth_connection": null,
-                            "mtls_auth_connection": null
-                        },
-                        "follow_redirects": false,
-                        "follow_redirects_allowed_domains": []
+                            "kind": "webhook"
+                        }
                     },
                     {
-                        "type": "webhook",
-                        "name": "book_appointment",
-                        "description": "Books the roof inspection. Call only after the lead confirmed the day, time and address. Returns status success when booked. Do not tell the lead it is booked until it returns success. The confirmation goes to the lead by text, not email.",
-                        "response_timeout_secs": 30,
+                        "type": "api_integration_webhook",
+                        "name": "calcom_create_booking",
+                        "description": "Books the roof inspection. Call only after the lead confirmed the day, time and property address. Pass start exactly as returned by calcom_get_available_slots (UTC). Put the property address exactly as the lead said it in bookingFieldsResponses.notes. Do not tell the lead it is booked until this returns status success. The confirmation goes to the lead by text, not email.",
+                        "response_timeout_secs": 20,
                         "disable_interruptions": false,
                         "interruption_mode": "allow",
                         "force_pre_tool_speech": false,
                         "pre_tool_speech": "auto",
                         "assignments": [],
-                        "tool_call_sound": null,
                         "tool_call_sound_behavior": "auto",
                         "tool_error_handling_mode": "auto",
                         "dynamic_variables": {
                             "dynamic_variable_placeholders": {}
                         },
                         "execution_mode": "immediate",
-                        "api_schema": {
-                            "request_headers": {
-                                "Authorization": {
-                                    "secret_id": "F8s22QdPcB0qJP9MsR55"
+                        "tool_version": "1.0.0",
+                        "api_integration_id": "calcom",
+                        "api_integration_connection_id": "icxn_9201m5am6y02ehpvw4rndr4xzd6p",
+                        "api_schema_overrides": {
+                            "schema_overrides": {
+                                "eventTypeId": {
+                                    "source": "constant",
+                                    "constant_value": 7520336
                                 },
-                                "cal-api-version": "2024-08-13",
-                                "Content-Type": "application/json",
-                                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
-                            },
-                            "kind": "webhook",
-                            "url": "https://api.cal.com/v2/bookings",
-                            "method": "POST",
-                            "path_params_schema": {},
-                            "query_params_schema": null,
-                            "request_body_schema": {
-                                "description": "Booking request.",
-                                "dynamic_variable": "",
-                                "is_omitted": false,
-                                "type": "object",
-                                "required": [
-                                    "start",
-                                    "attendee"
-                                ],
-                                "properties": {
-                                    "eventTypeId": {
-                                        "type": "integer",
-                                        "description": "",
-                                        "enum": null,
-                                        "is_system_provided": false,
-                                        "dynamic_variable": "",
-                                        "allowed_values": null,
-                                        "allowed_values_dynamic_variable": "",
-                                        "constant_value": 7520336,
-                                        "is_omitted": false
-                                    },
-                                    "start": {
-                                        "type": "string",
-                                        "description": "Slot start exactly as returned by check_availability, including its UTC offset (for example 2026-10-19T09:30:00.000-07:00). Do not convert it.",
-                                        "enum": null,
-                                        "is_system_provided": false,
-                                        "dynamic_variable": "",
-                                        "allowed_values": null,
-                                        "allowed_values_dynamic_variable": "",
-                                        "constant_value": "",
-                                        "is_omitted": false
-                                    },
-                                    "attendee": {
-                                        "description": "The lead.",
-                                        "dynamic_variable": "",
-                                        "is_omitted": false,
-                                        "type": "object",
-                                        "required": [
-                                            "name",
-                                            "phoneNumber",
-                                            "timeZone"
-                                        ],
-                                        "properties": {
-                                            "name": {
-                                                "type": "string",
-                                                "description": "Lead's full name.",
-                                                "enum": null,
-                                                "is_system_provided": false,
-                                                "dynamic_variable": "",
-                                                "allowed_values": null,
-                                                "allowed_values_dynamic_variable": "",
-                                                "constant_value": "",
-                                                "is_omitted": false
-                                            },
-                                            "timeZone": {
-                                                "type": "string",
-                                                "description": "",
-                                                "enum": null,
-                                                "is_system_provided": false,
-                                                "dynamic_variable": "",
-                                                "allowed_values": null,
-                                                "allowed_values_dynamic_variable": "",
-                                                "constant_value": "America/Los_Angeles",
-                                                "is_omitted": false
-                                            },
-                                            "phoneNumber": {
-                                                "type": "string",
-                                                "description": "The lead's mobile number in international format, for example +15415550123. Use {{lead_phone}} when it is filled in; on a test call where it is empty, use the number the lead gave.",
-                                                "enum": null,
-                                                "is_system_provided": false,
-                                                "dynamic_variable": "",
-                                                "allowed_values": null,
-                                                "allowed_values_dynamic_variable": "",
-                                                "constant_value": "",
-                                                "is_omitted": false
-                                            }
-                                        }
-                                    },
-                                    "bookingFieldsResponses": {
-                                        "description": "Extra booking fields.",
-                                        "dynamic_variable": "",
-                                        "is_omitted": false,
-                                        "type": "object",
-                                        "required": [],
-                                        "properties": {
-                                            "notes": {
-                                                "type": "string",
-                                                "description": "Property address for the inspection, e.g. 'Property address: 1420 NW Wall St, Bend OR'.",
-                                                "enum": null,
-                                                "is_system_provided": false,
-                                                "dynamic_variable": "",
-                                                "allowed_values": null,
-                                                "allowed_values_dynamic_variable": "",
-                                                "constant_value": "",
-                                                "is_omitted": false
-                                            }
-                                        }
-                                    }
+                                "timeZone": {
+                                    "source": "constant",
+                                    "constant_value": "America/Los_Angeles"
                                 }
                             },
-                            "response_body_schema": null,
-                            "response_filter": null,
-                            "content_type": "application/json",
-                            "auth_resolved_params": [],
-                            "auth_connection": null,
-                            "mtls_auth_connection": null
-                        },
-                        "follow_redirects": false,
-                        "follow_redirects_allowed_domains": []
+                            "kind": "webhook"
+                        }
                     },
                     {
                         "type": "system",
@@ -476,7 +257,6 @@
                         "force_pre_tool_speech": false,
                         "pre_tool_speech": "auto",
                         "assignments": [],
-                        "tool_call_sound": null,
                         "tool_call_sound_behavior": "auto",
                         "tool_error_handling_mode": "auto",
                         "params": {
@@ -493,7 +273,6 @@
                         "force_pre_tool_speech": false,
                         "pre_tool_speech": "auto",
                         "assignments": [],
-                        "tool_call_sound": null,
                         "tool_call_sound_behavior": "auto",
                         "tool_error_handling_mode": "auto",
                         "params": {
@@ -507,7 +286,7 @@
     },
     "metadata": {
         "created_at_unix_secs": 1792427070,
-        "updated_at_unix_secs": 1792427916
+        "updated_at_unix_secs": 1793216124
     },
     "platform_settings": {
         "evaluation": {
@@ -519,12 +298,9 @@
                     "conversation_goal_prompt": "Did the agent successfully book a free roof inspection with the lead?",
                     "use_knowledge_base": false,
                     "scope": "conversation",
-                    "llm": null,
                     "llm_billed": false,
-                    "analysis_schedule": null,
                     "scoring_mode": "binary",
-                    "max_score": 100,
-                    "score_instructions": null
+                    "max_score": 100
                 },
                 {
                     "id": "callback_scheduled",
@@ -533,12 +309,9 @@
                     "conversation_goal_prompt": "If an inspection wasn't booked, did the agent successfully schedule a specific callback time?",
                     "use_knowledge_base": false,
                     "scope": "conversation",
-                    "llm": null,
                     "llm_billed": false,
-                    "analysis_schedule": null,
                     "scoring_mode": "binary",
-                    "max_score": 100,
-                    "score_instructions": null
+                    "max_score": 100
                 },
                 {
                     "id": "lead_contact_confirmed",
@@ -547,12 +320,9 @@
                     "conversation_goal_prompt": "Did the agent confirm the lead's contact information for the inspection or callback?",
                     "use_knowledge_base": false,
                     "scope": "conversation",
-                    "llm": null,
                     "llm_billed": false,
-                    "analysis_schedule": null,
                     "scoring_mode": "binary",
-                    "max_score": 100,
-                    "score_instructions": null
+                    "max_score": 100
                 },
                 {
                     "id": "professional_tone_maintained",
@@ -561,12 +331,9 @@
                     "conversation_goal_prompt": "Did the agent maintain a professional yet warm tone throughout the conversation?",
                     "use_knowledge_base": false,
                     "scope": "conversation",
-                    "llm": null,
                     "llm_billed": false,
-                    "analysis_schedule": null,
                     "scoring_mode": "binary",
-                    "max_score": 100,
-                    "score_instructions": null
+                    "max_score": 100
                 }
             ]
         },
@@ -589,22 +356,9 @@
             "btn_text_color": "#ffffff",
             "border_color": "#e1e1e1",
             "focus_color": "#000000",
-            "border_radius": null,
-            "btn_radius": null,
-            "action_text": null,
-            "start_call_text": null,
-            "end_call_text": null,
-            "expand_text": null,
-            "listening_text": null,
-            "speaking_text": null,
-            "shareable_page_text": null,
             "shareable_page_show_terms": true,
-            "terms_text": null,
-            "terms_html": null,
-            "terms_key": null,
             "show_avatar_when_collapsed": false,
             "disable_banner": false,
-            "override_link": null,
             "markdown_link_allowed_hosts": [],
             "markdown_link_include_www": true,
             "markdown_link_allow_http": true,
@@ -618,153 +372,69 @@
             "show_agent_status": false,
             "show_conversation_id": true,
             "strip_audio_tags": true,
-            "syntax_highlight_theme": null,
-            "text_contents": {
-                "main_label": null,
-                "start_call": null,
-                "start_chat": null,
-                "new_call": null,
-                "end_call": null,
-                "mute_microphone": null,
-                "change_language": null,
-                "collapse": null,
-                "expand": null,
-                "copied": null,
-                "accept_terms": null,
-                "dismiss_terms": null,
-                "listening_status": null,
-                "speaking_status": null,
-                "connecting_status": null,
-                "chatting_status": null,
-                "queue_waiting_status": null,
-                "queue_waiting_status_short": null,
-                "input_label": null,
-                "input_placeholder": null,
-                "input_placeholder_text_only": null,
-                "input_placeholder_new_conversation": null,
-                "user_ended_conversation": null,
-                "agent_ended_conversation": null,
-                "conversation_id": null,
-                "error_occurred": null,
-                "queue_timed_out": null,
-                "copy_id": null,
-                "initiate_feedback": null,
-                "request_follow_up_feedback": null,
-                "thanks_for_feedback": null,
-                "thanks_for_feedback_details": null,
-                "follow_up_feedback_placeholder": null,
-                "submit": null,
-                "go_back": null,
-                "send_message": null,
-                "text_mode": null,
-                "voice_mode": null,
-                "switched_to_text_mode": null,
-                "switched_to_voice_mode": null,
-                "copy": null,
-                "download": null,
-                "wrap": null,
-                "agent_working": null,
-                "agent_done": null,
-                "agent_error": null,
-                "attach_file": null,
-                "remove_file": null,
-                "file_upload_error": null,
-                "file_type_unsupported": null,
-                "file_too_large": null,
-                "file_limit_reached": null,
-                "typing_indicator": null,
-                "rich_content_unavailable": null
-            },
-            "styles": {
-                "base": null,
-                "base_hover": null,
-                "base_active": null,
-                "base_border": null,
-                "base_subtle": null,
-                "base_primary": null,
-                "base_error": null,
-                "accent": null,
-                "accent_hover": null,
-                "accent_active": null,
-                "accent_border": null,
-                "accent_subtle": null,
-                "accent_primary": null,
-                "overlay_padding": null,
-                "button_radius": null,
-                "input_radius": null,
-                "bubble_radius": null,
-                "sheet_radius": null,
-                "compact_sheet_radius": null,
-                "dropdown_sheet_radius": null
-            },
+            "text_contents": {},
+            "styles": {},
             "show_resize_button": true,
             "end_confirmation_enabled": false,
+            "mobile_fullscreen": true,
+            "transcript_speech_sync_enabled": true,
             "language_selector": false,
             "supports_text_only": true,
-            "custom_avatar_path": null,
             "language_presets": {},
             "first_message_quick_replies": []
         },
         "data_collection": {
             "outcome": {
                 "type": "string",
-                "description": "One of: booked, callback_requested, not_interested, disqualified, wrong_number, no_answer, voicemail.",
-                "enum": null,
+                "description": "Call outcome. booked = inspection booked successfully. callback_requested = lead asked to be called back later. not_interested = declined. do_not_call = lead asked not to be called again or to be removed. disqualified = not the owner/renter or otherwise not a fit. out_of_area = property is outside the service area. wrong_number = wrong person. no_answer = nobody answered. voicemail = reached voicemail. booking_failed = booking tool failed and a team callback was promised.",
+                "enum": [
+                    "booked",
+                    "callback_requested",
+                    "not_interested",
+                    "do_not_call",
+                    "disqualified",
+                    "out_of_area",
+                    "wrong_number",
+                    "no_answer",
+                    "voicemail",
+                    "booking_failed"
+                ],
                 "is_system_provided": false,
                 "dynamic_variable": "",
-                "allowed_values": null,
                 "allowed_values_dynamic_variable": "",
                 "constant_value": "",
                 "is_omitted": false,
-                "name": null,
-                "llm": null,
-                "llm_billed": false,
-                "analysis_schedule": null
+                "llm_billed": false
             },
             "callback_time": {
                 "type": "string",
                 "description": "Callback day and time the lead asked for, if any.",
-                "enum": null,
                 "is_system_provided": false,
                 "dynamic_variable": "",
-                "allowed_values": null,
                 "allowed_values_dynamic_variable": "",
                 "constant_value": "",
                 "is_omitted": false,
-                "name": null,
-                "llm": null,
-                "llm_billed": false,
-                "analysis_schedule": null
+                "llm_billed": false
             },
             "booked_slot": {
                 "type": "string",
                 "description": "Booked inspection date and time, if booked.",
-                "enum": null,
                 "is_system_provided": false,
                 "dynamic_variable": "",
-                "allowed_values": null,
                 "allowed_values_dynamic_variable": "",
                 "constant_value": "",
                 "is_omitted": false,
-                "name": null,
-                "llm": null,
-                "llm_billed": false,
-                "analysis_schedule": null
+                "llm_billed": false
             },
             "notes": {
                 "type": "string",
                 "description": "Short notes on anything unusual in the call.",
-                "enum": null,
                 "is_system_provided": false,
                 "dynamic_variable": "",
-                "allowed_values": null,
                 "allowed_values_dynamic_variable": "",
                 "constant_value": "",
                 "is_omitted": false,
-                "name": null,
-                "llm": null,
-                "llm_billed": false,
-                "analysis_schedule": null
+                "llm_billed": false
             }
         },
         "data_collection_scopes": {},
@@ -773,59 +443,47 @@
                 {
                     "source": "user",
                     "analysis_item_id": "aitem_1501m5afn5dvf0brthaqhp6m0hww",
-                    "version_id": null,
                     "additional_version_ids": [],
-                    "scope": "conversation",
-                    "weight": null
+                    "scope": "conversation"
                 },
                 {
                     "source": "user",
                     "analysis_item_id": "aitem_1301m5afn5e7frn86gwf3ehk121r",
-                    "version_id": null,
                     "additional_version_ids": [],
-                    "scope": "conversation",
-                    "weight": null
+                    "scope": "conversation"
                 },
                 {
                     "source": "user",
                     "analysis_item_id": "aitem_7401m5afn5efew1ad6vc3mhpej3r",
-                    "version_id": null,
                     "additional_version_ids": [],
-                    "scope": "conversation",
-                    "weight": null
+                    "scope": "conversation"
                 },
                 {
                     "source": "user",
                     "analysis_item_id": "aitem_2701m5afn5epetbtkgf8hwzd4rzv",
-                    "version_id": null,
                     "additional_version_ids": [],
-                    "scope": "conversation",
-                    "weight": null
+                    "scope": "conversation"
                 }
             ],
             "data_collection": [
                 {
                     "source": "user",
                     "analysis_item_id": "aitem_2601m5afn5exfc2thrhhbszmzz8d",
-                    "version_id": null,
                     "scope": "conversation"
                 },
                 {
                     "source": "user",
                     "analysis_item_id": "aitem_4701m5afn5f4eaxt90kwa7psak8s",
-                    "version_id": null,
                     "scope": "conversation"
                 },
                 {
                     "source": "user",
                     "analysis_item_id": "aitem_5201m5afn5fbewavqw66gvb2sw1k",
-                    "version_id": null,
                     "scope": "conversation"
                 },
                 {
                     "source": "user",
                     "analysis_item_id": "aitem_5901m5afn5fjeac9bb6hhgx1vy34",
-                    "version_id": null,
                     "scope": "conversation"
                 }
             ]
@@ -839,7 +497,8 @@
                     "soft_timeout_config": {
                         "message": false,
                         "additional_soft_timeout_messages": false
-                    }
+                    },
+                    "noisy_environment_message": false
                 },
                 "tts": {
                     "model_id": false,
@@ -848,7 +507,7 @@
                     "stability": false,
                     "speed": false,
                     "similarity_boost": false,
-                    "pvc_strength": false,
+                    "clone_strength": false,
                     "pronunciation_dictionary_locators": false
                 },
                 "conversation": {
@@ -876,9 +535,7 @@
             "enable_procedure_ids_from_client": false
         },
         "workspace_overrides": {
-            "conversation_initiation_client_data_webhook": null,
             "webhooks": {
-                "post_call_webhook_id": null,
                 "events": [
                     "transcript"
                 ],
@@ -887,7 +544,6 @@
                 "send_audio": false
             },
             "cloud_storage_export": {
-                "destination_id": null,
                 "events": [
                     "transcript"
                 ],
@@ -897,20 +553,16 @@
         "testing": {
             "attached_tests": [
                 {
-                    "test_id": "test_8501m52zy16cezbag26tx373ggxn",
-                    "workflow_node_id": null
+                    "test_id": "test_8501m52zy16cezbag26tx373ggxn"
                 },
                 {
-                    "test_id": "test_4901m52zy16gf5tt5z0y6763xmqw",
-                    "workflow_node_id": null
+                    "test_id": "test_4901m52zy16gf5tt5z0y6763xmqw"
                 },
                 {
-                    "test_id": "test_7401m52zy16kfk9ts7j5at0c7vfb",
-                    "workflow_node_id": null
+                    "test_id": "test_7401m52zy16kfk9ts7j5at0c7vfb"
                 },
                 {
-                    "test_id": "test_7901m52zy16pemwanwj3g5c1j4zq",
-                    "workflow_node_id": null
+                    "test_id": "test_7901m52zy16pemwanwj3g5c1j4zq"
                 }
             ],
             "referenced_tests_ids": [
@@ -971,20 +623,16 @@
                     "type": "end_call"
                 }
             },
-            "moderation": null,
             "custom": {
                 "config": {
                     "configs": []
                 }
             }
         },
-        "summary_language": null,
-        "auto_translate_transcript_to_app_language": null,
         "auth": {
-            "enable_auth": false,
+            "enable_auth": true,
             "allowlist": [],
-            "require_origin_header": false,
-            "shareable_token": null
+            "require_origin_header": false
         },
         "call_limits": {
             "agent_concurrency_limit": -1,
@@ -993,11 +641,8 @@
         },
         "queueing_config": {
             "enabled": true,
-            "wait_timeout_seconds": 180,
-            "hold_audio": null
+            "wait_timeout_seconds": 180
         },
-        "ban": null,
-        "smb_metadata": null,
         "privacy": {
             "record_voice": true,
             "retention_days": -1,
@@ -1013,12 +658,12 @@
             },
             "user_memory": {
                 "enabled": false,
-                "scale": "balanced"
+                "scale": "balanced",
+                "accept_unverified_identities": false
             }
         },
         "trust_context": "low",
         "analysis_llm": "gemini-2.5-flash",
-        "analysis_bedrock_llm": null,
         "analysis_llm_billed": false,
         "topic_discovery": {
             "enabled": true
@@ -1030,8 +675,6 @@
             "enabled": false,
             "test_ids": []
         },
-        "alerting": null,
-        "overview_dashboard_template_id": null,
         "safety": {
             "is_blocked_ivc": false,
             "is_blocked_non_ivc": false,
@@ -1049,8 +692,7 @@
                     "x": 0.0,
                     "y": 0.0
                 },
-                "edge_order": [],
-                "parent_subgraph_id": null
+                "edge_order": []
             }
         },
         "subgraphs": {},
@@ -1061,7 +703,6 @@
         "creator_name": "abdullahblitz24@gmail.com",
         "creator_email": "abdullahblitz24@gmail.com",
         "role": "admin",
-        "anonymous_access_level_override": null,
         "access_source": "creator"
     },
     "access_permissions": [
@@ -1100,14 +741,14 @@
         "agent_rerun_conversation_analysis",
         "agent_run_tasks",
         "agent_run_tests",
-        "agent_search_conversations",
+        "agent_search_conversation_history",
         "agent_view_advanced_settings",
         "agent_view_analysis",
         "agent_view_analytics",
         "agent_view_batch_calling",
         "agent_view_channels",
         "agent_view_config",
-        "agent_view_conversation_history",
+        "agent_view_conversation_by_id",
         "agent_view_costs",
         "agent_view_experiments",
         "agent_view_guardrails",
@@ -1137,7 +778,7 @@
         "bake-off",
         "v1-strict"
     ],
-    "version_id": "agtvrsn_1601m5ageyvef8ns1757s7c85w2v",
+    "version_id": "agtvrsn_9301m62055dafs5tssrg9gkkf818",
     "branch_id": "agtbrch_0201m5afn5a5ejxaskex2f5v9zmt",
     "main_branch_id": "agtbrch_0201m5afn5a5ejxaskex2f5v9zmt",
     "procedures": {},
