@@ -3,7 +3,7 @@ import { spawn } from 'node:child_process';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { desc, eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { backupRuns } from '../db/schema';
 import { getWorkerDb, type Db } from '../db/client';
 import { getEnv } from '../env';
@@ -129,6 +129,57 @@ async function scratchRestore(
       ]);
       if (Number(Buffer.from(isolation).toString().trim()) !== 4)
         throw new Error('Restored tenant table schema check failed');
+      const fixtureContacts = Buffer.from(
+        await runCommand!(
+          'psql',
+          [
+            new URL(`/${dbName}`, maintenanceUrl).toString(),
+            '-At',
+            '-v',
+            'ON_ERROR_STOP=1',
+            '-c',
+            'select distinct on (tenant_id) tenant_id::text || \':\' || id::text from contacts order by tenant_id, id limit 2'
+          ]
+        )
+      )
+        .toString()
+        .trim()
+        .split('\n')
+        .map((row) => row.split(':'));
+      if (fixtureContacts.length !== 2 || fixtureContacts.some((row) => row.length !== 2))
+        throw new Error('Restored database needs at least two tenant contacts for isolation verification');
+      const [[tenantA, contactA], [tenantB, contactB]] = fixtureContacts as [string, string][];
+      await runCommand!(
+        'psql',
+        [
+          new URL(`/${dbName}`, maintenanceUrl).toString(),
+          '-v',
+          'ON_ERROR_STOP=1',
+          '-c',
+          'GRANT SELECT ON contacts TO kynetic_app'
+        ]
+      );
+      const appDatabaseUrl = new URL(getEnv().DATABASE_URL);
+      appDatabaseUrl.pathname = `/${dbName}`;
+      const rls = Buffer.from(
+        await runCommand!(
+          'psql',
+          [
+            appDatabaseUrl.toString(),
+            '-At',
+            '-v',
+            'ON_ERROR_STOP=1',
+            '-c',
+            `begin; select set_config('app.tenant_id','${tenantA}',true); select count(*) from contacts where id='${contactA}'; select count(*) from contacts where id='${contactB}'; commit;`
+          ]
+        )
+      )
+        .toString()
+        .trim()
+        .split('\n')
+        .filter((row) => row === '0' || row === '1');
+      if (rls.length !== 2 || rls[0] !== '1' || rls[1] !== '0')
+        throw new Error('Restored database tenant RLS isolation verification failed');
     } finally {
       await runCommand!('dropdb', [
         '--if-exists',
@@ -209,16 +260,24 @@ export async function runBackup(job: BackupJob, runtime: BackupRuntime = {}): Pr
   }
 }
 
-async function pruneBackupRetention(storage: StorageAdapter, now: Date) {
-  // Store a per-object timestamp in the key; remove expired objects only after successful runs.
+export async function pruneBackupRetention(storage: StorageAdapter, _now: Date) {
   const objects = await storage.list?.(`${BACKUP_KEY_PREFIX}/`);
   if (!objects) return;
-  const cutoff = new Date(now);
-  cutoff.setUTCDate(cutoff.getUTCDate() - 395);
+  const daily: { key: string; date: string }[] = [];
+  const monthly: { key: string; date: string }[] = [];
   for (const object of objects) {
-    const match = object.key.match(/^backups\/kynetic-crm\/(\d{4}-\d{2}-\d{2})\//);
-    if (match && new Date(`${match[1]}T00:00:00Z`) < cutoff) await storage.remove(object.key);
+    const match = object.key.match(
+      /^backups\/kynetic-crm\/(\d{4}-\d{2}-\d{2})\/(nightly|manual|restore_test)-[a-f0-9]+\.dump\.enc$/
+    );
+    if (!match) continue;
+    const [, date, kind] = match;
+    (kind === 'restore_test' ? monthly : daily).push({ key: object.key, date: date! });
   }
+  const newestFirst = (a: { key: string; date: string }, b: { key: string; date: string }) =>
+    b.date.localeCompare(a.date) || b.key.localeCompare(a.key);
+  daily.sort(newestFirst);
+  monthly.sort(newestFirst);
+  for (const object of [...daily.slice(30), ...monthly.slice(12)]) await storage.remove(object.key);
 }
 
 export async function handleBackupJob(job: BackupJob): Promise<void> {
@@ -229,11 +288,21 @@ export async function listBackups(
   ctx: { userId: string; role: 'admin' | 'va' },
   opts: { db?: Db } = {}
 ) {
-  return withPlatform(
+  const rows = await withPlatform(
     ctx,
-    (tx) => tx.select().from(backupRuns).orderBy(desc(backupRuns.startedAt)).limit(100),
+    (tx) => tx.execute(sql`select * from admin_list_backup_runs()`),
     opts
   );
+  return (rows as unknown as Record<string, unknown>[]).map((row) => ({
+    id: String(row.id),
+    kind: String(row.kind),
+    status: String(row.status),
+    startedAt: row.started_at as Date,
+    finishedAt: row.finished_at as Date | null,
+    sizeBytes: row.size_bytes === null ? null : Number(row.size_bytes),
+    offsiteKey: (row.offsite_key as string | null) ?? null,
+    restoreTestPassed: (row.restore_test_passed as boolean | null) ?? null
+  }));
 }
 
 export async function auditManualBackup(

@@ -228,8 +228,11 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-60 (M8a, platform) | VA reads the viewer; a client role calls it | VA reads; client refused by the app and by `audit_search` (42501); web role cannot select `audit_log` | Integration | Passing (`crm/tests/integration/audit-viewer.test.ts`) |
 | F-60 (M8a, platform) | Filter input is not a UUID or a date | Rejected before any query | Unit | Passing (`crm/tests/unit/admin/audit-viewer.test.ts`) |
 | F-62 (M8, platform) | Webhook failing | Error count rises; integration red; recovery returns to green | Integration | Not run |
-| F-63 (M8, platform) | Nightly job completes | Backups page shows time and size | Integration | Not run |
-| F-63 (M8, platform) | Manual backup button | Runs and is audited | Integration | Not run |
+| F-63 (M8b, platform) | Encrypted backup restore test | Real `pg_dump`, AES-256-GCM, storage readback, scratch `pg_restore`, schema and contact-level tenant RLS checks, and scratch cleanup | Integration | Pass (2026-10-28, `tests/integration/backups-m8b.test.ts`; disposable PostgreSQL 17 and fake storage) |
+| F-63 (M8b, platform) | Retention prune | 30 daily and 12 monthly objects remain | Integration | Pass (2026-10-28, `tests/integration/backups-m8b.test.ts`; fake storage) |
+| F-63 (M8b, platform) | Manual backup request | Admin request is audited and queued; VA request refused | Integration | Pass (2026-10-28, `tests/integration/backups-m8b.test.ts`; disposable PostgreSQL and pg-boss) |
+| F-63 (M8b, platform) | Admin backup list | Admin and VA read through `admin_list_backup_runs()`; client DB role refused by the function | Integration | Pass (2026-10-28, `tests/integration/backups-m8b.test.ts`; disposable PostgreSQL) |
+| F-63 (M8b, platform) | Backup status page renders restore result | Admin sees synthetic run status and restore result | E2E | Added (`tests/e2e/m8b-backups.spec.ts`); prior local run passed with F-37 search/export; rerun blocked because test PostgreSQL on 127.0.0.1:5432 was unavailable |
 | F-56, F-59, F-64 (Later) | Not in v1 | Out of scope | n/a | n/a |
 | F-65 to F-69 (Later, Phase 2) | Not in v1 | Out of scope | n/a | n/a |
 

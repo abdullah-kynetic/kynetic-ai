@@ -39,12 +39,19 @@ export async function setupJobs(
       GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA ${JOBS_SCHEMA} TO kynetic_app, kynetic_worker;
       GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA ${JOBS_SCHEMA} TO kynetic_app, kynetic_worker;
       GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA ${JOBS_SCHEMA} TO kynetic_app, kynetic_worker;
+      GRANT USAGE ON SCHEMA ${JOBS_SCHEMA} TO kynetic_backup;
+      GRANT SELECT ON ALL TABLES IN SCHEMA ${JOBS_SCHEMA} TO kynetic_backup;
+      GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA ${JOBS_SCHEMA} TO kynetic_backup;
       ALTER DEFAULT PRIVILEGES IN SCHEMA ${JOBS_SCHEMA}
         GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO kynetic_app, kynetic_worker;
       ALTER DEFAULT PRIVILEGES IN SCHEMA ${JOBS_SCHEMA}
         GRANT USAGE, SELECT ON SEQUENCES TO kynetic_app, kynetic_worker;
       ALTER DEFAULT PRIVILEGES IN SCHEMA ${JOBS_SCHEMA}
         GRANT EXECUTE ON FUNCTIONS TO kynetic_app, kynetic_worker;
+      ALTER DEFAULT PRIVILEGES IN SCHEMA ${JOBS_SCHEMA}
+        GRANT SELECT ON TABLES TO kynetic_backup;
+      ALTER DEFAULT PRIVILEGES IN SCHEMA ${JOBS_SCHEMA}
+        GRANT USAGE, SELECT ON SEQUENCES TO kynetic_backup;
     `);
   } finally {
     await sql.end();

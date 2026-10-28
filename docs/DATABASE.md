@@ -1267,9 +1267,9 @@ Seed data (synthetic only; no real client data in preview, spec s6):
 - Demo tenants for tests: two synthetic tenants (slugs `demo-a`, `demo-b`), with fictional contacts on 555-01xx numbers and no real names. Owners and staff with test emails on a reserved test domain.
 
 Backups and restore:
-- Nightly `pg_dump`, encrypted, to offsite storage: 30 daily and 12 monthly kept (spec s7, F-63). Each run writes a `backup_runs` row.
-- Monthly restore drill into a scratch database. The result writes a `backup_runs` row with `kind='restore_test'`. Pilot is blocked until one drill passes (spec M10).
-- Commands and provider for backup: Not configured.
+- Nightly `pg_dump`, authenticated-encrypted before upload, to offsite storage: 30 daily and 12 monthly kept (spec s7, F-63). Each run writes a `backup_runs` row.
+- Monthly restore drill into a scratch database. The result writes a `backup_runs` row with `kind='restore_test'`. The admin page reads only through `admin_list_backup_runs()`, which checks Kynetic admin/VA role and exposes display fields. Pilot is blocked until a production-like drill passes (spec M10).
+- Local commands are implemented in `src/server/admin/backups.ts` and verified on disposable PostgreSQL; R2 pagination, restore into a scratch database, schema checks, and scratch cleanup are tested. Production storage credentials, permissions, and scheduled operation are not verified.
 
 Rollback:
 - Forward fix preferred. Destructive rollback is by restore from the nightly backup, tested by the drill. Down migrations are not written (decided, recommended option).

@@ -416,12 +416,13 @@ Cookies per 2.1. Cloudflare: TLS 1.2 or higher, "Always HTTPS", managed WAF rule
 
 ### 6.4 Backups and recovery (locked decisions, F-63)
 - Nightly `pg_dump`, encrypted with `BACKUP_ENCRYPTION_KEY` before leaving the server, uploaded to offsite R2 or B2. **30 daily and 12 monthly** kept.
+- The dedicated `kynetic_backup` login is `NOSUPERUSER NOCREATEROLE BYPASSRLS CREATEDB`; superuser bootstrap sets these attributes. BYPASSRLS is required to dump FORCE-RLS tables, and CREATEDB is required for an isolated scratch restore. It has read-only object grants on application tables and queue tables; it cannot write application data. The app and worker roles do not receive these attributes.
 - **Monthly restore test** (locked decision): restore the latest backup into an isolated scratch database, run row-count and integrity checks, run the isolation tests (SEC-T-01, SEC-T-02) against it, and record the date and result. F-63 shows status, last test and a manual backup button (admin only, rate limited, audited).
 - The M10 backup restore drill is the first formal drill. Where evidence is recorded: Decided 2026-10-25 (recommended option approved: an `audit_log` entry plus a dated note in `docs/progress.md`).
 - A failed backup raises an alert. A backup older than 36 hours turns the admin card red.
-- Bucket credentials for the server are write-only, so it cannot delete or overwrite backups. Pruning to 30 and 12 runs with a different credential or a provider lifecycle policy (ransomware resistance).
+- Storage credentials used by the backup worker permit object list, upload, readback verification, and retention deletes. They are separate from the backup encryption key; production credential scoping and lifecycle protection remain deployment configuration.
 - RPO up to 24 h (nightly). RTO: Decided 2026-10-25 (recommended option approved: 4 hours). Point-in-time recovery is not in the spec; recommended option: defer until more than 5 paying clients.
-- Backup and restore commands: `Not configured` until written and tested in M8 and M10.
+- Local dump, authenticated encryption, upload/readback, scratch `createdb`/`pg_restore`/schema verification, and cleanup are implemented and exercised against disposable PostgreSQL in M8b. Production storage, credential scoping, and monthly live operations remain unverified.
 
 ### 6.5 Security-sensitive change review
 Changes needing Abdullah's review before merge. CODEOWNERS and branch protection: `Not configured`. Decided (recommended option): add in M0 so GitHub enforces it.
