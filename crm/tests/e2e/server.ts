@@ -34,6 +34,7 @@ async function signedCookie(token: string): Promise<string> {
 async function main(): Promise<void> {
   db = await createTestDatabase({ jobs: true });
   await seedTwoTenants(db.admin);
+  await db.admin`update tenants set name = 'Synthetic Brand Co', primary_color = '#2563eb' where id = ${IDS.tenantA}`;
   await db.admin`
     insert into tenant_modules (tenant_id, module_key, enabled, level)
     values (${IDS.tenantA}, 'crm', true, 'full')

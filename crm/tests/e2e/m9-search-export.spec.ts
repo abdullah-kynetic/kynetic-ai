@@ -62,3 +62,18 @@ test('F-44 contact phone offers a 44px tel link without opening the dialer', asy
   expect(box?.height).toBeGreaterThanOrEqual(44);
   expect(box?.width).toBeGreaterThanOrEqual(44);
 });
+
+test('F-39 saved synthetic branding appears in settings and across portal routes', async ({ authenticatedPage }) => {
+  await authenticatedPage.goto('/dashboard/settings/branding');
+  await expect(authenticatedPage.getByLabel('Business name')).toHaveValue('Synthetic Brand Co');
+  await expect(authenticatedPage.locator('#primaryColor')).toHaveValue('#2563eb');
+  await authenticatedPage.goto('/dashboard');
+  await expect(authenticatedPage.getByText('Synthetic Brand Co', { exact: true })).toBeVisible();
+  const branding = await authenticatedPage.locator('style').allTextContents();
+  expect(branding.join('\n')).toContain('#2563eb');
+  for (const route of ['/dashboard/contacts', '/dashboard/appointments']) {
+    await authenticatedPage.goto(route);
+    await expect(authenticatedPage.getByText('Synthetic Brand Co', { exact: true })).toBeVisible();
+    expect((await authenticatedPage.locator('style').allTextContents()).join('\n')).toContain('#2563eb');
+  }
+});
