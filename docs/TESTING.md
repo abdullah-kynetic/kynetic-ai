@@ -234,7 +234,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-63 (M8b, platform) | Retention prune | 30 daily and 12 monthly objects remain | Integration | Pass (2026-10-28, `tests/integration/backups-m8b.test.ts`; fake storage) |
 | F-63 (M8b, platform) | Manual backup request | Admin request is audited and queued; VA request refused | Integration | Pass (2026-10-28, `tests/integration/backups-m8b.test.ts`; disposable PostgreSQL and pg-boss) |
 | F-63 (M8b, platform) | Admin backup list | Admin and VA read through `admin_list_backup_runs()`; client DB role refused by the function | Integration | Pass (2026-10-28, `tests/integration/backups-m8b.test.ts`; disposable PostgreSQL) |
-| F-63 (M8b, platform) | Backup status page renders restore result | Admin sees synthetic run status and restore result | E2E | Added (`tests/e2e/m8b-backups.spec.ts`); prior local run passed with F-37 search/export; rerun blocked because test PostgreSQL on 127.0.0.1:5432 was unavailable |
+| F-63 (M8b, platform) | Backup status page renders restore result | Admin sees synthetic run status and restore result | E2E | Pass (2026-10-28, `tests/e2e/m8b-backups.spec.ts`; disposable PostgreSQL URLs explicitly set) |
 | F-56, F-59, F-64 (Later) | Not in v1 | Out of scope | n/a | n/a |
 | F-65 to F-69 (Later, Phase 2) | Not in v1 | Out of scope | n/a | n/a |
 
@@ -354,7 +354,7 @@ No command has been run against this repo's CI in any source. Each line stays `N
 
 All run from `crm/` with bun (Node 22). Verified locally on 2026-10-26 (M0-02); CI workflow `.github/workflows/crm-ci.yml` runs them on every PR touching `crm/`.
 
-- Production deploy scripts (M10-05): `bash deploy/prod/tests/rehearse.sh` from `crm/` (stubbed docker, curl, df and openssl; 25 checks covering deploy, failed health check, failed migration, rollback, forced command, alert test, de-duplication, recovery, disk and certificate). Also `bash -n` on every script and `docker compose -f deploy/prod/compose.yml --profile tools config -q` with dummy values; both run in `crm-ci.yml`. The rehearsal on a real server is still owed.
+- Production deploy scripts (M10-05): `bash deploy/prod/tests/rehearse.sh` from `crm/` (stubbed docker, curl, df and openssl; 25 checks covering deploy, failed health check, failed migration, rollback, forced command, alert test, de-duplication, recovery, disk and certificate). Also `bash -n` on every script passed locally (2026-10-28). The 25-check stubbed rehearsal passed locally (2026-10-28). Docker Compose config validation was not run because Docker CLI is unavailable; CI config validation and rehearsal on a real server remain owed.
 - Lint: `bun run lint` (oxlint).
 - Typecheck: `bun run typecheck`.
 - Format check: `bun run format:check` (oxfmt).
