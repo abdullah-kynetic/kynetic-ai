@@ -3,11 +3,14 @@ import { getWorkerDb } from '../db/client';
 import { calls } from '../db/schema';
 import { subscribe } from '../events';
 import { getSmsProvider } from '../messaging/provider';
+import type { SmsProvider } from '../adapters/sms/types';
 import { sendSms } from '../messaging/sms';
 import { withTenant } from '../tenancy';
 
 /** F-81: one compliant SMS for an inbound call that was not answered. */
-export function registerMissedCallTextbackSubscriber(): void {
+export function registerMissedCallTextbackSubscriber(
+  opts: { db?: ReturnType<typeof getWorkerDb>; provider?: SmsProvider; now?: () => Date } = {}
+): void {
   subscribe(
     'call.completed',
     'missed-call-textback',
@@ -29,7 +32,7 @@ export function registerMissedCallTextbackSubscriber(): void {
             .from(calls)
             .where(and(eq(calls.id, callId), eq(calls.tenantId, env.tenantId)))
             .limit(1),
-        { db: getWorkerDb() }
+        { db: opts.db ?? getWorkerDb() }
       );
       if (!call?.contactId) return;
 
@@ -43,7 +46,7 @@ export function registerMissedCallTextbackSubscriber(): void {
           idempotencyKey: `missed-call-textback:${callId}`,
           actor: { type: 'automation' }
         },
-        { provider: getSmsProvider(), now: new Date(env.occurredAt) }
+        { provider: opts.provider ?? getSmsProvider(), now: opts.now?.() ?? new Date(env.occurredAt) }
       );
     },
     { module: 'missed_call_textback' }

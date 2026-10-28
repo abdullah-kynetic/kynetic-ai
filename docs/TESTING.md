@@ -258,14 +258,14 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-78 (M4, alex_core) | New lead with consent inside call window | Outbound call starts (fake provider) | Integration | Pass (2026-10-26, M4-06, `outbound-call.test.ts`) |
 | F-78 (M4, alex_core) | Lead outside the call window, in quiet hours, or with no consent | No call; waits for the opening (or stops with a logged reason); never dials early | Integration | Pass (2026-10-26, M4-06) |
 | F-78 (M4, alex_core) | Retry cadence on a fake clock, redelivered or concurrent attempt, reached lead | Attempts at the configured delays; one dial per attempt; stops once reached or at the daily cap | Integration | Pass (2026-10-26, M4-06) |
-| F-79 (M7, quote_followup) | Module on; deal enters Quoted | Step 1 scheduled | Integration | Not run |
-| F-79 (M7, quote_followup) | Module off | No run created | Integration | Not run |
+| F-79 (M7, quote_followup) | Module on; deal enters Quoted; duplicate stage event | One step scheduled and one active run | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
+| F-79 (M7, quote_followup) | Module off | No run created | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
 | F-79 (M7, quote_followup) | Reply during run | Run stops | Integration | Not run |
-| F-80 (M4 and M7, after_hours) | Module on; inbound call after hours | Call record and contact exist; staff notified | Integration | Not run |
-| F-80 (M4 and M7, after_hours) | Module off | Calls not routed to Alex by this module | Integration | Not run |
-| F-81 (M7, missed_call_textback) | Module on; missed call from consented or permitted number | One SMS sent and logged (fake Twilio) | Integration | Not run |
+| F-80 (M4 and M7, after_hours) | Module on; inbound call after hours, event redelivered | One staff notification; call/contact are retained | Integration | Pass for subscriber notification/idempotency (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`); M4 intake separately owns call/contact creation |
+| F-80 (M4 and M7, after_hours) | Module off | Subscriber skipped | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
+| F-81 (M7, missed_call_textback) | Module on; missed call from consented number | One SMS sent and logged (fake Twilio) | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
 | F-81 (M7, missed_call_textback) | after_hours on | Text-back enabled with no separate charge flag | Unit | Not run |
-| F-81 (M7, missed_call_textback) | Missed call with no consent basis | No SMS | Integration | Not run |
+| F-81 (M7, missed_call_textback) | Missed call with no consent basis | No SMS | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
 | F-82 (M7, reactivation) | Launch with mixed audience | Only consented contacts enter run | Integration | Not run |
 | F-82 (M7, reactivation) | Module off; launch attempted | Refused | Integration | Not run |
 | F-83 (M11, opm) | Module on | Online Presence section and monthly report visible | E2E | Pass (2026-10-28, `tests/e2e/m11-presence.spec.ts`; enabled owner page and report section) |
