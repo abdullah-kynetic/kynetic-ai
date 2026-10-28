@@ -27,13 +27,13 @@ beforeAll(async () => {
     where tenant_id = ${IDS.tenantA} and deleted_at is null and merged_into_id is null
       and ((first_name || ' ' || coalesce(last_name, '')) ilike '%Load fixture 4321%'
         or primary_email ilike '%Load fixture 4321%'
-        or contacts_phones_search(phones) like '%55560004321%')`;
+        or regexp_replace(contacts_phones_search(phones), '[^0-9]', '', 'g') like '%15560004321%')`;
   console.info(`M10 search plan (app-equivalent pool max=10): ${plan.map((r) => r['QUERY PLAN']).join(' | ')}`);
   const phonePlan = await tdb.admin`
     explain (analyze, buffers, format text)
     select id from contacts
     where tenant_id = ${IDS.tenantA} and deleted_at is null
-      and regexp_replace(contacts_phones_search(phones), '[^0-9]', '', 'g') like '%55560004321%'`;
+      and regexp_replace(contacts_phones_search(phones), '[^0-9]', '', 'g') like '%15560004321%'`;
   const phonePlanText = phonePlan.map((r) => r['QUERY PLAN']).join('\n');
   console.info(`M10 phone-fragment plan: ${phonePlanText.replaceAll('\n', ' | ')}`);
   expect(phonePlanText).toContain('contacts_phone_fragment_trgm');
