@@ -188,6 +188,16 @@ describe('F-90 to F-96 contact import workflow', () => {
     expect(await tdb.admin`select count(*)::int as n from contacts where tenant_id = ${IDS.tenantA}`).toEqual(before);
   });
 
+  it('runs a 50,000-row contact dry-run without writing contacts', async () => {
+    const rows = ['first,email'];
+    for (let i = 0; i < 50_000; i++) rows.push(`Synthetic ${i},bulk-${String(i).padStart(5, '0')}@example.test`);
+    const before = await tdb.admin`select count(*)::int as n from contacts where tenant_id = ${IDS.tenantA}`;
+    const batch = await createImportBatch(adminCtx, adminActor, { fileName: 'fifty-thousand.csv', fileType: 'csv', importedSource: 'synthetic-50000' }, new TextEncoder().encode(rows.join('\n')), { db: appDb });
+    const report = await dryRunContactBatch(adminCtx, adminActor, batch.id, { firstName: 'first', email: 'email' }, { db: appDb });
+    expect(report).toMatchObject({ total: 50_000, ok: 50_000, failed: 0, duplicates: 0 });
+    expect(await tdb.admin`select count(*)::int as n from contacts where tenant_id = ${IDS.tenantA}`).toEqual(before);
+  }, 60_000);
+
   it('rejects oversized, renamed-binary, malformed and over-limit CSV before storage writes', async () => {
     const before = (await storage.list(`${IDS.tenantA}/imports/`)).length;
     const base = { fileName: 'intake.csv', fileType: 'csv' as const, importedSource: 'synthetic' };
@@ -232,6 +242,17 @@ describe('F-90 to F-96 contact import workflow', () => {
     expect(await tdb.admin`select first_name, deleted_at from contacts where id = ${imported!.id}`).toMatchObject([
       { first_name: 'Edited by owner', deleted_at: null }
     ]);
+  });
+
+  it('fills only empty duplicate fields and restores them on undo', async () => {
+    const [existing] = await tdb.admin`insert into contacts (tenant_id, first_name, phones, emails, primary_phone_e164, imported_source)
+      values (${IDS.tenantA}, '', ARRAY['+14155550166'], ARRAY[]::text[], '+14155550166', 'synthetic-existing') returning id`;
+    const batch = await createImportBatch(adminCtx, adminActor, { fileName: 'fill-empty.csv', fileType: 'csv', importedSource: 'synthetic-fill' , duplicateRule: 'fill_empty' }, new TextEncoder().encode('first,phone\nKeep safe,4155550166'), { db: appDb });
+    await dryRunContactBatch(adminCtx, adminActor, batch.id, { firstName: 'first', phone: 'phone' }, { db: appDb });
+    await expect(commitContactBatch(adminCtx, adminActor, batch.id, { db: appDb })).resolves.toMatchObject({ imported: 0, filled: 1, skipped: 1, failed: 0 });
+    expect(await tdb.admin`select first_name from contacts where id = ${existing!.id}`).toEqual([{ first_name: 'Keep safe' }]);
+    await expect(undoImportBatch(adminCtx, adminActor, batch.id, { db: appDb })).resolves.toMatchObject({ removed: 0, restored: 1, skipped: [] });
+    expect(await tdb.admin`select first_name from contacts where id = ${existing!.id}`).toEqual([{ first_name: '' }]);
   });
 
   it('imports synthetic companies, deals and linked notes with traceable batch metadata and undo', async () => {

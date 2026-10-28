@@ -58,3 +58,19 @@ test('F-90 reuses the last successful mapping for the same source system', async
   await expect(adminPage.locator('select[aria-label="firstName"]')).toHaveValue('first_name');
   await expect(adminPage.locator('select[aria-label="phone"]')).toHaveValue('phone');
 });
+
+test('F-93 admin can undo a committed batch from import history', async ({ adminPage }) => {
+  await adminPage.goto('/admin/clients/11111111-1111-4111-8111-111111111111/imports');
+  const batch = adminPage.locator('article').filter({ hasText: 'e2e.csv' });
+  await expect(batch).toContainText('done');
+  await batch.getByRole('button', { name: 'Undo batch' }).click();
+  await expect(adminPage.locator('article').filter({ hasText: 'e2e.csv' })).toContainText('undone');
+});
+
+test('F-94 client owner and VA cannot open the tenant import wizard', async ({ authenticatedPage, vaPage }) => {
+  const url = '/admin/clients/11111111-1111-4111-8111-111111111111/imports';
+  const ownerResponse = await authenticatedPage.goto(url);
+  expect(ownerResponse?.status()).toBe(403);
+  const vaResponse = await vaPage.goto(url);
+  expect(vaResponse?.status()).toBe(403);
+});
