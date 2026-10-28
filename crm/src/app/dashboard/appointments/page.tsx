@@ -83,7 +83,7 @@ export default async function AppointmentsPage({
         {(['day', 'week', 'month'] as const).map((name) => (
           <a
             key={name}
-            className='rounded border px-3 py-1 capitalize hover:bg-muted'
+            className='inline-flex min-h-11 items-center rounded border px-3 capitalize hover:bg-muted'
             href={`/dashboard/appointments?view=${name}`}
           >
             {name}
@@ -99,21 +99,21 @@ export default async function AppointmentsPage({
             <input
               name='contactId'
               placeholder='Contact ID (optional)'
-              className='rounded border px-3 py-2'
+              className='min-h-11 rounded border px-3 py-2'
             />
             <input
               name='startsAt'
               type='datetime-local'
               required
-              className='rounded border px-3 py-2'
+              className='min-h-11 rounded border px-3 py-2'
             />
             <input
               name='endsAt'
               type='datetime-local'
               required
-              className='rounded border px-3 py-2'
+              className='min-h-11 rounded border px-3 py-2'
             />
-            <button className='rounded bg-primary px-3 py-2 text-primary-foreground' type='submit'>
+            <button className='min-h-11 rounded bg-primary px-3 py-2 text-primary-foreground' type='submit'>
               Book
             </button>
           </form>
@@ -141,27 +141,27 @@ export default async function AppointmentsPage({
                 {appointment.status !== 'cancelled' && (
                   <div className='mt-4 flex gap-2'>
                     <form action={cancelAppointmentAction.bind(null, appointment.id)}>
-                      <button className='rounded border px-2 py-1 text-xs' type='submit'>
+                      <button className='min-h-11 rounded border px-3 py-2 text-xs' type='submit'>
                         Cancel
                       </button>
                     </form>
                     <form
                       action={rescheduleAppointmentForm.bind(null, appointment.id)}
-                      className='flex gap-1'
+                      className='flex flex-wrap gap-1'
                     >
                       <input
                         name='startsAt'
                         type='datetime-local'
                         required
-                        className='w-36 rounded border px-1 py-1 text-xs'
+                        className='min-h-11 w-full rounded border px-2 py-1 text-xs sm:w-36'
                       />
                       <input
                         name='endsAt'
                         type='datetime-local'
                         required
-                        className='w-36 rounded border px-1 py-1 text-xs'
+                        className='min-h-11 w-full rounded border px-2 py-1 text-xs sm:w-36'
                       />
-                      <button className='rounded border px-2 py-1 text-xs' type='submit'>
+                      <button className='min-h-11 rounded border px-3 py-2 text-xs' type='submit'>
                         Reschedule
                       </button>
                     </form>

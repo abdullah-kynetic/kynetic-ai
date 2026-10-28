@@ -32,3 +32,21 @@ test('F-44 daily-use shell has no horizontal overflow at 390px', async ({ authen
     );
   }
 });
+
+test('F-44 daily-use touch targets are at least 44 by 44 CSS pixels at 390px', async ({ authenticatedPage }) => {
+  await authenticatedPage.setViewportSize({ width: 390, height: 844 });
+  const smallTargets: string[] = [];
+  for (const route of ['/dashboard', '/dashboard/contacts', '/dashboard/appointments', '/dashboard/tasks', '/dashboard/documents']) {
+    await authenticatedPage.goto(route);
+    const undersized = await authenticatedPage.locator('a[href], button, input:not([type="hidden"]):not([type="checkbox"]), select, textarea, [role="button"], [data-slot="checkbox"]').evaluateAll((elements) => elements.flatMap((element) => {
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      if (element.classList.contains('sr-only') || rect.width === 0 || rect.height === 0 || style.visibility === 'hidden' || style.display === 'none') return [];
+      return rect.width < 44 || rect.height < 44
+        ? [`${element.tagName.toLowerCase()} ${element.textContent?.trim().slice(0, 36) || (element as HTMLInputElement).type || ''}: ${Math.round(rect.width)}x${Math.round(rect.height)}`]
+        : [];
+    }));
+    smallTargets.push(...undersized.map((target) => `${route}: ${target}`));
+  }
+  expect(smallTargets, smallTargets.join('\n')).toEqual([]);
+});

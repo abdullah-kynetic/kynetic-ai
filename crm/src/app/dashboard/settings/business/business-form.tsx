@@ -92,7 +92,6 @@ export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: 
                 <label className='flex items-center gap-2 text-sm'>
                   <input
                     type='checkbox'
-                    className='size-5'
                     checked={Boolean(w)}
                     onChange={(e) => setDay(key, e.target.checked ? {} : null)}
                   />

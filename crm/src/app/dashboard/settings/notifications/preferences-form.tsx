@@ -44,7 +44,6 @@ export function PreferencesForm({ initial }: { initial: Pref[] }) {
           <label key={p.kind} className='flex items-center gap-3 text-sm'>
             <input
               type='checkbox'
-              className='size-4'
               checked={p.emailEnabled}
               disabled={busy}
               onChange={(e) =>
