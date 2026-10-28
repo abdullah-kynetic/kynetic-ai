@@ -5,6 +5,7 @@ import type { Db } from '../db/client';
 import { alexConfigs, alexPrompts } from '../db/schema';
 import { AppError, ValidationError } from '../errors';
 import { getVoiceProvider } from '../calls/provider';
+import type { VoiceProvider } from '../adapters/voice/types';
 import { withTenant } from '../tenancy';
 
 const inputSchema = z.strictObject({
@@ -42,13 +43,13 @@ export async function updateAdminAlexConfig(ctx: { tenantId: string; userId: str
   }, opts);
 }
 
-export async function placeAdminTestCall(ctx: { tenantId: string; userId: string }, toE164: string, opts: { db?: Db } = {}) {
+export async function placeAdminTestCall(ctx: { tenantId: string; userId: string }, toE164: string, opts: { db?: Db; provider?: VoiceProvider } = {}) {
   const parsed = z.string().regex(/^\+[1-9][0-9]{7,14}$/).safeParse(toE164);
   if (!parsed.success) throw new ValidationError({ phone: ['invalid'] });
   return withTenant({ ...ctx, role: 'admin' }, async (tx) => {
     const [config] = await tx.select().from(alexConfigs).limit(1);
     if (!config?.agentRef) throw new AppError('NOT_FOUND');
-    const provider = getVoiceProvider(config.provider as 'elevenlabs' | 'retell');
+    const provider = opts.provider ?? getVoiceProvider(config.provider as 'elevenlabs' | 'retell');
     if (!provider?.placeTestCall) throw new AppError('PROVIDER_ERROR');
     const result = await provider.placeTestCall({ agentId: config.agentRef, toE164: parsed.data });
     await audit(tx, { action: 'alex.test_call', entity: 'alex_configs', entityId: ctx.tenantId, after: { provider: config.provider } });
