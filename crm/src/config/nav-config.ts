@@ -68,6 +68,13 @@ export const navGroups: NavGroup[] = [
         items: []
       },
       {
+        title: 'Documents',
+        url: '/dashboard/documents',
+        icon: 'post',
+        isActive: false,
+        items: []
+      },
+      {
         title: 'Online Presence',
         url: '/dashboard/presence',
         icon: 'dashboard',
