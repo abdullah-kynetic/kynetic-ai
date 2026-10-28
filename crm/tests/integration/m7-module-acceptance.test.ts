@@ -3,7 +3,10 @@ import { createDb, type Db } from '@/server/db/client';
 import { registerAutomationSubscribers } from '@/server/automations/worker';
 import { registerAfterHoursSubscriber } from '@/server/automations/after-hours';
 import { registerMissedCallTextbackSubscriber } from '@/server/automations/missed-call-textback';
+import { registerStageRuleSubscribers } from '@/server/automations/rules';
 import { FakeSmsProvider } from '@/server/adapters/sms/fake';
+import { FakeEmailProvider } from '@/server/adapters/email/fake';
+import { deliverNotificationEmail } from '@/server/notifications';
 import { clearSubscribers, deliver, type EventEnvelope } from '@/server/events';
 import { stopJobs } from '@/server/jobs';
 import { createTestDatabase, type TestDatabase } from '../helpers/db';
@@ -61,6 +64,9 @@ describe('M7 F-79/F-80/F-81 module acceptance', () => {
     expect(runs).toHaveLength(1);
     const jobs = await tdb.admin`select id from pgboss.job where name = 'automation.step' and data->>'runId' = ${runs[0]!.id}`;
     expect(jobs).toHaveLength(1);
+    await expect(deliver(event('message.received', { contactId: a!.contactId }), 'automation-stop-message.received')).resolves.toBe('ran');
+    const [stopped] = await tdb.admin`select status, stop_reason from automation_runs where id = ${runs[0]!.id}`;
+    expect(stopped).toMatchObject({ status: 'stopped_reply', stop_reason: 'reply' });
   });
 
   it('F-80: after-hours inbound completion notifies once and module-off delivery no-ops', async () => {
@@ -99,5 +105,25 @@ describe('M7 F-79/F-80/F-81 module acceptance', () => {
     expect(provider.sent).toHaveLength(1);
     const logged = await tdb.admin`select status from messages where tenant_id = ${IDS.tenantA} and contact_id = ${a!.contactId} and body like 'Sorry we missed your call%'`;
     expect(logged).toEqual([{ status: 'sent' }]);
+  });
+
+  it('F-33: deal-won alert creates one owner notification and emails once through the fake adapter', async () => {
+    registerStageRuleSubscribers();
+    const env = event('deal.won', { dealId: a!.dealId });
+    await expect(deliver(env, 'm7-deal-won-alert')).resolves.toBe('ran');
+    await expect(deliver(env, 'm7-deal-won-alert')).resolves.toBe('ran');
+    const rows = await tdb.admin`select id from notifications where tenant_id = ${IDS.tenantA} and kind = 'deal_won' and link = ${`/dashboard/deals/${a!.dealId}`}`;
+    expect(rows).toHaveLength(1);
+    const jobs = await tdb.admin`select id from pgboss.job where name = 'notification.email' and data->>'notificationId' = ${rows[0]!.id}`;
+    expect(jobs).toHaveLength(1);
+    const mail = new FakeEmailProvider();
+    await deliverNotificationEmail({ tenantId: IDS.tenantA, notificationId: rows[0]!.id }, {
+      db: worker, provider: mail, fromAddress: 'alerts@example.test', baseUrl: 'https://portal.example.test'
+    });
+    await deliverNotificationEmail({ tenantId: IDS.tenantA, notificationId: rows[0]!.id }, {
+      db: worker, provider: mail, fromAddress: 'alerts@example.test', baseUrl: 'https://portal.example.test'
+    });
+    expect(mail.sent).toHaveLength(1);
+    expect(mail.sent[0]!.to).toBe('owner-a@example.test');
   });
 });

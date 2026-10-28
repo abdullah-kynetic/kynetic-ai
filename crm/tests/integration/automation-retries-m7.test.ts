@@ -132,13 +132,17 @@ describe('M7 automation module and retry acceptance', () => {
       values (${IDS.tenantA}, 'template', 'reactivation', 'Synthetic reactivation', true) returning id`;
     await tdb.admin`insert into automation_steps (tenant_id, automation_id, position, channel, body)
       values (${IDS.tenantA}, ${sequence!.id}, 1, 'sms', 'Synthetic reactivation')`;
-    await tdb.admin`update tenant_modules set enabled = true where tenant_id = ${IDS.tenantA} and module_key = 'reactivation'`;
+    await tdb.admin`insert into tenant_modules (tenant_id, module_key, enabled) values (${IDS.tenantA}, 'reactivation', false)
+      on conflict (tenant_id, module_key) do update set enabled = false`;
     const [eligible] = await tdb.admin`insert into contacts (tenant_id, first_name, primary_phone_e164, phones, imported_source)
       values (${IDS.tenantA}, 'Imported eligible', '+15555550801', ARRAY['+15555550801'], 'synthetic-import') returning id`;
     const [blocked] = await tdb.admin`insert into contacts (tenant_id, first_name, primary_phone_e164, phones, imported_source)
       values (${IDS.tenantA}, 'Imported no consent', '+15555550802', ARRAY['+15555550802'], 'synthetic-import') returning id`;
     await recordConsent(ctx.ownerA(), { contactId: eligible!.id, channel: 'sms', source: 'form', capturedText: 'Synthetic consent', capturedAt: new Date('2026-10-01T00:00:00Z') }, { db });
 
+    await expect(launchReactivation(ctx.ownerA(), { userId: IDS.ownerA, kyneticRole: null, membership: { tenantId: IDS.tenantA, role: 'owner', canExport: true, canBulkDelete: true }, viewAs: null }, { importedSource: 'synthetic-import' }, { db, now: MIDDAY })).rejects.toMatchObject({ code: 'MODULE_DISABLED' });
+    expect(await tdb.admin`select id from reactivation_batches where tenant_id = ${IDS.tenantA} and created_by = ${IDS.ownerA}`).toHaveLength(0);
+    await tdb.admin`update tenant_modules set enabled = true where tenant_id = ${IDS.tenantA} and module_key = 'reactivation'`;
     const result = await launchReactivation(ctx.ownerA(), { userId: IDS.ownerA, kyneticRole: null, membership: { tenantId: IDS.tenantA, role: 'owner', canExport: true, canBulkDelete: true }, viewAs: null }, { importedSource: 'synthetic-import' }, { db, now: MIDDAY });
     expect(result).toMatchObject({ requested: 2, eligible: 1, enrolled: 1, blocked: 1 });
     const active = await tdb.admin`select contact_id from automation_runs where tenant_id = ${IDS.tenantA} and automation_id = ${sequence!.id} and status = 'active'`;

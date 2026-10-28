@@ -124,7 +124,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-32 (M7, per template) | Module disabled; active run delivers | Run stops before provider call | Integration | Pass (2026-10-28, `tests/integration/automation-retries-m7.test.ts`; synthetic PostgreSQL and fake SMS) |
 | F-32 (M7, per template) | Transient provider error followed by queue redelivery | Run remains active, then completes once | Integration | Pass (2026-10-28, `tests/integration/automation-retries-m7.test.ts`; synthetic PostgreSQL and fake SMS) |
 | F-32 (M7, per template) | Quiet-hour block and early duplicate delivery | Run due time advances; early delivery sends nothing | Integration | Pass (2026-10-28, `tests/integration/automation-retries-m7.test.ts`; synthetic PostgreSQL and fake SMS) |
-| F-33 (M7, platform) | Deal marked Won | Owner gets email (fake Resend) | Integration | Not run |
+| F-33 (M7, platform) | Deal marked Won; event delivered twice | One owner notification and one fake email despite retry | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
 | F-55 (M8, platform) | Complete onboarding form | Tenant, invite, pipeline, automations, Alex draft exist within 30 s; audited | E2E | Partly run: integration covers tenant, invite, modules, pipeline, Alex draft and audit in under 30 s; the page is not exercised in a browser (no sign-in fixture). Default automations are M7 |
 | F-57 (M8, platform) | View-as started by admin | Banner shown; writes refused; `audit_log` has impersonator and tenant | E2E | Not run (no signed-in fixture). Audit rows with impersonator and tenant, and refused writes, pass as integration in `tests/integration/view-as.test.ts` (M8a-04) |
 | F-90 (M9, platform) | Admin uploads a CSV with unusual headers, maps columns, previews | Preview shows how rows will land; saved mapping pre-fills the next file from that source | E2E | Not run |
@@ -260,18 +260,18 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-78 (M4, alex_core) | Retry cadence on a fake clock, redelivered or concurrent attempt, reached lead | Attempts at the configured delays; one dial per attempt; stops once reached or at the daily cap | Integration | Pass (2026-10-26, M4-06) |
 | F-79 (M7, quote_followup) | Module on; deal enters Quoted; duplicate stage event | One step scheduled and one active run | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
 | F-79 (M7, quote_followup) | Module off | No run created | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
-| F-79 (M7, quote_followup) | Reply during run | Run stops | Integration | Not run |
+| F-79 (M7, quote_followup) | Reply during run | Run stops as `stopped_reply` | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
 | F-80 (M4 and M7, after_hours) | Module on; inbound call after hours, event redelivered | One staff notification; call/contact are retained | Integration | Pass for subscriber notification/idempotency (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`); M4 intake separately owns call/contact creation |
 | F-80 (M4 and M7, after_hours) | Module off | Subscriber skipped | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
 | F-81 (M7, missed_call_textback) | Module on; missed call from consented number | One SMS sent and logged (fake Twilio) | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
-| F-81 (M7, missed_call_textback) | after_hours on | Text-back enabled with no separate charge flag | Unit | Not run |
+| F-81 (M7, missed_call_textback) | after_hours on | Text-back enabled with no separate charge flag | Unit | Pass (`tests/unit/modules.test.ts`; 2026-10-28 rerun) |
 | F-81 (M7, missed_call_textback) | Missed call with no consent basis | No SMS | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
 | F-82 (M7, reactivation) | Launch with mixed audience | Only consented contacts enter run | Integration | Not run |
-| F-82 (M7, reactivation) | Module off; launch attempted | Refused | Integration | Not run |
+| F-82 (M7, reactivation) | Module off; launch attempted | Refused with no batch/run written | Integration | Pass (2026-10-28, `tests/integration/automation-retries-m7.test.ts`) |
 | F-83 (M11, opm) | Module on | Online Presence section and monthly report visible | E2E | Pass (2026-10-28, `tests/e2e/m11-presence.spec.ts`; enabled owner page and report section) |
 | F-83 (M11, opm) | Module off | Section and routes absent (403) | Integration | Pass at service boundary (2026-10-28, `tests/integration/presence.test.ts`; module-off denial and retained data; route 403 is enforced by page guard but not separately requested over HTTP) |
-| F-84 (M0 flag and M7, followup_bundle) | Bundle on | Member modules behave as enabled (recommended option: quote_followup, reactivation, missed_call_textback) | Unit and Integration | Not run |
-| F-84 (M0 flag and M7, followup_bundle) | Bundle off | Only independently enabled modules remain | Integration | Not run |
+| F-84 (M0 flag and M7, followup_bundle) | Bundle on | Member modules behave as enabled (recommended option: quote_followup, reactivation, missed_call_textback) | Unit and Integration | Pass (2026-10-28, `tests/integration/automation-retries-m7.test.ts`; verifies all four flags enabled and audited) |
+| F-84 (M0 flag and M7, followup_bundle) | Bundle off | Only independently enabled modules remain | Integration | Pass (2026-10-28, `tests/integration/automation-retries-m7.test.ts`; verifies bundle and members disabled) |
 | F-85 (M0 flag; M1 to M9 gating, crm) | No `crm` (Alex-only tenant) | Base portal works (leads, kanban, appointments, calls, reports); Lite and Full routes 403 and are absent from nav | E2E and Integration | Not run |
 | F-85 (M0 flag; M1 to M9 gating, crm) | crm Lite | Companies, tasks, notes, stage settings available; Full-only surfaces hidden and their routes 403 | E2E and Integration | Not run |
 | F-85 (M0 flag, crm) | Upgrade Lite to Full | Full surfaces appear; data intact | Integration | Not run |
