@@ -86,8 +86,8 @@ async function seedTenant(
     await admin`insert into companies (tenant_id, name) values (${t}, ${`Company ${key}`}) returning id`;
   await admin`insert into custom_field_defs (tenant_id, entity, key, label, type) values (${t}, 'contact', 'roof_age', 'Roof age', 'number')`;
   const [contact] =
-    await admin`insert into contacts (tenant_id, first_name, primary_phone_e164, primary_email, company_id, owner_id)
-    values (${t}, ${`Contact ${key}`}, ${`+1555555010${n}`}, ${`lead-${key}@example.test`}, ${company.id}, ${owner}) returning id`;
+    await admin`insert into contacts (tenant_id, first_name, phones, emails, primary_phone_e164, primary_email, company_id, owner_id)
+    values (${t}, ${`Contact ${key}`}, ${[`+1555555010${n}`]}, ${[`lead-${key}@example.test`]}, ${`+1555555010${n}`}, ${`lead-${key}@example.test`}, ${company.id}, ${owner}) returning id`;
   const [pipeline] =
     await admin`insert into pipelines (tenant_id, name, is_default) values (${t}, 'Sales', true) returning id`;
   const [stage] =

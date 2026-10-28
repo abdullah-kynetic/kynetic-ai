@@ -5,7 +5,7 @@ import { KBarAnimator, KBarPortal, KBarPositioner, KBarProvider, KBarSearch } fr
 import { Kbd } from '@/components/ui/kbd';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { useKBar, useRegisterActions, type Action } from 'kbar';
+import { useRegisterActions, type Action } from 'kbar';
 import RenderResults from './render-result';
 import useThemeSwitching from './use-theme-switching';
 import { useFilteredNavGroups } from '@/hooks/use-nav';
@@ -18,6 +18,7 @@ export default function KBar({
   groups?: NavGroup[];
 }) {
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('');
   const filteredGroups = useFilteredNavGroups(groups);
 
   // These action are for the navigation
@@ -62,15 +63,14 @@ export default function KBar({
   }, [router, filteredGroups]);
 
   return (
-    <KBarProvider actions={actions}>
-      <ContactSearchActions />
+    <KBarProvider actions={actions} options={{ callbacks: { onQueryChange: setSearchQuery } }}>
+      <ContactSearchActions searchQuery={searchQuery} />
       <KBarComponent>{children}</KBarComponent>
     </KBarProvider>
   );
 }
 
-function ContactSearchActions() {
-  const searchQuery = useKBar((state) => state.searchQuery);
+function ContactSearchActions({ searchQuery }: { searchQuery: string }) {
   const router = useRouter();
   const [actions, setActions] = useState<Action[]>([]);
 

@@ -12,7 +12,7 @@ export const GET = withApi(async (request) => {
   await requireModule(ctx, 'crm', { level: 'full' });
   const q = new URL(request.url).searchParams.get('q')?.trim() ?? '';
   if (q.length < 2) return NextResponse.json({ ok: true, results: [] });
-  const result = await searchContacts(ctx, { q, perPage: 8 });
+  const result = await searchContacts(ctx, { q, perPage: 10 });
   return NextResponse.json({
     ok: true,
     results: result.rows.map((row) => ({

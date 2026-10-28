@@ -194,7 +194,9 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-35 (M7, platform) | New lead | Bell count +1; email sent per preference; open marks read | E2E | Integration pass (2026-10-26, M7-04); signed-in E2E Not run (no sign-in fixture) |
 | F-35 (M7, platform) | User A requests notifications of user B | Refused | Integration | Pass (2026-10-26, M7-04) |
 | F-37 (M9, crm) | Phone fragment on 10,000-contact seeded tenant | Matching contact returned; p95 under 500 ms (decided, recommended option) | Integration | Pass: `tests/integration/search-m9.test.ts` (10,000 synthetic contacts; 20 searches; tenant-scoped) |
-| F-37 (M9, crm) | Tenant A searches for tenant B's record | Zero results | Integration | Pass: `tests/integration/search-m9.test.ts` |
+| F-37 (M9, crm) | Tenant A searches for tenant B's record | Zero results | Integration | Pass: `tests/integration/search-m9.test.ts` (10,000 synthetic contacts; rerun 2026-10-28) |
+| F-37 (M9, crm) | Cmd+K phone-fragment search | Matching contact appears and opens | E2E | Prior local run passed; rerun 2026-10-28 blocked because Playwright's test PostgreSQL endpoint at 127.0.0.1:5432 was unavailable |
+| F-38 (M9, crm) | Filtered CSV export | Download honors filters and is audited | E2E | Prior local run passed; rerun 2026-10-28 blocked because Playwright's test PostgreSQL endpoint at 127.0.0.1:5432 was unavailable |
 | F-38 (M9, crm) | Staff without export permission | Export hidden; server refuses | Integration | Pass: `tests/integration/export-m9.test.ts` (owner permission and CRM Full gating; staff denied); Playwright visibility not run |
 | F-41 (M9, platform) | Staff opens team settings | Refused (403) | Integration | Pass (M9-09, `business-settings.test.ts`) |
 | F-42 (M9, alex_core) | Owner pauses Alex | No outbound calls start for tenant; dashboard shows "Paused"; raw prompt absent from every response | Integration | Not run |
