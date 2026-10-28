@@ -54,9 +54,7 @@ export async function setAutomationEnabled(
   requireToggle(actor, ctx.tenantId);
   const parsedKey = templateKeySchema.safeParse(key);
   if (!parsedKey.success) throw new ValidationError({ templateKey: ['invalid'] });
-  return (
-    opts.tx ? (async () => opts.tx!)() : withTenant(ctx, async (tx) => tx, { db: opts.db })
-  ).then(async (tx) => {
+  const update = async (tx: Tx) => {
     const [template] = await tx
       .select()
       .from(automationTemplates)
@@ -96,5 +94,6 @@ export async function setAutomationEnabled(
       after: { templateKey: template.key, enabled }
     });
     return row;
-  });
+  };
+  return opts.tx ? update(opts.tx) : withTenant(ctx, update, { db: opts.db });
 }
