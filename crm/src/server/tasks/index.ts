@@ -1,4 +1,5 @@
 export { instantToLocal, localToInstant } from './time';
+export { deliverTaskDue, registerTaskDueWorker, scheduleTaskDue, type TaskDueJob } from './due';
 export {
   TASK_PRIORITIES,
   type CreateTaskInput,
