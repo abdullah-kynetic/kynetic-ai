@@ -24,7 +24,7 @@ export default async function AdminImportsPage({
   return (
     <PageContainer
       pageTitle='Imports'
-      pageDescription='Import contacts into this client workspace.'
+      pageDescription='Import contacts, companies, deals and notes into this client workspace.'
     >
       <ImportPanel
         tenantId={tenantId}

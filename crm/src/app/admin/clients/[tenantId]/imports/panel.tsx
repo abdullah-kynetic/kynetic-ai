@@ -14,6 +14,14 @@ type Batch = {
   report: unknown;
 };
 
+type ImportEntity = 'contact' | 'company' | 'deal' | 'note';
+const entityFields: Record<ImportEntity, string[]> = {
+  contact: ['firstName', 'lastName', 'phone', 'email', 'externalId', 'consentDate', 'consentChannel', 'consentEvidence'],
+  company: ['name', 'phone', 'website', 'externalId'],
+  deal: ['title', 'valueCents', 'serviceType', 'expectedClose', 'stage', 'contactExternalId', 'externalId'],
+  note: ['body', 'contactExternalId', 'companyExternalId', 'dealExternalId', 'externalId']
+};
+
 async function requestJson(path: string, body: unknown) {
   const response = await fetch(path, {
     method: 'POST',
@@ -41,13 +49,8 @@ export function ImportPanel({
   const [batches, setBatches] = useState(initial);
   const [headers, setHeaders] = useState<string[]>([]);
   const [batchId, setBatchId] = useState('');
-  const [mapping, setMapping] = useState({
-    firstName: '',
-    lastName: '',
-    phone: '',
-    email: '',
-    externalId: ''
-  });
+  const [entity, setEntity] = useState<ImportEntity>('contact');
+  const [mapping, setMapping] = useState<Record<string, string>>({});
   const [duplicateRule, setDuplicateRule] = useState<'skip' | 'fill_empty'>('skip');
   const [report, setReport] = useState<unknown>(null);
   const [message, setMessage] = useState('');
@@ -62,7 +65,9 @@ export function ImportPanel({
       const data = new FormData();
       data.set('tenantId', tenantId);
       data.set('file', file);
+      data.set('entity', entity);
       data.set('importedSource', 'csv_other');
+      data.set('duplicateRule', duplicateRule);
       const response = await fetch('/api/imports', { method: 'POST', body: data });
       const result = (await response.json()) as {
         ok?: boolean;
@@ -147,6 +152,16 @@ export function ImportPanel({
       <section className='grid gap-3 rounded border p-4'>
         <h2 className='text-lg font-semibold'>Upload CSV</h2>
         <label>
+          Record type
+          <select className='mt-1 block min-h-11 w-full rounded border p-2' value={entity}
+            onChange={(event) => { setEntity(event.target.value as ImportEntity); setMapping({}); setBatchId(''); setHeaders([]); setReport(null); }}>
+            <option value='contact'>Contacts</option>
+            <option value='company'>Companies</option>
+            <option value='deal'>Deals and quotes</option>
+            <option value='note'>Notes and history</option>
+          </select>
+        </label>
+        <label>
           CSV file (up to 10 MB)
           <input
             className='mt-1 block min-h-11'
@@ -161,12 +176,13 @@ export function ImportPanel({
       </section>
       {batchId && headers.length > 0 && (
         <section className='grid gap-3 rounded border p-4'>
-          <h2 className='text-lg font-semibold'>Map contact columns</h2>
-          {(['firstName', 'lastName', 'phone', 'email', 'externalId'] as const).map((key) => (
+          <h2 className='text-lg font-semibold'>Map {entity} columns</h2>
+          {entityFields[entity].map((key) => (
             <label key={key}>
               {key}
               <select
                 className='mt-1 block min-h-11 w-full rounded border p-2'
+                aria-label={key}
                 value={mapping[key]}
                 onChange={(event) => setMapping((old) => ({ ...old, [key]: event.target.value }))}
               >
@@ -192,7 +208,7 @@ export function ImportPanel({
           </label>
           <button
             className='min-h-11 rounded border px-4'
-            disabled={busy || (!mapping.phone && !mapping.email)}
+            disabled={busy || !(entity === 'contact' ? mapping.phone || mapping.email : entity === 'company' ? mapping.name : entity === 'deal' ? mapping.title : mapping.body)}
             onClick={dryRun}
           >
             Run dry-run

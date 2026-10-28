@@ -15,6 +15,7 @@ export { IMPORT_MAX_ROWS };
 const inputSchema = z.strictObject({
   fileName: z.string().trim().min(1).max(255),
   fileType: z.enum(['csv', 'xlsx']),
+  entity: z.enum(['contact', 'company', 'deal', 'note']).default('contact'),
   importedSource: z.string().trim().min(1).max(100),
   sourceLabel: z.string().trim().max(200).optional(),
   mapping: z.record(z.string(), z.string()).default({}),
@@ -65,7 +66,7 @@ export async function createImportBatch(
         .values({
           id,
           tenantId: ctx.tenantId,
-          entity: 'contact',
+          entity: parsed.data.entity,
           importedSource: parsed.data.importedSource,
           sourceLabel: parsed.data.sourceLabel ?? null,
           fileName: parsed.data.fileName,

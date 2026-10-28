@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { decideAdminAccess } from '@/server/admin';
 import { resolveActor } from '@/server/auth';
 import { AppError } from '@/server/errors';
-import { dryRunContactBatch } from '@/server/imports';
+import { dryRunImportBatch } from '@/server/imports';
 import { withApi } from '@/server/security/with-api';
 import { isViewingAs } from '@/app/admin/view-as-guard';
 
@@ -17,7 +17,7 @@ export const POST = withApi(
     const body = await request.json();
     const tenantId = typeof body.tenantId === 'string' ? body.tenantId : '';
     const actor = await resolveActor(access.user);
-    const report = await dryRunContactBatch(
+    const report = await dryRunImportBatch(
       { tenantId, userId: access.user.id, role: 'admin' },
       actor,
       batchId,

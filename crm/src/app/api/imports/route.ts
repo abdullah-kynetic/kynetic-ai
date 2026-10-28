@@ -21,16 +21,20 @@ export const POST = withApi(async (request) => {
     throw new AppError('VALIDATION_FAILED', { message: 'A file is required.' });
   if (file.size > IMPORT_MAX_BYTES)
     throw new AppError('VALIDATION_FAILED', { message: 'File exceeds the 10 MB limit.' });
+  const rawEntity = String(form.get('entity') ?? 'contact');
+  if (!['contact', 'company', 'deal', 'note'].includes(rawEntity))
+    throw new AppError('VALIDATION_FAILED', { message: 'Unsupported import record type.' });
   const batch = await createImportBatch(
     ctx,
     actor,
     {
       fileName: file.name,
       fileType: file.name.toLowerCase().endsWith('.xlsx') ? 'xlsx' : 'csv',
+      entity: rawEntity as 'contact' | 'company' | 'deal' | 'note',
       importedSource: String(form.get('importedSource') ?? ''),
       sourceLabel: String(form.get('sourceLabel') ?? '') || undefined,
       mapping: {},
-      duplicateRule: 'skip'
+      duplicateRule: form.get('duplicateRule') === 'fill_empty' ? 'fill_empty' : 'skip'
     },
     new Uint8Array(await file.arrayBuffer())
   );

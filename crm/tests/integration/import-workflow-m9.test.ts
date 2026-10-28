@@ -7,6 +7,8 @@ import {
   createImportBatch,
   dryRunContactBatch,
   commitContactBatch,
+  dryRunImportBatch,
+  commitImportBatch,
   undoImportBatch,
   listImportBatches
 } from '@/server/imports';
@@ -204,5 +206,34 @@ describe('F-90 to F-96 contact import workflow', () => {
     expect(await tdb.admin`select first_name, deleted_at from contacts where id = ${imported!.id}`).toMatchObject([
       { first_name: 'Edited by owner', deleted_at: null }
     ]);
+  });
+
+  it('imports synthetic companies, deals and linked notes with traceable batch metadata and undo', async () => {
+    const asyncImport = async (entity: 'company' | 'deal' | 'note', fileName: string, csv: string, mapping: Record<string, string>) => {
+      const batch = await createImportBatch(adminCtx, adminActor, { fileName, fileType: 'csv', entity, importedSource: 'synthetic-multi' }, new TextEncoder().encode(csv), { db: appDb });
+      const preview = await dryRunImportBatch(adminCtx, adminActor, batch.id, mapping, { db: appDb });
+      expect(preview).toMatchObject({ total: 1, ok: 1, failed: 0 });
+      const result = await commitImportBatch(adminCtx, adminActor, batch.id, { db: appDb });
+      expect(result).toMatchObject({ imported: 1, failed: 0 });
+      return batch.id;
+    };
+
+    const companyBatch = await asyncImport('company', 'companies.csv', 'business,phone,site,external\nSynthetic Co,4155550144,https://example.test,co-1', { name: 'business', phone: 'phone', website: 'site', externalId: 'external' });
+    const dealBatch = await asyncImport('deal', 'deals.csv', 'quote,value,stage,external\nSynthetic quote,123450,New,d-1', { title: 'quote', valueCents: 'value', stage: 'stage', externalId: 'external' });
+    const noteBatch = await asyncImport('note', 'notes.csv', 'history,parent,external\nSynthetic imported history,d-1,n-1', { body: 'history', dealExternalId: 'parent', externalId: 'external' });
+
+    const [company] = await tdb.admin`select id, imported_source, import_batch_id, external_id from companies where tenant_id = ${IDS.tenantA} and external_id = 'co-1'`;
+    const [deal] = await tdb.admin`select id, value_cents, imported_source, import_batch_id, external_id from deals where tenant_id = ${IDS.tenantA} and external_id = 'd-1'`;
+    const [note] = await tdb.admin`select id, body_text, deal_id, imported_source, import_batch_id, external_id from notes where tenant_id = ${IDS.tenantA} and external_id = 'n-1'`;
+    expect(company).toMatchObject({ imported_source: 'synthetic-multi', import_batch_id: companyBatch, external_id: 'co-1' });
+    expect(deal).toMatchObject({ value_cents: 123450, imported_source: 'synthetic-multi', import_batch_id: dealBatch, external_id: 'd-1' });
+    expect(note).toMatchObject({ body_text: 'Synthetic imported history', deal_id: deal!.id, imported_source: 'synthetic-multi', import_batch_id: noteBatch, external_id: 'n-1' });
+
+    expect(await undoImportBatch(adminCtx, adminActor, companyBatch, { db: appDb })).toMatchObject({ removed: 1 });
+    expect(await undoImportBatch(adminCtx, adminActor, dealBatch, { db: appDb })).toMatchObject({ removed: 1 });
+    expect(await undoImportBatch(adminCtx, adminActor, noteBatch, { db: appDb })).toMatchObject({ removed: 1 });
+    expect(await tdb.admin`select deleted_at from companies where id = ${company!.id}`).not.toEqual([{ deleted_at: null }]);
+    expect(await tdb.admin`select deleted_at from deals where id = ${deal!.id}`).not.toEqual([{ deleted_at: null }]);
+    expect(await tdb.admin`select deleted_at from notes where id = ${note!.id}`).not.toEqual([{ deleted_at: null }]);
   });
 });
