@@ -12,6 +12,7 @@ import { getSmsProvider } from '../messaging/provider';
 import { sendSms } from '../messaging';
 import { subscribe } from '../events';
 import { withTenant } from '../tenancy';
+import { ModuleDisabledError, requireModule } from '../modules';
 
 export type AutomationStepJob = { tenantId: string; runId: string };
 const moduleKeys = [
@@ -103,7 +104,10 @@ export function registerAutomationSubscribers() {
   );
 }
 
-export async function deliverAutomationStep(job: AutomationStepJob) {
+export async function deliverAutomationStep(
+  job: AutomationStepJob,
+  deps: { provider?: ReturnType<typeof getSmsProvider>; now?: Date } = {}
+) {
   const db = getWorkerDb();
   const loaded = await withTenant(
     { tenantId: job.tenantId, role: 'system' },
@@ -114,6 +118,7 @@ export async function deliverAutomationStep(job: AutomationStepJob) {
         .where(and(eq(automationRuns.id, job.runId), eq(automationRuns.status, 'active')))
         .limit(1);
       if (!run) return null;
+      if (run.nextRunAt && new Date(run.nextRunAt).getTime() > Date.now()) return null;
       const [step] = await tx
         .select({ step: automationSteps, template: automationTemplates })
         .from(automationSteps)
@@ -144,21 +149,24 @@ export async function deliverAutomationStep(job: AutomationStepJob) {
     return;
   }
   const { run, step } = loaded;
-  if (step.step.channel !== 'sms') {
-    await withTenant(
-      { tenantId: job.tenantId, role: 'system' },
-      (tx) =>
-        tx
-          .update(automationRuns)
-          .set({
-            status: 'failed',
-            stopReason: `unsupported_channel:${step.step.channel}`,
-            nextRunAt: null,
-            updatedAt: new Date().toISOString()
-          })
-          .where(eq(automationRuns.id, run.id)),
-      { db }
+  const gatedModule = moduleKeys.includes((step.template?.moduleKey ?? '') as AutomationModule)
+    ? (step.template!.moduleKey as AutomationModule)
+    : null;
+  if (!gatedModule) {
+    await markRun(job, run.id, 'failed', 'template_module_missing');
+    return;
+  }
+  try {
+    await withTenant({ tenantId: job.tenantId, role: 'system' }, (tx) =>
+      requireModule({ tenantId: job.tenantId, role: 'system' }, gatedModule, { tx }), { db }
     );
+  } catch (error) {
+    if (!(error instanceof ModuleDisabledError)) throw error;
+    await markRun(job, run.id, 'stopped_module_off', 'module_disabled');
+    return;
+  }
+  if (step.step.channel !== 'sms') {
+    await markRun(job, run.id, 'failed', `unsupported_channel:${step.step.channel}`);
     return;
   }
   const outboundModule: AutomationModule = moduleKeys.includes(
@@ -175,16 +183,34 @@ export async function deliverAutomationStep(job: AutomationStepJob) {
       idempotencyKey: `automation:${run.id}:${step.step.position}`,
       actor: { type: 'automation' }
     },
-    { provider: getSmsProvider() }
+      { provider: deps.provider ?? getSmsProvider(), now: deps.now }
   );
   if (result.status === 'blocked' && result.retryAt) {
-    await enqueue('automation.step', job, {
-      startAfter: result.retryAt,
-      singletonKey: `automation:${run.id}:${step.step.position}:retry`
-    });
+    await withTenant(
+      { tenantId: job.tenantId, role: 'system' },
+      async (tx) => {
+        await tx
+          .update(automationRuns)
+          .set({ nextRunAt: result.retryAt!.toISOString(), updatedAt: new Date().toISOString() })
+          .where(and(eq(automationRuns.id, run.id), eq(automationRuns.status, 'active')));
+        await enqueue('automation.step', job, {
+          tx,
+          startAfter: result.retryAt,
+          singletonKey: `automation:${run.id}:${step.step.position}:retry`
+        });
+      },
+      { db }
+    );
     return;
   }
-  if (result.status !== 'sent') return;
+  if (result.status === 'failed') {
+    await markRun(job, run.id, 'failed', `sms_${result.errorCode}`);
+    return;
+  }
+  if (result.status === 'blocked') {
+    await markRun(job, run.id, 'failed', `sms_blocked:${result.reason}`);
+    return;
+  }
   await withTenant(
     { tenantId: job.tenantId, role: 'system' },
     async (tx) => {
@@ -219,6 +245,23 @@ export async function deliverAutomationStep(job: AutomationStepJob) {
   );
 }
 
+async function markRun(
+  job: AutomationStepJob,
+  runId: string,
+  status: 'failed' | 'stopped_module_off',
+  reason: string
+) {
+  await withTenant(
+    { tenantId: job.tenantId, role: 'system' },
+    (tx) =>
+      tx
+        .update(automationRuns)
+        .set({ status, stopReason: reason, nextRunAt: null, updatedAt: new Date().toISOString() })
+        .where(and(eq(automationRuns.id, runId), eq(automationRuns.status, 'active'))),
+    { db: getWorkerDb() }
+  );
+}
+
 export async function registerAutomationWorker() {
-  await registerWorker<AutomationStepJob>('automation.step', deliverAutomationStep);
+  await registerWorker<AutomationStepJob>('automation.step', (job) => deliverAutomationStep(job));
 }

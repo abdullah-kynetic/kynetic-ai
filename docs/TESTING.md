@@ -121,6 +121,9 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-02 (M6, alex_core) | Line and bar charts on two-month fixture | Totals equal fixture totals | Integration | Not run |
 | F-49 (M6, alex_core) | Monthly ROI report, full month of fixture data | Report totals equal dashboard totals for the same range | Integration | Not run |
 | F-32 (M7, per template) | Sequence in progress; contact replies | Remaining steps cancel; run status "stopped" | Integration | Not run |
+| F-32 (M7, per template) | Module disabled; active run delivers | Run stops before provider call | Integration | Pass (2026-10-28, `tests/integration/automation-retries-m7.test.ts`; synthetic PostgreSQL and fake SMS) |
+| F-32 (M7, per template) | Transient provider error followed by queue redelivery | Run remains active, then completes once | Integration | Pass (2026-10-28, `tests/integration/automation-retries-m7.test.ts`; synthetic PostgreSQL and fake SMS) |
+| F-32 (M7, per template) | Quiet-hour block and early duplicate delivery | Run due time advances; early delivery sends nothing | Integration | Pass (2026-10-28, `tests/integration/automation-retries-m7.test.ts`; synthetic PostgreSQL and fake SMS) |
 | F-33 (M7, platform) | Deal marked Won | Owner gets email (fake Resend) | Integration | Not run |
 | F-55 (M8, platform) | Complete onboarding form | Tenant, invite, pipeline, automations, Alex draft exist within 30 s; audited | E2E | Partly run: integration covers tenant, invite, modules, pipeline, Alex draft and audit in under 30 s; the page is not exercised in a browser (no sign-in fixture). Default automations are M7 |
 | F-57 (M8, platform) | View-as started by admin | Banner shown; writes refused; `audit_log` has impersonator and tenant | E2E | Not run (no signed-in fixture). Audit rows with impersonator and tenant, and refused writes, pass as integration in `tests/integration/view-as.test.ts` (M8a-04) |
