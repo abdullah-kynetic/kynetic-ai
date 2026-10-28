@@ -146,7 +146,7 @@ Locked decision: each Kynetic system and upsell has its own backend and is toggl
 | `after_hours` | F-80 | Inbound calls outside hours |
 | `missed_call_textback` | F-81 | SMS. Free with `after_hours` per decisions; SMS gate still applies (3.7) |
 | `reactivation` | F-82 | Highest compliance risk (3.8). One-time campaign |
-| `opm` | F-83 (and F-48 if PRD 7 accepts the mapping) | Holds third-party OAuth tokens (encrypted, section 4) |
+| `opm` | F-83 and F-48 | v1 stores status records and review snapshots only; no vendor credentials or OAuth integrations (PRD decision 6) |
 | `followup_bundle` | F-84 | Convenience grant that enables member flags. Bundle contents: PRD PRD 7 |
 | `crm` with level `lite` or `full` | Lite: F-10, F-17, F-20, F-22, F-43. Full: F-08, F-12, F-15, F-37, F-38. F-85 | Upsell on top of the base portal. Base routes (F-05 to F-07, F-14, F-16, F-19) are not gated by `crm` (PRD 1) |
 

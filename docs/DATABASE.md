@@ -949,7 +949,7 @@ Access: `tenant_billing` and `tenant_billing_modules` have RLS enabled and force
 
 ### Not in the baseline schema (decided by the PRD decisions log)
 
-- OPM data (F-83): migration `0058_presence.sql` adds tenant-scoped `presence_items` (kind, title, status, notes and timestamps) and `review_snapshots` (source, date, count and rating). Both use forced tenant RLS. M11 services and acceptance tests remain in progress; no vendor integration tables until vendors are chosen (UNRESOLVED).
+- OPM data (F-83): migration `0058_presence.sql` adds tenant-scoped `presence_items` (kind, title, status, notes and timestamps) and `review_snapshots` (source, date, count and rating). Both use forced tenant RLS. M11 acceptance covers tenant isolation, module gating, audited writes, month-scoped report sections and the owner browser flow. No vendor integration tables until vendors are chosen (UNRESOLVED).
 - Reactivation batches (F-82): a one-time campaign needs a `reactivation_batches` record (audience filter, launched_at, counts). Created in M7 with the reactivation module.
 - Follow-up bundle (F-84): modeled as flags on `tenant_modules` only. Contents are fixed by PRD decision 7; no table.
 - CRM Lite vs Full surfaces (F-85): gated by `tenant_modules.level`. No extra tables (PRD decision 1).

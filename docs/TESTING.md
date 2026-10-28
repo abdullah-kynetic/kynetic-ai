@@ -260,8 +260,8 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-81 (M7, missed_call_textback) | Missed call with no consent basis | No SMS | Integration | Not run |
 | F-82 (M7, reactivation) | Launch with mixed audience | Only consented contacts enter run | Integration | Not run |
 | F-82 (M7, reactivation) | Module off; launch attempted | Refused | Integration | Not run |
-| F-83 (M11, opm) | Module on | Online Presence section and monthly report visible | E2E | Not run |
-| F-83 (M11, opm) | Module off | Section and routes absent (403) | Integration | Not run |
+| F-83 (M11, opm) | Module on | Online Presence section and monthly report visible | E2E | Pass (2026-10-28, `tests/e2e/m11-presence.spec.ts`; enabled owner page and report section) |
+| F-83 (M11, opm) | Module off | Section and routes absent (403) | Integration | Pass at service boundary (2026-10-28, `tests/integration/presence.test.ts`; module-off denial and retained data; route 403 is enforced by page guard but not separately requested over HTTP) |
 | F-84 (M0 flag and M7, followup_bundle) | Bundle on | Member modules behave as enabled (recommended option: quote_followup, reactivation, missed_call_textback) | Unit and Integration | Not run |
 | F-84 (M0 flag and M7, followup_bundle) | Bundle off | Only independently enabled modules remain | Integration | Not run |
 | F-85 (M0 flag; M1 to M9 gating, crm) | No `crm` (Alex-only tenant) | Base portal works (leads, kanban, appointments, calls, reports); Lite and Full routes 403 and are absent from nav | E2E and Integration | Not run |
@@ -274,6 +274,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-89 (M7, platform) | Lead created | `lead.created` emitted once | Integration | Not run |
 | F-89 (M7, platform) | Service token scoped to tenant A used on tenant B | Refused | Integration | Not run |
 | F-89 (M7, platform) | Revoked service token | 401 | Integration | Not run |
+| F-89 (M7, platform) | Producer emits `lead.created` | n8n subscriber receives canonical event and sends a valid HMAC signature | Integration | Pass (2026-10-28, `tests/integration/n8n-events-m7.test.ts`; synthetic webhook endpoint, Postgres 17) |
 
 ### Cross-cutting risk rows
 

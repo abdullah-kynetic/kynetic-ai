@@ -36,6 +36,14 @@ async function main(): Promise<void> {
     insert into tenant_modules (tenant_id, module_key, enabled, level)
     values (${IDS.tenantA}, 'crm', true, 'full')
     on conflict (tenant_id, module_key) do update set enabled = true, level = 'full'`;
+  await db.admin`
+    insert into tenant_modules (tenant_id, module_key, enabled)
+    values (${IDS.tenantA}, 'opm', true)
+    on conflict (tenant_id, module_key) do update set enabled = true`;
+  await db.admin`insert into presence_items (tenant_id, kind, title, status)
+    values (${IDS.tenantA}, 'profile', 'Google Business Profile', 'in_progress')`;
+  await db.admin`insert into review_snapshots (tenant_id, source, captured_on, review_count, average_rating)
+    values (${IDS.tenantA}, 'Google', date '2026-09-14', 23, 4.70)`;
   const [{ companyId }] = await db.admin`
     select id as "companyId" from companies where tenant_id = ${IDS.tenantA} limit 1`;
   await db.admin`

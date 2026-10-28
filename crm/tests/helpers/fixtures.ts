@@ -118,6 +118,9 @@ async function seedTenant(
     values (${t}, ${contact.id}, ${deal.id}, now() + interval '1 day', now() + interval '1 day 1 hour', 'alex')`;
   await admin`insert into metrics_daily (tenant_id, day) values (${t}, current_date)`;
   await admin`insert into reports (tenant_id, kind, period_start, status) values (${t}, 'monthly_roi', date '2026-09-01', 'ready')`;
+  await admin`insert into reactivation_batches (tenant_id, audience_filter, status) values (${t}, '{}', 'completed')`;
+  await admin`insert into presence_items (tenant_id, kind, title, status) values (${t}, 'profile', ${`Profile ${key}`}, 'planned')`;
+  await admin`insert into review_snapshots (tenant_id, source, captured_on, review_count, average_rating) values (${t}, 'Google', date '2020-01-01', 1, 4.00)`;
   const [auto] =
     await admin`insert into automations (tenant_id, kind, template_key, name) values (${t}, 'template', 'speed_to_lead', 'Speed to lead') returning id`;
   await admin`insert into automation_steps (tenant_id, automation_id, position, channel) values (${t}, ${auto.id}, 1, 'sms')`;
