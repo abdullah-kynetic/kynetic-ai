@@ -38,6 +38,7 @@ export {
   findDuplicates,
   getContact,
   listContacts,
+  mergeContacts,
   NotFoundError,
   removeContactTags,
   restoreContact,
