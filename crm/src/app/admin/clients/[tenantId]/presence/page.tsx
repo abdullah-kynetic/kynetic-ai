@@ -4,6 +4,7 @@ import PageContainer from '@/components/layout/page-container';
 import { decideAdminAccess } from '@/server/admin';
 import { listPresence } from '@/server/presence';
 import { saveItem, saveReview } from './actions';
+import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,6 +26,11 @@ export default async function AdminPresencePage({
     <PageContainer
       pageTitle='Online Presence'
       pageDescription='Track the work performed for this client.'
+      pageHeaderAction={
+        <Link className='rounded border px-4 py-2' href={`/admin/clients/${tenantId}/imports`}>
+          Imports
+        </Link>
+      }
     >
       <form action={saveItem} className='grid max-w-2xl gap-3'>
         <input type='hidden' name='tenantId' value={tenantId} />

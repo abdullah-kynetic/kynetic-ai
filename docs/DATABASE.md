@@ -1185,7 +1185,7 @@ Key queries and the index that serves each:
 | --- | --- | --- |
 | Contacts list (F-05) | tenant, optional status, source, tag, owner, date; sort by updated_at; keyset page | `contacts_tenant_list_idx` (partial, deleted_at null). Filters on arrays use GIN on `tags` (add in M1) |
 | Dedupe on phone or email (F-07) | equal match on any phone or email | `contacts_tenant_phone_idx`, `contacts_tenant_email_idx`, `contacts_phones_gin`, `contacts_emails_gin` |
-| Global search (F-37) | trigram match on name; exact match on phone | `contacts_name_trgm`, `contacts_tenant_phone_idx`; companies and deals trigram indexes added in M9 |
+| Global search (F-37) | trigram match on name and phone fragments within normalized contact phone arrays; tenant RLS scope | `contacts_name_trgm`, `contacts_phone_fragment_trgm`; phone search helper and index are added by migration 0900. Company/deal search is still outstanding. |
 | Custom field filter (F-12) | `custom @> '{"roof_type":"tile"}'` | `contacts_custom_gin` (`jsonb_path_ops`) |
 | Kanban board (F-16) | tenant, pipeline, stage; ordered by position | `deals_board_idx` (partial, deleted_at null) |
 | Column totals (F-16) | sum of value_cents per stage | `deals_board_idx` (index only scan candidate) |

@@ -18,9 +18,18 @@ const LATE = new Date('2026-10-27T05:00:00Z'); // 22:00 PDT
 beforeAll(async () => {
   tdb = await createTestDatabase();
   await seedTwoTenants(tdb.admin);
+  // `enrollInSequence` uses the app DB facade because its public contract predates M7 options.
+  process.env.APP_BASE_URL = 'http://localhost:3000';
+  process.env.DATABASE_URL = tdb.urls.app;
+  process.env.DATABASE_URL_AUTH = tdb.authUrl;
+  process.env.DATABASE_URL_WORKER = tdb.urls.worker;
+  process.env.BETTER_AUTH_SECRET = 'integration-only-secret-not-for-real-use';
+  process.env.APP_ENCRYPTION_KEY = 'integration-only-encryption-key-not-real';
   db = createDb(tdb.app);
+  (globalThis as typeof globalThis & { __kyneticDb?: Db }).__kyneticDb = db;
 });
 afterAll(async () => {
+  delete (globalThis as typeof globalThis & { __kyneticDb?: Db }).__kyneticDb;
   await tdb?.drop();
 });
 
@@ -250,7 +259,7 @@ describe('OutboundGate', () => {
     expect(rows.length).toBe(0);
   });
 
-  it('enrollInSequence is a stub that reports not_available', async () => {
+  it('F-32 reports not_available when no matching enabled sequence exists', async () => {
     const c = await consented();
     expect(await enrollInSequence(ctx.ownerA(), { contactId: c.id, sequenceKey: 'x' })).toEqual({
       status: 'not_available'

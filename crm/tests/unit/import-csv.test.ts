@@ -5,7 +5,8 @@ const bytes = (text: string) => new TextEncoder().encode(text);
 describe('F-90 CSV intake', () => {
   it('parses quoted commas, escaped quotes and line breaks', () => {
     expect(parseImportCsv(bytes('name,note\r\n"A, B","say ""hi""\nnext"\r\n'))).toEqual([
-      ['name', 'note'], ['A, B', 'say "hi"\nnext']
+      ['name', 'note'],
+      ['A, B', 'say "hi"\nnext']
     ]);
   });
   it('rejects malformed quotes and more than 50,000 data rows', () => {

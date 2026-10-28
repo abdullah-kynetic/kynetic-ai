@@ -50,4 +50,5 @@ export {
   type DuplicateMatch
 } from './service';
 export { loadContactForPanel, saveContactFromPanel, type PanelSaveResult } from './panel';
+export { exportContactsCsv, neutralizeCsvCell } from './export';
 export { currentConsent, getContactDetail, type ConsentStatus, type ContactDetail } from './detail';

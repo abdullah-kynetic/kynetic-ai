@@ -44,6 +44,11 @@ async function main(): Promise<void> {
     values (${IDS.tenantA}, 'profile', 'Google Business Profile', 'in_progress')`;
   await db.admin`insert into review_snapshots (tenant_id, source, captured_on, review_count, average_rating)
     values (${IDS.tenantA}, 'Google', date '2026-09-14', 23, 4.70)`;
+  const [importBatch] =
+    await db.admin`insert into import_batches (tenant_id, entity, imported_source, file_name, file_type, status, rows_total, rows_ok)
+    values (${IDS.tenantA}, 'contact', 'csv_other', 'e2e.csv', 'csv', 'done', 1, 1) returning id`;
+  await db.admin`insert into import_batch_records (tenant_id, batch_id, entity, record_id, action)
+    values (${IDS.tenantA}, ${importBatch.id}, 'contact', gen_random_uuid(), 'created')`;
   const [{ companyId }] = await db.admin`
     select id as "companyId" from companies where tenant_id = ${IDS.tenantA} limit 1`;
   await db.admin`

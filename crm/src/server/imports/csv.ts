@@ -11,15 +11,22 @@ export function parseImportCsv(bytes: Uint8Array): string[][] {
   for (let i = 0; i < text.length; i++) {
     const ch = text[i]!;
     if (quoted) {
-      if (ch === '"' && text[i + 1] === '"') { cell += '"'; i++; }
-      else if (ch === '"') { quoted = false; closed = true; }
-      else cell += ch;
+      if (ch === '"' && text[i + 1] === '"') {
+        cell += '"';
+        i++;
+      } else if (ch === '"') {
+        quoted = false;
+        closed = true;
+      } else cell += ch;
     } else if (ch === '"' && cell === '' && !closed) quoted = true;
     else if (ch === ',' || ch === '\n' || ch === '\r') {
-      row.push(cell); cell = ''; closed = false;
+      row.push(cell);
+      cell = '';
+      closed = false;
       if (ch !== ',') {
         if (ch === '\r' && text[i + 1] === '\n') i++;
-        rows.push(row); row = [];
+        rows.push(row);
+        row = [];
         if (rows.length > IMPORT_MAX_ROWS + 1) throw new Error('too_many_rows');
       }
     } else {
@@ -28,7 +35,10 @@ export function parseImportCsv(bytes: Uint8Array): string[][] {
     }
   }
   if (quoted) throw new Error('invalid_csv');
-  if (row.length || cell || closed) { row.push(cell); rows.push(row); }
+  if (row.length || cell || closed) {
+    row.push(cell);
+    rows.push(row);
+  }
   if (rows.length > IMPORT_MAX_ROWS + 1) throw new Error('too_many_rows');
   return rows;
 }

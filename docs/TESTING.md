@@ -130,19 +130,19 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-91 (M9, platform) | 1,000-row file with 50 bad rows and 30 duplicates, dry run | Report shows 50 failed with reasons, 30 duplicates; zero rows written | Integration | Not run |
 | F-91 (M9, platform) | Same number in two phone formats | Treated as a duplicate (E.164) | Unit | Not run |
 | F-91 (M9, platform) | Commit without a successful dry run for the same file and mapping | Refused | Integration | Not run |
-| F-92 (M9, platform) | Commit a batch | Every record has `import_batch_id`, `imported_source`, `external_id`; visible only to that tenant | Integration | Not run |
+| F-92 (M9, platform) | Commit a batch | Every record has `import_batch_id`, `imported_source`, `external_id`; visible only to that tenant | Integration | Contact-only pass: `tests/integration/import-workflow-m9.test.ts`; company/deal/note imports and 500-row scale not run |
 | F-92 (M9, platform) | Deal row with an open quote | Deal in the mapped stage; value stored in cents | Integration | Not run |
 | F-92 (M9, platform) | Failure injected midway through commit | Batch `failed`; written records listed and undoable | Integration | Not run |
 | F-93 (M9, platform) | Undo a committed batch | Records gone from lists and search; history shows undone with who and when; audited | E2E | Not run |
 | F-93 (M9, platform) | Undo when one record was edited after import | Record listed and not removed | Integration | Not run |
-| F-94 (M9, platform) | Admin imports on tenant A's page | All records in tenant A; `audit_log` has the admin as actor | Integration | Not run |
+| F-94 (M9, platform) | Admin imports on tenant A's page | All records in tenant A; `audit_log` has the admin as actor | Integration | Service-level pass for tenant A writes/admin audit actor: `tests/integration/import-workflow-m9.test.ts`; HTTP role matrix not run |
 | F-94 (M9, platform) | VA and client owner call the import endpoints | 403 | Integration | Not run |
 | F-94 (M9, platform) | Import file used with another tenant's id in the request | Refused; nothing written to either tenant | Integration | Not run |
 | F-96 (M9, platform) | Commit 500 contacts | No call or SMS started; no `lead.created`; no sequence enrolled | Integration | Not run |
 | F-96 (M9 and M7, platform) | Reactivation includes imported contacts without consent evidence | Blocked and logged by `canContact` | Integration | Not run |
 | F-96 (M9, platform) | Import with mapped consent date and source | Consent record with source `import` exists | Integration | Not run |
 | F-96 (M9 and M4, platform) | Imported contact in quiet hours with consent | Send deferred | Integration | Not run |
-| F-38 (M9, crm) | Export a view containing a cell starting with `=` | Cell neutralized | Unit | Not run |
+| F-38 (M9, crm) | Export a view containing a cell starting with `=` | Cell neutralized | Unit | Pass: `tests/unit/export-csv.test.ts`; tenant filters, audit and permission tests pass in `tests/integration/export-m9.test.ts` |
 | F-39 (M9, platform) | Set logo, color and name for tenant | Visible on every page for that tenant; other tenant unaffected | E2E | Partial: integration (save, audit, other tenant untouched, bad file, low contrast, owner only) and unit (color table, logo rules) pass (2026-10-26, m9-08); E2E Not run |
 | F-63 (M10, platform) | Monthly restore drill | Drill passes (see Release criteria); result and date shown on backups page | Manual | Not run |
 | F-88 (M10, platform) | Fresh production database and demo tenant | Production holds only the pilot tenant's real data; demo tenant is synthetic only; no migration script exists | Integration | Not run |
@@ -190,9 +190,9 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-31 (M7, per template) | Module on; deal enters Quoted | Step 1 scheduled | Integration | Not run |
 | F-35 (M7, platform) | New lead | Bell count +1; email sent per preference; open marks read | E2E | Integration pass (2026-10-26, M7-04); signed-in E2E Not run (no sign-in fixture) |
 | F-35 (M7, platform) | User A requests notifications of user B | Refused | Integration | Pass (2026-10-26, M7-04) |
-| F-37 (M9, crm) | Phone fragment on 10,000-contact seeded tenant | Matching contact returned; p95 under 500 ms (decided, recommended option) | Integration | Not run |
-| F-37 (M9, crm) | Tenant A searches for tenant B's record | Zero results | Integration | Not run |
-| F-38 (M9, crm) | Staff without export permission | Export hidden; server refuses | Integration | Not run |
+| F-37 (M9, crm) | Phone fragment on 10,000-contact seeded tenant | Matching contact returned; p95 under 500 ms (decided, recommended option) | Integration | Pass: `tests/integration/search-m9.test.ts` (10,000 synthetic contacts; 20 searches; tenant-scoped) |
+| F-37 (M9, crm) | Tenant A searches for tenant B's record | Zero results | Integration | Pass: `tests/integration/search-m9.test.ts` |
+| F-38 (M9, crm) | Staff without export permission | Export hidden; server refuses | Integration | Pass: `tests/integration/export-m9.test.ts` (owner permission and CRM Full gating; staff denied); Playwright visibility not run |
 | F-41 (M9, platform) | Staff opens team settings | Refused (403) | Integration | Pass (M9-09, `business-settings.test.ts`) |
 | F-42 (M9, alex_core) | Owner pauses Alex | No outbound calls start for tenant; dashboard shows "Paused"; raw prompt absent from every response | Integration | Not run |
 | F-43 (M9, crm) | Create tag, apply it, filter by it | Works end to end | E2E | Create, apply, count, rename, merge, delete: integration pass (2026-10-26, M9-11); signed-in E2E and contact-list filter by tag Not run (list filter is M1-02) |

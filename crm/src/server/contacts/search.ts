@@ -94,7 +94,7 @@ function whereFor(v: z.output<typeof searchContactsSchema>, customParts: SQL[] =
     // A phone fragment matches any stored E.164 number, ignoring punctuation the user typed.
     const digits = v.q.replace(/\D/g, '');
     if (digits.length >= 3) {
-      any.push(sql`array_to_string(${contacts.phones}, ' ') LIKE ${like(digits)}`);
+      any.push(sql`contacts_phones_search(${contacts.phones}) LIKE ${like(digits)}`);
     }
     parts.push(sql`(${sql.join(any, sql` OR `)})`);
   }
