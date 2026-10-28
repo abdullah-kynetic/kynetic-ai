@@ -263,7 +263,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M11-01 | OPM tables and services (`presence_items`, `review_snapshots`) | PRD F-83, F-48; DB Not in the baseline schema | M0-28, M6-07 | Module off returns 403; data kept | M | Sonnet | no | 24 | todo | - |
+| M11-01 | OPM tables and services (`presence_items`, `review_snapshots`) | PRD F-83, F-48; DB Not in the baseline schema | M0-28, M6-07 | Module off returns 403; data kept | M | Sonnet | no | 24 | in-progress | Added tenant-scoped tables and module-gated read/admin status service; migration and isolation tests, review snapshot writes, and UI remain. |
 | M11-02 | Admin OPM status and task list per client | PRD F-83; DS OPM | M11-01, M8a-09 | Admin updates an item; audited | M | Sonnet | yes | 25 | todo | - |
 | M11-03 | Owner Online Presence tab and `ReportSection` for the monthly report | PRD F-83; ARCH 7 | M11-01, M6-05 | Section appears only with `opm` on | M | Sonnet | yes | 25 | todo | - |
 | M11-04 | M11 gate | AGENTS; T | M11-01, M11-02, M11-03 | All M11 rows pass | S | Haiku | no | 26 | todo | - |

@@ -183,6 +183,13 @@
       "when": 1793100008000,
       "tag": "0057_admin_operations",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1793100009000,
+      "tag": "0058_presence",
+      "breakpoints": true
     }
   ]
 }
