@@ -322,7 +322,7 @@ function ContactPoints({
           {items.map((v) => (
             <li key={v} className='flex items-center gap-2'>
               <a
-                className='text-primary-text underline-offset-4 hover:underline'
+                className='text-primary-text inline-flex min-h-11 items-center underline-offset-4 hover:underline'
                 href={`${kind}:${v}`}
               >
                 {v}

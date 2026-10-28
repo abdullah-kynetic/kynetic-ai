@@ -50,3 +50,15 @@ test('F-44 daily-use touch targets are at least 44 by 44 CSS pixels at 390px', a
   }
   expect(smallTargets, smallTargets.join('\n')).toEqual([]);
 });
+
+test('F-44 contact phone offers a 44px tel link without opening the dialer', async ({ authenticatedPage }) => {
+  await authenticatedPage.setViewportSize({ width: 390, height: 844 });
+  await authenticatedPage.goto('/dashboard/contacts');
+  await authenticatedPage.locator('a[href^="/dashboard/contacts/"]').first().click();
+  const phone = authenticatedPage.locator('a[href^="tel:"]').first();
+  await expect(phone).toBeVisible();
+  await expect(phone).toHaveAttribute('href', /^tel:\+/);
+  const box = await phone.boundingBox();
+  expect(box?.height).toBeGreaterThanOrEqual(44);
+  expect(box?.width).toBeGreaterThanOrEqual(44);
+});
