@@ -1,0 +1,27 @@
+{
+  "days": [
+    {
+      "day": "2026-01-01",
+      "leads": 2,
+      "calls": 3,
+      "contactsReached": 1,
+      "estimatesBooked": 1,
+      "wonRevenueCents": 120000
+    },
+    {
+      "day": "2026-01-02",
+      "leads": 1,
+      "calls": 1,
+      "contactsReached": 1,
+      "estimatesBooked": 0,
+      "wonRevenueCents": 0
+    }
+  ],
+  "expected": {
+    "leads": 3,
+    "calls": 4,
+    "contactsReached": 2,
+    "estimatesBooked": 1,
+    "wonRevenueCents": 120000
+  }
+}
