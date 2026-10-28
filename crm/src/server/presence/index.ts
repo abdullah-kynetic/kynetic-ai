@@ -16,6 +16,7 @@ const itemSchema = z.strictObject({
   notes: z.string().max(5000).default('')
 });
 export type PresenceItemInput = z.input<typeof itemSchema>;
+const snapshotSchema = z.strictObject({ source: z.string().trim().min(1).max(200), capturedOn: z.iso.date(), reviewCount: z.number().int().min(0), averageRating: z.number().min(0).max(5).nullable() });
 type Opts = { db?: Db; tx?: Tx };
 
 export async function listPresence(ctx: TenantContextInput, opts: Opts = {}) {
@@ -28,6 +29,19 @@ export async function listPresence(ctx: TenantContextInput, opts: Opts = {}) {
     return { items, reviews };
   };
   return opts.tx ? read(opts.tx) : withTenant(ctx, read, { db: opts.db });
+}
+
+export async function saveReviewSnapshot(ctx: TenantContextInput, actor: Actor, input: z.input<typeof snapshotSchema>, opts: Opts = {}) {
+  if (actor.kyneticRole !== 'admin' || actor.userId !== ctx.userId || ctx.role !== 'admin' || ctx.readOnly) throw new AppError('FORBIDDEN');
+  const value = parseInput(snapshotSchema, input);
+  const write = async (tx: Tx) => {
+    await requireModule(ctx, 'opm', { tx });
+    const [row] = await tx.insert(reviewSnapshots).values({ ...value, tenantId: ctx.tenantId, averageRating: value.averageRating?.toFixed(2) ?? null })
+      .onConflictDoUpdate({ target: [reviewSnapshots.tenantId, reviewSnapshots.source, reviewSnapshots.capturedOn], set: { reviewCount: value.reviewCount, averageRating: value.averageRating?.toFixed(2) ?? null } }).returning();
+    await audit(tx, { action: 'presence.review_snapshot', entity: 'review_snapshot', entityId: row.id, after: { source: row.source, capturedOn: row.capturedOn, reviewCount: row.reviewCount, averageRating: row.averageRating } });
+    return row;
+  };
+  return opts.tx ? write(opts.tx) : withTenant(ctx, write, { db: opts.db });
 }
 
 /** Only authenticated Kynetic admins acting in a tenant context may change OPM status. */

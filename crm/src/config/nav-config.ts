@@ -68,6 +68,14 @@ export const navGroups: NavGroup[] = [
         items: []
       },
       {
+        title: 'Online Presence',
+        url: '/dashboard/presence',
+        icon: 'dashboard',
+        isActive: false,
+        module: 'opm',
+        items: []
+      },
+      {
         title: 'Alex settings',
         url: '/dashboard/settings/alex',
         icon: 'settings',
