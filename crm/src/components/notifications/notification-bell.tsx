@@ -19,7 +19,7 @@ export function NotificationBell() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
-        render={<Button variant='secondary' size='icon' className='relative size-8' />}
+        render={<Button variant='secondary' size='icon' className='relative' />}
         aria-label={`Notifications. ${unreadLabel(unread)}`}
       >
         <Icons.notification aria-hidden='true' />

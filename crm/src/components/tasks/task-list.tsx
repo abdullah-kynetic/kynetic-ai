@@ -153,7 +153,6 @@ export function TaskList(props: Props) {
                   aria-label={`Complete: ${t.title}`}
                   checked={false}
                   onCheckedChange={() => void complete(t)}
-                  className='size-5'
                 />
                 <button
                   type='button'
