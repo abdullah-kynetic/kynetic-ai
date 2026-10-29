@@ -54,7 +54,7 @@ function Json({ label, value }: { label: string; value: unknown }) {
 function Detail({ row }: { row: AuditRow }) {
   return (
     <details>
-      <summary className='text-primary cursor-pointer text-sm underline-offset-2 hover:underline'>
+      <summary className='text-foreground cursor-pointer text-sm underline underline-offset-2'>
         View
         <span className='sr-only'>
           {' '}
@@ -186,7 +186,7 @@ export default async function AuditLogPage({
         <p className='text-muted-foreground text-sm'>No events match these filters.</p>
       ) : (
         <>
-          <div className='overflow-x-auto rounded-lg border'>
+          <div className='overflow-x-auto rounded-lg border' role='region' aria-label='Audit log results' tabIndex={0}>
             <Table>
               <TableHeader>
                 <TableRow>
