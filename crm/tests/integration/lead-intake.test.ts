@@ -125,6 +125,7 @@ describe('F-76 lead intake', () => {
   }, 30_000);
 
   it('the same lead replayed 10 times is one effect (source plus external id)', async () => {
+    const emittedBefore = emitted.length;
     const body = lead({ externalId: 'dup-1', phone: '555-010-0199' });
     for (let i = 0; i < 10; i++) {
       expect(
@@ -138,6 +139,7 @@ describe('F-76 lead intake', () => {
     await expect(processWebhookEvent(events[0]!.id, { db: workerDb })).resolves.toBe(
       'already_processed'
     );
+    await expectEmittedCount(emittedBefore + 1);
     const [{ n }] =
       await db.admin`select count(*)::int as n from contacts where primary_phone_e164 = '+15550100199'`;
     expect(n).toBe(1);
@@ -240,4 +242,10 @@ async function expectEmitted(n: number) {
   while (Date.now() < end && emitted.length < n) await new Promise((r) => setTimeout(r, 100));
   expect(emitted.length).toBeGreaterThanOrEqual(n);
   expect(emitted[0]).toBe(IDS.tenantA);
+}
+
+async function expectEmittedCount(n: number) {
+  const end = Date.now() + 20_000;
+  while (Date.now() < end && emitted.length < n) await new Promise((r) => setTimeout(r, 100));
+  expect(emitted.length).toBe(n);
 }

@@ -4,7 +4,8 @@ import type { NavGroup } from '@/types';
 import { KBarAnimator, KBarPortal, KBarPositioner, KBarProvider, KBarSearch } from 'kbar';
 import { Kbd } from '@/components/ui/kbd';
 import { useRouter } from 'next/navigation';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useRegisterActions, type Action } from 'kbar';
 import RenderResults from './render-result';
 import useThemeSwitching from './use-theme-switching';
 import { useFilteredNavGroups } from '@/hooks/use-nav';
@@ -17,6 +18,7 @@ export default function KBar({
   groups?: NavGroup[];
 }) {
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('');
   const filteredGroups = useFilteredNavGroups(groups);
 
   // These action are for the navigation
@@ -61,11 +63,59 @@ export default function KBar({
   }, [router, filteredGroups]);
 
   return (
-    <KBarProvider actions={actions}>
+    <KBarProvider actions={actions} options={{ callbacks: { onQueryChange: setSearchQuery } }}>
+      <ContactSearchActions searchQuery={searchQuery} />
       <KBarComponent>{children}</KBarComponent>
     </KBarProvider>
   );
 }
+
+function ContactSearchActions({ searchQuery }: { searchQuery: string }) {
+  const router = useRouter();
+  const [actions, setActions] = useState<Action[]>([]);
+
+  useEffect(() => {
+    const q = searchQuery.trim();
+    if (q.length < 2) {
+      setActions([]);
+      return;
+    }
+    const controller = new AbortController();
+    const timeout = setTimeout(() => {
+      void fetch(`/api/search?q=${encodeURIComponent(q)}`, { signal: controller.signal })
+        .then(async (response) => {
+          if (!response.ok) return [];
+          const body = (await response.json()) as {
+            results?: { id: string; name: string; phone: string | null }[];
+          };
+          return body.results ?? [];
+        })
+        .then((results) =>
+          setActions(
+            results.map((result) => ({
+              id: `contact-${result.id}`,
+              name: result.name,
+              subtitle: result.phone ?? 'Contact',
+              section: 'Contacts',
+              perform: () => router.push(`/dashboard/contacts/${result.id}`)
+            }))
+          )
+        )
+        .catch((error: unknown) => {
+          if (error instanceof DOMException && error.name === 'AbortError') return;
+          setActions([]);
+        });
+    }, 180);
+    return () => {
+      clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [router, searchQuery]);
+
+  useRegisterActions(actions, [actions]);
+  return null;
+}
+
 const KBarComponent = ({ children }: { children: React.ReactNode }) => {
   useThemeSwitching();
 

@@ -86,8 +86,8 @@ async function seedTenant(
     await admin`insert into companies (tenant_id, name) values (${t}, ${`Company ${key}`}) returning id`;
   await admin`insert into custom_field_defs (tenant_id, entity, key, label, type) values (${t}, 'contact', 'roof_age', 'Roof age', 'number')`;
   const [contact] =
-    await admin`insert into contacts (tenant_id, first_name, primary_phone_e164, primary_email, company_id, owner_id)
-    values (${t}, ${`Contact ${key}`}, ${`+1555555010${n}`}, ${`lead-${key}@example.test`}, ${company.id}, ${owner}) returning id`;
+    await admin`insert into contacts (tenant_id, first_name, phones, emails, primary_phone_e164, primary_email, company_id, owner_id)
+    values (${t}, ${`Contact ${key}`}, ${[`+1555555010${n}`]}, ${[`lead-${key}@example.test`]}, ${`+1555555010${n}`}, ${`lead-${key}@example.test`}, ${company.id}, ${owner}) returning id`;
   const [pipeline] =
     await admin`insert into pipelines (tenant_id, name, is_default) values (${t}, 'Sales', true) returning id`;
   const [stage] =
@@ -118,6 +118,9 @@ async function seedTenant(
     values (${t}, ${contact.id}, ${deal.id}, now() + interval '1 day', now() + interval '1 day 1 hour', 'alex')`;
   await admin`insert into metrics_daily (tenant_id, day) values (${t}, current_date)`;
   await admin`insert into reports (tenant_id, kind, period_start, status) values (${t}, 'monthly_roi', date '2026-09-01', 'ready')`;
+  await admin`insert into reactivation_batches (tenant_id, audience_filter, status) values (${t}, '{}', 'completed')`;
+  await admin`insert into presence_items (tenant_id, kind, title, status) values (${t}, 'profile', ${`Profile ${key}`}, 'planned')`;
+  await admin`insert into review_snapshots (tenant_id, source, captured_on, review_count, average_rating) values (${t}, 'Google', date '2020-01-01', 1, 4.00)`;
   const [auto] =
     await admin`insert into automations (tenant_id, kind, template_key, name) values (${t}, 'template', 'speed_to_lead', 'Speed to lead') returning id`;
   await admin`insert into automation_steps (tenant_id, automation_id, position, channel) values (${t}, ${auto.id}, 1, 'sms')`;

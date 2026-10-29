@@ -162,6 +162,76 @@
       "when": 1793100005000,
       "tag": "0054_tags_notification_prefs",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1793100006000,
+      "tag": "0055_reactivation_batches",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1793100007000,
+      "tag": "0056_admin_ops_rollups",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1793100008000,
+      "tag": "0057_admin_operations",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1793100009000,
+      "tag": "0058_presence",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1793210175000,
+      "tag": "0900_contacts_phone_search",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1793210176000,
+      "tag": "0059_admin_backup_runs",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1793210177000,
+      "tag": "0060_fix_admin_integration_health",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1793210178000,
+      "tag": "0061_replay_failed_webhooks",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1793242200000,
+      "tag": "0062_backup_role_read_access",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1793242500000,
+      "tag": "0063_backup_drizzle_schema",
+      "breakpoints": true
     }
   ]
 }

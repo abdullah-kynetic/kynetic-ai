@@ -103,4 +103,51 @@ export class R2Storage implements StorageAdapter {
       now: this.now()
     });
   }
+
+  async list(prefix: string) {
+    const path = `/${this.config.bucket}`;
+    const objects: { key: string; lastModified: Date }[] = [];
+    let continuationToken: string | undefined;
+    do {
+      const params = new URLSearchParams({ 'list-type': '2', prefix });
+      if (continuationToken) params.set('continuation-token', continuationToken);
+      const query = params.toString();
+      const headers = signRequestHeaders({
+        creds: this.config.credentials,
+        region: this.region,
+        method: 'GET',
+        origin: this.origin,
+        path: `${path}?${query}`,
+        body: undefined,
+        now: this.now()
+      });
+      const response = await this.http(`${this.origin}${encodePath(path)}?${query}`, {
+        method: 'GET',
+        headers
+      });
+      if (!response.ok) this.fail('LIST', response.status);
+      const xml = await response.text();
+      for (const match of xml.matchAll(
+        /<Contents>[\s\S]*?<Key>([^<]+)<\/Key>[\s\S]*?<LastModified>([^<]+)<\/LastModified>[\s\S]*?<\/Contents>/g
+      )) {
+        objects.push({
+          key: decodeXml(match[1]!),
+          lastModified: new Date(match[2]!)
+        });
+      }
+      const next = xml.match(/<NextContinuationToken>([^<]+)<\/NextContinuationToken>/)?.[1];
+      continuationToken = next ? decodeXml(next) : undefined;
+    } while (continuationToken);
+    return objects;
+  }
+}
+
+function decodeXml(value: string) {
+  return value.replace(/&(#x[\da-f]+|#\d+|amp|lt|gt|quot|apos);/gi, (entity, code: string) => {
+    if (code[0] === '#') {
+      const number = code[1]?.toLowerCase() === 'x' ? parseInt(code.slice(2), 16) : Number(code.slice(1));
+      return Number.isFinite(number) ? String.fromCodePoint(number) : entity;
+    }
+    return ({ amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" })[code.toLowerCase()] ?? entity;
+  });
 }

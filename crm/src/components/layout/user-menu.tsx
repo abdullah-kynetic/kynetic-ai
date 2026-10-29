@@ -26,7 +26,7 @@ export function UserMenu({ user }: { user: ShellUser }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        render={<Button variant='secondary' size='icon' className='size-8' />}
+        render={<Button variant='secondary' size='icon' />}
         aria-label='Account menu'
       >
         <Icons.account />

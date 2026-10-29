@@ -1,4 +1,4 @@
-import { and, desc, eq, isNull, ne, or, sql, type SQL } from 'drizzle-orm';
+import { and, desc, eq, inArray, isNull, ne, or, sql, type SQL } from 'drizzle-orm';
 import { audit } from '../audit';
 import type { Db, Tx } from '../db/client';
 import { contacts, memberships } from '../db/schema';
@@ -375,6 +375,128 @@ export async function restoreContact(
       tenantId: after.tenantId,
       actor: actorOf(ctx),
       payload: { contactId: id, changed: ['deletedAt'] }
+    });
+    return after;
+  });
+}
+
+/**
+ * Merge two live contacts in one transaction. The selected survivor keeps its identity; all
+ * contact-linked history moves to it, while the loser remains as evidence and is hidden from live
+ * reads. The tenant context and RLS enforce that both ids belong to the caller's tenant.
+ */
+export async function mergeContacts(
+  ctx: TenantContextInput,
+  survivorId: string,
+  loserId: string,
+  opts: ContactOpts = {}
+): Promise<Contact> {
+  parseInput(uuidSchema, survivorId);
+  parseInput(uuidSchema, loserId);
+  if (survivorId === loserId) throw new ValidationError({ loserId: ['must_be_different'] });
+
+  return run(ctx, opts, async (tx) => {
+    const rows = await tx
+      .select()
+      .from(contacts)
+      .where(
+        and(
+          inArray(contacts.id, [survivorId, loserId]),
+          isNull(contacts.deletedAt),
+          isNull(contacts.mergedIntoId)
+        )
+      )
+      .for('update');
+    const survivor = rows.find((r) => r.id === survivorId);
+    const loser = rows.find((r) => r.id === loserId);
+    if (!survivor || !loser) throw new NotFoundError();
+
+    // A deal can already be linked to both contacts. Insert the survivor link first and then
+    // remove the loser link, preserving the composite primary key.
+    await tx.execute(sql`
+      INSERT INTO deal_contacts (tenant_id, deal_id, contact_id, role)
+      SELECT tenant_id, deal_id, ${survivorId}::uuid, role
+      FROM deal_contacts
+      WHERE tenant_id = app_tenant_id() AND contact_id = ${loserId}::uuid
+      ON CONFLICT (deal_id, contact_id) DO NOTHING`);
+    await tx.execute(sql`
+      DELETE FROM deal_contacts
+      WHERE tenant_id = app_tenant_id() AND contact_id = ${loserId}::uuid`);
+
+    for (const table of [
+      'activities',
+      'tasks',
+      'notes',
+      'calls',
+      'messages',
+      'dnc_entries',
+      'appointments',
+      'automation_runs'
+    ]) {
+      await tx.execute(
+        sql.raw(
+          `UPDATE ${table} SET contact_id = '${survivorId}'::uuid WHERE tenant_id = app_tenant_id() AND contact_id = '${loserId}'::uuid`
+        )
+      );
+    }
+    // Consent history is append-only by design. Copy the evidence to the survivor and leave the
+    // loser rows untouched, so the merge never rewrites or deletes compliance records.
+    await tx.execute(sql`
+      INSERT INTO consents
+        (tenant_id, contact_id, channel, kind, source, captured_text, wording_version, ip, captured_at, revoked_at)
+      SELECT tenant_id, ${survivorId}::uuid, channel, kind, source, captured_text, wording_version, ip, captured_at, revoked_at
+      FROM consents
+      WHERE tenant_id = app_tenant_id() AND contact_id = ${loserId}::uuid`);
+
+    const unique = (values: string[]) => [...new Set(values.filter(Boolean))];
+    const mergedPhones = unique([...survivor.phones, ...loser.phones]);
+    const mergedEmails = unique([...survivor.emails, ...loser.emails]);
+    const mergedTags = unique([...survivor.tags, ...loser.tags]);
+    const mergedCustom = {
+      ...(loser.custom as Record<string, unknown>),
+      ...(survivor.custom as Record<string, unknown>)
+    };
+    const [after] = await tx
+      .update(contacts)
+      .set({
+        firstName: survivor.firstName || loser.firstName,
+        lastName: survivor.lastName ?? loser.lastName,
+        companyId: survivor.companyId ?? loser.companyId,
+        phones: mergedPhones,
+        emails: mergedEmails,
+        primaryPhoneE164: survivor.primaryPhoneE164 ?? loser.primaryPhoneE164,
+        primaryEmail: survivor.primaryEmail ?? loser.primaryEmail,
+        address: Object.keys(survivor.address as object).length ? survivor.address : loser.address,
+        timezone: survivor.timezone ?? loser.timezone,
+        source: survivor.source ?? loser.source,
+        tags: mergedTags,
+        ownerId: survivor.ownerId ?? loser.ownerId,
+        custom: mergedCustom,
+        updatedAt: sql`now()` as unknown as string
+      })
+      .where(eq(contacts.id, survivorId))
+      .returning();
+
+    await tx
+      .update(contacts)
+      .set({
+        mergedIntoId: survivorId,
+        deletedAt: sql`now()` as unknown as string,
+        updatedAt: sql`now()` as unknown as string
+      })
+      .where(eq(contacts.id, loserId));
+    await audit(tx, {
+      action: 'contact.merge',
+      entity: 'contact',
+      entityId: survivorId,
+      before: { survivorId, loserId },
+      after: { survivorId, loserId, moved: true }
+    });
+    await emitEvent(tx, {
+      name: 'contact.merged',
+      tenantId: after.tenantId,
+      actor: actorOf(ctx),
+      payload: { survivorId, loserId }
     });
     return after;
   });

@@ -21,7 +21,12 @@ const EXTRA_TABLES = [
   // Staff TOTP (M0-12); global, auth role only.
   'two_factors',
   // Rate limiter counters (M0-21); global, no tenant_id.
-  'rate_limits'
+  'rate_limits',
+  // M11 OPM tables are additive feature-owned tables.
+  'presence_items',
+  'review_snapshots',
+  // M7 table for tenant-scoped reactivation launches.
+  'reactivation_batches'
 ];
 
 function entitiesFromDoc(): string[] {

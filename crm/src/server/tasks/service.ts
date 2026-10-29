@@ -8,6 +8,7 @@ import { emitEvent } from '../events';
 import { ModuleDisabledError } from '../modules';
 import { moduleSatisfied, type CrmLevel, type ModuleKey } from '../modules/keys';
 import { withTenant, type TenantContextInput } from '../tenancy';
+import { scheduleTaskDue } from './due';
 import { parseInput, uuidSchema } from '../validation';
 import {
   createTaskSchema,
@@ -152,6 +153,7 @@ export async function createTask(
       entityId: row.id,
       after: { dueAt: row.dueAt, assigneeId: row.assigneeId, priority: row.priority }
     });
+    await scheduleTaskDue(tx, row);
     return row;
   });
 }
@@ -204,6 +206,7 @@ export async function updateTask(
         after: Object.fromEntries(changed.map((k) => [k, after[k]]))
       });
     }
+    if (changed.includes('dueAt')) await scheduleTaskDue(tx, after);
     return after;
   });
 }

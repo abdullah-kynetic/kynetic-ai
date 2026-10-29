@@ -20,6 +20,7 @@ Conventions used here:
   - `kynetic_rollup`: NOLOGIN, owns the SECURITY DEFINER roll-up functions and is the only role with `BYPASSRLS`. It is reachable only through those functions (recommended option; Decided list, item 16).
   - `kynetic_app`: web runtime. Not the owner, no `BYPASSRLS`. Subject to RLS on every tenant table.
   - `kynetic_worker`: pg-boss jobs. No `BYPASSRLS`. Sets tenant context per job. Cross-tenant access is limited to the webhook and due-run tables in the RLS section.
+  - `kynetic_backup`: dedicated encrypted-dump role. It has `CONNECT`, schema usage, and read-only table/sequence access in `public` and `drizzle`; migrations set default SELECT privileges for future objects in both schemas. It alone has `BYPASSRLS` and `CREATEDB` for FORCE-RLS dumps and isolated scratch restore; it is not used by app or worker.
 - Session context (transaction-local, set with `set_config(name, value, true)` by one server helper from the verified session): `app.tenant_id`, `app.user_id`, `app.role` (`owner` | `staff` | `admin` | `va` | `system`), `app.impersonator_id` (view-as only), `app.read_only` (`on` | `off`).
   - Trust note: a bug that sets the wrong `app.tenant_id` defeats RLS. Mitigations: one helper, no raw `set_config` elsewhere, and RLS tests that a forged tenant reads zero rows.
   - The existing portal uses `app.client_id` and `app.role` with different values (`admin`, `client`, `ingest`, `system`). The new build uses `app.role` with the values above. Those values do not carry over (contradiction 3).
@@ -949,7 +950,7 @@ Access: `tenant_billing` and `tenant_billing_modules` have RLS enabled and force
 
 ### Not in the baseline schema (decided by the PRD decisions log)
 
-- OPM data (F-83): a status/task record per item and the monthly report (M11, approved). Tables `presence_items` and `review_snapshots`; no vendor integration tables until vendors are chosen (UNRESOLVED).
+- OPM data (F-83): migration `0058_presence.sql` adds tenant-scoped `presence_items` (kind, title, status, notes and timestamps) and `review_snapshots` (source, date, count and rating). Both use forced tenant RLS. M11 acceptance covers tenant isolation, module gating, audited writes, month-scoped report sections and the owner browser flow. No vendor integration tables until vendors are chosen (UNRESOLVED).
 - Reactivation batches (F-82): a one-time campaign needs a `reactivation_batches` record (audience filter, launched_at, counts). Created in M7 with the reactivation module.
 - Follow-up bundle (F-84): modeled as flags on `tenant_modules` only. Contents are fixed by PRD decision 7; no table.
 - CRM Lite vs Full surfaces (F-85): gated by `tenant_modules.level`. No extra tables (PRD decision 1).
@@ -1090,12 +1091,19 @@ SECURITY DEFINER functions (owned by `kynetic_rollup`, `SET search_path = public
 | `admin_update_tenant_commercial(...)` | admin | Writes plan, pricing_tier, status, baseline, guarantee fields |
 | `admin_set_kynetic_role(p_user, p_role)` | admin | Sets `users.kynetic_role`; VA cannot call it for `admin` (F-61) |
 | `admin_tenant_overview()` | admin, va | One row per tenant: plan, status, leads 30d, booking rate, guarantee status, health inputs, last login (F-53, F-54) |
+| `admin_integration_health()` | admin | Provider and phone-number A2P status rollups, with latest synthetic/recorded provider health data (F-62) |
+| `admin_flagged_calls(p_limit)` | admin | Unreviewed flagged call summaries; tenant data remains hidden (F-28) |
+| `admin_set_outbound_kill_switch(p_tenant, p_enabled)` | admin | Audited global or tenant outbound gate (F-101) |
+| `admin_replay_webhook(p_event)` | admin | Marks a failed webhook for one replay; processing job enqueue is transactionally coupled (F-101) |
+| `admin_list_failed_webhooks(p_limit)` | admin | Failed, unprocessed webhook summaries; excludes payloads and secrets (F-101) |
 | `audit_search(p_tenant, p_actor, p_action, p_from, p_to)` | admin | Filtered read of `audit_log` (F-60) |
 
 Implemented in migration 0005 (M0-09, DC-054). Signatures: `create_tenant(slug, name, plan, timezone, owner_email, invite_token_hash, invite_expires_at) returns uuid`; `set_tenant_module(tenant, module, enabled, level default '')`; `admin_update_tenant_commercial(tenant, patch jsonb)` with an allowlist of fields; `admin_set_kynetic_role(user, role or null)`; `admin_tenant_overview()`; `audit_search(tenant, actor, action, from, to, limit)`. `admin_tenant_overview` and `audit_search` allow admin and VA (SECURITY 2.2: VA reads); the others are admin only. Only `kynetic_app` may execute them.
 
 Migration 0030 (M8a-02, DC-091) adds `owner_email_in_use(p_email)` (admin; true when a user or a pending invite holds the email) and `reissue_owner_invite(p_tenant, p_token_hash, p_expires_at)` (admin; revokes the pending owner invite, inserts a new one, marks the `owner_invited` checklist step done, returns the owner email and tenant name; audit action `invite.send` carries no token).
 Migration 0031 (M8a-03, DC-092) adds the user-management functions for F-61: `admin_list_users(tenant, search, limit)` (admin, va), `admin_invite_user(tenant, email, role, token_hash, expires_at)` (admin, va; client users only), `admin_reset_client_user(user)` (admin, va; client users only), and, admin only, `admin_deactivate_user(user)`, `admin_reactivate_user(user)`, `admin_set_membership_role(tenant, user, role)` and `admin_change_staff_role(user, role or null)`. The helper `rollup_active_staff()` confirms the session user is an active Kynetic user with the claimed role. Deactivation sets `users.disabled_at`, deletes all sessions and revokes pending invitations for the email in one transaction; every function audits in the same transaction. Only `kynetic_app` may execute them. New roll-up grants: `UPDATE (role)` on `memberships`, `UPDATE (revoked_at)` on `invitations`.
+
+Migration 0060 repairs the M8b integration-health source to use `phone_numbers.a2p_status` and assigns admin rollup functions to `kynetic_rollup` so forced RLS cannot hide aggregates. Migration 0061 adds failed-webhook listing and idempotent replay functions, owned by `kynetic_rollup`; the application enqueues the replay job in the same transaction. The operations page reads only a limited, safe `pgboss.job_common` summary and never returns job payload/output. Replay and rollups were exercised against disposable PostgreSQL on port 55432.
 
 Migration 0010 (M0-20, DC-060) adds `service_token_lookup(prefix)` and `service_token_touch(id)`, owned by `kynetic_rollup`, executable by `kynetic_app` and `kynetic_worker`. They exist because a bearer request has no tenant context yet. They take no tenant argument and cannot list tokens.
 
@@ -1185,7 +1193,7 @@ Key queries and the index that serves each:
 | --- | --- | --- |
 | Contacts list (F-05) | tenant, optional status, source, tag, owner, date; sort by updated_at; keyset page | `contacts_tenant_list_idx` (partial, deleted_at null). Filters on arrays use GIN on `tags` (add in M1) |
 | Dedupe on phone or email (F-07) | equal match on any phone or email | `contacts_tenant_phone_idx`, `contacts_tenant_email_idx`, `contacts_phones_gin`, `contacts_emails_gin` |
-| Global search (F-37) | trigram match on name; exact match on phone | `contacts_name_trgm`, `contacts_tenant_phone_idx`; companies and deals trigram indexes added in M9 |
+| Global search (F-37) | trigram match on name and phone fragments within normalized contact phone arrays; tenant RLS scope | `contacts_name_trgm`, `contacts_phone_fragment_trgm`; phone search helper and index are added by migration 0900. Company/deal search is still outstanding. |
 | Custom field filter (F-12) | `custom @> '{"roof_type":"tile"}'` | `contacts_custom_gin` (`jsonb_path_ops`) |
 | Kanban board (F-16) | tenant, pipeline, stage; ordered by position | `deals_board_idx` (partial, deleted_at null) |
 | Column totals (F-16) | sum of value_cents per stage | `deals_board_idx` (index only scan candidate) |
@@ -1267,9 +1275,9 @@ Seed data (synthetic only; no real client data in preview, spec s6):
 - Demo tenants for tests: two synthetic tenants (slugs `demo-a`, `demo-b`), with fictional contacts on 555-01xx numbers and no real names. Owners and staff with test emails on a reserved test domain.
 
 Backups and restore:
-- Nightly `pg_dump`, encrypted, to offsite storage: 30 daily and 12 monthly kept (spec s7, F-63). Each run writes a `backup_runs` row.
-- Monthly restore drill into a scratch database. The result writes a `backup_runs` row with `kind='restore_test'`. Pilot is blocked until one drill passes (spec M10).
-- Commands and provider for backup: Not configured.
+- Nightly `pg_dump`, authenticated-encrypted before upload, to offsite storage: 30 daily and 12 monthly kept (spec s7, F-63). Each run writes a `backup_runs` row.
+- Monthly restore drill into a scratch database. The result writes a `backup_runs` row with `kind='restore_test'`. The admin page reads only through `admin_list_backup_runs()`, which checks Kynetic admin/VA role and exposes display fields. Pilot is blocked until a production-like drill passes (spec M10).
+- Local commands are implemented in `src/server/admin/backups.ts` and verified on disposable PostgreSQL; R2 pagination, restore into a scratch database, schema checks, and scratch cleanup are tested. Production storage credentials, permissions, and scheduled operation are not verified.
 
 Rollback:
 - Forward fix preferred. Destructive rollback is by restore from the nightly backup, tested by the drill. Down migrations are not written (decided, recommended option).

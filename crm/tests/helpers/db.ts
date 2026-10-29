@@ -8,11 +8,13 @@ import { setupJobs } from '../../src/server/jobs/setup';
 
 // Integration tests need a superuser URL for a throwaway Postgres 16 (TEST_DATABASE_ADMIN_URL).
 // Each run creates its own database owned by kynetic_owner and drops it afterwards.
-const ROLE_PASSWORDS = {
-  owner: 'owner-test-pw',
-  app: 'app-test-pw',
-  worker: 'worker-test-pw',
-  auth: 'auth-test-pw'
+export const ROLE_PASSWORDS = {
+  // Exercise psql's quoted-variable interpolation and URL encoding with synthetic special chars.
+  owner: `owner-'quoted';$-back\\slash@-space test`,
+  app: `app-'quoted';$-back\\slash@-space test`,
+  worker: `worker-'quoted';$-back\\slash@-space test`,
+  auth: `auth-'quoted';$-back\\slash@-space test`,
+  backup: `backup-'quoted';$-back\\slash@-space test`
 };
 const bootstrapSql = fileURLToPath(new URL('../../deploy/db/bootstrap.sql', import.meta.url));
 const migrationsFolder = fileURLToPath(new URL('../../drizzle', import.meta.url));
@@ -24,12 +26,13 @@ export type TestDatabase = {
   owner: postgres.Sql;
   app: postgres.Sql;
   worker: postgres.Sql;
+  backup: postgres.Sql;
   /** The Better-Auth connection (kynetic_auth). */
   auth: postgres.Sql;
   /** Connection URL for kynetic_auth, for code that builds its own client. */
   authUrl: string;
   /** Connection URLs for roles that build their own client (pg-boss). */
-  urls: { app: string; worker: string };
+  urls: { app: string; worker: string; backup: string };
   drop: () => Promise<void>;
 };
 
@@ -48,6 +51,30 @@ function withDb(url: string, db: string, user?: string, password?: string): stri
   return u.toString();
 }
 
+export function bootstrapRoles(passwords = ROLE_PASSWORDS): void {
+  const base = adminUrl();
+  execFileSync(
+    'psql',
+    [
+      base,
+      '-q',
+      '-v',
+      `owner_pw=${passwords.owner}`,
+      '-v',
+      `app_pw=${passwords.app}`,
+      '-v',
+      `worker_pw=${passwords.worker}`,
+      '-v',
+      `auth_pw=${passwords.auth}`,
+      '-v',
+      `backup_pw=${passwords.backup}`,
+      '-f',
+      bootstrapSql
+    ],
+    { stdio: 'pipe' }
+  );
+}
+
 export async function createTestDatabase(
   opts: { migrate?: boolean; jobs?: boolean; jobQueues?: Record<string, object> } = {}
 ): Promise<TestDatabase> {
@@ -56,24 +83,7 @@ export async function createTestDatabase(
   const name = `kynetic_test_${randomBytes(4).toString('hex')}`;
 
   // Roles are cluster-wide and idempotent to create.
-  execFileSync(
-    'psql',
-    [
-      base,
-      '-q',
-      '-v',
-      `owner_pw=${ROLE_PASSWORDS.owner}`,
-      '-v',
-      `app_pw=${ROLE_PASSWORDS.app}`,
-      '-v',
-      `worker_pw=${ROLE_PASSWORDS.worker}`,
-      '-v',
-      `auth_pw=${ROLE_PASSWORDS.auth}`,
-      '-f',
-      bootstrapSql
-    ],
-    { stdio: 'pipe' }
-  );
+  bootstrapRoles();
   await maintenance.unsafe(`CREATE DATABASE ${name} OWNER kynetic_owner`);
   await maintenance.end();
 
@@ -86,9 +96,12 @@ export async function createTestDatabase(
         withDb(base, name, 'kynetic_owner', ROLE_PASSWORDS.owner),
         opts.jobQueues ?? {}
       );
+    const backup = postgres(withDb(base, name, 'kynetic_owner', ROLE_PASSWORDS.owner), { max: 1 });
+    await backup.end();
   }
   const app = postgres(withDb(base, name, 'kynetic_app', ROLE_PASSWORDS.app), { max: 2 });
   const worker = postgres(withDb(base, name, 'kynetic_worker', ROLE_PASSWORDS.worker), { max: 2 });
+  const backup = postgres(withDb(base, name, 'kynetic_backup', ROLE_PASSWORDS.backup), { max: 2 });
 
   const authUrl = withDb(base, name, 'kynetic_auth', ROLE_PASSWORDS.auth);
   const auth = postgres(authUrl, { max: 2 });
@@ -99,14 +112,16 @@ export async function createTestDatabase(
     authUrl,
     urls: {
       app: withDb(base, name, 'kynetic_app', ROLE_PASSWORDS.app),
-      worker: withDb(base, name, 'kynetic_worker', ROLE_PASSWORDS.worker)
+      worker: withDb(base, name, 'kynetic_worker', ROLE_PASSWORDS.worker),
+      backup: withDb(base, name, 'kynetic_backup', ROLE_PASSWORDS.backup)
     },
     admin,
     owner,
     app,
     worker,
+    backup,
     drop: async () => {
-      await Promise.all([admin.end(), owner.end(), app.end(), worker.end(), auth.end()]);
+      await Promise.all([admin.end(), owner.end(), app.end(), worker.end(), backup.end(), auth.end()]);
       const m = postgres(base, { max: 1 });
       await m.unsafe(`DROP DATABASE IF EXISTS ${name} WITH (FORCE)`);
       await m.end();

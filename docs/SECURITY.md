@@ -146,7 +146,7 @@ Locked decision: each Kynetic system and upsell has its own backend and is toggl
 | `after_hours` | F-80 | Inbound calls outside hours |
 | `missed_call_textback` | F-81 | SMS. Free with `after_hours` per decisions; SMS gate still applies (3.7) |
 | `reactivation` | F-82 | Highest compliance risk (3.8). One-time campaign |
-| `opm` | F-83 (and F-48 if PRD 7 accepts the mapping) | Holds third-party OAuth tokens (encrypted, section 4) |
+| `opm` | F-83 and F-48 | v1 stores status records and review snapshots only; no vendor credentials or OAuth integrations (PRD decision 6) |
 | `followup_bundle` | F-84 | Convenience grant that enables member flags. Bundle contents: PRD PRD 7 |
 | `crm` with level `lite` or `full` | Lite: F-10, F-17, F-20, F-22, F-43. Full: F-08, F-12, F-15, F-37, F-38. F-85 | Upsell on top of the base portal. Base routes (F-05 to F-07, F-14, F-16, F-19) are not gated by `crm` (PRD 1) |
 
@@ -166,6 +166,7 @@ Rules:
 - **Provider and n8n tokens.** Revoke and rotate per section 4.2. A one-click revoke for a tenant's n8n token and signing secrets belongs to F-62.
 - **Tenant suspension.** Setting `tenants.status` to suspended blocks logins and stops all outbound activity (queue gate checks status).
 - **Emergency stop.** `OUTBOUND_ENABLED=false` (config) stops all outbound calls and texts. Per-tenant "pause Alex" (F-42) stops that tenant's. Defined in 3.9.
+- **Provider stub mode.** `PROVIDER_MODE=stub` selects in-memory fake SMS and voice providers even when `NODE_ENV=production`; it is intended only for isolated rehearsals with `OUTBOUND_ENABLED=false`. The default is `live`, which keeps production fail-closed when provider credentials are missing. Stub mode cannot be combined with outbound enabled.
 
 ### 2.6 Impersonation ("view as client", F-57)
 - Entry: Kynetic admin (read or write) and VA (read only). Start requires a reason. An audit row records `impersonator_id`, tenant, start time and IP.
@@ -288,6 +289,7 @@ Decided 2026-10-25 (recommended option approved: these names; M0 fixes the final
 | `BACKUP_ENCRYPTION_KEY` | Encrypt `pg_dump` before upload | No. Stored apart from bucket credentials |
 | `SENTRY_DSN` (optional) | Error reporting | Server-only anyway |
 | `OUTBOUND_ENABLED` | Kill switch (3.9) | Config, not secret |
+| `PROVIDER_MODE` | Selects live provider adapters or test fakes; `stub` requires outbound disabled | Config, not secret |
 
 Existing Kynetic keys used by agency tooling are **not** reused. The portal gets its own keys, separate Twilio credentials where possible, and separate keys per environment.
 
@@ -416,12 +418,13 @@ Cookies per 2.1. Cloudflare: TLS 1.2 or higher, "Always HTTPS", managed WAF rule
 
 ### 6.4 Backups and recovery (locked decisions, F-63)
 - Nightly `pg_dump`, encrypted with `BACKUP_ENCRYPTION_KEY` before leaving the server, uploaded to offsite R2 or B2. **30 daily and 12 monthly** kept.
+- The dedicated `kynetic_backup` login is `NOSUPERUSER NOCREATEROLE BYPASSRLS CREATEDB`; superuser bootstrap sets these attributes. BYPASSRLS is required to dump FORCE-RLS tables, and CREATEDB is required for an isolated scratch restore. It has read-only object grants on application tables and queue tables; it cannot write application data. The app and worker roles do not receive these attributes.
 - **Monthly restore test** (locked decision): restore the latest backup into an isolated scratch database, run row-count and integrity checks, run the isolation tests (SEC-T-01, SEC-T-02) against it, and record the date and result. F-63 shows status, last test and a manual backup button (admin only, rate limited, audited).
 - The M10 backup restore drill is the first formal drill. Where evidence is recorded: Decided 2026-10-25 (recommended option approved: an `audit_log` entry plus a dated note in `docs/progress.md`).
 - A failed backup raises an alert. A backup older than 36 hours turns the admin card red.
-- Bucket credentials for the server are write-only, so it cannot delete or overwrite backups. Pruning to 30 and 12 runs with a different credential or a provider lifecycle policy (ransomware resistance).
+- Storage credentials used by the backup worker permit object list, upload, readback verification, and retention deletes. They are separate from the backup encryption key; production credential scoping and lifecycle protection remain deployment configuration.
 - RPO up to 24 h (nightly). RTO: Decided 2026-10-25 (recommended option approved: 4 hours). Point-in-time recovery is not in the spec; recommended option: defer until more than 5 paying clients.
-- Backup and restore commands: `Not configured` until written and tested in M8 and M10.
+- Local dump, authenticated encryption, upload/readback, scratch `createdb`/`pg_restore`/schema verification, and cleanup are implemented and exercised against disposable PostgreSQL in M8b. Production storage, credential scoping, and monthly live operations remain unverified.
 
 ### 6.5 Security-sensitive change review
 Changes needing Abdullah's review before merge. CODEOWNERS and branch protection: `Not configured`. Decided (recommended option): add in M0 so GitHub enforces it.

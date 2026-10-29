@@ -10,6 +10,7 @@ import {
   getContact,
   listContacts,
   loadContactForPanel,
+  mergeContacts,
   NotFoundError,
   removeContactTags,
   restoreContact,
@@ -298,5 +299,59 @@ describe('M1-04 contact panel save', () => {
     expect(
       await saveContactFromPanel(ctx.ownerB(), { id: made.id, values: { firstName: 'X' } }, opts)
     ).toMatchObject({ ok: false, kind: 'not_found' });
+  });
+});
+
+describe('M1-08 contact merge', () => {
+  it('moves linked records, keeps the selected survivor, audits and emits contact.merged', async () => {
+    const survivor = await createContact(
+      ctx.ownerA(),
+      { firstName: 'Survivor', phones: ['415-555-0990'], tags: ['survivor'] },
+      opts
+    );
+    const loser = await createContact(
+      ctx.ownerA(),
+      {
+        firstName: 'Loser',
+        phones: ['415-555-0991'],
+        emails: ['loser@example.test'],
+        tags: ['loser']
+      },
+      { ...opts, acknowledgeDuplicates: true }
+    );
+    // The seeded deal gives us an existing survivor link; this new link exercises the move.
+    const [{ id: seededDeal }] = await tdb.admin`
+      select id from deals where tenant_id = ${IDS.tenantA} limit 1`;
+    await tdb.admin`
+      insert into deal_contacts (tenant_id, deal_id, contact_id, role)
+      values (${IDS.tenantA}, ${seededDeal}, ${survivor.id}, 'homeowner')
+      on conflict do nothing`;
+    await tdb.admin`
+      insert into deal_contacts (tenant_id, deal_id, contact_id, role)
+      values (${IDS.tenantA}, ${seededDeal}, ${loser.id}, 'homeowner')
+      on conflict do nothing`;
+    await tdb.admin`
+      insert into notes (tenant_id, body_text, contact_id)
+      values (${IDS.tenantA}, 'Loser history', ${loser.id})`;
+
+    const merged = await mergeContacts(ctx.ownerA(), survivor.id, loser.id, opts);
+    expect(merged.id).toBe(survivor.id);
+    expect(merged.emails).toContain('loser@example.test');
+    expect(merged.tags).toEqual(['survivor', 'loser']);
+
+    const [loserRow] = await tdb.admin`
+      select deleted_at, merged_into_id from contacts where id = ${loser.id}`;
+    expect(loserRow).toMatchObject({ merged_into_id: survivor.id });
+    expect(loserRow.deleted_at).not.toBeNull();
+    const [{ notesMoved }] = await tdb.admin`
+      select count(*)::int as "notesMoved" from notes where contact_id = ${survivor.id} and body_text = 'Loser history'`;
+    expect(notesMoved).toBe(1);
+    const [auditRow] = await tdb.admin`
+      select action, entity_id from audit_log where action = 'contact.merge' and entity_id = ${survivor.id}`;
+    expect(auditRow).toMatchObject({ action: 'contact.merge', entity_id: survivor.id });
+    const ev = (await events('contact.merged')).find(
+      (e) => e.payload.survivorId === survivor.id && e.payload.loserId === loser.id
+    );
+    expect(ev?.tenantId).toBe(IDS.tenantA);
   });
 });

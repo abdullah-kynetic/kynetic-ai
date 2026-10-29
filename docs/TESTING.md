@@ -4,7 +4,7 @@ Kynetic Client CRM & Portal. Target path in the build repo: `docs/TESTING.md`.
 
 Source order: `DECISIONS_locked.md` (Oct 25, 2026) wins over `SPEC_client_crm_portal.md`. `PRD.md` supplies the F-IDs (F-01 to F-106) and the milestone and module tags. Anything in none of these is marked `Decided 2026-10-25 (recommended option: ...)` or, if it needs outside information, `UNRESOLVED`. Commands not verified in a running repo are marked `Not configured`.
 
-Status of this document: draft. The M0 gate (M0-28, 2026-10-26) ran the M0 suites on branch `m0/gate`: 105 unit, 244 integration, 15 Playwright E2E, `bun run check` and `bun run build` all pass. Matrix rows that an M0 test covers are marked `Pass`; every other row is still `Not run`. Not exercised anywhere yet: live Google sign-in, real email delivery, `docker compose up`, and signed-in E2E (no sign-in fixture).
+Status of this document: draft. The M0 gate (M0-28, 2026-10-26) ran the M0 suites on branch `m0/gate`: 105 unit, 244 integration, 15 Playwright E2E, `bun run check` and `bun run build` all pass. M1-09 was completed on 2026-10-28 on the current work branch: focused M1 integration suites, build checks and 20 Playwright E2E tests pass. Not exercised anywhere yet: live Google sign-in, real email delivery, and `docker compose up`.
 
 ---
 
@@ -50,6 +50,9 @@ Performance and accessibility targets are PRD decisions, not sourced numbers. Ap
   - Webhook signature verification (F-76, F-77).
   - Health chip color thresholds (F-54).
 - **Integration:** API, database and service boundaries against a real Postgres 16 with the app non-owner role. Providers are fakes (see Fixtures).
+  - Database bootstrap wrapper: `bash crm/deploy/db/tests/bootstrap-roles.sh` proves synthetic passwords with quotes, backslashes, `$`, semicolons, `@` and spaces reach psql as intact arguments, and empty values fail before psql runs. `tests/integration/bootstrap-roles.test.ts` additionally exercises the SQL bootstrap against the configured disposable Postgres.
+  - F-63 backup-role integration tests run `pg_dump` as `kynetic_backup` after migrations grant read-only access; the test helper must not add grants that production migrations omit.
+  - Provider mode: `tests/unit/provider-mode.test.ts` proves explicit stub mode selects fake SMS/voice adapters in production while live mode remains fail-closed without provider credentials.
   - RLS on every tenant table (F-72). Run as the app role, never the owner.
   - Route and server-action guards for roles (F-73) and modules (F-70).
   - Webhook pipeline: store in `webhook_events`, unique on (source, external_id), job queue, retry (F-77).
@@ -96,11 +99,11 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-71 (M0, platform) | Static search for Clerk imports, packages and env vars | None remain | Unit (static) | Not run |
 | F-74 (M0 consent service; M4 enforces, platform) | `canContact` with no consent row, then with a revoked consent | Returns false both times; `recordConsent` and `revokeConsent` write rows | Unit | Pass (2026-10-26, m0/gate) |
 | notify() (M0, platform) | `notify` writes a `notifications` row for the target user only | Other users cannot read it | Integration | Pass (2026-10-26, m0/gate) |
-| F-20 and F-22 notification path (M0 `notify`, M3, crm) | Overdue task and @mention each notify the right user | One row per recipient; delivered through `notify` | Integration | Partly run: @mention passes (2026-10-26, M3-03); overdue task is M3-04 |
+| F-20 and F-22 notification path (M0 `notify`, M3, crm) | Overdue task and @mention each notify the right user | One row per recipient; delivered through `notify` | Integration | M3-04 overdue-task path passes (2026-10-28, `tests/integration/task-due.test.ts`); @mention passes (2026-10-26, M3-03) |
 | M0 CI and preview (platform) | Preview deploys from CI; shell and empty states render with no seed data and no console errors | Preview URL serves the shell | E2E | Not run |
-| F-07 (M1, crm) | Create a contact with a phone already on contact P | Duplicate warning shows and offers merge | E2E | Partly run (2026-10-26, M1-04): integration covers the warning data, "create anyway" and edit (`tests/integration/contacts.test.ts`, M1-04 block). Merge is not offered yet (M1-08); the automated E2E needs the signed-in fixture |
-| F-07 (M1, crm) | Merge two contacts | Deals, notes and activities move to the survivor; loser soft-removed; audit row written | Integration | Not run |
-| F-12 (M1, crm) | Custom field "Roof type" select: filter, table and CSV import | Value shows in table, filters, and CSV import accepts it | E2E | Partly run: filter and values covered by `tests/integration/custom-fields.test.ts`; table, settings UI and CSV import not run in a browser |
+| F-07 (M1, crm) | Create a contact with a phone already on contact P | Duplicate warning shows and offers merge | E2E | Pass (2026-10-28): signed-in owner fixture and merge journey in `tests/e2e/merge.spec.ts`; duplicate detection and panel behavior remain covered by `tests/integration/contacts.test.ts` |
+| F-07 (M1, crm) | Merge two contacts | Deals, notes and activities move to the survivor; loser soft-removed; audit row written | Integration | Pass (2026-10-28, M1-08, `tests/integration/contacts.test.ts`) |
+| F-12 (M1, crm) | Custom field "Roof type" select: filter, table and CSV import | Value shows in table, filters, and CSV import accepts it | E2E | Partly run (2026-10-28): signed-in settings screen and seeded field render in `tests/e2e/m1.spec.ts`; field validation/filter coverage passes in `tests/integration/custom-fields.test.ts`; CSV import remains M9 |
 | F-08 (M1, crm) | Assign owner to 20 selected contacts | All 20 updated in one audited operation | Integration | Pass (2026-10-26, M1-07, `contacts-bulk.test.ts`) |
 | F-14 (M2, crm) | Save a deal in Lost without a lost reason | Save refused, message names the field | Integration | Pass (2026-10-26, M2-01) |
 | F-16 (M2, crm) | Drag a card from Contacted to Qualified, then reload | Card stays in Qualified; column totals updated | E2E | Not run (no signed-in E2E fixture yet). Move, order, totals and `deal.stage_changed` covered by integration (`pipeline-board.test.ts`, M2-02) and unit (`pipeline-board-state.test.ts`) tests, which Pass 2026-10-26 |
@@ -109,7 +112,7 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-16 (M2, crm) | Server rejects a drag | Card rolls back; error toast | E2E | Not run |
 | F-16 (M2, crm) | Undo within toast window after a drag | Previous stage restored | E2E | Not run |
 | F-19 (M3, crm) | Any write to a covered entity | `activities` row created and shown on timeline; actor shown | Integration | Pass |
-| F-20 (M3, crm) | Task past due and incomplete | Under Overdue; assignee gets notification | Integration | List, completion undo, tenant-day grouping, module gating and isolation: Pass (`tasks.test.ts`, M3-02). Notification: Not run (M3-04) |
+| F-20 (M3, crm) | Task past due and incomplete | Under Overdue; assignee gets notification | Integration | Pass (2026-10-28): grouping, completion undo, tenant-day grouping, module gating and isolation in `tasks.test.ts`; delayed job and idempotent notification in `task-due.test.ts` |
 | F-76 (M4, alex_core) | Duplicate lead webhook (same source and external id) | Second call is a no-op; one contact, one deal | Integration | Pass (2026-10-26, M4-04; replayed 10 times) |
 | F-74 (M4, alex_core) | STOP inbound SMS (fake Twilio) | Consent revoked; confirmation on timeline; no further SMS or calls | Integration | Passing (M4-08, tests/integration/twilio-sms.test.ts) |
 | F-77 (M4, platform) | Same Retell or ElevenLabs call-ended event (same source and external id) replayed 10 times | One effect (one call row, one timeline entry) | Integration | Pass (`call-end.test.ts`) |
@@ -120,31 +123,38 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-01 (M6, alex_core) | Dashboard on seeded fixture | Each card equals fixture expected value exactly | E2E | Not run |
 | F-02 (M6, alex_core) | Line and bar charts on two-month fixture | Totals equal fixture totals | Integration | Not run |
 | F-49 (M6, alex_core) | Monthly ROI report, full month of fixture data | Report totals equal dashboard totals for the same range | Integration | Not run |
-| F-32 (M7, per template) | Sequence in progress; contact replies | Remaining steps cancel; run status "stopped" | Integration | Not run |
-| F-33 (M7, platform) | Deal marked Won | Owner gets email (fake Resend) | Integration | Not run |
+| F-32 (M7, per template) | Sequence in progress; contact replies | Remaining steps cancel; run status "stopped_reply" | Integration | Pass (2026-10-28, `tests/integration/automation-retries-m7.test.ts`; tenant A reply stops only A's run, tenant B remains active) |
+| F-32 (M7, per template) | Module disabled; active run delivers | Run stops before provider call | Integration | Pass (2026-10-28, `tests/integration/automation-retries-m7.test.ts`; synthetic PostgreSQL and fake SMS) |
+| F-32 (M7, per template) | Transient provider error followed by queue redelivery | Run remains active, then completes once | Integration | Pass (2026-10-28, `tests/integration/automation-retries-m7.test.ts`; synthetic PostgreSQL and fake SMS) |
+| F-32 (M7, per template) | Quiet-hour block and early duplicate delivery | Run due time advances; early delivery sends nothing | Integration | Pass (2026-10-28, `tests/integration/automation-retries-m7.test.ts`; synthetic PostgreSQL and fake SMS) |
+| F-33 (M7, platform) | Deal marked Won; event delivered twice | One owner notification and one fake email despite retry | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
 | F-55 (M8, platform) | Complete onboarding form | Tenant, invite, pipeline, automations, Alex draft exist within 30 s; audited | E2E | Partly run: integration covers tenant, invite, modules, pipeline, Alex draft and audit in under 30 s; the page is not exercised in a browser (no sign-in fixture). Default automations are M7 |
 | F-57 (M8, platform) | View-as started by admin | Banner shown; writes refused; `audit_log` has impersonator and tenant | E2E | Not run (no signed-in fixture). Audit rows with impersonator and tenant, and refused writes, pass as integration in `tests/integration/view-as.test.ts` (M8a-04) |
-| F-90 (M9, platform) | Admin uploads a CSV with unusual headers, maps columns, previews | Preview shows how rows will land; saved mapping pre-fills the next file from that source | E2E | Not run |
-| F-90 (M9, platform) | Upload an `.xlsm`, an oversize file, and a CSV renamed from a binary | Refused before parsing, with a message | Integration | Not run |
-| F-90 (M9, platform) | XLSX with formulas and an external link | Cached values imported as text; nothing evaluated or fetched | Integration | Not run |
-| F-91 (M9, platform) | 1,000-row file with 50 bad rows and 30 duplicates, dry run | Report shows 50 failed with reasons, 30 duplicates; zero rows written | Integration | Not run |
-| F-91 (M9, platform) | Same number in two phone formats | Treated as a duplicate (E.164) | Unit | Not run |
-| F-91 (M9, platform) | Commit without a successful dry run for the same file and mapping | Refused | Integration | Not run |
-| F-92 (M9, platform) | Commit a batch | Every record has `import_batch_id`, `imported_source`, `external_id`; visible only to that tenant | Integration | Not run |
-| F-92 (M9, platform) | Deal row with an open quote | Deal in the mapped stage; value stored in cents | Integration | Not run |
-| F-92 (M9, platform) | Failure injected midway through commit | Batch `failed`; written records listed and undoable | Integration | Not run |
-| F-93 (M9, platform) | Undo a committed batch | Records gone from lists and search; history shows undone with who and when; audited | E2E | Not run |
-| F-93 (M9, platform) | Undo when one record was edited after import | Record listed and not removed | Integration | Not run |
-| F-94 (M9, platform) | Admin imports on tenant A's page | All records in tenant A; `audit_log` has the admin as actor | Integration | Not run |
-| F-94 (M9, platform) | VA and client owner call the import endpoints | 403 | Integration | Not run |
-| F-94 (M9, platform) | Import file used with another tenant's id in the request | Refused; nothing written to either tenant | Integration | Not run |
-| F-96 (M9, platform) | Commit 500 contacts | No call or SMS started; no `lead.created`; no sequence enrolled | Integration | Not run |
-| F-96 (M9 and M7, platform) | Reactivation includes imported contacts without consent evidence | Blocked and logged by `canContact` | Integration | Not run |
-| F-96 (M9, platform) | Import with mapped consent date and source | Consent record with source `import` exists | Integration | Not run |
+| F-90 (M9, platform) | Admin uploads CSV with unusual headers, maps columns, previews and commits | Preview is shown before commit; saved mapping pre-fills the next file from that source | E2E | Pass (2026-10-28, `tests/e2e/m9-import.spec.ts`; contact/company selection, mapping preview and same-source prefill with synthetic responses; service integration covers real dry run/commit) |
+| F-90 (M9, platform) | Oversize, binary, malformed and over-limit CSV | Refused before storage write | Integration | Pass (2026-10-28, `tests/integration/import-workflow-m9.test.ts`; XLSX refusal is a separate tested row) |
+| F-90 (M9, platform) | XLSX/XLSM intake while archive inspection is unavailable | Refused with `xlsx_not_available` before private storage write | Integration | Pass (2026-10-28, `tests/integration/import-workflow-m9.test.ts`; synthetic ZIP signatures and no storage objects created) |
+| F-91 (M9, platform) | 1,000-row file with 50 bad rows and 30 duplicates, dry run | Report shows 50 failed with reasons, 30 duplicates; zero rows written | Integration | Pass (2026-10-28, `tests/integration/import-workflow-m9.test.ts`; 920 valid, 50 failed, 30 E.164 duplicates, unchanged contact count) |
+| F-91 (M9, platform) | 50,000-row file dry run | 50,000 valid rows reported; zero contacts written | Integration | Pass (2026-10-28, `tests/integration/import-workflow-m9.test.ts`; synthetic PostgreSQL run completed in under 2 seconds) |
+| F-91 (M9, platform) | Same number in two phone formats | Treated as a duplicate (E.164) | Integration | Pass (2026-10-28, `tests/integration/import-workflow-m9.test.ts`) |
+| F-91 (M9, platform) | Duplicate email with different case | Treated as a duplicate (lower-case normalization) | Integration | Pass (2026-10-28, `tests/integration/import-workflow-m9.test.ts`; synthetic mixed-case import vs existing lowercase address) |
+| F-91 (M9, platform) | Fill-empty duplicate rule | Fills only empty values; undo restores prior values | Integration | Pass (2026-10-28, `tests/integration/import-workflow-m9.test.ts`; synthetic duplicate contact) |
+| F-91 (M9, platform) | Commit without a successful dry run for the same file and mapping | Refused | Integration | Pass (2026-10-28, `tests/integration/import-workflow-m9.test.ts`) |
+| F-92 (M9, platform) | Commit a batch | Every record has `import_batch_id`, `imported_source`, `external_id`; visible only to that tenant | Integration | Pass for contact/company/deal/note metadata and linked note parent (`tests/integration/import-workflow-m9.test.ts`, 2026-10-28); batch ledger inserts are chunked at 500 |
+| F-92 (M9, platform) | Deal row with an open quote | Deal in the mapped stage; value stored in cents | Integration | Pass (2026-10-28, `tests/integration/import-workflow-m9.test.ts`; synthetic deal lands in mapped `New` stage with cents value) |
+| F-92 (M9, platform) | Worker interruption injected after one company row | Batch `failed`; completed record listed and undoable | Integration | Pass (2026-10-28, `tests/integration/import-workflow-m9.test.ts`; injected interruption produces failed batch, ledger row and successful undo) |
+| F-92 (M9, platform) | Import companies, deals/open quotes and linked notes | All carry source, batch and external ID; no outreach; batch undo removes each | Integration | Pass for synthetic company/deal/note commit metadata, linked note parent and undo (2026-10-28, `tests/integration/import-workflow-m9.test.ts`); database-level transaction failure remains unverified |
+| F-93 (M9, platform) | Undo a committed batch | Records gone from lists and search; history shows undone with who and when; audited | E2E | Pass (2026-10-28, `tests/e2e/m9-import.spec.ts`; admin opens history and undoes the seeded committed batch; service integration proves soft-removal and audit) |
+| F-93 (M9, platform) | Undo when one record was edited after import | Record listed and not removed | Integration | Pass (2026-10-28, `tests/integration/import-workflow-m9.test.ts`; edited synthetic contact is returned in `skipped` and stays active) |
+| F-94 (M9, platform) | Admin imports on tenant A's page | All records in tenant A; `audit_log` has the admin as actor | Integration | Service-level pass for tenant A writes/admin audit actor: `tests/integration/import-workflow-m9.test.ts`; HTTP role matrix not run |
+| F-94 (M9, platform) | VA and client owner attempt import service operations | 403; no batch or file stored | Integration and E2E | Pass (2026-10-28, service denies VA/owner before storage; `tests/e2e/m9-import.spec.ts` verifies VA and owner receive 403 on wizard route) |
+| F-94 (M9, platform) | Batch id from tenant A replayed with tenant B's id | Refused; tenant B cannot use tenant A's batch | E2E | Pass (2026-10-28, `tests/e2e/m9-import.spec.ts`; real dry-run route returns 404) |
+| F-96 (M9, platform) | Commit synthetic contacts | No call or SMS started; no `lead.created`; no sequence enrolled | Integration | Pass for no `lead.created` or send side effect on synthetic import (`tests/integration/import-workflow-m9.test.ts`); a 500-contact commit size not separately exercised |
+| F-96 (M9 and M7, platform) | Reactivation includes imported contacts without consent evidence | Blocked and logged by `canContact` | Integration | Pass (2026-10-28, `tests/integration/automation-retries-m7.test.ts`; mixed synthetic imported audience enrolls only the consented contact) |
+| F-96 (M9, platform) | Import with mapped consent date and source | Consent record with source `import` exists | Integration | Not run (service maps channel/date/evidence and records consent in the undo ledger, but this test file has no positive mapped-consent assertion yet) |
 | F-96 (M9 and M4, platform) | Imported contact in quiet hours with consent | Send deferred | Integration | Not run |
-| F-38 (M9, crm) | Export a view containing a cell starting with `=` | Cell neutralized | Unit | Not run |
-| F-39 (M9, platform) | Set logo, color and name for tenant | Visible on every page for that tenant; other tenant unaffected | E2E | Partial: integration (save, audit, other tenant untouched, bad file, low contrast, owner only) and unit (color table, logo rules) pass (2026-10-26, m9-08); E2E Not run |
-| F-63 (M10, platform) | Monthly restore drill | Drill passes (see Release criteria); result and date shown on backups page | Manual | Not run |
+| F-38 (M9, crm) | Export a view containing a cell starting with `=` | Cell neutralized | Unit | Pass: `tests/unit/export-csv.test.ts`; tenant filters, audit and permission tests pass in `tests/integration/export-m9.test.ts` |
+| F-39 (M9, platform) | Set logo, color and name for tenant | Visible on every page for that tenant; other tenant unaffected | Integration and E2E | Pass: local save/audit/tenant isolation and saved name/color UI; live synthetic logo upload, R2 readback/browser download, and cleanup pass against only `kynetic-portal-test` (`tests/e2e/m9-r2-logo.spec.ts`, 2026-10-28). |
+| F-63 (M10, platform) | Monthly restore drill | Drill passes (see Release criteria); result and date shown on backups page | Manual | Disposable PostgreSQL encrypted dump/restore, contact RLS check and scratch cleanup pass; live encrypted upload/list/download/decrypt/scratch-restore from only `kynetic-portal-test` passes (`tests/integration/r2-live-m8b.test.ts`, 2026-10-28). Production-like host drill not run |
 | F-88 (M10, platform) | Fresh production database and demo tenant | Production holds only the pilot tenant's real data; demo tenant is synthetic only; no migration script exists | Integration | Not run |
 
 ### Features: client side (F-01 to F-52)
@@ -179,26 +189,28 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-26 (M4, alex_core) | List 10,000 calls with and without filters | p95 under 500 ms | Integration | Pass (`calls-list.test.ts`) |
 | F-27 (M4, alex_core) | Open call with recording and transcript | Player, transcript, summary and fields render | E2E | Not run |
 | F-27 (M4, alex_core) | Mint a recording URL as the owner, as another tenant's owner, and as a user with no membership | Signed 5-minute URL; 404; 403; object key never returned | Integration | Pass (`call-end.test.ts`) |
-| F-27 (M4, alex_core) | Recording URL after expiry | Expired signed URL refused | Integration | Adapter part written, passing locally (M4-03, `tests/unit/storage/r2.test.ts`: 5-minute expiry, wrong tenant 404, SigV4 vector); real route test waits for M4-11 |
+| F-27 (M4, alex_core) | R2 signed object URL after expiry | Expired signed URL refused | Integration | Adapter-level pass: live R2 signed test-object URL with 5-second expiry was accepted before expiry and refused after expiry; standard adapter URL reports 300-second TTL and downloads successfully (`tests/integration/r2-live-m8b.test.ts`, 2026-10-28; only `kynetic-portal-test`). Recording-specific route expiry remains unverified. |
 | F-27 (M4, alex_core) | Staff without call access requests call | Refused server-side | Integration | Not run |
 | F-30 (M4, platform) | Resend bounced, complained and delivered events (fake and signed fixtures) | Message status updates; bounce suppresses the address; complaint also opts the contact out of email; integration health shows `email` degraded | Integration | Pass (M4-09: `tests/integration/resend-events.test.ts`, `tests/unit/adapters/resend.test.ts`) |
 | F-30 (M4, platform) | Twilio delivered callback for automation SMS (fake) | Log and timeline status update | Integration | Passing (M4-08, tests/integration/twilio-sms.test.ts) |
 | F-30 (M4, platform) | Failed SMS callback (fake) | Error text shows; counted in integration health | Integration | Passing (M4-08, tests/integration/twilio-sms.test.ts) |
 | F-28 (M4, alex_core) | Owner flags a call with reason | `calls.flagged` true; review item exists; audit row written | Integration | Covered: crm/tests/integration/call-detail.test.ts |
 | F-30 (M4, platform) | Messages log lists both channels, filters, pages, isolates tenants, refuses with no messaging module | Newest first; error text on failed rows; other tenant invisible; `MODULE_DISABLED` | Integration | Passing (M4-12, tests/integration/message-log.test.ts) |
-| F-31 (M7, per template) | `quote_followup` module off | Template hidden; API refuses enablement | Integration | Not run |
-| F-31 (M7, per template) | Module on; deal enters Quoted | Step 1 scheduled | Integration | Not run |
+| F-31 (M7, per template) | `quote_followup` module off | Template hidden; API refuses enablement | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
+| F-31 (M7, per template) | Module on; deal enters Quoted | Step 1 scheduled; disabling stops active runs | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
 | F-35 (M7, platform) | New lead | Bell count +1; email sent per preference; open marks read | E2E | Integration pass (2026-10-26, M7-04); signed-in E2E Not run (no sign-in fixture) |
 | F-35 (M7, platform) | User A requests notifications of user B | Refused | Integration | Pass (2026-10-26, M7-04) |
-| F-37 (M9, crm) | Phone fragment on 10,000-contact seeded tenant | Matching contact returned; p95 under 500 ms (decided, recommended option) | Integration | Not run |
-| F-37 (M9, crm) | Tenant A searches for tenant B's record | Zero results | Integration | Not run |
-| F-38 (M9, crm) | Staff without export permission | Export hidden; server refuses | Integration | Not run |
+| F-37 (M9, crm) | Phone fragment on 10,000-contact seeded tenant | Matching contact returned; p95 under 500 ms (decided, recommended option) | Integration | Pass: `tests/integration/search-m9.test.ts` (10,000 synthetic contacts; 20 searches; tenant-scoped) |
+| F-37 (M9, crm) | Tenant A searches for tenant B's record | Zero results | Integration | Pass: `tests/integration/search-m9.test.ts` (10,000 synthetic contacts; rerun 2026-10-28) |
+| F-37 (M9, crm) | Cmd+K phone-fragment search | Matching contact appears and opens | E2E | Prior local run passed; rerun 2026-10-28 blocked because Playwright's test PostgreSQL endpoint at 127.0.0.1:5432 was unavailable |
+| F-38 (M9, crm) | Filtered CSV export | Download honors filters and is audited | E2E | Prior local run passed; rerun 2026-10-28 blocked because Playwright's test PostgreSQL endpoint at 127.0.0.1:5432 was unavailable |
+| F-38 (M9, crm) | Staff without export permission | Export hidden; server refuses | Integration | Pass: `tests/integration/export-m9.test.ts` (owner permission and CRM Full gating; staff denied); Playwright visibility not run |
 | F-41 (M9, platform) | Staff opens team settings | Refused (403) | Integration | Pass (M9-09, `business-settings.test.ts`) |
 | F-42 (M9, alex_core) | Owner pauses Alex | No outbound calls start for tenant; dashboard shows "Paused"; raw prompt absent from every response | Integration | Not run |
 | F-43 (M9, crm) | Create tag, apply it, filter by it | Works end to end | E2E | Create, apply, count, rename, merge, delete: integration pass (2026-10-26, M9-11); signed-in E2E and contact-list filter by tag Not run (list filter is M1-02) |
 | F-43 (M9, crm) | Tag settings as staff; tenant without `crm`; duplicate tag name | FORBIDDEN; MODULE_DISABLED; duplicate refused ignoring case | Integration | Pass (2026-10-26, M9-11) |
 | F-36 (M9, platform) | Turn email off for one type, then raise that type; other users and other types | No email for that user and type; the bell still lists it; others unaffected; owner-wide notices skip only opted-out owners | Integration | Pass (2026-10-26, M9-11) |
-| F-44 (M9, platform) | 390px viewport on daily-use pages | No horizontal scroll; touch targets at least 44px; tap-to-call uses `tel:` link | E2E and Manual | Not run |
+| F-44 (M9, platform) | 390px viewport on daily-use pages | No horizontal scroll; touch targets at least 44px; tap-to-call uses `tel:` link | E2E and Manual | Pass for no horizontal overflow and ≥44×44px controls across dashboard, contacts, appointments, tasks and documents, plus contact phone `tel:` link dimensions/URI (`tests/e2e/m9-search-export.spec.ts`, 2026-10-28); no visual device review |
 | F-49 (M6, alex_core) | Report delivery fails (fake Resend) | Retry runs; failure shown in integration health | Integration | Not run |
 | F-13 (Skip) | Look for conditional or computed field code and routes | None exist | Unit (static) | Not run |
 | F-34 (Skip) | Look for a visual workflow builder route | None exists | E2E | Not run |
@@ -208,15 +220,14 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 
 | Feature/risk | Scenario | Expected result | Layer | Status |
 | --- | --- | --- | --- | --- |
-| F-53 (M8, platform) | Three tenants in All clients | Table correct, sorts work; client owner gets 403 | Integration | Not run |
-| F-54 (M8, platform) | Fixture inputs | Score equals documented formula; chip matches thresholds | Unit | Not run |
-| F-54 (M8, platform) | Thresholds not set | Default values apply and are shown in admin | E2E | Not run |
+| F-53 (M8b, platform) | Three synthetic tenants in All clients | Three-tenant rollups, owner denial, and admin thresholds | Integration + E2E | Pass (2026-10-28; `admin-ops-m8b.test.ts`, `m8b-admin.spec.ts`) |
+| F-54 (M8b, platform) | Hand-scored fixtures and default thresholds | Formula and 70/40 chips match; defaults shown in admin | Integration + E2E | Pass (2026-10-28; `admin-ops-m8b.test.ts`, `m8b-admin.spec.ts`) |
 | F-55 (M8, platform) | Failure injected midway through onboarding | Nothing partially created | Integration | Pass (`tests/integration/admin-onboarding.test.ts`) |
 | F-55 (M8, platform) | Duplicate slug or owner email | Rejected with clear message | Integration | Pass (`tests/integration/admin-onboarding.test.ts`) |
 | F-57 (M8, platform) | Admin starts view-as, tries a write | Write refused unless explicitly escalated; banner visible | E2E | Not run |
 | F-57 (M8, platform) | VA tries a write while impersonating | Refused and logged | Integration | Pass (`tests/integration/view-as.test.ts`, M8a-04) |
-| F-58 (M8, alex_core) | Change Alex config | Saved; audited with before and after; VA cannot change prompts | Integration | Not run |
-| F-58 (M8, alex_core) | Test call button with entered number | Starts a call to that number only (fake provider in CI) | Integration | Not run |
+| F-58 (M8b, alex_core) | Change Alex config and prompt | Admin-only update/version plus UI edit path | Integration + E2E | Pass (2026-10-28; fake voice provider only) |
+| F-58 (M8b, alex_core) | Test call button with synthetic number | Calls injected fake voice provider only | Integration | Pass (2026-10-28; no real provider call) |
 | F-60 (M0, platform) | Write, login, export, impersonation | One `audit_log` row each | Integration | Not run |
 | F-60 (M0, platform) | UPDATE or DELETE on `audit_log` | Database refuses | Integration | Not run |
 | F-61 (M8, platform) | Deactivate a user with an open session | Cannot sign in; session ends | Integration | Pass (2026-10-26, M8a-03; `tests/integration/admin-users.test.ts`) |
@@ -224,9 +235,12 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-60 (M8a, platform) | Admin filters the viewer by tenant, user, action and date range | Only matching rows return; the end day is included | Integration | Passing (`crm/tests/integration/audit-viewer.test.ts`) |
 | F-60 (M8a, platform) | VA reads the viewer; a client role calls it | VA reads; client refused by the app and by `audit_search` (42501); web role cannot select `audit_log` | Integration | Passing (`crm/tests/integration/audit-viewer.test.ts`) |
 | F-60 (M8a, platform) | Filter input is not a UUID or a date | Rejected before any query | Unit | Passing (`crm/tests/unit/admin/audit-viewer.test.ts`) |
-| F-62 (M8, platform) | Webhook failing | Error count rises; integration red; recovery returns to green | Integration | Not run |
-| F-63 (M8, platform) | Nightly job completes | Backups page shows time and size | Integration | Not run |
-| F-63 (M8, platform) | Manual backup button | Runs and is audited | Integration | Not run |
+| F-62 (M8b, platform) | Synthetic provider failing | Error and A2P statuses appear in tenant/global admin views | Integration + E2E | Pass (2026-10-28; freshness under one minute not measured) |
+| F-63 (M8b, platform) | Encrypted backup restore test | Real `pg_dump`, AES-256-GCM, storage readback, scratch `pg_restore`, schema and contact-level tenant RLS checks, and scratch cleanup | Integration | Pass on only `kynetic-portal-test`: actual encrypted backup upload, list/download, decrypt and scratch restore (`tests/integration/r2-live-m8b.test.ts`, 2026-10-28); local FakeStorage test also passes |
+| F-63 (M8b, platform) | Retention prune | 30 daily and 12 monthly objects remain | Integration | Pass against actual R2 list/delete APIs on only `kynetic-portal-test`; created test objects were removed afterward (`tests/integration/r2-live-m8b.test.ts`, 2026-10-28) |
+| F-63 (M8b, platform) | Manual backup request | Admin request is audited and queued; VA request refused | Integration | Pass (2026-10-28, `tests/integration/backups-m8b.test.ts`; disposable PostgreSQL and pg-boss) |
+| F-63 (M8b, platform) | Admin backup list | Admin and VA read through `admin_list_backup_runs()`; client DB role refused by the function | Integration | Pass (2026-10-28, `tests/integration/backups-m8b.test.ts`; disposable PostgreSQL) |
+| F-63 (M8b, platform) | Backup status page renders restore result | Admin sees synthetic run status and restore result | E2E | Pass (2026-10-28, `tests/e2e/m8b-backups.spec.ts`; disposable PostgreSQL URLs explicitly set) |
 | F-56, F-59, F-64 (Later) | Not in v1 | Out of scope | n/a | n/a |
 | F-65 to F-69 (Later, Phase 2) | Not in v1 | Out of scope | n/a | n/a |
 
@@ -250,20 +264,20 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-78 (M4, alex_core) | New lead with consent inside call window | Outbound call starts (fake provider) | Integration | Pass (2026-10-26, M4-06, `outbound-call.test.ts`) |
 | F-78 (M4, alex_core) | Lead outside the call window, in quiet hours, or with no consent | No call; waits for the opening (or stops with a logged reason); never dials early | Integration | Pass (2026-10-26, M4-06) |
 | F-78 (M4, alex_core) | Retry cadence on a fake clock, redelivered or concurrent attempt, reached lead | Attempts at the configured delays; one dial per attempt; stops once reached or at the daily cap | Integration | Pass (2026-10-26, M4-06) |
-| F-79 (M7, quote_followup) | Module on; deal enters Quoted | Step 1 scheduled | Integration | Not run |
-| F-79 (M7, quote_followup) | Module off | No run created | Integration | Not run |
-| F-79 (M7, quote_followup) | Reply during run | Run stops | Integration | Not run |
-| F-80 (M4 and M7, after_hours) | Module on; inbound call after hours | Call record and contact exist; staff notified | Integration | Not run |
-| F-80 (M4 and M7, after_hours) | Module off | Calls not routed to Alex by this module | Integration | Not run |
-| F-81 (M7, missed_call_textback) | Module on; missed call from consented or permitted number | One SMS sent and logged (fake Twilio) | Integration | Not run |
-| F-81 (M7, missed_call_textback) | after_hours on | Text-back enabled with no separate charge flag | Unit | Not run |
-| F-81 (M7, missed_call_textback) | Missed call with no consent basis | No SMS | Integration | Not run |
-| F-82 (M7, reactivation) | Launch with mixed audience | Only consented contacts enter run | Integration | Not run |
-| F-82 (M7, reactivation) | Module off; launch attempted | Refused | Integration | Not run |
-| F-83 (M11, opm) | Module on | Online Presence section and monthly report visible | E2E | Not run |
-| F-83 (M11, opm) | Module off | Section and routes absent (403) | Integration | Not run |
-| F-84 (M0 flag and M7, followup_bundle) | Bundle on | Member modules behave as enabled (recommended option: quote_followup, reactivation, missed_call_textback) | Unit and Integration | Not run |
-| F-84 (M0 flag and M7, followup_bundle) | Bundle off | Only independently enabled modules remain | Integration | Not run |
+| F-79 (M7, quote_followup) | Module on; deal enters Quoted; duplicate stage event | One step scheduled and one active run | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
+| F-79 (M7, quote_followup) | Module off | No run created | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
+| F-79 (M7, quote_followup) | Reply during run | Run stops as `stopped_reply` | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
+| F-80 (M4 and M7, after_hours) | Module on; inbound call after hours, event redelivered | One staff notification; call/contact are retained | Integration | Pass for subscriber notification/idempotency (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`); M4 intake separately owns call/contact creation |
+| F-80 (M4 and M7, after_hours) | Module off | Subscriber skipped | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
+| F-81 (M7, missed_call_textback) | Module on; missed call from consented number | One SMS sent and logged (fake Twilio) | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
+| F-81 (M7, missed_call_textback) | after_hours on | Text-back enabled with no separate charge flag | Unit | Pass (`tests/unit/modules.test.ts`; 2026-10-28 rerun) |
+| F-81 (M7, missed_call_textback) | Missed call with no consent basis | No SMS | Integration | Pass (2026-10-28, `tests/integration/m7-module-acceptance.test.ts`) |
+| F-82 (M7, reactivation) | Launch with mixed audience | Only consented contacts enter run | Integration | Pass (2026-10-28, `tests/integration/automation-retries-m7.test.ts`; no-consent imported record is blocked, consented record alone enrolls) |
+| F-82 (M7, reactivation) | Module off; launch attempted | Refused with no batch/run written | Integration | Pass (2026-10-28, `tests/integration/automation-retries-m7.test.ts`) |
+| F-83 (M11, opm) | Module on | Online Presence section and monthly report visible | E2E | Pass (2026-10-28, `tests/e2e/m11-presence.spec.ts`; enabled owner page and report section) |
+| F-83 (M11, opm) | Module off | Section and routes absent (403) | Integration | Pass at service boundary (2026-10-28, `tests/integration/presence.test.ts`; module-off denial and retained data; route 403 is enforced by page guard but not separately requested over HTTP) |
+| F-84 (M0 flag and M7, followup_bundle) | Bundle on | Member modules behave as enabled (recommended option: quote_followup, reactivation, missed_call_textback) | Unit and Integration | Pass (2026-10-28, `tests/integration/automation-retries-m7.test.ts`; verifies all four flags enabled and audited) |
+| F-84 (M0 flag and M7, followup_bundle) | Bundle off | Only independently enabled modules remain | Integration | Pass (2026-10-28, `tests/integration/automation-retries-m7.test.ts`; verifies bundle and members disabled) |
 | F-85 (M0 flag; M1 to M9 gating, crm) | No `crm` (Alex-only tenant) | Base portal works (leads, kanban, appointments, calls, reports); Lite and Full routes 403 and are absent from nav | E2E and Integration | Not run |
 | F-85 (M0 flag; M1 to M9 gating, crm) | crm Lite | Companies, tasks, notes, stage settings available; Full-only surfaces hidden and their routes 403 | E2E and Integration | Not run |
 | F-85 (M0 flag, crm) | Upgrade Lite to Full | Full surfaces appear; data intact | Integration | Not run |
@@ -271,9 +285,11 @@ Test names in code must cite the F-ID (for example `F-72: tenant A cannot read t
 | F-86 (M8, platform) | Founding plan reference text | Shows $6,500 setup and 3 months then $1,500/mo (price decided, PRD decision 12) | E2E | Not run |
 | F-87 (M0, platform) | Scan responses of a browser session | No provider key in any response | Integration | Not run |
 | F-87 (M0, platform) | Burst of login, webhook and API requests | 429 once the limit is hit | Integration | Not run |
-| F-89 (M7, platform) | Lead created | `lead.created` emitted once | Integration | Not run |
-| F-89 (M7, platform) | Service token scoped to tenant A used on tenant B | Refused | Integration | Not run |
-| F-89 (M7, platform) | Revoked service token | 401 | Integration | Not run |
+| F-89 (M7, platform) | Lead created and replayed | `lead.created` emitted once | Integration | Pass (2026-10-28, `tests/integration/lead-intake.test.ts`; duplicate external ID and webhook processing replay produce one event) |
+| F-89 (M7, platform) | Service token scoped to tenant A used on tenant B through contact route | Own contact 200; tenant B contact 404 | Integration | Pass (2026-10-28, `tests/integration/service-tokens.test.ts`) |
+| F-89 (M7, platform) | Missing token, insufficient scope, and revoked token on service contact route | Generic 401 | Integration | Pass (2026-10-28, `tests/integration/service-tokens.test.ts`) |
+| F-89 (M7, platform) | Producer emits `lead.created` | n8n subscriber receives canonical event and sends a valid HMAC signature | Integration | Pass (2026-10-28, `tests/integration/n8n-events-m7.test.ts`; synthetic webhook endpoint, Postgres 17) |
+| F-89 (M7, platform) | n8n returns 503 then succeeds on retry | Same event ID and valid stable HMAC on retry | Integration | Pass (2026-10-28, `tests/integration/n8n-events-m7.test.ts`; synthetic fetcher) |
 
 ### Cross-cutting risk rows
 
@@ -345,7 +361,7 @@ No command has been run against this repo's CI in any source. Each line stays `N
 
 All run from `crm/` with bun (Node 22). Verified locally on 2026-10-26 (M0-02); CI workflow `.github/workflows/crm-ci.yml` runs them on every PR touching `crm/`.
 
-- Production deploy scripts (M10-05): `bash deploy/prod/tests/rehearse.sh` from `crm/` (stubbed docker, curl, df and openssl; 25 checks covering deploy, failed health check, failed migration, rollback, forced command, alert test, de-duplication, recovery, disk and certificate). Also `bash -n` on every script and `docker compose -f deploy/prod/compose.yml --profile tools config -q` with dummy values; both run in `crm-ci.yml`. The rehearsal on a real server is still owed.
+- Production deploy scripts (M10-05): `bash deploy/prod/tests/rehearse.sh` from `crm/` (stubbed docker, curl, df and openssl; 25 checks covering deploy, failed health check, failed migration, rollback, forced command, alert test, de-duplication, recovery, disk and certificate). Also `bash -n` on every script passed locally (2026-10-28). The 25-check stubbed rehearsal passed locally (2026-10-28). Docker Compose config validation was not run because Docker CLI is unavailable; CI config validation and rehearsal on a real server remain owed.
 - Lint: `bun run lint` (oxlint).
 - Typecheck: `bun run typecheck`.
 - Format check: `bun run format:check` (oxfmt).
@@ -354,7 +370,9 @@ All run from `crm/` with bun (Node 22). Verified locally on 2026-10-26 (M0-02); 
 - End-to-end (Playwright): `bun run test:e2e` (builds first with `bun run build`; starts `bun run start`). Locally set `PLAYWRIGHT_CHROMIUM_PATH` if the Playwright browser is not installed.
 - Accessibility scan: `@axe-core/playwright` is installed; the first axe tests came with the app shell (M0-23): the sign-in page in light and dark, run by `bun run test:e2e`. The base components (M0-24) are scanned in light and dark, with a dialog and an error toast open, on a test-only page `/dev/components` that answers 404 unless `COMPONENT_GALLERY=1` (set only in `playwright.config.ts`). The signed-in shell was checked with axe by hand (light, dark, 390px) during M0-23; its automated version needs a seeded session and arrives with the E2E seed helper (M0-26/M0-27).
 - Build: `bun run build`.
-- Load test: Not configured.
+- Local synthetic contact-search load baseline: `TEST_DATABASE_ADMIN_URL=postgres://box@127.0.0.1:55432/postgres bun run test:integration -- tests/integration/load-m10.test.ts` from `crm/`. It creates and drops its own disposable database, loads 10,000 synthetic contacts and runs 100 searches at concurrency 20 and 100 using the app-equivalent pool (`max=10`), asserting p95 <500ms. EXPLAIN asserts phone-fragment search uses `contacts_phone_fragment_trgm`. Docker-based production-like load and capacity checks remain blocked without Docker.
+- M10 accessibility/security browser review: `TEST_DATABASE_ADMIN_URL=postgres://box@127.0.0.1:55432/postgres bun run test:e2e -- tests/e2e/m10-a11y-security.spec.ts` from `crm/`. Uses the synthetic Playwright fixture; scans owner and admin pages with axe WCAG 2.2 AA tags, checks keyboard focus and that captured browser responses do not expose provider secrets. Screen-reader review remains manual.
+- Authorized live R2 acceptance is opt-in (`R2_LIVE_TESTS=1`) in `tests/integration/r2-live-m8b.test.ts` and `tests/e2e/m9-r2-logo.spec.ts`. Supply credentials only as ephemeral process environment, enforce `STORAGE_BUCKET=kynetic-portal-test`, and do not persist credentials. These tests use random synthetic keys and assert cleanup; they must never target any other bucket.
 - Backup restore drill: Not configured.
 
 
@@ -432,13 +450,13 @@ Regression policy: every important bug fix adds a regression test named with the
 | F-99 (M8a, platform) | Owner, staff and VA request the billing profile | 403 | Integration | Pass: `tests/integration/admin-billing.test.ts` (M8a-07; Postgres 16, 2026-10-26) |
 | F-100 (M8a, platform) | New tenant with `alex_core` | Checklist created with the module's steps | Integration | Pass (`tests/integration/admin-onboarding.test.ts`) |
 | F-100 (M8a, platform) | Owner opens the dashboard before go-live | Setup progress shows only `client_visible` steps; none after go-live | E2E | Not run in a browser; integration covers the data and the card query (`tests/integration/onboarding-checklist.test.ts`) |
-| F-101 (M8b, platform) | Kill switch on, a call job runs | No call or text sent; job waits; resumes after off | Integration | Pass for calls (2026-10-26, M4-06); texts and the admin switch not run |
+| F-101 (M8b, platform) | Kill switch on, synthetic call and SMS are requested | Both outbound fakes receive no send; tenant suspension blocks sends | Integration | Pass (2026-10-28; disposable PostgreSQL/fake providers) |
 | F-100 (M8a, platform) | Owner or staff queries or updates internal steps | Internal rows invisible; no writes | Integration | Pass (`tests/integration/onboarding-checklist.test.ts`) |
 | F-100 (M8a, platform) | Admin marks go-live with open steps; VA tries go-live | Refused; admin succeeds once all steps done or n/a, audited | Integration | Pass (`tests/integration/onboarding-checklist.test.ts`) |
-| F-101 (M8b, platform) | Replay a failed webhook twice | Processed once | Integration | Not run |
-| F-101 (M8b, platform) | Suspend a tenant | Its users cannot sign in; its jobs no-op | Integration | Not run |
+| F-101 (M8b, platform) | Replay a failed webhook twice | One replay job is queued; safe job viewer excludes payload/output | Integration + E2E | Pass (2026-10-28) |
+| F-101 (M8b, platform) | Suspend/reactivate a tenant | Outbound is blocked while suspended and restored after reactivation | Integration | Pass (2026-10-28; authentication denial and queued-job draining not independently asserted) |
 | F-102 (M0, platform) | User has not accepted the current version | Redirect to acceptance; accepted once, not asked again | E2E | Partly run: integration covers pending, accept, not asked again, new version, RLS (`tests/integration/terms.test.ts`); E2E covers the signed-out redirect only. The signed-in redirect needs an E2E sign-in fixture, not built yet |
-| F-103 (M9, platform) | Owner downloads a document; another tenant's id | Signed URL; 404 | Integration | Not run |
+| F-103 (M9, platform) | Admin uploads PDF; owner downloads; another tenant's id | Signed URL; 404 | Integration | Pass (2026-10-28, `tests/integration/documents-m9.test.ts`; disposable PostgreSQL and FakeStorage, PDF-only validation, tenant-prefixed object, foreign tenant 404); E2E covers owner list/download link and synthetic admin upload UI (`tests/e2e/m9-documents.spec.ts`) |
 | F-98 (M0, platform) | Staff account without TOTP | Reaches only enrolment; sign-in with TOTP works; reset by another admin is audited | E2E | Integration pass (M0-12, `staff-two-factor.test.ts`); E2E not run |
 | F-85 (M0, crm) | Alex-only tenant opens Leads, Kanban, Appointments, Calls, Reports | All work; Companies, Tasks, Notes, Search, Export are absent and 403 | E2E | Not run |
 

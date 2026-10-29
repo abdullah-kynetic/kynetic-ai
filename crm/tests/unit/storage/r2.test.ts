@@ -100,6 +100,20 @@ describe('F-27 R2 adapter', () => {
     );
     await expect(down.get(`${A}/x`)).rejects.toBeInstanceOf(ProviderError);
   });
+
+  it('lists every paginated object and decodes XML keys', async () => {
+    const urls: string[] = [];
+    const http = (async (url: string) => {
+      urls.push(url);
+      return urls.length === 1
+        ? new Response('<ListBucketResult><IsTruncated>true</IsTruncated><NextContinuationToken>next&amp;token</NextContinuationToken><Contents><Key>backups/a&amp;b.dump</Key><LastModified>2026-10-26T12:00:00Z</LastModified></Contents></ListBucketResult>')
+        : new Response('<ListBucketResult><IsTruncated>false</IsTruncated><Contents><Key>backups/second.dump</Key><LastModified>2026-10-27T12:00:00Z</LastModified></Contents></ListBucketResult>');
+    }) as unknown as typeof fetch;
+    const objects = await new R2Storage(config, http, now).list('backups/');
+    expect(objects.map((object) => object.key)).toEqual(['backups/a&b.dump', 'backups/second.dump']);
+    expect(urls).toHaveLength(2);
+    expect(urls[1]).toContain('continuation-token=next%26token');
+  });
 });
 
 describe('F-27 tenant keys and signed URL minting', () => {

@@ -80,6 +80,15 @@ async function configDecision(
     return deny('tenant_suspended');
   }
 
+  const [platform] = await tx
+    .select({ config: tenantModules.config })
+    .from(tenantModules)
+    .where(and(eq(tenantModules.tenantId, ctx.tenantId), eq(tenantModules.moduleKey, 'platform')))
+    .limit(1);
+  if ((platform?.config as { outbound_kill_switch?: unknown } | undefined)?.outbound_kill_switch === true) {
+    return deny('outbound_disabled');
+  }
+
   const [mod] = await tx
     .select({ enabled: tenantModules.enabled })
     .from(tenantModules)

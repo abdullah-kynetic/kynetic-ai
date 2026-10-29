@@ -39,8 +39,10 @@ PG_SUPER_PW=$(secret)
 OWNER_PW=$(secret)
 APP_PW=$(secret)
 WORKER_PW=$(secret)
+BACKUP_PW=$(secret)
 BETTER_AUTH_SECRET=$(secret)$(secret)
 APP_ENCRYPTION_KEY=$(secret)$(secret)
+BACKUP_ENCRYPTION_KEY=$(secret)$(secret)
 ENV
 }
 

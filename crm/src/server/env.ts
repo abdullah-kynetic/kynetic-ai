@@ -12,6 +12,8 @@ export const envSchema = z.object({
   DATABASE_URL_WORKER: z.string().startsWith('postgres').optional(),
   BETTER_AUTH_SECRET: z.string().min(32),
   APP_ENCRYPTION_KEY: z.string().min(32),
+  BACKUP_ENCRYPTION_KEY: z.string().min(32).optional(),
+  DATABASE_URL_BACKUP: z.string().startsWith('postgres').optional(),
   GOOGLE_CLIENT_ID: z.string().min(1).optional(),
   GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
   // Key rotation (SECURITY 4.2): bump the version with a new key and list old ones as "v:key,...".
@@ -23,6 +25,8 @@ export const envSchema = z.object({
   RETELL_API_KEY: z.string().min(1).optional(),
   RETELL_FROM_NUMBER: z.string().min(1).optional(),
   OUTBOUND_ENABLED: booleanString.default(false),
+  // `stub` is an explicit deployment/test setting; default live mode keeps production fail-closed.
+  PROVIDER_MODE: z.enum(['live', 'stub']).default('live'),
   RESEND_API_KEY: z.string().min(1).optional(),
   RESEND_WEBHOOK_SECRET: z.string().min(1).optional(),
   // Verified sending address for app email (ARCHITECTURE: Domain, DNS and email domain).
@@ -58,6 +62,10 @@ export const refinedEnvSchema = envSchema
     message:
       'STORAGE_ENDPOINT, STORAGE_ACCESS_KEY_ID, STORAGE_SECRET_ACCESS_KEY and STORAGE_BUCKET must be set together',
     path: ['STORAGE_ENDPOINT']
+  })
+  .refine((e) => e.PROVIDER_MODE !== 'stub' || !e.OUTBOUND_ENABLED, {
+    message: 'PROVIDER_MODE=stub requires OUTBOUND_ENABLED=false',
+    path: ['PROVIDER_MODE']
   });
 
 export type Env = z.infer<typeof envSchema>;

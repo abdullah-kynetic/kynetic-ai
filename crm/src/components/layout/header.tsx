@@ -11,7 +11,7 @@ export default function Header({ user }: { user: ShellUser }) {
   return (
     <header className='bg-background sticky top-(--view-as-h,0px) z-20 flex h-16 shrink-0 items-center justify-between gap-2 border-b md:h-14'>
       <div className='flex items-center gap-2 px-4'>
-        <SidebarTrigger className='-ml-1' />
+        <SidebarTrigger className='-ml-1' size='icon' />
         <Separator orientation='vertical' className='mr-2 h-4 data-vertical:self-center' />
         <Breadcrumbs />
       </div>

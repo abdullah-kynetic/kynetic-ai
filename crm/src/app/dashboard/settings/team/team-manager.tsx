@@ -60,7 +60,6 @@ export function TeamManager({ initial }: { initial: { members: Member[]; invites
                   <label className='flex items-center gap-2'>
                     <input
                       type='checkbox'
-                      className='size-5'
                       checked={m.canExport}
                       onChange={(e) =>
                         run(
@@ -75,7 +74,6 @@ export function TeamManager({ initial }: { initial: { members: Member[]; invites
                   <label className='flex items-center gap-2'>
                     <input
                       type='checkbox'
-                      className='size-5'
                       checked={m.canBulkDelete}
                       onChange={(e) =>
                         run(

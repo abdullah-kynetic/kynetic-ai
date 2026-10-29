@@ -21,6 +21,15 @@ const encode = (s: string) =>
 /** S3 does not double-encode: each path segment is encoded once and slashes are kept. */
 export const encodePath = (path: string) => path.split('/').map(encode).join('/');
 
+function canonicalQuery(query: string) {
+  if (!query) return '';
+  return [...new URLSearchParams(query).entries()]
+    .map(([key, value]) => [encode(key), encode(value)] as const)
+    .sort(([ak, av], [bk, bv]) => ak.localeCompare(bk) || av.localeCompare(bv))
+    .map(([key, value]) => `${key}=${value}`)
+    .join('&');
+}
+
 const amzDate = (d: Date) => d.toISOString().replace(/[-:]|\.\d{3}/g, '');
 
 function signingKey(secret: string, date: string, region: string) {
@@ -95,10 +104,11 @@ export function signRequestHeaders(opts: {
   const payloadHash = sha256Hex(body ?? '');
   const signedHeaders = 'host;x-amz-content-sha256;x-amz-date';
   const canonicalHeaders = `host:${host}\nx-amz-content-sha256:${payloadHash}\nx-amz-date:${stamp}\n`;
+  const [rawPath, rawQuery = ''] = path.split('?', 2);
   const canonicalRequest = [
     method,
-    encodePath(path),
-    '',
+    encodePath(rawPath!),
+    canonicalQuery(rawQuery),
     canonicalHeaders,
     signedHeaders,
     payloadHash

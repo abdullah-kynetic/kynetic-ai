@@ -40,6 +40,13 @@ const setInputSchema = z.object({
 });
 export type SetTenantModuleInput = z.input<typeof setInputSchema>;
 
+const FOLLOWUP_BUNDLE_MODULES = [
+  'followup_bundle',
+  'quote_followup',
+  'reactivation',
+  'missed_call_textback'
+] as const;
+
 /** A tenant's name and the state of every module, including the ones with no row yet. */
 export async function getTenantModules(
   actor: ModuleActor,
@@ -117,6 +124,41 @@ export async function setTenantModule(
         tx.execute(
           sql`select set_tenant_module(${tenantId}::uuid, ${moduleKey}, ${enabled}, ${level})`
         ),
+      opts
+    );
+  } catch (e) {
+    if ((e as { cause?: { code?: string } }).cause?.code === 'P0002')
+      throw new AppError('NOT_FOUND');
+    throw e;
+  }
+  return { changed: true };
+}
+
+/** Atomically switches the follow-up bundle and all of its member modules. */
+export async function setFollowupBundle(
+  actor: ModuleActor,
+  input: { tenantId: string; enabled: boolean },
+  opts: { db?: Db } = {}
+): Promise<{ changed: boolean }> {
+  requireAdmin(actor);
+  const parsed = z.object({ tenantId: z.uuid(), enabled: z.boolean() }).safeParse(input);
+  if (!parsed.success) throw new ValidationError({ module: ['invalid'] });
+  const { tenantId, enabled } = parsed.data;
+  const current = await getTenantModules(actor, tenantId, opts);
+  const changed = FOLLOWUP_BUNDLE_MODULES.some(
+    (key) => current.modules.find((m) => m.moduleKey === key)?.enabled !== enabled
+  );
+  if (!changed) return { changed: false };
+  try {
+    await withPlatform(
+      { userId: actor.id, role: 'admin' },
+      async (tx) => {
+        for (const moduleKey of FOLLOWUP_BUNDLE_MODULES) {
+          await tx.execute(
+            sql`select set_tenant_module(${tenantId}::uuid, ${moduleKey}, ${enabled}, '')`
+          );
+        }
+      },
       opts
     );
   } catch (e) {

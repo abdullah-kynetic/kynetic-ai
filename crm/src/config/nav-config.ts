@@ -44,11 +44,42 @@ export const navGroups: NavGroup[] = [
         items: []
       },
       {
+        title: 'Appointments',
+        url: '/dashboard/appointments',
+        icon: 'calendar',
+        isActive: false,
+        module: 'crm',
+        level: 'lite',
+        items: []
+      },
+      {
         title: 'Calls',
         url: '/dashboard/calls',
         icon: 'phone',
         isActive: false,
         module: 'alex_core',
+        items: []
+      },
+      {
+        title: 'Reports',
+        url: '/dashboard/reports',
+        icon: 'dashboard',
+        isActive: false,
+        items: []
+      },
+      {
+        title: 'Documents',
+        url: '/dashboard/documents',
+        icon: 'post',
+        isActive: false,
+        items: []
+      },
+      {
+        title: 'Online Presence',
+        url: '/dashboard/presence',
+        icon: 'dashboard',
+        isActive: false,
+        module: 'opm',
         items: []
       },
       {
@@ -143,6 +174,13 @@ export const navGroups: NavGroup[] = [
         icon: 'settings',
         isActive: false,
         items: []
+      },
+      {
+        title: 'Automations',
+        url: '/dashboard/settings/automations',
+        icon: 'settings',
+        isActive: false,
+        items: []
       }
     ]
   },
@@ -213,6 +251,14 @@ export const adminNavGroups: NavGroup[] = [
         icon: 'post',
         isActive: false,
         shortcut: ['a', 'l'],
+        items: []
+      },
+      {
+        title: 'Operations',
+        url: '/admin/operations',
+        icon: 'settings',
+        isActive: false,
+        shortcut: ['a', 'o'],
         items: []
       }
     ]

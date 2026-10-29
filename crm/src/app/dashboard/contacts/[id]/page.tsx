@@ -9,6 +9,7 @@ import { parseTimelineParams } from '@/components/timeline/params';
 import { listActivities, type TimelinePage } from '@/server/activity';
 import {
   getContactDetail,
+  listContacts,
   NotFoundError,
   type ConsentStatus,
   type ContactDetail
@@ -24,6 +25,7 @@ import type { Metadata } from 'next';
 import { cookies, headers } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
 import { addNote, editNote, pinNote, removeNote } from './note-actions';
+import { MergeContactForm } from '@/features/contacts/merge-contact-form';
 
 export const metadata: Metadata = {
   title: 'Contact',
@@ -130,6 +132,15 @@ export default async function ContactPage({
   const addressLine = [address.street, address.city, address.state, address.zip]
     .filter(Boolean)
     .join(', ');
+  const mergeCandidates = (await listContacts(ctx, { limit: 100 }))
+    .filter((candidate) => candidate.id !== id)
+    .map((candidate) => ({
+      id: candidate.id,
+      name:
+        [candidate.firstName, candidate.lastName].filter(Boolean).join(' ') || 'Unnamed contact',
+      phone: candidate.primaryPhoneE164,
+      email: candidate.primaryEmail
+    }));
 
   return (
     <PageContainer
@@ -170,6 +181,18 @@ export default async function ContactPage({
                   </dd>
                 </div>
               </dl>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Merge duplicate</CardTitle>
+              <CardDescription>
+                Keep this contact and move the other contact&apos;s history here.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <MergeContactForm survivorId={id} candidates={mergeCandidates} />
             </CardContent>
           </Card>
 
@@ -299,7 +322,7 @@ function ContactPoints({
           {items.map((v) => (
             <li key={v} className='flex items-center gap-2'>
               <a
-                className='text-primary-text underline-offset-4 hover:underline'
+                className='text-primary-text inline-flex min-h-11 items-center underline-offset-4 hover:underline'
                 href={`${kind}:${v}`}
               >
                 {v}

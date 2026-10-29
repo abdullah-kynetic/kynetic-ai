@@ -63,7 +63,7 @@ export default async function TasksPage({
       pageDescription={scope === 'all' ? 'Every open task on the team.' : 'Your open follow-ups.'}
       pageHeaderAction={
         <Link
-          className='text-primary-text text-sm underline-offset-4 hover:underline'
+          className='text-primary-text inline-flex min-h-11 items-center text-sm underline-offset-4 hover:underline'
           href={scope === 'all' ? '/dashboard/tasks' : '/dashboard/tasks?scope=all'}
         >
           {scope === 'all' ? 'Show only mine' : 'Show the whole team'}

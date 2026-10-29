@@ -19,7 +19,9 @@ export function getVoiceProvider(id: VoiceProviderId): VoiceProvider | null {
   if (cached[id]) return cached[id]!;
   const env = getEnv();
   if (id === 'elevenlabs') {
-    if (env.ELEVENLABS_API_KEY && env.ELEVENLABS_WEBHOOK_SECRET) {
+    if (env.PROVIDER_MODE === 'stub') {
+      cached[id] = new FakeVoiceProvider();
+    } else if (env.ELEVENLABS_API_KEY && env.ELEVENLABS_WEBHOOK_SECRET) {
       cached[id] = new ElevenLabsVoiceProvider({
         apiKey: env.ELEVENLABS_API_KEY,
         webhookSecret: env.ELEVENLABS_WEBHOOK_SECRET,
