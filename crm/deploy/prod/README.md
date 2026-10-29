@@ -1,9 +1,9 @@
 # Production server setup (M10-05)
 
 Runbook for the production Compose project on the OVH VPS. Source: `docs/ARCHITECTURE.md` "Server and deployment
-setup", "Domain, DNS and email domain" and "Monitoring and alerting"; decision DC-084. Everything here is files and
-scripts only. **Nothing has been run on the server**: each step below changes a live system and needs Abdullah's yes
-first (AGENTS "Live systems and deploys").
+setup", "Domain, DNS and email domain" and "Monitoring and alerting"; decision DC-084. The approved portal replacement
+has been run on the VPS as recorded below. Do not repeat live-system changes without approval (AGENTS "Live systems and
+deploys").
 
 ## What is here
 
@@ -35,6 +35,58 @@ first (AGENTS "Live systems and deploys").
 ## Go-live rehearsal (acceptance: health green, alert test fires, deploy and rollback rehearsed)
 
 On the server, with two real tags A and B: `deploy.sh deploy A`, confirm `https://portal.kyneticai.com/api/health` is 200, `alerts.sh test` arrives, `deploy.sh deploy B`, `deploy.sh rollback` (back to A), then deploy a tag whose app is deliberately unhealthy and confirm it returns to the last good tag. `tests/rehearse.sh` has already rehearsed this logic against stubs; the server run is still owed.
+
+## Approved portal replacement and rollback (2026-10-29)
+
+The approved stack is isolated at `/opt/portal-new`; it contains only `postgres`, `app`, and `worker`, and publishes the
+app on `127.0.0.1:3021`. Host Caddy remains in place and only the `portal.kyneticai.com` route points to port 3021.
+Twenty, n8n, and Kien containers were not changed. The old portal containers are stopped, not removed, and the
+`portal_portal-db-data` volume is retained. The live portal and the three neighboring service health URLs returned 200.
+The test stack uses only the `kynetic-portal-test` bucket, stub providers, and outbound disabled.
+
+### Restore the legacy portal
+
+The verified legacy files are in `/var/backups/portal-legacy-20261028T231704Z/`; the pre-cutover host Caddyfile is
+`/var/backups/portal-caddy-swap-20261029T024426Z/Caddyfile` (root-owned, mode 0644 when installed). The normal rollback
+uses the retained legacy database volume and does not restore or delete database files:
+
+```sh
+sudo docker start portal-portal-db-1 portal-portal-app-1
+curl --fail --show-error http://127.0.0.1:3020/api/health
+sudo install -o root -g root -m 0644 \
+  /var/backups/portal-caddy-swap-20261029T024426Z/Caddyfile /etc/caddy/Caddyfile
+sudo caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+sudo systemctl reload caddy
+curl --fail --show-error https://portal.kyneticai.com/api/health
+```
+
+Only proceed with the Caddy restore after the legacy loopback health check passes. The backup includes the original
+route to `127.0.0.1:3020`. Keep the old containers and volume until the replacement has passed its operational
+acceptance period.
+
+### Roll back the new app/worker image pair
+
+The VPS image switch rehearsal built commit `15457d0`, started that app and worker, observed app health `ok`, a running
+worker, and zero restarts, then restored the saved `4f104ff` compose and repeated those checks. This affects only the
+portal-new app and worker; it does not change Postgres, Caddy, or other Compose projects. The saved compose is
+`/opt/portal-new/compose.rollback-4f104ff.yml`:
+
+```sh
+sudo cp /opt/portal-new/compose.rollback-4f104ff.yml /opt/portal-new/compose.yml
+sudo docker compose -p portal-new --env-file /opt/portal-new/runtime.env \
+  -f /opt/portal-new/compose.yml up -d app worker
+curl --fail --show-error http://127.0.0.1:3021/api/health
+sudo docker inspect -f '{{.Name}} {{.Config.Image}} {{.State.Status}} {{.RestartCount}}' \
+  portal-new-app-1 portal-new-worker-1
+```
+
+Never use `--remove-orphans`; do not include Caddy or Kuma in this Compose project. A synthetic encrypted R2 backup
+was also downloaded, decrypted, restored into a scratch PostgreSQL database, checked for tenant RLS isolation, and
+cleaned up. Its object and temporary database were removed. This restore drill does not validate recovery of client
+data or use either production bucket.
+
+The full M10-05 gate remains blocked: the approved scope excludes Resend and real email, so the production alert email
+test has not been sent. DNS, real providers, pilot onboarding, and client-data import remain unapproved and untested.
 
 ## Alert coverage
 
