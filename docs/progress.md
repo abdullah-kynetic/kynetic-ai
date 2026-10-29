@@ -59,6 +59,12 @@ Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3
 - Initial M10-01 review state: authenticated API/search/export-import rate limits were not wired, exact Bun-lock audit and restore evidence were pending, and CI secret scanning/log-redaction plus production edge configuration were open. Details and subsequent resolution are recorded in `docs/security-review-M10-01.md`.
 - Post-fix verification: affected search/export/import/rate-limit integration suites passed 34 tests, `withApi` unit tests passed 5, and M10 accessibility/security plus M9 search/export browser suites passed 10/10 without rate-limit errors. Typecheck passed.
 
+### 2026-10-29 (CRM portal M10-04 accessibility review)
+- Expanded the axe matrix to 24 synthetic routes across light/dark and desktop/390px mobile, covering sign-in, pending terms, owner and admin pages. WCAG 2.0/2.1/2.2 A and AA tags were enabled; all 96 page-state scans are clean after fixes.
+- Initial valid findings: two low-contrast audit summaries, two non-focusable mobile table scroll regions, and an invalid Kanban `aria-orientation`; fixed in `d25d682` and `720b81f`. Updated the branding preview to use active-theme-derived text in `246d35d`.
+- `m10-a11y-security.spec.ts` plus `shell.spec.ts`: 21/21 passed, including keyboard/focus checks; typecheck and build passed; branding color unit suite 17/17 passed. Test coverage/fixture changes are `d96feeb`.
+- Manual screen-reader review: not verified, needs a human screen-reader pass. M10-04 remains blocked until completed.
+
 ### 2026-10-29 (CRM portal M10-01 gate update)
 - Closed the high rate-limit findings in `430da61` with integration coverage in `4ffce62`. Per supervisor evidence, production dependency audit is clean (366 checked), one moderate dev-only esbuild advisory remains low, and M8b restore passes 5/5 against matching PostgreSQL 17.10 tools. M10-01 is done; production edge/header/secret-scanner verification remains open and is not represented as production sign-off.
 
