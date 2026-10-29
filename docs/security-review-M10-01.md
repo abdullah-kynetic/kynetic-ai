@@ -37,3 +37,23 @@ The M10-01 local security gate is **done**: no high findings remain open. Produc
 ## Gate decision
 
 M10-01 is done under its no-open-high acceptance criterion. The 120/min authenticated API, 30/min search, and 5/hour/tenant export/import limits are implemented and covered by disposable-PostgreSQL tests. Production verification remains pending for edge TLS and origin lock-down, deployed response headers, and CI secret scanning. The dev-only esbuild moderate advisory remains a low-severity development dependency item. This review does not claim production acceptance.
+
+## Production evidence after deploying 97cc55f (2026-10-29, 3:57 PM PDT)
+
+Deployed `97cc55f` to the VPS (`/opt/portal-new`, app and worker images `:97cc55f`). Migration `1000_contacts_phone_fragment_tenant_index.sql` applied: 34 rows in `drizzle.__drizzle_migrations`, and `contacts_phone_fragment_trgm` now leads with `tenant_id`.
+
+Public response headers from `https://portal.kyneticai.com/sign-in` and `/api/health` (nonce redacted):
+
+- `content-security-policy: default-src 'self'; script-src 'self' 'nonce-…' 'strict-dynamic'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests`
+- `strict-transport-security: max-age=63072000; includeSubDomains`
+- `x-frame-options: DENY`
+- `x-content-type-options: nosniff`
+- `referrer-policy: strict-origin-when-cross-origin`
+- `permissions-policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()`
+- No `x-powered-by` header.
+
+Other live checks:
+
+- Unsigned `POST /api/hooks/resend` returns 401 `UNAUTHENTICATED`.
+- Auth IP limit: 7 synthetic `GET /api/auth/magic-link/verify?token=<invalid>` requests sent over one connection. Requests 1–4 returned 302. Request 5 returned 429 from Better-Auth's built-in limiter, and requests 6–7 returned 429 `RATE_LIMITED` from the PostgreSQL limiter.
+- Note: the requesting box's egress IP changes per connection, so separate connections each got a new `auth_ip` key. The per-IP limit cannot stop a client that rotates IPs; the per-email limit and edge/WAF controls cover that case. Edge (Cloudflare/origin lock-down) remains unverified.
