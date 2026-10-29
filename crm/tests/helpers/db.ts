@@ -97,9 +97,6 @@ export async function createTestDatabase(
         opts.jobQueues ?? {}
       );
     const backup = postgres(withDb(base, name, 'kynetic_owner', ROLE_PASSWORDS.owner), { max: 1 });
-    await backup.unsafe(
-      `GRANT CONNECT ON DATABASE ${name} TO kynetic_backup; GRANT USAGE ON SCHEMA public, drizzle TO kynetic_backup; GRANT SELECT ON ALL TABLES IN SCHEMA public, drizzle TO kynetic_backup; GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public, drizzle TO kynetic_backup;`
-    );
     await backup.end();
   }
   const app = postgres(withDb(base, name, 'kynetic_app', ROLE_PASSWORDS.app), { max: 2 });
