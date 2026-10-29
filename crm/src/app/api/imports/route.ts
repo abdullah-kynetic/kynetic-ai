@@ -5,6 +5,8 @@ import { AppError } from '@/server/errors';
 import { decideAdminAccess } from '@/server/admin';
 import { resolveActor } from '@/server/auth';
 import { isViewingAs } from '@/app/admin/view-as-guard';
+import { getDb } from '@/server/db/client';
+import { enforceExportImportRateLimit } from '@/server/security/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,6 +26,7 @@ export const POST = withApi(async (request) => {
   const rawEntity = String(form.get('entity') ?? 'contact');
   if (!['contact', 'company', 'deal', 'note'].includes(rawEntity))
     throw new AppError('VALIDATION_FAILED', { message: 'Unsupported import record type.' });
+  await enforceExportImportRateLimit(getDb(), tenantId);
   const batch = await createImportBatch(
     ctx,
     actor,
