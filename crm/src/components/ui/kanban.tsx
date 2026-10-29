@@ -611,7 +611,6 @@ function KanbanBoard(props: KanbanBoardProps) {
     ref,
     props: mergeProps<'div'>(
       {
-        'aria-orientation': context.orientation,
         'data-orientation': context.orientation,
         'data-slot': 'kanban-board'
       } as React.ComponentProps<'div'>,
