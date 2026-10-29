@@ -21,9 +21,9 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Rete
 - PR #14 merged: documented the move to self-hosted Twenty at https://crm.kyneticai.com.
 - PR #15 merged: client portal at https://portal.kyneticai.com (code in `portal/`, deployed on the OVH VPS). DNS A record was not set at the time (set since, see KI-006); no real client data until the must-fixes are done. See the Portal section of KYNETIC_CONTEXT.md and KI-006 to KI-008.
 - PR #16 merged: Claude sessions commit as `abdullah-kynetic` (`.claude/settings.json`, CLAUDE.md).
+- CRM portal M10-01 local security gate completed 2026-10-29 with no open high findings. Evidence and medium production-verification items are in `docs/security-review-M10-01.md`; this does not claim production sign-off.
 
 ## In progress
-- CRM portal M10-01 security review on branch `work`: tenant-leading search index and shared auth rate limits are fixed; review is documented in `docs/security-review-M10-01.md`. The gate remains blocked by high rate-limit and dependency-audit findings plus live-config verification.
 - 3.5 outbound build. Prep is in the repo. On 2026-10-17 a read-only check found `m2YJwZ1l8DTzyEkw` active with the Alex agent ID (`agent_71e3cfc8384aa38a910a506b53`) set in Call Settings and Retry Call Settings and the "Retell API (outbound)" credential attached. Go-live approved by Abdullah on 2026-10-18 (KI-009). Alex prompt v1.2.3 is on branch `claude/alex-demo-live-test`, not merged or published. Blocked on Abdullah; see Blockers.
 - Voice provider bake-off (Retell vs Bland vs ElevenLabs) for Alex. **Testing, no decision: Retell stays (D-018) unless a challenger clearly wins on the shared scorecard.** Control is Retell Alex Lab. ElevenLabs is furthest along; Bland has a test track and no results yet. Both live on unmerged branches (`claude/provider-test-elevenlabs`, `claude/provider-test-bland`), not on main. Current state, agent IDs and rules: the "Voice provider bake-off" section of KYNETIC_CONTEXT.md; running log: `providers/elevenlabs/RESULTS.md` on the branch and the Twenty note "VOICE PROVIDER BAKE-OFF". Twenty has no task for it yet.
 
@@ -56,7 +56,11 @@ Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3
 ## Log
 ### 2026-10-29 (CRM portal M10-01 security review)
 - Fixed the contacts phone-fragment GIN index to lead with `tenant_id` (`b7b8e57`) and wired shared PostgreSQL auth IP/email limits (`8256212`). Focused auth/rate-limit tests (19), baseline CRM test (13), header tests (3), and webhook/service-token test suites passed. Typecheck passed.
-- M10-01 remains blocked: authenticated API/search/export-import rate limits are declared but not wired; no dependency audit is configured against the exact Bun lock; CI secret scanning/log-redaction review and production edge configuration remain open. The local M8b restore test did not pass because the installed pg_restore 17.11 emitted a setting unsupported by PostgreSQL 16.14. Details: `docs/security-review-M10-01.md`.
+- Initial M10-01 review state: authenticated API/search/export-import rate limits were not wired, exact Bun-lock audit and restore evidence were pending, and CI secret scanning/log-redaction plus production edge configuration were open. Details and subsequent resolution are recorded in `docs/security-review-M10-01.md`.
+- Post-fix verification: affected search/export/import/rate-limit integration suites passed 34 tests, `withApi` unit tests passed 5, and M10 accessibility/security plus M9 search/export browser suites passed 10/10 without rate-limit errors. Typecheck passed.
+
+### 2026-10-29 (CRM portal M10-01 gate update)
+- Closed the high rate-limit findings in `430da61` with integration coverage in `4ffce62`. Per supervisor evidence, production dependency audit is clean (366 checked), one moderate dev-only esbuild advisory remains low, and M8b restore passes 5/5 against matching PostgreSQL 17.10 tools. M10-01 is done; production edge/header/secret-scanner verification remains open and is not represented as production sign-off.
 
 ### 2026-10-29 (portal Resend startup wiring)
 - Added idempotent Node app/worker boot wiring for the existing Resend adapter and Better Auth magic-link callback. Missing `RESEND_API_KEY` leaves both registries unset; configured mode logs only the provider name. The magic-link URL is HTML-escaped, excluded from logs and hashed for the Resend idempotency key.

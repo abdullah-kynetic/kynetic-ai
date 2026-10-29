@@ -3,9 +3,6 @@
 Mirror of open problems tracked in Twenty. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Open
-### KI-014: CRM portal M10-01 security gate has high findings (high)
-Review dated 2026-10-29: authenticated API (120/min/user), search (30/min/user), and import/export (5/hour/tenant) limits are declared but not applied to their routes. The production dependency audit has not run against the exact Bun lock resolution (`npm audit` has no npm lock; `bun pm scan` has no configured scanner). M10-01 review and evidence are in `docs/security-review-M10-01.md`; keep the gate blocked until both high findings are closed and remaining verification items are addressed.
-
 ### KI-002: TCPA emergency branch opt-out gap (high)
 Emergency calls and urgent notifications may reach someone who opted out.
 Fix: counsel sign-off (task 1.4). Also feeds the agreement rewrite (task 4.7, 4.8).
@@ -68,6 +65,9 @@ Fix: hand-dial a sample, counsel answer, and keep the audit step in every run.
 - The Kynetic Roofing (Demo) company record carries the real AM-1 office phone (D-016 amended). Never dial it from the demo or any test.
 
 ## Resolved
+### KI-014: CRM portal M10-01 security gate had high findings (high)
+Found 2026-10-29: authenticated API, search, and tenant import/export rate limits were declared but not enforced, and the exact Bun lock production audit was unavailable. Resolved 2026-10-29: `withApi` now enforces 120/min per authenticated user; contacts list and Cmd+K search enforce 30/min per user; import uploads and CSV export share 5/hour per tenant. Disposable PostgreSQL integration tests prove 429 responses at each limit. Supervisor ran `bun audit --prod` against `bun.lock` (366 packages, no production vulnerabilities); a moderate development-only esbuild advisory remains low. M10-01 is done; production edge/header/CI secret-scanner verification remains open. Evidence: `docs/security-review-M10-01.md`.
+
 ### KI-013: New CRM portal email provider not wired at process startup (was high)
 Found 2026-10-29: the Resend adapter and Better Auth magic-link callback existed, but no Node startup path called `setEmailProvider()` or `setMagicLinkSender()`, so configured email sends failed as unconfigured.
 Resolved 2026-10-29: added `wireEmail()` for app instrumentation and worker startup. Fake-fetch tests verify configured sends and no-key behavior. No real Resend request was made; live credentials and deliverability remain unverified.
