@@ -6,7 +6,7 @@ Mirror of the Twenty roadmap ("Roadmap: all phases"). Twenty is canonical; this 
 Plan 1 only: the outbound speed-to-lead agent at the D-017 price (first 3 clients $4,675, clients 4 and up $8,500, three Stripe invoices at 50/25/25). Gate of 5 paying clients before Plan 2 (D-013). Task titles in Twenty carry [P1]/[P2]; Emily inbound and all upsell systems are [P2].
 
 ## Current phase
-Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Retell is the platform and Vapi is parked (D-018). Active files: `retell/builds/outbound-speed-to-lead/`.
+Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Retell is the platform and Vapi is parked (D-018). Active files: `retell/builds/outbound-speed-to-lead/`. The separate CRM portal remains in local M10 hardening; it is not part of the Twenty roadmap.
 
 ## Done
 - PR #2 merged: Emily handoff, tools/retell.py, KYNETIC_CONTEXT.md.
@@ -23,6 +23,7 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Rete
 - PR #16 merged: Claude sessions commit as `abdullah-kynetic` (`.claude/settings.json`, CLAUDE.md).
 
 ## In progress
+- CRM portal M10-01 security review on branch `work`: tenant-leading search index and shared auth rate limits are fixed; review is documented in `docs/security-review-M10-01.md`. The gate remains blocked by high rate-limit and dependency-audit findings plus live-config verification.
 - 3.5 outbound build. Prep is in the repo. On 2026-10-17 a read-only check found `m2YJwZ1l8DTzyEkw` active with the Alex agent ID (`agent_71e3cfc8384aa38a910a506b53`) set in Call Settings and Retry Call Settings and the "Retell API (outbound)" credential attached. Go-live approved by Abdullah on 2026-10-18 (KI-009). Alex prompt v1.2.3 is on branch `claude/alex-demo-live-test`, not merged or published. Blocked on Abdullah; see Blockers.
 - Voice provider bake-off (Retell vs Bland vs ElevenLabs) for Alex. **Testing, no decision: Retell stays (D-018) unless a challenger clearly wins on the shared scorecard.** Control is Retell Alex Lab. ElevenLabs is furthest along; Bland has a test track and no results yet. Both live on unmerged branches (`claude/provider-test-elevenlabs`, `claude/provider-test-bland`), not on main. Current state, agent IDs and rules: the "Voice provider bake-off" section of KYNETIC_CONTEXT.md; running log: `providers/elevenlabs/RESULTS.md` on the branch and the Twenty note "VOICE PROVIDER BAKE-OFF". Twenty has no task for it yet.
 
@@ -53,6 +54,10 @@ Then: confirm the post-call webhook URL is set on the agent, web-call test Alex,
 Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-10-29 (CRM portal M10-01 security review)
+- Fixed the contacts phone-fragment GIN index to lead with `tenant_id` (`b7b8e57`) and wired shared PostgreSQL auth IP/email limits (`8256212`). Focused auth/rate-limit tests (19), baseline CRM test (13), header tests (3), and webhook/service-token test suites passed. Typecheck passed.
+- M10-01 remains blocked: authenticated API/search/export-import rate limits are declared but not wired; no dependency audit is configured against the exact Bun lock; CI secret scanning/log-redaction review and production edge configuration remain open. The local M8b restore test did not pass because the installed pg_restore 17.11 emitted a setting unsupported by PostgreSQL 16.14. Details: `docs/security-review-M10-01.md`.
+
 ### 2026-10-29 (portal Resend startup wiring)
 - Added idempotent Node app/worker boot wiring for the existing Resend adapter and Better Auth magic-link callback. Missing `RESEND_API_KEY` leaves both registries unset; configured mode logs only the provider name. The magic-link URL is HTML-escaped, excluded from logs and hashed for the Resend idempotency key.
 - Verified by fake-fetch unit tests only; no real Resend network call or email send was made. Focused tests and typecheck passed; implementation and test commits are on local `work` only (not pushed).

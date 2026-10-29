@@ -3,6 +3,9 @@
 Mirror of open problems tracked in Twenty. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Open
+### KI-014: CRM portal M10-01 security gate has high findings (high)
+Review dated 2026-10-29: authenticated API (120/min/user), search (30/min/user), and import/export (5/hour/tenant) limits are declared but not applied to their routes. The production dependency audit has not run against the exact Bun lock resolution (`npm audit` has no npm lock; `bun pm scan` has no configured scanner). M10-01 review and evidence are in `docs/security-review-M10-01.md`; keep the gate blocked until both high findings are closed and remaining verification items are addressed.
+
 ### KI-002: TCPA emergency branch opt-out gap (high)
 Emergency calls and urgent notifications may reach someone who opted out.
 Fix: counsel sign-off (task 1.4). Also feeds the agreement rewrite (task 4.7, 4.8).
