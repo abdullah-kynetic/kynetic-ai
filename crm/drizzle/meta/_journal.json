@@ -225,6 +225,13 @@
       "when": 1793242200000,
       "tag": "0062_backup_role_read_access",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1793242500000,
+      "tag": "0063_backup_drizzle_schema",
+      "breakpoints": true
     }
   ]
 }
