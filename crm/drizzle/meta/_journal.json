@@ -232,6 +232,13 @@
       "when": 1793242500000,
       "tag": "0063_backup_drizzle_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1793307709000,
+      "tag": "1000_contacts_phone_fragment_tenant_index",
+      "breakpoints": true
     }
   ]
 }
