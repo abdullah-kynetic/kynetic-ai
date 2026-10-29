@@ -12,7 +12,9 @@ let cached: SmsProvider | undefined;
 export function getSmsProvider(): SmsProvider {
   if (cached) return cached;
   const env = getEnv();
-  if (env.TWILIO_ACCOUNT_SID && env.TWILIO_AUTH_TOKEN) {
+  if (env.PROVIDER_MODE === 'stub') {
+    cached = new FakeSmsProvider();
+  } else if (env.TWILIO_ACCOUNT_SID && env.TWILIO_AUTH_TOKEN) {
     cached = new TwilioSmsProvider({
       accountSid: env.TWILIO_ACCOUNT_SID,
       authToken: env.TWILIO_AUTH_TOKEN,

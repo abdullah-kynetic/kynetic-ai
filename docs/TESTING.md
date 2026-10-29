@@ -51,6 +51,7 @@ Performance and accessibility targets are PRD decisions, not sourced numbers. Ap
   - Health chip color thresholds (F-54).
 - **Integration:** API, database and service boundaries against a real Postgres 16 with the app non-owner role. Providers are fakes (see Fixtures).
   - Database bootstrap wrapper: `bash crm/deploy/db/tests/bootstrap-roles.sh` proves synthetic passwords with quotes, backslashes, `$`, semicolons, `@` and spaces reach psql as intact arguments, and empty values fail before psql runs. `tests/integration/bootstrap-roles.test.ts` additionally exercises the SQL bootstrap against the configured disposable Postgres.
+  - Provider mode: `tests/unit/provider-mode.test.ts` proves explicit stub mode selects fake SMS/voice adapters in production while live mode remains fail-closed without provider credentials.
   - RLS on every tenant table (F-72). Run as the app role, never the owner.
   - Route and server-action guards for roles (F-73) and modules (F-70).
   - Webhook pipeline: store in `webhook_events`, unique on (source, external_id), job queue, retry (F-77).

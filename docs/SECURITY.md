@@ -166,6 +166,7 @@ Rules:
 - **Provider and n8n tokens.** Revoke and rotate per section 4.2. A one-click revoke for a tenant's n8n token and signing secrets belongs to F-62.
 - **Tenant suspension.** Setting `tenants.status` to suspended blocks logins and stops all outbound activity (queue gate checks status).
 - **Emergency stop.** `OUTBOUND_ENABLED=false` (config) stops all outbound calls and texts. Per-tenant "pause Alex" (F-42) stops that tenant's. Defined in 3.9.
+- **Provider stub mode.** `PROVIDER_MODE=stub` selects in-memory fake SMS and voice providers even when `NODE_ENV=production`; it is intended only for isolated rehearsals with `OUTBOUND_ENABLED=false`. The default is `live`, which keeps production fail-closed when provider credentials are missing. Stub mode cannot be combined with outbound enabled.
 
 ### 2.6 Impersonation ("view as client", F-57)
 - Entry: Kynetic admin (read or write) and VA (read only). Start requires a reason. An audit row records `impersonator_id`, tenant, start time and IP.
@@ -288,6 +289,7 @@ Decided 2026-10-25 (recommended option approved: these names; M0 fixes the final
 | `BACKUP_ENCRYPTION_KEY` | Encrypt `pg_dump` before upload | No. Stored apart from bucket credentials |
 | `SENTRY_DSN` (optional) | Error reporting | Server-only anyway |
 | `OUTBOUND_ENABLED` | Kill switch (3.9) | Config, not secret |
+| `PROVIDER_MODE` | Selects live provider adapters or test fakes; `stub` requires outbound disabled | Config, not secret |
 
 Existing Kynetic keys used by agency tooling are **not** reused. The portal gets its own keys, separate Twilio credentials where possible, and separate keys per environment.
 
