@@ -65,6 +65,10 @@ Fix: hand-dial a sample, counsel answer, and keep the audit step in every run.
 - The Kynetic Roofing (Demo) company record carries the real AM-1 office phone (D-016 amended). Never dial it from the demo or any test.
 
 ## Resolved
+### KI-013: New CRM portal email provider not wired at process startup (was high)
+Found 2026-10-29: the Resend adapter and Better Auth magic-link callback existed, but no Node startup path called `setEmailProvider()` or `setMagicLinkSender()`, so configured email sends failed as unconfigured.
+Resolved 2026-10-29: added `wireEmail()` for app instrumentation and worker startup. Fake-fetch tests verify configured sends and no-key behavior. No real Resend request was made; live credentials and deliverability remain unverified.
+
 ### KI-009: Outbound workflow found active with Alex ID set; go-live approved 2026-10-18 (was medium)
 Workflow `m2YJwZ1l8DTzyEkw` was found active on Oct 17 (read-only check, 38 nodes) with the Alex agent ID set and the Retell credential attached. Go-live not yet approved; Abdullah to confirm. Docs previously said inactive and never run. The public form and the post-call webhook are live while it is active. Do not change n8n without a yes on that specific change.
 Resolved 2026-10-18: Abdullah approved the workflow staying live. No n8n change was made. The post-call webhook still has no header auth (KI-005).

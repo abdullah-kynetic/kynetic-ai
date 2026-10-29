@@ -78,7 +78,7 @@ Client data never goes to Twenty (locked decision). Twenty receives at most an o
 ### 2.1 Identity and sessions (F-71)
 - **Decided:** drop Clerk. Better-Auth with Google sign-in and email magic links (PRD decision 2).
 - **Library.** Decided 2026-10-25: Better-Auth, behind the `src/server/auth` facade (ARCHITECTURE).
-- **Email magic link.** Decided 2026-10-25: ships for client users alongside Google sign-in. Single-use, short-lived, rate limited (5.4), sent through Resend. Staff accounts use Google plus TOTP.
+- **Email magic link.** Decided 2026-10-25: ships for client users alongside Google sign-in. Single-use, short-lived, rate limited (5.4), sent through Resend. Staff accounts use Google plus TOTP. The platform auth message is transactional, not contact outreach; it is wired at Node app/worker startup and is not routed through marketing-contact consent dispatch. Its URL is HTML-escaped, receives a URL-hash idempotency key, and must never be logged.
 - **Staff sign-in.** Kynetic admin and VA accounts sign in with Google accounts on an explicit allowlist, plus app-level TOTP (F-98, below).
 - **Account linking.** Link a Google identity only when Google reports the email as verified. Never link by unverified email.
 - **Sessions.** Server-side sessions in Postgres, not self-contained tokens, so revocation is immediate. Cookie: `HttpOnly`, `Secure`, `SameSite=Lax`, `__Host-` prefix.

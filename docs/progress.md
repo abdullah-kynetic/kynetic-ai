@@ -53,6 +53,10 @@ Then: confirm the post-call webhook URL is set on the agent, web-call test Alex,
 Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-10-29 (portal Resend startup wiring)
+- Added idempotent Node app/worker boot wiring for the existing Resend adapter and Better Auth magic-link callback. Missing `RESEND_API_KEY` leaves both registries unset; configured mode logs only the provider name. The magic-link URL is HTML-escaped, excluded from logs and hashed for the Resend idempotency key.
+- Verified by fake-fetch unit tests only; no real Resend network call or email send was made. Focused tests and typecheck passed; implementation and test commits are on local `work` only (not pushed).
+
 ### 2026-10-25 (Alex go-live thread: ElevenLabs chosen; D-025)
 - Verdict: ElevenLabs wins, v1 strict `agent_8201m5afn2rbeb7v29xfkhh1pjef` goes live (D-025). Free tier, demos only until the first client signs; Abdullah declined a paid plan for now. Retell go-live parked, nothing was activated.
 - 2026-10-22: edited the live v1 prompt (ElevenLabs API, prompt only; model and both Cal.com tools unchanged) to drop the "you'll get a text" promise. Before/after in `providers/elevenlabs/golive/`. Restore the text wording when the Twilio A2P campaign is approved (pre-approved by Abdullah).

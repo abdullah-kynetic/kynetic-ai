@@ -48,8 +48,14 @@ let sender: MagicLinkSender | undefined;
 let instance: Auth | undefined;
 
 /** Wired at boot to the email adapter. Until then no link is sent. */
-export function setMagicLinkSender(fn: MagicLinkSender): void {
+export function setMagicLinkSender(fn: MagicLinkSender | undefined): void {
   sender = fn;
+}
+
+/** Deliver an auth-only sign-in message through the configured transactional email provider. */
+export async function sendMagicLinkEmail(msg: { email: string; url: string }): Promise<void> {
+  if (!sender) throw new Error('No email sender is configured for sign-in links');
+  await sender(msg);
 }
 
 export function getAuth(): Auth {
@@ -64,8 +70,7 @@ export function getAuth(): Auth {
           ? { clientId: env.GOOGLE_CLIENT_ID, clientSecret: env.GOOGLE_CLIENT_SECRET }
           : undefined,
       sendMagicLink: async (msg) => {
-        if (!sender) throw new Error('No email sender is configured for sign-in links');
-        await sender(msg);
+        await sendMagicLinkEmail(msg);
       }
     });
   }
