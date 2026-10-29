@@ -4,6 +4,21 @@
 -- Role model: DATABASE.md "Storage model", SECURITY 2.3.
 \set ON_ERROR_STOP on
 
+-- Refuse empty or omitted passwords before changing any cluster roles. psql's :'var'
+-- interpolation quotes each value as a SQL literal, including quotes and backslashes.
+SELECT (
+  length(:'owner_pw') > 0
+  AND length(:'app_pw') > 0
+  AND length(:'worker_pw') > 0
+  AND length(:'auth_pw') > 0
+  AND length(:'backup_pw') > 0
+) AS bootstrap_passwords_valid \gset
+\if :bootstrap_passwords_valid
+\else
+\echo 'bootstrap refused: every role password must be non-empty'
+\quit 3
+\endif
+
 SELECT format('CREATE ROLE kynetic_owner LOGIN PASSWORD %L', :'owner_pw')
  WHERE NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'kynetic_owner') \gexec
 SELECT format('ALTER ROLE kynetic_owner PASSWORD %L', :'owner_pw') \gexec
