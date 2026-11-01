@@ -260,6 +260,13 @@
       "when": 1793530000000,
       "tag": "1003_agency_workspace",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1793553000000,
+      "tag": "1004_agency_dialer_campaigns",
+      "breakpoints": true
     }
   ]
 }

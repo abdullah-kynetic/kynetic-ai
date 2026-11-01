@@ -6,3 +6,4 @@ export * from './presence';
 export * from './contact-decisions';
 export * from './call-result-receipts';
 export * from './agency';
+export * from './agency-dialer';
