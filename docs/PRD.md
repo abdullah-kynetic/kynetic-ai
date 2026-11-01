@@ -323,5 +323,17 @@ Abdullah approved all gap-check proposals GP-01 to GP-12 on 2026-10-25 (DECISION
 6. Server, deploy and preview setup, DNS move to Cloudflare, email domain, monitoring, provider integration details and pre-go-live gates (ARCHITECTURE Operations). The Cloudflare DNS move and the ElevenLabs paid plan with phone import are actions Abdullah still has to take.
 7. Later: AI drafts and weekly summary (F-104), proposal builder (F-105), Twenty to portal sync (F-106).
 
+## Proposed additions: all-in-one portal (2026-10-31, waits for approval)
+
+Abdullah wants the portal to run Kynetic AI itself (as its own tenant) and its clients. F-IDs are not assigned; Abdullah numbers them. Build tasks are BUILD_PLAN M12 to M20. Decisions are DECISIONS DC-TBD-01 to -13.
+
+Client side: lead-to-call chain run by n8n with ElevenLabs, retries, follow-up sequences, appointment reminders, no-show recovery, new-lead and hot-lead alerts, review request 2 hours after payment received, weekly email report, ad spend and cost per lead, Alex usage and spend caps, recording-disclosure check, offboarding.
+
+Agency side: inbound and outbound lead lists (outbound split by cold call, SMS, email, DM), human dialer queue with DNC guard, campaigns, agency pipeline (New, Contacted, Interested, Proposal Sent, Won, Lost, Nurture), proposals, price plans as data, Stripe draft invoices, onboarding and tenant creation, auto-created Alex demo for new clients, contracts and e-sign tracking, revenue and expenses, client health and renewal alerts, support requests, referrals and case studies, daily digest, one-way Twenty backup.
+
+Rules: Kynetic cold outreach stays human only (D-007). Email and DMs are human-sent; the portal logs them and checks DNC. AI calls and texts go only to people who asked for contact.
+
+Conflict to resolve: GP-12 lists the proposal builder (F-105) and Twenty to portal sync (F-106) as Later. The proposal builder is now in M17. The Twenty direction is portal to Twenty only.
+
 ## Definition of ready
 Scope, journeys and acceptance criteria are written, and the decisions that block M0 are approved (see Decisions log). Ready for M0, apart from the items under "Still UNRESOLVED", none of which block M0.
