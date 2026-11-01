@@ -15,6 +15,8 @@ Rules from Abdullah's answers (2026-10-30):
 
 Open: none from the question list (stages, review timing and Later items settled Oct 31).
 
+Source audit (2026-10-31): `docs/audit-M12-M20.md` corrects stale implementation claims below; `docs/portal-n8n-contract.md` maps every row to existing or proposed interfaces. Existing portal sequences, ElevenLabs/Retell adapters and scheduled database backups are implemented; replacement n8n flows remain pending. Historical workflow counts/activation were not checked live.
+
 Legend: Owner N8N = runs in n8n. PORTAL = records and shows. Status: built, partial, missing, not confirmed.
 
 ## B. Client side (e.g. a roofer tenant)
@@ -29,7 +31,7 @@ Legend: Owner N8N = runs in n8n. PORTAL = records and shows. Status: built, part
 | B6 | Alex checks slots and books | N8N + Cal.com | partial | Portal has `appointments/availability` and `book`. Cal.com wiring not confirmed. |
 | B7 | Retries (5 min, 1 hour, next day, max 4) | N8N | missing | Sequences have no steps, nothing sends. |
 | B8 | SMS follow-up | N8N | blocked | Twilio A2P not approved, sends fail. |
-| B9 | Booked appointment moves deal stage | PORTAL | bug | Rule looks for stage `booked`, default is `Estimate Booked`. |
+| B9 | Booked appointment moves deal stage | PORTAL | partial | M13-06 now targets `Estimate Booked`; PostgreSQL regression execution pending. |
 | B10 | Appointment reminders | N8N | missing | Stubs. |
 | B11 | No-show recovery | N8N | missing | Stubs. |
 | B12 | New-lead alert to owner | N8N | missing | No `new_lead` alert. Hot-lead and deal-won alerts exist. |

@@ -211,3 +211,7 @@ Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3
 
 ### 2026-10-06
 - D-010: resolved the one-agent-vs-two-agents question from the ACTIVE BUILD PLAN note as two separate Retell agents. Inbound (Emily) paused — near-done, left alone until a client demo needs it. Outbound speed-to-lead is now the sole active build target. Updated the ACTIVE BUILD PLAN note and docs/progress.md, docs/decisions.md to match.
+
+### 2026-10-31 — M12–M20 audit, local wave 30
+
+On `work`, fast-forwarded the stale checkout to merged main `3ff1685` (PR #122); no main change. Drafted `docs/portal-n8n-contract.md`, audited all waves in `docs/audit-M12-M20.md`, and fixed F-33 booking stage lookup to Estimate Booked with a tenant/replay regression. Typecheck and 392 unit tests pass. Focused integration could not start without TEST_DATABASE_ADMIN_URL/PostgreSQL; baseline lint and format remain failing. M12-01 awaits review, M13-06 awaits database verification, M18-05 is blocked on explicit deletion approval and M10-07 legacy ingest fate. Next: regression verification/review, then eligible wave 31 tasks. No real provider calls, secrets, n8n activation, deploy, push or main merge. No new business decision or live issue was established; docs/decisions.md and docs/known-issues.md are unchanged.

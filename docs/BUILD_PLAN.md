@@ -278,7 +278,7 @@ Source of the decisions: `docs/DECISIONS.md` section "All-in-one portal, 2026-10
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M12-01 | Write the portal/n8n contract doc: events n8n sends, endpoints the portal exposes, signing, retries, idempotency | automation-map; DECISIONS DC-TBD | none | Doc reviewed. Every automation in the map has an owner and an endpoint. | S | Opus | yes | 30 | todo |  |
+| M12-01 | Write the portal/n8n contract doc: events n8n sends, endpoints the portal exposes, signing, retries, idempotency | automation-map; DECISIONS DC-TBD | none | Doc reviewed. Every automation in the map has an owner and an endpoint. | S | Opus | yes | 30 | in-progress | Contract drafted: docs/portal-n8n-contract.md; all automation-map rows mapped, existing vs target interfaces labeled. Owner review pending. Audit: docs/audit-M12-M20.md. |
 | M12-02 | Record decisions 3, 4, 7, 8 in `docs/DECISIONS.md` | automation-map; DECISIONS DC-TBD | M12-01 | Entries added with Abdullah's confirmation. No D-number guessed. | S | Haiku | yes | 31 | todo |  |
 | M12-03 | Portal endpoint: n8n posts a "contact decision" (allow or deny, reason, rule that fired). Stored on the lead timeline. | automation-map; DECISIONS DC-TBD | M12-01 | Integration test: allow and deny both stored, tenant isolated, duplicate post ignored. | M | Sonnet | yes | 31 | todo |  |
 | M12-04 | Portal kill switch n8n reads before any send (global and per tenant) | automation-map; DECISIONS DC-TBD | M12-03 | Test: switch on means the shared sub-workflow refuses. | S | Sonnet | yes | 32 | todo |  |
@@ -296,7 +296,7 @@ Source of the decisions: `docs/DECISIONS.md` section "All-in-one portal, 2026-10
 | M13-03 | Call result flow: provider webhook to n8n to portal (outcome, transcript, recording link) | automation-map; DECISIONS DC-TBD | M13-02 | Fake call shows outcome on the lead. Duplicate result ignored. | M | Sonnet | yes | 32 | todo |  |
 | M13-04 | Retry schedule in n8n (5 min, 1 hour, next day, max 4), each retry re-checks contact decision | automation-map; DECISIONS DC-TBD | M13-01 | Test with fake clock. No retry after opt-out or booking. | M | Sonnet | yes | 36 | todo |  |
 | M13-05 | Booking through Cal.com from the call, relayed to portal | automation-map; DECISIONS DC-TBD | M13-03 | Fake booking appears on the lead and moves the deal stage. | M | Sonnet | yes | 33 | todo |  |
-| M13-06 | Fix deal-to-booked rule (`booked` vs `Estimate Booked`) | automation-map; DECISIONS DC-TBD | none | Regression test. | S | Sonnet | yes | 30 | todo |  |
+| M13-06 | Fix deal-to-booked rule (`booked` vs `Estimate Booked`) | automation-map; DECISIONS DC-TBD | none | Regression test. | S | Sonnet | yes | 30 | in-progress | F-33 stage predicate fixed to Estimate Booked; tenant/replay regression added. Typecheck and 392 unit tests pass. Focused integration setup blocked: no TEST_DATABASE_ADMIN_URL/PostgreSQL. Acceptance pending. |
 | M13-07 | New-lead alert and hot-lead alert by email | automation-map; DECISIONS DC-TBD | M13-01 | Fake lead sends one email. No duplicate. | S | Sonnet | yes | 36 | todo |  |
 | M13-08 | Opt-out and STOP handling end to end | automation-map; DECISIONS DC-TBD | M12-06 | Fake STOP stops all further sends, logged with reason. | M | Opus | yes | 33 | todo |  |
 | M13-09 | M13 gate: full fake run, lead to call to booking to report data | automation-map; DECISIONS DC-TBD | M13-01, M13-03, M13-04, M13-05, M13-07, M13-08 | Abdullah's yes. Real provider test calls need a separate yes. | S | Haiku | yes | 37 | todo |  |
@@ -355,7 +355,7 @@ Source of the decisions: `docs/DECISIONS.md` section "All-in-one portal, 2026-10
 | M18-02 | Daily digest to Abdullah | automation-map; DECISIONS DC-TBD | M15-01 | Fake data digest arrives. | S | Sonnet | yes | 39 | todo |  |
 | M18-03 | Twilio click-to-call dialer (later, only after A2P and volume) | automation-map; DECISIONS DC-TBD | M16-03 | Deferred. | L | Opus | yes | 38 | todo |  |
 | M18-04 | Update docs, progress, known issues | automation-map; DECISIONS DC-TBD | all | Docs match what was built. | S | Haiku | no | 42 | todo |  |
-| M18-05 | Delete the retired `portal/` folder and update `CLAUDE.md`, `KYNETIC_CONTEXT.md` and the system map. Needs Abdullah's yes; first record the fate of `/api/ingest/results` (M10-07). | M10-07; KYNETIC_CONTEXT | none | No code, workflow or tool references `portal/` or `/api/ingest`; docs point to `crm/`; history keeps the old code | S | Haiku | yes | 30 | todo |  |
+| M18-05 | Delete the retired `portal/` folder and update `CLAUDE.md`, `KYNETIC_CONTEXT.md` and the system map. Needs Abdullah's yes; first record the fate of `/api/ingest/results` (M10-07). | M10-07; KYNETIC_CONTEXT | none | No code, workflow or tool references `portal/` or `/api/ingest`; docs point to `crm/`; history keeps the old code | S | Haiku | yes | 30 | blocked | No deletion approval or M10-07 legacy ingest fate recorded. Referrer/cutover inventory: docs/audit-M12-M20.md. portal/ preserved. |
 
 ### M19 Client-side completeness (added Nov 1 from the gap check)
 

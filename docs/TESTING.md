@@ -512,3 +512,7 @@ Abdullah approved these explicitly or told us to take the recommended option. Te
 - No test command is verified, so all are `Not configured`.
 - Nothing has been run. No pass is recorded.
 - No real provider call or SMS is covered by an automated test.
+
+### M12/M13 wave 30 local verification (2026-10-31)
+
+Baseline `3ff1685`, branch `work`. `bun run typecheck` passed; `bun run test` passed 51 files / 392 tests. Bun 1.4.4 was invoked through npm exec with a temporary cache because Bun was absent from PATH. `bun run lint` failed on existing kbar set-state-in-effect and admin backups noninteractive tabindex errors; `bun run format:check` reported 61 files. The focused `bun run test:integration -- tests/integration/m7-module-acceptance.test.ts` failed setup (TEST_DATABASE_ADMIN_URL unset; 6 tests skipped). New F-33 M13-06 regression covers default Estimate Booked, foreign-tenant event denial, and replay; it has not passed against PostgreSQL here. No CI, browser, production build, provider or n8n execution. Details: `docs/audit-M12-M20.md`. Acceptance remains pending.
