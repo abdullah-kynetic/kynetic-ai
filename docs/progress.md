@@ -4,7 +4,7 @@ Mirror of the Twenty roadmap ("Roadmap: all phases"). Twenty is canonical; this 
 
 ## Portal implementation order (2026-11-01)
 
-N8n automations are deferred by Abdullah. Continue portal features with synthetic fixtures; login/auth work stays last. M16 agency workspace, source tracking and pipeline UI are locally verified. Next: human dialer with DNC/never-dial guards, campaigns, then proposal drafts. Live systems remain unchanged.
+N8n automations are deferred by Abdullah. Continue portal features with synthetic fixtures; login/auth work stays last. M16 agency workspace, source tracking, pipeline UI, human dialer/never-dial checks and campaigns are locally verified. Next: proposal drafts and the remaining portal-only features. Live systems remain unchanged.
 
 ## Current plan
 Plan 1 only: the outbound speed-to-lead agent at the D-017 price (first 3 clients $4,675, clients 4 and up $8,500, three Stripe invoices at 50/25/25). Gate of 5 paying clients before Plan 2 (D-013). Task titles in Twenty carry [P1]/[P2]; Emily inbound and all upsell systems are [P2].
@@ -241,3 +241,9 @@ Verified: typecheck; 402 unit tests; 107 integration tests across nine suites. F
 Abdullah directed us to skip n8n automations and continue the rest of the portal. Updated the synthetic-only dependency order and built M16-01/02/05: isolated registry/setup (migration 1003), admin agency workspace UI, manual source-classified leads, source filters/counts, seven agency stages, stage renaming and logged deal moves. Existing contact/deal/stage services and auth guards are reused. Setup leaves outbound disabled, Alex paused and no invites/memberships/credentials; no real agency tenant was created. Real data migration remains separate. Existing client pipelines and demo seeds are preserved.
 
 Verified: production build, typecheck, 406 unit tests, 27 integration tests and one browser flow including mobile axe with zero violations. A seed regression was fixed before the final passing run. Scoped lint has no errors (one axe import warning); scoped formatting passes. CI/deployed behavior not verified. No n8n/connector work, login/auth feature work, provider calls, real secrets, deploy, push or main merge. Local test database removed. Next: M16 human dialer together with never-dial/DNC safeguards, then campaigns and proposal drafts.
+
+### 2026-11-01 — M16 manual dialer and campaigns
+
+Built M16-03/04/06 on work. New pages /admin/agency/dialer and /admin/agency/campaigns expose a guarded first-pass synthetic queue, reviewed draft script, manual outcome/history, separate DNC marking, campaign creation/assignment, queue filters and member outcome summaries. Migration 1004 owns the tenant-scoped campaign/membership/immutable manual-history tables. Existing contact entry now optionally accepts fictional 555-01xx phones and known state codes. One rule guards both selection and logging: AM-1 identity/known protected number, FL/OK, unknown/conflicting state, DNC/phone opt-outs, unsafe numbers, closed/already-logged leads are excluded. No provider/call job or AI calls record is created. Callback is a recorded outcome with no schedule. All existing admin/view-as and module controls remain; login/auth feature work stays last.
+
+Verified: production build/typecheck, 425 unit tests, 63 integration tests and two browser flows with zero mobile axe violations. Scoped lint has no errors and scoped formatting passes. CI/live behavior not verified. No n8n/connector work, VPS access, actual call/message, real secrets, deploy, push or main merge. Local test database removed. Next: M17 proposal draft builder; n8n work remains parked.

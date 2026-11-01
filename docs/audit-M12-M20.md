@@ -1,6 +1,6 @@
 # M12–M20 audit and wave 30 delivery
 
-**Current order (2026-11-01):** Abdullah deferred n8n automation work. M16-01/02/05 are implemented and verified locally (build/typecheck, 406 unit, 27 integration, one mobile/browser accessibility scenario). Next portal work: human dialer with DNC/never-dial guards, campaigns, proposal drafts. Earlier integration gates remain open; login/auth work stays last.
+**Current order (2026-11-01):** n8n automations remain deferred. M16-01 through M16-06 are implemented locally, including the synthetic human dialer, never-dial guards and campaigns. Latest increment passed build/typecheck, 425 unit, 63 integration and two mobile/browser accessibility scenarios. Next portal task: proposal drafts. No real agency migration or live provider operation is implied; login/auth work stays last.
 
 **Latest progress (2026-11-01):** M13-06 database regression now passes; M12-01 technical review complete. Wave 31 local implementation completed M12-03, M12-05 and M13-02. M12-02 awaits explicit supersede confirmation; M15-04 formatter is tested but workflow validation is blocked by connector errors. Current evidence is in BUILD_PLAN, TESTING and progress; the original audit below records the earlier baseline.
 
