@@ -630,4 +630,4 @@ The lead signing secret is the sole one-time-display exception to status-only se
 
 ### M13-02 live voice opt-in (2026-11-01)
 
-Credentials alone cannot select the real ElevenLabs adapter. `ELEVENLABS_LIVE_ENABLED=false` is the default; explicit true plus live provider mode is required. Existing consent and outbound controls remain. Stub mode overrides the flag. The deployment env template records false; real configuration/calls still require Abdullah's specific yes.
+Credentials alone cannot select the real ElevenLabs adapter. `ELEVENLABS_LIVE_ENABLED=false` is the default; explicit true plus live provider mode is required. Existing consent and outbound controls remain. Stub mode overrides the flag. Production live mode with the flag absent/false fails closed rather than falling back to fake-signature verification. The deployment env template records false; real configuration/calls still require Abdullah's specific yes.

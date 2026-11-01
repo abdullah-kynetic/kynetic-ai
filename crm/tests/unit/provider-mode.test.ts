@@ -37,8 +37,9 @@ describe('provider mode', () => {
     expect(getVoiceProvider('elevenlabs')).toBeInstanceOf(FakeVoiceProvider);
   });
 
-  it('M13-02 F-78: defaults ElevenLabs to a working idempotent stub even with synthetic live credentials', async () => {
+  it('M13-02 F-78: test mode defaults to an idempotent stub even with synthetic live credentials', async () => {
     setProductionEnv('live');
+    vi.stubEnv('NODE_ENV', 'test');
     vi.stubEnv('ELEVENLABS_LIVE_ENABLED', undefined);
     vi.stubEnv('ELEVENLABS_API_KEY', 'synthetic-key');
     vi.stubEnv('ELEVENLABS_WEBHOOK_SECRET', 'synthetic-hook-key');
@@ -75,6 +76,14 @@ describe('provider mode', () => {
     const { getVoiceProvider } = await import('@/server/calls/provider');
     const { ElevenLabsVoiceProvider } = await import('@/server/adapters/voice/elevenlabs');
     expect(getVoiceProvider('elevenlabs')).toBeInstanceOf(ElevenLabsVoiceProvider);
+  });
+
+  it('M13-02 F-78: production live mode refuses an absent opt-in instead of accepting fake webhooks', async () => {
+    setProductionEnv('live');
+    vi.stubEnv('ELEVENLABS_LIVE_ENABLED', undefined);
+    vi.resetModules();
+    const { getVoiceProvider } = await import('@/server/calls/provider');
+    expect(() => getVoiceProvider('elevenlabs')).toThrow(/ELEVENLABS_LIVE_ENABLED/);
   });
 
   it('keeps production live mode fail-closed without credentials', async () => {

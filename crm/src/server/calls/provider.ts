@@ -19,7 +19,15 @@ export function getVoiceProvider(id: VoiceProviderId): VoiceProvider | null {
   if (cached[id]) return cached[id]!;
   const env = getEnv();
   if (id === 'elevenlabs') {
-    if (env.PROVIDER_MODE === 'stub' || !env.ELEVENLABS_LIVE_ENABLED) {
+    if (env.PROVIDER_MODE === 'stub') {
+      cached[id] = new FakeVoiceProvider();
+    } else if (!env.ELEVENLABS_LIVE_ENABLED) {
+      // An unconfigured production live deployment must never accept fake webhook signatures.
+      if (env.NODE_ENV === 'production') {
+        throw new Error(
+          'ELEVENLABS_LIVE_ENABLED is false; explicitly select stub mode or authorize live voice'
+        );
+      }
       cached[id] = new FakeVoiceProvider();
     } else if (env.ELEVENLABS_API_KEY && env.ELEVENLABS_WEBHOOK_SECRET) {
       cached[id] = new ElevenLabsVoiceProvider({
