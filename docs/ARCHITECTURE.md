@@ -429,7 +429,7 @@ Abdullah approved these explicitly or told us to take the recommended option. De
 
 ### Proposed 2026-10-31: n8n runs automations (not in effect until the plan is approved)
 
-Source: DECISIONS DC-TBD-04, -05, -07, -08, -09, -11. Build tasks: BUILD_PLAN M12 to M20. Automation list: `docs/automation-map.md`.
+Source: DECISIONS DC-TBD-04, -05, -07, -08, -09, -11. Build tasks: BUILD_PLAN M12 to M20. Automation list: `docs/automation-map.md`. Draft transport and target endpoint contract: `docs/portal-n8n-contract.md` (M12-01; existing and proposed interfaces are labeled separately).
 
 - **Split.** n8n runs lead sources in, starting calls and retries, sequences, reminders, no-show recovery, the consent decision, alerts, weekly and monthly emails, review requests, Stripe, Cal.com relay, Twenty backup and error alerts. The portal records everything, shows it live, owns consent and DNC lists, metrics math, report data, tenancy, logins, the event bus and webhook intake.
 - **Lead chain.** Form, Meta, Angi or LSA triggers one n8n workflow. Step 1 posts the lead to the portal lead webhook, so it is saved before anything can fail. Step 2 runs the shared "may I contact" sub-workflow and posts the decision. Step 3 asks ElevenLabs to place the call. The provider result comes back through n8n to the portal.
