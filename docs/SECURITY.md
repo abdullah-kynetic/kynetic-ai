@@ -627,3 +627,7 @@ Approved by Abdullah 2026-10-25 (GP-01 to GP-05). The Terms and Privacy wording 
 ### M12-05 admin lead-webhook issuance (2026-11-01)
 
 The lead signing secret is the sole one-time-display exception to status-only secret reads: a verified Kynetic admin may issue/rotate it at `/admin/clients/{tenantId}/webhooks`. This does not reveal any previously stored value or any provider credential. Existing TOTP/admin checks and view-as denial apply on the action and page; active admin role is rechecked in the service. AES-GCM storage and value-free audit commit atomically using the worker connection. The browser receives the new value once, keeps it only in component memory and can dismiss it. Old signatures fail immediately after rotation. No automatic n8n configuration or activation. Real issuance/rotation still needs Abdullah's yes.
+
+### M13-02 live voice opt-in (2026-11-01)
+
+Credentials alone cannot select the real ElevenLabs adapter. `ELEVENLABS_LIVE_ENABLED=false` is the default; explicit true plus live provider mode is required. Existing consent and outbound controls remain. Stub mode overrides the flag. The deployment env template records false; real configuration/calls still require Abdullah's specific yes.

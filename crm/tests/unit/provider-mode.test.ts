@@ -37,8 +37,49 @@ describe('provider mode', () => {
     expect(getVoiceProvider('elevenlabs')).toBeInstanceOf(FakeVoiceProvider);
   });
 
+  it('M13-02 F-78: defaults ElevenLabs to a working idempotent stub even with synthetic live credentials', async () => {
+    setProductionEnv('live');
+    vi.stubEnv('ELEVENLABS_LIVE_ENABLED', undefined);
+    vi.stubEnv('ELEVENLABS_API_KEY', 'synthetic-key');
+    vi.stubEnv('ELEVENLABS_WEBHOOK_SECRET', 'synthetic-hook-key');
+    const fetcher = vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('network forbidden'));
+    vi.resetModules();
+    const { getVoiceProvider } = await import('@/server/calls/provider');
+    const { FakeVoiceProvider } = await import('@/server/adapters/voice/fake');
+    try {
+      const provider = getVoiceProvider('elevenlabs');
+      expect(provider).toBeInstanceOf(FakeVoiceProvider);
+      const input = {
+        tenantId: 'synthetic',
+        contactId: 'synthetic',
+        agentId: 'synthetic-agent',
+        toE164: '+15555550123',
+        context: {},
+        idempotencyKey: 'synthetic-attempt-1'
+      };
+      expect(await provider!.startOutboundCall(input)).toEqual(
+        await provider!.startOutboundCall(input)
+      );
+      expect(fetcher).not.toHaveBeenCalled();
+    } finally {
+      fetcher.mockRestore();
+    }
+  });
+
+  it('M13-02 F-78: selects the real adapter only behind the explicit opt-in without making a call', async () => {
+    setProductionEnv('live');
+    vi.stubEnv('ELEVENLABS_LIVE_ENABLED', 'true');
+    vi.stubEnv('ELEVENLABS_API_KEY', 'synthetic-key');
+    vi.stubEnv('ELEVENLABS_WEBHOOK_SECRET', 'synthetic-hook-key');
+    vi.resetModules();
+    const { getVoiceProvider } = await import('@/server/calls/provider');
+    const { ElevenLabsVoiceProvider } = await import('@/server/adapters/voice/elevenlabs');
+    expect(getVoiceProvider('elevenlabs')).toBeInstanceOf(ElevenLabsVoiceProvider);
+  });
+
   it('keeps production live mode fail-closed without credentials', async () => {
     setProductionEnv('live');
+    vi.stubEnv('ELEVENLABS_LIVE_ENABLED', 'true');
     vi.stubEnv('TWILIO_ACCOUNT_SID', undefined);
     vi.stubEnv('TWILIO_AUTH_TOKEN', undefined);
     vi.stubEnv('ELEVENLABS_API_KEY', undefined);

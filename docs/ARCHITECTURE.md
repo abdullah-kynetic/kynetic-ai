@@ -459,3 +459,7 @@ Source: DECISIONS DC-TBD-04, -05, -07, -08, -09, -11. Build tasks: BUILD_PLAN M1
 10. **Drizzle and Resend:** decisions listed them "to confirm", and `portal/` already runs both. Confirmed (PRD decision 4).
 11. **Text-back pricing:** decisions say text-back is free with after-hours; billing is Phase 2 (Later), so the flag is not enforced in v1.
 
+
+### M13-02 voice selection (2026-11-01)
+
+The existing ElevenLabs adapter is reused. `ELEVENLABS_LIVE_ENABLED` defaults false: runtime selection returns FakeVoiceProvider even when keys are present. Selecting real ElevenLabs requires that opt-in plus `PROVIDER_MODE=live` and the required credentials; production then fails closed when credentials are missing. `PROVIDER_MODE=stub` always overrides the opt-in. OUTBOUND_ENABLED and OutboundGate remain separate controls. Retell selection is unchanged. Enabling live mode is not authorized by this code change; no provider request was made.
