@@ -1,5 +1,7 @@
 # M12–M20 audit and wave 30 delivery
 
+**Latest progress (2026-11-01):** M13-06 database regression now passes; M12-01 technical review complete. Wave 31 local implementation completed M12-03, M12-05 and M13-02. M12-02 awaits explicit supersede confirmation; M15-04 formatter is tested but workflow validation is blocked by connector errors. Current evidence is in BUILD_PLAN, TESTING and progress; the original audit below records the earlier baseline.
+
 2026-10-31 (America/Los_Angeles). Baseline: `3ff1685` on `origin/main`, including merged PR #122. Local `work` was fast-forwarded from `1651451`; main was not modified. Source inspection and local checks only; no live-system state was queried. This report does not certify deployment readiness.
 
 ## What is already implemented

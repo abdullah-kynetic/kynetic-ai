@@ -23,15 +23,15 @@ Legend: Owner N8N = runs in n8n. PORTAL = records and shows. Status: built, part
 
 | # | Automation | Owner | Status | Note |
 |---|---|---|---|---|
-| B1 | Lead intake from form, Meta, Angi, LSA | N8N catches, PORTAL stores | partial | Portal has `/api/hooks/leads/[tenantKey]` with signature check. No admin screen to issue the secret or n8n URL. |
+| B1 | Lead intake from form, Meta, Angi, LSA | N8N catches, PORTAL stores | partial | Portal has `/api/hooks/leads/[tenantKey]` with signature check. Admin webhook URL/status and one-time secret issue/rotate screen now exists (M12-05); source-specific n8n adapters remain pending. |
 | B2 | Dedupe and save lead, show live | PORTAL | built (not confirmed end to end) | `server/leads`. |
 | B3 | Consent, quiet hours, DNC, state rules decision | N8N | conflict | Built in portal as `outbound/gate.ts` + `consent`. New plan moves the decision to n8n. Portal keeps the lists and logs the decision. |
-| B4 | Start Alex call within about 60 seconds | N8N | partial | Portal call code is stub mode. ElevenLabs adapter is not live. |
+| B4 | Start Alex call within about 60 seconds | N8N | partial | ElevenLabs adapter exists with explicit live opt-in defaulting off (M13-02); no live runtime checked. n8n call chain remains unbuilt. |
 | B5 | Call result back (outcome, transcript, recording) | N8N relays, PORTAL stores | partial | `/api/hooks/voice/[provider]` exists. |
 | B6 | Alex checks slots and books | N8N + Cal.com | partial | Portal has `appointments/availability` and `book`. Cal.com wiring not confirmed. |
-| B7 | Retries (5 min, 1 hour, next day, max 4) | N8N | missing | Sequences have no steps, nothing sends. |
+| B7 | Retries (5 min, 1 hour, next day, max 4) | N8N | missing | Portal sequence steps exist; the replacement n8n retry chain is not built. |
 | B8 | SMS follow-up | N8N | blocked | Twilio A2P not approved, sends fail. |
-| B9 | Booked appointment moves deal stage | PORTAL | partial | M13-06 now targets `Estimate Booked`; PostgreSQL regression execution pending. |
+| B9 | Booked appointment moves deal stage | PORTAL | built (local regression verified) | M13-06 targets `Estimate Booked`; PostgreSQL 16 tenant/replay regression passes. |
 | B10 | Appointment reminders | N8N | missing | Stubs. |
 | B11 | No-show recovery | N8N | missing | Stubs. |
 | B12 | New-lead alert to owner | N8N | missing | No `new_lead` alert. Hot-lead and deal-won alerts exist. |
@@ -41,7 +41,7 @@ Legend: Owner N8N = runs in n8n. PORTAL = records and shows. Status: built, part
 | B16 | Weekly email report to client | N8N | missing | New requirement. |
 | B17 | Monthly report | PORTAL page | partial | `reports/worker.ts` exists, never scheduled. |
 | B18 | Opt-out and STOP handling | N8N acts, PORTAL records | partial | `/api/hooks/twilio/inbound`. Not confirmed. |
-| B19 | Error alerts for failed workflows | N8N | missing | |
+| B19 | Error alerts for failed workflows | N8N | partial | Safe local formatter and fake delivery tests exist; importable graph blocked by n8n connector schema/reference errors (M15-04). |
 
 ## A. Kynetic agency side (run as its own tenant)
 
@@ -55,7 +55,7 @@ Legend: Owner N8N = runs in n8n. PORTAL = records and shows. Status: built, part
 | A6 | Proposal draft for approval | PORTAL | missing | Never auto-sent. |
 | A7 | Stripe draft invoices | N8N | missing | Needs approval before send. |
 | A8 | Payment received, dunning | N8N | missing | |
-| A9 | Client onboarding: create tenant, issue webhook secret, checklist | PORTAL | partial | Admin client screens exist. No secret issuing. |
+| A9 | Client onboarding: create tenant, issue webhook secret, checklist | PORTAL | partial | Admin client screens and one-time webhook secret issuing exist; won-deal onboarding remains M17-03. |
 | A10 | Daily digest to Abdullah | N8N | missing | |
 | A11 | Agency reporting | PORTAL | missing | |
 | A12 | Twenty one-way backup | N8N | missing | Needs new decision. |

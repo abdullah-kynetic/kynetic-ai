@@ -219,3 +219,9 @@ On `work`, fast-forwarded the stale checkout to merged main `3ff1685` (PR #122);
 ### 2026-11-01 — login/auth sequencing
 
 Abdullah requested login/auth last. Updated BUILD_PLAN and DECISIONS: remaining user-facing login/auth work follows feature implementation and precedes go-live. Existing access controls stay enforced; feature tests use synthetic authenticated fixtures. Documentation-only change; no runtime changes or tests run.
+
+### 2026-11-01 — wave 31 local implementation
+
+Completed the pending M13-06 regression against disposable PostgreSQL 16 (6/6). Technically reviewed M12-01 for local build; locked-decision supersedes and go-live remain separate gates. Built M12-03 evidence-only contact-decision API (atomic tenant-isolated immutable ledger + timeline), M12-05 admin webhook status/one-time secret issue/rotate screen with role/view-as protection, and M13-02 explicit ElevenLabs live opt-in defaulting off. Only synthetic encryption keys/tokens/records were used. Login/auth feature work remains last; existing controls are reused.
+
+Verification: typecheck passed; full unit suite 401/401, then final provider/alert guard tests 8/8; six integration suites 45/45. Targeted lint has no errors (three fixture warnings), formatting passes. CI/build/browser/live behavior not run; baseline whole-repo lint/format failures remain. M15-04 safe alert formatter/fake delivery tests are drafted, but n8n SDK reference/node schemas return internal errors, so the importable workflow is blocked. M12-02 supersede confirmation remains pending; no decision IDs guessed. Next: resolve those two gates, then wave 32's policy/kill-state/result relay work. Test database removed at session end. No real secret access/issuance, provider calls, workflow writes/activation, deploy, push or main merge.

@@ -516,3 +516,14 @@ Abdullah approved these explicitly or told us to take the recommended option. Te
 ### M12/M13 wave 30 local verification (2026-10-31)
 
 Baseline `3ff1685`, branch `work`. `bun run typecheck` passed; `bun run test` passed 51 files / 392 tests. Bun 1.4.4 was invoked through npm exec with a temporary cache because Bun was absent from PATH. `bun run lint` failed on existing kbar set-state-in-effect and admin backups noninteractive tabindex errors; `bun run format:check` reported 61 files. The focused `bun run test:integration -- tests/integration/m7-module-acceptance.test.ts` failed setup (TEST_DATABASE_ADMIN_URL unset; 6 tests skipped). New F-33 M13-06 regression covers default Estimate Booked, foreign-tenant event denial, and replay; it has not passed against PostgreSQL here. No CI, browser, production build, provider or n8n execution. Details: `docs/audit-M12-M20.md`. Acceptance remains pending.
+
+### Wave 31 local implementation (2026-11-01)
+
+Branch work, after 0362a5b. Temporary local PostgreSQL 16 container on loopback port 55432, synthetic records only; no existing database/credentials used. The psql client ran in that same container via a temporary wrapper; TEST_DATABASE_ADMIN_URL selected that disposable instance. Bun 1.4.4 ran the documented commands through npm exec with its temporary cache.
+
+- `bun run typecheck`: passed after the final schema/voice changes.
+- `bun run test`: 53 files / 401 tests passed. After the final production-live guard was added, focused provider/alert suites passed 8/8, including the additional production fail-closed case. No provider request occurred.
+- `bun run test:integration -- tests/integration/contact-decisions-m12.test.ts tests/integration/lead-webhooks-admin-m12.test.ts tests/integration/m7-module-acceptance.test.ts tests/integration/lead-intake.test.ts tests/integration/service-tokens.test.ts tests/integration/tenant-secrets.test.ts`: 6 files / 45 tests passed. Includes M13-06 replay/isolation, M12-03 evidence/atomicity, M12-05 secret rotation/audit/access, and existing intake/service-token/encryption regressions.
+- Focused oxlint on 15 changed/new TS/TSX files: no errors, three warnings (existing global test seam naming and array sort in the new integration fixture). Targeted oxfmt check on those files passed. The whole-repo lint/format baseline failures recorded above remain; no whole-repo clean claim.
+- M15-04 tests execute the actual draft Code body in a VM and fake idempotent email delivery. They do not verify an n8n graph or real email idempotency.
+- CI, production build, browser rendering/one-time-display interaction, deployed role enforcement, real provider calls and n8n execution are not verified. Local migrations were applied only by the disposable test harness, never to production.
