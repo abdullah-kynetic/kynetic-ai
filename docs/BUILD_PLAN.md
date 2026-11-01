@@ -35,6 +35,7 @@ Resume notes must contain, in this order: `branch:`; `last commit:` (short hash)
 
 ## Summary
 - 128 tasks in 13 milestone groups and 29 waves.
+- Proposed 2026-10-31, not yet approved: 60 more tasks in M12 to M20 (see "M12 to M20 All-in-one portal" below).
 - Models: Sonnet 76, Opus 29, Haiku 23.
 - Sizes: S 30, M 70, L 28.
 
@@ -155,7 +156,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M4-06 | Outbound call start on `lead.created`: call windows, retries, real `OutboundGate` | PRD F-78; SEC 3.4 | M4-01, M4-04 | No call outside the window; kill switch honored; retry cadence tested with a fake clock | L | Opus | no | 13 | done | [PR #100](https://github.com/abdullah-kynetic/kynetic-ai/pull/100). Crash gap (dialed, provider call id unsaved) closed in the M4 gate, DC-119. |
 | M4-07 | Compliance enforcement: quiet hours 8am to 9pm lead-local, DNC, disclosure, recording flag | PRD F-74, F-75; SEC 3 | M4-06 | Table-driven tests incl. DST; two-party state flagged from config | L | Opus | no | 14 | done | [PR #114](https://github.com/abdullah-kynetic/kynetic-ai/pull/114). Per-state table content still needs counsel. |
 | M4-08 | Twilio SMS adapter, status and inbound webhooks, STOP and HELP into consents | PRD F-74, F-30; ARCH Provider integration details | M0-28 | Signature verified; STOP revokes SMS only; sends gated by A2P status | L | Opus | yes | 12 | done | [PR #81](https://github.com/abdullah-kynetic/kynetic-ai/pull/81). Live sends wait on A2P approval. |
-| M4-09 | Resend adapter, webhook, bounce and complaint suppression | PRD F-30, F-35 | M0-28 | Bounce marks the address; shows in integration health data | M | Sonnet | yes | 12 | done | [PR #74](https://github.com/abdullah-kynetic/kynetic-ai/pull/74). Migration 0019, DC-077. |
+| M4-09 | Resend adapter, webhook, bounce and complaint suppression | PRD F-30, F-35 | M0-28 | Bounce marks the address; shows in integration health data | M | Sonnet | yes | 12 | done | [PR #74](https://github.com/abdullah-kynetic/kynetic-ai/pull/74). Migration 0019, DC-077. Resend provider and Better Auth magic-link sender are now wired in Node app and worker startup; fake-fetch unit coverage verifies provider config, escaped link content, sender/recipient, URL-hash idempotency and no-key behavior. No real Resend request or production email was made. |
 | M4-10 | Calls list page | PRD F-26; DS calls | M4-05 | Filters and outcome chips; 10,000-call list under 500 ms p95 | M | Sonnet | yes | 14 | done | [PR #106](https://github.com/abdullah-kynetic/kynetic-ai/pull/106). |
 | M4-11 | Call detail page: player, transcript, summary, extracted fields, flag for review | PRD F-27, F-28 | M4-05, M4-03 | Flag sets `calls.flagged` and notifies Kynetic | M | Sonnet | yes | 14 | done | [PR #104](https://github.com/abdullah-kynetic/kynetic-ai/pull/104). |
 | M4-12 | Messages log page (SMS and email, delivery status) | PRD F-30 | M4-08, M4-09 | Delivery status updates on webhook | S | Haiku | yes | 13 | done | [PR #92](https://github.com/abdullah-kynetic/kynetic-ai/pull/92). |
@@ -250,10 +251,10 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M10-01 | Security review against the SEC checklist; fix findings | SEC Appendix A and 7 | M9-14, M7-11, M8b-08 | Review checklist signed; no open high findings | L | Opus | no | 27 | blocked | Local source/runbook review, tenant/role/token/rate-limit/webhook suites and browser secret-response check pass. Final checklist sign-off depends on M8b-08 and production-like/live configuration evidence, both unavailable under current local-only constraints. |
+| M10-01 | Security review against the SEC checklist; fix findings | SEC Appendix A and 7 | M9-14, M7-11, M8b-08 | Review checklist signed; no open high findings | L | Opus | no | 27 | done | Review evidence: `docs/security-review-M10-01.md`. Tenant-leading contacts trigram index (`b7b8e57`), shared auth IP/email limits (`8256212`), and API/search/export/import limits (`430da61`, tests `4ffce62`) are implemented. Focused rate-limit/search/list/export/import suites passed 34 tests; withApi unit tests passed 5; typecheck passed; affected M10 accessibility/security and M9 search/export browser suites passed 10/10 with no limit errors. Supervisor reports Bun 1.4.2 production audit clean (366 packages), one moderate dev-only esbuild advisory, and matching PostgreSQL 17.10 M8b restore tests 5/5; earlier full PG16.14 integration run was 627 passed, 2 failed, 2 skipped, with the index issue fixed and restore mismatch explained. No high findings remain. Production verification is still pending for edge TLS/origin lock-down, deployed headers, and CI secret scanning; the dev dependency advisory is low. |
 | M10-02 | Load test and set numeric limits | ARCH Operations Scale; PRD decision 13 | M9-12 | p95 targets met; limits recorded in ARCH | M | Sonnet | yes | 17 | done | 100 synthetic searches over 10,000 contacts passed at concurrency 20 (p95 75.2ms) and 100 (p95 218.1ms) using the app-equivalent pool max=10. EXPLAIN confirms phone-fragment trigram index; combined search sequential scan measured 17.9ms. Production capacity remains unverified. |
 | M10-03 | Restore drill on the production-like stack | ARCH Operations; T restore drill | M8b-05 | Scratch restore passes isolation tests | M | Opus | yes | 17 | done | 2026-10-29 VPS drill: synthetic restore-source DB migrated and seeded with demo-a/demo-b/demo-sales; `kynetic_backup` pg_dump, AES-GCM encryption, upload to authorized kynetic-portal-test, read-after-write download/decrypt, scratch pg_restore, tenant RLS isolation assertions all passed. PostgreSQL 16 client used. Test object, backup_runs row, and temporary source DB were removed; test bucket backup prefix verified empty. Live portal health remained 200/ok. Repo fixes for backup role public/drizzle read access are commits  dd16456 and 15457d0. |
-| M10-04 | WCAG 2.2 AA audit: axe plus manual keyboard and screen-reader pass | DS Accessibility; PRD decision 13 | M9-12 | No AA failures on daily-use pages | M | Sonnet | yes | 17 | blocked | Automated axe WCAG 2.2 AA scans pass on six owner and four admin pages; keyboard focus checks pass on contacts, appointments and tasks. Remaining screen-reader and full keyboard interaction acceptance requires manual human review. |
+| M10-04 | WCAG 2.2 AA audit: axe plus manual keyboard and screen-reader pass | DS Accessibility; PRD decision 13 | M9-12 | No AA failures on daily-use pages | M | Sonnet | yes | 17 | blocked | Automated evidence: `docs/a11y-review-M10-04.md`. Axe scanned 24 routes in light/dark and desktop/390px mobile (96 clean page-state scans), using WCAG 2.0/2.1/2.2 A and AA tags; the combined `m10-a11y-security.spec.ts` + `shell.spec.ts` run passed 21/21, including keyboard and focus checks. Initial product findings were five affected DOM nodes (audit summaries, two mobile table regions and Kanban board ARIA); all fixed in `d25d682`, `720b81f`, and `246d35d`. Manual screen-reader review: not verified, needs a human screen-reader pass. Keep blocked until that human review is recorded. |
 | M10-05 | Production server setup: compose project, Cloudflare, Caddy, deploy script, monitoring and alerts | ARCH Server and deployment setup, Monitoring | M0-27, M0-28 | Health check green; alert test fires; deploy and rollback rehearsed | L | Opus | blocked | 12 | blocked | Legacy backup verified at `/var/backups/portal-legacy-20261028T231704Z`; Caddy backup at `/var/backups/portal-caddy-swap-20261029T024426Z/Caddyfile`. New app/worker/Postgres stack at `/opt/portal-new`, app on `127.0.0.1:3021`, R2 test bucket only, provider mode stub, outbound disabled. Bootstrap, role migrations, app health and worker verified. Portal-only Caddy change validated/reloaded; portal, Twenty, n8n, Kien all returned 200. Old app/DB containers are stopped; named volume retained. M10-03 production-like R2 restore drill passed and all synthetic/temp R2 objects and DB records were cleaned. Deploy/rollback rehearsal passed: built app/worker from source commit `15457d0`, verified app healthy and worker running with zero restarts, then restored the saved `4f104ff` app/worker compose and repeated the checks; the legacy DB volume and neighboring services were untouched. Exact legacy and image rollback commands are in `crm/deploy/prod/README.md`. Gate remains blocked because the production alert email test requires Resend/real email, which is excluded from approved scope; DNS/pilot/client-data checks also remain unapproved. |
 | M10-06 | Email domain and DNS records (SPF, DKIM, DMARC) | ARCH Domain, DNS and email domain | M10-05 | Resend domain verified | S | Sonnet | yes | 13 | blocked | DNS and Resend domain verification are live-system changes, explicitly excluded without Abdullah's approval. |
 | M10-07 | Pre-go-live gates checklist, synthetic demo tenant script, old portal and `/api/ingest/results` fate recorded | ARCH Pre-go-live gates; PRD F-88 | M10-01..M10-06 | Every gate ticked; demo tenant seeded with synthetic data only | M | Sonnet | no | 28 | blocked | Depends on open M10-01/03/04/05/06 and owner decision on legacy portal/API fate. Production readiness is not claimed. |
@@ -268,6 +269,141 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M11-03 | Owner Online Presence tab and `ReportSection` for the monthly report | PRD F-83; ARCH 7 | M11-01, M6-05 | Section appears only with `opm` on | M | Sonnet | yes | 25 | done | Monthly report sections include enabled OPM snapshots; owner page and report browser flow pass in `tests/e2e/m11-presence.spec.ts` (2026-10-28). |
 | M11-04 | M11 gate | AGENTS; T | M11-01, M11-02, M11-03 | All M11 rows pass | S | Haiku | no | 26 | done | Focused presence and baseline integration tests (20 passed), M11 browser flow (1 passed), typecheck and production build pass. No vendor connector was built; vendor selection remains unresolved and out of v1 status-only scope. |
 
+
+## M12 to M20 All-in-one portal (proposed 2026-10-31, waits for Abdullah's approval)
+
+Source of the decisions: `docs/DECISIONS.md` section "All-in-one portal, 2026-10-30/31". Companion: `docs/automation-map.md`. Nothing here is built. n8n workflows are built inactive and never activated without Abdullah's yes. Real provider calls, deploys, DNS, and writes to Retell, Twenty or Notion each need his specific yes. Waves are assigned when approved.
+
+### M12 n8n contract and safety (the gate tasks must be done before any send task)
+
+| ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| M12-01 | Write the portal/n8n contract doc: events n8n sends, endpoints the portal exposes, signing, retries, idempotency | automation-map; DECISIONS DC-TBD | none | Doc reviewed. Every automation in the map has an owner and an endpoint. | S | Opus | yes | 30 | todo |  |
+| M12-02 | Record decisions 3, 4, 7, 8 in `docs/DECISIONS.md` | automation-map; DECISIONS DC-TBD | M12-01 | Entries added with Abdullah's confirmation. No D-number guessed. | S | Haiku | yes | 31 | todo |  |
+| M12-03 | Portal endpoint: n8n posts a "contact decision" (allow or deny, reason, rule that fired). Stored on the lead timeline. | automation-map; DECISIONS DC-TBD | M12-01 | Integration test: allow and deny both stored, tenant isolated, duplicate post ignored. | M | Sonnet | yes | 31 | todo |  |
+| M12-04 | Portal kill switch n8n reads before any send (global and per tenant) | automation-map; DECISIONS DC-TBD | M12-03 | Test: switch on means the shared sub-workflow refuses. | S | Sonnet | yes | 32 | todo |  |
+| M12-05 | Admin screen to issue a tenant's lead-webhook secret and show the n8n URL | automation-map; DECISIONS DC-TBD | M12-01 | Secret shown once, rotated, never logged. Access test for non-admin. | M | Sonnet | yes | 31 | todo |  |
+| M12-06 | Shared n8n sub-workflow "may I contact" (consent, quiet hours, state rules, DNC, frequency caps) reading portal data | automation-map; DECISIONS DC-TBD | M12-03 | Fake-data test table covers every rule, including quiet hours at edges and Florida/Oklahoma blocks. Logs a decision per run. | L | Opus | yes | 32 | todo |  |
+| M12-07 | Gate parity test: same inputs through the old portal gate and the n8n sub-workflow give the same answer | automation-map; DECISIONS DC-TBD | M12-06 | All cases match or each difference is listed for Abdullah. | M | Opus | yes | 33 | todo |  |
+| M12-08 | M12 gate: review of decisions, risk list, kill switch | automation-map; DECISIONS DC-TBD | M12-02, M12-03, M12-04, M12-05, M12-07 | Abdullah's yes. | S | Haiku | yes | 34 | todo |  |
+
+### M13 Client lead-to-call chain (ElevenLabs, stub first)
+
+| ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| M13-01 | n8n workflow: form/Meta/Angi/LSA lead in, post to portal, check contact decision, start call | automation-map; DECISIONS DC-TBD | M12-08 | Fake-source test: lead appears in portal first, then a fake call starts. Lead is never lost if call step fails. | L | Sonnet | yes | 35 | todo |  |
+| M13-02 | ElevenLabs adapter in the portal (stub and real behind a switch) | automation-map; DECISIONS DC-TBD | M12-01 | Stub passes. Real mode off by default. | M | Opus | yes | 31 | todo |  |
+| M13-03 | Call result flow: provider webhook to n8n to portal (outcome, transcript, recording link) | automation-map; DECISIONS DC-TBD | M13-02 | Fake call shows outcome on the lead. Duplicate result ignored. | M | Sonnet | yes | 32 | todo |  |
+| M13-04 | Retry schedule in n8n (5 min, 1 hour, next day, max 4), each retry re-checks contact decision | automation-map; DECISIONS DC-TBD | M13-01 | Test with fake clock. No retry after opt-out or booking. | M | Sonnet | yes | 36 | todo |  |
+| M13-05 | Booking through Cal.com from the call, relayed to portal | automation-map; DECISIONS DC-TBD | M13-03 | Fake booking appears on the lead and moves the deal stage. | M | Sonnet | yes | 33 | todo |  |
+| M13-06 | Fix deal-to-booked rule (`booked` vs `Estimate Booked`) | automation-map; DECISIONS DC-TBD | none | Regression test. | S | Sonnet | yes | 30 | todo |  |
+| M13-07 | New-lead alert and hot-lead alert by email | automation-map; DECISIONS DC-TBD | M13-01 | Fake lead sends one email. No duplicate. | S | Sonnet | yes | 36 | todo |  |
+| M13-08 | Opt-out and STOP handling end to end | automation-map; DECISIONS DC-TBD | M12-06 | Fake STOP stops all further sends, logged with reason. | M | Opus | yes | 33 | todo |  |
+| M13-09 | M13 gate: full fake run, lead to call to booking to report data | automation-map; DECISIONS DC-TBD | M13-01, M13-03, M13-04, M13-05, M13-07, M13-08 | Abdullah's yes. Real provider test calls need a separate yes. | S | Haiku | yes | 37 | todo |  |
+| M13-10 | Replace the Retell outbound-speed-to-lead n8n workflow with the ElevenLabs lead chain (same Alex, same agent role). The old workflow stays inactive until the new one passes, then is archived only with Abdullah's yes. Nora and Emily are not touched. | automation-map B4; DECISIONS DC-TBD-07 | M13-09 | Side-by-side fake-lead run gives the same outcomes on the new chain; old workflow confirmed inactive; no live n8n or Retell write without a yes | M | Sonnet | yes | 38 | todo |  |
+
+### M14 Follow-up sequences, reminders, reviews
+
+| ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| M14-01 | Sequence steps in n8n (SMS and email) with the contact decision before each send | automation-map; DECISIONS DC-TBD | M13-09 | Test: steps fire in order, stop on reply or opt-out. SMS stays off until A2P. | L | Sonnet | yes | 38 | todo |  |
+| M14-02 | Appointment reminders (24h, 2h) | automation-map; DECISIONS DC-TBD | M13-05 | Fake appointment sends two reminders. | M | Sonnet | yes | 34 | todo |  |
+| M14-03 | No-show recovery | automation-map; DECISIONS DC-TBD | M14-02 | No-show triggers one recovery message and a task. | M | Sonnet | yes | 35 | todo |  |
+| M14-04 | Portal "payment received" event, Paid button and 2-hour review-request timer | automation-map; DECISIONS DC-TBD | M13-09 | Fake payment starts a timer; message is queued 2 hours later; duplicate payment does not double-send. | M | Sonnet | yes | 38 | todo |  |
+| M14-06 | n8n review-request workflow: email now, text after A2P, contact decision before each send | automation-map; DECISIONS DC-TBD | M14-04, M12-06 | Fake run sends the email at 2 hours; opted-out contact gets nothing. Text path stays off until A2P. | M | Sonnet | yes | 39 | todo |  |
+| M14-07 | First two invoicing adapters in n8n (systems chosen with Abdullah once a client's system is known; Stripe test mode is the default first) | automation-map; DECISIONS DC-TBD | M14-04 | Fake paid invoice triggers the portal event. No real client account is touched without a yes. | L | Sonnet | yes | 39 | todo |  |
+| M14-08 | Retire portal-side sending: turn off the portal's own sequence, text-back, reactivation and reminder sends (module flags off), then remove that code once the n8n versions pass. Keep the tables and records. | automation-map B3, B7, B13; DECISIONS DC-TBD-08 | M14-05, M14-06, M12-07 | Only n8n sends in a fake-data run; portal worker queues for these sends are gone; history and records still readable; deletion of code needs Abdullah's yes | M | Sonnet | yes | 40 | todo |  |
+| M14-05 | Missed-call text-back, after-hours reply, reactivation moved or kept | automation-map; DECISIONS DC-TBD | M14-01 | Parity with existing portal behavior. | M | Sonnet | yes | 39 | todo |  |
+
+### M15 Reporting and alerts
+
+| ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| M15-01 | n8n schedule that triggers daily metrics per tenant | automation-map; DECISIONS DC-TBD | M13-09 | Metrics rows appear for fake tenants each day. | S | Sonnet | yes | 38 | todo |  |
+| M15-02 | Weekly client email from n8n (counts, bookings, link to portal) | automation-map; DECISIONS DC-TBD | M15-01 | Fake tenant gets one email with correct numbers. | M | Sonnet | yes | 39 | todo |  |
+| M15-03 | Monthly report scheduling | automation-map; DECISIONS DC-TBD | M15-01 | Report generated for a fake tenant. | S | Sonnet | yes | 39 | todo |  |
+| M15-04 | Error alerts for failed n8n workflows to email | automation-map; DECISIONS DC-TBD | M12-01 | Forced failure sends one alert. | S | Sonnet | yes | 31 | todo |  |
+| M15-05 | SMS alert to Abdullah (blocked until A2P) | automation-map; DECISIONS DC-TBD | M15-04 | Test with fake number only. | S | Sonnet | yes | 32 | todo |  |
+
+### M16 Kynetic agency tenant: leads, dialer, pipeline
+
+| ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| M16-01 | Create Kynetic as its own tenant (synthetic data first) | automation-map; DECISIONS DC-TBD | M12-08 | Isolation test with a client tenant. | M | Opus | yes | 35 | todo |  |
+| M16-02 | Lead sources inbound vs outbound; outbound split by channel (cold call, SMS, email, DM) | automation-map; DECISIONS DC-TBD | M16-01 | Filters and counts correct on seeded data. | M | Sonnet | yes | 36 | todo |  |
+| M16-03 | Human dialer queue: next lead, script, DNC flag, one-tap outcome log | automation-map; DECISIONS DC-TBD | M16-02 | Seeded run: DNC lead is never shown. Outcome saved with time. | L | Sonnet | yes | 37 | todo |  |
+| M16-04 | Campaigns | automation-map; DECISIONS DC-TBD | M16-02 | Create, assign leads, see results. | M | Sonnet | yes | 37 | todo |  |
+| M16-05 | Agency pipeline stages (confirmed: New, Contacted, Interested, Proposal Sent, Won, Lost, Nurture) | automation-map; DECISIONS DC-TBD | M16-01 | Stages editable, moves logged. | M | Sonnet | yes | 36 | todo |  |
+| M16-06 | Never-dial list guard (AM-1 Roofing, FL, OK, DNC) in the dialer | automation-map; DECISIONS DC-TBD | M16-03 | Test: blocked numbers cannot be logged as called. | S | Opus | yes | 38 | todo |  |
+
+### M17 Proposals, onboarding, billing
+
+| ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| M17-01 | Proposal builder (draft, never auto-sent; Problem, Agentic Solution, Roadmap, ROI) | automation-map; DECISIONS DC-TBD | M16-05 | Draft saved and rendered. | M | Sonnet | yes | 37 | todo |  |
+| M17-02 | Price plans as data | automation-map; DECISIONS DC-TBD | M17-01 | Both price models loadable; no hard-coded price. | M | Sonnet | yes | 38 | todo |  |
+| M17-03 | Client onboarding checklist and tenant creation from a won deal (no live provider calls) | automation-map; DECISIONS DC-TBD | M17-01, M12-05 | Fake client created end to end. | L | Sonnet | yes | 38 | todo |  |
+| M17-06 | Auto-created Alex demo when a client profile is created (copy a template agent with the client's name; demo number only reachable by Abdullah; real provider calls need his yes; never touches Nora or Emily) | automation-map; DECISIONS DC-TBD | M13-02, M17-03 | Fake client profile creates a stub demo agent record and shows a test link. No live write. | L | Opus | yes | 39 | todo |  |
+| M17-04 | Stripe draft invoices from n8n (needs Abdullah's yes before any real Stripe write) | automation-map; DECISIONS DC-TBD | M17-02 | Stripe test mode only. Draft created and logged. | L | Sonnet | yes | 39 | todo |  |
+| M17-05 | Payment received and dunning (test mode) | automation-map; DECISIONS DC-TBD | M17-04 | Fake failed payment starts dunning. | M | Sonnet | yes | 40 | todo |  |
+
+### M18 Backup, digest, cleanup
+
+| ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| M18-01 | Twenty one-way backup of Kynetic data and tenant summaries (no personal data) | automation-map; DECISIONS DC-TBD | M12-02 | Test proves no client personal data in the payload. Writes need Abdullah's yes. | L | Opus | yes | 32 | todo |  |
+| M18-02 | Daily digest to Abdullah | automation-map; DECISIONS DC-TBD | M15-01 | Fake data digest arrives. | S | Sonnet | yes | 39 | todo |  |
+| M18-03 | Twilio click-to-call dialer (later, only after A2P and volume) | automation-map; DECISIONS DC-TBD | M16-03 | Deferred. | L | Opus | yes | 38 | todo |  |
+| M18-04 | Update docs, progress, known issues | automation-map; DECISIONS DC-TBD | all | Docs match what was built. | S | Haiku | no | 42 | todo |  |
+| M18-05 | Delete the retired `portal/` folder and update `CLAUDE.md`, `KYNETIC_CONTEXT.md` and the system map. Needs Abdullah's yes; first record the fate of `/api/ingest/results` (M10-07). | M10-07; KYNETIC_CONTEXT | none | No code, workflow or tool references `portal/` or `/api/ingest`; docs point to `crm/`; history keeps the old code | S | Haiku | yes | 30 | todo |  |
+
+### M19 Client-side completeness (added Nov 1 from the gap check)
+
+| ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| M19-01 | Ad spend and cost-per-lead on the client dashboard (Meta spend pulled by n8n, stored by portal) | automation-map; DECISIONS DC-TBD | M13-09 | Fake spend plus fake leads give correct cost per lead per week. | M | Sonnet | yes | 38 | todo |  |
+| M19-02 | Alex usage and cost tracking per tenant, with a monthly spend cap that pauses calls | automation-map; DECISIONS DC-TBD | M13-03, M12-04 | Fake usage over the cap pauses new calls and alerts Abdullah. | M | Opus | yes | 33 | todo |  |
+| M19-03 | Recording-disclosure check on every call (opener present in transcript, flag if missing) | automation-map; DECISIONS DC-TBD | M13-03 | Fake transcript without the disclosure is flagged on the call and counted in the report. | S | Sonnet | yes | 33 | todo |  |
+| M19-04 | Client offboarding: stop all sends, export their data, mark tenant inactive | automation-map; DECISIONS DC-TBD | M12-06 | Fake tenant cancelled; no further sends; export contains only that tenant. | M | Opus | yes | 33 | todo |  |
+| M19-05 | Client staff roles and invites recheck against the new flows (built in M8; verify only) | automation-map; DECISIONS DC-TBD | M13-09 | Role tests still pass with n8n-written data. | S | Sonnet | yes | 38 | todo |  |
+
+### M20 Agency completeness (added Nov 1 from the gap check)
+
+| ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| M20-01 | Lead sourcing import into outbound lists (Meta Ad Library and Maps results through n8n) | automation-map; DECISIONS DC-TBD | M16-02 | Seeded results import once, dedupe, never import AM-1 Roofing or FL/OK. | M | Sonnet | yes | 37 | todo |  |
+| M20-02 | Outbound email and DM tracking (human-sent; portal logs and checks DNC; no automated sends, per D-007) | automation-map; DECISIONS DC-TBD | M16-02 | Logged message appears on lead; DNC lead blocked. | M | Sonnet | yes | 37 | todo |  |
+| M20-03 | Contracts and e-sign tracking (draft, sent, signed; provider chosen by Abdullah) | automation-map; DECISIONS DC-TBD | M17-01 | Status moves and links to the deal. No real send without a yes. | M | Sonnet | yes | 38 | todo |  |
+| M20-04 | Revenue and expenses view for Kynetic | automation-map; DECISIONS DC-TBD | M17-05 | Seeded invoices and expenses give correct monthly totals. | M | Sonnet | no | 41 | todo |  |
+| M20-05 | Client health score and renewal alerts | automation-map; DECISIONS DC-TBD | M15-01 | Fake low-activity client triggers one alert. | M | Sonnet | yes | 39 | todo |  |
+| M20-06 | Support requests from clients | automation-map; DECISIONS DC-TBD | M16-01 | Client submits, Abdullah sees it, status tracked. | M | Sonnet | yes | 36 | todo |  |
+| M20-07 | Referrals and case-study tracking | automation-map; DECISIONS DC-TBD | M17-03 | Referral linked to a won deal; case-study status per client. | S | Haiku | yes | 39 | todo |  |
+
+
+
+
+### Build order for M12 to M20
+
+Waves 30 and up continue after the existing 29. A task may start when every dependency is `done`. Tasks in the same wave with Parallel = yes can run in separate threads. Anything that needs a live provider, deploy, DNS change or write to Retell, Twenty, Notion or Stripe waits for Abdullah's specific yes, whatever the wave.
+
+| Wave | Tasks | Notes |
+| --- | --- | --- |
+| 30 | M12-01, M13-06, M18-05 | |
+| 31 | M12-02, M12-03, M12-05, M13-02, M15-04 | |
+| 32 | M12-04, M12-06, M13-03, M15-05, M18-01 | |
+| 33 | M12-07, M13-05, M13-08, M19-02, M19-03, M19-04 | |
+| 34 | M12-08, M14-02 | |
+| 35 | M13-01, M14-03, M16-01 | |
+| 36 | M13-04, M13-07, M16-02, M16-05, M20-06 | |
+| 37 | M13-09, M16-03, M16-04, M17-01, M20-01, M20-02 | |
+| 38 | M13-10, M14-01, M14-04, M15-01, M16-06, M17-02, M17-03, M18-03, M19-01, M19-05, M20-03 | |
+| 39 | M14-06, M14-07, M14-05, M15-02, M15-03, M17-06, M17-04, M18-02, M20-05, M20-07 | |
+| 40 | M14-08, M17-05 | |
+| 41 | M20-04 | |
+| 42 | M18-04 | |
+
+How a new thread uses this: read this section and the rows for the wave it is taking, then the Implements docs (`docs/automation-map.md`, DECISIONS DC-TBD entries, ARCHITECTURE "Proposed 2026-10-31", SECURITY 3.1a, PRD "Proposed additions"), analyze what each task needs, build it on `work` with its acceptance tests, update the row, and stop at any live-system step.
+
 ## Open items that can block tasks
 These come from `docs/DECISIONS.md` (Still UNRESOLVED and approved gap-check items).
 - Delivery date: no task is blocked, but the plan cannot be dated until Abdullah gives it.
@@ -276,6 +412,12 @@ These come from `docs/DECISIONS.md` (Still UNRESOLVED and approved gap-check ite
 - Counsel answers gate the state rule table and consent wording (M4-07). Build to the decided defaults with the table as versioned config.
 - ElevenLabs paid plan and phone import gate real calls (M4-01 live check, M10-08), not the adapter.
 - F-97 connectors and OPM vendors are not planned until chosen.
+- M12 to M20 (proposed): counsel has not confirmed that n8n making the consent decision (DC-TBD-08) meets TCPA and state rules; M12-06 and M12-07 are built against the decided defaults and the real go-live waits for counsel.
+- M12 to M20: which two invoicing systems come first (M14-07) needs Abdullah, once a client's system is known.
+- M12 to M20: whether the current lead webhook accepts every lead-source shape, and what the `backup.run` job does, are not confirmed; M12-01 and M18-01 check them first.
+- M12 to M20: Twilio A2P gates every text step (M14-01, M14-04, M14-06, M15-05).
+- Not in M12 to M20: the M10 leftovers (Cloudflare/TLS lock-down, CI secret scanning, human screen-reader pass). They stay under M10-01, M10-04 and M10-05.
+- Coastal Roofing tenant setup is on hold until Abdullah says go and is not a task here.
 
 ## M0 gate resume notes (2026-10-26)
 

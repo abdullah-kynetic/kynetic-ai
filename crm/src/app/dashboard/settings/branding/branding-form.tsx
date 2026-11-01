@@ -10,6 +10,7 @@ import {
   normalizeHex
 } from '@/lib/branding/color';
 import { useState, useTransition } from 'react';
+import { useTheme } from 'next-themes';
 import { saveBrandingAction, type BrandingResult } from './actions';
 
 type Initial = { name: string; primaryColor: string; logoUrl: string | null };
@@ -19,10 +20,12 @@ export function BrandingForm({ initial }: { initial: Initial }) {
   const [color, setColor] = useState(initial.primaryColor);
   const [result, setResult] = useState<BrandingResult | null>(null);
   const [pending, start] = useTransition();
+  const { resolvedTheme } = useTheme();
 
   const hex = normalizeHex(color);
   const check = hex ? checkPrimaryColor(hex) : null;
-  const preview = deriveBranding(check?.ok && hex ? hex : KYNETIC_ORANGE).light;
+  const branding = deriveBranding(check?.ok && hex ? hex : KYNETIC_ORANGE);
+  const preview = resolvedTheme === 'dark' ? branding.dark : branding.light;
   const live =
     color && !check
       ? 'Enter the color as #rrggbb.'

@@ -366,6 +366,7 @@ Approved by Abdullah 2026-10-25 (GP-06 to GP-11, DECISIONS DC-047). Items that n
 - **Portal domain.** `portal.kyneticai.com` for everyone (PRD decision 11). Today `kyneticai.com` DNS is at Squarespace and the bare domain does not resolve (project memory, 2026-10-22). Cloudflare in front of the portal needs the zone, or at least the `portal` and `*.preview` records, on Cloudflare. Approved (GP-07); needs Abdullah's action: move the nameservers to Cloudflare and recreate the Squarespace records first, so the site keeps working. This is pending question 9 in the project notes.
 - **TLS.** Cloudflare edge certificate plus a Caddy origin certificate (Cloudflare Origin CA), full-strict mode. Certificate expiry is alerted at 14 days.
 - **Email domain.** Resend sending domain on a subdomain, `mail.kyneticai.com`, with SPF, DKIM and DMARC (start at `p=none`, tighten to `quarantine` after a clean month). Decided 2026-10-25 (approved: as written; needs DNS access). Sender display name is the tenant's business name (F-39); the address stays Kynetic's verified domain; Reply-To is the owner's email.
+- **Platform auth email.** Better Auth magic links are transactional platform messages. The Node app and worker boot path wires the Resend provider when `RESEND_API_KEY` is configured; the auth sender uses `Kynetic AI` and `EMAIL_FROM_ADDRESS`. Missing Resend configuration leaves email providers unset. Message links are HTML-escaped, expire in 15 minutes, and use a SHA-256 URL idempotency key. No token URL or provider key is logged.
 - **Per-client custom domains** stay Later (F-40).
 
 ### Monitoring and alerting (gap check 2026-10-25)
@@ -425,6 +426,17 @@ Abdullah approved these explicitly or told us to take the recommended option. De
 12. Numeric rate limits, alert thresholds and scale limits: the SECURITY 5.4 numbers are the v1 defaults; M10's load test may tune them. Alerts go by email through Resend.
 13. This doc is authoritative for layout; CODE_STYLE follows it.
 14. Twenty push of tenant summaries is Later, not v1. Client data never goes into Twenty.
+
+### Proposed 2026-10-31: n8n runs automations (not in effect until the plan is approved)
+
+Source: DECISIONS DC-TBD-04, -05, -07, -08, -09, -11. Build tasks: BUILD_PLAN M12 to M20. Automation list: `docs/automation-map.md`.
+
+- **Split.** n8n runs lead sources in, starting calls and retries, sequences, reminders, no-show recovery, the consent decision, alerts, weekly and monthly emails, review requests, Stripe, Cal.com relay, Twenty backup and error alerts. The portal records everything, shows it live, owns consent and DNC lists, metrics math, report data, tenancy, logins, the event bus and webhook intake.
+- **Lead chain.** Form, Meta, Angi or LSA triggers one n8n workflow. Step 1 posts the lead to the portal lead webhook, so it is saved before anything can fail. Step 2 runs the shared "may I contact" sub-workflow and posts the decision. Step 3 asks ElevenLabs to place the call. The provider result comes back through n8n to the portal.
+- **What stays in the portal worker.** `event.dispatch`, `event.subscriber`, `webhook.process`, and the metrics and report math. Sequence steps, reminders, alert emails, task-due reminders and call retries move to n8n schedules. `backup.run` is not confirmed.
+- **Voice.** ElevenLabs adapter first, behind the existing adapter interface. Retell is not built.
+- **Backup to Twenty.** One way, Kynetic-side data plus per-tenant summaries with no personal data. Twenty never writes back.
+- **Consent gate.** See SECURITY 3.1a. `OutboundGate` and `canContact` remain until the n8n sub-workflow passes the parity test.
 
 ### UNRESOLVED (needs outside information)
 

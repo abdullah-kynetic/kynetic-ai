@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { contactsActorScope, exportContactsCsv, searchContactsSchema } from '@/server/contacts';
 import { AppError } from '@/server/errors';
+import { getDb } from '@/server/db/client';
+import { enforceExportImportRateLimit } from '@/server/security/rate-limit';
 import { withApi } from '@/server/security/with-api';
 
 export const dynamic = 'force-dynamic';
@@ -28,6 +30,7 @@ export const GET = withApi(async (request) => {
     createdTo: params.get('createdTo') ?? undefined,
     custom
   });
+  await enforceExportImportRateLimit(getDb(), scope.ctx.tenantId);
   const csv = await exportContactsCsv(scope.ctx, scope.actor, filters);
   return new NextResponse(csv, {
     headers: {

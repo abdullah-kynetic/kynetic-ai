@@ -23,7 +23,7 @@ export default async function BackupsPage() {
         ) : undefined
       }
     >
-      <div className='overflow-x-auto rounded border'>
+      <div className='overflow-x-auto rounded border' role='region' aria-label='Backup history' tabIndex={0}>
         <table className='w-full text-left text-sm'>
           <thead>
             <tr>

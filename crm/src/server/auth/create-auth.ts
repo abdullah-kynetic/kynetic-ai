@@ -51,6 +51,13 @@ export function createAuth(deps: AuthDeps) {
       expiresIn: SESSION_EXPIRES_IN_SECONDS,
       updateAge: SESSION_UPDATE_AGE_SECONDS
     },
+    rateLimit: {
+      enabled: true,
+      // The route wrapper enforces the shared PostgreSQL-backed 5/min IP and 10/hour email rules.
+      // Disable Better Auth's stricter in-memory magic-link default so limits are consistent across
+      // app instances and match SECURITY 5.4.
+      customRules: { '/sign-in/magic-link': false }
+    },
     account: {
       // Google links to an existing user only when Google reports the email verified. No
       // trustedProviders, so an unverified email never links.

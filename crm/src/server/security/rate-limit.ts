@@ -78,6 +78,19 @@ export async function enforceRateLimit(
   return result;
 }
 
+export function enforceApiRateLimit(db: Db, userId: string, now?: Date) {
+  return enforceRateLimit(db, RATE_LIMITS.apiUser, userId, now);
+}
+
+export function enforceSearchRateLimit(db: Db, userId: string, now?: Date) {
+  return enforceRateLimit(db, RATE_LIMITS.searchUser, userId, now);
+}
+
+/** Import batches and CSV exports share the per-tenant hourly budget from SECURITY 5.4. */
+export function enforceExportImportRateLimit(db: Db, tenantId: string, now?: Date) {
+  return enforceRateLimit(db, RATE_LIMITS.exportImportTenant, tenantId, now);
+}
+
 /** Counters are short-lived. The M0-15 job runner calls this on a schedule. */
 export async function purgeExpiredRateLimits(db: Db, now: Date = new Date()): Promise<number> {
   const rows = await db

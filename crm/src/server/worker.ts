@@ -5,6 +5,7 @@ import {
   registerVoiceProcessor
 } from './calls';
 import { getEnv } from './env';
+import { wireEmail } from './email/wire';
 import { registerEventWorkers } from './events';
 import { stopJobs } from './jobs';
 import { getSmsProvider } from './messaging/provider';
@@ -30,7 +31,7 @@ import { handleBackupJob, type BackupJob } from './admin/backups';
 
 // Worker entry (kynetic_worker). Feature milestones register their subscribers and webhook
 // processors before this point; the fan-out workers below deliver to them.
-getEnv();
+wireEmail(getEnv());
 registerVoiceProcessor({ provider: getVoiceProvider('elevenlabs')! });
 registerLeadProcessor();
 registerOutboundCallSubscriber();

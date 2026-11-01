@@ -15,8 +15,8 @@ SELECT (
 ) AS bootstrap_passwords_valid \gset
 \if :bootstrap_passwords_valid
 \else
-\echo 'bootstrap refused: every role password must be non-empty'
-\quit 3
+-- psql's \quit takes no exit code, so raise an error: ON_ERROR_STOP then exits non-zero (3).
+DO $$ BEGIN RAISE EXCEPTION 'bootstrap refused: every role password must be non-empty'; END $$;
 \endif
 
 SELECT format('CREATE ROLE kynetic_owner LOGIN PASSWORD %L', :'owner_pw')

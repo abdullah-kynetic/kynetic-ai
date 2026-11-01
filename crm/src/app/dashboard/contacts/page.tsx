@@ -17,6 +17,8 @@ import {
 import { headers } from 'next/headers';
 import { can } from '@/server/auth/permissions';
 import { Button } from '@/components/ui/button';
+import { getDb } from '@/server/db/client';
+import { enforceSearchRateLimit } from '@/server/security/rate-limit';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Leads' };
@@ -36,6 +38,7 @@ export default async function ContactsPage({
     );
   }
   const { ctx, actor } = scope;
+  await enforceSearchRateLimit(getDb(), actor.userId);
   const canWrite = (await contactsScope(await headers(), 'tenant_data.write')) !== null;
   // Custom fields are CRM Full (F-12); the base portal and Lite show the list without them.
   const customFields = (await isModuleEnabled(ctx, 'crm', { level: 'full' }))

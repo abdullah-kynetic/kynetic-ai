@@ -11,6 +11,8 @@ const baseUrl = `http://localhost:${port}`;
 const storagePath = join('/tmp', 'kynetic-crm-e2e-owner.json');
 const adminStoragePath = join('/tmp', 'kynetic-crm-e2e-admin.json');
 const vaStoragePath = join('/tmp', 'kynetic-crm-e2e-va.json');
+const termsStoragePath = join('/tmp', 'kynetic-crm-e2e-terms.json');
+const termsUserId = 'ddddddd1-0000-4000-8000-000000000001';
 const secret = 'e2e-only-secret-not-for-real-use-0000';
 let db: TestDatabase | undefined;
 let child: ReturnType<typeof spawn> | undefined;
@@ -34,6 +36,10 @@ async function signedCookie(token: string): Promise<string> {
 async function main(): Promise<void> {
   db = await createTestDatabase({ jobs: true });
   const seeded = await seedTwoTenants(db.admin);
+  await db.admin`insert into calls (id, tenant_id, contact_id, provider, provider_call_id, direction, started_at, summary)
+    values ('cccccccc-0000-4000-8000-000000000063', '11111111-1111-4111-8111-111111111111', ${seeded.a.contactId}, 'fake', 'synthetic-a11y-detail', 'outbound', now(), 'Synthetic accessibility review call')`;
+  await db.admin`insert into users (id, email) values (${termsUserId}, 'pending-terms@example.test')`;
+  await db.admin`insert into memberships (tenant_id, user_id, role) values ('11111111-1111-4111-8111-111111111111', ${termsUserId}, 'owner')`;
   await db.admin`insert into tenants (id, slug, name, plan, timezone) values ('33333333-3333-4333-8333-333333333333', 'tenant-c', 'Tenant C', 'founding', 'UTC')`;
   await db.admin`update tenants set name = 'Synthetic Brand Co', primary_color = '#2563eb' where id = ${IDS.tenantA}`;
   await db.admin`update alex_configs set provider = 'elevenlabs', agent_ref = 'synthetic-e2e-agent', greeting = 'Synthetic greeting', paused = false where tenant_id = ${IDS.tenantA}`;
@@ -87,6 +93,7 @@ async function main(): Promise<void> {
   const session = await (await auth.$context).internalAdapter.createSession(IDS.ownerA);
   const adminSession = await (await auth.$context).internalAdapter.createSession(IDS.admin);
   const vaSession = await (await auth.$context).internalAdapter.createSession(IDS.va);
+  const termsSession = await (await auth.$context).internalAdapter.createSession(termsUserId);
   await db.admin`update users set two_factor_enabled = true where id = ${IDS.admin}`;
   await db.admin`update sessions set two_factor_verified_at = now() where id = ${adminSession.id}`;
   await db.admin`update users set two_factor_enabled = true where id = ${IDS.va}`;
@@ -124,14 +131,38 @@ async function main(): Promise<void> {
       origins: []
     })
   );
-  await writeFile(vaStoragePath, JSON.stringify({ cookies: [{
-    name: 'better-auth.session_token',
-    value: await signedCookie(vaSession.token),
-    domain: 'localhost',
-    path: '/',
-    httpOnly: true,
-    sameSite: 'Lax'
-  }], origins: [] }));
+  await writeFile(
+    vaStoragePath,
+    JSON.stringify({
+      cookies: [
+        {
+          name: 'better-auth.session_token',
+          value: await signedCookie(vaSession.token),
+          domain: 'localhost',
+          path: '/',
+          httpOnly: true,
+          sameSite: 'Lax'
+        }
+      ],
+      origins: []
+    })
+  );
+  await writeFile(
+    termsStoragePath,
+    JSON.stringify({
+      cookies: [
+        {
+          name: 'better-auth.session_token',
+          value: await signedCookie(termsSession.token),
+          domain: 'localhost',
+          path: '/',
+          httpOnly: true,
+          sameSite: 'Lax'
+        }
+      ],
+      origins: []
+    })
+  );
 
   const env = {
     ...process.env,

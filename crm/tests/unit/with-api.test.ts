@@ -2,14 +2,20 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { RateLimitedError } from '@/server/errors';
 
 const calls: unknown[][] = [];
+const apiCalls: unknown[][] = [];
 let behavior: () => void = () => {};
 const enforceRateLimit = async (...args: unknown[]) => {
   calls.push(args);
   behavior();
 };
+const enforceApiRateLimit = async (...args: unknown[]) => {
+  apiCalls.push(args);
+  behavior();
+};
 vi.mock('@/server/env', () => ({ getEnv: () => ({ APP_BASE_URL: 'https://app.example.test' }) }));
 vi.mock('@/server/db/client', () => ({ getDb: () => ({}) }));
-vi.mock('@/server/security/rate-limit', () => ({ enforceRateLimit }));
+vi.mock('@/server/auth', () => ({ getSessionUser: async () => ({ id: 'synthetic-user' }) }));
+vi.mock('@/server/security/rate-limit', () => ({ enforceRateLimit, enforceApiRateLimit }));
 
 const { withApi } = await import('@/server/security/with-api');
 const rule = { name: 't', limit: 1, windowSeconds: 60 };
@@ -18,6 +24,7 @@ const post = (headers: Record<string, string> = {}) =>
 
 beforeEach(() => {
   calls.length = 0;
+  apiCalls.length = 0;
   behavior = () => {};
 });
 
@@ -50,6 +57,15 @@ describe('withApi', () => {
     expect(res.status).toBe(429);
     expect(res.headers.get('retry-after')).toBe('30');
     expect((await res.json()).error.code).toBe('RATE_LIMITED');
+  });
+
+  it('applies the shared per-user API bucket to cookie-authenticated calls', async () => {
+    const res = await withApi(async () => Response.json({ ok: true }))(
+      new Request('https://app.example.test/api/x', { headers: { cookie: 'synthetic=session' } }),
+      undefined
+    );
+    expect(res.status).toBe(200);
+    expect(apiCalls).toEqual([[{}, 'synthetic-user']]);
   });
 
   it('turns a thrown surprise into INTERNAL without its message', async () => {

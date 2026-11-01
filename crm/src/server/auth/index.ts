@@ -44,12 +44,21 @@ export class UnauthenticatedError extends Error {
 
 type MagicLinkSender = (msg: { email: string; url: string }) => Promise<void>;
 
-let sender: MagicLinkSender | undefined;
+// Kept on globalThis so the sender wired in instrumentation is visible to route handlers.
+const SENDER_KEY = Symbol.for('kynetic.magicLinkSender');
+type SenderSlot = { [SENDER_KEY]?: MagicLinkSender };
 let instance: Auth | undefined;
 
 /** Wired at boot to the email adapter. Until then no link is sent. */
-export function setMagicLinkSender(fn: MagicLinkSender): void {
-  sender = fn;
+export function setMagicLinkSender(fn: MagicLinkSender | undefined): void {
+  (globalThis as SenderSlot)[SENDER_KEY] = fn;
+}
+
+/** Deliver an auth-only sign-in message through the configured transactional email provider. */
+export async function sendMagicLinkEmail(msg: { email: string; url: string }): Promise<void> {
+  const sender = (globalThis as SenderSlot)[SENDER_KEY];
+  if (!sender) throw new Error('No email sender is configured for sign-in links');
+  await sender(msg);
 }
 
 export function getAuth(): Auth {
@@ -64,8 +73,7 @@ export function getAuth(): Auth {
           ? { clientId: env.GOOGLE_CLIENT_ID, clientSecret: env.GOOGLE_CLIENT_SECRET }
           : undefined,
       sendMagicLink: async (msg) => {
-        if (!sender) throw new Error('No email sender is configured for sign-in links');
-        await sender(msg);
+        await sendMagicLinkEmail(msg);
       }
     });
   }

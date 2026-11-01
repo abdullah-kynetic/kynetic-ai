@@ -142,11 +142,33 @@ Added at Abdullah's request after a sweep of what the portal needs that no doc c
 | GP-11 | 2026-10-25 | Pre-go-live gates, including KI-006 and KI-008 from the old portal plan. | ARCHITECTURE |
 | GP-12 | 2026-10-25 | Later: AI-drafted admin messages and weekly summary (F-104), proposal builder and estimator (F-105), Twenty to portal client sync (F-106). | PRD |
 
+## All-in-one portal, 2026-10-30/31 (Abdullah, proposed until the plan is approved)
+
+Decided in the project thread while planning M12 to M20 (`docs/BUILD_PLAN.md`). IDs are `DC-TBD-nn`: Abdullah assigns the real DC numbers. Marked "Explicit" because he chose each in his own words or on a decision card. Entries 3, 4, 7 and 8 reverse or replace earlier locked decisions and need his confirmation of the supersede.
+
+| ID | Date | Decision | Source | Docs |
+| --- | --- | --- | --- | --- |
+| DC-TBD-01 | 2026-10-30 | Kynetic's own cold outreach stays human only (D-007 stands). AI calls and SMS go only to people who asked for contact. | Explicit | PRD |
+| DC-TBD-02 | 2026-10-30 | Kynetic dialer is the user's own phone plus portal logging. Twilio click-to-call is Later. | Explicit | PRD, BUILD_PLAN |
+| DC-TBD-03 | 2026-10-30 | Billing price plans are stored as data (Oct 25 prices or D-017, chosen per proposal). Stripe invoices are drafts for approval. | Explicit | PRD, DATABASE |
+| DC-TBD-04 | 2026-10-30 | Twenty one-way backup carries Kynetic-side data plus per-tenant summaries with no personal data. Supersedes DC-043 and DC-003 where they say Twenty holds no tenant data. | Explicit | PRD, ARCHITECTURE |
+| DC-TBD-05 | 2026-10-30 | Cal.com remains the calendar. | Explicit | ARCHITECTURE |
+| DC-TBD-06 | 2026-10-30 | Alerts go by email; SMS to Abdullah after Twilio A2P approval. | Explicit | PRD |
+| DC-TBD-07 | 2026-10-30 | ElevenLabs is the first voice provider. Retell is not built. | Explicit | ARCHITECTURE |
+| DC-TBD-08 | 2026-10-31 | n8n runs the automations and makes the consent, quiet-hours and DNC decision. The portal records each decision with its reason and owns the lists and the kill switch. Replaces the portal `canContact` / `OutboundGate` as the single gate (SECURITY 3.9, SEC-T-13). Counsel has not confirmed this. | Explicit | SECURITY, ARCHITECTURE, TESTING |
+| DC-TBD-09 | 2026-10-31 | Reports: live portal dashboard plus a weekly email sent by n8n. | Explicit | PRD |
+| DC-TBD-10 | 2026-10-31 | Agency pipeline stages: New, Contacted, Interested, Proposal Sent, Won, Lost, Nurture. | Explicit | PRD |
+| DC-TBD-11 | 2026-10-31 | Review request text goes out 2 hours after payment is received. One generic payment-received event in the portal, a thin n8n adapter per invoicing system, and a Paid button as fallback. Email until A2P approval. | Explicit | PRD, ARCHITECTURE |
+| DC-TBD-12 | 2026-11-01 | In scope: auto-created Alex demo for new client profiles and the first two invoicing adapters. Later: Twilio click-to-call, Retell adapter. | Explicit | BUILD_PLAN |
+| DC-TBD-13 | 2026-11-01 | Gap-check items added as M19 and M20. Outbound email and DMs stay manual (human-sent; portal logs and DNC-checks). | Explicit | BUILD_PLAN |
+
 ## Still UNRESOLVED (needs outside information)
 
 | Item | Needs |
 | --- | --- |
 | Delivery date | Abdullah's date |
+| Counsel view of n8n making the consent decision (DC-TBD-08) | Counsel |
+| Which two invoicing systems come first (M14-07) | Abdullah |
 | Which F-97 direct connectors, in what order, and their API access | Abdullah and the providers |
 | State calling and recording rules, consent wording, Terms and Privacy wording, incident notification duties | Counsel |
 | Twilio A2P campaign approval and per-tenant sending numbers | Twilio |

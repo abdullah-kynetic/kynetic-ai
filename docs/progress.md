@@ -6,7 +6,7 @@ Mirror of the Twenty roadmap ("Roadmap: all phases"). Twenty is canonical; this 
 Plan 1 only: the outbound speed-to-lead agent at the D-017 price (first 3 clients $4,675, clients 4 and up $8,500, three Stripe invoices at 50/25/25). Gate of 5 paying clients before Plan 2 (D-013). Task titles in Twenty carry [P1]/[P2]; Emily inbound and all upsell systems are [P2].
 
 ## Current phase
-Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Retell is the platform and Vapi is parked (D-018). Active files: `retell/builds/outbound-speed-to-lead/`.
+Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Retell is the platform and Vapi is parked (D-018). Active files: `retell/builds/outbound-speed-to-lead/`. The separate CRM portal remains in local M10 hardening; it is not part of the Twenty roadmap.
 
 ## Done
 - PR #2 merged: Emily handoff, tools/retell.py, KYNETIC_CONTEXT.md.
@@ -21,6 +21,7 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Rete
 - PR #14 merged: documented the move to self-hosted Twenty at https://crm.kyneticai.com.
 - PR #15 merged: client portal at https://portal.kyneticai.com (code in `portal/`, deployed on the OVH VPS). DNS A record was not set at the time (set since, see KI-006); no real client data until the must-fixes are done. See the Portal section of KYNETIC_CONTEXT.md and KI-006 to KI-008.
 - PR #16 merged: Claude sessions commit as `abdullah-kynetic` (`.claude/settings.json`, CLAUDE.md).
+- CRM portal M10-01 local security gate completed 2026-10-29 with no open high findings. Evidence and medium production-verification items are in `docs/security-review-M10-01.md`; this does not claim production sign-off.
 
 ## In progress
 - 3.5 outbound build. Prep is in the repo. On 2026-10-17 a read-only check found `m2YJwZ1l8DTzyEkw` active with the Alex agent ID (`agent_71e3cfc8384aa38a910a506b53`) set in Call Settings and Retry Call Settings and the "Retell API (outbound)" credential attached. Go-live approved by Abdullah on 2026-10-18 (KI-009). Alex prompt v1.2.3 is on branch `claude/alex-demo-live-test`, not merged or published. Blocked on Abdullah; see Blockers.
@@ -53,6 +54,24 @@ Then: confirm the post-call webhook URL is set on the agent, web-call test Alex,
 Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-10-29 (CRM portal M10-01 security review)
+- Fixed the contacts phone-fragment GIN index to lead with `tenant_id` (`b7b8e57`) and wired shared PostgreSQL auth IP/email limits (`8256212`). Focused auth/rate-limit tests (19), baseline CRM test (13), header tests (3), and webhook/service-token test suites passed. Typecheck passed.
+- Initial M10-01 review state: authenticated API/search/export-import rate limits were not wired, exact Bun-lock audit and restore evidence were pending, and CI secret scanning/log-redaction plus production edge configuration were open. Details and subsequent resolution are recorded in `docs/security-review-M10-01.md`.
+- Post-fix verification: affected search/export/import/rate-limit integration suites passed 34 tests, `withApi` unit tests passed 5, and M10 accessibility/security plus M9 search/export browser suites passed 10/10 without rate-limit errors. Typecheck passed.
+
+### 2026-10-29 (CRM portal M10-04 accessibility review)
+- Expanded the axe matrix to 24 synthetic routes across light/dark and desktop/390px mobile, covering sign-in, pending terms, owner and admin pages. WCAG 2.0/2.1/2.2 A and AA tags were enabled; all 96 page-state scans are clean after fixes.
+- Initial valid findings: two low-contrast audit summaries, two non-focusable mobile table scroll regions, and an invalid Kanban `aria-orientation`; fixed in `d25d682` and `720b81f`. Updated the branding preview to use active-theme-derived text in `246d35d`.
+- `m10-a11y-security.spec.ts` plus `shell.spec.ts`: 21/21 passed, including keyboard/focus checks; typecheck and build passed; branding color unit suite 17/17 passed. Test coverage/fixture changes are `d96feeb`.
+- Manual screen-reader review: not verified, needs a human screen-reader pass. M10-04 remains blocked until completed.
+
+### 2026-10-29 (CRM portal M10-01 gate update)
+- Closed the high rate-limit findings in `430da61` with integration coverage in `4ffce62`. Per supervisor evidence, production dependency audit is clean (366 checked), one moderate dev-only esbuild advisory remains low, and M8b restore passes 5/5 against matching PostgreSQL 17.10 tools. M10-01 is done; production edge/header/secret-scanner verification remains open and is not represented as production sign-off.
+
+### 2026-10-29 (portal Resend startup wiring)
+- Added idempotent Node app/worker boot wiring for the existing Resend adapter and Better Auth magic-link callback. Missing `RESEND_API_KEY` leaves both registries unset; configured mode logs only the provider name. The magic-link URL is HTML-escaped, excluded from logs and hashed for the Resend idempotency key.
+- Verified by fake-fetch unit tests only; no real Resend network call or email send was made. Focused tests and typecheck passed; implementation and test commits are on local `work` only (not pushed).
+
 ### 2026-10-25 (Alex go-live thread: ElevenLabs chosen; D-025)
 - Verdict: ElevenLabs wins, v1 strict `agent_8201m5afn2rbeb7v29xfkhh1pjef` goes live (D-025). Free tier, demos only until the first client signs; Abdullah declined a paid plan for now. Retell go-live parked, nothing was activated.
 - 2026-10-22: edited the live v1 prompt (ElevenLabs API, prompt only; model and both Cal.com tools unchanged) to drop the "you'll get a text" promise. Before/after in `providers/elevenlabs/golive/`. Restore the text wording when the Twilio A2P campaign is approved (pre-approved by Abdullah).

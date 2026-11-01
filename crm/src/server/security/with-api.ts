@@ -1,13 +1,18 @@
-import { getDb } from '../db/client';
+import { getDb, type Db } from '../db/client';
+import { getSessionUser } from '../auth';
 import { getEnv } from '../env';
 import { errorResponse } from '../errors';
 import { assertSameOrigin } from './origin';
-import { enforceRateLimit, type RateLimitRule } from './rate-limit';
+import { enforceApiRateLimit, enforceRateLimit, type RateLimitRule } from './rate-limit';
 
 export type ApiOptions = {
   /** Rate limit to apply; the subject comes from `rateLimitSubject` (defaults to the client IP). */
   rateLimit?: RateLimitRule;
   rateLimitSubject?: (request: Request) => string | Promise<string>;
+  /** Test seam and opt-out for unauthenticated provider/service endpoints. */
+  authenticatedUserRateLimit?: false;
+  resolveUser?: (headers: Headers) => Promise<{ id: string } | null>;
+  rateLimitDb?: Db;
 };
 
 export function clientIp(request: Request): string {
@@ -28,7 +33,14 @@ export function withApi<Ctx>(
       assertSameOrigin(request, getEnv().APP_BASE_URL);
       if (options.rateLimit) {
         const subject = await (options.rateLimitSubject ?? clientIp)(request);
-        await enforceRateLimit(getDb(), options.rateLimit, subject);
+        await enforceRateLimit(options.rateLimitDb ?? getDb(), options.rateLimit, subject);
+      } else if (
+        options.authenticatedUserRateLimit !== false &&
+        request.headers.has('cookie') &&
+        !/^\/api\/(hooks|service)\//.test(new URL(request.url).pathname)
+      ) {
+        const user = await (options.resolveUser ?? getSessionUser)(request.headers);
+        if (user) await enforceApiRateLimit(options.rateLimitDb ?? getDb(), user.id);
       }
       return await handler(request, ctx);
     } catch (err) {
