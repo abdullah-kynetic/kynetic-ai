@@ -1404,3 +1404,15 @@ Migration `1003_agency_workspace` adds `agency_workspaces`: tenant_id PK/FK, uni
 The synthetic tenant uses reserved slug `demo-kynetic-agency`, timezone UTC, an initial reference plan, platform outbound kill switch enabled, paused Alex draft and CRM Full. No price is hard-coded or invoiced. A separate default Agency sales pipeline is seeded with New, Contacted, Interested, Proposal Sent, Won, Lost, Nurture. Probabilities remain unestimated (zero), except Won at 100. Client pipeline defaults are unchanged. Preview accepts this reserved synthetic slug in addition to the existing three seeded demo tenants; the demo seeder still creates exactly those original three.
 
 M16-02 uses the existing contacts.source field with eight bounded `agency_<direction>_<channel>` keys (inbound form/booking/referral/other; outbound cold_call/sms/email/dm). No new contact columns. Agency service calls derive the tenant from the trusted registry instead of a browser-provided ID. Contact+deal creation is atomic and uses the existing contact service with asLead=false; no lead.created event or consent is generated. Source filtering/counts exclude deleted/merged contacts; lists show the latest 50 matching contacts, with counts over all live classified contacts.
+
+## M16 manual dialer and campaigns (2026-11-01)
+
+Migration `1004_agency_dialer_campaigns` adds three agency-owned tables. Their tenant FKs reference the agency workspace registry, so ordinary client tenants cannot create rows even in their own RLS context.
+
+- `agency_campaigns`: UUID id, tenant, bounded name/script, creator, timestamp; tenant/name unique ignoring case, tenant/id composite key.
+- `agency_campaign_leads`: tenant/campaign/contact composite PK and tenant-scoped FKs. Assignment is idempotent.
+- `agency_call_attempts`: UUID id, tenant/contact/event, validated-request hash, bounded manual outcome/notes, actor and server timestamp. Tenant/contact and tenant/event are unique. Runtime UPDATE/DELETE revoked. History is separate from AI/provider calls, costs and metrics; no provider identifier is stored.
+
+All three use FORCE RLS. Outcome writes lock the event/contact, recheck current eligibility, and atomically commit history, timeline/audit and DNC effects. Same event/body returns the prior ID; changed body or already-logged contact conflicts. Leads leave the first-pass queue after an outcome. Callback is history only; no automatic retry/requeue or reminder is added.
+
+The synthetic lead form optionally accepts a reserved +1 area-code 555-01xx phone and a known US state/DC code. Unknown/conflicting state excludes the candidate. Campaign reports summarize manual outcomes for assigned live contacts, including pre-assignment history; they are not attribution calculations. Assignment choices keep the latest-50 lead limit.

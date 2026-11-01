@@ -341,3 +341,7 @@ Scope, journeys and acceptance criteria are written, and the decisions that bloc
 ### Portal-first implementation update (2026-11-01)
 
 Abdullah deferred n8n automation work. M16-01/02/05 now supply a synthetic agency workspace, the seven approved agency stages, manual source-classified lead entry, filters/counts, stage renaming and logged deal moves through `/admin/agency`. This reuses F-05/F-14/F-17 CRM capabilities; no new F-number assigned. Source categories are inbound form/booking/referral/other and outbound cold call/SMS/email/DM. The initial workspace accepts fictional @example.test records, has outbound disabled and sends no invites or outreach. Real source ingestion, the human dialer/campaigns and live agency setup remain later tasks. Login/auth work remains the final stage.
+
+### M16 manual queue and campaigns (2026-11-01)
+
+M16-03/04/06 add a guarded synthetic manual-call queue with draft script, DNC status, one-click outcomes, history/timestamps and DNC marking without a call record. Never-dial checks ship with the queue. Campaigns support creation, assignment, filtered queues and outcome summaries. Reuses F-05/F-19/F-74 controls; no new F-ID assigned. Initial operation is reserved synthetic numbers only, with no provider call, automatic follow-up or callback scheduling. Real agency setup and further retry/requeue policy remain separate.

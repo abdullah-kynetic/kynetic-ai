@@ -195,3 +195,9 @@ Policy readers expose minimal status inputs without changing the portal safety g
 Skip n8n automations for now and continue the remaining portal build. The synthetic, outbound-disabled M16 agency foundation may proceed independently of the deferred n8n safety gate. Existing portal contact enforcement remains in force; later integration/live approvals remain separate. Login/auth work stays last. No new decision number assigned.
 
 Implementation default: the first agency workspace is explicitly synthetic, uses UTC and a reserved demo slug, contains no invitations/memberships/credentials, and accepts @example.test leads only. Real agency setup/migration is a later owner-approved action. Source channels follow the approved M16-02 list; normal CRM services provide stage edits and logged moves.
+
+### M16 manual dialer defaults — 2026-11-01
+
+Ship the human dialer with never-dial checks as one unit. The synthetic workspace uses reserved test numbers and known state codes; protect AM-1 identity/number and exclude FL/OK, DNC, unknown/conflicting state and non-synthetic numbers. Outcome history is immutable first-pass data: a lead leaves the queue after one outcome. Callback records no automated schedule; DNC may be marked without logging a call. Human logging grants no AI consent.
+
+Campaign summaries count manual history for assigned live contacts, including pre-assignment outcomes, without claiming marketing attribution. Scripts remain drafts for review and are never sent automatically. These defaults authorize no live migration or calling. No new decision number assigned.
