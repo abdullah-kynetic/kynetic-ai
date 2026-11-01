@@ -1,6 +1,6 @@
 # Portal / n8n contract — M12-01 (F-76, F-77, F-89)
 
-Draft for review, 2026-10-31. Audited against `3ff1685` on `work`. This document distinguishes existing interfaces from proposed interfaces; it does not enable n8n sending or supersede locked decisions. SECURITY 3.1 and the portal OutboundGate remain in force until M12 parity and owner sign-off. No workflows are activated by this contract.
+Drafted 2026-10-31; technical source review completed 2026-11-01 for local implementation. Audited against `3ff1685` on `work`. This document distinguishes existing interfaces from proposed interfaces; it does not enable n8n sending or supersede locked decisions. SECURITY 3.1 and the portal OutboundGate remain in force until M12 parity and owner sign-off. No workflows are activated by this contract.
 
 ## Existing transport
 
@@ -96,7 +96,7 @@ Exact schemas, error codes and migrations travel with those tasks and their secu
 
 ## Acceptance and open review
 
-M12-01 deliverable is drafted; owner review is pending. Existing shape/signature/idempotency behavior above was inspected in source, not exercised against n8n. Each target requires enabled/disabled module tests, cross-tenant tests, invalid/revoked/wrong-scope auth tests, replay/concurrency tests and no-real-provider fixtures. No source adapter fixture proves Meta/Angi/LSA end to end yet.
+M12-01 technical review is complete for local implementation. Explicit locked-decision supersedes and the M12-08 owner safety gate remain pending. Existing shape/signature/idempotency behavior above was inspected in source, not exercised against n8n. Each target requires enabled/disabled module tests, cross-tenant tests, invalid/revoked/wrong-scope auth tests, replay/concurrency tests and no-real-provider fixtures. No source adapter fixture proves Meta/Angi/LSA end to end yet.
 
 Current `backup.run` is confirmed in source: worker schedules nightly encrypted database backup at 02:00 UTC and monthly scratch restore at 03:00 UTC on day 1; implementation is `server/admin/backups.ts`. This is distinct from the proposed Twenty data export and must not be repurposed or removed. Live backups/restore results were not checked in this audit.
 
