@@ -1,6 +1,6 @@
 # All-in-one portal plan (DRAFT for Abdullah's OK, 2026-10-31)
 
-Extends `docs/BUILD_PLAN.md` (M0 to M11 stay as they are). New milestones are M12 to M18. Nothing here is built, deployed or sent. Tenant setup for Coastal Roofing stays on hold until Abdullah says go.
+Extends `docs/BUILD_PLAN.md` (M0 to M11 stay as they are). New milestones are M12 to M20. Nothing here is built, deployed or sent. Tenant setup for Coastal Roofing stays on hold until Abdullah says go.
 
 Companion: `docs/automation-map.md` (every automation, owner, status).
 
@@ -118,9 +118,31 @@ Columns follow BUILD_PLAN. Size: S 1 to 3 hours, M 3 to 8 hours, L 1 to 2 days. 
 | M18-03 | Twilio click-to-call dialer (later, only after A2P and volume) | M16-03 | Deferred. | L | Opus |
 | M18-04 | Update docs, progress, known issues | all | Docs match what was built. | S | Haiku |
 
+### M19 Client-side completeness (added Nov 1 from the gap check)
+
+| ID | Task | Depends | Acceptance | Size | Model |
+|---|---|---|---|---|---|
+| M19-01 | Ad spend and cost-per-lead on the client dashboard (Meta spend pulled by n8n, stored by portal) | M13-09 | Fake spend plus fake leads give correct cost per lead per week. | M | Sonnet |
+| M19-02 | Alex usage and cost tracking per tenant, with a monthly spend cap that pauses calls | M13-03, M12-04 | Fake usage over the cap pauses new calls and alerts Abdullah. | M | Opus |
+| M19-03 | Recording-disclosure check on every call (opener present in transcript, flag if missing) | M13-03 | Fake transcript without the disclosure is flagged on the call and counted in the report. | S | Sonnet |
+| M19-04 | Client offboarding: stop all sends, export their data, mark tenant inactive | M12-06 | Fake tenant cancelled; no further sends; export contains only that tenant. | M | Opus |
+| M19-05 | Client staff roles and invites recheck against the new flows (built in M8; verify only) | M13-09 | Role tests still pass with n8n-written data. | S | Sonnet |
+
+### M20 Agency completeness (added Nov 1 from the gap check)
+
+| ID | Task | Depends | Acceptance | Size | Model |
+|---|---|---|---|---|---|
+| M20-01 | Lead sourcing import into outbound lists (Meta Ad Library and Maps results through n8n) | M16-02 | Seeded results import once, dedupe, never import AM-1 Roofing or FL/OK. | M | Sonnet |
+| M20-02 | Outbound email and DM tracking (human-sent; portal logs and checks DNC; no automated sends, per D-007) | M16-02 | Logged message appears on lead; DNC lead blocked. | M | Sonnet |
+| M20-03 | Contracts and e-sign tracking (draft, sent, signed; provider chosen by Abdullah) | M17-01 | Status moves and links to the deal. No real send without a yes. | M | Sonnet |
+| M20-04 | Revenue and expenses view for Kynetic | M17-05 | Seeded invoices and expenses give correct monthly totals. | M | Sonnet |
+| M20-05 | Client health score and renewal alerts | M15-01 | Fake low-activity client triggers one alert. | M | Sonnet |
+| M20-06 | Support requests from clients | M16-01 | Client submits, Abdullah sees it, status tracked. | M | Sonnet |
+| M20-07 | Referrals and case-study tracking | M17-03 | Referral linked to a won deal; case-study status per client. | S | Haiku |
+
 ## Order
 
-M12 runs alone first. M13 and M16 can then run in parallel threads. M14 and M15 follow M13. M17 follows M16. M18 last.
+M12 runs alone first. M13 and M16 can then run in parallel threads. M14 and M15 follow M13. M17 follows M16. M19 follows M13 and can run beside M14 and M15. M20 follows M16 and M17. M18 last.
 
 ## Not in this plan
 
