@@ -16,7 +16,7 @@ import { isModuleEnabled } from '../modules';
 import { businessHoursSchema, isWithinBusinessHours } from '../settings/hours';
 import { withTenant, type TenantContextInput } from '../tenancy';
 import { registerWebhookProcessor, type WebhookProcessor } from '../webhooks';
-import { normalizeOutcome, normalizeSentiment, outcomeLabel, type CallOutcome } from './outcomes';
+import { normalizeOutcome, normalizeSentiment, outcomeLabel } from './outcomes';
 
 // F-26, F-27, F-77, ARCHITECTURE section 3 "Inbound webhook". The route verified the signature and
 // stored the event once; this processor runs in the worker. The tenant comes from our own agent

@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { POST } from '@/app/api/service/call-results/route';
 import { FakeStorage } from '@/server/adapters/storage/fake';
 import { FakeVoiceProvider } from '@/server/adapters/voice/fake';
@@ -224,9 +224,14 @@ describe('M13-03 F-26/F-27/F-77/F-89 normalized relay', () => {
     await tdb.admin
       .unsafe(`CREATE FUNCTION reject_relay_receipt() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'synthetic failure'; END $$;
       CREATE TRIGGER reject_relay_receipt BEFORE INSERT ON call_result_receipts FOR EACH ROW EXECUTE FUNCTION reject_relay_receipt();`);
+    const log = vi.spyOn(console, 'error').mockImplementation(() => {});
     try {
       expect((await post(body)).status).toBe(500);
+      expect(log).toHaveBeenCalled();
+      expect(JSON.stringify(log.mock.calls)).not.toContain(body.payload.transcript);
+      expect(JSON.stringify(log.mock.calls)).not.toContain(body.payload.summary);
     } finally {
+      log.mockRestore();
       await tdb.admin.unsafe(
         'DROP TRIGGER reject_relay_receipt ON call_result_receipts; DROP FUNCTION reject_relay_receipt();'
       );
@@ -269,12 +274,24 @@ describe('M13-03 F-26/F-27/F-77/F-89 normalized relay', () => {
     expect(rows.length).toBeGreaterThan(0);
     expect(rows.every((r) => r.tenantId === IDS.tenantA)).toBe(true);
     expect(await db.select().from(callResultReceipts)).toHaveLength(0);
-    const [foreign] = await tdb.admin`select id from calls where tenant_id = ${IDS.tenantB} limit 1`;
+    const [foreign] =
+      await tdb.admin`select id from calls where tenant_id = ${IDS.tenantB} limit 1`;
     for (const tenantId of [IDS.tenantA, IDS.tenantB]) {
-      await expect(withTenant(ctx.ownerA(), (tx) => tx.insert(callResultReceipts).values({
-        tenantId, eventId: crypto.randomUUID(), callId: foreign!.id,
-        provider: 'elevenlabs', providerCallId: crypto.randomUUID(), payloadHash: '0'.repeat(64)
-      }), { db })).rejects.toThrow();
+      await expect(
+        withTenant(
+          ctx.ownerA(),
+          (tx) =>
+            tx.insert(callResultReceipts).values({
+              tenantId,
+              eventId: crypto.randomUUID(),
+              callId: foreign!.id,
+              provider: 'elevenlabs',
+              providerCallId: crypto.randomUUID(),
+              payloadHash: '0'.repeat(64)
+            }),
+          { db }
+        )
+      ).rejects.toThrow();
     }
     for (const role of ['kynetic_app', 'kynetic_worker']) {
       const [grants] =

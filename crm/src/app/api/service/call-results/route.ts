@@ -1,5 +1,5 @@
 import { callResultSchema, recordCallResult } from '@/server/call-results';
-import { errorResponse } from '@/server/errors';
+import { AppError, errorResponse } from '@/server/errors';
 import { moduleDisabledResponse, ModuleDisabledError } from '@/server/modules';
 import { withServiceAuth } from '@/server/service-auth';
 import { parseJsonBody } from '@/server/validation';
@@ -19,7 +19,16 @@ export const POST = withServiceAuth(
       );
     } catch (error) {
       if (error instanceof ModuleDisabledError) return moduleDisabledResponse(error);
-      return errorResponse(error);
+      if (error instanceof AppError) return errorResponse(error);
+      // Database errors can embed SQL parameters containing transcripts; log identifiers only.
+      console.error(
+        JSON.stringify({
+          level: 'error',
+          msg: 'call result persistence failed',
+          tenantId: svc.tenantId
+        })
+      );
+      return errorResponse(new AppError('INTERNAL'));
     }
   },
   { requiredScope: 'calls:write' }
