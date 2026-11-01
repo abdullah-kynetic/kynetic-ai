@@ -76,6 +76,12 @@ export default async function AgencyPage({
         >
           Campaigns
         </Link>
+        <Link
+          href='/admin/agency/proposals'
+          className='inline-flex min-h-11 items-center underline'
+        >
+          Proposal drafts
+        </Link>
       </nav>
       <p className='mb-6 rounded-md border p-3'>
         Synthetic workspace · Use fictional names and @example.test emails. No outreach starts from
