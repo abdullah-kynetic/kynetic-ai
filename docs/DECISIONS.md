@@ -189,3 +189,9 @@ Admin lead-webhook settings reuse the encrypted secret store. New signing values
 ### Wave 32 implementation note — 2026-11-01
 
 Policy readers expose minimal status inputs without changing the portal safety gate; migrationGatePassed remains false. The normalized call-result relay reuses native call persistence and keeps an immutable tenant/event/provider-call receipt. Receipt evidence conflicts return 409 rather than overwriting a completed native call. Only an already-ingested tenant recording key is accepted; no external media fetch is performed. These are local interface decisions, not approval of the pending locked supersedes, counsel rules, live integrations or sender cutover. No decision number assigned.
+
+## Portal-first build order — 2026-11-01 (explicit, Abdullah)
+
+Skip n8n automations for now and continue the remaining portal build. The synthetic, outbound-disabled M16 agency foundation may proceed independently of the deferred n8n safety gate. Existing portal contact enforcement remains in force; later integration/live approvals remain separate. Login/auth work stays last. No new decision number assigned.
+
+Implementation default: the first agency workspace is explicitly synthetic, uses UTC and a reserved demo slug, contains no invitations/memberships/credentials, and accepts @example.test leads only. Real agency setup/migration is a later owner-approved action. Source channels follow the approved M16-02 list; normal CRM services provide stage edits and logged moves.

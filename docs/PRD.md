@@ -337,3 +337,7 @@ Conflict to resolve: GP-12 lists the proposal builder (F-105) and Twenty to port
 
 ## Definition of ready
 Scope, journeys and acceptance criteria are written, and the decisions that block M0 are approved (see Decisions log). Ready for M0, apart from the items under "Still UNRESOLVED", none of which block M0.
+
+### Portal-first implementation update (2026-11-01)
+
+Abdullah deferred n8n automation work. M16-01/02/05 now supply a synthetic agency workspace, the seven approved agency stages, manual source-classified lead entry, filters/counts, stage renaming and logged deal moves through `/admin/agency`. This reuses F-05/F-14/F-17 CRM capabilities; no new F-number assigned. Source categories are inbound form/booking/referral/other and outbound cold call/SMS/email/DM. The initial workspace accepts fictional @example.test records, has outbound disabled and sends no invites or outreach. Real source ingestion, the human dialer/campaigns and live agency setup remain later tasks. Login/auth work remains the final stage.

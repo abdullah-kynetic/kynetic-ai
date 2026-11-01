@@ -322,14 +322,14 @@ Source of the decisions: `docs/DECISIONS.md` section "All-in-one portal, 2026-10
 | M15-01 | n8n schedule that triggers daily metrics per tenant | automation-map; DECISIONS DC-TBD | M13-09 | Metrics rows appear for fake tenants each day. | S | Sonnet | yes | 38 | todo |  |
 | M15-02 | Weekly client email from n8n (counts, bookings, link to portal) | automation-map; DECISIONS DC-TBD | M15-01 | Fake tenant gets one email with correct numbers. | M | Sonnet | yes | 39 | todo |  |
 | M15-03 | Monthly report scheduling | automation-map; DECISIONS DC-TBD | M15-01 | Report generated for a fake tenant. | S | Sonnet | yes | 39 | todo |  |
-| M15-04 | Error alerts for failed n8n workflows to email | automation-map; DECISIONS DC-TBD | M12-01 | Forced failure sends one alert. | S | Sonnet | yes | 31 | blocked | Safe Code-node formatter + fake delivery tests drafted in n8n/drafts. Connector SDK reference, guidance and node schemas returned internal errors; no importable graph or n8n runtime verification yet. No workflow write/activation. |
+| M15-04 | Error alerts for failed n8n workflows to email | automation-map; DECISIONS DC-TBD | M12-01 | Forced failure sends one alert. | S | Sonnet | yes | 31 | blocked | Deferred by Abdullah 2026-11-01 with all n8n automation work. Existing local formatter preserved; no workflow graph/import/activation. |
 | M15-05 | SMS alert to Abdullah (blocked until A2P) | automation-map; DECISIONS DC-TBD | M15-04 | Test with fake number only. | S | Sonnet | yes | 32 | todo |  |
 
 ### M16 Kynetic agency tenant: leads, dialer, pipeline
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M16-01 | Create Kynetic as its own tenant (synthetic data first) | automation-map; DECISIONS DC-TBD | M12-08 | Isolation test with a client tenant. | M | Opus | yes | 35 | todo |  |
+| M16-01 | Create Kynetic as its own tenant (synthetic data first) | automation-map; DECISIONS DC-TBD | M12-01 (synthetic portal-only sequencing override 2026-11-01) | Isolation test with a client tenant. | M | Opus | yes | 35 | in-progress | Building admin-only synthetic agency workspace; all outbound disabled and no integrations or invites. |
 | M16-02 | Lead sources inbound vs outbound; outbound split by channel (cold call, SMS, email, DM) | automation-map; DECISIONS DC-TBD | M16-01 | Filters and counts correct on seeded data. | M | Sonnet | yes | 36 | todo |  |
 | M16-03 | Human dialer queue: next lead, script, DNC flag, one-tap outcome log | automation-map; DECISIONS DC-TBD | M16-02 | Seeded run: DNC lead is never shown. Outcome saved with time. | L | Sonnet | yes | 37 | todo |  |
 | M16-04 | Campaigns | automation-map; DECISIONS DC-TBD | M16-02 | Create, assign leads, see results. | M | Sonnet | yes | 37 | todo |  |
@@ -383,6 +383,8 @@ Source of the decisions: `docs/DECISIONS.md` section "All-in-one portal, 2026-10
 
 
 ### Build order for M12 to M20
+
+**Portal-first update (Abdullah, 2026-11-01):** Skip n8n automation work for now. Build independent portal features against local/synthetic fixtures. M16-01 may start without the deferred M12-08 automation gate for this synthetic, outbound-disabled workspace only; M16-02 and M16-05 then follow M16-01. n8n gates remain open for later integration/go-live. Login/auth work stays last.
 
 **Sequencing update (Abdullah, 2026-11-01):** Defer remaining user-facing login/auth implementation, provider setup and polish until after the feature waves. Existing login, server authorization, tenant isolation, service-token authentication and webhook verification stay enforced throughout development. Use synthetic authenticated fixtures for feature verification. The final login/auth pass must finish before go-live; this changes work order, not release security requirements.
 

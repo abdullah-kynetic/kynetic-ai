@@ -253,6 +253,13 @@
       "when": 1793520000000,
       "tag": "1002_call_result_receipts",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1793530000000,
+      "tag": "1003_agency_workspace",
+      "breakpoints": true
     }
   ]
 }
