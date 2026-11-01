@@ -4,6 +4,8 @@ Extends `docs/BUILD_PLAN.md` (M0 to M11 stay as they are). New milestones are M1
 
 Companion: `docs/automation-map.md` (every automation, owner, status).
 
+**Where this now lives (2026-11-01):** tasks are in `docs/BUILD_PLAN.md` (M12 to M20), decisions in `docs/DECISIONS.md` (DC-TBD-01 to 13), design in ARCHITECTURE, consent-gate change in SECURITY 3.1a, features in PRD. This file keeps the rationale and risk notes. If they differ, BUILD_PLAN and DECISIONS win.
+
 ## Decisions this plan assumes (Abdullah, 2026-10-30/31)
 
 | # | Decision | Needs a decision entry |
