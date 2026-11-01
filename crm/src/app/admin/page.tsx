@@ -30,6 +30,11 @@ export default async function AdminHomePage() {
       pageTitle='All clients'
       pageDescription='Every client in one place, with performance and health signals. Health: green ≥70, yellow ≥40, red <40.'
     >
+      {user.kyneticRole === 'admin' && (
+        <Link href='/admin/agency' className='mb-4 inline-flex min-h-11 items-center underline'>
+          Open agency workspace
+        </Link>
+      )}
       <Table>
         <TableHeader>
           <TableRow>
