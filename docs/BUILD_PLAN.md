@@ -340,7 +340,7 @@ Source of the decisions: `docs/DECISIONS.md` section "All-in-one portal, 2026-10
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M17-01 | Proposal builder (draft, never auto-sent; Problem, Agentic Solution, Roadmap, ROI) | automation-map; DECISIONS DC-TBD | M16-05 | Draft saved and rendered. | M | Sonnet | yes | 37 | todo |  |
+| M17-01 | Proposal builder (draft, never auto-sent; Problem, Agentic Solution, Roadmap, ROI) | automation-map; DECISIONS DC-TBD | M16-05 | Draft saved and rendered. | M | Sonnet | yes | 37 | done | Internal per-deal four-section draft editor/preview, revision conflicts and safe text rendering verified locally by unit/integration/browser tests. No sends, pricing or stage changes; CI pending. |
 | M17-02 | Price plans as data | automation-map; DECISIONS DC-TBD | M17-01 | Both price models loadable; no hard-coded price. | M | Sonnet | yes | 38 | todo |  |
 | M17-03 | Client onboarding checklist and tenant creation from a won deal (no live provider calls) | automation-map; DECISIONS DC-TBD | M17-01, M12-05 | Fake client created end to end. | L | Sonnet | yes | 38 | todo |  |
 | M17-06 | Auto-created Alex demo when a client profile is created (copy a template agent with the client's name; demo number only reachable by Abdullah; real provider calls need his yes; never touches Nora or Emily) | automation-map; DECISIONS DC-TBD | M13-02, M17-03 | Fake client profile creates a stub demo agent record and shows a test link. No live write. | L | Opus | yes | 39 | todo |  |

@@ -4,7 +4,7 @@ Mirror of the Twenty roadmap ("Roadmap: all phases"). Twenty is canonical; this 
 
 ## Portal implementation order (2026-11-01)
 
-N8n automations are deferred by Abdullah. Continue portal features with synthetic fixtures; login/auth work stays last. M16 agency workspace, source tracking, pipeline UI, human dialer/never-dial checks and campaigns are locally verified. Next: proposal drafts and the remaining portal-only features. Live systems remain unchanged.
+N8n automations are deferred by Abdullah. Continue portal features with synthetic fixtures; login/auth work stays last. M16 agency workspace, source tracking, pipeline UI, human dialer/never-dial checks and campaigns are locally verified. M17-01 proposal drafts are also locally verified. Next: wave 38 won-deal onboarding and price-plan data (pricing decision gate remains). Live systems remain unchanged.
 
 ## Current plan
 Plan 1 only: the outbound speed-to-lead agent at the D-017 price (first 3 clients $4,675, clients 4 and up $8,500, three Stripe invoices at 50/25/25). Gate of 5 paying clients before Plan 2 (D-013). Task titles in Twenty carry [P1]/[P2]; Emily inbound and all upsell systems are [P2].
@@ -247,3 +247,9 @@ Verified: production build, typecheck, 406 unit tests, 27 integration tests and 
 Built M16-03/04/06 on work. New pages /admin/agency/dialer and /admin/agency/campaigns expose a guarded first-pass synthetic queue, reviewed draft script, manual outcome/history, separate DNC marking, campaign creation/assignment, queue filters and member outcome summaries. Migration 1004 owns the tenant-scoped campaign/membership/immutable manual-history tables. Existing contact entry now optionally accepts fictional 555-01xx phones and known state codes. One rule guards both selection and logging: AM-1 identity/known protected number, FL/OK, unknown/conflicting state, DNC/phone opt-outs, unsafe numbers, closed/already-logged leads are excluded. No provider/call job or AI calls record is created. Callback is a recorded outcome with no schedule. All existing admin/view-as and module controls remain; login/auth feature work stays last.
 
 Verified: production build/typecheck, 425 unit tests, 63 integration tests and two browser flows with zero mobile axe violations. Scoped lint has no errors and scoped formatting passes. CI/live behavior not verified. No n8n/connector work, VPS access, actual call/message, real secrets, deploy, push or main merge. Local test database removed. Next: M17 proposal draft builder; n8n work remains parked.
+
+### 2026-11-01 — M17 proposal drafts
+
+Built M17-01 on work: migration 1005, one internal draft per agency deal, four editable sections, persisted preview, partial drafts and revision conflict protection. Controlled editor fields retain unsaved text after a conflict. Existing admin/module/view-as checks remain enforced. No send/public link, stage move, price calculation or invoice is created.
+
+Verified: production build with TypeScript, 430 unit tests, 9 focused PostgreSQL integration tests and one Chromium browser flow, including mobile editor/preview axe scans with zero violations after navigation finishes. Browser harness corrections wait for lead creation, target the conflict alert specifically and wait for the existing transient navigation indicator to disappear before axe. Scoped lint/format pass. CI, deployed/VPS and live integrations remain unverified; earlier global lint/format baseline issues remain. Test database removed at session end. No n8n, provider calls, real secrets, deploy, push or main merge. Next: wave 38 won-deal onboarding; price-plan work must respect the pending pricing decision gate. Login/auth stays last. No new business decision or live issue established; lowercase decisions/known-issues unchanged.

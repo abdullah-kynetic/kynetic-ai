@@ -563,3 +563,11 @@ Work branch, after 2d6594a. PostgreSQL 16 was disposable/local on loopback 55432
 - `bun run test:e2e -- tests/e2e/m16-agency.spec.ts tests/e2e/m16-dialer-campaigns.spec.ts --workers=1`: 2 browser flows passed with local Chromium. The new flow enters a test phone/state, creates/assigns a campaign, filters the queue, displays its script, logs an outcome, verifies queue advancement/history and updated campaign results, and checks VA denial. Dialer/campaign mobile axe scans report zero WCAG AA violations. The existing workspace test now handles already-created synthetic setup idempotently.
 - Scoped oxlint found no errors; new dialer files have no warnings. Scoped oxfmt passed. Earlier whole-repo lint/format baseline issues remain outside this change.
 - Not verified: CI, deployment/VPS, real agency data/phone operation, provider or n8n integration. First-pass history does not implement callback scheduling or requeue. Local test database removed at session end.
+
+### M17-01 proposal drafts (2026-11-01)
+
+- Production `bun run build` passed, including TypeScript and proposal routes; stub mode/outbound disabled with synthetic build configuration.
+- `bun run test`: 57 files / 430 tests passed. New proposal action tests: 5/5.
+- `bun run test:integration -- tests/integration/proposals-m17.test.ts`: 9/9 passed against disposable local PostgreSQL 16. Covers concurrent open/save, partial drafts, no-op retries, stale revisions, tenant FKs/RLS, soft-deleted deals, audit rollback, denied roles/disabled admin/module, immutable-delete permission and absence of stage/job effects.
+- `bun run test:e2e -- tests/e2e/m17-proposals.spec.ts --workers=1`: 1/1 passed with local Chromium. Covers save/reload, retained stale-tab text, literal HTML-like preview, client/VA denial and mobile editor/preview axe AA scans (zero violations after navigation settles). Earlier harness failures were fixed by waiting for lead persistence, selecting the specific conflict alert and waiting for the transient navigation bar before accessibility scanning.
+- Scoped oxlint/oxfmt pass. Whole-repo baseline lint/format issues remain. CI, deployed/VPS and real providers not verified. No real outbound or n8n operations. Disposable test database removed afterward.
