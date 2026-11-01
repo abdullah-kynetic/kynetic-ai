@@ -631,3 +631,7 @@ The lead signing secret is the sole one-time-display exception to status-only se
 ### M13-02 live voice opt-in (2026-11-01)
 
 Credentials alone cannot select the real ElevenLabs adapter. `ELEVENLABS_LIVE_ENABLED=false` is the default; explicit true plus live provider mode is required. Existing consent and outbound controls remain. Stub mode overrides the flag. Production live mode with the flag absent/false fails closed rather than falling back to fake-signature verification. The deployment env template records false; real configuration/calls still require Abdullah's specific yes.
+
+### M12-04/M12-06 read-only policy inputs (2026-11-01)
+
+Send-state/contact-policy routes require separate least-privilege tenant bearer scopes and no-store responses. Configuration reads fail closed for absent/malformed platform state; snapshots read the current tenant state on each request. Contact data is RLS scoped, and foreign/deleted/merged contacts return 404. Consent evidence is represented by status/timestamps/source and an evidence-present boolean, not wording/IP/phone/email. Reads create no timeline or send job. Global environment disable and the existing per-tenant kill flags remain the actual portal controls; the admin global toggle currently updates existing tenant flags. No new global storage or change to OutboundGate is introduced. The snapshot explicitly reports migrationGatePassed=false until n8n/parity/owner review gates are implemented; a readable snapshot does not authorize contact.
