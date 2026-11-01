@@ -13,7 +13,7 @@ Rules from Abdullah's answers (2026-10-30):
 - **n8n runs the automations. The portal records everything and shows it live.** n8n decides consent, quiet hours and DNC. The portal logs each decision with its reason. This supersedes the portal-side `canContact` gate (needs a new decision entry).
 - Reports: live portal dashboard plus a weekly email from n8n.
 
-Open: pipeline stages, review requests, and which Later items to defer.
+Open: none from the question list (stages, review timing and Later items settled Oct 31).
 
 Legend: Owner N8N = runs in n8n. PORTAL = records and shows. Status: built, partial, missing, not confirmed.
 
@@ -34,7 +34,7 @@ Legend: Owner N8N = runs in n8n. PORTAL = records and shows. Status: built, part
 | B11 | No-show recovery | N8N | missing | Stubs. |
 | B12 | New-lead alert to owner | N8N | missing | No `new_lead` alert. Hot-lead and deal-won alerts exist. |
 | B13 | Missed-call text-back, after-hours, reactivation | N8N | partial | Code in `server/automations`. Cannot send until SMS works. |
-| B14 | Review request after job done | N8N | missing | Open question. |
+| B14 | Review request 2 hours after payment received | N8N | missing | Decided Oct 31. Email until A2P, then text. |
 | B15 | Daily metrics | N8N triggers, PORTAL computes | missing | Computed in `metrics/daily.ts`, never scheduled. |
 | B16 | Weekly email report to client | N8N | missing | New requirement. |
 | B17 | Monthly report | PORTAL page | partial | `reports/worker.ts` exists, never scheduled. |
@@ -49,7 +49,7 @@ Legend: Owner N8N = runs in n8n. PORTAL = records and shows. Status: built, part
 | A2 | Outbound lead lists by channel (cold call, SMS, email, DMs) | PORTAL | missing | Scraping stays in n8n or tools. |
 | A3 | Human dialer queue: next lead, script, DNC flag, log outcome | PORTAL | missing | Phone plus log. |
 | A4 | Campaigns | PORTAL | missing | |
-| A5 | Agency pipeline | PORTAL | missing | Stages not decided. |
+| A5 | Agency pipeline | PORTAL | missing | Stages: New, Contacted, Interested, Proposal Sent, Won, Lost, Nurture. |
 | A6 | Proposal draft for approval | PORTAL | missing | Never auto-sent. |
 | A7 | Stripe draft invoices | N8N | missing | Needs approval before send. |
 | A8 | Payment received, dunning | N8N | missing | |

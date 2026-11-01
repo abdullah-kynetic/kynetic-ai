@@ -18,7 +18,11 @@ Companion: `docs/automation-map.md` (every automation, owner, status).
 | 8 | n8n runs the automations. The portal records everything and shows it live. n8n makes the consent, quiet-hours and DNC decision and the portal logs it with the reason. | yes, supersedes the portal-side gate rule |
 | 9 | Reports: live portal dashboard plus a weekly email from n8n. | no |
 
-Open (not decided): agency and client pipeline stages (proposed below), review requests, Later items.
+| 10 | Agency pipeline stages: New, Contacted, Interested, Proposal Sent, Won, Lost, Nurture. Client default ends in Estimate Booked. | no |
+| 11 | Review request goes out 2 hours after the customer's payment is received. One generic "payment received" event in the portal plus a thin n8n adapter per invoicing system, added when a client signs. A Paid button in the portal covers any system that cannot connect. Text waits for Twilio A2P; email covers until then. | no |
+| 12 | In this build: auto-created Alex demo for new client profiles and the first two invoicing adapters. Later: Twilio click-to-call, Retell adapter. | no |
+
+Open: none from Abdullah's question list. Still unconfirmed: counsel's view of decision 8 and which two invoicing systems come first.
 
 ## Risk to read before approving
 
@@ -68,7 +72,9 @@ Columns follow BUILD_PLAN. Size: S 1 to 3 hours, M 3 to 8 hours, L 1 to 2 days. 
 | M14-01 | Sequence steps in n8n (SMS and email) with the contact decision before each send | M13-09 | Test: steps fire in order, stop on reply or opt-out. SMS stays off until A2P. | L | Sonnet |
 | M14-02 | Appointment reminders (24h, 2h) | M13-05 | Fake appointment sends two reminders. | M | Sonnet |
 | M14-03 | No-show recovery | M14-02 | No-show triggers one recovery message and a task. | M | Sonnet |
-| M14-04 | Review request after job done (needs Abdullah's answer on timing and wording) | M14-01 | Draft message only; test sends to a fake number. | M | Sonnet |
+| M14-04 | Portal "payment received" event, Paid button and 2-hour review-request timer | M13-09 | Fake payment starts a timer; message is queued 2 hours later; duplicate payment does not double-send. | M | Sonnet |
+| M14-06 | n8n review-request workflow: email now, text after A2P, contact decision before each send | M14-04, M12-06 | Fake run sends the email at 2 hours; opted-out contact gets nothing. Text path stays off until A2P. | M | Sonnet |
+| M14-07 | First two invoicing adapters in n8n (systems chosen with Abdullah once a client's system is known; Stripe test mode is the default first) | M14-04 | Fake paid invoice triggers the portal event. No real client account is touched without a yes. | L | Sonnet |
 | M14-05 | Missed-call text-back, after-hours reply, reactivation moved or kept | M14-01 | Parity with existing portal behavior. | M | Sonnet |
 
 ### M15 Reporting and alerts
@@ -89,7 +95,7 @@ Columns follow BUILD_PLAN. Size: S 1 to 3 hours, M 3 to 8 hours, L 1 to 2 days. 
 | M16-02 | Lead sources inbound vs outbound; outbound split by channel (cold call, SMS, email, DM) | M16-01 | Filters and counts correct on seeded data. | M | Sonnet |
 | M16-03 | Human dialer queue: next lead, script, DNC flag, one-tap outcome log | M16-02 | Seeded run: DNC lead is never shown. Outcome saved with time. | L | Sonnet |
 | M16-04 | Campaigns | M16-02 | Create, assign leads, see results. | M | Sonnet |
-| M16-05 | Agency pipeline stages (proposed, unconfirmed: New, Contacted, Interested, Proposal Sent, Won, Lost, Nurture) | M16-01 | Stages editable, moves logged. | M | Sonnet |
+| M16-05 | Agency pipeline stages (confirmed: New, Contacted, Interested, Proposal Sent, Won, Lost, Nurture) | M16-01 | Stages editable, moves logged. | M | Sonnet |
 | M16-06 | Never-dial list guard (AM-1 Roofing, FL, OK, DNC) in the dialer | M16-03 | Test: blocked numbers cannot be logged as called. | S | Opus |
 
 ### M17 Proposals, onboarding, billing
@@ -99,6 +105,7 @@ Columns follow BUILD_PLAN. Size: S 1 to 3 hours, M 3 to 8 hours, L 1 to 2 days. 
 | M17-01 | Proposal builder (draft, never auto-sent; Problem, Agentic Solution, Roadmap, ROI) | M16-05 | Draft saved and rendered. | M | Sonnet |
 | M17-02 | Price plans as data | M17-01 | Both price models loadable; no hard-coded price. | M | Sonnet |
 | M17-03 | Client onboarding checklist and tenant creation from a won deal (no live provider calls) | M17-01, M12-05 | Fake client created end to end. | L | Sonnet |
+| M17-06 | Auto-created Alex demo when a client profile is created (copy a template agent with the client's name; demo number only reachable by Abdullah; real provider calls need his yes; never touches Nora or Emily) | M13-02, M17-03 | Fake client profile creates a stub demo agent record and shows a test link. No live write. | L | Opus |
 | M17-04 | Stripe draft invoices from n8n (needs Abdullah's yes before any real Stripe write) | M17-02 | Stripe test mode only. Draft created and logged. | L | Sonnet |
 | M17-05 | Payment received and dunning (test mode) | M17-04 | Fake failed payment starts dunning. | M | Sonnet |
 
@@ -124,4 +131,5 @@ Coastal Roofing tenant (on hold). Real provider calls, production deploys, DNS, 
 - Whether current portal lead webhook accepts every lead-source shape.
 - What `backup.run` does.
 - Counsel's view of consent logic in n8n.
-- Final pipeline stages, review-request timing, Later items.
+- Which two invoicing systems come first.
+- Not in this plan: M10 leftovers (Cloudflare/TLS lock-down, CI secret scanning, human screen-reader pass); tracked in the existing docs.
