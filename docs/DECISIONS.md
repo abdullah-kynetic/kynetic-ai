@@ -181,3 +181,7 @@ Abdullah explicitly requested that login and auth be the last work added. Remain
 ### M12-03 implementation note — 2026-11-01
 
 Contact decisions are stored as immutable evidence in an M12-owned ledger plus the existing lead timeline. No approval to send follows from an allow log. Tenant event IDs are unique; conflicting retries return 409. Base-platform evidence logging remains available when alex_core is off so denials can be recorded. Existing consent enforcement and pending DC-TBD supersedes are unchanged. No decision number assigned.
+
+### M12-05 implementation note — 2026-11-01
+
+Admin lead-webhook settings reuse the encrypted secret store. New signing values are shown once only to the issuing admin; provider secrets and existing signing values remain unreadable from the UI. Rotation/audit are atomic. The page displays the existing n8n receiver URL; configuring/activating n8n remains a separate approved action. No decision number assigned and no real secrets issued.

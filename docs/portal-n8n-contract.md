@@ -6,7 +6,7 @@ Drafted 2026-10-31; technical source review completed 2026-11-01 for local imple
 
 ### Lead intake: n8n → portal
 
-`POST /api/hooks/leads/{tenantId}` is implemented in `crm/src/server/leads/intake.ts`. The UUID in the path is an identifier, not authentication. Use a per-tenant signing secret, never a browser session or provider credential. Secret issuance exists as a server helper; the admin surface is M12-05.
+`POST /api/hooks/leads/{tenantId}` is implemented in `crm/src/server/leads/intake.ts`. The UUID in the path is an identifier, not authentication. Use a per-tenant signing secret, never a browser session or provider credential. Secret issuance exists as a server helper; the admin surface is `/admin/clients/{tenantId}/webhooks` (M12-05, implemented locally).
 
 Sign the exact raw JSON bytes with HMAC-SHA256 over `timestamp.rawBody`. Headers: `X-Kynetic-Timestamp` (Unix seconds), `X-Kynetic-Signature: sha256=<hex>`. Freshness is ±300 seconds. Re-sign retries with a fresh timestamp; keep the same source and externalId. Body limit is currently 16,000 JS string characters (Content-Length is also checked); byte-exact enforcement for multibyte text needs hardening before accepting arbitrary source payloads.
 
@@ -111,3 +111,7 @@ Locked supersedes (DC-TBD-03/04/07/08), counsel rules, A2P, invoicing provider c
 ```
 
 Channels are phone_call/sms/email; decision is allow/deny. Rule identifiers match `[a-zA-Z0-9_.:-]{1,100}` and carry no free-form PII/diagnostics. Body cap is 8,000 characters under the current parser. Response: `{ok:true,data:{id,status}}`, 201 recorded or 200 duplicate, no-store. A changed validated payload under the same tenant event ID returns 409; member order is immaterial. Unknown/foreign/deleted/merged contacts return 404; invalid schema 400; invalid/revoked/wrong-scope tokens 401. Database timestamp is receipt time; supplied timestamps are evidence only. This endpoint appends an automation activity and never changes consent, queues jobs or triggers sending.
+
+## M12-05 admin operations (2026-11-01)
+
+The admin page shows the portal intake URL, the existing configured n8n event receiver URL (or Not configured), and secret set/rotation status. It does not configure n8n or issue provider credentials. Server actions recheck staff/TOTP through the existing admin guard and refuse view-as sessions. The secret service rechecks the active admin database row. Issue/rotate returns plaintext only in that action response; reads return status only. The UI holds the one-time value in component memory, supports dismissal, and uses no URL/browser persistence. Rotation and a value-free audit record commit together. URLs with credentials/query strings/fragments are suppressed. No real secret issuance was performed in this session.

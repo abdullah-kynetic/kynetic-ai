@@ -28,7 +28,7 @@ export default async function AdminHomePage() {
           <TableCell>{row.leads30d}</TableCell><TableCell>{row.appointments30d}</TableCell>
           <TableCell>{row.modules.length} modules</TableCell>
           <TableCell><StatusBadge tone={tones[row.healthTone]}>{row.healthScore} · {row.healthTone}</StatusBadge></TableCell>
-          <TableCell><Link className='min-h-11 inline-flex items-center underline' href={`/admin/clients/${row.tenantId}/documents`}>Manage</Link></TableCell>
+          <TableCell><Link className='min-h-11 inline-flex items-center underline' href={`/admin/clients/${row.tenantId}/documents`}>Manage</Link>{user.kyneticRole === 'admin' && <Link className='ml-3 min-h-11 inline-flex items-center underline' href={`/admin/clients/${row.tenantId}/webhooks`}>Webhooks</Link>}</TableCell>
         </TableRow>)}</TableBody>
       </Table>
     </PageContainer>
