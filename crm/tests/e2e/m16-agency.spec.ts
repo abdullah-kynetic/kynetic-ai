@@ -7,7 +7,8 @@ test('M16 F-05/F-14/F-17: admin uses an isolated synthetic agency workspace', as
   vaPage
 }) => {
   await adminPage.goto('/admin/agency');
-  await adminPage.getByRole('button', { name: 'Create synthetic agency workspace' }).click();
+  const setup = adminPage.getByRole('button', { name: 'Create synthetic agency workspace' });
+  if (await setup.isVisible()) await setup.click();
   await expect(adminPage.getByText('Synthetic workspace ·')).toBeVisible();
   await expect(adminPage.getByRole('heading', { name: 'Agency workspace' })).toBeVisible();
   await adminPage.getByLabel('Name', { exact: true }).fill('Synthetic Browser Lead');

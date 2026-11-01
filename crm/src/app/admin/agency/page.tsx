@@ -1,3 +1,5 @@
+import Link from 'next/link';
+import { US_STATE_CODES } from '@/server/agency/dialer-policy';
 import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
 import PageContainer from '@/components/layout/page-container';
@@ -64,6 +66,17 @@ export default async function AgencyPage({
           @example.test email, and provide a reason when moving to Lost.
         </p>
       )}
+      <nav aria-label='Agency tools' className='mb-4 flex flex-wrap gap-4'>
+        <Link href='/admin/agency/dialer' className='inline-flex min-h-11 items-center underline'>
+          Human dialer
+        </Link>
+        <Link
+          href='/admin/agency/campaigns'
+          className='inline-flex min-h-11 items-center underline'
+        >
+          Campaigns
+        </Link>
+      </nav>
       <p className='mb-6 rounded-md border p-3'>
         Synthetic workspace · Use fictional names and @example.test emails. No outreach starts from
         this page.
@@ -86,6 +99,27 @@ export default async function AgencyPage({
               placeholder='prospect@example.test'
               required
             />
+          </div>
+          <div className='space-y-2'>
+            <Label htmlFor='phone'>Synthetic phone (optional)</Label>
+            <Input id='phone' name='phone' type='tel' placeholder='+12025550123' />
+            <p className='text-muted-foreground text-sm'>
+              Use a reserved +1 area-code 555-01xx number.
+            </p>
+          </div>
+          <div className='space-y-2'>
+            <Label htmlFor='state'>State (required for dialer)</Label>
+            <select id='state' name='state' className={`${selectClass} w-full`}>
+              <option value=''>Unknown</option>
+              {US_STATE_CODES.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+            <p className='text-muted-foreground text-sm'>
+              Florida and Oklahoma are excluded from the dialer.
+            </p>
           </div>
           <div className='space-y-2 sm:col-span-2'>
             <Label htmlFor='source'>Lead source</Label>

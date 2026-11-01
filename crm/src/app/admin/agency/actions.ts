@@ -39,6 +39,12 @@ export async function createAgencyLeadAction(form: FormData) {
     createAgencyLead(await caller(), {
       firstName: String(form.get('firstName') ?? ''),
       email: String(form.get('email') ?? ''),
+      ...(String(form.get('phone') ?? '').trim()
+        ? { phone: String(form.get('phone')).trim() }
+        : {}),
+      ...(String(form.get('state') ?? '').trim()
+        ? { state: String(form.get('state')).trim() }
+        : {}),
       direction,
       channel
     })
