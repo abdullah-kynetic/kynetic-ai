@@ -2,6 +2,8 @@
 
 **Latest progress (2026-11-01):** M13-06 database regression now passes; M12-01 technical review complete. Wave 31 local implementation completed M12-03, M12-05 and M13-02. M12-02 awaits explicit supersede confirmation; M15-04 formatter is tested but workflow validation is blocked by connector errors. Current evidence is in BUILD_PLAN, TESTING and progress; the original audit below records the earlier baseline.
 
+**Wave 32 update:** send-state/contact-policy readers and normalized call-result API are implemented and locally tested (402 unit, 107 integration). M12-04/M12-06/M13-03 remain in-progress for actual n8n graphs/parity/recording ingestion; see TESTING and the current contract for limits.
+
 2026-10-31 (America/Los_Angeles). Baseline: `3ff1685` on `origin/main`, including merged PR #122. Local `work` was fast-forwarded from `1651451`; main was not modified. Source inspection and local checks only; no live-system state was queried. This report does not certify deployment readiness.
 
 ## What is already implemented

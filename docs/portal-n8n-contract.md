@@ -104,7 +104,7 @@ Locked supersedes (DC-TBD-03/04/07/08), counsel rules, A2P, invoicing provider c
 
 ## M12-03 implemented wire shape (2026-11-01)
 
-`POST /api/service/contact-decisions` is implemented; the other target routes above remain reserved. Bearer scope is `contact-decisions:write`. Strict body:
+`POST /api/service/contact-decisions`, the send-state/contact-policy readers and call-results relay are implemented; the remaining target routes above are reserved. See the later wire-shape sections. Bearer scope is `contact-decisions:write`. Strict body:
 
 ```json
 {"eventId":"<uuid>","version":1,"occurredAt":"<UTC ISO time>","payload":{"contactId":"<uuid>","channel":"phone_call","decision":"deny","reasonCode":"internal_dnc","ruleVersion":"v1","firedRule":"dnc","evaluatedAt":"<UTC ISO time>"}}
@@ -131,3 +131,7 @@ The admin page shows the portal intake URL, the existing configured n8n event re
 The recordingKey must be `<this tenant>/calls/<safe identifier>/recording`, representing audio already ingested into tenant storage. The endpoint does not upload, fetch or verify object existence; upstream recording ingestion needs its own tested handoff before live use. The existing recording reader mints the authorized short-lived URL. Recording upload and live provider webhook schemas are not established by the fake fixture.
 
 Response `{ok:true,data:{callId,status}}`: 201 recorded, 200 duplicate, no-store. The receipt hashes the entire validated envelope (including eventId and occurredAt); retries must preserve those fields and the payload, though JSON member order is immaterial. A new event ID for an already-receipted provider call, changed evidence, conflicting contact, or prior native completion returns 409. Missing/foreign contact/agent/recording reference returns 404. Native provider hooks still require their original signatures; the service token does not replace provider verification upstream in n8n. Effects commit together via the existing call persistence routine; the service does not start a call or send a message.
+
+### Outstanding rule/validation work
+
+M12-06 asks for Florida/Oklahoma blocks, while the existing portal draft state table narrows those states to 08:00–20:00 rather than blocking them entirely. No rule was changed here: a parity test must list that difference for owner/counsel review before approving a replacement gate. The n8n SDK reference tool still returns an internal error. The official npm SDK 0.38.4 was located and its reference/license inspected in a temporary directory as a possible offline validation fallback; no package/dependency or vendored SDK code was added to the repo. An offline SDK check would not prove actual n8n runtime compatibility or execution.

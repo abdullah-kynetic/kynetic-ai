@@ -527,3 +527,15 @@ Branch work, after 0362a5b. Temporary local PostgreSQL 16 container on loopback 
 - Focused oxlint on 15 changed/new TS/TSX files: no errors, three warnings (existing global test seam naming and array sort in the new integration fixture). Targeted oxfmt check on those files passed. The whole-repo lint/format baseline failures recorded above remain; no whole-repo clean claim.
 - M15-04 tests execute the actual draft Code body in a VM and fake idempotent email delivery. They do not verify an n8n graph or real email idempotency.
 - CI, production build, browser rendering/one-time-display interaction, deployed role enforcement, real provider calls and n8n execution are not verified. Local migrations were applied only by the disposable test harness, never to production.
+
+### Wave 32 portal interfaces (2026-11-01)
+
+On work after a489e9d, synthetic data only, disposable local PostgreSQL 16 on loopback port 55432 (removed at the end). Bun 1.4.4 was invoked with the temporary npm cache; a temporary psql wrapper executes the client in that same local container. No production credentials or database were used.
+
+- `bun run typecheck`: passed, including the final safe error-logging change.
+- `bun run test`: 53 files / 402 tests passed.
+- `bun run test:integration -- tests/integration/contact-policy-m12.test.ts tests/integration/call-results-m13.test.ts tests/integration/call-end.test.ts tests/integration/outbound-call.test.ts tests/integration/outbound-gate.test.ts tests/integration/call-detail.test.ts tests/integration/calls-list.test.ts tests/integration/contact-decisions-m12.test.ts tests/integration/service-tokens.test.ts`: 9 suites / 107 tests passed. After the final logging change, call-results-m13 passed again (10/10), including no transcript/summary in forced-failure logs.
+- Policy tests cover global/per-tenant kill visibility, malformed/missing config, suspended/offboarded tenants, scoped status inputs without raw wording/PII, no timeline effects, foreign/deleted contacts, and token scope/revocation.
+- Relay tests cover fake result/detail/timeline and signed recording URL, concurrent exact replay, conflicting event/call identities, forbidden contact/agent/storage references, module isolation, invalid/revoked scopes, existing started calls, DNC, transactional failure rollback, native concurrent completion and ledger RLS/FK/immutability.
+- Scoped oxlint: no errors; four fixture global-seam naming warnings after unused native import cleanup. Targeted oxfmt check passed on the nine implementation/test files. Earlier whole-repo lint/format baseline failures remain unresolved; no whole-repo clean claim.
+- Not run: CI, production build, browser, n8n graphs/runtime, real provider callbacks or recording uploads. The native call processor, native webhook verification, consent gate and sender selection remain in force. No workflow activated or imported; actual rule parity and owner/counsel review remain pending.
