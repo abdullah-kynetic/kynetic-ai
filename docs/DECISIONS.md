@@ -185,3 +185,7 @@ Contact decisions are stored as immutable evidence in an M12-owned ledger plus t
 ### M12-05 implementation note — 2026-11-01
 
 Admin lead-webhook settings reuse the encrypted secret store. New signing values are shown once only to the issuing admin; provider secrets and existing signing values remain unreadable from the UI. Rotation/audit are atomic. The page displays the existing n8n receiver URL; configuring/activating n8n remains a separate approved action. No decision number assigned and no real secrets issued.
+
+### Wave 32 implementation note — 2026-11-01
+
+Policy readers expose minimal status inputs without changing the portal safety gate; migrationGatePassed remains false. The normalized call-result relay reuses native call persistence and keeps an immutable tenant/event/provider-call receipt. Receipt evidence conflicts return 409 rather than overwriting a completed native call. Only an already-ingested tenant recording key is accepted; no external media fetch is performed. These are local interface decisions, not approval of the pending locked supersedes, counsel rules, live integrations or sender cutover. No decision number assigned.

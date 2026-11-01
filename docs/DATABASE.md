@@ -1392,3 +1392,7 @@ Cross-document check items:
 ## M12-03 contact-decision evidence (2026-11-01)
 
 Migration `1001_contact_decisions` adds the M12-owned `contact_decisions` append-only request ledger: UUID id, tenant_id, event_id, contact_id, validated versioned JSON payload, SHA-256 payload_hash and server created_at. Unique `(tenant_id,event_id)` provides tenant-local idempotency; composite `(tenant_id,contact_id)` references contacts. FORCE RLS uses the standard tenant policies; app and worker have SELECT/INSERT only (UPDATE/DELETE revoked). The decision and its `activities` timeline entry commit in one transaction. This records evidence, never consent or send authorization. No existing shared table schema changes. New migrations follow journal order; 1001 follows existing 1000.
+
+## M13-03 call-result receipts (2026-11-01)
+
+Migration `1002_call_result_receipts` follows journal 1001 and creates the M13-owned immutable relay ledger: id, tenant_id, event_id, call_id, provider, provider_call_id, payload_hash and created_at. Unique tenant/event and tenant/provider/call keys reject conflicting retry identities. The composite tenant/call foreign key prevents cross-tenant references. FORCE RLS is enabled; app/worker retain SELECT/INSERT only. The table stores no duplicate transcript, recording URL or other provider payload. Receipt, call, disclosure/DNC effects, activity and queued completion event commit atomically. Runtime UPDATE/DELETE is revoked. This additive migration does not change existing shared table schemas or helper contracts.
