@@ -35,6 +35,7 @@ Resume notes must contain, in this order: `branch:`; `last commit:` (short hash)
 
 ## Summary
 - 128 tasks in 13 milestone groups and 29 waves.
+- Proposed 2026-10-31, not yet approved: 57 more tasks in M12 to M20 (see "M12 to M20 All-in-one portal" below).
 - Models: Sonnet 76, Opus 29, Haiku 23.
 - Sizes: S 30, M 70, L 28.
 
@@ -267,6 +268,113 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M11-02 | Admin OPM status and task list per client | PRD F-83; DS OPM | M11-01, M8a-09 | Admin updates an item; audited | M | Sonnet | yes | 25 | done | Admin client page supports presence task create/status updates and audited review snapshot capture; service write and audit assertions pass in `presence.test.ts`. |
 | M11-03 | Owner Online Presence tab and `ReportSection` for the monthly report | PRD F-83; ARCH 7 | M11-01, M6-05 | Section appears only with `opm` on | M | Sonnet | yes | 25 | done | Monthly report sections include enabled OPM snapshots; owner page and report browser flow pass in `tests/e2e/m11-presence.spec.ts` (2026-10-28). |
 | M11-04 | M11 gate | AGENTS; T | M11-01, M11-02, M11-03 | All M11 rows pass | S | Haiku | no | 26 | done | Focused presence and baseline integration tests (20 passed), M11 browser flow (1 passed), typecheck and production build pass. No vendor connector was built; vendor selection remains unresolved and out of v1 status-only scope. |
+
+
+## M12 to M20 All-in-one portal (proposed 2026-10-31, waits for Abdullah's approval)
+
+Source of the decisions: `docs/DECISIONS.md` section "All-in-one portal, 2026-10-30/31". Companion: `docs/automation-map.md`. Nothing here is built. n8n workflows are built inactive and never activated without Abdullah's yes. Real provider calls, deploys, DNS, and writes to Retell, Twenty or Notion each need his specific yes. Waves are assigned when approved.
+
+### M12 n8n contract and safety (first, alone)
+
+| ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| M12-01 | Write the portal/n8n contract doc: events n8n sends, endpoints the portal exposes, signing, retries, idempotency | ALL_IN_ONE_PLAN; automation-map | none | Doc reviewed. Every automation in the map has an owner and an endpoint. | S | Opus | no | tbd | todo | |
+| M12-02 | Record decisions 3, 4, 7, 8 in `docs/DECISIONS.md` | ALL_IN_ONE_PLAN; automation-map | M12-01 | Entries added with Abdullah's confirmation. No D-number guessed. | S | Haiku | no | tbd | todo | |
+| M12-03 | Portal endpoint: n8n posts a "contact decision" (allow or deny, reason, rule that fired). Stored on the lead timeline. | ALL_IN_ONE_PLAN; automation-map | M12-01 | Integration test: allow and deny both stored, tenant isolated, duplicate post ignored. | M | Sonnet | no | tbd | todo | |
+| M12-04 | Portal kill switch n8n reads before any send (global and per tenant) | ALL_IN_ONE_PLAN; automation-map | M12-03 | Test: switch on means the shared sub-workflow refuses. | S | Sonnet | no | tbd | todo | |
+| M12-05 | Admin screen to issue a tenant's lead-webhook secret and show the n8n URL | ALL_IN_ONE_PLAN; automation-map | M12-01 | Secret shown once, rotated, never logged. Access test for non-admin. | M | Sonnet | no | tbd | todo | |
+| M12-06 | Shared n8n sub-workflow "may I contact" (consent, quiet hours, state rules, DNC, frequency caps) reading portal data | ALL_IN_ONE_PLAN; automation-map | M12-03 | Fake-data test table covers every rule, including quiet hours at edges and Florida/Oklahoma blocks. Logs a decision per run. | L | Opus | no | tbd | todo | |
+| M12-07 | Gate parity test: same inputs through the old portal gate and the n8n sub-workflow give the same answer | ALL_IN_ONE_PLAN; automation-map | M12-06 | All cases match or each difference is listed for Abdullah. | M | Opus | no | tbd | todo | |
+| M12-08 | M12 gate: review of decisions, risk list, kill switch | ALL_IN_ONE_PLAN; automation-map | M12-07 | Abdullah's yes. | S | Haiku | no | tbd | todo | |
+
+### M13 Client lead-to-call chain (ElevenLabs, stub first)
+
+| ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| M13-01 | n8n workflow: form/Meta/Angi/LSA lead in, post to portal, check contact decision, start call | ALL_IN_ONE_PLAN; automation-map | M12-08 | Fake-source test: lead appears in portal first, then a fake call starts. Lead is never lost if call step fails. | L | Sonnet | no | tbd | todo | |
+| M13-02 | ElevenLabs adapter in the portal (stub and real behind a switch) | ALL_IN_ONE_PLAN; automation-map | M12-01 | Stub passes. Real mode off by default. | M | Opus | no | tbd | todo | |
+| M13-03 | Call result flow: provider webhook to n8n to portal (outcome, transcript, recording link) | ALL_IN_ONE_PLAN; automation-map | M13-02 | Fake call shows outcome on the lead. Duplicate result ignored. | M | Sonnet | no | tbd | todo | |
+| M13-04 | Retry schedule in n8n (5 min, 1 hour, next day, max 4), each retry re-checks contact decision | ALL_IN_ONE_PLAN; automation-map | M13-01 | Test with fake clock. No retry after opt-out or booking. | M | Sonnet | no | tbd | todo | |
+| M13-05 | Booking through Cal.com from the call, relayed to portal | ALL_IN_ONE_PLAN; automation-map | M13-03 | Fake booking appears on the lead and moves the deal stage. | M | Sonnet | no | tbd | todo | |
+| M13-06 | Fix deal-to-booked rule (`booked` vs `Estimate Booked`) | ALL_IN_ONE_PLAN; automation-map | none | Regression test. | S | Sonnet | no | tbd | todo | |
+| M13-07 | New-lead alert and hot-lead alert by email | ALL_IN_ONE_PLAN; automation-map | M13-01 | Fake lead sends one email. No duplicate. | S | Sonnet | no | tbd | todo | |
+| M13-08 | Opt-out and STOP handling end to end | ALL_IN_ONE_PLAN; automation-map | M12-06 | Fake STOP stops all further sends, logged with reason. | M | Opus | no | tbd | todo | |
+| M13-09 | M13 gate: full fake run, lead to call to booking to report data | ALL_IN_ONE_PLAN; automation-map | M13-08 | Abdullah's yes. Real provider test calls need a separate yes. | S | Haiku | no | tbd | todo | |
+
+### M14 Follow-up sequences, reminders, reviews
+
+| ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| M14-01 | Sequence steps in n8n (SMS and email) with the contact decision before each send | ALL_IN_ONE_PLAN; automation-map | M13-09 | Test: steps fire in order, stop on reply or opt-out. SMS stays off until A2P. | L | Sonnet | no | tbd | todo | |
+| M14-02 | Appointment reminders (24h, 2h) | ALL_IN_ONE_PLAN; automation-map | M13-05 | Fake appointment sends two reminders. | M | Sonnet | no | tbd | todo | |
+| M14-03 | No-show recovery | ALL_IN_ONE_PLAN; automation-map | M14-02 | No-show triggers one recovery message and a task. | M | Sonnet | no | tbd | todo | |
+| M14-04 | Portal "payment received" event, Paid button and 2-hour review-request timer | ALL_IN_ONE_PLAN; automation-map | M13-09 | Fake payment starts a timer; message is queued 2 hours later; duplicate payment does not double-send. | M | Sonnet | no | tbd | todo | |
+| M14-06 | n8n review-request workflow: email now, text after A2P, contact decision before each send | ALL_IN_ONE_PLAN; automation-map | M14-04, M12-06 | Fake run sends the email at 2 hours; opted-out contact gets nothing. Text path stays off until A2P. | M | Sonnet | no | tbd | todo | |
+| M14-07 | First two invoicing adapters in n8n (systems chosen with Abdullah once a client's system is known; Stripe test mode is the default first) | ALL_IN_ONE_PLAN; automation-map | M14-04 | Fake paid invoice triggers the portal event. No real client account is touched without a yes. | L | Sonnet | no | tbd | todo | |
+| M14-05 | Missed-call text-back, after-hours reply, reactivation moved or kept | ALL_IN_ONE_PLAN; automation-map | M14-01 | Parity with existing portal behavior. | M | Sonnet | no | tbd | todo | |
+
+### M15 Reporting and alerts
+
+| ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| M15-01 | n8n schedule that triggers daily metrics per tenant | ALL_IN_ONE_PLAN; automation-map | M13-09 | Metrics rows appear for fake tenants each day. | S | Sonnet | no | tbd | todo | |
+| M15-02 | Weekly client email from n8n (counts, bookings, link to portal) | ALL_IN_ONE_PLAN; automation-map | M15-01 | Fake tenant gets one email with correct numbers. | M | Sonnet | no | tbd | todo | |
+| M15-03 | Monthly report scheduling | ALL_IN_ONE_PLAN; automation-map | M15-01 | Report generated for a fake tenant. | S | Sonnet | no | tbd | todo | |
+| M15-04 | Error alerts for failed n8n workflows to email | ALL_IN_ONE_PLAN; automation-map | M12-01 | Forced failure sends one alert. | S | Sonnet | no | tbd | todo | |
+| M15-05 | SMS alert to Abdullah (blocked until A2P) | ALL_IN_ONE_PLAN; automation-map | M15-04 | Test with fake number only. | S | Sonnet | no | tbd | todo | |
+
+### M16 Kynetic agency tenant: leads, dialer, pipeline
+
+| ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| M16-01 | Create Kynetic as its own tenant (synthetic data first) | ALL_IN_ONE_PLAN; automation-map | M12-08 | Isolation test with a client tenant. | M | Opus | no | tbd | todo | |
+| M16-02 | Lead sources inbound vs outbound; outbound split by channel (cold call, SMS, email, DM) | ALL_IN_ONE_PLAN; automation-map | M16-01 | Filters and counts correct on seeded data. | M | Sonnet | no | tbd | todo | |
+| M16-03 | Human dialer queue: next lead, script, DNC flag, one-tap outcome log | ALL_IN_ONE_PLAN; automation-map | M16-02 | Seeded run: DNC lead is never shown. Outcome saved with time. | L | Sonnet | no | tbd | todo | |
+| M16-04 | Campaigns | ALL_IN_ONE_PLAN; automation-map | M16-02 | Create, assign leads, see results. | M | Sonnet | no | tbd | todo | |
+| M16-05 | Agency pipeline stages (confirmed: New, Contacted, Interested, Proposal Sent, Won, Lost, Nurture) | ALL_IN_ONE_PLAN; automation-map | M16-01 | Stages editable, moves logged. | M | Sonnet | no | tbd | todo | |
+| M16-06 | Never-dial list guard (AM-1 Roofing, FL, OK, DNC) in the dialer | ALL_IN_ONE_PLAN; automation-map | M16-03 | Test: blocked numbers cannot be logged as called. | S | Opus | no | tbd | todo | |
+
+### M17 Proposals, onboarding, billing
+
+| ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| M17-01 | Proposal builder (draft, never auto-sent; Problem, Agentic Solution, Roadmap, ROI) | ALL_IN_ONE_PLAN; automation-map | M16-05 | Draft saved and rendered. | M | Sonnet | no | tbd | todo | |
+| M17-02 | Price plans as data | ALL_IN_ONE_PLAN; automation-map | M17-01 | Both price models loadable; no hard-coded price. | M | Sonnet | no | tbd | todo | |
+| M17-03 | Client onboarding checklist and tenant creation from a won deal (no live provider calls) | ALL_IN_ONE_PLAN; automation-map | M17-01, M12-05 | Fake client created end to end. | L | Sonnet | no | tbd | todo | |
+| M17-06 | Auto-created Alex demo when a client profile is created (copy a template agent with the client's name; demo number only reachable by Abdullah; real provider calls need his yes; never touches Nora or Emily) | ALL_IN_ONE_PLAN; automation-map | M13-02, M17-03 | Fake client profile creates a stub demo agent record and shows a test link. No live write. | L | Opus | no | tbd | todo | |
+| M17-04 | Stripe draft invoices from n8n (needs Abdullah's yes before any real Stripe write) | ALL_IN_ONE_PLAN; automation-map | M17-02 | Stripe test mode only. Draft created and logged. | L | Sonnet | no | tbd | todo | |
+| M17-05 | Payment received and dunning (test mode) | ALL_IN_ONE_PLAN; automation-map | M17-04 | Fake failed payment starts dunning. | M | Sonnet | no | tbd | todo | |
+
+### M18 Backup, digest, cleanup
+
+| ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| M18-01 | Twenty one-way backup of Kynetic data and tenant summaries (no personal data) | ALL_IN_ONE_PLAN; automation-map | M12-02 | Test proves no client personal data in the payload. Writes need Abdullah's yes. | L | Opus | no | tbd | todo | |
+| M18-02 | Daily digest to Abdullah | ALL_IN_ONE_PLAN; automation-map | M15-01 | Fake data digest arrives. | S | Sonnet | no | tbd | todo | |
+| M18-03 | Twilio click-to-call dialer (later, only after A2P and volume) | ALL_IN_ONE_PLAN; automation-map | M16-03 | Deferred. | L | Opus | no | tbd | todo | |
+| M18-04 | Update docs, progress, known issues | ALL_IN_ONE_PLAN; automation-map | all | Docs match what was built. | S | Haiku | no | tbd | todo | |
+
+### M19 Client-side completeness (added Nov 1 from the gap check)
+
+| ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| M19-01 | Ad spend and cost-per-lead on the client dashboard (Meta spend pulled by n8n, stored by portal) | ALL_IN_ONE_PLAN; automation-map | M13-09 | Fake spend plus fake leads give correct cost per lead per week. | M | Sonnet | no | tbd | todo | |
+| M19-02 | Alex usage and cost tracking per tenant, with a monthly spend cap that pauses calls | ALL_IN_ONE_PLAN; automation-map | M13-03, M12-04 | Fake usage over the cap pauses new calls and alerts Abdullah. | M | Opus | no | tbd | todo | |
+| M19-03 | Recording-disclosure check on every call (opener present in transcript, flag if missing) | ALL_IN_ONE_PLAN; automation-map | M13-03 | Fake transcript without the disclosure is flagged on the call and counted in the report. | S | Sonnet | no | tbd | todo | |
+| M19-04 | Client offboarding: stop all sends, export their data, mark tenant inactive | ALL_IN_ONE_PLAN; automation-map | M12-06 | Fake tenant cancelled; no further sends; export contains only that tenant. | M | Opus | no | tbd | todo | |
+| M19-05 | Client staff roles and invites recheck against the new flows (built in M8; verify only) | ALL_IN_ONE_PLAN; automation-map | M13-09 | Role tests still pass with n8n-written data. | S | Sonnet | no | tbd | todo | |
+
+### M20 Agency completeness (added Nov 1 from the gap check)
+
+| ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| M20-01 | Lead sourcing import into outbound lists (Meta Ad Library and Maps results through n8n) | ALL_IN_ONE_PLAN; automation-map | M16-02 | Seeded results import once, dedupe, never import AM-1 Roofing or FL/OK. | M | Sonnet | no | tbd | todo | |
+| M20-02 | Outbound email and DM tracking (human-sent; portal logs and checks DNC; no automated sends, per D-007) | ALL_IN_ONE_PLAN; automation-map | M16-02 | Logged message appears on lead; DNC lead blocked. | M | Sonnet | no | tbd | todo | |
+| M20-03 | Contracts and e-sign tracking (draft, sent, signed; provider chosen by Abdullah) | ALL_IN_ONE_PLAN; automation-map | M17-01 | Status moves and links to the deal. No real send without a yes. | M | Sonnet | no | tbd | todo | |
+| M20-04 | Revenue and expenses view for Kynetic | ALL_IN_ONE_PLAN; automation-map | M17-05 | Seeded invoices and expenses give correct monthly totals. | M | Sonnet | no | tbd | todo | |
+| M20-05 | Client health score and renewal alerts | ALL_IN_ONE_PLAN; automation-map | M15-01 | Fake low-activity client triggers one alert. | M | Sonnet | no | tbd | todo | |
+| M20-06 | Support requests from clients | ALL_IN_ONE_PLAN; automation-map | M16-01 | Client submits, Abdullah sees it, status tracked. | M | Sonnet | no | tbd | todo | |
+| M20-07 | Referrals and case-study tracking | ALL_IN_ONE_PLAN; automation-map | M17-03 | Referral linked to a won deal; case-study status per client. | S | Haiku | no | tbd | todo | |
 
 ## Open items that can block tasks
 These come from `docs/DECISIONS.md` (Still UNRESOLVED and approved gap-check items).
