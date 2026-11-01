@@ -35,7 +35,7 @@ Resume notes must contain, in this order: `branch:`; `last commit:` (short hash)
 
 ## Summary
 - 128 tasks in 13 milestone groups and 29 waves.
-- Proposed 2026-10-31, not yet approved: 57 more tasks in M12 to M20 (see "M12 to M20 All-in-one portal" below).
+- Proposed 2026-10-31, not yet approved: 60 more tasks in M12 to M20 (see "M12 to M20 All-in-one portal" below).
 - Models: Sonnet 76, Opus 29, Haiku 23.
 - Sizes: S 30, M 70, L 28.
 
@@ -285,7 +285,7 @@ Source of the decisions: `docs/DECISIONS.md` section "All-in-one portal, 2026-10
 | M12-05 | Admin screen to issue a tenant's lead-webhook secret and show the n8n URL | automation-map; DECISIONS DC-TBD | M12-01 | Secret shown once, rotated, never logged. Access test for non-admin. | M | Sonnet | yes | 31 | todo |  |
 | M12-06 | Shared n8n sub-workflow "may I contact" (consent, quiet hours, state rules, DNC, frequency caps) reading portal data | automation-map; DECISIONS DC-TBD | M12-03 | Fake-data test table covers every rule, including quiet hours at edges and Florida/Oklahoma blocks. Logs a decision per run. | L | Opus | yes | 32 | todo |  |
 | M12-07 | Gate parity test: same inputs through the old portal gate and the n8n sub-workflow give the same answer | automation-map; DECISIONS DC-TBD | M12-06 | All cases match or each difference is listed for Abdullah. | M | Opus | yes | 33 | todo |  |
-| M12-08 | M12 gate: review of decisions, risk list, kill switch | automation-map; DECISIONS DC-TBD | M12-07 | Abdullah's yes. | S | Haiku | yes | 34 | todo |  |
+| M12-08 | M12 gate: review of decisions, risk list, kill switch | automation-map; DECISIONS DC-TBD | M12-02, M12-03, M12-04, M12-05, M12-07 | Abdullah's yes. | S | Haiku | yes | 34 | todo |  |
 
 ### M13 Client lead-to-call chain (ElevenLabs, stub first)
 
@@ -299,27 +299,29 @@ Source of the decisions: `docs/DECISIONS.md` section "All-in-one portal, 2026-10
 | M13-06 | Fix deal-to-booked rule (`booked` vs `Estimate Booked`) | automation-map; DECISIONS DC-TBD | none | Regression test. | S | Sonnet | yes | 30 | todo |  |
 | M13-07 | New-lead alert and hot-lead alert by email | automation-map; DECISIONS DC-TBD | M13-01 | Fake lead sends one email. No duplicate. | S | Sonnet | yes | 36 | todo |  |
 | M13-08 | Opt-out and STOP handling end to end | automation-map; DECISIONS DC-TBD | M12-06 | Fake STOP stops all further sends, logged with reason. | M | Opus | yes | 33 | todo |  |
-| M13-09 | M13 gate: full fake run, lead to call to booking to report data | automation-map; DECISIONS DC-TBD | M13-08 | Abdullah's yes. Real provider test calls need a separate yes. | S | Haiku | yes | 34 | todo |  |
+| M13-09 | M13 gate: full fake run, lead to call to booking to report data | automation-map; DECISIONS DC-TBD | M13-01, M13-03, M13-04, M13-05, M13-07, M13-08 | Abdullah's yes. Real provider test calls need a separate yes. | S | Haiku | yes | 37 | todo |  |
+| M13-10 | Replace the Retell outbound-speed-to-lead n8n workflow with the ElevenLabs lead chain (same Alex, same agent role). The old workflow stays inactive until the new one passes, then is archived only with Abdullah's yes. Nora and Emily are not touched. | automation-map B4; DECISIONS DC-TBD-07 | M13-09 | Side-by-side fake-lead run gives the same outcomes on the new chain; old workflow confirmed inactive; no live n8n or Retell write without a yes | M | Sonnet | yes | 38 | todo |  |
 
 ### M14 Follow-up sequences, reminders, reviews
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M14-01 | Sequence steps in n8n (SMS and email) with the contact decision before each send | automation-map; DECISIONS DC-TBD | M13-09 | Test: steps fire in order, stop on reply or opt-out. SMS stays off until A2P. | L | Sonnet | yes | 35 | todo |  |
+| M14-01 | Sequence steps in n8n (SMS and email) with the contact decision before each send | automation-map; DECISIONS DC-TBD | M13-09 | Test: steps fire in order, stop on reply or opt-out. SMS stays off until A2P. | L | Sonnet | yes | 38 | todo |  |
 | M14-02 | Appointment reminders (24h, 2h) | automation-map; DECISIONS DC-TBD | M13-05 | Fake appointment sends two reminders. | M | Sonnet | yes | 34 | todo |  |
 | M14-03 | No-show recovery | automation-map; DECISIONS DC-TBD | M14-02 | No-show triggers one recovery message and a task. | M | Sonnet | yes | 35 | todo |  |
-| M14-04 | Portal "payment received" event, Paid button and 2-hour review-request timer | automation-map; DECISIONS DC-TBD | M13-09 | Fake payment starts a timer; message is queued 2 hours later; duplicate payment does not double-send. | M | Sonnet | yes | 35 | todo |  |
-| M14-06 | n8n review-request workflow: email now, text after A2P, contact decision before each send | automation-map; DECISIONS DC-TBD | M14-04, M12-06 | Fake run sends the email at 2 hours; opted-out contact gets nothing. Text path stays off until A2P. | M | Sonnet | yes | 36 | todo |  |
-| M14-07 | First two invoicing adapters in n8n (systems chosen with Abdullah once a client's system is known; Stripe test mode is the default first) | automation-map; DECISIONS DC-TBD | M14-04 | Fake paid invoice triggers the portal event. No real client account is touched without a yes. | L | Sonnet | yes | 36 | todo |  |
-| M14-05 | Missed-call text-back, after-hours reply, reactivation moved or kept | automation-map; DECISIONS DC-TBD | M14-01 | Parity with existing portal behavior. | M | Sonnet | yes | 36 | todo |  |
+| M14-04 | Portal "payment received" event, Paid button and 2-hour review-request timer | automation-map; DECISIONS DC-TBD | M13-09 | Fake payment starts a timer; message is queued 2 hours later; duplicate payment does not double-send. | M | Sonnet | yes | 38 | todo |  |
+| M14-06 | n8n review-request workflow: email now, text after A2P, contact decision before each send | automation-map; DECISIONS DC-TBD | M14-04, M12-06 | Fake run sends the email at 2 hours; opted-out contact gets nothing. Text path stays off until A2P. | M | Sonnet | yes | 39 | todo |  |
+| M14-07 | First two invoicing adapters in n8n (systems chosen with Abdullah once a client's system is known; Stripe test mode is the default first) | automation-map; DECISIONS DC-TBD | M14-04 | Fake paid invoice triggers the portal event. No real client account is touched without a yes. | L | Sonnet | yes | 39 | todo |  |
+| M14-08 | Retire portal-side sending: turn off the portal's own sequence, text-back, reactivation and reminder sends (module flags off), then remove that code once the n8n versions pass. Keep the tables and records. | automation-map B3, B7, B13; DECISIONS DC-TBD-08 | M14-05, M14-06, M12-07 | Only n8n sends in a fake-data run; portal worker queues for these sends are gone; history and records still readable; deletion of code needs Abdullah's yes | M | Sonnet | yes | 40 | todo |  |
+| M14-05 | Missed-call text-back, after-hours reply, reactivation moved or kept | automation-map; DECISIONS DC-TBD | M14-01 | Parity with existing portal behavior. | M | Sonnet | yes | 39 | todo |  |
 
 ### M15 Reporting and alerts
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M15-01 | n8n schedule that triggers daily metrics per tenant | automation-map; DECISIONS DC-TBD | M13-09 | Metrics rows appear for fake tenants each day. | S | Sonnet | yes | 35 | todo |  |
-| M15-02 | Weekly client email from n8n (counts, bookings, link to portal) | automation-map; DECISIONS DC-TBD | M15-01 | Fake tenant gets one email with correct numbers. | M | Sonnet | yes | 36 | todo |  |
-| M15-03 | Monthly report scheduling | automation-map; DECISIONS DC-TBD | M15-01 | Report generated for a fake tenant. | S | Sonnet | yes | 36 | todo |  |
+| M15-01 | n8n schedule that triggers daily metrics per tenant | automation-map; DECISIONS DC-TBD | M13-09 | Metrics rows appear for fake tenants each day. | S | Sonnet | yes | 38 | todo |  |
+| M15-02 | Weekly client email from n8n (counts, bookings, link to portal) | automation-map; DECISIONS DC-TBD | M15-01 | Fake tenant gets one email with correct numbers. | M | Sonnet | yes | 39 | todo |  |
+| M15-03 | Monthly report scheduling | automation-map; DECISIONS DC-TBD | M15-01 | Report generated for a fake tenant. | S | Sonnet | yes | 39 | todo |  |
 | M15-04 | Error alerts for failed n8n workflows to email | automation-map; DECISIONS DC-TBD | M12-01 | Forced failure sends one alert. | S | Sonnet | yes | 31 | todo |  |
 | M15-05 | SMS alert to Abdullah (blocked until A2P) | automation-map; DECISIONS DC-TBD | M15-04 | Test with fake number only. | S | Sonnet | yes | 32 | todo |  |
 
@@ -343,26 +345,27 @@ Source of the decisions: `docs/DECISIONS.md` section "All-in-one portal, 2026-10
 | M17-03 | Client onboarding checklist and tenant creation from a won deal (no live provider calls) | automation-map; DECISIONS DC-TBD | M17-01, M12-05 | Fake client created end to end. | L | Sonnet | yes | 38 | todo |  |
 | M17-06 | Auto-created Alex demo when a client profile is created (copy a template agent with the client's name; demo number only reachable by Abdullah; real provider calls need his yes; never touches Nora or Emily) | automation-map; DECISIONS DC-TBD | M13-02, M17-03 | Fake client profile creates a stub demo agent record and shows a test link. No live write. | L | Opus | yes | 39 | todo |  |
 | M17-04 | Stripe draft invoices from n8n (needs Abdullah's yes before any real Stripe write) | automation-map; DECISIONS DC-TBD | M17-02 | Stripe test mode only. Draft created and logged. | L | Sonnet | yes | 39 | todo |  |
-| M17-05 | Payment received and dunning (test mode) | automation-map; DECISIONS DC-TBD | M17-04 | Fake failed payment starts dunning. | M | Sonnet | no | 40 | todo |  |
+| M17-05 | Payment received and dunning (test mode) | automation-map; DECISIONS DC-TBD | M17-04 | Fake failed payment starts dunning. | M | Sonnet | yes | 40 | todo |  |
 
 ### M18 Backup, digest, cleanup
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | M18-01 | Twenty one-way backup of Kynetic data and tenant summaries (no personal data) | automation-map; DECISIONS DC-TBD | M12-02 | Test proves no client personal data in the payload. Writes need Abdullah's yes. | L | Opus | yes | 32 | todo |  |
-| M18-02 | Daily digest to Abdullah | automation-map; DECISIONS DC-TBD | M15-01 | Fake data digest arrives. | S | Sonnet | yes | 36 | todo |  |
+| M18-02 | Daily digest to Abdullah | automation-map; DECISIONS DC-TBD | M15-01 | Fake data digest arrives. | S | Sonnet | yes | 39 | todo |  |
 | M18-03 | Twilio click-to-call dialer (later, only after A2P and volume) | automation-map; DECISIONS DC-TBD | M16-03 | Deferred. | L | Opus | yes | 38 | todo |  |
 | M18-04 | Update docs, progress, known issues | automation-map; DECISIONS DC-TBD | all | Docs match what was built. | S | Haiku | no | 42 | todo |  |
+| M18-05 | Delete the retired `portal/` folder and update `CLAUDE.md`, `KYNETIC_CONTEXT.md` and the system map. Needs Abdullah's yes; first record the fate of `/api/ingest/results` (M10-07). | M10-07; KYNETIC_CONTEXT | none | No code, workflow or tool references `portal/` or `/api/ingest`; docs point to `crm/`; history keeps the old code | S | Haiku | yes | 30 | todo |  |
 
 ### M19 Client-side completeness (added Nov 1 from the gap check)
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M19-01 | Ad spend and cost-per-lead on the client dashboard (Meta spend pulled by n8n, stored by portal) | automation-map; DECISIONS DC-TBD | M13-09 | Fake spend plus fake leads give correct cost per lead per week. | M | Sonnet | yes | 35 | todo |  |
+| M19-01 | Ad spend and cost-per-lead on the client dashboard (Meta spend pulled by n8n, stored by portal) | automation-map; DECISIONS DC-TBD | M13-09 | Fake spend plus fake leads give correct cost per lead per week. | M | Sonnet | yes | 38 | todo |  |
 | M19-02 | Alex usage and cost tracking per tenant, with a monthly spend cap that pauses calls | automation-map; DECISIONS DC-TBD | M13-03, M12-04 | Fake usage over the cap pauses new calls and alerts Abdullah. | M | Opus | yes | 33 | todo |  |
 | M19-03 | Recording-disclosure check on every call (opener present in transcript, flag if missing) | automation-map; DECISIONS DC-TBD | M13-03 | Fake transcript without the disclosure is flagged on the call and counted in the report. | S | Sonnet | yes | 33 | todo |  |
 | M19-04 | Client offboarding: stop all sends, export their data, mark tenant inactive | automation-map; DECISIONS DC-TBD | M12-06 | Fake tenant cancelled; no further sends; export contains only that tenant. | M | Opus | yes | 33 | todo |  |
-| M19-05 | Client staff roles and invites recheck against the new flows (built in M8; verify only) | automation-map; DECISIONS DC-TBD | M13-09 | Role tests still pass with n8n-written data. | S | Sonnet | yes | 35 | todo |  |
+| M19-05 | Client staff roles and invites recheck against the new flows (built in M8; verify only) | automation-map; DECISIONS DC-TBD | M13-09 | Role tests still pass with n8n-written data. | S | Sonnet | yes | 38 | todo |  |
 
 ### M20 Agency completeness (added Nov 1 from the gap check)
 
@@ -372,9 +375,11 @@ Source of the decisions: `docs/DECISIONS.md` section "All-in-one portal, 2026-10
 | M20-02 | Outbound email and DM tracking (human-sent; portal logs and checks DNC; no automated sends, per D-007) | automation-map; DECISIONS DC-TBD | M16-02 | Logged message appears on lead; DNC lead blocked. | M | Sonnet | yes | 37 | todo |  |
 | M20-03 | Contracts and e-sign tracking (draft, sent, signed; provider chosen by Abdullah) | automation-map; DECISIONS DC-TBD | M17-01 | Status moves and links to the deal. No real send without a yes. | M | Sonnet | yes | 38 | todo |  |
 | M20-04 | Revenue and expenses view for Kynetic | automation-map; DECISIONS DC-TBD | M17-05 | Seeded invoices and expenses give correct monthly totals. | M | Sonnet | no | 41 | todo |  |
-| M20-05 | Client health score and renewal alerts | automation-map; DECISIONS DC-TBD | M15-01 | Fake low-activity client triggers one alert. | M | Sonnet | yes | 36 | todo |  |
+| M20-05 | Client health score and renewal alerts | automation-map; DECISIONS DC-TBD | M15-01 | Fake low-activity client triggers one alert. | M | Sonnet | yes | 39 | todo |  |
 | M20-06 | Support requests from clients | automation-map; DECISIONS DC-TBD | M16-01 | Client submits, Abdullah sees it, status tracked. | M | Sonnet | yes | 36 | todo |  |
 | M20-07 | Referrals and case-study tracking | automation-map; DECISIONS DC-TBD | M17-03 | Referral linked to a won deal; case-study status per client. | S | Haiku | yes | 39 | todo |  |
+
+
 
 
 ### Build order for M12 to M20
@@ -383,17 +388,17 @@ Waves 30 and up continue after the existing 29. A task may start when every depe
 
 | Wave | Tasks | Notes |
 | --- | --- | --- |
-| 30 | M12-01, M13-06 | |
+| 30 | M12-01, M13-06, M18-05 | |
 | 31 | M12-02, M12-03, M12-05, M13-02, M15-04 | |
 | 32 | M12-04, M12-06, M13-03, M15-05, M18-01 | |
 | 33 | M12-07, M13-05, M13-08, M19-02, M19-03, M19-04 | |
-| 34 | M12-08, M13-09, M14-02 | |
-| 35 | M13-01, M14-01, M14-03, M14-04, M15-01, M16-01, M19-01, M19-05 | |
-| 36 | M13-04, M13-07, M14-06, M14-07, M14-05, M15-02, M15-03, M16-02, M16-05, M18-02, M20-05, M20-06 | |
-| 37 | M16-03, M16-04, M17-01, M20-01, M20-02 | |
-| 38 | M16-06, M17-02, M17-03, M18-03, M20-03 | |
-| 39 | M17-06, M17-04, M20-07 | |
-| 40 | M17-05 | |
+| 34 | M12-08, M14-02 | |
+| 35 | M13-01, M14-03, M16-01 | |
+| 36 | M13-04, M13-07, M16-02, M16-05, M20-06 | |
+| 37 | M13-09, M16-03, M16-04, M17-01, M20-01, M20-02 | |
+| 38 | M13-10, M14-01, M14-04, M15-01, M16-06, M17-02, M17-03, M18-03, M19-01, M19-05, M20-03 | |
+| 39 | M14-06, M14-07, M14-05, M15-02, M15-03, M17-06, M17-04, M18-02, M20-05, M20-07 | |
+| 40 | M14-08, M17-05 | |
 | 41 | M20-04 | |
 | 42 | M18-04 | |
 
