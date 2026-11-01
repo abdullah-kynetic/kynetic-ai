@@ -1,5 +1,7 @@
 # M12–M20 audit and wave 30 delivery
 
+**Current order (2026-11-01):** Abdullah deferred n8n automation work. M16-01/02/05 are implemented and verified locally (build/typecheck, 406 unit, 27 integration, one mobile/browser accessibility scenario). Next portal work: human dialer with DNC/never-dial guards, campaigns, proposal drafts. Earlier integration gates remain open; login/auth work stays last.
+
 **Latest progress (2026-11-01):** M13-06 database regression now passes; M12-01 technical review complete. Wave 31 local implementation completed M12-03, M12-05 and M13-02. M12-02 awaits explicit supersede confirmation; M15-04 formatter is tested but workflow validation is blocked by connector errors. Current evidence is in BUILD_PLAN, TESTING and progress; the original audit below records the earlier baseline.
 
 **Wave 32 update:** send-state/contact-policy readers and normalized call-result API are implemented and locally tested (402 unit, 107 integration). M12-04/M12-06/M13-03 remain in-progress for actual n8n graphs/parity/recording ingestion; see TESTING and the current contract for limits.

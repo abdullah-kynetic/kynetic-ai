@@ -2,6 +2,10 @@
 
 Mirror of the Twenty roadmap ("Roadmap: all phases"). Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
+## Portal implementation order (2026-11-01)
+
+N8n automations are deferred by Abdullah. Continue portal features with synthetic fixtures; login/auth work stays last. M16 agency workspace, source tracking and pipeline UI are locally verified. Next: human dialer with DNC/never-dial guards, campaigns, then proposal drafts. Live systems remain unchanged.
+
 ## Current plan
 Plan 1 only: the outbound speed-to-lead agent at the D-017 price (first 3 clients $4,675, clients 4 and up $8,500, three Stripe invoices at 50/25/25). Gate of 5 paying clients before Plan 2 (D-013). Task titles in Twenty carry [P1]/[P2]; Emily inbound and all upsell systems are [P2].
 
@@ -231,3 +235,9 @@ Verification: typecheck passed; full unit suite 401/401, then final provider/ale
 On work, added tenant-scoped send-state/contact-policy readers and the normalized call-result relay. Policy snapshots expose minimal status/rule/count inputs, fail closed on bad platform config and explicitly report migrationGatePassed=false. The relay checks scoped auth/module/contact/agent ownership, accepts only tenant recording keys, stores immutable receipt migration 1002 and reuses native disclosure/DNC/retention/timeline/completion persistence with concurrency locks. Unexpected relay failures omit transcript-bearing database error objects.
 
 Verified: typecheck; 402 unit tests; 107 integration tests across nine suites. Final relay failure-log regression passed 10/10 afterward. Scoped lint has no errors; scoped formatting passes. No CI/build/browser/n8n/live verification. M12-04, M12-06 and M13-03 remain in-progress where acceptance requires actual n8n graphs/parity or recording ingestion. M12-02 supersede confirmations remain pending. The n8n reference tool retry still fails; official npm SDK 0.38.4 reference/license inspected in temporary storage as a possible offline fallback, with no repo dependency added. FL/OK block-vs-window parity difference is documented for review. Next: construct/validate inactive n8n graphs using verified node schemas, test the shared contact rules/parity, and establish recording ingestion before advancing dependent flows. Local test database removed. No real secrets/provider calls, workflow writes/activation, deploy, push or main merge; login/auth work stays last.
+
+### 2026-11-01 — portal-first M16 agency workspace
+
+Abdullah directed us to skip n8n automations and continue the rest of the portal. Updated the synthetic-only dependency order and built M16-01/02/05: isolated registry/setup (migration 1003), admin agency workspace UI, manual source-classified leads, source filters/counts, seven agency stages, stage renaming and logged deal moves. Existing contact/deal/stage services and auth guards are reused. Setup leaves outbound disabled, Alex paused and no invites/memberships/credentials; no real agency tenant was created. Real data migration remains separate. Existing client pipelines and demo seeds are preserved.
+
+Verified: production build, typecheck, 406 unit tests, 27 integration tests and one browser flow including mobile axe with zero violations. A seed regression was fixed before the final passing run. Scoped lint has no errors (one axe import warning); scoped formatting passes. CI/deployed behavior not verified. No n8n/connector work, login/auth feature work, provider calls, real secrets, deploy, push or main merge. Local test database removed. Next: M16 human dialer together with never-dial/DNC safeguards, then campaigns and proposal drafts.

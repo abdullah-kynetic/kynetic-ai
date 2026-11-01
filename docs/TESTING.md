@@ -539,3 +539,16 @@ On work after a489e9d, synthetic data only, disposable local PostgreSQL 16 on lo
 - Relay tests cover fake result/detail/timeline and signed recording URL, concurrent exact replay, conflicting event/call identities, forbidden contact/agent/storage references, module isolation, invalid/revoked scopes, existing started calls, DNC, transactional failure rollback, native concurrent completion and ledger RLS/FK/immutability.
 - Scoped oxlint: no errors; four fixture global-seam naming warnings after unused native import cleanup. Targeted oxfmt check passed on the nine implementation/test files. Earlier whole-repo lint/format baseline failures remain unresolved; no whole-repo clean claim.
 - Not run: CI, production build, browser, n8n graphs/runtime, real provider callbacks or recording uploads. The native call processor, native webhook verification, consent gate and sender selection remain in force. No workflow activated or imported; actual rule parity and owner/counsel review remain pending.
+
+### M16 portal-first agency build (2026-11-01)
+
+Local work branch, synthetic data only. The build used explicit synthetic auth/encryption settings, localhost database selectors, PROVIDER_MODE=stub and OUTBOUND_ENABLED=false. No environment files, provider credentials or VPS systems were accessed. PostgreSQL 16 ran in the disposable local container on loopback port 55432; Chromium was `/usr/bin/chromium`.
+
+- `bun run typecheck`: passed after the final preview-guard correction and action tests.
+- `bun run build`: production compilation and route generation passed, including /admin/agency.
+- `bun run test`: 54 files / 406 tests passed, including four new direct-action guard/feedback tests.
+- `bun run test:integration -- tests/integration/agency-m16.test.ts tests/integration/stages.test.ts tests/integration/seed.test.ts`: 3 files / 27 tests passed. Coverage includes concurrent idempotent setup, rollback, default/custom stage preservation, source filtering/counts, no consent/outreach triggers, tenant isolation, forbidden caller/disabled admin/impersonation contexts, module-off refusal and existing pipeline/seed behavior.
+- An earlier seed regression found that extending SEED_TENANT_SLUGS changed the existing seeder's contract. Fixed by preserving its original three slugs and separately allowing the reserved agency slug in preview; final seed and agency tests passed. No failing check was waived.
+- `bun run test:e2e -- tests/e2e/m16-agency.spec.ts`: 1 browser scenario passed. Uses the existing synthetic session fixture; creates workspace and an outbound test lead, moves it to Interested, filters inbound, checks owner/VA denial and scans at 390px with axe WCAG AA tags (zero violations). Existing authentication was reused; no login/auth feature work.
+- Scoped oxlint on agency/UI/preview/schema/tests: no errors, one axe-import naming warning. Scoped oxfmt check passed. Whole-repo lint/format baseline issues remain outside this feature.
+- Not verified: CI, deployed/VPS behavior, real agency data migration or real providers. n8n automations are deferred by the user; no n8n workflow or connector work was performed for this feature. The local test database was removed at session end.
