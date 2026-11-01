@@ -619,3 +619,7 @@ Approved by Abdullah 2026-10-25 (GP-01 to GP-05). The Terms and Privacy wording 
 - **F-103 documents.** Upload by admin only; PDF only, size limit 10 MB, magic-number check, stored under the tenant prefix; owners download by a signed URL that expires in 5 minutes after `authorize()`. Another tenant's id returns 404.
 - **Branding inputs (F-39).** Logo upload follows 2.x upload rules (type, size, re-encode); primary color must pass the contrast rule in DESIGN_SYSTEM before it is saved.
 - **Preview environments** carry synthetic data only and sit behind Cloudflare Access.
+
+### M12-03 evidence endpoint (2026-11-01; local implementation)
+
+`POST /api/service/contact-decisions` uses existing tenant-scoped service authentication with `contact-decisions:write`. It records n8n's claim as evidence only; SECURITY 3.1 and OutboundGate still enforce sends. Strict v1 payload contains a contact ID, channel (`phone_call`, `sms`, `email`), allow/deny, bounded rule/reason identifiers and UTC timestamps. Tenant comes exclusively from the token. Foreign/deleted/merged contacts are 404. Exact retries yield the original ID; changed payload under the same event ID returns 409. The ledger and activity are atomic; runtime roles cannot update/delete ledger rows. This base-platform logging remains available to record module-off denials. It sends nothing, changes no consent and emits no trigger event. No new login/auth work is included.

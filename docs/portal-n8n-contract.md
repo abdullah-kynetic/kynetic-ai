@@ -40,13 +40,13 @@ Delivery is at least once; non-2xx throws. pg-boss queues use retryLimit 6, init
 
 `GET /api/appointments/availability` and `POST /api/appointments/book` exist with service authentication. These are portal availability/booking functions, not proof of Cal.com synchronization. Cal.com remains the proposed calendar authority; M13-05 must define external event mapping and dedupe before using both calendars.
 
-## Target interfaces (reserved design, none implemented by this document)
+## Target interfaces (status is task-specific)
 
 All new service routes use tenant-scoped bearer authentication with a distinct least-privilege scope, server-side module checks, strict versioned schemas and RLS. No route accepts an arbitrary tenantId to override the token. Mutation envelope: `eventId` UUID, `version:1`, `occurredAt` UTC ISO time, and a task-specific payload. Store an idempotency key `(tenantId, operation, eventId)` and the effect atomically; repeated identical requests return the original result without another effect, changed payload under the same key returns 409. Foreign record IDs return 404. This is a requirement for later tasks, not the current service API's behavior.
 
 | Interface to build | Scope | Payload / effect | Owner task |
 | --- | --- | --- | --- |
-| POST /api/service/contact-decisions | contact-decisions:write | contactId, channel, allow/deny, reasonCode, ruleVersion, firedRule, evaluatedAt; append timeline evidence, never authorize a portal send | M12-03 |
+| POST /api/service/contact-decisions | contact-decisions:write | contactId, channel, allow/deny, reasonCode, ruleVersion, firedRule, evaluatedAt; append timeline evidence, never authorize a portal send | M12-03: implemented locally 2026-11-01 |
 | GET /api/service/contact-policy/{contactId} | contact-policy:read | consent evidence, DNC, timezone/state, counts and tenant state; minimize returned PII | M12-06 |
 | GET /api/service/send-state | send-state:read | global kill switch, tenant pause/suspension and checkedAt; no secrets | M12-04 |
 | POST /api/service/call-results | calls:write | contactId, provider, providerCallId, outcome, start/end, transcript and allowlisted recording reference; dedupe by tenant/provider/call id too | M13-03 |
@@ -101,3 +101,13 @@ M12-01 technical review is complete for local implementation. Explicit locked-de
 Current `backup.run` is confirmed in source: worker schedules nightly encrypted database backup at 02:00 UTC and monthly scratch restore at 03:00 UTC on day 1; implementation is `server/admin/backups.ts`. This is distinct from the proposed Twenty data export and must not be repurposed or removed. Live backups/restore results were not checked in this audit.
 
 Locked supersedes (DC-TBD-03/04/07/08), counsel rules, A2P, invoicing provider choices and explicit gate approval remain separate from permission to build local code. Retell code already exists despite the proposed “not built” wording: leave it and protected agents untouched; retirement is not implied.
+
+## M12-03 implemented wire shape (2026-11-01)
+
+`POST /api/service/contact-decisions` is implemented; the other target routes above remain reserved. Bearer scope is `contact-decisions:write`. Strict body:
+
+```json
+{"eventId":"<uuid>","version":1,"occurredAt":"<UTC ISO time>","payload":{"contactId":"<uuid>","channel":"phone_call","decision":"deny","reasonCode":"internal_dnc","ruleVersion":"v1","firedRule":"dnc","evaluatedAt":"<UTC ISO time>"}}
+```
+
+Channels are phone_call/sms/email; decision is allow/deny. Rule identifiers match `[a-zA-Z0-9_.:-]{1,100}` and carry no free-form PII/diagnostics. Body cap is 8,000 characters under the current parser. Response: `{ok:true,data:{id,status}}`, 201 recorded or 200 duplicate, no-store. A changed validated payload under the same tenant event ID returns 409; member order is immaterial. Unknown/foreign/deleted/merged contacts return 404; invalid schema 400; invalid/revoked/wrong-scope tokens 401. Database timestamp is receipt time; supplied timestamps are evidence only. This endpoint appends an automation activity and never changes consent, queues jobs or triggers sending.

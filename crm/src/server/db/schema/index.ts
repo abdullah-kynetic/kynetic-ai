@@ -3,3 +3,4 @@ export * from './auth';
 export * from './settings';
 export * from './email';
 export * from './presence';
+export * from './contact-decisions';

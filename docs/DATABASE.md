@@ -1388,3 +1388,7 @@ Cross-document check items:
 - Feature IDs are PRD IDs (F-01 to F-106). Spec section numbering is not used.
 - Module keys match PRD v4 and ARCHITECTURE exactly.
 - CODE_STYLE decided `tenant_modules(tenant_id, module_key, enabled, config jsonb, updated_at)`. This doc adds `level`, `changed_by` and `changed_at`, which the PRD F-70 requires (changed-by, timestamp) and the CRM level requires.
+
+## M12-03 contact-decision evidence (2026-11-01)
+
+Migration `1001_contact_decisions` adds the M12-owned `contact_decisions` append-only request ledger: UUID id, tenant_id, event_id, contact_id, validated versioned JSON payload, SHA-256 payload_hash and server created_at. Unique `(tenant_id,event_id)` provides tenant-local idempotency; composite `(tenant_id,contact_id)` references contacts. FORCE RLS uses the standard tenant policies; app and worker have SELECT/INSERT only (UPDATE/DELETE revoked). The decision and its `activities` timeline entry commit in one transaction. This records evidence, never consent or send authorization. No existing shared table schema changes. New migrations follow journal order; 1001 follows existing 1000.

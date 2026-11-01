@@ -239,6 +239,13 @@
       "when": 1793307709000,
       "tag": "1000_contacts_phone_fragment_tenant_index",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1793518200000,
+      "tag": "1001_contact_decisions",
+      "breakpoints": true
     }
   ]
 }

@@ -177,3 +177,7 @@ Decided in the project thread while planning M12 to M20 (`docs/BUILD_PLAN.md`). 
 ## Sequencing update — 2026-11-01
 
 Abdullah explicitly requested that login and auth be the last work added. Remaining user-facing login/auth work and setup move after the feature waves, before go-live. Existing authentication, server authorization, tenant isolation and API/webhook verification remain enforced. No new decision number assigned. This is a sequencing change; it does not remove existing controls or approve deployment.
+
+### M12-03 implementation note — 2026-11-01
+
+Contact decisions are stored as immutable evidence in an M12-owned ledger plus the existing lead timeline. No approval to send follows from an allow log. Tenant event IDs are unique; conflicting retries return 409. Base-platform evidence logging remains available when alex_core is off so denials can be recorded. Existing consent enforcement and pending DC-TBD supersedes are unchanged. No decision number assigned.
