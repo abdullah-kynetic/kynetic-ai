@@ -131,6 +131,30 @@ describe('M7 F-79/F-80/F-81 module acceptance', () => {
     expect(logged).toEqual([{ status: 'sent' }]);
   });
 
+  it('F-33 M13-06: booking moves only its tenant deal to the default Estimate Booked stage; replay is a no-op', async () => {
+    clearSubscribers();
+    registerStageRuleSubscribers();
+    const [target] = await tdb.admin`insert into pipeline_stages (tenant_id, pipeline_id, name, position)
+      values (${IDS.tenantA}, ${a.pipelineId}, 'Estimate Booked', 3) returning id`;
+    // A legacy name must not take priority over the PRD's default stage.
+    await tdb.admin`insert into pipeline_stages (tenant_id, pipeline_id, name, position)
+      values (${IDS.tenantA}, ${a.pipelineId}, 'Booked', 2)`;
+    const [appointment] = await tdb.admin`insert into appointments (tenant_id, contact_id, deal_id, starts_at, ends_at, booked_by)
+      values (${IDS.tenantA}, ${a.contactId}, ${a.dealId}, '2026-11-02T18:00:00Z', '2026-11-02T19:00:00Z', 'alex') returning id`;
+    const env = event('appointment.booked', { appointmentId: appointment!.id });
+    // A forged event for the other tenant cannot see or move A's appointment/deal.
+    await deliver({ ...env, tenantId: IDS.tenantB }, 'm7-booking-stage-rule');
+    const [unchanged] = await tdb.admin`select stage_id from deals where id = ${a.dealId}`;
+    expect(unchanged!.stage_id).toBe(a.stageId);
+    await deliver(env, 'm7-booking-stage-rule');
+    const [moved] = await tdb.admin`select stage_id, updated_at from deals where id = ${a.dealId}`;
+    expect(moved!.stage_id).toBe(target!.id);
+    await deliver(env, 'm7-booking-stage-rule');
+    const [replayed] = await tdb.admin`select stage_id, updated_at from deals where id = ${a.dealId}`;
+    expect(replayed).toEqual(moved);
+    clearSubscribers();
+  });
+
   it('F-33: deal-won alert creates one owner notification and emails once through the fake adapter', async () => {
     registerStageRuleSubscribers();
     const env = event('deal.won', { dealId: a!.dealId });
