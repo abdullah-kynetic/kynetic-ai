@@ -267,6 +267,13 @@
       "when": 1793553000000,
       "tag": "1004_agency_dialer_campaigns",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1793556000000,
+      "tag": "1005_agency_proposals",
+      "breakpoints": true
     }
   ]
 }

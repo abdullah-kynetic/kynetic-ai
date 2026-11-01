@@ -1416,3 +1416,7 @@ Migration `1004_agency_dialer_campaigns` adds three agency-owned tables. Their t
 All three use FORCE RLS. Outcome writes lock the event/contact, recheck current eligibility, and atomically commit history, timeline/audit and DNC effects. Same event/body returns the prior ID; changed body or already-logged contact conflicts. Leads leave the first-pass queue after an outcome. Callback is history only; no automatic retry/requeue or reminder is added.
 
 The synthetic lead form optionally accepts a reserved +1 area-code 555-01xx phone and a known US state/DC code. Unknown/conflicting state excludes the candidate. Campaign reports summarize manual outcomes for assigned live contacts, including pre-assignment history; they are not attribution calculations. Assignment choices keep the latest-50 lead limit.
+
+### M17-01 proposal drafts — 2026-11-01
+
+Migration 1005 adds `agency_proposals`: one working draft per synthetic agency deal, with title, Problem, Agentic Solution, Roadmap and ROI text, revision, actor and timestamps. Composite tenant/deal FK and the agency registry FK prevent cross-tenant attachment. Tenant RLS applies; runtime DELETE is revoked. Status is constrained to draft, title to 1–200 trimmed characters, each section to 6,000 characters. Sections may be blank. Deleted deals hide their drafts; no purge UI is introduced.

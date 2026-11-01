@@ -345,3 +345,7 @@ Abdullah deferred n8n automation work. M16-01/02/05 now supply a synthetic agenc
 ### M16 manual queue and campaigns (2026-11-01)
 
 M16-03/04/06 add a guarded synthetic manual-call queue with draft script, DNC status, one-click outcomes, history/timestamps and DNC marking without a call record. Never-dial checks ship with the queue. Campaigns support creation, assignment, filtered queues and outcome summaries. Reuses F-05/F-19/F-74 controls; no new F-ID assigned. Initial operation is reserved synthetic numbers only, with no provider call, automatic follow-up or callback scheduling. Real agency setup and further retry/requeue policy remain separate.
+
+### F-105 incremental delivery: M17-01 — 2026-11-01
+
+The portal-first build adds an internal, manually authored proposal draft attached to a synthetic agency deal. Admins can save partial Problem, Agentic Solution, Roadmap and ROI sections and preview the saved text. Concurrent changes are rejected while the editor retains unsaved text. This slice does not implement service pricing, timeline estimation, AI generation, approval or delivery; those remain separate tasks.

@@ -201,3 +201,7 @@ Implementation default: the first agency workspace is explicitly synthetic, uses
 Ship the human dialer with never-dial checks as one unit. The synthetic workspace uses reserved test numbers and known state codes; protect AM-1 identity/number and exclude FL/OK, DNC, unknown/conflicting state and non-synthetic numbers. Outcome history is immutable first-pass data: a lead leaves the queue after one outcome. Callback records no automated schedule; DNC may be marked without logging a call. Human logging grants no AI consent.
 
 Campaign summaries count manual history for assigned live contacts, including pre-assignment outcomes, without claiming marketing attribution. Scripts remain drafts for review and are never sent automatically. These defaults authorize no live migration or calling. No new decision number assigned.
+
+### M17 proposal draft defaults — 2026-11-01
+
+One working draft per synthetic agency deal; partial sections are allowed. Saves use optimistic revisions, with identical-content retries treated as no-ops. Drafts remain internal and never change deal stage, send content or create invoices. ROI is manually authored with assumptions for review; no return or price is invented. Preview escapes plain text. These are local implementation defaults within M17-01, not live-system authorization or a locked-pricing supersede. No decision number assigned.
