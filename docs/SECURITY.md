@@ -190,6 +190,18 @@ One code path can start a call, send an SMS or send a marketing email: `canConta
 4. Deny reasons: `no_consent`, `consent_revoked`, `opted_out`, `internal_dnc`, `quiet_hours`, `module_off`, `tenant_suspended`, `alex_paused`, `outbound_disabled`, `sms_not_approved`, `rate_cap`, `unknown_timezone`.
 5. Quiet-hours denials reschedule to the next allowed window. Other denials are final until state changes.
 
+### 3.1a Proposed change (2026-10-31, not in effect until approved): n8n makes the contact decision
+
+Abdullah decided that n8n runs the automations and makes the consent, quiet-hours and DNC decision (DECISIONS DC-TBD-08). This would replace 3.1 as the single gate. It is not in effect. Until the plan is approved and built, 3.1 and SEC-T-13 stand and nothing below is enforced.
+
+If approved, the controls that keep it safe are:
+1. One shared n8n sub-workflow, "may I contact", that every call, text and marketing email goes through. No workflow sends without it. A test fails if a workflow calls a provider without it.
+2. The portal owns consent records, opt-outs, DNC lists and tenant state. n8n reads them at send time.
+3. n8n posts every allow and deny to the portal with the reason code and the rule that fired. The portal writes the `activities` row (3.1 item 3).
+4. The portal kill switch and per-tenant pause are read by the sub-workflow before every send (F-101).
+5. A parity test runs the same inputs through the old portal gate and the n8n sub-workflow. Any difference is listed for Abdullah before go-live.
+6. Counsel has not confirmed that this arrangement meets TCPA and state rules. Treat as open until they do (`docs/counsel-questions.md`).
+
 ### 3.2 Consent capture (TCPA, F-74)
 - Stored per tenant, per contact, per channel (`voice`, `sms`, `email`) in `consents`: `type` (`express_written` or `opt_out`), `source`, `captured_text`, `ip`, `captured_at`, `revoked_at`. Consent given to one client is never reused by another tenant or by Kynetic.
 - A form lead counts as consent only when its payload carries the consent wording shown and a capture time. The lead webhook writes the wording, source URL, IP and timestamp in the same transaction that creates the contact.
