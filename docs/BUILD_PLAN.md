@@ -384,6 +384,8 @@ Source of the decisions: `docs/DECISIONS.md` section "All-in-one portal, 2026-10
 
 ### Build order for M12 to M20
 
+**Sequencing update (Abdullah, 2026-11-01):** Defer remaining user-facing login/auth implementation, provider setup and polish until after the feature waves. Existing login, server authorization, tenant isolation, service-token authentication and webhook verification stay enforced throughout development. Use synthetic authenticated fixtures for feature verification. The final login/auth pass must finish before go-live; this changes work order, not release security requirements.
+
 Waves 30 and up continue after the existing 29. A task may start when every dependency is `done`. Tasks in the same wave with Parallel = yes can run in separate threads. Anything that needs a live provider, deploy, DNS change or write to Retell, Twenty, Notion or Stripe waits for Abdullah's specific yes, whatever the wave.
 
 | Wave | Tasks | Notes |

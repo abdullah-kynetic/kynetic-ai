@@ -173,3 +173,7 @@ Decided in the project thread while planning M12 to M20 (`docs/BUILD_PLAN.md`). 
 | State calling and recording rules, consent wording, Terms and Privacy wording, incident notification duties | Counsel |
 | Twilio A2P campaign approval and per-tenant sending numbers | Twilio |
 | OPM vendors or connectors beyond status records | Abdullah |
+
+## Sequencing update — 2026-11-01
+
+Abdullah explicitly requested that login and auth be the last work added. Remaining user-facing login/auth work and setup move after the feature waves, before go-live. Existing authentication, server authorization, tenant isolation and API/webhook verification remain enforced. No new decision number assigned. This is a sequencing change; it does not remove existing controls or approve deployment.

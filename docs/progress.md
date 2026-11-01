@@ -215,3 +215,7 @@ Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3
 ### 2026-10-31 — M12–M20 audit, local wave 30
 
 On `work`, fast-forwarded the stale checkout to merged main `3ff1685` (PR #122); no main change. Drafted `docs/portal-n8n-contract.md`, audited all waves in `docs/audit-M12-M20.md`, and fixed F-33 booking stage lookup to Estimate Booked with a tenant/replay regression. Typecheck and 392 unit tests pass. Focused integration could not start without TEST_DATABASE_ADMIN_URL/PostgreSQL; baseline lint and format remain failing. M12-01 awaits review, M13-06 awaits database verification, M18-05 is blocked on explicit deletion approval and M10-07 legacy ingest fate. Next: regression verification/review, then eligible wave 31 tasks. No real provider calls, secrets, n8n activation, deploy, push or main merge. No new business decision or live issue was established; docs/decisions.md and docs/known-issues.md are unchanged.
+
+### 2026-11-01 — login/auth sequencing
+
+Abdullah requested login/auth last. Updated BUILD_PLAN and DECISIONS: remaining user-facing login/auth work follows feature implementation and precedes go-live. Existing access controls stay enforced; feature tests use synthetic authenticated fixtures. Documentation-only change; no runtime changes or tests run.
