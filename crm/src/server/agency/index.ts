@@ -1,4 +1,5 @@
 import { and, count, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
+import { SYNTHETIC_PHONE, US_STATE_CODES } from './dialer-policy';
 import { z } from 'zod';
 import { getDb, type Db, type Tx } from '../db/client';
 import { contacts, dealContacts, deals, pipelineStages, pipelines } from '../db/schema';
@@ -100,6 +101,8 @@ export const syntheticLeadSchema = z
       .max(254)
       .transform((v) => v.toLowerCase())
       .refine((v) => v.endsWith('@example.test')),
+    phone: z.string().regex(SYNTHETIC_PHONE).optional(),
+    state: z.enum(US_STATE_CODES as [string, ...string[]]).optional(),
     direction: z.enum(['inbound', 'outbound']),
     channel: z.enum(['form', 'booking', 'referral', 'other', 'cold_call', 'sms', 'email', 'dm'])
   })
@@ -132,7 +135,8 @@ export async function createAgencyLead(caller: StaffCaller, raw: unknown, opts: 
         ctx,
         {
           firstName: input.firstName,
-          phones: [],
+          phones: input.phone ? [input.phone] : [],
+          address: input.state ? { state: input.state } : {},
           emails: [input.email],
           source: sourceKey(input.direction, input.channel)
         },
