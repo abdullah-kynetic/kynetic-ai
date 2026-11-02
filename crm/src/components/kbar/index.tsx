@@ -70,16 +70,15 @@ export default function KBar({
   );
 }
 
+const NO_ACTIONS: Action[] = [];
+
 function ContactSearchActions({ searchQuery }: { searchQuery: string }) {
   const router = useRouter();
   const [actions, setActions] = useState<Action[]>([]);
 
   useEffect(() => {
     const q = searchQuery.trim();
-    if (q.length < 2) {
-      setActions([]);
-      return;
-    }
+    if (q.length < 2) return;
     const controller = new AbortController();
     const timeout = setTimeout(() => {
       void fetch(`/api/search?q=${encodeURIComponent(q)}`, { signal: controller.signal })
@@ -112,7 +111,9 @@ function ContactSearchActions({ searchQuery }: { searchQuery: string }) {
     };
   }, [router, searchQuery]);
 
-  useRegisterActions(actions, [actions]);
+  // Short queries show no results; derived here instead of resetting state inside the effect.
+  const visibleActions = searchQuery.trim().length < 2 ? NO_ACTIONS : actions;
+  useRegisterActions(visibleActions, [visibleActions]);
   return null;
 }
 

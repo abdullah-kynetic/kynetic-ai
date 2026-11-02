@@ -1,3 +1,4 @@
+/* oxlint-disable jsx-a11y/no-noninteractive-tabindex -- scrollable table regions must be keyboard focusable (WCAG 2.1.1) */
 import Link from 'next/link';
 import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
