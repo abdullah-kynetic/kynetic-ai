@@ -9,6 +9,8 @@
 //   http://localhost:3000/as/owner    switch to a client owner (Tenant A)
 import { spawn } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
+import { createServer } from 'node:http';
+import { Readable } from 'node:stream';
 
 const port = Number(process.env.DEMO_PORT ?? 3000);
 const innerPort = Number(process.env.E2E_PORT ?? 3100);
@@ -65,38 +67,51 @@ async function cookieFor(who: Who): Promise<string> {
 await ready();
 let who: Who = 'admin';
 
-Bun.serve({
-  port,
-  hostname: '127.0.0.1',
-  async fetch(req) {
-    const url = new URL(req.url);
+createServer(async (incoming, outgoing) => {
+  try {
+    const url = new URL(incoming.url ?? '/', outer);
     const switchTo = /^\/as\/(admin|va|owner)$/.exec(url.pathname);
     if (switchTo) {
       who = switchTo[1] as Who;
-      return Response.redirect(`${outer}${who === 'owner' ? '/dashboard' : '/admin'}`, 302);
+      outgoing.writeHead(302, { location: `${outer}${who === 'owner' ? '/dashboard' : '/admin'}` });
+      outgoing.end();
+      return;
     }
-    const headers = new Headers(req.headers);
+    const headers = new Headers();
+    for (const [k, v] of Object.entries(incoming.headers)) {
+      if (v === undefined || k === 'accept-encoding') continue;
+      headers.set(k, Array.isArray(v) ? v.join(', ') : v);
+    }
     headers.set('host', `localhost:${innerPort}`);
     headers.set('cookie', await cookieFor(who));
-    headers.delete('accept-encoding');
     for (const h of ['origin', 'referer']) {
       const v = headers.get(h);
       if (v) headers.set(h, v.replace(outer, inner));
     }
+    const hasBody = incoming.method !== 'GET' && incoming.method !== 'HEAD';
     const res = await fetch(`${inner}${url.pathname}${url.search}`, {
-      method: req.method,
+      method: incoming.method,
       headers,
-      body: req.method === 'GET' || req.method === 'HEAD' ? undefined : req.body,
-      redirect: 'manual'
+      body: hasBody ? (Readable.toWeb(incoming) as unknown as BodyInit) : undefined,
+      redirect: 'manual',
+      // Node's fetch needs this to stream a request body.
+      ...(hasBody ? { duplex: 'half' } : {})
+    } as RequestInit);
+    const out: Record<string, string | string[]> = {};
+    res.headers.forEach((v, k) => {
+      if (k === 'content-encoding' || k === 'content-length' || k === 'set-cookie') return;
+      out[k] = k === 'location' ? v.replace(inner, outer) : v;
     });
-    const out = new Headers(res.headers);
-    const location = out.get('location');
-    if (location) out.set('location', location.replace(inner, outer));
-    out.delete('content-encoding');
-    out.delete('content-length');
-    return new Response(res.body, { status: res.status, headers: out });
+    const cookies = res.headers.getSetCookie();
+    if (cookies.length) out['set-cookie'] = cookies;
+    outgoing.writeHead(res.status, out);
+    if (res.body) Readable.fromWeb(res.body as never).pipe(outgoing);
+    else outgoing.end();
+  } catch (error) {
+    outgoing.writeHead(502);
+    outgoing.end(String(error));
   }
-});
+}).listen(port, '127.0.0.1');
 
-console.log(`\nDemo ready: ${outer}  (signed in as the Kynetic admin, fake data only)`);
-console.log(`Switch user: ${outer}/as/admin | ${outer}/as/va | ${outer}/as/owner\n`);
+process.stdout.write(`\nDemo ready: ${outer}  (signed in as the Kynetic admin, fake data only)\n`);
+process.stdout.write(`Switch user: ${outer}/as/admin | ${outer}/as/va | ${outer}/as/owner\n\n`);
