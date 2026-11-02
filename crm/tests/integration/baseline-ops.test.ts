@@ -35,7 +35,9 @@ const EXTRA_TABLES = [
   'agency_campaigns',
   'agency_campaign_leads',
   'agency_call_attempts',
-  'agency_proposals'
+  'agency_proposals',
+  // M20-06 client support requests.
+  'support_requests'
 ];
 
 function entitiesFromDoc(): string[] {

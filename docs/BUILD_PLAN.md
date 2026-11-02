@@ -376,7 +376,7 @@ Source of the decisions: `docs/DECISIONS.md` section "All-in-one portal, 2026-10
 | M20-03 | Contracts and e-sign tracking (draft, sent, signed; provider chosen by Abdullah) | automation-map; DECISIONS DC-TBD | M17-01 | Status moves and links to the deal. No real send without a yes. | M | Sonnet | yes | 38 | todo |  |
 | M20-04 | Revenue and expenses view for Kynetic | automation-map; DECISIONS DC-TBD | M17-05 | Seeded invoices and expenses give correct monthly totals. | M | Sonnet | no | 41 | todo |  |
 | M20-05 | Client health score and renewal alerts | automation-map; DECISIONS DC-TBD | M15-01 | Fake low-activity client triggers one alert. | M | Sonnet | yes | 39 | todo |  |
-| M20-06 | Support requests from clients | automation-map; DECISIONS DC-TBD | M16-01 | Client submits, Abdullah sees it, status tracked. | M | Sonnet | yes | 36 | todo |  |
+| M20-06 | Support requests from clients | automation-map; DECISIONS DC-TBD | M16-01 | Client submits, Abdullah sees it, status tracked. | M | Sonnet | yes | 36 | done | Commits: see PR for M20-06. Locally verified (6 integration tests, typecheck, lint, build); browser flow not run. |
 | M20-07 | Referrals and case-study tracking | automation-map; DECISIONS DC-TBD | M17-03 | Referral linked to a won deal; case-study status per client. | S | Haiku | yes | 39 | todo |  |
 
 

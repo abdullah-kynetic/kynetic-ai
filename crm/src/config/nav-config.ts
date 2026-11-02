@@ -68,6 +68,13 @@ export const navGroups: NavGroup[] = [
         items: []
       },
       {
+        title: 'Support',
+        url: '/dashboard/support',
+        icon: 'help',
+        isActive: false,
+        items: []
+      },
+      {
         title: 'Documents',
         url: '/dashboard/documents',
         icon: 'post',
@@ -259,6 +266,13 @@ export const adminNavGroups: NavGroup[] = [
         icon: 'settings',
         isActive: false,
         shortcut: ['a', 'o'],
+        items: []
+      },
+      {
+        title: 'Support requests',
+        url: '/admin/support',
+        icon: 'help',
+        isActive: false,
         items: []
       }
     ]

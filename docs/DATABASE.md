@@ -1420,3 +1420,7 @@ The synthetic lead form optionally accepts a reserved +1 area-code 555-01xx phon
 ### M17-01 proposal drafts — 2026-11-01
 
 Migration 1005 adds `agency_proposals`: one working draft per synthetic agency deal, with title, Problem, Agentic Solution, Roadmap and ROI text, revision, actor and timestamps. Composite tenant/deal FK and the agency registry FK prevent cross-tenant attachment. Tenant RLS applies; runtime DELETE is revoked. Status is constrained to draft, title to 1–200 trimmed characters, each section to 6,000 characters. Sections may be blank. Deleted deals hide their drafts; no purge UI is introduced.
+
+## M20-06 client support requests (2026-11-02)
+
+Migration `1006_support_requests` adds `support_requests` (tenant_id, subject 1-200, body 1-5000, status `open`/`in_progress`/`resolved`, submitted_by, created_at, updated_at, resolved_at). Standard FORCE RLS applies. The app and worker roles can SELECT and INSERT their own tenant's rows; UPDATE and DELETE are revoked. Kynetic staff (admin and VA) read every client's requests with `admin_list_support_requests()` and change status with `admin_set_support_request_status(id, status)`, both SECURITY DEFINER functions owned by `kynetic_rollup` that check the role, refuse view-as and read-only sessions, and write an audit row for each status change. Nothing is sent, queued or emitted.
