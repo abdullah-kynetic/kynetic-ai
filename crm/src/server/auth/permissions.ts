@@ -72,7 +72,9 @@ export const MATRIX = {
   'backups.run': { admin: Y, va: N, owner: N, staff: N, write: true },
   'billing.manage': { admin: Y, va: N, owner: N, staff: N, write: true },
   'tenant.delete': { admin: Y, va: N, owner: N, staff: N, write: true },
-  'admin_accounts.manage': { admin: Y, va: N, owner: N, staff: N, write: true }
+  'admin_accounts.manage': { admin: Y, va: N, owner: N, staff: N, write: true },
+  // M20-06: staff triage client support requests. VA may work the queue; clients only submit and read their own.
+  'support.manage': { admin: Y, va: Y, owner: N, staff: N, write: true }
 } as const satisfies Record<string, Row>;
 
 export type Action = keyof typeof MATRIX;

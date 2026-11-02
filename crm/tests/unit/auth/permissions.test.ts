@@ -51,7 +51,8 @@ const EXPECTED: Record<Action, Expect> = {
   'backups.run': { admin: true, va: false, owner: false, staff: false },
   'billing.manage': { admin: true, va: false, owner: false, staff: false },
   'tenant.delete': { admin: true, va: false, owner: false, staff: false },
-  'admin_accounts.manage': { admin: true, va: false, owner: false, staff: false }
+  'admin_accounts.manage': { admin: true, va: false, owner: false, staff: false },
+  'support.manage': { admin: true, va: true, owner: false, staff: false }
 };
 
 describe('F-73 permissions matrix, one test per row', () => {
