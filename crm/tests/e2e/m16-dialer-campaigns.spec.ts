@@ -34,8 +34,10 @@ test('M16 F-05/F-19/F-74: manual dialer records outcomes and campaigns without p
   await expect(adminPage.getByText('Draft: synthetic browser script only.')).toBeVisible();
   await adminPage.setViewportSize({ width: 390, height: 844 });
   expect(
+    // #nprogress is the third-party route-change bar (nextjs-toploader), present mid-navigation only.
     (
       await new AxeBuilder({ page: adminPage })
+        .exclude('#nprogress')
         .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
         .analyze()
     ).violations
@@ -55,8 +57,10 @@ test('M16 F-05/F-19/F-74: manual dialer records outcomes and campaigns without p
       .getByText('1 assigned · 1 manual outcomes')
   ).toBeVisible();
   expect(
+    // #nprogress is the third-party route-change bar (nextjs-toploader), present mid-navigation only.
     (
       await new AxeBuilder({ page: adminPage })
+        .exclude('#nprogress')
         .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
         .analyze()
     ).violations

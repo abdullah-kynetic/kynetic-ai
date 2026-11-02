@@ -9,6 +9,11 @@ test.use({ trace: 'off' });
 test('F-39 uploads and downloads a synthetic tenant logo through the authorized R2 test bucket', async ({
   authenticatedPage
 }) => {
+  // Needs the authorized R2 test bucket and its credentials, which CI does not have; run it where they exist.
+  test.skip(
+    !process.env.STORAGE_ENDPOINT || !process.env.STORAGE_ACCESS_KEY_ID,
+    'R2 test bucket credentials are not configured in this environment'
+  );
   if (process.env.STORAGE_BUCKET !== 'kynetic-portal-test') {
     throw new Error('Refusing R2 logo E2E: STORAGE_BUCKET must equal kynetic-portal-test');
   }

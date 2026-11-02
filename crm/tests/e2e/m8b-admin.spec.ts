@@ -10,7 +10,10 @@ test('F-53/F-54 admin all-clients table shows synthetic tenants and health thres
     '·'
   );
   await expect(adminPage.getByRole('row').filter({ hasText: 'Tenant C' })).toBeVisible();
-  await expect(adminPage.getByRole('row')).toHaveCount(4);
+  // The synthetic Kynetic agency tenant exists once the agency specs have run; it is not a client row.
+  await expect(
+    adminPage.getByRole('row').filter({ hasNotText: 'Kynetic AI (synthetic)' })
+  ).toHaveCount(4);
 });
 
 test('F-28/F-62 admin operations shows integration failures and reviews a flagged call', async ({
