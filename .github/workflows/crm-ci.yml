@@ -65,6 +65,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: check
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 3s --health-retries 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -77,6 +85,7 @@ jobs:
       - run: bun run test:e2e
         env:
           CI: 'true'
+          TEST_DATABASE_ADMIN_URL: postgres://postgres:postgres@localhost:5432/postgres
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
