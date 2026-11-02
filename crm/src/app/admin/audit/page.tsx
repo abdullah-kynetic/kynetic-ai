@@ -187,7 +187,12 @@ export default async function AuditLogPage({
         <p className='text-muted-foreground text-sm'>No events match these filters.</p>
       ) : (
         <>
-          <div className='overflow-x-auto rounded-lg border' role='region' aria-label='Audit log results' tabIndex={0}>
+          <div
+            className='overflow-x-auto rounded-lg border'
+            role='region'
+            aria-label='Audit log results'
+            tabIndex={0}
+          >
             <Table>
               <TableHeader>
                 <TableRow>

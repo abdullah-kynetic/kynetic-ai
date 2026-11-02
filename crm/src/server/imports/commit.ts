@@ -5,7 +5,15 @@ import { audit } from '../audit';
 import { can, type Actor } from '../auth/permissions';
 import type { Db } from '../db/client';
 import { getStorage } from '../adapters/storage';
-import { companies, consents, contacts, deals, importBatchRecords, importBatches, notes } from '../db/schema';
+import {
+  companies,
+  consents,
+  contacts,
+  deals,
+  importBatchRecords,
+  importBatches,
+  notes
+} from '../db/schema';
 import { AppError } from '../errors';
 import { withTenant, type TenantContextInput } from '../tenancy';
 import { createContactSchema } from '../contacts/schemas';
@@ -303,7 +311,8 @@ export async function undoImportBatch(
         .where(eq(importBatches.id, batchId))
         .limit(1);
       if (!batch) throw new AppError('NOT_FOUND');
-      if (!['done', 'failed'].includes(batch.status) || !batch.committedAt) throw new AppError('CONFLICT');
+      if (!['done', 'failed'].includes(batch.status) || !batch.committedAt)
+        throw new AppError('CONFLICT');
       const records = await tx
         .select()
         .from(importBatchRecords)
@@ -336,17 +345,29 @@ export async function undoImportBatch(
         }
         let current: { id: string; updatedAt: string } | undefined;
         if (record.entity === 'contact') {
-          [current] = await tx.select({ id: contacts.id, updatedAt: contacts.updatedAt }).from(contacts)
-            .where(and(eq(contacts.id, record.recordId), eq(contacts.tenantId, ctx.tenantId))).limit(1);
+          [current] = await tx
+            .select({ id: contacts.id, updatedAt: contacts.updatedAt })
+            .from(contacts)
+            .where(and(eq(contacts.id, record.recordId), eq(contacts.tenantId, ctx.tenantId)))
+            .limit(1);
         } else if (record.entity === 'company') {
-          [current] = await tx.select({ id: companies.id, updatedAt: companies.updatedAt }).from(companies)
-            .where(and(eq(companies.id, record.recordId), eq(companies.tenantId, ctx.tenantId))).limit(1);
+          [current] = await tx
+            .select({ id: companies.id, updatedAt: companies.updatedAt })
+            .from(companies)
+            .where(and(eq(companies.id, record.recordId), eq(companies.tenantId, ctx.tenantId)))
+            .limit(1);
         } else if (record.entity === 'deal') {
-          [current] = await tx.select({ id: deals.id, updatedAt: deals.updatedAt }).from(deals)
-            .where(and(eq(deals.id, record.recordId), eq(deals.tenantId, ctx.tenantId))).limit(1);
+          [current] = await tx
+            .select({ id: deals.id, updatedAt: deals.updatedAt })
+            .from(deals)
+            .where(and(eq(deals.id, record.recordId), eq(deals.tenantId, ctx.tenantId)))
+            .limit(1);
         } else if (record.entity === 'note') {
-          [current] = await tx.select({ id: notes.id, updatedAt: notes.updatedAt }).from(notes)
-            .where(and(eq(notes.id, record.recordId), eq(notes.tenantId, ctx.tenantId))).limit(1);
+          [current] = await tx
+            .select({ id: notes.id, updatedAt: notes.updatedAt })
+            .from(notes)
+            .where(and(eq(notes.id, record.recordId), eq(notes.tenantId, ctx.tenantId)))
+            .limit(1);
         }
         if (!current || current.updatedAt > batch.committedAt) {
           skipped.push(record.recordId);
@@ -354,13 +375,32 @@ export async function undoImportBatch(
         }
         if (record.action === 'created') {
           const now = new Date().toISOString();
-          if (record.entity === 'contact') await tx.update(contacts).set({ deletedAt: now, updatedAt: now }).where(eq(contacts.id, current.id));
-          else if (record.entity === 'company') await tx.update(companies).set({ deletedAt: now, updatedAt: now }).where(eq(companies.id, current.id));
-          else if (record.entity === 'deal') await tx.update(deals).set({ deletedAt: now, updatedAt: now }).where(eq(deals.id, current.id));
-          else if (record.entity === 'note') await tx.update(notes).set({ deletedAt: now, updatedAt: now }).where(eq(notes.id, current.id));
+          if (record.entity === 'contact')
+            await tx
+              .update(contacts)
+              .set({ deletedAt: now, updatedAt: now })
+              .where(eq(contacts.id, current.id));
+          else if (record.entity === 'company')
+            await tx
+              .update(companies)
+              .set({ deletedAt: now, updatedAt: now })
+              .where(eq(companies.id, current.id));
+          else if (record.entity === 'deal')
+            await tx
+              .update(deals)
+              .set({ deletedAt: now, updatedAt: now })
+              .where(eq(deals.id, current.id));
+          else if (record.entity === 'note')
+            await tx
+              .update(notes)
+              .set({ deletedAt: now, updatedAt: now })
+              .where(eq(notes.id, current.id));
           removed++;
         } else {
-          if (record.entity !== 'contact') { skipped.push(record.recordId); continue; }
+          if (record.entity !== 'contact') {
+            skipped.push(record.recordId);
+            continue;
+          }
           const prior = z.record(z.string(), z.unknown()).parse(record.priorValues ?? {});
           await tx
             .update(contacts)

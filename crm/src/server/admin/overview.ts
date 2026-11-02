@@ -32,8 +32,12 @@ export function calculateHealthScore(input: {
   now?: Date;
 }): number {
   const booking = Math.min(100, Math.round((input.bookingRate ?? 0) * 100));
-  const leads = Math.min(100, input.leads30d > 0 ? Math.round(Math.min(input.leads30d, 20) * 5) : 0);
-  const integrations = input.integrationErrors === 0 ? 100 : Math.max(0, 100 - input.integrationErrors * 10);
+  const leads = Math.min(
+    100,
+    input.leads30d > 0 ? Math.round(Math.min(input.leads30d, 20) * 5) : 0
+  );
+  const integrations =
+    input.integrationErrors === 0 ? 100 : Math.max(0, 100 - input.integrationErrors * 10);
   const loginAge = input.lastLoginAt
     ? Math.max(0, (input.now ?? new Date()).getTime() - Date.parse(input.lastLoginAt))
     : Number.POSITIVE_INFINITY;
@@ -68,7 +72,8 @@ export async function listAdminTenantOverview(
       calls30d: Number(r.calls_30d),
       appointments30d: Number(r.appointments_30d),
       bookingRate: r.booking_rate === null ? null : Number(r.booking_rate),
-      guaranteeTarget: r.guarantee_target_bookings === null ? null : Number(r.guarantee_target_bookings),
+      guaranteeTarget:
+        r.guarantee_target_bookings === null ? null : Number(r.guarantee_target_bookings),
       guaranteeBookings: r.guarantee_bookings === null ? null : Number(r.guarantee_bookings),
       guaranteeStartDate: (r.guarantee_start_date as string | null) ?? null,
       integrationErrors: Number(r.integration_errors),

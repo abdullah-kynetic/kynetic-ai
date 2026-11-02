@@ -27,8 +27,14 @@ test('F-39 uploads and downloads a synthetic tenant logo through the authorized 
   const [r, g, b] = randomBytes(3);
   const png = await sharp({
     create: { width: 12, height: 12, channels: 4, background: { r, g, b, alpha: 1 } }
-  }).png().toBuffer();
-  const processed = await processLogo({ name: 'synthetic-test.png', type: 'image/png', bytes: png });
+  })
+    .png()
+    .toBuffer();
+  const processed = await processLogo({
+    name: 'synthetic-test.png',
+    type: 'image/png',
+    bytes: png
+  });
   const key = logoKey(tenantId, processed.hash);
 
   try {
@@ -50,9 +56,13 @@ test('F-39 uploads and downloads a synthetic tenant logo through the authorized 
     await authenticatedPage.reload();
     const currentLogo = authenticatedPage.getByRole('img', { name: 'Current logo' });
     await expect(currentLogo).toBeVisible();
-    await expect.poll(() => currentLogo.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
+    await expect
+      .poll(() => currentLogo.evaluate((image: HTMLImageElement) => image.naturalWidth))
+      .toBeGreaterThan(0);
   } finally {
     await storage.remove(key);
-    expect((await storage.list(`tenants/${tenantId}/branding/`)).map((object) => object.key)).not.toContain(key);
+    expect(
+      (await storage.list(`tenants/${tenantId}/branding/`)).map((object) => object.key)
+    ).not.toContain(key);
   }
 });

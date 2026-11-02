@@ -57,7 +57,8 @@ export async function launchReactivation(
           )
         )
         .limit(1);
-      if (!sequence) throw new AppError('CONFLICT', { message: 'Reactivation automation is not enabled.' });
+      if (!sequence)
+        throw new AppError('CONFLICT', { message: 'Reactivation automation is not enabled.' });
 
       const source = audience.data.importedSource;
       const batch = audience.data.importBatchId;
@@ -129,7 +130,12 @@ export async function launchReactivation(
 
       await tx
         .update(reactivationBatches)
-        .set({ eligibleCount: eligible, enrolledCount: enrolled, blockedCount: blocked, status: 'completed' })
+        .set({
+          eligibleCount: eligible,
+          enrolledCount: enrolled,
+          blockedCount: blocked,
+          status: 'completed'
+        })
         .where(eq(reactivationBatches.id, created.id));
       await audit(tx, {
         action: 'reactivation.launch',

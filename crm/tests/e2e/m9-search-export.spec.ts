@@ -20,7 +20,12 @@ test('F-38 contacts CSV export downloads the current tenant view', async ({
 
 test('F-44 daily-use shell has no horizontal overflow at 390px', async ({ authenticatedPage }) => {
   await authenticatedPage.setViewportSize({ width: 390, height: 844 });
-  for (const route of ['/dashboard', '/dashboard/contacts', '/dashboard/appointments', '/dashboard/tasks']) {
+  for (const route of [
+    '/dashboard',
+    '/dashboard/contacts',
+    '/dashboard/appointments',
+    '/dashboard/tasks'
+  ]) {
     await authenticatedPage.goto(route);
     await expect(authenticatedPage.locator('body')).toBeVisible();
     const dimensions = await authenticatedPage.evaluate(() => ({
@@ -33,25 +38,50 @@ test('F-44 daily-use shell has no horizontal overflow at 390px', async ({ authen
   }
 });
 
-test('F-44 daily-use touch targets are at least 44 by 44 CSS pixels at 390px', async ({ authenticatedPage }) => {
+test('F-44 daily-use touch targets are at least 44 by 44 CSS pixels at 390px', async ({
+  authenticatedPage
+}) => {
   await authenticatedPage.setViewportSize({ width: 390, height: 844 });
   const smallTargets: string[] = [];
-  for (const route of ['/dashboard', '/dashboard/contacts', '/dashboard/appointments', '/dashboard/tasks', '/dashboard/documents']) {
+  for (const route of [
+    '/dashboard',
+    '/dashboard/contacts',
+    '/dashboard/appointments',
+    '/dashboard/tasks',
+    '/dashboard/documents'
+  ]) {
     await authenticatedPage.goto(route);
-    const undersized = await authenticatedPage.locator('a[href], button, input:not([type="hidden"]):not([type="checkbox"]), select, textarea, [role="button"], [data-slot="checkbox"]').evaluateAll((elements) => elements.flatMap((element) => {
-      const rect = element.getBoundingClientRect();
-      const style = getComputedStyle(element);
-      if (element.classList.contains('sr-only') || rect.width === 0 || rect.height === 0 || style.visibility === 'hidden' || style.display === 'none') return [];
-      return rect.width < 44 || rect.height < 44
-        ? [`${element.tagName.toLowerCase()} ${element.textContent?.trim().slice(0, 36) || (element as HTMLInputElement).type || ''}: ${Math.round(rect.width)}x${Math.round(rect.height)}`]
-        : [];
-    }));
+    const undersized = await authenticatedPage
+      .locator(
+        'a[href], button, input:not([type="hidden"]):not([type="checkbox"]), select, textarea, [role="button"], [data-slot="checkbox"]'
+      )
+      .evaluateAll((elements) =>
+        elements.flatMap((element) => {
+          const rect = element.getBoundingClientRect();
+          const style = getComputedStyle(element);
+          if (
+            element.classList.contains('sr-only') ||
+            rect.width === 0 ||
+            rect.height === 0 ||
+            style.visibility === 'hidden' ||
+            style.display === 'none'
+          )
+            return [];
+          return rect.width < 44 || rect.height < 44
+            ? [
+                `${element.tagName.toLowerCase()} ${element.textContent?.trim().slice(0, 36) || (element as HTMLInputElement).type || ''}: ${Math.round(rect.width)}x${Math.round(rect.height)}`
+              ]
+            : [];
+        })
+      );
     smallTargets.push(...undersized.map((target) => `${route}: ${target}`));
   }
   expect(smallTargets, smallTargets.join('\n')).toEqual([]);
 });
 
-test('F-44 contact phone offers a 44px tel link without opening the dialer', async ({ authenticatedPage }) => {
+test('F-44 contact phone offers a 44px tel link without opening the dialer', async ({
+  authenticatedPage
+}) => {
   await authenticatedPage.setViewportSize({ width: 390, height: 844 });
   await authenticatedPage.goto('/dashboard/contacts');
   await authenticatedPage.locator('a[href^="/dashboard/contacts/"]').first().click();
@@ -63,7 +93,9 @@ test('F-44 contact phone offers a 44px tel link without opening the dialer', asy
   expect(box?.width).toBeGreaterThanOrEqual(44);
 });
 
-test('F-39 saved synthetic branding appears in settings and across portal routes', async ({ authenticatedPage }) => {
+test('F-39 saved synthetic branding appears in settings and across portal routes', async ({
+  authenticatedPage
+}) => {
   await authenticatedPage.goto('/dashboard/settings/branding');
   await expect(authenticatedPage.getByLabel('Business name')).toHaveValue('Synthetic Brand Co');
   await expect(authenticatedPage.locator('#primaryColor')).toHaveValue('#2563eb');
@@ -74,6 +106,8 @@ test('F-39 saved synthetic branding appears in settings and across portal routes
   for (const route of ['/dashboard/contacts', '/dashboard/appointments']) {
     await authenticatedPage.goto(route);
     await expect(authenticatedPage.getByText('Synthetic Brand Co', { exact: true })).toBeVisible();
-    expect((await authenticatedPage.locator('style').allTextContents()).join('\n')).toContain('#2563eb');
+    expect((await authenticatedPage.locator('style').allTextContents()).join('\n')).toContain(
+      '#2563eb'
+    );
   }
 });

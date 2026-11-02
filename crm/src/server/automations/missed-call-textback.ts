@@ -46,7 +46,10 @@ export function registerMissedCallTextbackSubscriber(
           idempotencyKey: `missed-call-textback:${callId}`,
           actor: { type: 'automation' }
         },
-        { provider: opts.provider ?? getSmsProvider(), now: opts.now?.() ?? new Date(env.occurredAt) }
+        {
+          provider: opts.provider ?? getSmsProvider(),
+          now: opts.now?.() ?? new Date(env.occurredAt)
+        }
       );
     },
     { module: 'missed_call_textback' }

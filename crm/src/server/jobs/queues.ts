@@ -30,8 +30,8 @@ export const QUEUES = {
   'task.due': { ...retrying, policy: 'short' } /** One rebuildable tenant/day metrics rollup. */,
   'metrics.daily': { ...retrying, policy: 'short' },
   'automation.step': { ...retrying, policy: 'short' },
-  'report.monthly': { ...retrying, policy: 'short' }
-  , 'backup.run': { ...retrying, policy: 'short' }
+  'report.monthly': { ...retrying, policy: 'short' },
+  'backup.run': { ...retrying, policy: 'short' }
 } as const satisfies Record<string, QueueDef>;
 
 export type QueueName = keyof typeof QUEUES;

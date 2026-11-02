@@ -57,16 +57,22 @@ describe('F-89 n8n event delivery', () => {
     clearSubscribers();
     const secret = 'synthetic-webhook-retry-secret';
     await tdb.admin`update tenant_modules set config = ${tdb.admin.json({
-      n8nWebhookUrl: 'https://n8n.example.test/hooks/retry', n8nWebhookSecret: secret
+      n8nWebhookUrl: 'https://n8n.example.test/hooks/retry',
+      n8nWebhookSecret: secret
     })} where tenant_id = ${IDS.tenantA} and module_key = 'platform'`;
-    const fetcher = vi.fn()
+    const fetcher = vi
+      .fn()
       .mockResolvedValueOnce(new Response(null, { status: 503 }))
       .mockResolvedValueOnce(new Response(null, { status: 204 }));
     registerN8nEventSubscribers({ db: workerDb, fetcher: fetcher as typeof fetch });
     const event: EventEnvelope = {
-      id: '55555555-5555-4555-8555-555555555555', name: 'lead.created', version: 1,
-      tenantId: IDS.tenantA, occurredAt: '2026-10-28T12:00:00.000Z',
-      actor: { type: 'system' }, payload: { contactId: 'synthetic-contact' }
+      id: '55555555-5555-4555-8555-555555555555',
+      name: 'lead.created',
+      version: 1,
+      tenantId: IDS.tenantA,
+      occurredAt: '2026-10-28T12:00:00.000Z',
+      actor: { type: 'system' },
+      payload: { contactId: 'synthetic-contact' }
     };
     await expect(deliver(event, 'n8n-lead-created')).rejects.toThrow('503');
     await expect(deliver(event, 'n8n-lead-created')).resolves.toBe('ran');
@@ -76,6 +82,12 @@ describe('F-89 n8n event delivery', () => {
     expect(firstHeaders.get('x-kynetic-event-id')).toBe(event.id);
     expect(secondHeaders.get('x-kynetic-event-id')).toBe(event.id);
     expect(firstHeaders.get('x-kynetic-signature')).toBe(secondHeaders.get('x-kynetic-signature'));
-    expect(verifyN8nEvent(String(fetcher.mock.calls[1]![1]?.body), secondHeaders.get('x-kynetic-signature')!, secret)).toBe(true);
+    expect(
+      verifyN8nEvent(
+        String(fetcher.mock.calls[1]![1]?.body),
+        secondHeaders.get('x-kynetic-signature')!,
+        secret
+      )
+    ).toBe(true);
   });
 });

@@ -121,7 +121,14 @@ export async function createTestDatabase(
     worker,
     backup,
     drop: async () => {
-      await Promise.all([admin.end(), owner.end(), app.end(), worker.end(), backup.end(), auth.end()]);
+      await Promise.all([
+        admin.end(),
+        owner.end(),
+        app.end(),
+        worker.end(),
+        backup.end(),
+        auth.end()
+      ]);
       const m = postgres(base, { max: 1 });
       await m.unsafe(`DROP DATABASE IF EXISTS ${name} WITH (FORCE)`);
       await m.end();

@@ -30,7 +30,10 @@ export async function enforceAuthRequestRateLimits(
   await enforceRateLimit(db, RATE_LIMITS.authIp, clientIp(request));
   if (request.method !== 'POST' || path !== '/sign-in/magic-link') return;
 
-  const payload = (await request.clone().json().catch(() => null)) as { email?: unknown } | null;
+  const payload = (await request
+    .clone()
+    .json()
+    .catch(() => null)) as { email?: unknown } | null;
   if (typeof payload?.email === 'string' && payload.email.trim()) {
     await enforceRateLimit(db, RATE_LIMITS.authEmail, payload.email);
   }

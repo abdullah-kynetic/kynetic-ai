@@ -43,7 +43,9 @@ export async function listAutomationTemplates(
       .orderBy(automationTemplates.key);
   const rows = opts.tx ? await run(opts.tx) : await withTenant(ctx, run, { db: opts.db });
   const enabled = await loadEnabledModules(ctx, { db: opts.db, tx: opts.tx });
-  return rows.filter((row) => !row.moduleKey || moduleSatisfied(enabled, { module: row.moduleKey as never }));
+  return rows.filter(
+    (row) => !row.moduleKey || moduleSatisfied(enabled, { module: row.moduleKey as never })
+  );
 }
 
 export async function setAutomationEnabled(

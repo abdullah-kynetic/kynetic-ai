@@ -7,9 +7,21 @@ import { DocumentUploadForm } from './upload-form';
 
 export const dynamic = 'force-dynamic';
 
-export default async function AdminTenantDocumentsPage({ params }: { params: Promise<{ tenantId: string }> }) {
+export default async function AdminTenantDocumentsPage({
+  params
+}: {
+  params: Promise<{ tenantId: string }>;
+}) {
   const { tenantId } = await params;
   const access = await decideAdminAccess(await headers());
-  if (access.kind !== 'ok' || access.role !== 'admin' || await isViewingAs(access.user)) forbidden();
-  return <PageContainer pageTitle='Client documents' pageDescription='Upload a PDF for this client workspace.'><DocumentUploadForm tenantId={tenantId} /></PageContainer>;
+  if (access.kind !== 'ok' || access.role !== 'admin' || (await isViewingAs(access.user)))
+    forbidden();
+  return (
+    <PageContainer
+      pageTitle='Client documents'
+      pageDescription='Upload a PDF for this client workspace.'
+    >
+      <DocumentUploadForm tenantId={tenantId} />
+    </PageContainer>
+  );
 }

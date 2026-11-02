@@ -33,7 +33,8 @@ export function registerAfterHoursSubscriber(): void {
           if (!call) return;
           const hours = businessHoursSchema.safeParse(call.businessHours);
           const hasConfiguredHours =
-            hours.success && Object.values(hours.data).some((windows) => (windows?.length ?? 0) > 0);
+            hours.success &&
+            Object.values(hours.data).some((windows) => (windows?.length ?? 0) > 0);
           if (
             !hasConfiguredHours ||
             isWithinBusinessHours(hours.data, call.tenantTimezone, new Date(startedAt))
