@@ -43,6 +43,9 @@ Found 2026-10-19 (read-only review of Twenty).
 - The "no people-search or data-broker sites" rule appears in Lane A notes with no recorded reason. Kept as is; a counsel question for 1.4 if it should be loosened.
 Fix: Abdullah to say where the research files are, confirm the Treg rotation, and approve or reject the D-002 reword.
 
+### KI-013: Portal has no sign-in (open mode) (high)
+Found 2026-11-02 (DC-TBD-15). Anyone who can reach an open-mode build acts as the Kynetic admin or any client. Fine for local use and synthetic data. Do NOT deploy it to a public address with real client data until network access control or sign-in is back. The live portal.kyneticai.com still runs the Oct 29 build with sign-in; deploying main replaces that with the open build. Fix: restore auth (git history before the open-mode commit has it) or add Cloudflare Access first.
+
 ### KI-012: Lead enrichment: phone certainty, rate limits, wrong-business matches (medium)
 Found 2026-10-20.
 - No tested stack shows which phone reaches the owner (Bert has several; Johnny Walker differs between Muse and the script). Sample hand-dials needed.
