@@ -8,7 +8,6 @@ import { ViewAsProvider } from '@/components/view-as/view-as-context';
 import { ViewAsBanner, VIEW_AS_BANNER_HEIGHT } from '@/components/view-as/view-as-banner';
 import { VIEW_AS_COOKIE } from '@/server/impersonation';
 import { loadShellContext, roleLabel } from '@/server/shell';
-import { pendingDocuments } from '@/server/terms';
 import { brandingCss } from '@/lib/branding/color';
 import type { Metadata } from 'next';
 import { cookies, headers } from 'next/headers';
@@ -32,8 +31,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
     cookieStore.get(VIEW_AS_COOKIE)?.value
   );
   if (!shell) redirect('/sign-in');
-  // F-102: nothing in the portal until the current Terms and Privacy Policy are accepted.
-  if ((await pendingDocuments(shell.user.id)).length > 0) redirect('/accept-terms');
 
   // Only Kynetic staff are shown the way into the admin side; the admin routes check the role again.
   // Inside a view-as session the page is the client's, so there is no way into the admin side.

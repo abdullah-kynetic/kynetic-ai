@@ -11,18 +11,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { authClient } from '@/lib/auth-client';
-import { useRouter } from 'next/navigation';
 
 export type ShellUser = { name: string | null; email: string; roleLabel: string };
 
 export function UserMenu({ user }: { user: ShellUser }) {
-  const router = useRouter();
-  async function signOut() {
-    await authClient.signOut();
-    router.push('/sign-in');
-    router.refresh();
-  }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -40,10 +32,20 @@ export function UserMenu({ user }: { user: ShellUser }) {
           </DropdownMenuLabel>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={signOut}>
-          <Icons.logout />
-          Sign out
-        </DropdownMenuItem>
+        {/* No sign-in in open mode: these switch which existing user the portal acts as. */}
+        <DropdownMenuLabel className='text-muted-foreground text-xs'>View as</DropdownMenuLabel>
+        {(
+          [
+            ['admin', 'Kynetic admin'],
+            ['va', 'Kynetic support'],
+            ['owner', 'Client owner'],
+            ['staff', 'Client team member']
+          ] as const
+        ).map(([key, label]) => (
+          <DropdownMenuItem key={key} onClick={() => window.location.assign(`/open/${key}`)}>
+            {label}
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );

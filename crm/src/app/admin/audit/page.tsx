@@ -93,7 +93,6 @@ export default async function AuditLogPage({
 }) {
   const access = await decideAdminAccess(await headers());
   if (access.kind === 'sign_in') redirect('/sign-in');
-  if (access.kind === 'second_factor') redirect('/staff/2fa');
   if (access.kind !== 'ok') forbidden();
 
   const params = await searchParams;
