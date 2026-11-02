@@ -161,6 +161,7 @@ Decided in the project thread while planning M12 to M20 (`docs/BUILD_PLAN.md`). 
 | DC-TBD-11 | 2026-10-31 | Review request text goes out 2 hours after payment is received. One generic payment-received event in the portal, a thin n8n adapter per invoicing system, and a Paid button as fallback. Email until A2P approval. | Explicit | PRD, ARCHITECTURE |
 | DC-TBD-12 | 2026-11-01 | In scope: auto-created Alex demo for new client profiles and the first two invoicing adapters. Later: Twilio click-to-call, Retell adapter. | Explicit | BUILD_PLAN |
 | DC-TBD-13 | 2026-11-01 | Gap-check items added as M19 and M20. Outbound email and DMs stay manual (human-sent; portal logs and DNC-checks). | Explicit | BUILD_PLAN |
+| DC-TBD-14 | 2026-11-02 | Build all M12 to M20 features first; visual design polish comes after. New screens use the existing components and tokens with no new design work, and the rebrand and DS polish are deferred. Accessibility rules in DS still apply. | Explicit | BUILD_PLAN, DESIGN_SYSTEM |
 
 ## Still UNRESOLVED (needs outside information)
 

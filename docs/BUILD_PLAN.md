@@ -384,6 +384,8 @@ Source of the decisions: `docs/DECISIONS.md` section "All-in-one portal, 2026-10
 
 ### Build order for M12 to M20
 
+**Features before design (DC-TBD-14, 2026-11-02):** build every M12 to M20 feature first and do design polish afterward. New screens use the existing components and tokens as they are; do not spend tasks on visuals, rebrand or layout polish, and do not skip accessibility basics (labels, keyboard access, contrast).
+
 Waves 30 and up continue after the existing 29. A task may start when every dependency is `done`. Tasks in the same wave with Parallel = yes can run in separate threads. Anything that needs a live provider, deploy, DNS change or write to Retell, Twenty, Notion or Stripe waits for Abdullah's specific yes, whatever the wave.
 
 | Wave | Tasks | Notes |
