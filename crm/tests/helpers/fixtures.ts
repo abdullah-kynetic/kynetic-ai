@@ -101,8 +101,13 @@ async function seedTenant(
     await admin`insert into notes (tenant_id, body_text, contact_id) values (${t}, 'Fixture note', ${contact.id}) returning id`;
   await admin`insert into note_mentions (tenant_id, note_id, user_id) values (${t}, ${note.id}, ${owner})`;
 
-  await admin`insert into calls (tenant_id, contact_id, deal_id, provider, provider_call_id, direction, started_at)
-    values (${t}, ${contact.id}, ${deal.id}, 'fake', ${`call-${key}`}, 'outbound', now())`;
+  const [call] =
+    await admin`insert into calls (tenant_id, contact_id, deal_id, provider, provider_call_id, direction, started_at)
+    values (${t}, ${contact.id}, ${deal.id}, 'fake', ${`call-${key}`}, 'outbound', now()) returning id`;
+  await admin`insert into call_result_receipts (tenant_id, event_id, call_id, provider, provider_call_id, payload_hash)
+    values (${t}, gen_random_uuid(), ${call.id}, 'elevenlabs', ${`call-${key}`}, ${'0'.repeat(64)})`;
+  await admin`insert into contact_decisions (tenant_id, event_id, contact_id, payload, payload_hash)
+    values (${t}, gen_random_uuid(), ${contact.id}, '{}', ${'0'.repeat(64)})`;
   await admin`insert into messages (tenant_id, contact_id, channel, direction, actor_type, from_address, to_address, status)
     values (${t}, ${contact.id}, 'sms', 'outbound', 'alex', '+15555550100', ${`+1555555010${n}`}, 'sent')`;
   await admin`insert into email_suppressions (tenant_id, address, reason) values (${t}, ${`bounced-${key}@example.test`}, 'bounced')`;

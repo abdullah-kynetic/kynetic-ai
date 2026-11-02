@@ -98,7 +98,7 @@ describe('M12-04/M12-06 F-74/F-89 policy readers', () => {
     await tdb.admin`update contacts set timezone = 'America/New_York', address = '{"state":"FL"}' where id = ${a.contactId}`;
     await tdb.admin`insert into dnc_entries (tenant_id, e164, contact_id, source) values (${IDS.tenantA}, '+15555550101', ${a.contactId}, 'manual')`;
     await tdb.admin`insert into consents (tenant_id, contact_id, channel, kind, source, captured_text, captured_at)
-      values (${IDS.tenantA}, ${a.contactId}, 'sms', 'opt_out', 'sms_keyword', 'synthetic-private-wording', ${at.toISOString()})`;
+      values (${IDS.tenantA}, ${a.contactId}, 'sms', 'opt_out', 'sms_keyword', 'synthetic-private-wording', now() + interval '1 day')`;
     const [before] = await tdb.admin`select count(*) as n from activities`;
     const snapshot = await readContactPolicy(svc, a.contactId, opts());
     expect(snapshot).toMatchObject({
