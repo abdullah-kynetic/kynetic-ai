@@ -130,49 +130,42 @@ async function scratchRestore(
       if (Number(Buffer.from(isolation).toString().trim()) !== 4)
         throw new Error('Restored tenant table schema check failed');
       const fixtureContacts = Buffer.from(
-        await runCommand!(
-          'psql',
-          [
-            new URL(`/${dbName}`, maintenanceUrl).toString(),
-            '-At',
-            '-v',
-            'ON_ERROR_STOP=1',
-            '-c',
-            'select distinct on (tenant_id) tenant_id::text || \':\' || id::text from contacts order by tenant_id, id limit 2'
-          ]
-        )
+        await runCommand!('psql', [
+          new URL(`/${dbName}`, maintenanceUrl).toString(),
+          '-At',
+          '-v',
+          'ON_ERROR_STOP=1',
+          '-c',
+          "select distinct on (tenant_id) tenant_id::text || ':' || id::text from contacts order by tenant_id, id limit 2"
+        ])
       )
         .toString()
         .trim()
         .split('\n')
         .map((row) => row.split(':'));
       if (fixtureContacts.length !== 2 || fixtureContacts.some((row) => row.length !== 2))
-        throw new Error('Restored database needs at least two tenant contacts for isolation verification');
+        throw new Error(
+          'Restored database needs at least two tenant contacts for isolation verification'
+        );
       const [[tenantA, contactA], [tenantB, contactB]] = fixtureContacts as [string, string][];
-      await runCommand!(
-        'psql',
-        [
-          new URL(`/${dbName}`, maintenanceUrl).toString(),
-          '-v',
-          'ON_ERROR_STOP=1',
-          '-c',
-          'GRANT SELECT ON contacts TO kynetic_app'
-        ]
-      );
+      await runCommand!('psql', [
+        new URL(`/${dbName}`, maintenanceUrl).toString(),
+        '-v',
+        'ON_ERROR_STOP=1',
+        '-c',
+        'GRANT SELECT ON contacts TO kynetic_app'
+      ]);
       const appDatabaseUrl = new URL(getEnv().DATABASE_URL);
       appDatabaseUrl.pathname = `/${dbName}`;
       const rls = Buffer.from(
-        await runCommand!(
-          'psql',
-          [
-            appDatabaseUrl.toString(),
-            '-At',
-            '-v',
-            'ON_ERROR_STOP=1',
-            '-c',
-            `begin; select set_config('app.tenant_id','${tenantA}',true); select count(*) from contacts where id='${contactA}'; select count(*) from contacts where id='${contactB}'; commit;`
-          ]
-        )
+        await runCommand!('psql', [
+          appDatabaseUrl.toString(),
+          '-At',
+          '-v',
+          'ON_ERROR_STOP=1',
+          '-c',
+          `begin; select set_config('app.tenant_id','${tenantA}',true); select count(*) from contacts where id='${contactA}'; select count(*) from contacts where id='${contactB}'; commit;`
+        ])
       )
         .toString()
         .trim()

@@ -78,7 +78,7 @@ export function registerStageRuleSubscribers() {
           .where(
             and(
               eq(pipelineStages.pipelineId, deal.pipelineId),
-              sql`lower(${pipelineStages.name}) = 'booked'`
+              sql`lower(${pipelineStages.name}) = 'estimate booked'`
             )
           )
           .limit(1);

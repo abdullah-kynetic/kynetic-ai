@@ -1,11 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createDb, type Db } from '@/server/db/client';
-import {
-  decryptBackup,
-  pruneBackupRetention,
-  runBackup
-} from '@/server/admin/backups';
+import { decryptBackup, pruneBackupRetention, runBackup } from '@/server/admin/backups';
 import { R2Storage } from '@/server/adapters/storage/r2';
 import type { StorageAdapter } from '@/server/adapters/storage/types';
 import { mintSignedUrl, tenantKey } from '@/server/adapters/storage/tenant-keys';
@@ -177,12 +173,18 @@ describe.skipIf(!enabled)('authorized R2 test-bucket acceptance (F-27, F-39, F-6
     for (let index = 0; index < 35; index++) {
       const day = new Date(Date.UTC(2026, 9, index + 1)).toISOString().slice(0, 10);
       const id = index.toString(16).padStart(32, '0');
-      await storage.put(`backups/kynetic-crm/${day}/nightly-${id}.dump.enc`, new Uint8Array([index]));
+      await storage.put(
+        `backups/kynetic-crm/${day}/nightly-${id}.dump.enc`,
+        new Uint8Array([index])
+      );
     }
     for (let index = 0; index < 14; index++) {
       const day = new Date(Date.UTC(2027, index, 1)).toISOString().slice(0, 10);
       const id = (index + 100).toString(16).padStart(32, '0');
-      await storage.put(`backups/kynetic-crm/${day}/restore_test-${id}.dump.enc`, new Uint8Array([index]));
+      await storage.put(
+        `backups/kynetic-crm/${day}/restore_test-${id}.dump.enc`,
+        new Uint8Array([index])
+      );
     }
     await pruneBackupRetention(storage, new Date('2026-10-28T12:00:00.000Z'));
     const retained = await storage.list('backups/kynetic-crm/');

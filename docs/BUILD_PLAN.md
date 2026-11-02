@@ -278,11 +278,11 @@ Source of the decisions: `docs/DECISIONS.md` section "All-in-one portal, 2026-10
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M12-01 | Write the portal/n8n contract doc: events n8n sends, endpoints the portal exposes, signing, retries, idempotency | automation-map; DECISIONS DC-TBD | none | Doc reviewed. Every automation in the map has an owner and an endpoint. | S | Opus | yes | 30 | todo |  |
+| M12-01 | Write the portal/n8n contract doc: events n8n sends, endpoints the portal exposes, signing, retries, idempotency | automation-map; DECISIONS DC-TBD | none | Doc reviewed. Every automation in the map has an owner and an endpoint. | S | Opus | yes | 30 | done | Commits: de1303b, 7392c65. Locally verified; CI pending. |
 | M12-02 | Record decisions 3, 4, 7, 8 in `docs/DECISIONS.md` | automation-map; DECISIONS DC-TBD | M12-01 | Entries added with Abdullah's confirmation. No D-number guessed. | S | Haiku | yes | 31 | todo |  |
-| M12-03 | Portal endpoint: n8n posts a "contact decision" (allow or deny, reason, rule that fired). Stored on the lead timeline. | automation-map; DECISIONS DC-TBD | M12-01 | Integration test: allow and deny both stored, tenant isolated, duplicate post ignored. | M | Sonnet | yes | 31 | todo |  |
+| M12-03 | Portal endpoint: n8n posts a "contact decision" (allow or deny, reason, rule that fired). Stored on the lead timeline. | automation-map; DECISIONS DC-TBD | M12-01 | Integration test: allow and deny both stored, tenant isolated, duplicate post ignored. | M | Sonnet | yes | 31 | done | Commits: 04be9a4. Locally verified; CI pending. |
 | M12-04 | Portal kill switch n8n reads before any send (global and per tenant) | automation-map; DECISIONS DC-TBD | M12-03 | Test: switch on means the shared sub-workflow refuses. | S | Sonnet | yes | 32 | todo |  |
-| M12-05 | Admin screen to issue a tenant's lead-webhook secret and show the n8n URL | automation-map; DECISIONS DC-TBD | M12-01 | Secret shown once, rotated, never logged. Access test for non-admin. | M | Sonnet | yes | 31 | todo |  |
+| M12-05 | Admin screen to issue a tenant's lead-webhook secret and show the n8n URL | automation-map; DECISIONS DC-TBD | M12-01 | Secret shown once, rotated, never logged. Access test for non-admin. | M | Sonnet | yes | 31 | done | Commits: 8e97414. Locally verified; CI pending. |
 | M12-06 | Shared n8n sub-workflow "may I contact" (consent, quiet hours, state rules, DNC, frequency caps) reading portal data | automation-map; DECISIONS DC-TBD | M12-03 | Fake-data test table covers every rule, including quiet hours at edges and Florida/Oklahoma blocks. Logs a decision per run. | L | Opus | yes | 32 | todo |  |
 | M12-07 | Gate parity test: same inputs through the old portal gate and the n8n sub-workflow give the same answer | automation-map; DECISIONS DC-TBD | M12-06 | All cases match or each difference is listed for Abdullah. | M | Opus | yes | 33 | todo |  |
 | M12-08 | M12 gate: review of decisions, risk list, kill switch | automation-map; DECISIONS DC-TBD | M12-02, M12-03, M12-04, M12-05, M12-07 | Abdullah's yes. | S | Haiku | yes | 34 | todo |  |
@@ -292,11 +292,11 @@ Source of the decisions: `docs/DECISIONS.md` section "All-in-one portal, 2026-10
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | M13-01 | n8n workflow: form/Meta/Angi/LSA lead in, post to portal, check contact decision, start call | automation-map; DECISIONS DC-TBD | M12-08 | Fake-source test: lead appears in portal first, then a fake call starts. Lead is never lost if call step fails. | L | Sonnet | yes | 35 | todo |  |
-| M13-02 | ElevenLabs adapter in the portal (stub and real behind a switch) | automation-map; DECISIONS DC-TBD | M12-01 | Stub passes. Real mode off by default. | M | Opus | yes | 31 | todo |  |
+| M13-02 | ElevenLabs adapter in the portal (stub and real behind a switch) | automation-map; DECISIONS DC-TBD | M12-01 | Stub passes. Real mode off by default. | M | Opus | yes | 31 | done | Commits: 337844b, 593cdc0. Locally verified; CI pending. |
 | M13-03 | Call result flow: provider webhook to n8n to portal (outcome, transcript, recording link) | automation-map; DECISIONS DC-TBD | M13-02 | Fake call shows outcome on the lead. Duplicate result ignored. | M | Sonnet | yes | 32 | todo |  |
 | M13-04 | Retry schedule in n8n (5 min, 1 hour, next day, max 4), each retry re-checks contact decision | automation-map; DECISIONS DC-TBD | M13-01 | Test with fake clock. No retry after opt-out or booking. | M | Sonnet | yes | 36 | todo |  |
 | M13-05 | Booking through Cal.com from the call, relayed to portal | automation-map; DECISIONS DC-TBD | M13-03 | Fake booking appears on the lead and moves the deal stage. | M | Sonnet | yes | 33 | todo |  |
-| M13-06 | Fix deal-to-booked rule (`booked` vs `Estimate Booked`) | automation-map; DECISIONS DC-TBD | none | Regression test. | S | Sonnet | yes | 30 | todo |  |
+| M13-06 | Fix deal-to-booked rule (`booked` vs `Estimate Booked`) | automation-map; DECISIONS DC-TBD | none | Regression test. | S | Sonnet | yes | 30 | done | Commits: ad1fb59, 7392c65. Locally verified; CI pending. |
 | M13-07 | New-lead alert and hot-lead alert by email | automation-map; DECISIONS DC-TBD | M13-01 | Fake lead sends one email. No duplicate. | S | Sonnet | yes | 36 | todo |  |
 | M13-08 | Opt-out and STOP handling end to end | automation-map; DECISIONS DC-TBD | M12-06 | Fake STOP stops all further sends, logged with reason. | M | Opus | yes | 33 | todo |  |
 | M13-09 | M13 gate: full fake run, lead to call to booking to report data | automation-map; DECISIONS DC-TBD | M13-01, M13-03, M13-04, M13-05, M13-07, M13-08 | Abdullah's yes. Real provider test calls need a separate yes. | S | Haiku | yes | 37 | todo |  |
@@ -329,18 +329,18 @@ Source of the decisions: `docs/DECISIONS.md` section "All-in-one portal, 2026-10
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M16-01 | Create Kynetic as its own tenant (synthetic data first) | automation-map; DECISIONS DC-TBD | M12-08 | Isolation test with a client tenant. | M | Opus | yes | 35 | todo |  |
-| M16-02 | Lead sources inbound vs outbound; outbound split by channel (cold call, SMS, email, DM) | automation-map; DECISIONS DC-TBD | M16-01 | Filters and counts correct on seeded data. | M | Sonnet | yes | 36 | todo |  |
-| M16-03 | Human dialer queue: next lead, script, DNC flag, one-tap outcome log | automation-map; DECISIONS DC-TBD | M16-02 | Seeded run: DNC lead is never shown. Outcome saved with time. | L | Sonnet | yes | 37 | todo |  |
-| M16-04 | Campaigns | automation-map; DECISIONS DC-TBD | M16-02 | Create, assign leads, see results. | M | Sonnet | yes | 37 | todo |  |
-| M16-05 | Agency pipeline stages (confirmed: New, Contacted, Interested, Proposal Sent, Won, Lost, Nurture) | automation-map; DECISIONS DC-TBD | M16-01 | Stages editable, moves logged. | M | Sonnet | yes | 36 | todo |  |
-| M16-06 | Never-dial list guard (AM-1 Roofing, FL, OK, DNC) in the dialer | automation-map; DECISIONS DC-TBD | M16-03 | Test: blocked numbers cannot be logged as called. | S | Opus | yes | 38 | todo |  |
+| M16-01 | Create Kynetic as its own tenant (synthetic data first) | automation-map; DECISIONS DC-TBD | M12-08 | Isolation test with a client tenant. | M | Opus | yes | 35 | done | Commits: 51bacd8. Locally verified; CI pending. |
+| M16-02 | Lead sources inbound vs outbound; outbound split by channel (cold call, SMS, email, DM) | automation-map; DECISIONS DC-TBD | M16-01 | Filters and counts correct on seeded data. | M | Sonnet | yes | 36 | done | Commits: 51bacd8, 54cd21c. Locally verified; CI pending. |
+| M16-03 | Human dialer queue: next lead, script, DNC flag, one-tap outcome log | automation-map; DECISIONS DC-TBD | M16-02 | Seeded run: DNC lead is never shown. Outcome saved with time. | L | Sonnet | yes | 37 | done | Commits: e5847b4, d5d7db2, daf8c41. Locally verified; CI pending. |
+| M16-04 | Campaigns | automation-map; DECISIONS DC-TBD | M16-02 | Create, assign leads, see results. | M | Sonnet | yes | 37 | done | Commits: d5d7db2, daf8c41. Locally verified; CI pending. |
+| M16-05 | Agency pipeline stages (confirmed: New, Contacted, Interested, Proposal Sent, Won, Lost, Nurture) | automation-map; DECISIONS DC-TBD | M16-01 | Stages editable, moves logged. | M | Sonnet | yes | 36 | done | Commits: 51bacd8, 54cd21c. Locally verified; CI pending. |
+| M16-06 | Never-dial list guard (AM-1 Roofing, FL, OK, DNC) in the dialer | automation-map; DECISIONS DC-TBD | M16-03 | Test: blocked numbers cannot be logged as called. | S | Opus | yes | 38 | done | Commits: e5847b4, d5d7db2. Locally verified; CI pending. |
 
 ### M17 Proposals, onboarding, billing
 
 | ID | Title | Implements | Depends | Acceptance | Size | Model | Parallel | Wave | Status | Resume notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M17-01 | Proposal builder (draft, never auto-sent; Problem, Agentic Solution, Roadmap, ROI) | automation-map; DECISIONS DC-TBD | M16-05 | Draft saved and rendered. | M | Sonnet | yes | 37 | todo |  |
+| M17-01 | Proposal builder (draft, never auto-sent; Problem, Agentic Solution, Roadmap, ROI) | automation-map; DECISIONS DC-TBD | M16-05 | Draft saved and rendered. | M | Sonnet | yes | 37 | done | Commits: 892f2fe, 1bebdfa. Locally verified; CI pending. |
 | M17-02 | Price plans as data | automation-map; DECISIONS DC-TBD | M17-01 | Both price models loadable; no hard-coded price. | M | Sonnet | yes | 38 | todo |  |
 | M17-03 | Client onboarding checklist and tenant creation from a won deal (no live provider calls) | automation-map; DECISIONS DC-TBD | M17-01, M12-05 | Fake client created end to end. | L | Sonnet | yes | 38 | todo |  |
 | M17-06 | Auto-created Alex demo when a client profile is created (copy a template agent with the client's name; demo number only reachable by Abdullah; real provider calls need his yes; never touches Nora or Emily) | automation-map; DECISIONS DC-TBD | M13-02, M17-03 | Fake client profile creates a stub demo agent record and shows a test link. No live write. | L | Opus | yes | 39 | todo |  |
@@ -383,6 +383,8 @@ Source of the decisions: `docs/DECISIONS.md` section "All-in-one portal, 2026-10
 
 
 ### Build order for M12 to M20
+
+**Features before design (DC-TBD-14, 2026-11-02):** build every M12 to M20 feature first and do design polish afterward. New screens use the existing components and tokens as they are; do not spend tasks on visuals, rebrand or layout polish, and do not skip accessibility basics (labels, keyboard access, contrast).
 
 Waves 30 and up continue after the existing 29. A task may start when every dependency is `done`. Tasks in the same wave with Parallel = yes can run in separate threads. Anything that needs a live provider, deploy, DNS change or write to Retell, Twenty, Notion or Stripe waits for Abdullah's specific yes, whatever the wave.
 

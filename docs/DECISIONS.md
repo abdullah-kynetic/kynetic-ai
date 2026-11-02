@@ -161,6 +161,7 @@ Decided in the project thread while planning M12 to M20 (`docs/BUILD_PLAN.md`). 
 | DC-TBD-11 | 2026-10-31 | Review request text goes out 2 hours after payment is received. One generic payment-received event in the portal, a thin n8n adapter per invoicing system, and a Paid button as fallback. Email until A2P approval. | Explicit | PRD, ARCHITECTURE |
 | DC-TBD-12 | 2026-11-01 | In scope: auto-created Alex demo for new client profiles and the first two invoicing adapters. Later: Twilio click-to-call, Retell adapter. | Explicit | BUILD_PLAN |
 | DC-TBD-13 | 2026-11-01 | Gap-check items added as M19 and M20. Outbound email and DMs stay manual (human-sent; portal logs and DNC-checks). | Explicit | BUILD_PLAN |
+| DC-TBD-14 | 2026-11-02 | Build all M12 to M20 features first; visual design polish comes after. New screens use the existing components and tokens with no new design work, and the rebrand and DS polish are deferred. Accessibility rules in DS still apply. | Explicit | BUILD_PLAN, DESIGN_SYSTEM |
 
 ## Still UNRESOLVED (needs outside information)
 
@@ -173,3 +174,35 @@ Decided in the project thread while planning M12 to M20 (`docs/BUILD_PLAN.md`). 
 | State calling and recording rules, consent wording, Terms and Privacy wording, incident notification duties | Counsel |
 | Twilio A2P campaign approval and per-tenant sending numbers | Twilio |
 | OPM vendors or connectors beyond status records | Abdullah |
+
+## Sequencing update — 2026-11-01
+
+Abdullah explicitly requested that login and auth be the last work added. Remaining user-facing login/auth work and setup move after the feature waves, before go-live. Existing authentication, server authorization, tenant isolation and API/webhook verification remain enforced. No new decision number assigned. This is a sequencing change; it does not remove existing controls or approve deployment.
+
+### M12-03 implementation note — 2026-11-01
+
+Contact decisions are stored as immutable evidence in an M12-owned ledger plus the existing lead timeline. No approval to send follows from an allow log. Tenant event IDs are unique; conflicting retries return 409. Base-platform evidence logging remains available when alex_core is off so denials can be recorded. Existing consent enforcement and pending DC-TBD supersedes are unchanged. No decision number assigned.
+
+### M12-05 implementation note — 2026-11-01
+
+Admin lead-webhook settings reuse the encrypted secret store. New signing values are shown once only to the issuing admin; provider secrets and existing signing values remain unreadable from the UI. Rotation/audit are atomic. The page displays the existing n8n receiver URL; configuring/activating n8n remains a separate approved action. No decision number assigned and no real secrets issued.
+
+### Wave 32 implementation note — 2026-11-01
+
+Policy readers expose minimal status inputs without changing the portal safety gate; migrationGatePassed remains false. The normalized call-result relay reuses native call persistence and keeps an immutable tenant/event/provider-call receipt. Receipt evidence conflicts return 409 rather than overwriting a completed native call. Only an already-ingested tenant recording key is accepted; no external media fetch is performed. These are local interface decisions, not approval of the pending locked supersedes, counsel rules, live integrations or sender cutover. No decision number assigned.
+
+## Portal-first build order — 2026-11-01 (explicit, Abdullah)
+
+Skip n8n automations for now and continue the remaining portal build. The synthetic, outbound-disabled M16 agency foundation may proceed independently of the deferred n8n safety gate. Existing portal contact enforcement remains in force; later integration/live approvals remain separate. Login/auth work stays last. No new decision number assigned.
+
+Implementation default: the first agency workspace is explicitly synthetic, uses UTC and a reserved demo slug, contains no invitations/memberships/credentials, and accepts @example.test leads only. Real agency setup/migration is a later owner-approved action. Source channels follow the approved M16-02 list; normal CRM services provide stage edits and logged moves.
+
+### M16 manual dialer defaults — 2026-11-01
+
+Ship the human dialer with never-dial checks as one unit. The synthetic workspace uses reserved test numbers and known state codes; protect AM-1 identity/number and exclude FL/OK, DNC, unknown/conflicting state and non-synthetic numbers. Outcome history is immutable first-pass data: a lead leaves the queue after one outcome. Callback records no automated schedule; DNC may be marked without logging a call. Human logging grants no AI consent.
+
+Campaign summaries count manual history for assigned live contacts, including pre-assignment outcomes, without claiming marketing attribution. Scripts remain drafts for review and are never sent automatically. These defaults authorize no live migration or calling. No new decision number assigned.
+
+### M17 proposal draft defaults — 2026-11-01
+
+One working draft per synthetic agency deal; partial sections are allowed. Saves use optimistic revisions, with identical-content retries treated as no-ops. Drafts remain internal and never change deal stage, send content or create invoices. ROI is manually authored with assumptions for review; no return or price is invented. Preview escapes plain text. These are local implementation defaults within M17-01, not live-system authorization or a locked-pricing supersede. No decision number assigned.

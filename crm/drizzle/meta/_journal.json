@@ -239,6 +239,41 @@
       "when": 1793307709000,
       "tag": "1000_contacts_phone_fragment_tenant_index",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1793518200000,
+      "tag": "1001_contact_decisions",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1793520000000,
+      "tag": "1002_call_result_receipts",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1793530000000,
+      "tag": "1003_agency_workspace",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1793553000000,
+      "tag": "1004_agency_dialer_campaigns",
+      "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1793556000000,
+      "tag": "1005_agency_proposals",
+      "breakpoints": true
     }
   ]
 }

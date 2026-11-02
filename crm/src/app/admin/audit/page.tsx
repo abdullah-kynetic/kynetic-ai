@@ -1,3 +1,4 @@
+/* oxlint-disable jsx-a11y/no-noninteractive-tabindex -- scrollable table regions must be keyboard focusable (WCAG 2.1.1) */
 import PageContainer from '@/components/layout/page-container';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -186,7 +187,12 @@ export default async function AuditLogPage({
         <p className='text-muted-foreground text-sm'>No events match these filters.</p>
       ) : (
         <>
-          <div className='overflow-x-auto rounded-lg border' role='region' aria-label='Audit log results' tabIndex={0}>
+          <div
+            className='overflow-x-auto rounded-lg border'
+            role='region'
+            aria-label='Audit log results'
+            tabIndex={0}
+          >
             <Table>
               <TableHeader>
                 <TableRow>

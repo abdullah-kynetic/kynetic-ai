@@ -69,6 +69,7 @@ export default async function ContactsPage({
       pageHeaderAction={
         exportEnabled ? (
           <Button
+            // oxlint-disable-next-line jsx-a11y/control-has-associated-label -- link text is the Button children ("Export CSV") composed through render
             render={<a href={`/api/contacts/export?${exportParams}`} download />}
             variant='outline'
           >

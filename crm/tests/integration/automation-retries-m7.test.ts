@@ -56,16 +56,22 @@ beforeAll(async () => {
     OUTBOUND_ENABLED: 'true'
   });
   (globalThis as typeof globalThis & { __kyneticDb?: Db; __kyneticWorkerDb?: Db }).__kyneticDb = db;
-  (globalThis as typeof globalThis & { __kyneticDb?: Db; __kyneticWorkerDb?: Db }).__kyneticWorkerDb = createDb(tdb.worker);
+  (
+    globalThis as typeof globalThis & { __kyneticDb?: Db; __kyneticWorkerDb?: Db }
+  ).__kyneticWorkerDb = createDb(tdb.worker);
   await tdb.admin`update automations set enabled = true where id = ${automationId}`;
   await tdb.admin`update phone_numbers set a2p_status = 'approved' where tenant_id = ${IDS.tenantA}`;
-  await recordConsent(ctx.ownerA(), {
-    contactId,
-    channel: 'sms',
-    source: 'form',
-    capturedText: 'Synthetic test consent',
-    capturedAt: new Date('2026-10-01T00:00:00Z')
-  }, { db });
+  await recordConsent(
+    ctx.ownerA(),
+    {
+      contactId,
+      channel: 'sms',
+      source: 'form',
+      capturedText: 'Synthetic test consent',
+      capturedAt: new Date('2026-10-01T00:00:00Z')
+    },
+    { db }
+  );
 });
 
 afterAll(async () => {
@@ -86,7 +92,11 @@ async function newRun() {
 }
 
 async function runStatus(runId: string) {
-  const [run] = await withTenant(system, (tx) => tx.select().from(automationRuns).where(eq(automationRuns.id, runId)), { db });
+  const [run] = await withTenant(
+    system,
+    (tx) => tx.select().from(automationRuns).where(eq(automationRuns.id, runId)),
+    { db }
+  );
   return run!;
 }
 
@@ -110,8 +120,12 @@ describe('M7 automation module and retry acceptance', () => {
     };
 
     await expect(deliver(event, 'automation-stop-message.received')).resolves.toBe('ran');
-    expect(await runStatus(runA!.id)).toMatchObject({ status: 'stopped_reply', stopReason: 'reply' });
-    const [tenantBRun] = await tdb.admin`select status, stop_reason from automation_runs where id = ${runB!.id}`;
+    expect(await runStatus(runA!.id)).toMatchObject({
+      status: 'stopped_reply',
+      stopReason: 'reply'
+    });
+    const [tenantBRun] =
+      await tdb.admin`select status, stop_reason from automation_runs where id = ${runB!.id}`;
     expect(tenantBRun).toMatchObject({ status: 'active', stop_reason: null });
   });
 
@@ -132,42 +146,101 @@ describe('M7 automation module and retry acceptance', () => {
     };
 
     await expect(deliver(event, 'automation-stop-appointment.booked')).resolves.toBe('ran');
-    expect(await runStatus(run!.id)).toMatchObject({ status: 'stopped_booked', stopReason: 'booked' });
+    expect(await runStatus(run!.id)).toMatchObject({
+      status: 'stopped_booked',
+      stopReason: 'booked'
+    });
   });
 
   it('enables all follow-up bundle modules atomically and rolls them back together', async () => {
     await setFollowupBundle(admin, { tenantId: IDS.tenantA, enabled: true }, { db });
-    for (const key of ['followup_bundle', 'quote_followup', 'reactivation', 'missed_call_textback'] as const)
+    for (const key of [
+      'followup_bundle',
+      'quote_followup',
+      'reactivation',
+      'missed_call_textback'
+    ] as const)
       expect(await isModuleEnabled(system, key, { db })).toBe(true);
-    const rows = await tdb.admin`select action, after from audit_log where tenant_id = ${IDS.tenantA} and action = 'module.toggle' order by created_at desc limit 4`;
+    const rows =
+      await tdb.admin`select action, after from audit_log where tenant_id = ${IDS.tenantA} and action = 'module.toggle' order by created_at desc limit 4`;
     expect(rows).toHaveLength(4);
     await setFollowupBundle(admin, { tenantId: IDS.tenantA, enabled: false }, { db });
-    for (const key of ['followup_bundle', 'quote_followup', 'reactivation', 'missed_call_textback'] as const)
+    for (const key of [
+      'followup_bundle',
+      'quote_followup',
+      'reactivation',
+      'missed_call_textback'
+    ] as const)
       expect(await isModuleEnabled(system, key, { db })).toBe(false);
   });
 
   it('reactivation only enrolls imported contacts with valid SMS consent', async () => {
     await tdb.admin`insert into automation_templates (key, module_key, label) values ('reactivation', 'reactivation', 'Reactivation') on conflict do nothing`;
-    const [sequence] = await tdb.admin`insert into automations (tenant_id, kind, template_key, name, enabled)
+    const [sequence] =
+      await tdb.admin`insert into automations (tenant_id, kind, template_key, name, enabled)
       values (${IDS.tenantA}, 'template', 'reactivation', 'Synthetic reactivation', true) returning id`;
     await tdb.admin`insert into automation_steps (tenant_id, automation_id, position, channel, body)
       values (${IDS.tenantA}, ${sequence!.id}, 1, 'sms', 'Synthetic reactivation')`;
     await tdb.admin`insert into tenant_modules (tenant_id, module_key, enabled) values (${IDS.tenantA}, 'reactivation', false)
       on conflict (tenant_id, module_key) do update set enabled = false`;
-    const [eligible] = await tdb.admin`insert into contacts (tenant_id, first_name, primary_phone_e164, phones, imported_source)
+    const [eligible] =
+      await tdb.admin`insert into contacts (tenant_id, first_name, primary_phone_e164, phones, imported_source)
       values (${IDS.tenantA}, 'Imported eligible', '+15555550801', ARRAY['+15555550801'], 'synthetic-import') returning id`;
-    const [blocked] = await tdb.admin`insert into contacts (tenant_id, first_name, primary_phone_e164, phones, imported_source)
+    const [blocked] =
+      await tdb.admin`insert into contacts (tenant_id, first_name, primary_phone_e164, phones, imported_source)
       values (${IDS.tenantA}, 'Imported no consent', '+15555550802', ARRAY['+15555550802'], 'synthetic-import') returning id`;
-    await recordConsent(ctx.ownerA(), { contactId: eligible!.id, channel: 'sms', source: 'form', capturedText: 'Synthetic consent', capturedAt: new Date('2026-10-01T00:00:00Z') }, { db });
+    await recordConsent(
+      ctx.ownerA(),
+      {
+        contactId: eligible!.id,
+        channel: 'sms',
+        source: 'form',
+        capturedText: 'Synthetic consent',
+        capturedAt: new Date('2026-10-01T00:00:00Z')
+      },
+      { db }
+    );
 
-    await expect(launchReactivation(ctx.ownerA(), { userId: IDS.ownerA, kyneticRole: null, membership: { tenantId: IDS.tenantA, role: 'owner', canExport: true, canBulkDelete: true }, viewAs: null }, { importedSource: 'synthetic-import' }, { db, now: MIDDAY })).rejects.toMatchObject({ code: 'MODULE_DISABLED' });
-    expect(await tdb.admin`select id from reactivation_batches where tenant_id = ${IDS.tenantA} and created_by = ${IDS.ownerA}`).toHaveLength(0);
+    await expect(
+      launchReactivation(
+        ctx.ownerA(),
+        {
+          userId: IDS.ownerA,
+          kyneticRole: null,
+          membership: {
+            tenantId: IDS.tenantA,
+            role: 'owner',
+            canExport: true,
+            canBulkDelete: true
+          },
+          viewAs: null
+        },
+        { importedSource: 'synthetic-import' },
+        { db, now: MIDDAY }
+      )
+    ).rejects.toMatchObject({ code: 'MODULE_DISABLED' });
+    expect(
+      await tdb.admin`select id from reactivation_batches where tenant_id = ${IDS.tenantA} and created_by = ${IDS.ownerA}`
+    ).toHaveLength(0);
     await tdb.admin`update tenant_modules set enabled = true where tenant_id = ${IDS.tenantA} and module_key = 'reactivation'`;
-    const result = await launchReactivation(ctx.ownerA(), { userId: IDS.ownerA, kyneticRole: null, membership: { tenantId: IDS.tenantA, role: 'owner', canExport: true, canBulkDelete: true }, viewAs: null }, { importedSource: 'synthetic-import' }, { db, now: MIDDAY });
+    const result = await launchReactivation(
+      ctx.ownerA(),
+      {
+        userId: IDS.ownerA,
+        kyneticRole: null,
+        membership: { tenantId: IDS.tenantA, role: 'owner', canExport: true, canBulkDelete: true },
+        viewAs: null
+      },
+      { importedSource: 'synthetic-import' },
+      { db, now: MIDDAY }
+    );
     expect(result).toMatchObject({ requested: 2, eligible: 1, enrolled: 1, blocked: 1 });
-    const active = await tdb.admin`select contact_id from automation_runs where tenant_id = ${IDS.tenantA} and automation_id = ${sequence!.id} and status = 'active'`;
+    const active =
+      await tdb.admin`select contact_id from automation_runs where tenant_id = ${IDS.tenantA} and automation_id = ${sequence!.id} and status = 'active'`;
     expect(active).toEqual([{ contact_id: eligible!.id }]);
-    expect(await canContact(system, blocked!.id, 'sms', MIDDAY, { db })).toMatchObject({ allowed: false });
+    expect(await canContact(system, blocked!.id, 'sms', MIDDAY, { db })).toMatchObject({
+      allowed: false
+    });
   });
 
   it('stops an active run before sending when the template module is disabled', async () => {
@@ -177,7 +250,11 @@ describe('M7 automation module and retry acceptance', () => {
     try {
       await deliverAutomationStep({ tenantId: IDS.tenantA, runId }, { provider, now: MIDDAY });
       expect(provider.sent).toHaveLength(0);
-      expect(await runStatus(runId)).toMatchObject({ status: 'stopped_module_off', stopReason: 'module_disabled', nextRunAt: null });
+      expect(await runStatus(runId)).toMatchObject({
+        status: 'stopped_module_off',
+        stopReason: 'module_disabled',
+        nextRunAt: null
+      });
     } finally {
       await tdb.admin`update tenant_modules set enabled = true where tenant_id = ${IDS.tenantA} and module_key = 'alex_core'`;
     }
@@ -186,8 +263,14 @@ describe('M7 automation module and retry acceptance', () => {
   it('keeps a transient failure active for queue retry, then completes once on fake provider success', async () => {
     const runId = await newRun();
     const provider = new FlakySms();
-    const sentBefore = await withTenant(system, (tx) => tx.select().from(messages).where(eq(messages.contactId, contactId)), { db });
-    await expect(deliverAutomationStep({ tenantId: IDS.tenantA, runId }, { provider, now: MIDDAY })).rejects.toMatchObject({ kind: 'transient' });
+    const sentBefore = await withTenant(
+      system,
+      (tx) => tx.select().from(messages).where(eq(messages.contactId, contactId)),
+      { db }
+    );
+    await expect(
+      deliverAutomationStep({ tenantId: IDS.tenantA, runId }, { provider, now: MIDDAY })
+    ).rejects.toMatchObject({ kind: 'transient' });
     expect(await runStatus(runId)).toMatchObject({ status: 'active', currentStep: 1 });
     await deliverAutomationStep({ tenantId: IDS.tenantA, runId }, { provider, now: MIDDAY });
     expect(provider.attempts).toBe(2);
@@ -195,7 +278,11 @@ describe('M7 automation module and retry acceptance', () => {
     expect(await runStatus(runId)).toMatchObject({ status: 'completed', currentStep: 2 });
     await deliverAutomationStep({ tenantId: IDS.tenantA, runId }, { provider, now: MIDDAY });
     expect(provider.sent).toHaveLength(1);
-    const rows = await withTenant(system, (tx) => tx.select().from(messages).where(eq(messages.contactId, contactId)), { db });
+    const rows = await withTenant(
+      system,
+      (tx) => tx.select().from(messages).where(eq(messages.contactId, contactId)),
+      { db }
+    );
     expect(rows.filter((message) => message.status === 'sent')).toHaveLength(
       sentBefore.filter((message) => message.status === 'sent').length + 1
     );

@@ -26,7 +26,16 @@ const EXTRA_TABLES = [
   'presence_items',
   'review_snapshots',
   // M7 table for tenant-scoped reactivation launches.
-  'reactivation_batches'
+  'reactivation_batches',
+  // M12 contact-decision ledger and call-result receipts.
+  'contact_decisions',
+  'call_result_receipts',
+  // M16/M17 agency workspace tables (synthetic Kynetic tenant only).
+  'agency_workspaces',
+  'agency_campaigns',
+  'agency_campaign_leads',
+  'agency_call_attempts',
+  'agency_proposals'
 ];
 
 function entitiesFromDoc(): string[] {

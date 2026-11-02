@@ -157,8 +157,10 @@ export async function deliverAutomationStep(
     return;
   }
   try {
-    await withTenant({ tenantId: job.tenantId, role: 'system' }, (tx) =>
-      requireModule({ tenantId: job.tenantId, role: 'system' }, gatedModule, { tx }), { db }
+    await withTenant(
+      { tenantId: job.tenantId, role: 'system' },
+      (tx) => requireModule({ tenantId: job.tenantId, role: 'system' }, gatedModule, { tx }),
+      { db }
     );
   } catch (error) {
     if (!(error instanceof ModuleDisabledError)) throw error;
@@ -183,7 +185,7 @@ export async function deliverAutomationStep(
       idempotencyKey: `automation:${run.id}:${step.step.position}`,
       actor: { type: 'automation' }
     },
-      { provider: deps.provider ?? getSmsProvider(), now: deps.now }
+    { provider: deps.provider ?? getSmsProvider(), now: deps.now }
   );
   if (result.status === 'blocked' && result.retryAt) {
     await withTenant(

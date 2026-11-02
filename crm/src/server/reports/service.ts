@@ -63,7 +63,16 @@ export async function generateMonthlyReport(
       const presence = await presenceReport(ctx, period, { tx });
       sections.online_presence = {
         title: 'Online Presence',
-        data: { snapshots: presence.snapshots.map(({ source, capturedOn, reviewCount, averageRating }) => ({ source, capturedOn, reviewCount, averageRating })) }
+        data: {
+          snapshots: presence.snapshots.map(
+            ({ source, capturedOn, reviewCount, averageRating }) => ({
+              source,
+              capturedOn,
+              reviewCount,
+              averageRating
+            })
+          )
+        }
       };
     }
     const [row] = await tx

@@ -145,9 +145,10 @@ export class R2Storage implements StorageAdapter {
 function decodeXml(value: string) {
   return value.replace(/&(#x[\da-f]+|#\d+|amp|lt|gt|quot|apos);/gi, (entity, code: string) => {
     if (code[0] === '#') {
-      const number = code[1]?.toLowerCase() === 'x' ? parseInt(code.slice(2), 16) : Number(code.slice(1));
+      const number =
+        code[1]?.toLowerCase() === 'x' ? parseInt(code.slice(2), 16) : Number(code.slice(1));
       return Number.isFinite(number) ? String.fromCodePoint(number) : entity;
     }
-    return ({ amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" })[code.toLowerCase()] ?? entity;
+    return { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" }[code.toLowerCase()] ?? entity;
   });
 }

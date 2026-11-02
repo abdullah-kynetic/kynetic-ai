@@ -9,6 +9,11 @@ test.use({ trace: 'off' });
 test('F-39 uploads and downloads a synthetic tenant logo through the authorized R2 test bucket', async ({
   authenticatedPage
 }) => {
+  // Needs the authorized R2 test bucket and its credentials, which CI does not have; run it where they exist.
+  test.skip(
+    !process.env.STORAGE_ENDPOINT || !process.env.STORAGE_ACCESS_KEY_ID,
+    'R2 test bucket credentials are not configured in this environment'
+  );
   if (process.env.STORAGE_BUCKET !== 'kynetic-portal-test') {
     throw new Error('Refusing R2 logo E2E: STORAGE_BUCKET must equal kynetic-portal-test');
   }
@@ -27,8 +32,14 @@ test('F-39 uploads and downloads a synthetic tenant logo through the authorized 
   const [r, g, b] = randomBytes(3);
   const png = await sharp({
     create: { width: 12, height: 12, channels: 4, background: { r, g, b, alpha: 1 } }
-  }).png().toBuffer();
-  const processed = await processLogo({ name: 'synthetic-test.png', type: 'image/png', bytes: png });
+  })
+    .png()
+    .toBuffer();
+  const processed = await processLogo({
+    name: 'synthetic-test.png',
+    type: 'image/png',
+    bytes: png
+  });
   const key = logoKey(tenantId, processed.hash);
 
   try {
@@ -50,9 +61,13 @@ test('F-39 uploads and downloads a synthetic tenant logo through the authorized 
     await authenticatedPage.reload();
     const currentLogo = authenticatedPage.getByRole('img', { name: 'Current logo' });
     await expect(currentLogo).toBeVisible();
-    await expect.poll(() => currentLogo.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
+    await expect
+      .poll(() => currentLogo.evaluate((image: HTMLImageElement) => image.naturalWidth))
+      .toBeGreaterThan(0);
   } finally {
     await storage.remove(key);
-    expect((await storage.list(`tenants/${tenantId}/branding/`)).map((object) => object.key)).not.toContain(key);
+    expect(
+      (await storage.list(`tenants/${tenantId}/branding/`)).map((object) => object.key)
+    ).not.toContain(key);
   }
 });

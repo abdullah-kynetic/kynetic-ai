@@ -1,15 +1,24 @@
 import { expect, test } from './fixtures';
 
-test('F-53/F-54 admin all-clients table shows synthetic tenants and health thresholds', async ({ adminPage }) => {
+test('F-53/F-54 admin all-clients table shows synthetic tenants and health thresholds', async ({
+  adminPage
+}) => {
   await adminPage.goto('/admin');
   await expect(adminPage.getByRole('heading', { name: 'All clients' })).toBeVisible();
   await expect(adminPage.getByText(/green ≥70, yellow ≥40, red <40/)).toBeVisible();
-  await expect(adminPage.getByRole('row').filter({ hasText: 'Synthetic Brand Co' })).toContainText('·');
+  await expect(adminPage.getByRole('row').filter({ hasText: 'Synthetic Brand Co' })).toContainText(
+    '·'
+  );
   await expect(adminPage.getByRole('row').filter({ hasText: 'Tenant C' })).toBeVisible();
-  await expect(adminPage.getByRole('row')).toHaveCount(4);
+  // The synthetic Kynetic agency tenant exists once the agency specs have run; it is not a client row.
+  await expect(
+    adminPage.getByRole('row').filter({ hasNotText: 'Kynetic AI (synthetic)' })
+  ).toHaveCount(4);
 });
 
-test('F-28/F-62 admin operations shows integration failures and reviews a flagged call', async ({ adminPage }) => {
+test('F-28/F-62 admin operations shows integration failures and reviews a flagged call', async ({
+  adminPage
+}) => {
   await adminPage.goto('/admin/operations');
   await expect(adminPage.getByRole('heading', { name: 'Integration health' })).toBeVisible();
   await expect(adminPage.getByText('Synthetic integration failure')).toBeVisible();
@@ -21,11 +30,15 @@ test('F-28/F-62 admin operations shows integration failures and reviews a flagge
   await expect(failed).toBeVisible();
   await failed.getByRole('button', { name: 'Replay failed event' }).click();
   await expect(adminPage.getByText('No failed webhooks.')).toBeVisible();
-  const jobs = adminPage.getByRole('region').filter({ has: adminPage.getByRole('heading', { name: 'Recent jobs' }) });
+  const jobs = adminPage
+    .getByRole('region')
+    .filter({ has: adminPage.getByRole('heading', { name: 'Recent jobs' }) });
   await expect(jobs.getByText('webhook.process')).toBeVisible();
 });
 
-test('F-58 admin updates client Alex configuration and creates a prompt version', async ({ adminPage }) => {
+test('F-58 admin updates client Alex configuration and creates a prompt version', async ({
+  adminPage
+}) => {
   await adminPage.goto('/admin/clients/11111111-1111-4111-8111-111111111111/alex');
   await expect(adminPage.getByRole('heading', { name: 'Alex configuration' })).toBeVisible();
   await expect(adminPage.getByText(/prompt version 1/)).toBeVisible();

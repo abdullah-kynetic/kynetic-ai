@@ -1,3 +1,4 @@
+/* oxlint-disable jsx-a11y/no-noninteractive-tabindex -- scrollable table regions must be keyboard focusable (WCAG 2.1.1) */
 import PageContainer from '@/components/layout/page-container';
 import { Button } from '@/components/ui/button';
 import { decideAdminAccess, listBackups } from '@/server/admin';
@@ -23,7 +24,12 @@ export default async function BackupsPage() {
         ) : undefined
       }
     >
-      <div className='overflow-x-auto rounded border' role='region' aria-label='Backup history' tabIndex={0}>
+      <div
+        className='overflow-x-auto rounded border'
+        role='region'
+        aria-label='Backup history'
+        tabIndex={0}
+      >
         <table className='w-full text-left text-sm'>
           <thead>
             <tr>

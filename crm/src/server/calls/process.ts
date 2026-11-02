@@ -16,7 +16,7 @@ import { isModuleEnabled } from '../modules';
 import { businessHoursSchema, isWithinBusinessHours } from '../settings/hours';
 import { withTenant, type TenantContextInput } from '../tenancy';
 import { registerWebhookProcessor, type WebhookProcessor } from '../webhooks';
-import { normalizeOutcome, normalizeSentiment, outcomeLabel, type CallOutcome } from './outcomes';
+import { normalizeOutcome, normalizeSentiment, outcomeLabel } from './outcomes';
 
 // F-26, F-27, F-77, ARCHITECTURE section 3 "Inbound webhook". The route verified the signature and
 // stored the event once; this processor runs in the worker. The tenant comes from our own agent
@@ -149,23 +149,115 @@ async function writeCall(
   provider: VoiceProviderId,
   db: Db
 ): Promise<{ callId: string; needsRecording: boolean }> {
+  return withTenant(ctx, (tx) => writeCallInTransaction(ctx, ev, provider, tx), { db });
+}
+
+/** Shared persistence for verified native events and the authenticated M13 relay. Never calls a provider. */
+export async function writeCallInTransaction(
+  ctx: TenantContextInput,
+  ev: VoiceEventPayload,
+  provider: VoiceProviderId,
+  tx: Tx,
+  resolvedContactId?: string
+): Promise<{ callId: string; needsRecording: boolean }> {
   const outcome = normalizeOutcome(ev.outcome);
   const startedAt = new Date(ev.startedAt);
   const durationS = Math.max(0, Math.round(ev.durationS));
   const endedAt = new Date(startedAt.getTime() + durationS * 1000);
+  // Serialize all native/relayed completions for this call before checking timeline/event idempotency.
+  await tx.execute(
+    sql`select pg_advisory_xact_lock(hashtextextended(${`${ctx.tenantId}:${provider}:${ev.providerCallId}`}, 0))`
+  );
+  const [existing] = await tx
+    .select({
+      id: calls.id,
+      contactId: calls.contactId,
+      dealId: calls.dealId,
+      recordingKey: calls.recordingKey,
+      disclosureVersion: calls.disclosureVersion,
+      flagged: calls.flagged
+    })
+    .from(calls)
+    .where(
+      and(
+        eq(calls.tenantId, ctx.tenantId),
+        eq(calls.provider, provider),
+        eq(calls.providerCallId, ev.providerCallId)
+      )
+    )
+    .limit(1);
 
-  return withTenant(
-    ctx,
-    async (tx) => {
-      const [existing] = await tx
-        .select({
-          id: calls.id,
-          contactId: calls.contactId,
-          dealId: calls.dealId,
-          recordingKey: calls.recordingKey,
-          disclosureVersion: calls.disclosureVersion,
-          flagged: calls.flagged
-        })
+  const disclosure = await checkDisclosure(tx, ev, outcome, existing);
+  let contactId =
+    existing?.contactId ?? resolvedContactId ?? (await contactForNumber(tx, ev.counterpartE164));
+  if (!contactId && ev.direction === 'inbound' && ev.counterpartE164) {
+    const [tenant] = await tx
+      .select({ timezone: tenants.timezone, businessHours: tenants.businessHours })
+      .from(tenants)
+      .limit(1);
+    const hours = businessHoursSchema.safeParse(tenant?.businessHours);
+    const hasConfiguredHours =
+      hours.success && Object.values(hours.data).some((windows) => (windows?.length ?? 0) > 0);
+    const afterHours =
+      hasConfiguredHours &&
+      !isWithinBusinessHours(hours.data, tenant?.timezone ?? '', startedAt) &&
+      (await isModuleEnabled(ctx, 'after_hours', { tx }));
+    if (afterHours) {
+      const contact = await createContact(
+        ctx,
+        {
+          firstName: '',
+          phones: [ev.counterpartE164],
+          emails: [],
+          source: 'after_hours',
+          status: 'new',
+          tags: ['after-hours'],
+          address: {},
+          custom: {}
+        },
+        { tx, acknowledgeDuplicates: true, asLead: true }
+      );
+      contactId = contact.id;
+    }
+  }
+  const values = {
+    direction: ev.direction,
+    startedAt: startedAt.toISOString(),
+    endedAt: endedAt.toISOString(),
+    durationS,
+    outcome,
+    sentiment: normalizeSentiment(ev.sentiment),
+    transcript: ev.transcript?.slice(0, MAX_TRANSCRIPT_CHARS) ?? null,
+    summary: ev.summary?.slice(0, MAX_SUMMARY_CHARS) ?? null,
+    extracted: boundedExtracted(ev.extracted),
+    costCents: ev.costCents ?? null,
+    purgeAfter: addMonths(endedAt, RETENTION_MONTHS).toISOString(),
+    contactId,
+    ...disclosure,
+    updatedAt: new Date().toISOString()
+  };
+
+  let callId: string;
+  if (existing) {
+    callId = existing.id;
+    await tx.update(calls).set(values).where(eq(calls.id, callId));
+  } else {
+    callId = randomUUID();
+    // The unique key makes a concurrent delivery of the same call lose cleanly instead of duplicating.
+    const inserted = await tx
+      .insert(calls)
+      .values({
+        id: callId,
+        tenantId: ctx.tenantId,
+        provider,
+        providerCallId: ev.providerCallId,
+        ...values
+      })
+      .onConflictDoNothing()
+      .returning({ id: calls.id });
+    if (inserted.length === 0) {
+      const [winner] = await tx
+        .select({ id: calls.id })
         .from(calls)
         .where(
           and(
@@ -175,125 +267,42 @@ async function writeCall(
           )
         )
         .limit(1);
+      callId = winner!.id;
+    }
+  }
 
-      const disclosure = await checkDisclosure(tx, ev, outcome, existing);
-      let contactId = existing?.contactId ?? (await contactForNumber(tx, ev.counterpartE164));
-      if (!contactId && ev.direction === 'inbound' && ev.counterpartE164) {
-        const [tenant] = await tx
-          .select({ timezone: tenants.timezone, businessHours: tenants.businessHours })
-          .from(tenants)
-          .limit(1);
-        const hours = businessHoursSchema.safeParse(tenant?.businessHours);
-        const hasConfiguredHours =
-          hours.success && Object.values(hours.data).some((windows) => (windows?.length ?? 0) > 0);
-        const afterHours =
-          hasConfiguredHours &&
-          !(isWithinBusinessHours(hours.data, tenant?.timezone ?? '', startedAt)) &&
-          (await isModuleEnabled(ctx, 'after_hours', { tx }));
-        if (afterHours) {
-          const contact = await createContact(
-            ctx,
-            {
-              firstName: '',
-              phones: [ev.counterpartE164],
-              emails: [],
-              source: 'after_hours',
-              status: 'new',
-              tags: ['after-hours'],
-              address: {},
-              custom: {}
-            },
-            { tx, acknowledgeDuplicates: true, asLead: true }
-          );
-          contactId = contact.id;
-        }
-      }
-      const values = {
-        direction: ev.direction,
-        startedAt: startedAt.toISOString(),
-        endedAt: endedAt.toISOString(),
-        durationS,
-        outcome,
-        sentiment: normalizeSentiment(ev.sentiment),
-        transcript: ev.transcript?.slice(0, MAX_TRANSCRIPT_CHARS) ?? null,
-        summary: ev.summary?.slice(0, MAX_SUMMARY_CHARS) ?? null,
-        extracted: boundedExtracted(ev.extracted),
-        costCents: ev.costCents ?? null,
-        purgeAfter: addMonths(endedAt, RETENTION_MONTHS).toISOString(),
+  const [seen] = await tx
+    .select({ id: activities.id })
+    .from(activities)
+    .where(and(eq(activities.refTable, 'calls'), eq(activities.refId, callId)))
+    .limit(1);
+  if (!seen) {
+    await recordActivity(tx, {
+      contactId,
+      dealId: existing?.dealId ?? null,
+      type: 'call',
+      refTable: 'calls',
+      refId: callId,
+      summary: `${ev.direction === 'inbound' ? 'Inbound call' : 'Alex call'}: ${outcomeLabel(outcome)} (${durationText(durationS)})`,
+      actor: { type: 'alex' },
+      occurredAt: startedAt
+    });
+    await emitEvent(tx, {
+      name: 'call.completed',
+      tenantId: ctx.tenantId,
+      actor: { type: 'alex' },
+      payload: {
+        callId,
         contactId,
-        ...disclosure,
-        updatedAt: new Date().toISOString()
-      };
-
-      let callId: string;
-      if (existing) {
-        callId = existing.id;
-        await tx.update(calls).set(values).where(eq(calls.id, callId));
-      } else {
-        callId = randomUUID();
-        // The unique key makes a concurrent delivery of the same call lose cleanly instead of duplicating.
-        const inserted = await tx
-          .insert(calls)
-          .values({
-            id: callId,
-            tenantId: ctx.tenantId,
-            provider,
-            providerCallId: ev.providerCallId,
-            ...values
-          })
-          .onConflictDoNothing()
-          .returning({ id: calls.id });
-        if (inserted.length === 0) {
-          const [winner] = await tx
-            .select({ id: calls.id })
-            .from(calls)
-            .where(
-              and(
-                eq(calls.tenantId, ctx.tenantId),
-                eq(calls.provider, provider),
-                eq(calls.providerCallId, ev.providerCallId)
-              )
-            )
-            .limit(1);
-          callId = winner!.id;
-        }
+        outcome,
+        direction: ev.direction,
+        durationS,
+        startedAt: startedAt.toISOString()
       }
-
-      const [seen] = await tx
-        .select({ id: activities.id })
-        .from(activities)
-        .where(and(eq(activities.refTable, 'calls'), eq(activities.refId, callId)))
-        .limit(1);
-      if (!seen) {
-        await recordActivity(tx, {
-          contactId,
-          dealId: existing?.dealId ?? null,
-          type: 'call',
-          refTable: 'calls',
-          refId: callId,
-          summary: `${ev.direction === 'inbound' ? 'Inbound call' : 'Alex call'}: ${outcomeLabel(outcome)} (${durationText(durationS)})`,
-          actor: { type: 'alex' },
-          occurredAt: startedAt
-        });
-        await emitEvent(tx, {
-          name: 'call.completed',
-          tenantId: ctx.tenantId,
-          actor: { type: 'alex' },
-          payload: {
-            callId,
-            contactId,
-            outcome,
-            direction: ev.direction,
-            durationS,
-            startedAt: startedAt.toISOString()
-          }
-        });
-        if (outcome === 'dnc') await honourDnc(ctx, tx, contactId, ev.counterpartE164);
-      }
-      return { callId, needsRecording: !existing?.recordingKey };
-    },
-    { db }
-  );
+    });
+    if (outcome === 'dnc') await honourDnc(ctx, tx, contactId, ev.counterpartE164);
+  }
+  return { callId, needsRecording: !existing?.recordingKey };
 }
 
 /** Only an unambiguous match links a call we did not start; two contacts on one number link to none. */

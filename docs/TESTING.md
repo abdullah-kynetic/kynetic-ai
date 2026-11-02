@@ -370,7 +370,7 @@ All run from `crm/` with bun (Node 22). Verified locally on 2026-10-26 (M0-02); 
 - End-to-end (Playwright): `bun run test:e2e` (builds first with `bun run build`; starts `bun run start`). Locally set `PLAYWRIGHT_CHROMIUM_PATH` if the Playwright browser is not installed.
 - Accessibility scan: `@axe-core/playwright` is installed; the first axe tests came with the app shell (M0-23): the sign-in page in light and dark, run by `bun run test:e2e`. The base components (M0-24) are scanned in light and dark, with a dialog and an error toast open, on a test-only page `/dev/components` that answers 404 unless `COMPONENT_GALLERY=1` (set only in `playwright.config.ts`). The signed-in shell was checked with axe by hand (light, dark, 390px) during M0-23; its automated version needs a seeded session and arrives with the E2E seed helper (M0-26/M0-27).
 - Build: `bun run build`.
-- Local synthetic contact-search load baseline: `TEST_DATABASE_ADMIN_URL=postgres://box@127.0.0.1:55432/postgres bun run test:integration -- tests/integration/load-m10.test.ts` from `crm/`. It creates and drops its own disposable database, loads 10,000 synthetic contacts and runs 100 searches at concurrency 20 and 100 using the app-equivalent pool (`max=10`), asserting p95 <500ms. EXPLAIN asserts phone-fragment search uses `contacts_phone_fragment_trgm`. Docker-based production-like load and capacity checks remain blocked without Docker.
+- Local synthetic contact-search load baseline: `TEST_DATABASE_ADMIN_URL=postgres://box@127.0.0.1:55432/postgres bun run test:integration -- tests/integration/load-m10.test.ts` from `crm/`. It creates and drops its own disposable database, loads 10,000 synthetic contacts and runs 100 searches at concurrency 20 and 100 using the app-equivalent pool (`max=10`), asserting p95 <500ms locally (CI sets `LOAD_P95_MS=5000`, a sanity ceiling because shared-runner timings swing 2x between runs; the index-use EXPLAIN assertion still runs because shared runners are slower; decided 2026-11-02, target DC-033 unchanged). EXPLAIN asserts phone-fragment search uses `contacts_phone_fragment_trgm`. Docker-based production-like load and capacity checks remain blocked without Docker.
 - M10 accessibility/security browser review: `TEST_DATABASE_ADMIN_URL=postgres://box@127.0.0.1:55432/postgres bun run test:e2e -- tests/e2e/m10-a11y-security.spec.ts` from `crm/`. Uses the synthetic Playwright fixture; scans owner and admin pages with axe WCAG 2.2 AA tags, checks keyboard focus and that captured browser responses do not expose provider secrets. Screen-reader review remains manual.
 - Authorized live R2 acceptance is opt-in (`R2_LIVE_TESTS=1`) in `tests/integration/r2-live-m8b.test.ts` and `tests/e2e/m9-r2-logo.spec.ts`. Supply credentials only as ephemeral process environment, enforce `STORAGE_BUCKET=kynetic-portal-test`, and do not persist credentials. These tests use random synthetic keys and assert cleanup; they must never target any other bucket.
 - Backup restore drill: Not configured.
@@ -512,3 +512,66 @@ Abdullah approved these explicitly or told us to take the recommended option. Te
 - No test command is verified, so all are `Not configured`.
 - Nothing has been run. No pass is recorded.
 - No real provider call or SMS is covered by an automated test.
+
+### M12/M13 wave 30 local verification (2026-10-31)
+
+Baseline `3ff1685`, branch `work`. `bun run typecheck` passed; `bun run test` passed 51 files / 392 tests. Bun 1.4.4 was invoked through npm exec with a temporary cache because Bun was absent from PATH. `bun run lint` failed on existing kbar set-state-in-effect and admin backups noninteractive tabindex errors; `bun run format:check` reported 61 files. The focused `bun run test:integration -- tests/integration/m7-module-acceptance.test.ts` failed setup (TEST_DATABASE_ADMIN_URL unset; 6 tests skipped). New F-33 M13-06 regression covers default Estimate Booked, foreign-tenant event denial, and replay; it has not passed against PostgreSQL here. No CI, browser, production build, provider or n8n execution. Details: `docs/audit-M12-M20.md`. Acceptance remains pending.
+
+### Wave 31 local implementation (2026-11-01)
+
+Branch work, after 0362a5b. Temporary local PostgreSQL 16 container on loopback port 55432, synthetic records only; no existing database/credentials used. The psql client ran in that same container via a temporary wrapper; TEST_DATABASE_ADMIN_URL selected that disposable instance. Bun 1.4.4 ran the documented commands through npm exec with its temporary cache.
+
+- `bun run typecheck`: passed after the final schema/voice changes.
+- `bun run test`: 53 files / 401 tests passed. After the final production-live guard was added, focused provider/alert suites passed 8/8, including the additional production fail-closed case. No provider request occurred.
+- `bun run test:integration -- tests/integration/contact-decisions-m12.test.ts tests/integration/lead-webhooks-admin-m12.test.ts tests/integration/m7-module-acceptance.test.ts tests/integration/lead-intake.test.ts tests/integration/service-tokens.test.ts tests/integration/tenant-secrets.test.ts`: 6 files / 45 tests passed. Includes M13-06 replay/isolation, M12-03 evidence/atomicity, M12-05 secret rotation/audit/access, and existing intake/service-token/encryption regressions.
+- Focused oxlint on 15 changed/new TS/TSX files: no errors, three warnings (existing global test seam naming and array sort in the new integration fixture). Targeted oxfmt check on those files passed. The whole-repo lint/format baseline failures recorded above remain; no whole-repo clean claim.
+- M15-04 tests execute the actual draft Code body in a VM and fake idempotent email delivery. They do not verify an n8n graph or real email idempotency.
+- CI, production build, browser rendering/one-time-display interaction, deployed role enforcement, real provider calls and n8n execution are not verified. Local migrations were applied only by the disposable test harness, never to production.
+
+### Wave 32 portal interfaces (2026-11-01)
+
+On work after a489e9d, synthetic data only, disposable local PostgreSQL 16 on loopback port 55432 (removed at the end). Bun 1.4.4 was invoked with the temporary npm cache; a temporary psql wrapper executes the client in that same local container. No production credentials or database were used.
+
+- `bun run typecheck`: passed, including the final safe error-logging change.
+- `bun run test`: 53 files / 402 tests passed.
+- `bun run test:integration -- tests/integration/contact-policy-m12.test.ts tests/integration/call-results-m13.test.ts tests/integration/call-end.test.ts tests/integration/outbound-call.test.ts tests/integration/outbound-gate.test.ts tests/integration/call-detail.test.ts tests/integration/calls-list.test.ts tests/integration/contact-decisions-m12.test.ts tests/integration/service-tokens.test.ts`: 9 suites / 107 tests passed. After the final logging change, call-results-m13 passed again (10/10), including no transcript/summary in forced-failure logs.
+- Policy tests cover global/per-tenant kill visibility, malformed/missing config, suspended/offboarded tenants, scoped status inputs without raw wording/PII, no timeline effects, foreign/deleted contacts, and token scope/revocation.
+- Relay tests cover fake result/detail/timeline and signed recording URL, concurrent exact replay, conflicting event/call identities, forbidden contact/agent/storage references, module isolation, invalid/revoked scopes, existing started calls, DNC, transactional failure rollback, native concurrent completion and ledger RLS/FK/immutability.
+- Scoped oxlint: no errors; four fixture global-seam naming warnings after unused native import cleanup. Targeted oxfmt check passed on the nine implementation/test files. Earlier whole-repo lint/format baseline failures remain unresolved; no whole-repo clean claim.
+- Not run: CI, production build, browser, n8n graphs/runtime, real provider callbacks or recording uploads. The native call processor, native webhook verification, consent gate and sender selection remain in force. No workflow activated or imported; actual rule parity and owner/counsel review remain pending.
+
+### M16 portal-first agency build (2026-11-01)
+
+Local work branch, synthetic data only. The build used explicit synthetic auth/encryption settings, localhost database selectors, PROVIDER_MODE=stub and OUTBOUND_ENABLED=false. No environment files, provider credentials or VPS systems were accessed. PostgreSQL 16 ran in the disposable local container on loopback port 55432; Chromium was `/usr/bin/chromium`.
+
+- `bun run typecheck`: passed after the final preview-guard correction and action tests.
+- `bun run build`: production compilation and route generation passed, including /admin/agency.
+- `bun run test`: 54 files / 406 tests passed, including four new direct-action guard/feedback tests.
+- `bun run test:integration -- tests/integration/agency-m16.test.ts tests/integration/stages.test.ts tests/integration/seed.test.ts`: 3 files / 27 tests passed. Coverage includes concurrent idempotent setup, rollback, default/custom stage preservation, source filtering/counts, no consent/outreach triggers, tenant isolation, forbidden caller/disabled admin/impersonation contexts, module-off refusal and existing pipeline/seed behavior.
+- An earlier seed regression found that extending SEED_TENANT_SLUGS changed the existing seeder's contract. Fixed by preserving its original three slugs and separately allowing the reserved agency slug in preview; final seed and agency tests passed. No failing check was waived.
+- `bun run test:e2e -- tests/e2e/m16-agency.spec.ts`: 1 browser scenario passed. Uses the existing synthetic session fixture; creates workspace and an outbound test lead, moves it to Interested, filters inbound, checks owner/VA denial and scans at 390px with axe WCAG AA tags (zero violations). Existing authentication was reused; no login/auth feature work.
+- Scoped oxlint on agency/UI/preview/schema/tests: no errors, one axe-import naming warning. Scoped oxfmt check passed. Whole-repo lint/format baseline issues remain outside this feature.
+- Not verified: CI, deployed/VPS behavior, real agency data migration or real providers. n8n automations are deferred by the user; no n8n workflow or connector work was performed for this feature. The local test database was removed at session end.
+
+### M16 human dialer, never-dial guards and campaigns (2026-11-01)
+
+Work branch, after 2d6594a. PostgreSQL 16 was disposable/local on loopback 55432; all contacts/numbers were synthetic except the protected public AM-1 value used strictly as a rejection fixture. No provider method or external workflow was invoked. Build/browser environments explicitly used PROVIDER_MODE=stub and OUTBOUND_ENABLED=false. Existing login/session fixtures were reused.
+
+- `bun run typecheck`: passed; `bun run build` also compiled/typechecked the new dialer/campaign routes successfully.
+- `bun run test`: 56 files / 425 tests passed, including 16 never-dial policy cases and three action-guard tests.
+- `bun run test:integration -- tests/integration/agency-dialer.test.ts tests/integration/agency-m16.test.ts tests/integration/seed.test.ts tests/integration/stages.test.ts tests/integration/consent.test.ts`: 5 files / 63 tests passed. Verifies blocked contacts cannot be logged, protected identity/primary/alternate numbers, excluded/unknown state, DNC/opt-outs, stale-page rejection, immutable/idempotent manual outcomes, timestamp/actor, rollback, campaign uniqueness/idempotent assignment/member summaries, cross-tenant references, role/module isolation and existing consent/seed/stage behavior.
+- `bun run test:e2e -- tests/e2e/m16-agency.spec.ts tests/e2e/m16-dialer-campaigns.spec.ts --workers=1`: 2 browser flows passed with local Chromium. The new flow enters a test phone/state, creates/assigns a campaign, filters the queue, displays its script, logs an outcome, verifies queue advancement/history and updated campaign results, and checks VA denial. Dialer/campaign mobile axe scans report zero WCAG AA violations. The existing workspace test now handles already-created synthetic setup idempotently.
+- Scoped oxlint found no errors; new dialer files have no warnings. Scoped oxfmt passed. Earlier whole-repo lint/format baseline issues remain outside this change.
+- Not verified: CI, deployment/VPS, real agency data/phone operation, provider or n8n integration. First-pass history does not implement callback scheduling or requeue. Local test database removed at session end.
+
+### M17-01 proposal drafts (2026-11-01)
+
+- Production `bun run build` passed, including TypeScript and proposal routes; stub mode/outbound disabled with synthetic build configuration.
+- `bun run test`: 57 files / 430 tests passed. New proposal action tests: 5/5.
+- `bun run test:integration -- tests/integration/proposals-m17.test.ts`: 9/9 passed against disposable local PostgreSQL 16. Covers concurrent open/save, partial drafts, no-op retries, stale revisions, tenant FKs/RLS, soft-deleted deals, audit rollback, denied roles/disabled admin/module, immutable-delete permission and absence of stage/job effects.
+- `bun run test:e2e -- tests/e2e/m17-proposals.spec.ts --workers=1`: 1/1 passed with local Chromium. Covers save/reload, retained stale-tab text, literal HTML-like preview, client/VA denial and mobile editor/preview axe AA scans (zero violations after navigation settles). Earlier harness failures were fixed by waiting for lead persistence, selecting the specific conflict alert and waiting for the transient navigation bar before accessibility scanning.
+- Scoped oxlint/oxfmt pass. Whole-repo baseline lint/format issues remain. CI, deployed/VPS and real providers not verified. No real outbound or n8n operations. Disposable test database removed afterward.
+
+### Preview deployment preparation (2026-11-01)
+
+User approved a separate synthetic preview of work for visual review. Preview Compose now supplies DATABASE_URL_AUTH using a separately generated kynetic_auth password and explicitly sets PROVIDER_MODE=stub with outbound disabled. Existing preview state gets AUTH_PW on its next up without replacing other credentials. Bash syntax, YAML parsing and checks of the auth-role/stub/outbound settings pass locally. No Docker deployment or external health check ran: this environment has no configured VPS connection/credentials or TCP grants, and GitHub CLI authentication is invalid. Approval remains valid; access setup is the blocker, not another permission request.

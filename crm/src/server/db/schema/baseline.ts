@@ -1679,7 +1679,10 @@ export const reactivationBatches = pgTable(
       'reactivation_batches_status_check',
       sql`status = ANY (ARRAY['launched'::text, 'completed'::text, 'failed'::text])`
     ),
-    check('reactivation_batches_counts_check', sql`requested_count >= 0 AND eligible_count >= 0 AND enrolled_count >= 0 AND blocked_count >= 0`)
+    check(
+      'reactivation_batches_counts_check',
+      sql`requested_count >= 0 AND eligible_count >= 0 AND enrolled_count >= 0 AND blocked_count >= 0`
+    )
   ]
 );
 

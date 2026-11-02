@@ -49,10 +49,10 @@ describe('M10-01 authenticated API route limits (SECURITY 5.4)', () => {
   it('shares a five-per-hour tenant budget between import and export operations', async () => {
     for (let i = 0; i < 3; i++) await enforceExportImportRateLimit(db, 'synthetic-tenant', now);
     for (let i = 0; i < 2; i++) await enforceExportImportRateLimit(db, 'synthetic-tenant', now);
-    await expectRateLimited(() =>
-      enforceExportImportRateLimit(db, 'synthetic-tenant', now)
-    );
-    await expect(enforceExportImportRateLimit(db, 'another-synthetic-tenant', now)).resolves.toMatchObject({
+    await expectRateLimited(() => enforceExportImportRateLimit(db, 'synthetic-tenant', now));
+    await expect(
+      enforceExportImportRateLimit(db, 'another-synthetic-tenant', now)
+    ).resolves.toMatchObject({
       allowed: true,
       count: 1
     });

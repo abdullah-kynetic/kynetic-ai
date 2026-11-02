@@ -2,6 +2,10 @@
 
 Mirror of the Twenty roadmap ("Roadmap: all phases"). Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
+## Portal implementation order (2026-11-01)
+
+N8n automations are deferred by Abdullah. Continue portal features with synthetic fixtures; login/auth work stays last. M16 agency workspace, source tracking, pipeline UI, human dialer/never-dial checks and campaigns are locally verified. M17-01 proposal drafts are also locally verified. Next: wave 38 won-deal onboarding and price-plan data (pricing decision gate remains). Live systems remain unchanged.
+
 ## Current plan
 Plan 1 only: the outbound speed-to-lead agent at the D-017 price (first 3 clients $4,675, clients 4 and up $8,500, three Stripe invoices at 50/25/25). Gate of 5 paying clients before Plan 2 (D-013). Task titles in Twenty carry [P1]/[P2]; Emily inbound and all upsell systems are [P2].
 
@@ -211,3 +215,45 @@ Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3
 
 ### 2026-10-06
 - D-010: resolved the one-agent-vs-two-agents question from the ACTIVE BUILD PLAN note as two separate Retell agents. Inbound (Emily) paused — near-done, left alone until a client demo needs it. Outbound speed-to-lead is now the sole active build target. Updated the ACTIVE BUILD PLAN note and docs/progress.md, docs/decisions.md to match.
+
+### 2026-10-31 — M12–M20 audit, local wave 30
+
+On `work`, fast-forwarded the stale checkout to merged main `3ff1685` (PR #122); no main change. Drafted `docs/portal-n8n-contract.md`, audited all waves in `docs/audit-M12-M20.md`, and fixed F-33 booking stage lookup to Estimate Booked with a tenant/replay regression. Typecheck and 392 unit tests pass. Focused integration could not start without TEST_DATABASE_ADMIN_URL/PostgreSQL; baseline lint and format remain failing. M12-01 awaits review, M13-06 awaits database verification, M18-05 is blocked on explicit deletion approval and M10-07 legacy ingest fate. Next: regression verification/review, then eligible wave 31 tasks. No real provider calls, secrets, n8n activation, deploy, push or main merge. No new business decision or live issue was established; docs/decisions.md and docs/known-issues.md are unchanged.
+
+### 2026-11-01 — login/auth sequencing
+
+Abdullah requested login/auth last. Updated BUILD_PLAN and DECISIONS: remaining user-facing login/auth work follows feature implementation and precedes go-live. Existing access controls stay enforced; feature tests use synthetic authenticated fixtures. Documentation-only change; no runtime changes or tests run.
+
+### 2026-11-01 — wave 31 local implementation
+
+Completed the pending M13-06 regression against disposable PostgreSQL 16 (6/6). Technically reviewed M12-01 for local build; locked-decision supersedes and go-live remain separate gates. Built M12-03 evidence-only contact-decision API (atomic tenant-isolated immutable ledger + timeline), M12-05 admin webhook status/one-time secret issue/rotate screen with role/view-as protection, and M13-02 explicit ElevenLabs live opt-in defaulting off. Only synthetic encryption keys/tokens/records were used. Login/auth feature work remains last; existing controls are reused.
+
+Verification: typecheck passed; full unit suite 401/401, then final provider/alert guard tests 8/8; six integration suites 45/45. Targeted lint has no errors (three fixture warnings), formatting passes. CI/build/browser/live behavior not run; baseline whole-repo lint/format failures remain. M15-04 safe alert formatter/fake delivery tests are drafted, but n8n SDK reference/node schemas return internal errors, so the importable workflow is blocked. M12-02 supersede confirmation remains pending; no decision IDs guessed. Next: resolve those two gates, then wave 32's policy/kill-state/result relay work. Test database removed at session end. No real secret access/issuance, provider calls, workflow writes/activation, deploy, push or main merge.
+
+### 2026-11-01 — wave 32 portal readers and result relay
+
+On work, added tenant-scoped send-state/contact-policy readers and the normalized call-result relay. Policy snapshots expose minimal status/rule/count inputs, fail closed on bad platform config and explicitly report migrationGatePassed=false. The relay checks scoped auth/module/contact/agent ownership, accepts only tenant recording keys, stores immutable receipt migration 1002 and reuses native disclosure/DNC/retention/timeline/completion persistence with concurrency locks. Unexpected relay failures omit transcript-bearing database error objects.
+
+Verified: typecheck; 402 unit tests; 107 integration tests across nine suites. Final relay failure-log regression passed 10/10 afterward. Scoped lint has no errors; scoped formatting passes. No CI/build/browser/n8n/live verification. M12-04, M12-06 and M13-03 remain in-progress where acceptance requires actual n8n graphs/parity or recording ingestion. M12-02 supersede confirmations remain pending. The n8n reference tool retry still fails; official npm SDK 0.38.4 reference/license inspected in temporary storage as a possible offline fallback, with no repo dependency added. FL/OK block-vs-window parity difference is documented for review. Next: construct/validate inactive n8n graphs using verified node schemas, test the shared contact rules/parity, and establish recording ingestion before advancing dependent flows. Local test database removed. No real secrets/provider calls, workflow writes/activation, deploy, push or main merge; login/auth work stays last.
+
+### 2026-11-01 — portal-first M16 agency workspace
+
+Abdullah directed us to skip n8n automations and continue the rest of the portal. Updated the synthetic-only dependency order and built M16-01/02/05: isolated registry/setup (migration 1003), admin agency workspace UI, manual source-classified leads, source filters/counts, seven agency stages, stage renaming and logged deal moves. Existing contact/deal/stage services and auth guards are reused. Setup leaves outbound disabled, Alex paused and no invites/memberships/credentials; no real agency tenant was created. Real data migration remains separate. Existing client pipelines and demo seeds are preserved.
+
+Verified: production build, typecheck, 406 unit tests, 27 integration tests and one browser flow including mobile axe with zero violations. A seed regression was fixed before the final passing run. Scoped lint has no errors (one axe import warning); scoped formatting passes. CI/deployed behavior not verified. No n8n/connector work, login/auth feature work, provider calls, real secrets, deploy, push or main merge. Local test database removed. Next: M16 human dialer together with never-dial/DNC safeguards, then campaigns and proposal drafts.
+
+### 2026-11-01 — M16 manual dialer and campaigns
+
+Built M16-03/04/06 on work. New pages /admin/agency/dialer and /admin/agency/campaigns expose a guarded first-pass synthetic queue, reviewed draft script, manual outcome/history, separate DNC marking, campaign creation/assignment, queue filters and member outcome summaries. Migration 1004 owns the tenant-scoped campaign/membership/immutable manual-history tables. Existing contact entry now optionally accepts fictional 555-01xx phones and known state codes. One rule guards both selection and logging: AM-1 identity/known protected number, FL/OK, unknown/conflicting state, DNC/phone opt-outs, unsafe numbers, closed/already-logged leads are excluded. No provider/call job or AI calls record is created. Callback is a recorded outcome with no schedule. All existing admin/view-as and module controls remain; login/auth feature work stays last.
+
+Verified: production build/typecheck, 425 unit tests, 63 integration tests and two browser flows with zero mobile axe violations. Scoped lint has no errors and scoped formatting passes. CI/live behavior not verified. No n8n/connector work, VPS access, actual call/message, real secrets, deploy, push or main merge. Local test database removed. Next: M17 proposal draft builder; n8n work remains parked.
+
+### 2026-11-01 — M17 proposal drafts
+
+Built M17-01 on work: migration 1005, one internal draft per agency deal, four editable sections, persisted preview, partial drafts and revision conflict protection. Controlled editor fields retain unsaved text after a conflict. Existing admin/module/view-as checks remain enforced. No send/public link, stage move, price calculation or invoice is created.
+
+Verified: production build with TypeScript, 430 unit tests, 9 focused PostgreSQL integration tests and one Chromium browser flow, including mobile editor/preview axe scans with zero violations after navigation finishes. Browser harness corrections wait for lead creation, target the conflict alert specifically and wait for the existing transient navigation indicator to disappear before axe. Scoped lint/format pass. CI, deployed/VPS and live integrations remain unverified; earlier global lint/format baseline issues remain. Test database removed at session end. No n8n, provider calls, real secrets, deploy, push or main merge. Next: wave 38 won-deal onboarding; price-plan work must respect the pending pricing decision gate. Login/auth stays last. No new business decision or live issue established; lowercase decisions/known-issues unchanged.
+
+### 2026-11-01 — preview deployment approved; access pending
+
+Abdullah approved deployment of the separate synthetic work preview for visual review, superseding the earlier no-deploy restriction for this scope. Corrected preview auth database configuration and explicit stub provider selection. Shell syntax and YAML/config checks pass. Actual deployment has not run: current managed environment reports no credentials/identities/VPS capabilities, no TCP access grants, and GitHub CLI reports invalid authentication. Need a configured preview VPS connection (or working GitHub Actions access with the existing PREVIEW_SSH_* setup). Production, n8n and providers unchanged. No URL is claimed live.

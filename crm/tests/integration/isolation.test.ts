@@ -7,6 +7,18 @@ import { createTestDatabase, type TestDatabase } from '../helpers/db';
 
 let db: TestDatabase;
 let tables: string[] = [];
+// The agency tables hang off agency_workspaces, which allows exactly one tenant (the synthetic Kynetic one),
+// so the shared two-tenant fixture cannot seed them. They still get the RLS enabled/forced/policy check.
+const SINGLE_WORKSPACE_TABLES = new Set([
+  'agency_workspaces',
+  'agency_campaigns',
+  'agency_campaign_leads',
+  'agency_call_attempts',
+  'agency_proposals'
+]);
+function seededTables() {
+  return tables.filter((t) => !SINGLE_WORKSPACE_TABLES.has(t));
+}
 const counts = new Map<string, { a: number; b: number }>();
 
 async function count(table: string, tenant: string) {
@@ -71,7 +83,7 @@ describe('SEC-T-01 schema check', () => {
   });
 
   it('the seed fixture put a row for both tenants in every tenant table', () => {
-    for (const t of tables) {
+    for (const t of seededTables()) {
       const c = counts.get(t);
       expect(c?.a, `${t} tenant A`).toBeGreaterThan(0);
       expect(c?.b, `${t} tenant B`).toBeGreaterThan(0);
@@ -126,7 +138,7 @@ describe('SEC-T-02 SQL-level isolation for every tenant table', () => {
   });
 
   it('an insert or update that moves a row to another tenant never succeeds', async () => {
-    for (const t of tables) {
+    for (const t of seededTables()) {
       // webhook_events is insert-only intake by design and carries a nullable tenant.
       if (t === 'webhook_events') continue;
       // Insert: copy tenant A's row and point it at tenant B, while the session is tenant A.
@@ -162,7 +174,7 @@ describe('SEC-T-02 SQL-level isolation for every tenant table', () => {
   });
 
   it('with read_only on, no write changes any tenant table', async () => {
-    for (const t of tables) {
+    for (const t of seededTables()) {
       const [rowA] = await db.admin.unsafe(
         `select to_jsonb(x) as j from ${t} x where tenant_id = '${IDS.tenantA}' limit 1`
       );

@@ -17,7 +17,9 @@ export default async function ReportDetailPage({ params }: { params: Promise<{ i
   const ctx = { tenantId: shell.tenant.id, userId: shell.user.id, role: shell.role };
   const report = await getReport(ctx, id);
   if (!report) notFound();
-  const presence = await isModuleEnabled(ctx, 'opm') ? await presenceReport(ctx, report.periodStart) : null;
+  const presence = (await isModuleEnabled(ctx, 'opm'))
+    ? await presenceReport(ctx, report.periodStart)
+    : null;
   return (
     <PageContainer
       pageTitle={`${report.periodStart} ROI report`}
@@ -37,9 +39,28 @@ export default async function ReportDetailPage({ params }: { params: Promise<{ i
           <p className='text-muted-foreground mt-4 text-sm'>Generated {report.createdAt}</p>
         </CardContent>
       </Card>
-      {presence && <Card className='mt-4'><CardHeader><CardTitle>Online Presence</CardTitle></CardHeader><CardContent>
-        {presence.snapshots.length ? <ul className='space-y-2'>{presence.snapshots.map((snapshot) => <li key={snapshot.id}>{snapshot.source}: {snapshot.reviewCount} reviews{snapshot.averageRating && ` · ${snapshot.averageRating}/5`} ({snapshot.capturedOn})</li>)}</ul> : <p>No review snapshots were recorded this month.</p>}
-      </CardContent></Card>}
+      {presence && (
+        <Card className='mt-4'>
+          <CardHeader>
+            <CardTitle>Online Presence</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {presence.snapshots.length ? (
+              <ul className='space-y-2'>
+                {presence.snapshots.map((snapshot) => (
+                  <li key={snapshot.id}>
+                    {snapshot.source}: {snapshot.reviewCount} reviews
+                    {snapshot.averageRating && ` · ${snapshot.averageRating}/5`} (
+                    {snapshot.capturedOn})
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No review snapshots were recorded this month.</p>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </PageContainer>
   );
 }

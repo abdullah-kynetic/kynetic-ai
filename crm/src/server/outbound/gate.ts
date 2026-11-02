@@ -85,7 +85,10 @@ async function configDecision(
     .from(tenantModules)
     .where(and(eq(tenantModules.tenantId, ctx.tenantId), eq(tenantModules.moduleKey, 'platform')))
     .limit(1);
-  if ((platform?.config as { outbound_kill_switch?: unknown } | undefined)?.outbound_kill_switch === true) {
+  if (
+    (platform?.config as { outbound_kill_switch?: unknown } | undefined)?.outbound_kill_switch ===
+    true
+  ) {
     return deny('outbound_disabled');
   }
 

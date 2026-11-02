@@ -17,10 +17,20 @@ const CSV_FIELDS = [
   'owner'
 ] as const;
 
+/** True when the first character after any whitespace or control characters is =, +, @ or -. */
+function startsWithFormulaTrigger(text: string): boolean {
+  for (const char of text) {
+    const code = char.codePointAt(0) ?? 0;
+    if (code <= 0x1f || /\s/.test(char)) continue;
+    return char === '=' || char === '+' || char === '@' || char === '-';
+  }
+  return false;
+}
+
 /** Prevent spreadsheet formula execution when a CSV is opened in common office applications. */
 export function neutralizeCsvCell(value: unknown): string {
   let text = value == null ? '' : String(value);
-  if (/^[\s\u0000-\u001f]*[=+@\-]/.test(text)) text = `'${text}`;
+  if (startsWithFormulaTrigger(text)) text = `'${text}`;
   return `"${text.replaceAll('"', '""')}"`;
 }
 

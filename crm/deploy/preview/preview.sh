@@ -39,6 +39,7 @@ PG_SUPER_PW=$(secret)
 OWNER_PW=$(secret)
 APP_PW=$(secret)
 WORKER_PW=$(secret)
+AUTH_PW=$(secret)
 BACKUP_PW=$(secret)
 BETTER_AUTH_SECRET=$(secret)$(secret)
 APP_ENCRYPTION_KEY=$(secret)$(secret)
@@ -67,6 +68,11 @@ case "$cmd" in
     mkdir -p "$STATE_DIR"
     env_file="$STATE_DIR/${slug}.env"
     [ -f "$env_file" ] || write_env "$env_file" "$slug"
+    # Existing previews predate the separate auth-role password. Add it without
+    # replacing any existing database credentials or printing the generated value.
+    if ! grep -q '^AUTH_PW=' "$env_file"; then
+      (umask 077; printf 'AUTH_PW=%s\n' "$(secret)" >>"$env_file")
+    fi
     COMPOSE_PROJECT_NAME="$project" docker compose -f "$HERE/compose.yml" --env-file "$env_file" up -d --build --wait
     echo "preview up: https://${slug}.${PREVIEW_DOMAIN}"
     ;;

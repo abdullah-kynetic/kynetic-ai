@@ -11,7 +11,7 @@ export function isVoiceProviderId(v: string): v is VoiceProviderId {
 }
 
 /**
- * ElevenLabs when its key and webhook secret are set. Without them only development and test fall
+ * ElevenLabs only when ELEVENLABS_LIVE_ENABLED=true, live mode and credentials are set. Without them only development and test fall
  * back to the in-memory fake; production fails closed so a missing secret cannot accept unsigned
  * calls. Retell (fallback) follows the same rule with `RETELL_API_KEY`.
  */
@@ -20,6 +20,14 @@ export function getVoiceProvider(id: VoiceProviderId): VoiceProvider | null {
   const env = getEnv();
   if (id === 'elevenlabs') {
     if (env.PROVIDER_MODE === 'stub') {
+      cached[id] = new FakeVoiceProvider();
+    } else if (!env.ELEVENLABS_LIVE_ENABLED) {
+      // An unconfigured production live deployment must never accept fake webhook signatures.
+      if (env.NODE_ENV === 'production') {
+        throw new Error(
+          'ELEVENLABS_LIVE_ENABLED is false; explicitly select stub mode or authorize live voice'
+        );
+      }
       cached[id] = new FakeVoiceProvider();
     } else if (env.ELEVENLABS_API_KEY && env.ELEVENLABS_WEBHOOK_SECRET) {
       cached[id] = new ElevenLabsVoiceProvider({

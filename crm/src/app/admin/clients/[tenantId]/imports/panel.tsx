@@ -18,15 +18,44 @@ type Batch = {
 
 type ImportEntity = 'contact' | 'company' | 'deal' | 'note';
 const entityFields: Record<ImportEntity, string[]> = {
-  contact: ['firstName', 'lastName', 'phone', 'email', 'externalId', 'consentDate', 'consentChannel', 'consentEvidence'],
+  contact: [
+    'firstName',
+    'lastName',
+    'phone',
+    'email',
+    'externalId',
+    'consentDate',
+    'consentChannel',
+    'consentEvidence'
+  ],
   company: ['name', 'phone', 'website', 'externalId'],
-  deal: ['title', 'valueCents', 'serviceType', 'expectedClose', 'stage', 'contactExternalId', 'externalId'],
+  deal: [
+    'title',
+    'valueCents',
+    'serviceType',
+    'expectedClose',
+    'stage',
+    'contactExternalId',
+    'externalId'
+  ],
   note: ['body', 'contactExternalId', 'companyExternalId', 'dealExternalId', 'externalId']
 };
 
-function savedMapping(batches: Batch[], entity: ImportEntity, source: string): Record<string, string> {
-  const saved = [...batches].reverse().find((batch) => batch.entity === entity && batch.importedSource === source && batch.mapping && Object.keys(batch.mapping as object).length > 0);
-  return saved ? saved.mapping as Record<string, string> : {};
+function savedMapping(
+  batches: Batch[],
+  entity: ImportEntity,
+  source: string
+): Record<string, string> {
+  const saved = [...batches]
+    .reverse()
+    .find(
+      (batch) =>
+        batch.entity === entity &&
+        batch.importedSource === source &&
+        batch.mapping &&
+        Object.keys(batch.mapping as object).length > 0
+    );
+  return saved ? (saved.mapping as Record<string, string>) : {};
 }
 
 async function requestJson(path: string, body: unknown) {
@@ -58,7 +87,13 @@ export function ImportPanel({
   const [batchId, setBatchId] = useState('');
   const [entity, setEntity] = useState<ImportEntity>(initial.at(-1)?.entity ?? 'contact');
   const [source, setSource] = useState(initial.at(-1)?.importedSource ?? 'csv_other');
-  const [mapping, setMapping] = useState<Record<string, string>>(() => savedMapping(initial, initial.at(-1)?.entity ?? 'contact', initial.at(-1)?.importedSource ?? 'csv_other'));
+  const [mapping, setMapping] = useState<Record<string, string>>(() =>
+    savedMapping(
+      initial,
+      initial.at(-1)?.entity ?? 'contact',
+      initial.at(-1)?.importedSource ?? 'csv_other'
+    )
+  );
   const [duplicateRule, setDuplicateRule] = useState<'skip' | 'fill_empty'>('skip');
   const [report, setReport] = useState<unknown>(null);
   const [message, setMessage] = useState('');
@@ -121,7 +156,9 @@ export function ImportPanel({
       });
       setReport(result.report);
       setMessage('Dry run complete. Review the report before committing.');
-      setBatches((old) => old.map((b) => (b.id === batchId ? { ...b, status: 'dry_run_ok', mapping: values } : b)));
+      setBatches((old) =>
+        old.map((b) => (b.id === batchId ? { ...b, status: 'dry_run_ok', mapping: values } : b))
+      );
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'Dry run failed.');
     } finally {
@@ -135,7 +172,9 @@ export function ImportPanel({
       const result = await requestJson(`/api/imports/${batchId}/commit`, { tenantId });
       setReport(result.result ?? null);
       setMessage('Import committed.');
-      setBatches((old) => old.map((batch) => (batch.id === batchId ? { ...batch, status: 'done' } : batch)));
+      setBatches((old) =>
+        old.map((batch) => (batch.id === batchId ? { ...batch, status: 'done' } : batch))
+      );
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'Commit failed.');
     } finally {
@@ -163,8 +202,18 @@ export function ImportPanel({
         <h2 className='text-lg font-semibold'>Upload CSV</h2>
         <label>
           Record type
-          <select className='mt-1 block min-h-11 w-full rounded border p-2' value={entity}
-            onChange={(event) => { const next = event.target.value as ImportEntity; setEntity(next); setMapping(savedMapping(batches, next, source)); setBatchId(''); setHeaders([]); setReport(null); }}>
+          <select
+            className='mt-1 block min-h-11 w-full rounded border p-2'
+            value={entity}
+            onChange={(event) => {
+              const next = event.target.value as ImportEntity;
+              setEntity(next);
+              setMapping(savedMapping(batches, next, source));
+              setBatchId('');
+              setHeaders([]);
+              setReport(null);
+            }}
+          >
             <option value='contact'>Contacts</option>
             <option value='company'>Companies</option>
             <option value='deal'>Deals and quotes</option>
@@ -173,8 +222,15 @@ export function ImportPanel({
         </label>
         <label>
           Source system
-          <input className='mt-1 block min-h-11 w-full rounded border px-3' value={source}
-            onChange={(event) => { const next = event.target.value; setSource(next); setMapping(savedMapping(batches, entity, next)); }} />
+          <input
+            className='mt-1 block min-h-11 w-full rounded border px-3'
+            value={source}
+            onChange={(event) => {
+              const next = event.target.value;
+              setSource(next);
+              setMapping(savedMapping(batches, entity, next));
+            }}
+          />
         </label>
         <label>
           CSV file (up to 10 MB)
@@ -223,7 +279,16 @@ export function ImportPanel({
           </label>
           <button
             className='min-h-11 rounded border px-4'
-            disabled={busy || !(entity === 'contact' ? mapping.phone || mapping.email : entity === 'company' ? mapping.name : entity === 'deal' ? mapping.title : mapping.body)}
+            disabled={
+              busy ||
+              !(entity === 'contact'
+                ? mapping.phone || mapping.email
+                : entity === 'company'
+                  ? mapping.name
+                  : entity === 'deal'
+                    ? mapping.title
+                    : mapping.body)
+            }
             onClick={dryRun}
           >
             Run dry-run

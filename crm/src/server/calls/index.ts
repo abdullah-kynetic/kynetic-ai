@@ -2,6 +2,7 @@ export { handleVoiceWebhook } from './hooks';
 export { normalizeOutcome, normalizeSentiment, CALL_OUTCOMES } from './outcomes';
 export {
   createVoiceProcessor,
+  writeCallInTransaction,
   recordingKey,
   registerVoiceProcessor,
   RETENTION_MONTHS,

@@ -6,7 +6,7 @@ import { contacts } from '@/server/db/schema';
 import { withPlatform } from '@/server/tenancy';
 import { withTenant } from '@/server/tenancy';
 import { ctx, IDS, seedTwoTenants } from '../helpers/fixtures';
-import { createTestDatabase, type TestDatabase } from '../helpers/db';
+import { createTestDatabase, ROLE_PASSWORDS, type TestDatabase } from '../helpers/db';
 
 let tdb: TestDatabase;
 let db: Db;
@@ -21,7 +21,7 @@ beforeAll(async () => {
   const u = new URL(process.env.TEST_DATABASE_ADMIN_URL as string);
   u.pathname = `/${tdb.name}`;
   u.username = 'kynetic_app';
-  u.password = 'app-test-pw';
+  u.password = ROLE_PASSWORDS.app;
   oneConnClient = postgres(u.toString(), { max: 1 });
   oneConn = createDb(oneConnClient);
 });

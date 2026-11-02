@@ -3,7 +3,12 @@ import { createDb, type Db } from '@/server/db/client';
 import { FakeStorage } from '@/server/adapters/storage/fake';
 import { createTestDatabase, type TestDatabase } from '../helpers/db';
 import { IDS, seedTwoTenants } from '../helpers/fixtures';
-import { decryptBackup, encryptBackup, pruneBackupRetention, runBackup } from '@/server/admin/backups';
+import {
+  decryptBackup,
+  encryptBackup,
+  pruneBackupRetention,
+  runBackup
+} from '@/server/admin/backups';
 import { auditManualBackup, listBackups } from '@/server/admin/backups';
 import { stopJobs } from '@/server/jobs';
 
@@ -63,7 +68,9 @@ describe('F-63 encrypted database backup and restore drill', () => {
     expect(rows[0]!.offsite_key).toContain('restore_test-');
     const stored = await storage.get(rows[0]!.offsite_key as string);
     expect(stored).not.toBeNull();
-    expect(Buffer.from(stored!.body).subarray(0, Buffer.byteLength('encrypted-pg-dump-v1\n')).toString()).toBe('encrypted-pg-dump-v1\n');
+    expect(
+      Buffer.from(stored!.body).subarray(0, Buffer.byteLength('encrypted-pg-dump-v1\n')).toString()
+    ).toBe('encrypted-pg-dump-v1\n');
     const after =
       await tdb.admin`select datname from pg_database where datname like 'kynetic_restore_%'`;
     expect(after).toHaveLength(0);
@@ -83,12 +90,18 @@ describe('F-63 encrypted database backup and restore drill', () => {
     for (let i = 0; i < 35; i += 1) {
       const day = new Date(Date.UTC(2026, 0, i + 1)).toISOString().slice(0, 10);
       const id = String(i).padStart(32, '0');
-      await retentionStorage.put(`backups/kynetic-crm/${day}/nightly-${id}.dump.enc`, new Uint8Array([i]));
+      await retentionStorage.put(
+        `backups/kynetic-crm/${day}/nightly-${id}.dump.enc`,
+        new Uint8Array([i])
+      );
     }
     for (let i = 0; i < 14; i += 1) {
       const day = new Date(Date.UTC(2025, i, 1)).toISOString().slice(0, 10);
       const id = String(i).padStart(32, '0');
-      await retentionStorage.put(`backups/kynetic-crm/${day}/restore_test-${id}.dump.enc`, new Uint8Array([i]));
+      await retentionStorage.put(
+        `backups/kynetic-crm/${day}/restore_test-${id}.dump.enc`,
+        new Uint8Array([i])
+      );
     }
     await pruneBackupRetention(retentionStorage, new Date('2026-10-28T12:00:00Z'));
     const remaining = await retentionStorage.list('backups/kynetic-crm/');
@@ -100,13 +113,16 @@ describe('F-63 encrypted database backup and restore drill', () => {
   it('lists backups for admin and VA and queues manual backups only for admin', async () => {
     await expect(listBackups({ userId: IDS.admin, role: 'admin' })).resolves.toBeDefined();
     await expect(listBackups({ userId: IDS.va, role: 'va' })).resolves.toBeDefined();
-    await expect(tdb.app.begin(async (tx) => {
-      await tx`select set_config('app.user_id', ${IDS.ownerA}, true), set_config('app.role', 'owner', true)`;
-      return tx`select * from admin_list_backup_runs()`;
-    })).rejects.toThrow(/insufficient privilege/);
+    await expect(
+      tdb.app.begin(async (tx) => {
+        await tx`select set_config('app.user_id', ${IDS.ownerA}, true), set_config('app.role', 'owner', true)`;
+        return tx`select * from admin_list_backup_runs()`;
+      })
+    ).rejects.toThrow(/insufficient privilege/);
     await expect(auditManualBackup({ userId: IDS.va, role: 'va' } as never)).rejects.toThrow();
     await auditManualBackup({ userId: IDS.admin, role: 'admin' });
-    const rows = await tdb.admin`select action, actor_user_id from audit_log where action = 'backup.manual_start'`;
+    const rows =
+      await tdb.admin`select action, actor_user_id from audit_log where action = 'backup.manual_start'`;
     expect(rows).toContainEqual({ action: 'backup.manual_start', actor_user_id: IDS.admin });
     const jobs = await tdb.admin`select name, data from pgboss.job where name = 'backup.run'`;
     expect(jobs).toContainEqual({ name: 'backup.run', data: { kind: 'manual' } });

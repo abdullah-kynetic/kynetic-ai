@@ -619,3 +619,43 @@ Approved by Abdullah 2026-10-25 (GP-01 to GP-05). The Terms and Privacy wording 
 - **F-103 documents.** Upload by admin only; PDF only, size limit 10 MB, magic-number check, stored under the tenant prefix; owners download by a signed URL that expires in 5 minutes after `authorize()`. Another tenant's id returns 404.
 - **Branding inputs (F-39).** Logo upload follows 2.x upload rules (type, size, re-encode); primary color must pass the contrast rule in DESIGN_SYSTEM before it is saved.
 - **Preview environments** carry synthetic data only and sit behind Cloudflare Access.
+
+### M12-03 evidence endpoint (2026-11-01; local implementation)
+
+`POST /api/service/contact-decisions` uses existing tenant-scoped service authentication with `contact-decisions:write`. It records n8n's claim as evidence only; SECURITY 3.1 and OutboundGate still enforce sends. Strict v1 payload contains a contact ID, channel (`phone_call`, `sms`, `email`), allow/deny, bounded rule/reason identifiers and UTC timestamps. Tenant comes exclusively from the token. Foreign/deleted/merged contacts are 404. Exact retries yield the original ID; changed payload under the same event ID returns 409. The ledger and activity are atomic; runtime roles cannot update/delete ledger rows. This base-platform logging remains available to record module-off denials. It sends nothing, changes no consent and emits no trigger event. No new login/auth work is included.
+
+### M12-05 admin lead-webhook issuance (2026-11-01)
+
+The lead signing secret is the sole one-time-display exception to status-only secret reads: a verified Kynetic admin may issue/rotate it at `/admin/clients/{tenantId}/webhooks`. This does not reveal any previously stored value or any provider credential. Existing TOTP/admin checks and view-as denial apply on the action and page; active admin role is rechecked in the service. AES-GCM storage and value-free audit commit atomically using the worker connection. The browser receives the new value once, keeps it only in component memory and can dismiss it. Old signatures fail immediately after rotation. No automatic n8n configuration or activation. Real issuance/rotation still needs Abdullah's yes.
+
+### M13-02 live voice opt-in (2026-11-01)
+
+Credentials alone cannot select the real ElevenLabs adapter. `ELEVENLABS_LIVE_ENABLED=false` is the default; explicit true plus live provider mode is required. Existing consent and outbound controls remain. Stub mode overrides the flag. Production live mode with the flag absent/false fails closed rather than falling back to fake-signature verification. The deployment env template records false; real configuration/calls still require Abdullah's specific yes.
+
+### M12-04/M12-06 read-only policy inputs (2026-11-01)
+
+Send-state/contact-policy routes require separate least-privilege tenant bearer scopes and no-store responses. Configuration reads fail closed for absent/malformed platform state; snapshots read the current tenant state on each request. Contact data is RLS scoped, and foreign/deleted/merged contacts return 404. Consent evidence is represented by status/timestamps/source and an evidence-present boolean, not wording/IP/phone/email. Reads create no timeline or send job. Global environment disable and the existing per-tenant kill flags remain the actual portal controls; the admin global toggle currently updates existing tenant flags. No new global storage or change to OutboundGate is introduced. The snapshot explicitly reports migrationGatePassed=false until n8n/parity/owner review gates are implemented; a readable snapshot does not authorize contact.
+
+### M13-03 normalized result relay (2026-11-01)
+
+The call-result route authenticates a tenant service token with `calls:write`, requires alex_core, validates a strict bounded v1 schema, and checks both contact ownership and the agent/provider mapping inside that tenant. Foreign contact/agent/storage reference returns 404; disabled module returns 403 with no write; wrong/revoked scope returns 401. Caller-supplied tenant IDs and external recording URLs are rejected. Only a recording object key matching `<tenant>/calls/<safe-segment>/recording` may be attached; existing read authorization and five-minute signed URLs control playback. The route performs no fetch/provider call.
+
+Concurrent retries share tenant event and provider-call locks, and an immutable receipt checks the full validated-body hash. Exact replay returns 200 duplicate; changed body/event identity for the same call returns 409. A call completed by the native path is not silently overwritten by the relay. Receipt failure rolls back call/activity/event/DNC effects. Existing native verification and tenant-agent resolution remain intact. An operational single-ingestion-path decision and real provider/n8n tests are still required before live cutover.
+
+Unexpected call-result persistence errors log a fixed message and tenant ID only. Raw database error objects are not logged or serialized by this route because they may contain transcript/summary SQL parameters; a forced-failure integration test verifies that boundary.
+
+### M16 synthetic agency workspace (2026-11-01)
+
+Agency setup/reads require a current Kynetic admin, rechecked in the SECURITY DEFINER registry function; VA, client, disabled admin, impersonation and read-only contexts are rejected. Agency feature reads/writes require CRM Full and resolve the tenant from the agency registry. Normal tenant RLS protects contacts/deals/stages. The registry cannot be forged through app/worker table writes. Actions and page recheck existing access/view-as guards; no new login/auth functionality is added.
+
+This first workspace is synthetic only: it starts with platform outbound disabled and Alex paused, no invites, memberships, credentials or integrations. The lead form accepts fictional names and @example.test email addresses only. Direction/channel combinations are validated server-side. Adding leads records no consent, emits no lead.created, and calls no send/provider helper. Stage moves/renames use existing audit/timeline behavior; Lost requires the user's reason. Repeated setup never resets customized stages or existing data. No live tenant was created in this session.
+
+### M16 manual dialer safeguards (2026-11-01)
+
+The synthetic queue excludes protected AM-1 identity/office number (D-016), active contact/number DNC, current phone opt-out/revocation, Florida/Oklahoma in either state/region field, missing/conflicting state, missing/non-synthetic numbers, non-cold-call sources, closed deals and previously logged first-pass leads. Alternate numbers are checked. The logger rechecks current database values after locking the contact. A committed event replay reads its original receipt and creates no new history.
+
+The UI has no tel link, calls no provider and creates no AI calls row/send job. Human logging does not require or grant AI-call consent. DNC can be marked without asserting a call occurred; a DNC outcome applies existing number/contact/phone+SMS protections atomically. Audit/timeline contain IDs/outcomes rather than phone or operator notes. Current admin/TOTP/view-as guards, active-admin registry recheck and CRM Full gate protect all actions; tenant identity never comes from the form. Scripts/notes are untrusted plain text. These controls are not authorization for live agency data or real calls.
+
+### M17-01 internal proposal drafts — 2026-11-01
+
+Proposal reads and writes reuse existing admin/TOTP, no-view-as, active-admin and CRM Full checks in the synthetic agency workspace. Clients and VAs cannot access them; foreign deal/draft IDs return NOT_FOUND. Strict input validation rejects status/tenant overrides. Plain-text rendering escapes HTML-like content; error responses and logs exclude raw draft-bearing database errors. Audit records contain IDs, revisions and changed field names, never draft bodies. There is no public preview, send or publish action.

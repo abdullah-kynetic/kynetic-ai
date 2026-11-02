@@ -429,7 +429,7 @@ Abdullah approved these explicitly or told us to take the recommended option. De
 
 ### Proposed 2026-10-31: n8n runs automations (not in effect until the plan is approved)
 
-Source: DECISIONS DC-TBD-04, -05, -07, -08, -09, -11. Build tasks: BUILD_PLAN M12 to M20. Automation list: `docs/automation-map.md`.
+Source: DECISIONS DC-TBD-04, -05, -07, -08, -09, -11. Build tasks: BUILD_PLAN M12 to M20. Automation list: `docs/automation-map.md`. Draft transport and target endpoint contract: `docs/portal-n8n-contract.md` (M12-01; existing and proposed interfaces are labeled separately).
 
 - **Split.** n8n runs lead sources in, starting calls and retries, sequences, reminders, no-show recovery, the consent decision, alerts, weekly and monthly emails, review requests, Stripe, Cal.com relay, Twenty backup and error alerts. The portal records everything, shows it live, owns consent and DNC lists, metrics math, report data, tenancy, logins, the event bus and webhook intake.
 - **Lead chain.** Form, Meta, Angi or LSA triggers one n8n workflow. Step 1 posts the lead to the portal lead webhook, so it is saved before anything can fail. Step 2 runs the shared "may I contact" sub-workflow and posts the decision. Step 3 asks ElevenLabs to place the call. The provider result comes back through n8n to the portal.
@@ -459,3 +459,29 @@ Source: DECISIONS DC-TBD-04, -05, -07, -08, -09, -11. Build tasks: BUILD_PLAN M1
 10. **Drizzle and Resend:** decisions listed them "to confirm", and `portal/` already runs both. Confirmed (PRD decision 4).
 11. **Text-back pricing:** decisions say text-back is free with after-hours; billing is Phase 2 (Later), so the flag is not enforced in v1.
 
+
+### M13-02 voice selection (2026-11-01)
+
+The existing ElevenLabs adapter is reused. `ELEVENLABS_LIVE_ENABLED` defaults false. Development/test select FakeVoiceProvider when the opt-in is absent, even when keys are present. Production in live mode refuses startup without the opt-in instead of accepting fake webhook signatures; explicit stub mode remains available for synthetic deployments. Selecting real ElevenLabs requires that opt-in plus `PROVIDER_MODE=live` and the required credentials; production then fails closed when credentials are missing. `PROVIDER_MODE=stub` always overrides the opt-in. OUTBOUND_ENABLED and OutboundGate remain separate controls. Retell selection is unchanged. Enabling live mode is not authorized by this code change; no provider request was made.
+
+### Wave 32 service interfaces (2026-11-01)
+
+Tenant-scoped send-state and contact-policy readers implement the minimal inputs in `portal-n8n-contract.md`. They are read-only and not a replacement for OutboundGate. Missing/malformed platform configuration is blocked; the snapshot explicitly advertises that the n8n migration gate has not passed. Actual n8n subworkflow refusal/parity tests remain pending while the connector reference tooling is unavailable.
+
+`POST /api/service/call-results` implements the normalized bearer-authenticated result path, distinct from native provider-signature hooks. It accepts an existing tenant-owned contact and matching configured agent, records an immutable receipt, and reuses `writeCallInTransaction` exported by the calls facade. The shared persistence routine preserves existing disclosure, retention, DNC, activity and completion-event behavior; native/relay completions serialize on the tenant/provider/call advisory lock. Relay event identities also serialize before applying effects. An already-completed native call returns conflict on the relay path. A relay recording reference must point into the same tenant's calls storage area; it is never fetched from an arbitrary URL. Recording upload/ingestion and an actual n8n graph are not implemented by this endpoint. No sender cutover or native hook removal occurs.
+
+### Portal-first sequence and agency workspace (2026-11-01)
+
+Abdullah deferred n8n automation work and requested the remaining portal build. The synthetic-only M16 workspace may proceed ahead of M12-08's deferred integration gate. This changes implementation order; existing contact/outbound enforcement and live approval requirements remain. Remaining login/auth work stays last.
+
+`src/server/agency` owns the admin-only synthetic workspace service. The tenant is isolated by normal RLS, has no owner invite or configured provider, and starts with outbound disabled. Agency lead records use the normal contact/deal services with no lead.created event. Rename and move operations reuse existing pipeline services, audit and timeline/event handling. Every agency action rechecks admin/TOTP via the existing guard and rejects view-as; the registry function independently checks the active admin database row. CRM Full gates agency feature operations. `inAgency` resolves the fixed registry tenant, never a request tenant ID. No shared M0 helper contract or app shell changes.
+
+### M16 manual work queue and campaigns (2026-11-01)
+
+Human queue and never-dial safeguards ship together (M16-03/M16-06). `agency/dialer-policy.ts` is used by both reads and outcome writes; `agency/dialer.ts` owns first-pass selection, immutable outcome receipts and DNC marking. `agency/campaigns.ts` owns campaign scripts, assignments and manual-outcome summaries. Routes: `/admin/agency/dialer` and `/admin/agency/campaigns`. No worker, schedule, provider request or n8n automation is added.
+
+Campaign selection filters the guarded queue. A lead may belong to several campaigns but is logged once across the first-pass queue; reports summarize each campaign's assigned contacts' history, including earlier records. Callback is an outcome only. Synthetic phones/state are optional on lead entry but necessary for dialer eligibility. Blocked records return no lead card/phone. Existing contact creation continues to avoid lead.created/consent, and client pipelines remain unchanged.
+
+### M17-01 draft interface — 2026-11-01
+
+`src/server/proposals` exposes open/get/list/save operations through the existing admin-only `inAgency` transaction and CRM Full gate. Open is idempotent per deal; save locks the draft and checks expectedRevision. Identical-content retries return the current revision without another audit; changed stale saves return CONFLICT. Audit and draft updates commit atomically, with only revisions/changed field names in audit payloads. No job, outbound event or deal-stage transition is emitted. Internal editor and preview live under `/admin/agency/proposals`; preview renders escaped text only.

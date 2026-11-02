@@ -1,4 +1,5 @@
 import type postgres from 'postgres';
+import { AGENCY_SYNTHETIC_SLUG } from '../agency/constants';
 import { SEED_TENANT_SLUGS } from '../db/seed/demo';
 
 type Sql = postgres.Sql;
@@ -10,7 +11,7 @@ type Sql = postgres.Sql;
  */
 export async function findNonSeedTenants(sql: Sql): Promise<string[]> {
   const rows = await sql<{ slug: string }[]>`select slug from tenants order by slug`;
-  const allowed = new Set<string>(SEED_TENANT_SLUGS);
+  const allowed = new Set<string>([...SEED_TENANT_SLUGS, AGENCY_SYNTHETIC_SLUG]);
   return rows.map((r) => r.slug).filter((slug) => !allowed.has(slug));
 }
 
