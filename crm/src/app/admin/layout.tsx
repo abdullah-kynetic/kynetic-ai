@@ -7,7 +7,6 @@ import { adminNavGroups } from '@/config/nav-config';
 import { decideAdminAccess } from '@/server/admin';
 import { resolveViewAs, VIEW_AS_COOKIE } from '@/server/impersonation';
 import { roleLabel } from '@/server/shell';
-import { pendingDocuments } from '@/server/terms';
 import type { Metadata } from 'next';
 import { cookies, headers } from 'next/headers';
 import { forbidden, redirect } from 'next/navigation';
@@ -26,10 +25,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const [cookieStore, requestHeaders] = await Promise.all([cookies(), headers()]);
   const access = await decideAdminAccess(requestHeaders);
   if (access.kind === 'sign_in') redirect('/sign-in');
-  if (access.kind === 'second_factor') redirect('/staff/2fa');
   if (access.kind === 'forbidden') forbidden();
   if (access.kind !== 'ok') return null;
-  if ((await pendingDocuments(access.user.id)).length > 0) redirect('/accept-terms');
   // Impersonation cannot reach the admin side (SECURITY 2.6): exit first.
   const viewAs = await resolveViewAs({
     user: access.user,

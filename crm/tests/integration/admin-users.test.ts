@@ -9,7 +9,6 @@ import {
   resetClientUser,
   type StaffCaller
 } from '@/server/admin';
-import { getSessionUser, createAuth, type Auth } from '@/server/auth';
 import { createDb } from '@/server/db/client';
 import { createTestDatabase, type TestDatabase } from '../helpers/db';
 import { IDS, seedTwoTenants } from '../helpers/fixtures';
@@ -19,8 +18,6 @@ import { IDS, seedTwoTenants } from '../helpers/fixtures';
 // ends; a VA who tries to manage an admin is refused.
 
 let db: TestDatabase;
-let auth: Auth;
-const BASE = 'http://localhost:3000';
 const ADMIN2 = 'cccccccc-0000-4000-8000-000000000003';
 const OWNER_A2 = 'aaaaaaa3-0000-4000-8000-000000000003';
 
@@ -36,12 +33,6 @@ beforeAll(async () => {
   await db.admin`insert into users (id, email, kynetic_role) values (${ADMIN2}, 'admin2@example.test', 'admin')`;
   await db.admin`insert into users (id, email) values (${OWNER_A2}, 'owner2@example.test')`;
   await db.admin`insert into memberships (tenant_id, user_id, role) values (${IDS.tenantA}, ${OWNER_A2}, 'owner')`;
-  auth = createAuth({
-    db: createDb(db.auth),
-    baseUrl: BASE,
-    secret: 'integration-test-secret-0123456789abcdef',
-    sendMagicLink: async () => {}
-  });
 });
 afterAll(async () => {
   await db?.drop();
@@ -52,13 +43,11 @@ const audit = (action: string) =>
 const sessionsOf = async (userId: string) =>
   (await db.admin`select 1 from sessions where user_id = ${userId}`).length;
 
-async function signIn(userId: string): Promise<Headers> {
-  const ctx = await auth.$context;
-  const s = await ctx.internalAdapter.createSession(userId);
-  const { serializeSignedCookie } = await import('better-call');
-  const c = await serializeSignedCookie('better-auth.session_token', s.token, ctx.secret);
-  const value = decodeURIComponent(c.split(';')[0].split('=').slice(1).join('='));
-  return new Headers({ origin: BASE, cookie: `better-auth.session_token=${value}` });
+// Open mode has no sign-in, but old session rows still exist in the table and must be cleared when a
+// user is deactivated or has their role changed, so the tests plant rows directly.
+async function openSession(userId: string): Promise<void> {
+  await db.admin`insert into sessions (user_id, token, expires_at)
+    values (${userId}, ${`token-${userId}-${Math.random()}`}, now() + interval '1 day')`;
 }
 
 describe('listUsers', () => {
@@ -180,17 +169,15 @@ describe('inviteUser', () => {
 
 describe('deactivateUser', () => {
   it('ends every session, blocks the next request, revokes invites and audits (SEC-T-09)', async () => {
-    const headers = await signIn(IDS.staffA);
-    await signIn(IDS.staffA);
+    await openSession(IDS.staffA);
+    await openSession(IDS.staffA);
     expect(await sessionsOf(IDS.staffA)).toBe(2);
-    expect(await getSessionUser(headers, { auth, db: createDb(db.auth) })).not.toBeNull();
     await db.admin`insert into invitations (tenant_id, email, role, token_hash, expires_at)
       select ${IDS.tenantA}, email, 'staff', 'hash-staffA', now() + interval '1 day' from users where id = ${IDS.staffA}`;
 
     await deactivateUser(admin, IDS.staffA, deps());
 
     expect(await sessionsOf(IDS.staffA)).toBe(0);
-    expect(await getSessionUser(headers, { auth, db: createDb(db.auth) })).toBeNull();
     const [u] = await db.admin`select disabled_at from users where id = ${IDS.staffA}`;
     expect(u.disabled_at).not.toBeNull();
     const [inv] =
@@ -259,7 +246,7 @@ describe('deactivateUser', () => {
 
 describe('resetClientUser', () => {
   it('signs a client user out everywhere, audits, then notifies', async () => {
-    await signIn(IDS.ownerB);
+    await openSession(IDS.ownerB);
     const notified: string[] = [];
     await resetClientUser(va, IDS.ownerB, {
       ...deps(),
@@ -316,7 +303,7 @@ describe('changeMembershipRole', () => {
 
 describe('changeStaffRole', () => {
   it('changes a Kynetic role, signs the target out, and never your own account', async () => {
-    await signIn(ADMIN2);
+    await openSession(ADMIN2);
     await changeStaffRole(admin, { userId: ADMIN2, role: 'va' }, deps());
     const [u] = await db.admin`select kynetic_role from users where id = ${ADMIN2}`;
     expect(u.kynetic_role).toBe('va');

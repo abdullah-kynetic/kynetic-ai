@@ -120,16 +120,6 @@ test('M10-04 WCAG 2.2 A/AA automated scan on admin routes across themes and view
   expect(violations, violations.join('\n')).toEqual([]);
 });
 
-test('M10-04 WCAG 2.2 A/AA automated scan on sign-in and accept-terms', async ({
-  page,
-  termsPage
-}) => {
-  const violations: string[] = [];
-  violations.push(...(await scanMatrix(page, '/sign-in')));
-  violations.push(...(await scanMatrix(termsPage, '/accept-terms')));
-  expect(violations, violations.join('\n')).toEqual([]);
-});
-
 test('F-87 provider configuration and secrets are absent from browser responses', async ({
   authenticatedPage,
   adminPage

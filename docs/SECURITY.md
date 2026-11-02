@@ -75,6 +75,8 @@ Client data never goes to Twenty (locked decision). Twenty receives at most an o
 
 ## 2. Authentication and authorization
 
+> **Open mode (DC-TBD-15, 2026-11-02): sign-in is removed until the end of the build.** There is no login, session, magic link, Google sign-in, second factor or terms gate in the code. A cookie (`kynetic_open_as`) picks one of the existing users, and `/open/<admin|va|owner|staff>` switches it. Authorization (the permissions matrix), tenant RLS and the audit log still apply to the chosen user. Everything below that describes sign-in, sessions, TOTP and the terms gate describes the design to restore, not the current code. Do not expose an open-mode build to the public internet; put network access control in front of it (for example Cloudflare Access) or restore sign-in first.
+
 ### 2.1 Identity and sessions (F-71)
 - **Decided:** drop Clerk. Better-Auth with Google sign-in and email magic links (PRD decision 2).
 - **Library.** Decided 2026-10-25: Better-Auth, behind the `src/server/auth` facade (ARCHITECTURE).
