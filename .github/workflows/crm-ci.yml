@@ -59,7 +59,7 @@ jobs:
         run: |
           for f in deploy/prod/*.sh deploy/prod/host/*.sh deploy/prod/monitor/*.sh deploy/prod/tests/*.sh; do bash -n "$f"; done
           bash deploy/prod/tests/rehearse.sh
-          POSTGRES_USER=a POSTGRES_PASSWORD=b POSTGRES_DB=c PGDATA_HOST_PATH=/tmp/pg APP_BASE_URL=https://x DATABASE_URL=x DATABASE_URL_AUTH=x DATABASE_URL_WORKER=x BETTER_AUTH_SECRET=x APP_ENCRYPTION_KEY=x DATABASE_URL_MIGRATE=x SITE_ADDRESS=portal.example.test IMAGE_REPO=ghcr.io/o/r IMAGE_TAG=abc docker compose -f deploy/prod/compose.yml --profile tools config -q
+          POSTGRES_USER=a POSTGRES_PASSWORD=b POSTGRES_DB=c PGDATA_HOST_PATH=/tmp/pg APP_BASE_URL=https://x DATABASE_URL=x DATABASE_URL_AUTH=x DATABASE_URL_WORKER=x BETTER_AUTH_SECRET=x APP_ENCRYPTION_KEY=x DATABASE_URL_MIGRATE=x DATABASE_URL_BACKUP=x SITE_ADDRESS=portal.example.test IMAGE_REPO=ghcr.io/o/r IMAGE_TAG=abc docker compose -f deploy/prod/compose.yml --profile tools config -q
 
   e2e:
     runs-on: ubuntu-latest
