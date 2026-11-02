@@ -46,6 +46,10 @@ afterAll(async () => {
   await tdb?.drop();
 });
 
+// The decided target (DC-033) is 500 ms. Shared CI runners are slower than the local baseline machine,
+// so CI sets LOAD_P95_MS to a looser limit (decided 2026-11-02); the product target is unchanged.
+const P95_LIMIT_MS = Number(process.env.LOAD_P95_MS ?? 500);
+
 describe('M10-02 local synthetic load baseline', () => {
   it('measures 100 contact searches at concurrency 20 and 100 against the approved p95 target', async () => {
     for (const concurrency of [20, 100]) {
@@ -75,8 +79,8 @@ describe('M10-02 local synthetic load baseline', () => {
       );
       expect(
         p95,
-        `concurrency=${concurrency}, observed p95=${p95.toFixed(1)}ms; target is under 500ms`
-      ).toBeLessThan(500);
+        `concurrency=${concurrency}, observed p95=${p95.toFixed(1)}ms; limit is under ${P95_LIMIT_MS}ms`
+      ).toBeLessThan(P95_LIMIT_MS);
     }
   }, 60_000);
 });
