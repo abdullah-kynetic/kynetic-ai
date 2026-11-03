@@ -5,9 +5,11 @@ import PageContainer from '@/components/layout/page-container';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { decideAdminAccess } from '@/server/admin';
+import { getAgencyWorkspace } from '@/server/agency';
 import { getAgencyDialer, HUMAN_CALL_OUTCOMES } from '@/server/agency/dialer';
 import { listAgencyCampaigns } from '@/server/agency/campaigns';
 import { AppError } from '@/server/errors';
+import { AgencyWorkspaceMissing } from '../workspace-missing';
 import { isViewingAs } from '../../view-as-guard';
 import { logAgencyCallAction, markAgencyDncAction } from './actions';
 export const dynamic = 'force-dynamic';
@@ -20,6 +22,8 @@ export default async function DialerPage({
   if (access.kind !== 'ok' || access.role !== 'admin') forbidden();
   if (await isViewingAs(access.user)) forbidden();
   const caller = { id: access.user.id, kyneticRole: access.role };
+  if (!(await getAgencyWorkspace(caller)))
+    return <AgencyWorkspaceMissing pageTitle='Human dialer' />;
   const query = await searchParams;
   const [data, campaigns] = await Promise.all([
     getAgencyDialer(caller, query.campaignId),

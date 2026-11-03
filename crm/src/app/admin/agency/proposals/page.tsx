@@ -7,7 +7,9 @@ import { Label } from '@/components/ui/label';
 import { AppError } from '@/server/errors';
 import { ModuleDisabledError } from '@/server/modules';
 import { decideAdminAccess } from '@/server/admin';
+import { getAgencyWorkspace } from '@/server/agency';
 import { listAgencyProposals, listProposalDeals } from '@/server/proposals';
+import { AgencyWorkspaceMissing } from '../workspace-missing';
 import { isViewingAs } from '../../view-as-guard';
 import { openProposalAction } from './actions';
 export const dynamic = 'force-dynamic';
@@ -20,6 +22,8 @@ export default async function ProposalsPage({
   if (access.kind !== 'ok' || access.role !== 'admin') forbidden();
   if (await isViewingAs(access.user)) forbidden();
   const caller = { id: access.user.id, kyneticRole: access.role };
+  if (!(await getAgencyWorkspace(caller)))
+    return <AgencyWorkspaceMissing pageTitle='Proposal drafts' />;
   const [drafts, deals, query] = await Promise.all([
     listAgencyProposals(caller),
     listProposalDeals(caller),
