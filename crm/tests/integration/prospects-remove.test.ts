@@ -24,6 +24,8 @@ const run = (...args: string[]) =>
 
 describe('prospects-remove-cli', () => {
   it('dry run changes nothing, apply removes only the named tenants', async () => {
+    const [{ id }] = await db.admin`select id from tenants where slug = 'super-roofer'`;
+    await db.admin`insert into audit_log (tenant_id, action, entity) values (${id}, 'test', 'tenant')`;
     expect(run('super-roofer', 'kitchens-alive')).toMatch(/dry run/);
     expect((await db.admin`select 1 from tenants`).length).toBe(13);
     expect(run('super-roofer', 'kitchens-alive', '--apply')).toMatch(/deleted 2/);
@@ -31,6 +33,7 @@ describe('prospects-remove-cli', () => {
     expect(left).toHaveLength(11);
     expect(left.some((t) => t.slug === 'super-roofer')).toBe(false);
     expect((await db.admin`select 1 from companies`).length).toBe(11);
+    expect((await db.admin`select 1 from audit_log where tenant_id = ${id}`).length).toBe(1);
   });
 
   it('refuses unknown slugs without changing anything', async () => {
