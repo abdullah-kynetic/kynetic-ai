@@ -18,7 +18,7 @@ restrict,command="/usr/local/sbin/portal-new-deploy-entry" ssh-ed25519 AAAAC3Nza
 ## sudoers rule (`/etc/sudoers.d/portal-new-deploy`, mode 0440)
 
 ```
-portalnew-deploy ALL=(root) NOPASSWD: /usr/local/sbin/portal-new-deploy status, /usr/local/sbin/portal-new-deploy rollback, /usr/local/sbin/portal-new-deploy seed, /usr/local/sbin/portal-new-deploy deploy [0-9a-f]*
+portalnew-deploy ALL=(root) NOPASSWD: /usr/local/sbin/portal-new-deploy status, /usr/local/sbin/portal-new-deploy rollback, /usr/local/sbin/portal-new-deploy seed, /usr/local/sbin/portal-new-deploy deploy *
 ```
 
 ## Notes for review
@@ -41,3 +41,6 @@ portalnew-deploy ALL=(root) NOPASSWD: /usr/local/sbin/portal-new-deploy status, 
 - **Seed:** `seed` only works after a deploy of a commit that includes PR #127. Live is still `7eea4129`, which has
   no `db:seed:prospects` script. The live database already holds a different 13 businesses, so running the PR #127
   seed as is would add 13 more (26 in total). Do not run `seed` until Abdullah decides.
+- **sudoers argument pattern:** sudo here rejects a `[0-9a-f]*` pattern ("wildcards are not allowed in command arguments"),
+  so the rule is `deploy *`. The 40-hex check is enforced twice, in `portal-new-deploy-entry` and again in
+  `portal-new-deploy`, and the key can only reach sudo through the entry script.

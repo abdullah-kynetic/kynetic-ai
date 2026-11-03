@@ -11,7 +11,7 @@ install -d -m 0700 -o "$U" -g "$U" "/home/$U/.ssh"
 printf 'restrict,command="/usr/local/sbin/portal-new-deploy-entry" %s\n' "$(cat "$D/key.pub")" >"/home/$U/.ssh/authorized_keys"
 chown "$U:$U" "/home/$U/.ssh/authorized_keys"; chmod 600 "/home/$U/.ssh/authorized_keys"
 cat >/etc/sudoers.d/portal-new-deploy.tmp <<EOF
-$U ALL=(root) NOPASSWD: /usr/local/sbin/portal-new-deploy status, /usr/local/sbin/portal-new-deploy rollback, /usr/local/sbin/portal-new-deploy seed, /usr/local/sbin/portal-new-deploy deploy [0-9a-f]*
+$U ALL=(root) NOPASSWD: /usr/local/sbin/portal-new-deploy status, /usr/local/sbin/portal-new-deploy rollback, /usr/local/sbin/portal-new-deploy seed, /usr/local/sbin/portal-new-deploy deploy *
 EOF
 chmod 0440 /etc/sudoers.d/portal-new-deploy.tmp
 visudo -cf /etc/sudoers.d/portal-new-deploy.tmp
