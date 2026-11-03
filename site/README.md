@@ -7,3 +7,4 @@ Rebuild of the Framer site. Static output, no deploy configured yet.
 - `src/scripts/` holds the motion and interactions (see `main.ts`).
 - `node tests/visual/diff.mjs` compares the build with the live site by pixels; `tests/capture/` holds the live-site recorders.
 - Set `PUBLIC_CONTACT_WEBHOOK` at build time to the n8n webhook URL for the contact form.
+- `/audit` (internal sales-call tool) is not in the public build. Build it locally with `INCLUDE_AUDIT=1 npm run build` (or `INCLUDE_AUDIT=1 npm run dev`).
