@@ -92,11 +92,11 @@ Retell stays the platform (D-018) unless another provider clearly wins. Only a w
 
 ## Portal
 
-- Client portal: https://portal.kyneticai.com (Next.js app in `portal/`). The DNS A record is set (resolves to 40.160.150.91, `/api/health` ok as of 2026-10-17) and Resend email works. Remaining go-live gaps are in KI-006.
+- Client portal: https://portal.kyneticai.com (Next.js app in `crm/`; the old `portal/` app was deleted 2026-11-02, recoverable from commit `7eea4129` (run `git show 7eea4129:portal/`)). The DNS A record is set (resolves to 40.160.150.91, `/api/health` ok as of 2026-10-17) and Resend email works. Remaining go-live gaps are in KI-006.
 - Runs on the OVH VPS in `/opt/portal`; the app listens on `127.0.0.1:3020` behind Caddy. Nightly backup at 02:30.
 - Sign-in: invite-only. Clients use password, an emailed link, or Google (on since 2026-10-18; invited clients only). Admins use password + authenticator code, with an optional "Remember this device for 30 days" (skips only the code). New invites sign the user straight in; password resets end at the sign-in page. Deploys go through server-side `portal-deploy` (D-022).
 - VPS (OVH, 72 GB disk, about 14% used, 4 cores, 7.6 GB memory) runs the portal, its database and Twenty. Bookstack and Docmost trials were removed 2026-10-18. Planned, not started: self-hosting n8n here (see docs/progress.md, 2026-10-18).
-- Ops docs: `portal/ADMIN.md` (admin and server) and `portal/N8N.md` (ingest API). Build report: `portal/docs/build-report-2026-10-16.md` (point-in-time).
+- Old portal ops docs (`ADMIN.md`, `N8N.md`, build report) are only in commit `7eea4129`. The new portal's docs are `crm/README.md`, `crm/deploy/prod/README.md` and `docs/`.
 - No real client data until the must-fixes are done (KI-006, KI-008).
 
 ## Access

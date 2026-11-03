@@ -355,7 +355,7 @@ Source of the decisions: `docs/DECISIONS.md` section "All-in-one portal, 2026-10
 | M18-02 | Daily digest to Abdullah | automation-map; DECISIONS DC-TBD | M15-01 | Fake data digest arrives. | S | Sonnet | yes | 39 | todo |  |
 | M18-03 | Twilio click-to-call dialer (later, only after A2P and volume) | automation-map; DECISIONS DC-TBD | M16-03 | Deferred. | L | Opus | yes | 38 | todo |  |
 | M18-04 | Update docs, progress, known issues | automation-map; DECISIONS DC-TBD | all | Docs match what was built. | S | Haiku | no | 42 | todo |  |
-| M18-05 | Delete the retired `portal/` folder and update `CLAUDE.md`, `KYNETIC_CONTEXT.md` and the system map. Needs Abdullah's yes; first record the fate of `/api/ingest/results` (M10-07). | M10-07; KYNETIC_CONTEXT | none | No code, workflow or tool references `portal/` or `/api/ingest`; docs point to `crm/`; history keeps the old code | S | Haiku | yes | 30 | todo |  |
+| M18-05 | Delete the retired `portal/` folder and update `CLAUDE.md`, `KYNETIC_CONTEXT.md` and the system map. Needs Abdullah's yes; first record the fate of `/api/ingest/results` (M10-07). | M10-07; KYNETIC_CONTEXT | none | No code, workflow or tool references `portal/` or `/api/ingest`; docs point to `crm/`; history keeps the old code | S | Haiku | yes | 30 | done (PR pending, 2026-11-02) |  |
 
 ### M19 Client-side completeness (added Nov 1 from the gap check)
 
