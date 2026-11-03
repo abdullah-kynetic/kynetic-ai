@@ -3,6 +3,7 @@ import postgres from 'postgres';
 // Removes whole tenants by slug (for replacing a wrongly loaded prospect set).
 // Usage: bun prospects-remove-cli.ts <slug> [<slug> ...] [--apply]
 // Dry run by default: prints per-table row counts and changes nothing. DATABASE_URL_SEED must bypass RLS.
+// audit_log is append-only by design and has no tenant foreign key, so its rows are kept (it is skipped).
 // Run it inside a fresh pg_dump window; deleting is permanent.
 const args = process.argv.slice(2);
 const apply = args.includes('--apply');
@@ -30,7 +31,7 @@ try {
   const tables = await sql`select c.table_name as t from information_schema.columns c
     join information_schema.tables x on x.table_schema = c.table_schema and x.table_name = c.table_name and x.table_type = 'BASE TABLE'
     where c.table_schema = 'public' and c.column_name = 'tenant_id' order by 1`;
-  const names = tables.map((r) => r.t as string);
+  const names = tables.map((r) => r.t as string).filter((n) => n !== 'audit_log');
   const counts: Record<string, number> = {};
   for (const n of names) {
     const [r] = await sql.unsafe(
