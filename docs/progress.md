@@ -13,6 +13,7 @@ Plan 1 only: the outbound speed-to-lead agent at the D-017 price (first 3 client
 Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Retell is the platform and Vapi is parked (D-018). Active files: `retell/builds/outbound-speed-to-lead/`. The separate CRM portal remains in local M10 hardening; it is not part of the Twenty roadmap.
 
 ## Done
+- 2026-11-03: replaced the 13 pitch-client workspaces on the live portal (portal.kyneticai.com) with the agreed set from PR #127 (5 Houston-area roofers, 3 pool builders, 2 window/door, 3 remodelers). The wrong 10 roofers and the 3 earlier remodeler rows were removed with `db:remove:tenants` (PRs #130, #132); the 4 `audit_log` rows for them were kept on purpose. Live is on `350bf67`. Backups in `/var/backups` (`portal-new-pre-replace2-20261103T060432Z.dump` is the pre-swap one). No calls, leads, reviews or revenue were loaded.
 - PR #2 merged: Emily handoff, tools/retell.py, KYNETIC_CONTEXT.md.
 - PRs #3-#7 merged: docs memory files, Retell permission rule, repo cleanup (two rounds), build-log docs step.
 - PR #11 merged: outbound speed-to-lead prep (prompt, config, specs, Kynetic Roofing demo).
