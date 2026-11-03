@@ -78,11 +78,21 @@ case "$cmd" in
     src="$BASE/src-$tag"
     [ ! -e "$src" ] || { log "$src already exists; refusing to overwrite"; exit 1; }
     log "deploy $sha (tag $tag), previous tag $old"
+    # Extraction runs as root on archive content from the key holder: save it, refuse anything that is not
+    # plain files and directories (symlinks, hardlinks, devices) or that has absolute or .. paths, then extract.
+    ok=0; tarf=""; tmp=""
+    trap '[ "$ok" = 1 ] || rm -rf "$tmp" "$src"; rm -f "$tarf"' EXIT
+    tarf="$(mktemp "$BASE/.incoming-XXXXXX.tar")"
+    cat >"$tarf"
+    listing_v="$(tar -tvf "$tarf")"
+    if grep -Eq '^[^d-]' <<<"$listing_v"; then log "tar refused: contains a link or special file"; exit 1; fi
+    listing="$(tar -tf "$tarf")"
+    if grep -Eq '(^/|(^|/)\.\.(/|$))' <<<"$listing"; then log "tar refused: absolute or .. path"; exit 1; fi
     tmp="$(mktemp -d "$BASE/.incoming.XXXXXX")"
-    trap 'rm -rf "$tmp"' EXIT
-    tar -x --no-same-owner --no-same-permissions -C "$tmp"
+    tar -xf "$tarf" --no-same-owner --no-same-permissions -C "$tmp"
+    rm -f "$tarf"; tarf=""
     [ -f "$tmp/deploy/Dockerfile" ] && [ -f "$tmp/package.json" ] || { log "tar is not a crm/ tree"; exit 1; }
-    mv "$tmp" "$src"; trap - EXIT
+    mv "$tmp" "$src"; tmp=""
     echo "$sha" >"$src/.commit"
 
     backup "pre-deploy-$tag"
@@ -103,6 +113,7 @@ case "$cmd" in
     if healthy; then
       echo "$sha" >"$BASE/current-commit"
       log "deploy ok: $tag"
+      ok=1
     else
       log "health check FAILED; rolling back app + worker to $old"
       cp "$PREV" "$COMPOSE"

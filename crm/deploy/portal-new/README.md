@@ -31,3 +31,13 @@ portalnew-deploy ALL=(root) NOPASSWD: /usr/local/sbin/portal-new-deploy status, 
 - Never touched: Caddy, DNS, Twenty, n8n, Kien, the legacy portal, secrets, Postgres data beyond migrations.
   Never uses `--remove-orphans`.
 - The private key lives only on Abdullah's Mac (`~/.ssh/kynetic-portal-new-deploy`). It is never committed.
+- **Trust:** whoever holds this key can ship any code to the portal, which runs with the portal's database
+  credentials and secrets. That is inherent to a deploy key. It is restricted away from the rest of the server
+  (n8n, Twenty, Kien, Caddy, DNS), not from the portal itself.
+- **Tar safety:** the deploy tar is saved to a file first and refused if it holds anything other than plain files
+  and directories (symlinks, hardlinks, devices) or any absolute or `..` path, before it is extracted as root.
+  A failed deploy removes its half-built `src-<tag>` folder so the same commit can be retried; a `src-<tag>`
+  folder that existed before the run is never deleted.
+- **Seed:** `seed` only works after a deploy of a commit that includes PR #127. Live is still `7eea4129`, which has
+  no `db:seed:prospects` script. The live database already holds a different 13 businesses, so running the PR #127
+  seed as is would add 13 more (26 in total). Do not run `seed` until Abdullah decides.
