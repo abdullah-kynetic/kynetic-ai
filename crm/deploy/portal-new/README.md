@@ -38,9 +38,9 @@ portalnew-deploy ALL=(root) NOPASSWD: /usr/local/sbin/portal-new-deploy status, 
   and directories (symlinks, hardlinks, devices) or any absolute or `..` path, before it is extracted as root.
   A failed deploy removes its half-built `src-<tag>` folder so the same commit can be retried; a `src-<tag>`
   folder that existed before the run is never deleted.
-- **Seed:** `seed` only works after a deploy of a commit that includes PR #127. Live is still `7eea4129`, which has
-  no `db:seed:prospects` script. The live database already holds a different 13 businesses, so running the PR #127
-  seed as is would add 13 more (26 in total). Do not run `seed` until Abdullah decides.
+- **Seed:** `seed` needs a deployed commit that includes PR #127. If the live database holds a wrong set of
+  tenants, remove them first with `bun run db:remove:tenants <slug> ... [--apply]` (dry run by default, one
+  transaction, takes whole tenants including child rows). Take a dump first and ask before `--apply`.
 - **sudoers argument pattern:** sudo here rejects a `[0-9a-f]*` pattern ("wildcards are not allowed in command arguments"),
   so the rule is `deploy *`. The 40-hex check is enforced twice, in `portal-new-deploy-entry` and again in
   `portal-new-deploy`, and the key can only reach sudo through the entry script.
