@@ -13,7 +13,7 @@ export default async function ViewAsPage() {
   return (
     <PageContainer
       pageTitle='View as client'
-      pageDescription='See the portal as a client sees it. Read-only unless an admin turns on write mode. Every session is logged with your reason.'
+      pageDescription='See the portal as a client sees it. Read-only unless an admin turns on write mode. Every session is logged; a VA also gives a reason.'
     >
       {tenants.length === 0 ? (
         <p className='text-muted-foreground text-sm'>No clients yet.</p>
@@ -25,7 +25,11 @@ export default async function ViewAsPage() {
                 {t.name}{' '}
                 <span className='text-muted-foreground text-sm font-normal'>({t.status})</span>
               </p>
-              <StartViewAsForm tenantId={t.id} tenantName={t.name} />
+              <StartViewAsForm
+                tenantId={t.id}
+                tenantName={t.name}
+                reasonRequired={user?.kyneticRole !== 'admin'}
+              />
             </li>
           ))}
         </ul>

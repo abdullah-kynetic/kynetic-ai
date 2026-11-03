@@ -281,6 +281,13 @@
       "when": 1793559000000,
       "tag": "1006_support_requests",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1793562000000,
+      "tag": "1007_view_as_optional_reason",
+      "breakpoints": true
     }
   ]
 }

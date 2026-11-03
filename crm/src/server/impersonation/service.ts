@@ -59,6 +59,16 @@ function sessionCtx(user: ViewAsUser & { kyneticRole: 'admin' | 'va' }, tenantId
   } satisfies TenantContextInput;
 }
 
+/**
+ * Starting a session: the super admin (Kynetic role `admin`) may go in without a typed reason (DC-125).
+ * A reason that is given is still checked and stored. A VA always needs one.
+ */
+function checkStartReason(user: ViewAsUser, reason: unknown): string | null {
+  const blank = reason === undefined || reason === null || String(reason).trim() === '';
+  if (blank && user.kyneticRole === 'admin') return null;
+  return checkReason(reason);
+}
+
 function checkReason(reason: unknown): string {
   const parsed = reasonSchema.safeParse(reason);
   if (!parsed.success)
@@ -103,7 +113,7 @@ function decide(row: Row, user: ViewAsUser, now: Date) {
 }
 
 /**
- * Starts a session. Needs a reason, TOTP-verified staff, and no session already open in this browser
+ * Starts a session. Needs TOTP-verified staff, a reason (optional for the admin role, DC-125), and no session already open in this browser
  * (impersonation does not nest). Starts are limited per user (SECURITY 5.4); a refused start is
  * audited so repeated attempts are visible.
  */
@@ -121,7 +131,7 @@ export async function startViewAs(
   staffOnly(user);
   const db = deps.db ?? getDb();
   const now = deps.now ?? new Date();
-  const reason = checkReason(input.reason);
+  const reason = checkStartReason(user, input.reason);
   const meta = input.meta ?? {};
 
   const existing = await resolveViewAs({ user, cookie: input.activeCookie, touch: false }, deps);
