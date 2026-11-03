@@ -258,6 +258,10 @@ Verified: production build with TypeScript, 430 unit tests, 9 focused PostgreSQL
 
 Abdullah approved deployment of the separate synthetic work preview for visual review, superseding the earlier no-deploy restriction for this scope. Corrected preview auth database configuration and explicit stub provider selection. Shell syntax and YAML/config checks pass. Actual deployment has not run: current managed environment reports no credentials/identities/VPS capabilities, no TCP access grants, and GitHub CLI reports invalid authentication. Need a configured preview VPS connection (or working GitHub Actions access with the existing PREVIEW_SSH_* setup). Production, n8n and providers unchanged. No URL is claimed live.
 
+### 2026-11-03 — Claude relay (VPS <-> cloud)
+
+Added `tools/claude_relay.py` and `docs/claude-relay.md`: two Claude sessions message each other through the git branch `claude/relay-bus` (one append-only file per direction, secrets refused). Tested only against a local bare repo with two home directories. Not tested against the real remote or from the VPS; the bus branch does not exist yet. No live-system change, no decision or known-issue change.
+
 ### 2026-11-02 — M20-06 client support requests
 
 Merged PR #123 to main first (CI green after fixing lint, formatting, integration, compose-check and e2e setup issues). Then built M20-06 on `claude/project-thread-qyeivs`: migration 1006 `support_requests` (tenant RLS, app role insert/select only), staff rollup functions `admin_list_support_requests` and `admin_set_support_request_status` (admin and VA, refused in view-as/read-only, audited), service `src/server/support`, client page `/dashboard/support`, staff queue `/admin/support`, `support.manage` permission. Nothing is sent or queued; Abdullah sees requests in the queue (email alerts would be an n8n task later).
