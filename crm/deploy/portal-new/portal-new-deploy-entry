@@ -1,0 +1,21 @@
+#!/bin/bash
+# Forced command for the `portalnew-deploy` user's SSH key (authorized_keys: restrict,command="...").
+# Ignores whatever shell the client asked for. Accepts exactly four requests and nothing else:
+#   status | rollback | seed | deploy <40-hex commit>   (deploy reads a tar of crm/ on stdin)
+set -euo pipefail
+read -r verb arg extra <<<"${SSH_ORIGINAL_COMMAND:-}"
+if [ -n "${extra:-}" ]; then echo "refused: too many arguments" >&2; exit 2; fi
+case "${verb:-}" in
+  status | rollback | seed)
+    [ -z "${arg:-}" ] || { echo "refused: $verb takes no argument" >&2; exit 2; }
+    exec sudo -n /usr/local/sbin/portal-new-deploy "$verb"
+    ;;
+  deploy)
+    [[ "${arg:-}" =~ ^[0-9a-f]{40}$ ]] || { echo "refused: deploy needs a 40-hex commit" >&2; exit 2; }
+    exec sudo -n /usr/local/sbin/portal-new-deploy deploy "$arg"
+    ;;
+  *)
+    echo "refused: allowed requests are status, rollback, seed, deploy <sha>" >&2
+    exit 2
+    ;;
+esac
