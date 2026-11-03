@@ -20,7 +20,7 @@ Read before anything else: `docs/progress.md` (state; never assume state that is
 | Change the Alex agent or prompt | `retell/builds/outbound-speed-to-lead/`, `retell/PROMPTING_STYLE.md`, skill `retell-builder` |
 | Call the Retell API | `tools/retell.py` (dry-run unless `--apply`) |
 | Back up or compare n8n workflows | `n8n/`, `tools/n8n_backup.py` (read-only) |
-| Client portal code or deploy | `portal/` (its own `AGENTS.md`) |
+| Client portal code or deploy | `crm/` (its own `AGENTS.md`); the old `portal/` was deleted in M18-05, see git history |
 | Decisions, state, issues | `docs/` |
 | What is X / what else moves if I change X | `docs/map/CLAUDE.md` (system map) |
 | Skills | `.claude/skills/skills-breakdown.md` |

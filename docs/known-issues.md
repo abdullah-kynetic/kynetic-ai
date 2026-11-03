@@ -43,6 +43,9 @@ Found 2026-10-19 (read-only review of Twenty).
 - The "no people-search or data-broker sites" rule appears in Lane A notes with no recorded reason. Kept as is; a counsel question for 1.4 if it should be loosened.
 Fix: Abdullah to say where the research files are, confirm the Treg rotation, and approve or reject the D-002 reword.
 
+### KI-013: Portal has no sign-in (open mode) (high)
+Found 2026-11-02 (DC-TBD-15). Anyone who can reach an open-mode build acts as the Kynetic admin or any client. Fine for local use and synthetic data. Do NOT deploy it to a public address with real client data until network access control or sign-in is back. The live portal.kyneticai.com still runs the Oct 29 build with sign-in; deploying main replaces that with the open build. Fix: restore auth (git history before the open-mode commit has it) or add Cloudflare Access first.
+
 ### KI-012: Lead enrichment: phone certainty, rate limits, wrong-business matches (medium)
 Found 2026-10-20.
 - No tested stack shows which phone reaches the owner (Bert has several; Johnny Walker differs between Muse and the script). Sample hand-dials needed.
@@ -65,6 +68,13 @@ Fix: hand-dial a sample, counsel answer, and keep the audit step in every run.
 - The Kynetic Roofing (Demo) company record carries the real AM-1 office phone (D-016 amended). Never dial it from the demo or any test.
 
 ## Resolved
+### KI-014: CRM portal M10-01 security gate had high findings (high)
+Found 2026-10-29: authenticated API, search, and tenant import/export rate limits were declared but not enforced, and the exact Bun lock production audit was unavailable. Resolved 2026-10-29: `withApi` now enforces 120/min per authenticated user; contacts list and Cmd+K search enforce 30/min per user; import uploads and CSV export share 5/hour per tenant. Disposable PostgreSQL integration tests prove 429 responses at each limit. Supervisor ran `bun audit --prod` against `bun.lock` (366 packages, no production vulnerabilities); a moderate development-only esbuild advisory remains low. M10-01 is done; production edge/header/CI secret-scanner verification remains open. Evidence: `docs/security-review-M10-01.md`.
+
+### KI-013: New CRM portal email provider not wired at process startup (was high)
+Found 2026-10-29: the Resend adapter and Better Auth magic-link callback existed, but no Node startup path called `setEmailProvider()` or `setMagicLinkSender()`, so configured email sends failed as unconfigured.
+Resolved 2026-10-29: added `wireEmail()` for app instrumentation and worker startup. Fake-fetch tests verify configured sends and no-key behavior. No real Resend request was made; live credentials and deliverability remain unverified.
+
 ### KI-009: Outbound workflow found active with Alex ID set; go-live approved 2026-10-18 (was medium)
 Workflow `m2YJwZ1l8DTzyEkw` was found active on Oct 17 (read-only check, 38 nodes) with the Alex agent ID set and the Retell credential attached. Go-live not yet approved; Abdullah to confirm. Docs previously said inactive and never run. The public form and the post-call webhook are live while it is active. Do not change n8n without a yes on that specific change.
 Resolved 2026-10-18: Abdullah approved the workflow staying live. No n8n change was made. The post-call webhook still has no header auth (KI-005).
@@ -75,6 +85,9 @@ Resolved 2026-10-18: Abdullah approved the workflow staying live. No n8n change 
 ### KI-010: Who and what can change the portal server (was medium)
 Found read-only on 2026-10-17. Two keys have full administrator access to the VPS (which also holds Twenty and its backups): Abdullah's Mac, and one labelled `bob-box-ovh-vps` (believed to be Abdullah's Grok bot). A restricted `deploy` key (forced command, deploys only commits on `main`, rolls back on failure) was added the same evening. There are now two ways to deploy: the bot path (`portal-deploy`) and `portal/deploy/deploy.sh`; each overwrites `/opt/portal/src`, so use one. Decide whether the bot should keep full root, and which deploy path is the one.
 Resolved 2026-10-18 (D-022): the `bob-box-ovh-vps` key keeps full root by Abdullah's choice, and `portal-deploy` is the single deploy path.
+
+### Portal server deploys from Claude sessions (2026-11-03)
+The "Kynetic VPS" session's auto-mode classifier blocks `portal-new-deploy deploy` as a production deploy unless an allow rule exists (`Bash(sudo /usr/local/sbin/portal-new-deploy *)` via `/permissions`) or Abdullah approves it in that session. Its repo clone lives in a /tmp scratchpad that may vanish; move it to a permanent path. Cloud sessions cannot SSH to the server (port 22 blocked).
 
 ### KI-001: Leaked Cal.com key in git history (was high)
 A key starting cal_live_f64 was committed Aug 23, carried in from the Inflate AI reference files. Confirmed Oct 4, 2026 it was a live key on Abdullah's own Cal.com account (abdullah@kyneticai.com). Deleted in Cal.com and replaced with a new key, entered into Emily's two Retell Cal tools (check_availability_cal, book_appointment_cal on llm_b520d8a6b9bf754f19285a8a6185), event type 7025524 (Water Damage Assessment). Confirmed both tools show the new key and validate. The old key value stays in git history; it is dead in Cal.com so that no longer matters.

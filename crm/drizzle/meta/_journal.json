@@ -1,0 +1,293 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1792977441452,
+      "tag": "0000_roles_helpers",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792977609699,
+      "tag": "0001_baseline_tenancy",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792977717907,
+      "tag": "0002_baseline_crm",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792977784915,
+      "tag": "0003_baseline_ops",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792978249646,
+      "tag": "0004_audit_insert_tenant_check",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792978353543,
+      "tag": "0005_rollup_functions",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792978578647,
+      "tag": "0006_auth_tables",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792978579647,
+      "tag": "0010_service_token_lookup",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1792979000000,
+      "tag": "0012_seed_reference",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1792979100000,
+      "tag": "0013_staff_two_factor",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1792980000000,
+      "tag": "0014_rate_limits",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1792980001000,
+      "tag": "0015_auth_membership_resolution",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1792980002000,
+      "tag": "0018_twilio_number_lookup",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1792981000000,
+      "tag": "0019_email_suppressions",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1792981001000,
+      "tag": "0021_tenant_updated_at_grant",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1792990000000,
+      "tag": "0030_owner_invite_functions",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1792990001000,
+      "tag": "0031_admin_user_management",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1793100000000,
+      "tag": "0032_view_as_sessions",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1793100001000,
+      "tag": "0036_alex_agent_lookup",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1793100002000,
+      "tag": "0047_billing_profile",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1793100003000,
+      "tag": "0048_onboarding_checklist",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1793100004000,
+      "tag": "0053_notification_mention_kind",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1793100005000,
+      "tag": "0054_tags_notification_prefs",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1793100006000,
+      "tag": "0055_reactivation_batches",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1793100007000,
+      "tag": "0056_admin_ops_rollups",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1793100008000,
+      "tag": "0057_admin_operations",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1793100009000,
+      "tag": "0058_presence",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1793210175000,
+      "tag": "0900_contacts_phone_search",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1793210176000,
+      "tag": "0059_admin_backup_runs",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1793210177000,
+      "tag": "0060_fix_admin_integration_health",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1793210178000,
+      "tag": "0061_replay_failed_webhooks",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1793242200000,
+      "tag": "0062_backup_role_read_access",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1793242500000,
+      "tag": "0063_backup_drizzle_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1793307709000,
+      "tag": "1000_contacts_phone_fragment_tenant_index",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1793518200000,
+      "tag": "1001_contact_decisions",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1793520000000,
+      "tag": "1002_call_result_receipts",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1793530000000,
+      "tag": "1003_agency_workspace",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1793553000000,
+      "tag": "1004_agency_dialer_campaigns",
+      "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1793556000000,
+      "tag": "1005_agency_proposals",
+      "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1793559000000,
+      "tag": "1006_support_requests",
+      "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1793562000000,
+      "tag": "1007_view_as_optional_reason",
+      "breakpoints": true
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+# Production edge. Cloudflare terminates the public TLS (mode full-strict); Caddy serves a Cloudflare
+# Origin CA certificate from ./certs. Port 443 is firewalled to Cloudflare ranges (host/update-cloudflare-ips.sh),
+# and the same ranges are trusted here so the logged client address is the visitor, not Cloudflare.
+{
+	servers {
+		import /etc/caddy/cloudflare-ips.caddy
+		client_ip_headers CF-Connecting-IP
+	}
+}
+
+{$SITE_ADDRESS} {
+	tls /certs/origin.pem /certs/origin.key
+	encode zstd gzip
+	log {
+		output stdout
+		format json
+	}
+	reverse_proxy app:3000
+}
