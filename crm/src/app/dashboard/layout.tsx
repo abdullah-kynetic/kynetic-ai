@@ -9,6 +9,7 @@ import { ViewAsBanner, VIEW_AS_BANNER_HEIGHT } from '@/components/view-as/view-a
 import { VIEW_AS_COOKIE } from '@/server/impersonation';
 import { loadShellContext, roleLabel } from '@/server/shell';
 import { brandingCss } from '@/lib/branding/color';
+import { NoClientSelected } from './no-client-selected';
 import type { Metadata } from 'next';
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -72,7 +73,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               <AppSidebar tenant={shell.tenant} groups={groups} />
               <SidebarInset id='main-content' tabIndex={-1} className='scroll-mt-16'>
                 <Header user={{ ...shell.user, roleLabel: roleLabel(shell.role) }} />
-                {children}
+                {shell.tenant ? children : <NoClientSelected />}
               </SidebarInset>
             </SidebarProvider>
           </KBar>

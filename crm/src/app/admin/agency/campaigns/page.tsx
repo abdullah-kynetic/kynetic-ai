@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { decideAdminAccess } from '@/server/admin';
-import { listAgencyLeads } from '@/server/agency';
+import { getAgencyWorkspace, listAgencyLeads } from '@/server/agency';
+import { AgencyWorkspaceMissing } from '../workspace-missing';
 import { listAgencyCampaigns } from '@/server/agency/campaigns';
 import { DEFAULT_DIALER_SCRIPT } from '@/server/agency/dialer-policy';
 import { isViewingAs } from '../../view-as-guard';
@@ -21,6 +22,8 @@ export default async function CampaignsPage({
   if (access.kind !== 'ok' || access.role !== 'admin') forbidden();
   if (await isViewingAs(access.user)) forbidden();
   const caller = { id: access.user.id, kyneticRole: access.role };
+  if (!(await getAgencyWorkspace(caller)))
+    return <AgencyWorkspaceMissing pageTitle='Agency campaigns' />;
   const [campaigns, data, query] = await Promise.all([
     listAgencyCampaigns(caller),
     listAgencyLeads(caller),
