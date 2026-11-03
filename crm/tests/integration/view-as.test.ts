@@ -46,9 +46,30 @@ async function start(user: ViewAsUser, tenantId: string = IDS.tenantA, now = T0)
 }
 
 describe('start (F-57)', () => {
+  it('lets the admin role start with no reason and still audits it (DC-125)', async () => {
+    const { sessionId } = await startViewAs(
+      { user: admin, tenantId: IDS.tenantA, reason: '' },
+      { db, now: T0 }
+    );
+    const [row] =
+      await tdb.admin`select reason from impersonation_sessions where id = ${sessionId}`;
+    expect(row.reason).toBeNull();
+    expect((await auditRows('viewas.start', sessionId))[0]).toMatchObject({
+      actor_user_id: IDS.admin,
+      impersonator_user_id: IDS.admin
+    });
+    await expect(
+      startViewAs({ user: admin, tenantId: IDS.tenantB, reason: 'short' }, { db, now: T0 })
+    ).rejects.toMatchObject({ code: 'VALIDATION_FAILED' });
+  });
+
   it('needs a reason and records the session with tenant, impersonator, ip and reason', async () => {
     await expect(
       startViewAs({ user: admin, tenantId: IDS.tenantA, reason: 'short' }, { db, now: T0 })
+    ).rejects.toMatchObject({ code: 'VALIDATION_FAILED' });
+
+    await expect(
+      startViewAs({ user: va, tenantId: IDS.tenantA, reason: '' }, { db, now: T0 })
     ).rejects.toMatchObject({ code: 'VALIDATION_FAILED' });
 
     const { sessionId, cookie } = await start(admin);

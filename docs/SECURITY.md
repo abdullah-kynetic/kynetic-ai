@@ -171,7 +171,7 @@ Rules:
 - **Provider stub mode.** `PROVIDER_MODE=stub` selects in-memory fake SMS and voice providers even when `NODE_ENV=production`; it is intended only for isolated rehearsals with `OUTBOUND_ENABLED=false`. The default is `live`, which keeps production fail-closed when provider credentials are missing. Stub mode cannot be combined with outbound enabled.
 
 ### 2.6 Impersonation ("view as client", F-57)
-- Entry: Kynetic admin (read or write) and VA (read only). Start requires a reason. An audit row records `impersonator_id`, tenant, start time and IP.
+- Entry: Kynetic admin (read or write) and VA (read only). Start requires a reason for a VA; the admin role (super admin) may start without one (DC-125). An audit row records `impersonator_id`, tenant, start time and IP.
 - **Read-only by default.** The request context carries `readOnly=true`, and the database transaction is `READ ONLY`, so a code bug cannot write. Decided 2026-10-25 (recommended option approved: admin may switch to write per session with a second reason and a 30-minute expiry; VA never gets write mode. VA edits on request use a separate logged support-edit action).
 - A persistent banner reads "Viewing as <tenant>, read-only" with an exit control.
 - Every request during the session writes audit rows with both the tenant context and `impersonator_id`.
