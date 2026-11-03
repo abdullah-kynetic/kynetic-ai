@@ -83,6 +83,9 @@ Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3
 - Read-only findings: n8n workflow `xlmyRd5jBBBu8LX7` is not on the VPS (only the Retell one `tXJwNTkNgKGnp0Ab` is); VPS lacks the Twenty and Gmail credentials; Twilio +16692660586 is not Nora's line. Plan: `docs/plans/ALEX-ELEVENLABS-GOLIVE.md`.
 - Twenty: task 3.9 and the decision notes updated to match; mismatch between Twenty D-023 (offer) and repo D-023 (site) / D-024 (offer) flagged in D-025.
 
+### 2026-10-22 (lead pipeline: audit, Twenty import, sync, refill)
+- New `tools/lead_pipeline.py` + offline tests and `docs/lead-pipeline.md`. Audit gate passes 10 of the 18 remaining roofers on the mechanical checks; it does not prove right-business matches (KI-012). Twenty has 4 companies, none from the engine, so nothing is loaded yet. Import/sync/refill are dry runs; the Twenty REST filter and response shapes are unverified until the first `--apply` (no `TWENTY_API_KEY` in env). Treg balance still $0. No live changes made.
+
 ### 2026-10-22 (Twenty fields for the lead engine; Abdullah approved on the decision card)
 - Created on Twenty `companies` (self-hosted, crm.kyneticai.com): Engine status (select DIAL_READY/HOLD), Meta Page ID (text), Facebook Page (links), Live ads, Oldest ad (days), New ads (30d), Est. ad spend/mo low and high (numbers, a rough proxy not real spend), Engine reason (text), State (text). That is 10 fields; the card said 9 but listed 10, all 10 were created.
 - Added niche options Bath Remodel, Kitchen Remodel, Windows & Doors, Siding, Fence, Concrete to the existing Niche field (all existing options kept with their ids).
