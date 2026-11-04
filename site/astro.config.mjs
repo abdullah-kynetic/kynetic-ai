@@ -15,7 +15,7 @@ const auditRoute = {
 };
 
 export default defineConfig({
-  site: 'https://kyneticai.com',
+  site: 'https://www.kyneticai.com',
   output: 'static',
   trailingSlash: 'ignore',
   build: { format: 'directory', inlineStylesheets: 'never' },
