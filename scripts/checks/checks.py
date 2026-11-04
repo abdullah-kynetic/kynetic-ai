@@ -2,6 +2,7 @@
 """Kynetic step checks. Read-only. Never prints secret values."""
 import argparse, json, os, re, subprocess, sys, glob, urllib.request, urllib.error
 from vps_evidence import load_dev_portal_evidence
+from portal_check import check_dev_portal
 from pathlib import Path
 
 LIVE_ALEX = "agent_8201m5afn2rbeb7v29xfkhh1pjef"
@@ -87,11 +88,14 @@ def s1():
     miss = [x for x in t if not Path("crm", x).exists()]
     if miss: out("FAIL", "1.6", "safety unit tests: not built " + ",".join(miss))
     else: npm("1.6", "test", *t)
-    if not env("PORTAL_URL"): out("SKIP", "1.7", "real portal locked: PORTAL_URL not set")
+    if not env("DEV_PORTAL_URL"):
+        out("FAIL", "1.7", "dev portal auth: DEV_PORTAL_URL not set")
     else:
-        c, _ = get(os.environ["PORTAL_URL"].rstrip("/") + "/admin")
-        c2, _ = get(os.environ["PORTAL_URL"])
-        ok("1.7", c2 in (200, 302, 307) and 200 <= c < 600 and c != 200, "real portal up, /admin not public", f"root {c2}, /admin {c}")
+        try:
+            passed, root, admin = check_dev_portal(os.environ["DEV_PORTAL_URL"])
+            ok("1.7", passed, "DEV portal up; anonymous admin denied or redirected to sign-in", f"root {root}, /admin {admin}")
+        except ValueError:
+            out("FAIL", "1.7", "invalid dev target; refusing production or non-dev URL")
     files = subprocess.run(["git", "ls-files"], capture_output=True, text=True).stdout.split()
     pat = re.compile(r"(sk_live_[A-Za-z0-9]{20,}|xi-api-key\s*[:=]\s*['\"][a-z0-9]{20,}|AC[0-9a-f]{32}|eyJhbGciOi[A-Za-z0-9_-]{30,}\.)")
     hits = []
