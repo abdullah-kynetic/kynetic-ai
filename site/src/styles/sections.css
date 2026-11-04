@@ -108,9 +108,10 @@ main[data-framer-name="Content"] article strong.framer-text { color: var(--kn-in
 .kn-pricing { background: var(--color-page); padding: 96px 24px; width: 100%; box-sizing: border-box; display: block; }
 .kn-pricing__inner { max-width: 1080px; margin: 0 auto; }
 .kn-pricing__head { text-align: center; max-width: 720px; margin: 0 auto 48px; }
-.kn-pricing__eyebrow { font-family: var(--font-sans); font-size: var(--text-sm); font-weight: var(--weight-semibold); letter-spacing: .08em; text-transform: uppercase; color: var(--color-gold); margin: 0 0 12px; }
-.kn-pricing__title { font-family: var(--font-serif); font-weight: 600; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.1; color: var(--color-text); margin: 0 0 16px; }
-.kn-pricing__lede { font-family: var(--font-sans); font-size: var(--text-lg); line-height: 1.6; color: var(--color-muted); margin: 0; }
+/* Eyebrow, title and lede match the other section headers (badge pill, 50px serif title, 18px lede) */
+.kn-pricing__eyebrow { display: inline-block; font-family: var(--font-sans); font-size: 11px; font-weight: 500; line-height: 13.2px; letter-spacing: 1.98px; text-transform: uppercase; color: #7a5c26; background: #fff; border: 1px solid var(--color-border); border-radius: 8px; padding: 8px 13px; margin: 0 0 25px; }
+.kn-pricing__title { font-family: var(--font-serif); font-weight: 600; font-size: clamp(2.25rem, 4vw, 3.125rem); line-height: 1.2; letter-spacing: -0.5px; color: var(--color-text); margin: 0 0 12px; }
+.kn-pricing__lede { font-family: var(--font-sans); font-size: 18px; line-height: 1.5; letter-spacing: -0.36px; color: var(--color-text); margin: 0; }
 .kn-pricing__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
 .kn-plan { background: var(--color-card); border: 1px solid var(--color-border); border-radius: 16px; padding: 32px; display: flex; flex-direction: column; gap: 16px; font-family: var(--font-sans); }
 .kn-plan--featured { border: 2px solid var(--color-accent); }
