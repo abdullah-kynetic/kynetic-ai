@@ -3,7 +3,7 @@
   "short_name": "Kynetic",
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#1C1916",
+  "theme_color": "#281F1C",
   "background_color": "#faf8f5",
   "icons": [
     {
