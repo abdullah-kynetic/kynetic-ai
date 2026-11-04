@@ -14,7 +14,7 @@ const PILL = { type: 'spring', stiffness: 220, damping: 30, mass: 1 } as const;
 const BAR = { type: 'spring', stiffness: 500, damping: 60, mass: 1 } as const;
 
 // Scroll-spy: a link is selected from the moment its section top passes this line.
-const SPY: Record<string, string> = { process: 'Process', services: 'Services', plans: 'Pricing', contact: 'Contact' };
+const SPY: Record<string, string> = { journey: 'Journey', services: 'Services', industries: 'Industries', plans: 'Pricing', contact: 'Contact' };
 const SPY_OFFSET = 120; // a link is selected once its section reaches the bottom of the nav pill, so the highlight follows the section you are reading
 
 function initLinks() {

@@ -32,6 +32,16 @@ const remodelers: Niche = {
         'Text follow-up when a lead does not pick up',
         'Books the estimate straight onto your calendar',
       ],
+      demo: {
+        title: 'Alex in action',
+        note: 'Illustration of the flow. Not a real lead or real results.',
+        steps: [
+          { label: 'New lead comes in', detail: 'Meta ad or website form' },
+          { label: 'Alex calls back', detail: 'Within 60 seconds' },
+          { label: 'Text follow-up', detail: 'If the lead does not pick up' },
+          { label: 'Estimate booked', detail: 'On your calendar' },
+        ],
+      },
     },
     addonsTitle: 'Add-ons, chosen on your audit',
     addonsNote: 'We recommend add-ons based on what the audit finds. Nothing is switched on until you agree.',

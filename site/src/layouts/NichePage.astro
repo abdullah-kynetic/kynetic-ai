@@ -83,12 +83,26 @@ const ogImage = new URL('/brand/og-image-light.png', Astro.site).href;
             <p class="np-lede">{n.services.lede}</p>
           </header>
           <article class="np-core">
-            <div class="np-core__top">
-              <h3>{n.services.core.name}</h3>
-              <span class="np-tag np-tag--live">{n.services.core.badge}</span>
+            <div class="np-core__copy">
+              <div class="np-core__top">
+                <h3>{n.services.core.name}</h3>
+                <span class="np-tag np-tag--live">{n.services.core.badge}</span>
+              </div>
+              <p>{n.services.core.desc}</p>
+              <ul>{n.services.core.points.map((p) => <li>{p}</li>)}</ul>
             </div>
-            <p>{n.services.core.desc}</p>
-            <ul>{n.services.core.points.map((p) => <li>{p}</li>)}</ul>
+            <div class="np-demo" role="img" aria-label={n.services.core.demo.title + ': ' + n.services.core.demo.steps.map((x) => x.label).join(', then ')}>
+              <p class="np-demo__title">{n.services.core.demo.title}</p>
+              <ol class="np-demo__steps">
+                {n.services.core.demo.steps.map((st, i) => (
+                  <li style={`--i:${i}`}>
+                    <span class="np-demo__dot"></span>
+                    <span><strong>{st.label}</strong><small>{st.detail}</small></span>
+                  </li>
+                ))}
+              </ol>
+              <p class="np-demo__note">{n.services.core.demo.note}</p>
+            </div>
           </article>
           <h3 class="np-subtitle">{n.services.addonsTitle}</h3>
           <p class="np-note">{n.services.addonsNote}</p>

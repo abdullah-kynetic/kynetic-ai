@@ -12,7 +12,7 @@ export interface Niche {
   video: { title: string; embedUrl: string | null; placeholder: string; todo: string };
   services: {
     eyebrow: string; title: string; lede: string;
-    core: { name: string; badge: string; desc: string; points: string[] };
+    core: { name: string; badge: string; desc: string; points: string[]; demo: { title: string; note: string; steps: { label: string; detail: string }[] } };
     addonsTitle: string; addonsNote: string;
     addons: { name: string; desc: string; badge: string }[];  // badge must not claim "live" until confirmed
     todo: string;
