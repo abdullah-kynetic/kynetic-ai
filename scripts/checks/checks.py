@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Kynetic step checks. Read-only. Never prints secret values."""
 import argparse, json, os, re, subprocess, sys, glob, urllib.request, urllib.error
-from vps_evidence import load_dev_portal_evidence
+from vps_evidence import load_dev_auth_evidence, load_dev_portal_evidence
 from portal_check import check_dev_portal
 from pathlib import Path
 
@@ -90,6 +90,12 @@ def s1():
     else: npm("1.6", "test", *t)
     if not env("DEV_PORTAL_URL"):
         out("FAIL", "1.7", "dev portal auth: DEV_PORTAL_URL not set")
+    elif VPS_EVIDENCE:
+        try:
+            root, admin, revision = load_dev_auth_evidence(VPS_EVIDENCE, os.environ["DEV_PORTAL_URL"])
+            out("PASS", "1.7", f"DEV auth — USER MAC EVIDENCE: root {root}, /admin {admin}; checker {revision[:12]}; not checked from this executor or proof of deployment")
+        except (ValueError, KeyError, OSError, TypeError):
+            out("FAIL", "1.7", "invalid or stale user-supplied dev auth evidence")
     else:
         try:
             passed, root, admin = check_dev_portal(os.environ["DEV_PORTAL_URL"])
@@ -156,7 +162,7 @@ STEPS = [s0, s1, s2, s3, s4, s5, s6]
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("step", nargs="?", default="all", choices=["all", *map(str, range(7))])
-    parser.add_argument("--vps-evidence", help="Explicit user-reported Mac evidence for check 0.7")
+    parser.add_argument("--vps-evidence", help="Explicit user-reported Mac evidence for checks 0.7 and 1.7")
     args = parser.parse_args()
     a = args.step
     VPS_EVIDENCE = args.vps_evidence

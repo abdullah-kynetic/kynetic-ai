@@ -2,7 +2,7 @@
 Tick a step only when `scripts/checks/run.sh <n>` has no FAIL. Note SKIPs.
 
 - [x] 0 Dev setup
-- [ ] 1 Foundation
+- [x] 1 Foundation
 - [ ] 2 Alex on ElevenLabs
 - [ ] 3 Lead→booking chain
 - [ ] 4 Texts & alerts
@@ -96,3 +96,10 @@ Tick a step only when `scripts/checks/run.sh <n>` has no FAIL. Note SKIPs.
 - The new verified-session code is NOT deployed. The prior Mac dev 403 was observed on an older deployed revision and is not evidence that these new guards ran on the VPS. No production requests, provider writes, secret outputs, workflow changes or deployment were made.
 - Session issuance/sign-in/2FA setup routes removed by the earlier open-mode change are not restored in this scoped verifier fix. Valid existing sessions are checked; new interactive login setup remains separate. Anonymous access fails closed.
 - Read-only Mac handoff `scripts/checks/mac-dev-portal.sh` runs the identical current 1.7 URL/method/headers/no-redirect assertion and prints raw status. No deployment is required merely to recheck the existing dev 403; no deployment command will be run automatically. Step 1 remains unchecked until remote check evidence is supplied. No further step is started.
+
+### Step 1 complete for the authorized dev scope — 2026-11-04
+- Abdullah's uploaded Mac output confirms successful pull of `e7e7f2d` after stashing local `docs/decisions.md` edits. That stash remains on the Mac; no stash was dropped or overwritten by Codex.
+- Identical Python checker requests (GET, no cookies/auth headers, no redirects): dev `/admin` raw **403**, no Location; dev `/` raw **307**, Location `/dashboard`. This satisfies the unchanged strict denial assertion. No deployment performed; source changes remain undeployed.
+- Recorded as explicit user_mac_terminal evidence for 1.7. Earlier production evidence is retained separately under investigations and is not reused to pass the dev check. Evidence validation checks URL, checker ancestor revision/date, exact method/headers/no-redirect setting and the same HTTP status assertion; public/404/missing responses and authenticated requests are rejected.
+- `scripts/checks/run.sh 1 --vps-evidence docs/codex/vps-evidence.json`: **8 PASS, 0 FAIL, 0 SKIP**. Local typecheck, lint, full unit tests, build, safety source/suites and secret scan reran here; only 1.7 used the Mac result. Seven Python checker/evidence tests also passed.
+- This completes the dev foundation checks under the latest no-production-request instruction. It does not claim production is protected or that the new verified-session implementation has run on the VPS. No deployment, sign-in provisioning, production request or live provider change was made.
