@@ -164,3 +164,9 @@ footer.framer-34GLz .framer-z7as9h > a svg, footer.framer-34GLz .framer-z7as9h >
 footer.framer-34GLz .framer-z7as9h > a svg [fill]:not([fill="none"]) { fill: var(--espresso-text) !important; }
 footer.framer-34GLz .framer-z7as9h > a svg { fill: var(--espresso-text) !important; color: var(--espresso-text) !important; stroke: none !important; }
 footer.framer-34GLz .framer-z7as9h > a svg * { fill: inherit; stroke: none !important; }
+/* Espresso fixes: light orange focus ring on dark, white badge keeps gold-on-light text, button label stays near-black */
+.framer-1gqj635 a:focus-visible, footer.framer-34GLz a:focus-visible,
+.framer-1gqj635 [tabindex="0"]:focus-visible, footer.framer-34GLz [tabindex="0"]:focus-visible { outline-color: var(--espresso-accent-text); }
+.framer-1gqj635 [data-framer-name="Badge"] p.framer-text { --framer-text-color: var(--color-gold) !important; color: var(--color-gold) !important; }
+.framer-1gqj635 a p.framer-text { --framer-text-color: var(--color-on-accent) !important; color: var(--color-on-accent) !important; }
+.framer-1gqj635 [data-framer-name="Badge"] .framer-text, .framer-1gqj635 .framer-vkcjs6 [data-framer-name="Badge"] p.framer-text, .framer-1gqj635 [data-framer-name="Elements/Badge"] p.framer-text { --framer-text-color: var(--color-gold) !important; color: var(--color-gold) !important; }
