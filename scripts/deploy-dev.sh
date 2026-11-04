@@ -5,21 +5,36 @@ cd "$(git rev-parse --show-toplevel)"
 [ "$(git branch --show-current)" = dev/codex-setup ] || { echo 'Checkout dev/codex-setup first.' >&2; exit 1; }
 # Local edits are left untouched; the upload below contains only committed HEAD files.
 command -v ssh >/dev/null
-host="${PORTAL_DEPLOY_HOST:-}"
-user="${PORTAL_DEPLOY_USER:-}"
-[ -n "$host" ] || read -r -p 'VPS SSH hostname (or SSH config alias): ' host
-[ -n "$user" ] || read -r -p 'VPS SSH user (blank uses SSH config): ' user
-[[ "$host" =~ ^[a-zA-Z0-9_.:-]+$ ]] || { echo 'Invalid SSH hostname.' >&2; exit 1; }
+# Production deploy users/keys are forced-command credentials, unsuitable for dev setup.
+if [ -f "$HOME/.ssh/config" ]; then
+  echo 'SSH aliases configured on this Mac:'
+  awk 'tolower($1) == "host" {for (i=2;i<=NF;i++) if ($i !~ /[*?!]/) print "  " $i}' "$HOME/.ssh/config"
+fi
+host="${DEV_DEPLOY_SSH_HOST:-}"
+user="${DEV_DEPLOY_SSH_USER:-}"
+identity="${DEV_DEPLOY_SSH_IDENTITY_FILE:-}"
+if [ -z "$host" ]; then
+  read -r -p 'VPS SSH hostname or alias [40.160.150.91]: ' host
+  host="${host:-40.160.150.91}"
+fi
+if [ -z "$user" ]; then
+  read -r -p 'VPS admin SSH user [ubuntu] (- uses SSH config): ' user
+  user="${user:-ubuntu}"
+fi
+[ "$user" != - ] || user=''
+case "$user" in
+  portalnew-deploy|deploy) echo 'This is a restricted production deploy account. Use your VPS admin login.' >&2; exit 1 ;;
+esac
+[[ "$host" =~ ^[a-zA-Z0-9][a-zA-Z0-9_.:-]*$ ]] || { echo 'Invalid SSH hostname.' >&2; exit 1; }
 [[ "$user" =~ ^[a-zA-Z0-9_-]*$ ]] || { echo 'Invalid SSH user.' >&2; exit 1; }
+if [ -z "$identity" ]; then
+  read -r -p 'Existing SSH private key FILE path (blank uses SSH agent/config; never paste key contents): ' identity
+fi
 ssh_opts=(-o StrictHostKeyChecking=ask)
-key_file=''
-cleanup() { [ -z "$key_file" ] || rm -f "$key_file"; }
-trap cleanup EXIT
-if [ -n "${PORTAL_DEPLOY_SSH_KEY:-}" ]; then
-  key_file="$(mktemp)"
-  chmod 600 "$key_file"
-  printf '%s\n' "$PORTAL_DEPLOY_SSH_KEY" > "$key_file"
-  ssh_opts+=(-i "$key_file" -o IdentitiesOnly=yes)
+if [ -n "$identity" ]; then
+  case "$identity" in '~/'*) identity="$HOME/${identity:2}" ;; esac
+  [ -f "$identity" ] || { echo 'SSH key file not found.' >&2; exit 1; }
+  ssh_opts+=(-i "$identity" -o IdentitiesOnly=yes)
 fi
 [ -z "$user" ] || ssh_opts+=(-l "$user")
 revision="$(git rev-parse HEAD)"

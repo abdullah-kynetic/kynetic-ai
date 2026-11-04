@@ -1,10 +1,14 @@
 # Dedicated dev portal
 
 From the Mac checkout on `dev/codex-setup`, run `bash scripts/deploy-dev.sh` after pulling.
-The script uses `PORTAL_DEPLOY_HOST`, `PORTAL_DEPLOY_USER` and, if supplied,
-`PORTAL_DEPLOY_SSH_KEY` from the environment. Without host/user it prompts for those
-non-secret selectors and uses normal SSH configuration/agent keys. Never paste a key
-into a command. The VPS account needs sudo; the SSH connection requests a terminal.
+The script uses optional `DEV_DEPLOY_SSH_HOST`, `DEV_DEPLOY_SSH_USER` and
+`DEV_DEPLOY_SSH_IDENTITY_FILE` selectors. Otherwise it prompts for the server (default
+40.160.150.91), an admin user (default `ubuntu`, or `-` to use the SSH config user),
+and an existing private key **file path** (blank uses SSH agent/config). SSH aliases
+from the Mac's config are listed without reading any key contents. Never paste key
+contents into a prompt or command. The admin account needs sudo; SSH requests a terminal.
+Production `PORTAL_DEPLOY_*` credentials are deliberately not used: `portalnew-deploy`
+and `deploy` are restricted production accounts and cannot run this installer.
 
 Uncommitted Mac edits are neither deployed nor changed. The tracked revision is streamed over SSH into a private staging directory. The server
 script runs as root, stores immutable releases under `/opt/kynetic-dev-portal/releases/`,

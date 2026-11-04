@@ -37,3 +37,8 @@ Tick a step only when `scripts/checks/run.sh <n>` has no FAIL. Note SKIPs.
 - Mac output confirmed the initial deployment script stopped at its clean-worktree guard before SSH; this is not a VPS check 0.7 failure.
 - Removed that unnecessary guard. Uploads still use `git archive HEAD`; uncommitted Mac changes are preserved and excluded from the deployed payload. Branch restriction remains enforced.
 - Validation: Bash syntax; isolated temporary Git checkout with a modified tracked file reaches a stubbed SSH command without changing the file; wrong branch still refuses before SSH. Awaiting deployment output; step 0 remains unchecked.
+
+### Step 0 SSH account correction — 2026-11-04
+- Mac SSH authentication as `portalnew-deploy` was denied before any remote command. Repository inspection confirms this is a restricted production forced-command account, not a suitable admin login for dev setup. Earlier advice to use it was incorrect.
+- Dev deployment now uses separate optional `DEV_DEPLOY_SSH_*` selectors and prompts for an existing Mac key file path or normal SSH config/agent. Defaults are the documented server IP and admin account `ubuntu`; restricted production accounts are refused. No private key values are copied, displayed or transferred.
+- Bash syntax and stubbed SSH tests passed for admin selection, key paths containing spaces, and production-account refusal. Awaiting Mac SSH/deploy output; no VPS deployment or 0.7 success claimed.
