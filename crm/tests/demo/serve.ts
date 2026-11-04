@@ -1,6 +1,6 @@
 // Local demo: starts the synthetic server (throwaway local database, fake data, outbound off) on
-// port 3000. There is no sign-in (open mode): the portal opens as the Kynetic admin, and the account
-// menu or /open/admin, /open/va, /open/owner, /open/staff switches who you are.
+// port 3000. Authentication is required. The E2E harness writes synthetic signed-session
+// storage states under /tmp; it does not enable anonymous admin or production persona switching.
 // Needs a local Postgres 16 (TEST_DATABASE_ADMIN_URL) and a built app (`bun run build`).
 import { spawn } from 'node:child_process';
 
