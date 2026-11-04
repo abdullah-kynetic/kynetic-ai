@@ -591,3 +591,7 @@ Check 1.7 now uses DEV_PORTAL_URL exclusively, refuses non-dev hosts, prints GET
 The E2E fixture uses signed synthetic server sessions instead of anonymous persona cookies. The old open-mode integration suite now requires anonymous/persona-only requests to be rejected even with privileged users in the DB. Browser/integration suites are separate from the unit checks and were not exercised in this run.
 
 Check 1.7 Mac evidence can be supplied explicitly with `scripts/checks/run.sh 1 --vps-evidence docs/codex/vps-evidence.json`. The evidence path validates the exact unauthenticated request settings, dev URL, recent observation and checker revision, then applies the same status assertion. It labels the result USER MAC EVIDENCE; it is not a local network observation or evidence of deploying the current auth implementation.
+
+### Step 2 synthetic ElevenLabs provisioning (2026-11-04)
+
+`bun run test tests/unit/elevenlabs-dev-workflow.test.ts` from `crm/` verifies the actual workflow's embedded Code node using a VM with synthetic input/env and no I/O. Covers TEST_PHONE destination isolation, missing config, non-synthetic/FL/OK rejection, optional email, project type/budget, and disabled dispatch/inactive workflow. `python3 -m unittest discover -s tools -p test_codex_step2.py` verifies dry-run safety and repeated provisioning with mocked provider APIs; it never buys numbers or makes calls. Live setup verification uses read-only GETs and stable before/after configuration hashes, never live-agent writes.

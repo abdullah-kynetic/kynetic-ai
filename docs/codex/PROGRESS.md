@@ -3,7 +3,7 @@ Tick a step only when `scripts/checks/run.sh <n>` has no FAIL. Note SKIPs.
 
 - [x] 0 Dev setup
 - [x] 1 Foundation
-- [ ] 2 Alex on ElevenLabs
+- [x] 2 Alex on ElevenLabs
 - [ ] 3 Lead→booking chain
 - [ ] 4 Texts & alerts
 - [ ] 5 Onboarding
@@ -103,3 +103,13 @@ Tick a step only when `scripts/checks/run.sh <n>` has no FAIL. Note SKIPs.
 - Recorded as explicit user_mac_terminal evidence for 1.7. Earlier production evidence is retained separately under investigations and is not reused to pass the dev check. Evidence validation checks URL, checker ancestor revision/date, exact method/headers/no-redirect setting and the same HTTP status assertion; public/404/missing responses and authenticated requests are rejected.
 - `scripts/checks/run.sh 1 --vps-evidence docs/codex/vps-evidence.json`: **8 PASS, 0 FAIL, 0 SKIP**. Local typecheck, lint, full unit tests, build, safety source/suites and secret scan reran here; only 1.7 used the Mac result. Seven Python checker/evidence tests also passed.
 - This completes the dev foundation checks under the latest no-production-request instruction. It does not claim production is protected or that the new verified-session implementation has run on the VPS. No deployment, sign-in provisioning, production request or live provider change was made.
+
+### Step 2 complete — 2026-11-04
+- Initial `scripts/checks/run.sh 2`: 2 PASS, 3 FAIL (2.1 missing template, 2.2 no attached DEV number, 2.3 missing workflow); Cal.com and live Alex read checks passed.
+- Added `providers/elevenlabs/templates/alex.json` and created a NEW `DEV-Alex Step2 Synthetic` on Blitz. Verified the created prompt matches the template, web auth is enabled, and no live/shared tool IDs are attached. Project type/budget intake is included; email is optional. Only synthetic scheduling is allowed; no real booking/confirmation claim is made.
+- Created NEW `DEV - ElevenLabs Speed to Lead` via the documented n8n REST API because the connector's SDK-reference tool returned an internal error. Workflow is DEV-tagged/inactive; its HTTP dispatch node is disabled. Code rejects non-synthetic and FL/OK input, requires TEST_PHONE/configured DEV IDs, ignores submitted phone numbers, and preserves project_type/budget. Execution payload persistence is disabled.
+- Provisioned a NEW dedicated `DEV - Codex Alex Step2` Twilio voice number (normal account number charges apply), imported only that new number to Blitz, and assigned only the new DEV agent. SMS import disabled; inbound voice/SMS hooks cleared on the newly owned number. The existing caller number was not imported or edited. IDs only are recorded in dev-resources.json; no phone or credential values stored.
+- Added dry-run-by-default, resumable `tools/codex_step2.py`; repeated application does not create duplicate resources. No Calls/Messages/activation routes exist in the provisioner. Live Alex canonical configuration hashes before/after match, including its prompt/tools, workflow, number assignments and branch/version.
+- Second `scripts/checks/run.sh 2`: **5 PASS, 0 FAIL, 0 SKIP**. All failures fixed on the second run; no three-failure blocker.
+- Validation: 7 workflow unit tests passed; 2 provisioning tests passed (safe default, single creation on repeated apply, no live-agent writes/calls/messages/activation); CRM typecheck passed; workflow hygiene passed; created agent GET matches template. Repository Code-node JavaScript skill was used read-only; nothing was copied from it.
+- No calls, texts, real bookings, workflow activation, VPS config/restart or dev deployment. New auth code remains undeployed, as instructed. Step 3 will wire actual portal gate/retry/tool behavior; environment/credential setup and any deployment must use a Mac handoff. Step 2 stops here for acceptance.
