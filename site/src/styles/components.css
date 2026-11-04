@@ -143,3 +143,45 @@ button.framer-NHy43[data-state="success"] p.framer-text { --framer-text-color: v
   border: 3px solid transparent; border-color: color-mix(in srgb, var(--color-on-accent) 25%, transparent);
   border-top-color: var(--color-on-accent);
 }
+
+/* Contact form: one question at a time (kn-cf). Replaces the Framer form; see src/scripts/form.ts */
+.kn-cf { position: relative; display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 560px; margin: 0 auto; padding: 28px; background: var(--color-card); border: 1px solid var(--color-border); border-radius: 12px; text-align: left; font-family: var(--font-sans); color: var(--color-text); }
+.kn-cf-top { display: flex; align-items: center; gap: 14px; }
+.kn-cf-count { margin: 0; font-size: var(--text-sm); font-weight: 600; color: var(--color-gold); white-space: nowrap; }
+.kn-cf-track { flex: 1; height: 4px; border-radius: 2px; background: var(--color-border); overflow: hidden; }
+.kn-cf-bar { display: block; height: 100%; width: 20%; background: var(--color-accent); transition: width .3s ease; }
+.kn-cf-step { display: flex; flex-direction: column; gap: 10px; min-width: 0; margin: 0; padding: 0; border: 0; }
+.kn-cf-step[hidden], .kn-cf-done[hidden], .kn-cf-nav [hidden], .kn-cf-keys[hidden] { display: none; }
+.kn-cf-step:not([hidden]) { animation: kn-cf-in .28s ease both; }
+@keyframes kn-cf-in { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
+.kn-cf-q { margin: 0; padding: 0; font-family: var(--font-serif); font-weight: 600; font-size: clamp(1.6rem, 4.5vw, 2.1rem); line-height: 1.15; color: var(--color-text); }
+.kn-cf-hint { margin: 0; font-size: var(--text-sm); color: var(--color-muted); }
+.kn-cf-in { width: 100%; box-sizing: border-box; padding: 14px 16px; font: inherit; font-size: 1.0625rem; color: var(--color-text); background: var(--color-page); border: 1px solid var(--color-border-input); border-radius: 8px; }
+.kn-cf-in::placeholder { color: var(--color-muted); opacity: .8; }
+.kn-cf-ta { resize: vertical; min-height: 110px; }
+.kn-cf-in:focus-visible, .kn-cf button:focus-visible, .kn-cf-chip:has(input:focus-visible) { outline: var(--focus-ring-width) solid var(--color-accent-text); outline-offset: var(--focus-ring-offset); }
+.kn-cf-in[aria-invalid="true"] { border-color: var(--color-error); }
+.kn-cf-err { margin: 0; min-height: 0; font-size: var(--text-sm); font-weight: 500; color: var(--color-error); }
+.kn-cf-err:empty { display: none; }
+.kn-cf-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.kn-cf-chip { position: relative; display: inline-flex; cursor: pointer; }
+.kn-cf-chip input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.kn-cf-chip span { padding: 11px 16px; font-size: var(--text-sm); font-weight: 500; line-height: 1.3; background: var(--color-page); border: 1px solid var(--color-border-input); border-radius: 999px; transition: background .15s, border-color .15s; }
+.kn-cf-chip:hover span { border-color: var(--color-accent-text); }
+.kn-cf-chip input:checked + span { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-on-accent); font-weight: 600; }
+.kn-cf-nav { display: flex; align-items: center; gap: 12px; }
+.kn-cf-nav button { min-height: 48px; padding: 0 22px; font: inherit; font-size: 1rem; font-weight: 600; border-radius: 8px; cursor: pointer; }
+.kn-cf-next { margin-left: auto; background: var(--color-accent); color: var(--color-on-accent); border: 0; }
+.kn-cf-next:hover { background: var(--color-accent-hover); }
+.kn-cf-next[disabled] { opacity: .7; cursor: progress; }
+.kn-cf-back, .kn-cf-skip { background: transparent; color: var(--color-accent-text); border: 0; text-decoration: underline; text-underline-offset: 3px; padding: 0 8px; }
+.kn-cf-back:hover, .kn-cf-skip:hover { color: var(--color-accent-text-hover); }
+.kn-cf-keys { margin: -8px 0 0; font-size: var(--text-xs); color: var(--color-muted); }
+.kn-cf-trap { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.kn-cf-done { display: flex; flex-direction: column; gap: 10px; padding: 12px 0; }
+.kn-cf-done:focus { outline: none; }
+.kn-cf-done .kn-cf-q::before { content: ""; display: block; width: 36px; height: 3px; margin-bottom: 14px; background: var(--color-accent); }
+.kn-cf.is-done > :not(.kn-cf-done) { display: none; }
+@media (hover: none) { .kn-cf-keys { display: none; } }
+@media (max-width: 520px) { .kn-cf { padding: 20px; } .kn-cf-nav button { padding: 0 16px; } }
+@media (prefers-reduced-motion: reduce) { .kn-cf-step:not([hidden]) { animation: none; } .kn-cf-bar { transition: none; } }
