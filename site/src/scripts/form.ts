@@ -3,7 +3,7 @@
 // (framer-NHy43): hover/press colours, a spinner while sending, "Thank you" or "Something went wrong".
 import { animate } from 'motion';
 
-const ENDPOINT: string = import.meta.env.PUBLIC_CONTACT_WEBHOOK ?? '';
+const ENDPOINT: string = import.meta.env.PUBLIC_CONTACT_WEBHOOK ?? 'https://n8n.kyneticai.com/webhook/website-contact';
 const TWEEN = { duration: 0.2, ease: [0.44, 0, 0.56, 1] } as const;
 const BG = { rest: 'rgb(217, 102, 42)', hover: 'rgb(226, 114, 58)', press: 'rgb(194, 85, 34)', error: 'rgba(0, 0, 0, 0)' };
 
