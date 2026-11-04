@@ -8,6 +8,8 @@
   },
   "n8n": {
     "repo_workflow": "n8n/workflows/dev/setup-safety-check.json",
-    "deployed": false
+    "deployed": true,
+    "workflow_id": "wWsM69Xx1B8Mfy9s",
+    "active": false
   }
 }

@@ -1,0 +1,13 @@
+{
+  "checks": {
+    "0.7": {
+      "source": "user_mac_terminal",
+      "observed_on": "2026-11-04",
+      "url": "https://dev.kyneticai.com/",
+      "http_status": 200,
+      "deployed_revision": "7b21cd751f85c9d3d7a0d13ed2e0bcb6279d629d",
+      "reported_output": "PASS dev database: isolated kynetic-dev-portal Postgres volume; synthetic seed guard passed\nPASS dev app: 127.0.0.1:3031/api/health HTTP 200; providers stubbed; outbound disabled\nPASS dev HTTPS site installed: dev.kyneticai.com -> 127.0.0.1:3031\nPASS 0.7 https://dev.kyneticai.com/ HTTP 200 (verified from Mac)\nDEPLOYED_REVISION=7b21cd751f85c9d3d7a0d13ed2e0bcb6279d629d",
+      "note": "Initial LibreSSL handshake error recovered by retry; final request returned 200. Report supplied by Abdullah in this chat."
+    }
+  }
+}

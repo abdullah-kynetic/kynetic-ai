@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Kynetic step checks. Read-only. Never prints secret values."""
-import json, os, re, subprocess, sys, glob, urllib.request, urllib.error
+import argparse, json, os, re, subprocess, sys, glob, urllib.request, urllib.error
+from vps_evidence import load_dev_portal_evidence
 from pathlib import Path
 
 LIVE_ALEX = "agent_8201m5afn2rbeb7v29xfkhh1pjef"
 N8N = "https://n8n.kyneticai.com"
 TWENTY = "https://crm.kyneticai.com"
 R = {"PASS": 0, "FAIL": 0, "SKIP": 0}
+VPS_EVIDENCE = None
 
 def out(s, cid, msg): R[s] += 1; print(f"{s:4} {cid} {msg}")
 def ok(cid, cond, msg, fail="not built"): out("PASS" if cond else "FAIL", cid, msg if cond else f"{msg}: {fail}")
@@ -66,7 +68,13 @@ def s0():
         c, d = el("/v1/convai/agents?page_size=100")
         names = [a.get("name", "") for a in d.get("agents", [])]
         ok("0.6", any(n.startswith("DEV-") for n in names), "DEV- agent on Blitz", f"HTTP {c}, none named DEV-" if c == 200 else f"HTTP {c}")
-    if env("DEV_PORTAL_URL"): http_check("0.7", "dev portal up", os.environ["DEV_PORTAL_URL"])
+    if VPS_EVIDENCE:
+        try:
+            revision = load_dev_portal_evidence(VPS_EVIDENCE, os.environ.get("DEV_PORTAL_URL", ""))
+            out("PASS", "0.7", f"dev portal HTTP 200 — USER MAC EVIDENCE, deployed {revision[:12]}; not checked from this executor")
+        except (ValueError, KeyError, OSError):
+            out("FAIL", "0.7", "invalid or stale user-supplied VPS evidence")
+    elif env("DEV_PORTAL_URL"): http_check("0.7", "dev portal up", os.environ["DEV_PORTAL_URL"])
     else: out("FAIL", "0.7", "dev portal up: DEV_PORTAL_URL not set (not built)")
 
 def s1():
@@ -142,7 +150,12 @@ def s6():
 
 STEPS = [s0, s1, s2, s3, s4, s5, s6]
 if __name__ == "__main__":
-    a = sys.argv[1] if len(sys.argv) > 1 else "all"
+    parser = argparse.ArgumentParser()
+    parser.add_argument("step", nargs="?", default="all", choices=["all", *map(str, range(7))])
+    parser.add_argument("--vps-evidence", help="Explicit user-reported Mac evidence for check 0.7")
+    args = parser.parse_args()
+    a = args.step
+    VPS_EVIDENCE = args.vps_evidence
     for i in (range(7) if a == "all" else [int(a)]):
         print(f"== step {i} =="); STEPS[i]()
     print(f"PASS={R['PASS']} FAIL={R['FAIL']} SKIP={R['SKIP']}")

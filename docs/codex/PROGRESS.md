@@ -1,7 +1,7 @@
 # Codex progress (steps 0–6)
 Tick a step only when `scripts/checks/run.sh <n>` has no FAIL. Note SKIPs.
 
-- [ ] 0 Dev setup
+- [x] 0 Dev setup
 - [ ] 1 Foundation
 - [ ] 2 Alex on ElevenLabs
 - [ ] 3 Lead→booking chain
@@ -42,3 +42,10 @@ Tick a step only when `scripts/checks/run.sh <n>` has no FAIL. Note SKIPs.
 - Mac SSH authentication as `portalnew-deploy` was denied before any remote command. Repository inspection confirms this is a restricted production forced-command account, not a suitable admin login for dev setup. Earlier advice to use it was incorrect.
 - Dev deployment now uses separate optional `DEV_DEPLOY_SSH_*` selectors and prompts for an existing Mac key file path or normal SSH config/agent. Defaults are the documented server IP and admin account `ubuntu`; restricted production accounts are refused. No private key values are copied, displayed or transferred.
 - Bash syntax and stubbed SSH tests passed for admin selection, key paths containing spaces, and production-account refusal. Awaiting Mac SSH/deploy output; no VPS deployment or 0.7 success claimed.
+
+### Step 0 complete — 2026-11-04
+- Mac handoff confirmed deployment of `7b21cd751f85c9d3d7a0d13ed2e0bcb6279d629d`: dedicated Postgres volume/synthetic guard, healthy loopback app at 3031, new HTTPS dev site, and final public HTTP 200. The initial TLS error recovered during the retry. Existing production site blocks were reported retained.
+- Created only the new `DEV - Setup Safety Check` n8n workflow, DEV tagged and verified inactive. It is manual-only with no send nodes; its literal TEST_PHONE placeholder cannot contact anyone. Resource ID is recorded in `dev-resources.json`. The n8n connector returned an internal error, so provisioning used the documented REST endpoint with its env key.
+- `scripts/checks/run.sh 0 --vps-evidence docs/codex/vps-evidence.json`: **7 PASS, 0 FAIL, 0 SKIP**. Checks 0.1–0.6 reran here; 0.7 explicitly used Abdullah's Mac output. Evidence is checked against the target URL, status, provenance, date, and deployed ancestor revision; ordinary checker invocation still performs HTTP normally.
+- Evidence validation tests passed, including wrong-target, failure-status, missing-provenance/output, stale/future-date and unknown-revision rejection. Prior network blocker is resolved for this workflow by the authorized Mac handoff, not by changing network policy.
+- Continuing to step 1 under Abdullah's instruction to proceed between steps.
