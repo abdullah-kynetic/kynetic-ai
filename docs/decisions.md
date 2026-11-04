@@ -151,3 +151,7 @@ Decided:
 Replaced: D-018 item 2 and 3 as far as they make Retell the platform for Alex. Still stands from D-018: Vapi stays parked, and Nora and Emily stay on Retell workspace `kyneticai`, frozen.
 Note: Twenty and this repo number decisions differently after Oct 24. Twenty has D-023 as the offer and pricing decision; the repo branches `feat/brand-revamp` and `fix/a2p-privacy-terms` carry D-023 (site rebuild) and D-024 (offer). D-025 was the first number free in both. Flag for Abdullah: reconcile D-023/D-024 when those branches merge.
 
+
+## 2026-11-04 — verified sessions replace anonymous admin open mode (dev branch)
+
+Abdullah explicitly requested removing the anonymous admin default, requiring verified server-side sessions for `/admin`, restricting persona switching to an explicit non-production flag, unit tests, and no deployment. This supersedes the anonymous open-mode behavior for the implementation on `dev/codex-setup`. Production remains unchanged. Existing role permissions (including authorized Kynetic support) remain intact. The checker now probes only DEV_PORTAL_URL under the no-production-request instruction; its results do not certify production access controls.

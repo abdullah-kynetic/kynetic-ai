@@ -14,7 +14,13 @@ import {
 
 export type ShellUser = { name: string | null; email: string; roleLabel: string };
 
-export function UserMenu({ user }: { user: ShellUser }) {
+export function UserMenu({
+  user,
+  showPersonas = false
+}: {
+  user: ShellUser;
+  showPersonas?: boolean;
+}) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -31,21 +37,24 @@ export function UserMenu({ user }: { user: ShellUser }) {
             <span className='text-muted-foreground text-xs'>{user.roleLabel}</span>
           </DropdownMenuLabel>
         </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        {/* No sign-in in open mode: these switch which existing user the portal acts as. */}
-        <DropdownMenuLabel className='text-muted-foreground text-xs'>View as</DropdownMenuLabel>
-        {(
-          [
-            ['admin', 'Kynetic admin'],
-            ['va', 'Kynetic support'],
-            ['owner', 'Client owner'],
-            ['staff', 'Client team member']
-          ] as const
-        ).map(([key, label]) => (
-          <DropdownMenuItem key={key} onClick={() => window.location.assign(`/open/${key}`)}>
-            {label}
-          </DropdownMenuItem>
-        ))}
+        {showPersonas && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel className='text-muted-foreground text-xs'>View as</DropdownMenuLabel>
+            {(
+              [
+                ['admin', 'Kynetic admin'],
+                ['va', 'Kynetic support'],
+                ['owner', 'Client owner'],
+                ['staff', 'Client team member']
+              ] as const
+            ).map(([key, label]) => (
+              <DropdownMenuItem key={key} onClick={() => window.location.assign(`/open/${key}`)}>
+                {label}
+              </DropdownMenuItem>
+            ))}
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

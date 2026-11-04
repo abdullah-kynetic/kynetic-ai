@@ -14,6 +14,15 @@ describe('F-87 env validation', () => {
   it('accepts a complete environment and defaults the kill switch to off', () => {
     const env = parseEnv(valid);
     expect(env.OUTBOUND_ENABLED).toBe(false);
+    expect(env.DEV_PERSONA_SWITCHING).toBe(false);
+  });
+
+  it('forces persona switching off in production even when the flag is set', () => {
+    expect(
+      parseEnv({ ...valid, NODE_ENV: 'production', DEV_PERSONA_SWITCHING: 'true' })
+        .DEV_PERSONA_SWITCHING
+    ).toBe(false);
+    expect(parseEnv({ ...valid, DEV_PERSONA_SWITCHING: 'true' }).DEV_PERSONA_SWITCHING).toBe(true);
   });
 
   it('refuses a missing variable and names it without echoing values', () => {

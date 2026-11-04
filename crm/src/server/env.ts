@@ -6,6 +6,7 @@ const booleanString = z.enum(['true', 'false']).transform((v) => v === 'true');
 
 export const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+  DEV_PERSONA_SWITCHING: booleanString.default(false),
   APP_BASE_URL: z.url(),
   DATABASE_URL: z.string().startsWith('postgres'),
   DATABASE_URL_AUTH: z.string().startsWith('postgres'),
@@ -68,7 +69,11 @@ export const refinedEnvSchema = envSchema
   .refine((e) => e.PROVIDER_MODE !== 'stub' || !e.OUTBOUND_ENABLED, {
     message: 'PROVIDER_MODE=stub requires OUTBOUND_ENABLED=false',
     path: ['PROVIDER_MODE']
-  });
+  })
+  .transform((value) => ({
+    ...value,
+    DEV_PERSONA_SWITCHING: value.NODE_ENV !== 'production' && value.DEV_PERSONA_SWITCHING
+  }));
 
 export type Env = z.infer<typeof envSchema>;
 

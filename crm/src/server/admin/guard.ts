@@ -1,4 +1,4 @@
-import { getSessionUser, type AuthUser } from '../auth';
+import { getVerifiedSessionUser, type AuthUser } from '../auth';
 
 export type AdminAccess =
   | { kind: 'ok'; user: AuthUser; role: 'admin' | 'va' }
@@ -16,7 +16,7 @@ export async function decideAdminAccess(
   headers: Headers,
   deps: { getUser?: (headers: Headers) => Promise<AuthUser | null> } = {}
 ): Promise<AdminAccess> {
-  const user = await (deps.getUser ?? getSessionUser)(headers);
+  const user = await (deps.getUser ?? getVerifiedSessionUser)(headers);
   if (!user) return { kind: 'sign_in' };
   if (!user.kyneticRole) return { kind: 'forbidden' };
   if (user.twoFactor === 'enrol' || user.twoFactor === 'challenge')

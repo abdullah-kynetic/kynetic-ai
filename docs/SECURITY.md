@@ -661,3 +661,11 @@ The UI has no tel link, calls no provider and creates no AI calls row/send job. 
 ### M17-01 internal proposal drafts — 2026-11-01
 
 Proposal reads and writes reuse existing admin/TOTP, no-view-as, active-admin and CRM Full checks in the synthetic agency workspace. Clients and VAs cannot access them; foreign deal/draft IDs return NOT_FOUND. Strict input validation rejects status/tenant overrides. Plain-text rendering escapes HTML-like content; error responses and logs exclude raw draft-bearing database errors. Audit records contain IDs, revisions and changed field names, never draft bodies. There is no public preview, send or publish action.
+
+### Session enforcement restored on dev/codex-setup (2026-11-04)
+
+Per Abdullah's explicit instruction, anonymous requests never select a default persona. `getVerifiedSessionUser` verifies the signed Better Auth session cookie against the existing server-side session store, checks expiry, current user/role/disabled state, staff lifetime and session-level second-factor verification. Cookie session caching is disabled. `/admin` and `/api/admin` reject missing sessions with HTTP 401 and insufficient roles/second-factor state with HTTP 403 in the Next proxy before rendering, including prefetch requests; layout and route/action guards retain their own checks.
+
+`DEV_PERSONA_SWITCHING` defaults false and is forced false for `NODE_ENV=production`, even when configured true. In non-production it permits only an already authenticated, second-factor-verified Kynetic admin to preview an explicitly selected existing persona. Missing, malformed, unknown or unavailable selections never fall back to admin or another role. The `/open/[persona]` endpoint and menu are disabled without this flag. Admin authorization always uses the verified real session, independent of persona previews.
+
+This change restores session verification, not the previously removed sign-in UI, session-issuance routes or second-factor setup flow. Existing legitimate sessions can be verified; anonymous access fails closed. No provider login/email flow, production setting or deployment is performed by this work. Additional sign-in restoration must be handled explicitly before relying on new interactive logins.

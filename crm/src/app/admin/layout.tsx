@@ -9,7 +9,7 @@ import { resolveViewAs, VIEW_AS_COOKIE } from '@/server/impersonation';
 import { roleLabel } from '@/server/shell';
 import type { Metadata } from 'next';
 import { cookies, headers } from 'next/headers';
-import { forbidden, redirect } from 'next/navigation';
+import { forbidden, redirect, unauthorized } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: { default: 'Admin | Kynetic', template: '%s | Kynetic' },
@@ -24,7 +24,7 @@ export const dynamic = 'force-dynamic';
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const [cookieStore, requestHeaders] = await Promise.all([cookies(), headers()]);
   const access = await decideAdminAccess(requestHeaders);
-  if (access.kind === 'sign_in') redirect('/sign-in');
+  if (access.kind === 'sign_in') unauthorized();
   if (access.kind === 'forbidden') forbidden();
   if (access.kind !== 'ok') return null;
   // Impersonation cannot reach the admin side (SECURITY 2.6): exit first.
