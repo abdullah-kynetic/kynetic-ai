@@ -24,9 +24,9 @@
   --color-success: #2f7d4f;
 
   /* Espresso palette (constants; applied through the scope below) */
-  --espresso-band: #1C1916;
-  --espresso-card: #26211C;
-  --espresso-border: #3A332B;
+  --espresso-band: #281F1C;
+  --espresso-card: #342A26;
+  --espresso-border: #453832;
   --espresso-divider: #f4f1ea40;
   --espresso-text: #f4f1ea;
   --espresso-muted: #b9b2a7;

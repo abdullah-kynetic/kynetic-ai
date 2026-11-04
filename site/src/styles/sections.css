@@ -143,3 +143,24 @@ main[data-framer-name="Content"] article strong.framer-text { color: var(--kn-in
 }
 .kn-plan__list, .kn-pricing__addons strong, .kn-pricing__addons-title { font-size: var(--text-base); }
 .kn-btn { font-size: var(--text-base); }
+
+/* Espresso bands (#281F1C): closing CTA card and footer ---------------------------------------------- */
+/* Cream text (#f4f1ea), orange button with near-black label, lighter orange (#E07A3F) for text and links,
+   champagne gold (#C9A96E) for small labels. Never gold or dark orange text on light surfaces from here. */
+.framer-1gqj635 { background-color: var(--espresso-band) !important; --border-color: var(--espresso-border) !important; }
+.framer-1gqj635 p.framer-text, .framer-1gqj635 h1, .framer-1gqj635 h2 { --framer-text-color: var(--espresso-text) !important; color: var(--espresso-text) !important; }
+.framer-1gqj635 [data-framer-name="Badge"] .framer-text, .framer-1gqj635 .framer-vkcjs6 p.framer-text, .framer-1gqj635 .framer-ppu1et p.framer-text { --framer-text-color: var(--espresso-gold) !important; color: var(--espresso-gold) !important; }
+.framer-1gqj635 a:not([class*="button"]) p.framer-text { color: inherit; }
+footer.framer-34GLz { background-color: var(--espresso-band) !important; --border-color: var(--espresso-border) !important; color: var(--espresso-text); }
+footer.framer-34GLz [data-framer-name="Badge"] .framer-text { --framer-text-color: var(--espresso-gold) !important; color: var(--espresso-gold) !important; }
+footer.framer-34GLz .framer-1k530gz p, footer.framer-34GLz .framer-97ffzp p { --framer-text-color: var(--espresso-text) !important; color: var(--espresso-text) !important; }
+footer.framer-34GLz a.framer-1cg0spb p.framer-text, footer.framer-34GLz a.framer-1cg0spb, footer.framer-34GLz a.framer-styles-preset-1cg0spb { --framer-text-color: var(--espresso-accent-text) !important; color: var(--espresso-accent-text) !important; }
+footer.framer-34GLz a.framer-1cg0spb:hover, footer.framer-34GLz a.framer-styles-preset-1cg0spb:hover { --framer-text-color: var(--espresso-text) !important; color: var(--espresso-text) !important; }
+footer.framer-34GLz .framer-z7as9h > a { border: 1px solid var(--espresso-border); }
+footer.framer-34GLz .framer-z7as9h > a svg { color: var(--espresso-text); stroke: var(--espresso-text); }
+footer.framer-34GLz .framer-z7as9h > a:hover { border-color: var(--espresso-accent-text); }
+footer.framer-34GLz p.framer-text { --framer-text-color: var(--espresso-muted) !important; color: var(--espresso-muted) !important; }
+footer.framer-34GLz .framer-z7as9h > a svg, footer.framer-34GLz .framer-z7as9h > a svg * { color: var(--espresso-text) !important; stroke: var(--espresso-text) !important; }
+footer.framer-34GLz .framer-z7as9h > a svg [fill]:not([fill="none"]) { fill: var(--espresso-text) !important; }
+footer.framer-34GLz .framer-z7as9h > a svg { fill: var(--espresso-text) !important; color: var(--espresso-text) !important; stroke: none !important; }
+footer.framer-34GLz .framer-z7as9h > a svg * { fill: inherit; stroke: none !important; }
