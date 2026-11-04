@@ -20,5 +20,21 @@
       "checker_revision": "aacd2741",
       "note": "Curl followed redirects. Final status alone does not distinguish an admin page from a sign-in page. No response body or redirect chain was collected. Subsequent manually entered PASS text was a shell command error, not check evidence."
     }
+  },
+  "investigations": {
+    "dev_admin": {
+      "source": "user_mac_terminal",
+      "observed_on": "2026-11-04",
+      "url": "https://dev.kyneticai.com/admin",
+      "no_follow_http_status": 403,
+      "redirect_url": "",
+      "follow_http_status": 403,
+      "final_url": "https://dev.kyneticai.com/admin",
+      "title": "Admin | Kynetic | Kynetic",
+      "admin_all_clients_heading": false,
+      "diagnostic_revision": "de427d05",
+      "reported_output": "NO_FOLLOW 403\nFOLLOW 403 FINAL_URL https://dev.kyneticai.com/admin\nTITLE Admin | Kynetic | Kynetic\nADMIN_ALL_CLIENTS_HEADING False",
+      "conclusion": "This dev request was denied directly; no sign-in redirect and no All-clients heading. Does not resolve the separate production check."
+    }
   }
 }
