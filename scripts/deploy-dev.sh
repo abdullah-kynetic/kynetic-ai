@@ -3,7 +3,7 @@
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 [ "$(git branch --show-current)" = dev/codex-setup ] || { echo 'Checkout dev/codex-setup first.' >&2; exit 1; }
-[ -z "$(git status --porcelain --untracked-files=no)" ] || { echo 'Commit tracked changes before deployment.' >&2; exit 1; }
+# Local edits are left untouched; the upload below contains only committed HEAD files.
 command -v ssh >/dev/null
 host="${PORTAL_DEPLOY_HOST:-}"
 user="${PORTAL_DEPLOY_USER:-}"

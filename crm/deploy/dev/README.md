@@ -6,7 +6,7 @@ The script uses `PORTAL_DEPLOY_HOST`, `PORTAL_DEPLOY_USER` and, if supplied,
 non-secret selectors and uses normal SSH configuration/agent keys. Never paste a key
 into a command. The VPS account needs sudo; the SSH connection requests a terminal.
 
-The tracked revision is streamed over SSH into a private staging directory. The server
+Uncommitted Mac edits are neither deployed nor changed. The tracked revision is streamed over SSH into a private staging directory. The server
 script runs as root, stores immutable releases under `/opt/kynetic-dev-portal/releases/`,
 and keeps generated credentials outside the repository in
 `/var/lib/kynetic-dev-portal/dev.env` (mode 600). Repeated deployments retain credentials

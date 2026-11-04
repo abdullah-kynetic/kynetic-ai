@@ -32,3 +32,8 @@ Tick a step only when `scripts/checks/run.sh <n>` has no FAIL. Note SKIPs.
 - Local validation passed: Bash syntax for both scripts; Docker Compose rendering and assertions for dedicated volume/port/provider isolation; Caddy candidate preservation/idempotency and refusal of duplicate or edited dev routes; generated credential redaction and log mode 600; `git diff --check`.
 - Not run here: VPS deploy, Docker image build, migrations/seed, TLS issuance, or public dev HTTP check. Runtime deployment depends on the Mac handoff; step 0 remains unchecked. Check 0.7's three previous failures describe this executor's network restriction and are not new deployment attempts.
 - Awaiting Mac output: `PASS 0.7 ... HTTP 200` plus `DEPLOYED_REVISION`. Then verify available checks here, record remote evidence for 0.7, and continue setup before step 1.
+
+### Step 0 handoff correction — 2026-11-04
+- Mac output confirmed the initial deployment script stopped at its clean-worktree guard before SSH; this is not a VPS check 0.7 failure.
+- Removed that unnecessary guard. Uploads still use `git archive HEAD`; uncommitted Mac changes are preserved and excluded from the deployed payload. Branch restriction remains enforced.
+- Validation: Bash syntax; isolated temporary Git checkout with a modified tracked file reaches a stubbed SSH command without changing the file; wrong branch still refuses before SSH. Awaiting deployment output; step 0 remains unchecked.
