@@ -575,3 +575,9 @@ Work branch, after 2d6594a. PostgreSQL 16 was disposable/local on loopback 55432
 ### Preview deployment preparation (2026-11-01)
 
 User approved a separate synthetic preview of work for visual review. Preview Compose now supplies DATABASE_URL_AUTH using a separately generated kynetic_auth password and explicitly sets PROVIDER_MODE=stub with outbound disabled. Existing preview state gets AUTH_PW on its next up without replacing other credentials. Bash syntax, YAML parsing and checks of the auth-role/stub/outbound settings pass locally. No Docker deployment or external health check ran: this environment has no configured VPS connection/credentials or TCP grants, and GitHub CLI authentication is invalid. Approval remains valid; access setup is the blocker, not another permission request.
+
+### Codex foundation verification (2026-11-04)
+
+`crm/tests/unit/kill-switch.test.ts` verifies the existing outbound gate's global and tenant kill switches, including the inbound SMS reply path and module protection. It uses transaction/consent test doubles and makes no provider requests. Run with `bun run test tests/unit/quiet-hours.test.ts tests/unit/contact-consent-status.test.ts tests/unit/kill-switch.test.ts` from `crm/`.
+
+The cloud executor cannot reach the portal domains. `bash scripts/checks/mac-portal.sh` is the read-only Mac handoff for check 1.7: root must be available and unauthenticated `/admin` must return a final non-200 HTTP response. Record the reported status codes in `docs/codex/PROGRESS.md`; a public admin response requires a separate live-system authorization before any change.

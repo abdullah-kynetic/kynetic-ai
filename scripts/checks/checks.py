@@ -91,7 +91,7 @@ def s1():
     else:
         c, _ = get(os.environ["PORTAL_URL"].rstrip("/") + "/admin")
         c2, _ = get(os.environ["PORTAL_URL"])
-        ok("1.7", c2 in (200, 302, 307) and c != 200, "real portal up, /admin not public", f"root {c2}, /admin {c}")
+        ok("1.7", c2 in (200, 302, 307) and 200 <= c < 600 and c != 200, "real portal up, /admin not public", f"root {c2}, /admin {c}")
     files = subprocess.run(["git", "ls-files"], capture_output=True, text=True).stdout.split()
     pat = re.compile(r"(sk_live_[A-Za-z0-9]{20,}|xi-api-key\s*[:=]\s*['\"][a-z0-9]{20,}|AC[0-9a-f]{32}|eyJhbGciOi[A-Za-z0-9_-]{30,}\.)")
     hits = []
