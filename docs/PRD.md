@@ -53,7 +53,7 @@ Conventions used below:
   - Deploys are preview-only until Abdullah approves (locked rule). Preview environments contain no real client data.
   - Never print or commit secrets. Merges use `--no-ff`. Commits are authored as `abdullah-kynetic <abdullah@kyneticai.com>`.
   - Build runs as parallel Cursor/Claude threads: M0 first, then M1 to M10 in merge waves. Each thread owns one milestone and merges when its tests pass.
-  - SMS depends on Twilio A2P campaign approval. Project memory (Oct 22, 2026): sole-prop brand approved, no campaign yet, sends fail with error 30034. SMS features are built and tested against fakes until approval.
+  - SMS depends on Twilio A2P campaign approval. Project memory (Oct 22, 2026): sole-prop brand approved, no campaign yet, sends fail with error 30034. Update 2026-11-04 (Abdullah): campaign CJUDEQY was verified on 2026-10-28. SMS features were built and tested against fakes; per-tenant sending numbers and the tenant approval flag still gate production sends.
   - Budget and delivery date: UNRESOLVED (needs Abdullah's date). Working target: the first founding client live and using the portal daily.
   - Performance and accessibility numeric targets are not in the spec: see "Success measures".
 
@@ -310,7 +310,7 @@ Approved by Abdullah on 2026-10-25. Numbers are kept so other docs can cite them
 - Delivery date (13).
 - Which F-97 connectors, and their API access (17).
 - The state-by-state calling and recording rules and consent wording, which need counsel (18, SECURITY 3).
-- Twilio A2P campaign approval and per-tenant sending numbers (Twilio, in progress).
+- Per-tenant sending numbers (Twilio). The A2P campaign CJUDEQY was verified 2026-10-28 per Abdullah.
 - OPM vendors or connectors, if Kynetic later wants more than status records in the portal.
 
 ### Gap check 2026-10-25: approved for v1

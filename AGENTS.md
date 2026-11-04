@@ -95,7 +95,7 @@ Follow the layout in `docs/ARCHITECTURE.md`: server code in `src/server/...`, fe
 - **Sensitive systems (names only):** production Postgres, Abdullah's server, Cloudflare, offsite backup storage, Twenty (Kynetic-internal, no client data), Twilio, the voice provider, n8n, Resend, Google OAuth.
 - **Blocking unknowns:** none block M0. Every product and technical decision is closed in the PRD "Decisions log" (approved by Abdullah, 2026-10-25). These stay UNRESOLVED because they need outside information; ask Abdullah one at a time if your milestone touches one:
   - Delivery date (all milestones).
-  - Twilio A2P campaign approval and per-tenant sending numbers (blocks SMS going live, M4 and M7).
+  - Twilio per-tenant sending numbers (SMS going live, M4 and M7). The A2P campaign itself (CJUDEQY) was verified 2026-10-28 per Abdullah.
   - State calling and recording rules and consent wording, which need counsel (M4). Build to the decided defaults: 8:00 am to 9:00 pm lead-local, disclosure on every call, state table as versioned config.
   - Which Phase 2 direct connectors F-97 covers (Later, not v1).
   - OPM vendors or connectors beyond status records (M11).

@@ -7,9 +7,9 @@ Mirror of open problems tracked in Twenty. Twenty is canonical; this file mirror
 Emergency calls and urgent notifications may reach someone who opted out.
 Fix: counsel sign-off (task 1.4). Also feeds the agreement rewrite (task 4.7, 4.8).
 
-### KI-003: Twilio A2P not registered, SMS filtered (high)
+### KI-003: Twilio A2P not registered, SMS filtered (resolved at Twilio, follow-ups open)
 SMS from +16692660586 never arrived on Sep 22.
-Fix: finish A2P 10DLC registration (task 1.3).
+2026-11-04 update (Abdullah): Twilio A2P campaign CJUDEQY was verified on 2026-10-28. Registration (task 1.3) is done. Still open: restoring the text wording in the live Alex prompt and adding the SMS tool (pre-approved in D-025, not yet done), per-client sending numbers, and the portal SMS gate (SECURITY 3.7) staying off until an admin marks a tenant approved.
 
 ### KI-004: Emily workflow still has 13 Notion nodes (medium)
 Fix: replace with Twenty nodes, needs approval (task 3.2).

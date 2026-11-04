@@ -258,7 +258,7 @@ Verification per source. Header names and algorithms are checked against current
 | Our events to n8n (lead.created, deal.stage_changed, call.completed) | We sign outbound. n8n workflows must verify. KI-005 found existing n8n webhooks accept unauthenticated calls | Send IDs, not full PII. Decided 2026-10-25 (recommended option approved) |
 
 ### 3.7 SMS gating until A2P approval
-Status in sources (Oct 22 project notes): the local 10DLC number has an approved sole-proprietor brand, but **no campaign**, and sends fail with error 30034. Two-way inbox is Later (F-47).
+Status in sources (Oct 22 project notes): the local 10DLC number has an approved sole-proprietor brand, but **no campaign**, and sends fail with error 30034. Update 2026-11-04 (Abdullah): campaign CJUDEQY was verified on 2026-10-28; the gate below stays on until an admin marks a tenant approved. Two-way inbox is Later (F-47).
 - SMS is denied by default (`sms_not_approved`) unless the tenant's Twilio integration shows an approved campaign, set by an admin after checking Twilio. Status shows in F-62.
 - Text-back (F-81) and SMS steps are skipped with a visible "SMS not approved" activity, not silently dropped.
 - STOP and HELP handling is built and tested in M4 regardless of approval.
@@ -513,7 +513,7 @@ Tests below go into `docs/TESTING.md` and run in CI (Vitest for unit and integra
 |---|---|---|---|
 | R1 | A compromised Kynetic admin account reaches every tenant | Abdullah | Mitigated: Google allowlist plus mandatory TOTP (F-98, 2.1), audit log, impersonation limits |
 | R2 | Legal wording, state quiet hours, two-party recording states, DNC scrub and consent basis for third-party leads not settled. This file is not legal advice | Abdullah, with counsel | Open |
-| R3 | A2P campaign not approved: no SMS in production | Abdullah (Twilio thread) | Open. SMS gated off (3.7) |
+| R3 | A2P campaign not approved: no SMS in production | Abdullah (Twilio thread) | Campaign CJUDEQY verified 2026-10-28 (Abdullah). SMS stays gated off per tenant until an admin approves (3.7) |
 | R4 | Cloudflare origin lock-down and host hardening `Not configured`. Shared VPS risk with n8n, Twenty and the existing portal | Abdullah | Open |
 | R5 | Backups hold deleted data for up to 12 months | Abdullah | Accepted (Decided 2026-10-25); must appear in client agreement |
 | R6 | Provider-hosted recordings reachable by long-lived URLs | Abdullah | Mitigated by copying to tenant storage (2.3 item 10) |

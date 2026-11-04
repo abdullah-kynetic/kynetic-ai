@@ -25,3 +25,5 @@ When the Twilio A2P campaign is approved: put the "text the confirmation" wordin
 
 ## Out of scope
 SMS itself (n8n plus Twilio workflow, Twilio account check thread).
+
+2026-11-04 update (Abdullah): Twilio A2P campaign CJUDEQY was verified on 2026-10-28. The restore step is now unblocked but has not been done.
