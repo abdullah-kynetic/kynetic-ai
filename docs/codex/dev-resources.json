@@ -1,0 +1,13 @@
+{
+  "elevenlabs": {
+    "name": "DEV-Alex Codex Setup",
+    "agent_id": "agent_9401m6kpwrd1fgx8cajfjenr9xxe",
+    "account_env": "ELEVENLABS_API_KEY_blitz",
+    "tools": [],
+    "phone_number_attached": false
+  },
+  "n8n": {
+    "repo_workflow": "n8n/workflows/dev/setup-safety-check.json",
+    "deployed": false
+  }
+}

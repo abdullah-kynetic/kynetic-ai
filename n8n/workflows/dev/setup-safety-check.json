@@ -1,0 +1,66 @@
+{
+  "name": "DEV - Setup Safety Check",
+  "active": false,
+  "tags": [
+    {
+      "name": "DEV"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "manual-trigger",
+      "name": "Manual dev check",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "test-destination",
+      "name": "TEST_PHONE placeholder only",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "destination",
+              "name": "test_phone",
+              "value": "{{TEST_PHONE}}",
+              "type": "string"
+            },
+            {
+              "id": "outbound-disabled",
+              "name": "outbound_enabled",
+              "value": false,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Manual dev check": {
+      "main": [
+        [
+          {
+            "node": "TEST_PHONE placeholder only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
