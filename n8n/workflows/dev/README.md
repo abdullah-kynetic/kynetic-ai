@@ -29,7 +29,9 @@ portal deployment changes are needed later, push and use the required Mac handof
 ## Step 4 notification stubs
 
 The four `missed-call`, `reminder`, `owner-alert` and `error-alert` workflows are
-repository-only, inactive, manual synthetic rehearsals. Regenerate with
+inactive, manual synthetic rehearsals. They have now also been imported as NEW
+DEV-tagged inactive objects; IDs and source hashes are recorded in
+`docs/codex/dev-notification-resources.json`. Regenerate with
 `python3 tools/build_dev_notification_workflows.py`. Code bodies come from
 `notification-prepare.js`; no skill/reference contents were copied.
 
@@ -48,4 +50,7 @@ credentials and automatic retry off. Manual/success/error payload storage is off
 VM tests execute these exact Code bodies, including timing, deduplication and redaction.
 The portal's existing server-side sendSms/OutboundGate remains the only real SMS path;
 real delivery/activation is unverified and requires a separate explicit approval.
-These files do not configure or change any remote n8n workflow.
+The create-only importer `tools/import_dev_notifications.py` is dry-run by default.
+Its approved development application created only these four new stubs and assigned
+the DEV tag to those new IDs; it has no activation/execution/delete operation. Existing
+workflow definitions are never edited. Real delivery is still unconfigured and unauthorized.

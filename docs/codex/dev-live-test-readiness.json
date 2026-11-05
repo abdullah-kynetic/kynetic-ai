@@ -1,0 +1,16 @@
+{
+  "source": "read_only_provider_gets",
+  "observed_on": "2026-11-05",
+  "dev_agent_id": "agent_0801m6mctqxpe71b4kb269f9bqd5",
+  "agent_name_is_dev": true,
+  "tool_types": [
+    "system",
+    "system"
+  ],
+  "referenced_tool_count": 0,
+  "dev_number_id": "phnum_7801m6mctyyxeder81mx3gyffmbr",
+  "dev_number_assigned_to_expected_agent": true,
+  "owned_speed_to_lead_workflow_inactive": true,
+  "owned_workflow_http_dispatch_disabled": true,
+  "provider_requests_were_read_only": true
+}
