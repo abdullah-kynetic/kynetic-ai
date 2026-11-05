@@ -11,7 +11,7 @@ export interface Niche {
   draft: boolean;                               // true => noindex, left out of sitemap.xml
   metaTitle: string;
   metaDescription: string;
-  hero: { eyebrow: string; headline: string; sub: string; ctaLabel: string; ctaNote?: string };
+  hero: { eyebrow: string; headline: string; sub: string; ctaLabel: string; ctaNote?: string; termsLink?: string };
   example: { title: string };                   // worked lost-revenue example (example inputs live in LeakCalc.astro)
   video: { title: string; embedUrl: string | null; placeholder: string; todo: string };  // renders only when embedUrl is set
   services: {
@@ -24,7 +24,7 @@ export interface Niche {
   };
   how: { eyebrow: string; title: string; steps: { title: string; desc: string }[] };
   portal: { eyebrow: string; title: string; lede: string; points: string[]; mockNote: string };
-  guarantee: { eyebrow: string; title: string; wording: string; condition: string; approved: boolean; todo: string };  // renders only when approved
+  guarantee: { eyebrow: string; title: string; wording: string; termsTitle: string; terms: string[]; approved: boolean; todo: string };  // the offer wording is Abdullah's; renders only when approved
   proof: { eyebrow: string; title: string; cases: CaseCard[]; emptyNote: string; placeholders: string[]; todo: string };
-  finalCta: { title: string; sub: string; ctaLabel: string; capacity: string; steps: string };
+  finalCta: { title: string; sub: string; ctaLabel: string; capacity?: string; steps: string };
 }

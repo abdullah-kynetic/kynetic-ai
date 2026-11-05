@@ -5,13 +5,14 @@ const remodelers: Niche = {
   draft: true, // noindex + left out of the sitemap. Flip to false when the page is ready to be found
   metaTitle: 'Done-for-you AI System for Remodelers | Kynetic AI',
   metaDescription:
-    'Every lead called back in under 60 seconds and every quote chased until you get an answer, so more of your ad spend turns into booked estimates. Built and run for you by Kynetic AI.',
+    'More booked appointments from the leads you already pay for, or we work free until you get them. Built and run for you by Kynetic AI.',
   hero: {
     eyebrow: 'Done-for-you AI System for remodelers',
-    headline: 'More booked estimates from the Meta and web leads you already pay for.',
-    sub: 'Every lead called in under 60 seconds and every quote chased until you get an answer, so more of your ad spend turns into booked estimates. Built and run for you.',
+    headline: 'We book remodelers 20% more appointments than last month in 30 days, or we work free until we do.',
+    sub: 'Alex calls every new Meta and web lead back in under 60 seconds and books the estimate, so more of the ad spend you already pay for turns into appointments on your calendar. Built and run for you.',
     ctaLabel: 'Book your free lead leak audit',
     ctaNote: 'A few short questions, then pick a time. The audit call is free.',
+    termsLink: 'Terms apply. See how it is measured.',
   },
   example: { title: 'What slow replies can cost a remodeler' },
   video: {
@@ -61,16 +62,16 @@ const remodelers: Niche = {
     steps: [
       { title: 'Free lead leak audit', desc: 'A short call to map how leads reach you today and where they slip away.' },
       { title: 'We fix your biggest leak first', desc: 'Alex first, then only the add-ons your audit shows will book you more work.' },
-      { title: 'Live in 14 days', desc: 'We build, test every call and text, and go live.' },
-      { title: 'Watch booked estimates climb in your portal.', desc: 'See every booked estimate and how fast each lead got a response.' },
+      { title: 'We build, test and go live', desc: 'We build it, test every call and text, and agree your go-live date on the audit.' },
+      { title: 'Watch booked appointments climb in your portal.', desc: 'See every booked appointment next to last month\'s baseline, and how fast each lead got a response.' },
     ],
   },
   portal: {
     eyebrow: 'Client portal',
-    title: 'See every booked estimate and how fast each lead got a call',
+    title: 'See every booked appointment and how fast each lead got a call',
     lede: 'Your client portal shows the estimates booked from each system and how quickly every new lead was answered, so you are never guessing.',
     points: [
-      'Booked estimates from each system',
+      'Booked appointments, next to last month\'s baseline',
       'How fast every new lead got a response',
       'Which systems are on, and which are not',
     ],
@@ -78,11 +79,17 @@ const remodelers: Niche = {
   },
   guarantee: {
     eyebrow: 'Our guarantee',
-    title: 'Live in 14 days, with a booked-appointment guarantee',
-    wording: 'Booked appointments within 14 days of go-live, or we keep working at no charge until you get them, as long as you answer the leads we book.',
-    condition: 'This depends on you answering the leads we book and completing onboarding.',
-    approved: false, // set true once Abdullah approves the exact wording; the block then appears without the draft flag
-    todo: 'TODO (Abdullah): approve the exact guarantee wording (what is guaranteed, the remedy, and the conditions). Hidden until approved.',
+    title: 'How the guarantee works',
+    wording: 'We book remodelers 20% more appointments than last month in 30 days, or we work free until we do.',
+    termsTitle: 'How we measure it',
+    terms: [
+      'Your baseline is the appointments you booked last month.',
+      'You keep your ads at last month\'s level.',
+      'You take the appointments we set.',
+      'We guarantee appointments booked, not jobs closed.',
+    ],
+    approved: true, // offer wording locked by Abdullah on 2026-11-05; the four terms above are plain-language and still need his read
+    todo: 'TODO (Abdullah): confirm when the 30 days start (go-live or first live lead), what happens when last month was zero or very low, and whether "appointments" means the ones we book or every booked appointment that month.',
   },
   proof: {
     eyebrow: 'Results',
@@ -94,9 +101,8 @@ const remodelers: Niche = {
   },
   finalCta: {
     title: 'Find out how many booked estimates your leads are leaving on the table',
-    sub: 'Book a free lead leak audit and we will show you.',
+    sub: 'We book remodelers 20% more appointments than last month in 30 days, or we work free until we do.',
     ctaLabel: 'Book your free lead leak audit',
-    capacity: 'We take on a few new clients a month so every build gets done right.',
     steps: 'A few short questions, then pick a time. The audit call is free.',
   },
 };

@@ -66,6 +66,7 @@ const ogImage = new URL('/brand/og-image-light.png', Astro.site).href;
           <div class="np-cta">
             <a class="np-btn np-btn--primary" href={BOOK}>{n.hero.ctaLabel}</a>
             {n.hero.ctaNote && <p class="np-cta__note">{n.hero.ctaNote}</p>}
+            {n.hero.termsLink && <p class="np-cta__note"><a href="#guarantee">{n.hero.termsLink}</a></p>}
           </div>
         </div>
       </section>
@@ -165,7 +166,7 @@ const ogImage = new URL('/brand/og-image-light.png', Astro.site).href;
             <div class="np-mock__row"><span>{n.services.core.name}</span><b class="np-on">On</b></div>
             {n.services.addons.map((a) => <div class="np-mock__row"><span>{a.name}</span><b class="np-off">Off</b></div>)}
             <div class="np-mock__stats">
-              <div><small>Booked estimates</small><strong>&ndash;</strong></div>
+              <div><small>Booked appointments</small><strong>&ndash;</strong></div>
               <div><small>Lead response time</small><strong>&ndash;</strong></div>
             </div>
             <p class="np-mock__note">{n.portal.mockNote}</p>
@@ -180,8 +181,9 @@ const ogImage = new URL('/brand/og-image-light.png', Astro.site).href;
               <p class="np-badge">{n.guarantee.eyebrow}</p>
               <h2>{n.guarantee.title}</h2>
               <p class="np-guarantee__wording">{n.guarantee.wording}</p>
-              <p class="np-guarantee__cond">{n.guarantee.condition}</p>
-              {!n.guarantee.approved && <p class="np-pending">{n.guarantee.todo}</p>}
+              <h3 class="np-guarantee__terms-title">{n.guarantee.termsTitle}</h3>
+              <ul class="np-guarantee__terms">{n.guarantee.terms.map((t) => <li>{t}</li>)}</ul>
+              {showDrafts && <p class="np-pending">{n.guarantee.todo}</p>}
             </div>
           </div>
         </section>
@@ -231,7 +233,7 @@ const ogImage = new URL('/brand/og-image-light.png', Astro.site).href;
             <p class="np-qual__hint">Please do not include sensitive details. These answers go into your booking notes so we can prepare.</p>
             <button class="np-btn np-btn--primary" type="submit">{n.finalCta.ctaLabel}</button>
           </form>
-          <p class="np-band__cap">{n.finalCta.capacity}</p>
+          {n.finalCta.capacity && <p class="np-band__cap">{n.finalCta.capacity}</p>}
         </div>
       </section>
     </main>
