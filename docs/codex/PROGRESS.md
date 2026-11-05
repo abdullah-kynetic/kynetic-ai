@@ -5,7 +5,7 @@ Tick a step only when `scripts/checks/run.sh <n>` has no FAIL. Note SKIPs.
 - [x] 1 Foundation
 - [x] 2 Alex on ElevenLabs
 - [x] 3 Lead→booking chain
-- [ ] 4 Texts & alerts
+- [x] 4 Texts & alerts
 - [ ] 5 Onboarding
 - [ ] 6 Go-live (full test needs Abdullah's yes)
 
@@ -212,3 +212,11 @@ Appended at Abdullah's request; existing steps 0–6, their text, checks and com
 - Current branch includes accepted local booking/retry work through 5625458 and the tested rollback-only DEV gate verifier through 549f4c5. `scripts/checks/run.sh 3` in this sequence: **4 PASS, 0 FAIL, 0 SKIP**. Check 3.4 uses read-only Twenty GET; no write executor was invoked. Existing verified coverage: 7 chain integration cases plus 3 deployed-gate verifier cases, with consent/quiet-hours/global+tenant kill blocking, worker-RLS/rollback checks and booking-hour rejection; native booking and retries are synthetic.
 - Step 3 is checked for the newly authorized CLOUD/STUB acceptance scope. This does not claim a DEV deployment, real call, real Cal.com booking or current remote n8n synchronization. The four previously approved synthetic Twenty writes/read-back remain the only external writeback evidence. Signed intake through a running VPS worker, actual external booking, and final DEV gate verification remain explicitly unverified until the final handoff/manual test as applicable.
 - No calls/SMS, new Twenty writes, workflow activation, live Alex edits, production deployment, DNS or secret disclosure. Continue immediately to step 4 under Abdullah's new instruction; do not start a mid-step VPS handoff.
+
+
+### Step 4 cloud/stub acceptance — 2026-11-05
+- First `scripts/checks/run.sh 4`: 2 PASS/1 FAIL (4.1 missing four workflows). Created repository-only `DEV - missed-call`, `DEV - reminder`, `DEV - owner-alert` and `DEV - error-alert`, DEV tagged/inactive, no credentials, disabled Twilio nodes, TEST_PHONE-only expression, no automatic send retry, and no saved execution payloads. No remote workflow change or activation.
+- Workflow Code source/generator are owned implementation, built with the existing n8n JavaScript skill read-only. Textback accepts only inbound missed calls; confirmations require confirmed bookings; reminders require explicit due/expiry bounds; owner alerts cover client activity; error alerts redact arbitrary content and suppress self-recursion. Stable per-record/action keys support the fake sink. Gate snapshots are explicitly synthetic fixtures, NOT real send permits: missing/denied snapshots block and quiet hours defer; all previews retain dispatch_enabled=false/requires_server_recheck=true. Real delivery must still go through server sendSms/OutboundGate and separate approval.
+- 13 VM tests execute actual embedded Code bodies, testing eligibility, due/expiry timing, unconfirmed/cancelled suppression, gate blocks, privacy, recursion, test-phone configuration, inactive/disabled invariants, fake-sink deduplication and zero provider requests. Typecheck and touched-file lint passed (existing integration warnings). All DEV workflow hygiene checks pass.
+- Existing native SMS integration suite extended to assert quiet-hours/global-kill/tenant-kill denial calls no fake provider and creates no outgoing message. Together with existing consent/A2P blocks: **15/15 PASS** on disposable local PostgreSQL. Only in-memory fake deliveries in this suite; no real calls/SMS.
+- Second `scripts/checks/run.sh 4`: **3 PASS, 0 FAIL, 0 SKIP**, including read-only Twilio GET. Step 4 checked for CLOUD/STUB scope; actual delivery, credential binding, remote n8n import/activation, and production behavior remain unverified and unauthorized. No new Twenty write or VPS operation. Continue to step 5 automatically.
