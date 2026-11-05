@@ -111,3 +111,11 @@ html.am-lock { overflow: hidden; }
 @media (max-width: 899px) { .kn-onsite { grid-template-columns: 1fr; } }
 .kn-onsite p.kn-onsite__eyebrow { font-size: 11px; line-height: 1.2; color: var(--espresso-gold); }
 .kn-onsite__list li { font-size: 1rem; }
+
+/* Cards removed: on phones the map is replaced by the same explanations stacked as a list */
+@media (max-width: 809px) {
+  .kn-map { display: block; margin-bottom: 24px; }
+  .kn-map svg { display: none; }
+  .kn-map .kn-pop { position: static; display: block !important; width: auto; margin: 0 0 14px; pointer-events: auto; border-color: var(--color-border); }
+  .kn-map .kn-pop[hidden] { display: block !important; }
+}

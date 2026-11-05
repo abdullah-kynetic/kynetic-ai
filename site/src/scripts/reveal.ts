@@ -16,6 +16,6 @@ export function initReveal() {
       io.unobserve(el);
       animate(el, { opacity: [0, 1], y: [24, 0] }, { type: 'spring', stiffness: 220, damping: 30, delay: i * 0.08 });
     });
-  }, { threshold: 0.2, rootMargin: '0px 0px -8% 0px' });
+  }, { threshold: 0.08, rootMargin: '0px 0px -8% 0px' });
   els.forEach((el) => io.observe(el));
 }
