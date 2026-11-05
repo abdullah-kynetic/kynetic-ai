@@ -80,11 +80,15 @@ Workflow `m2YJwZ1l8DTzyEkw` was found active on Oct 17 (read-only check, 38 node
 Resolved 2026-10-18: Abdullah approved the workflow staying live. No n8n change was made. The post-call webhook still has no header auth (KI-005).
 
 ### KI-011: Rebuilt site card loops are replays, form webhook not set (medium)
+2026-11-04 update: the contact form now posts to the n8n webhook `website-contact` (workflow `WxIh0Hw4lQodY1Xa`, active, Gmail alert on). The Services card loops are gone from the homepage (replaced by plain cards); the remaining loops are on the Remodelers page's Alex card, which is plain CSS.
 2026-10-22. In `site/`, the looping service-card animations replay cycles recorded from the live site (`site/scripts/build-loops.mjs`), not Framer's own code, so they look the same but can't be edited as logic. The contact form needs `PUBLIC_CONTACT_WEBHOOK` at build time; without it the button shows "Something went wrong". Success and error button colours and the spinner ring are approximated (not captured from Framer). The site's pricing copy still differs from D-017.
 
 ### KI-010: Who and what can change the portal server (was medium)
 Found read-only on 2026-10-17. Two keys have full administrator access to the VPS (which also holds Twenty and its backups): Abdullah's Mac, and one labelled `bob-box-ovh-vps` (believed to be Abdullah's Grok bot). A restricted `deploy` key (forced command, deploys only commits on `main`, rolls back on failure) was added the same evening. There are now two ways to deploy: the bot path (`portal-deploy`) and `portal/deploy/deploy.sh`; each overwrites `/opt/portal/src`, so use one. Decide whether the bot should keep full root, and which deploy path is the one.
 Resolved 2026-10-18 (D-022): the `bob-box-ovh-vps` key keeps full root by Abdullah's choice, and `portal-deploy` is the single deploy path.
+
+### Website placeholders and stale share image (2026-11-04)
+Open on the preview branch `feat/positioning-remodelers`: founder video URL, add-on readiness labels, guarantee wording and proof section on `/remodelers` (red TODO boxes). The espresso share image (`site/public/brand/og-image-espresso.png`) still reads "AI voice agents that answer, qualify and book" and needs new text to match the growth-partner positioning. The team card says "AI Implementation & Strategy", and the founder quote mentions "local businesses".
 
 ### Portal server deploys from Claude sessions (2026-11-03)
 The "Kynetic VPS" session's auto-mode classifier blocks `portal-new-deploy deploy` as a production deploy unless an allow rule exists (`Bash(sudo /usr/local/sbin/portal-new-deploy *)` via `/permissions`) or Abdullah approves it in that session. Its repo clone lives in a /tmp scratchpad that may vanish; move it to a permanent path. Cloud sessions cannot SSH to the server (port 22 blocked).
