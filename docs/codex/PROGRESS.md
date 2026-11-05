@@ -4,7 +4,7 @@ Tick a step only when `scripts/checks/run.sh <n>` has no FAIL. Note SKIPs.
 - [x] 0 Dev setup
 - [x] 1 Foundation
 - [x] 2 Alex on ElevenLabs
-- [ ] 3 Lead→booking chain
+- [x] 3 Lead→booking chain
 - [ ] 4 Texts & alerts
 - [ ] 5 Onboarding
 - [ ] 6 Go-live (full test needs Abdullah's yes)
@@ -205,3 +205,10 @@ Appended at Abdullah's request; existing steps 0–6, their text, checks and com
 - Local validation: 3 verifier integration cases passed, covering gate results and exact pre/post database snapshots, unsafe config refusal and non-synthetic database refusal. Combined verifier plus existing chain integration: **10/10 PASS**. Four mocked Mac handoff tests pass, including server-verifier failure and wrong unsigned status rejection; Bash syntax, Compose rendering/isolation assertions, typecheck and touched-file lint pass.
 - During setup the first verifier suite could not connect because the disposable local PostgreSQL had not finished starting; readiness was then checked explicitly. The first executing verifier case exposed the contact schema's required phone-or-email constraint; corrected the rollback fixture to use only a reserved example.test email, with no phone or delivery path. All subsequent cases passed. Initial Compose rendering omitted the inactive profile as intended; validation and explicit server selection now use `--profile verify`. No check failed three times.
 - Pending Mac output: gate verification summary, auth /sign-in 200 and anonymous /admin 401, final public root 200, deployed revision, and unsigned DEV intake POST 401. These are not yet remote PASS evidence. After Abdullah replies done with output, rerun available step-3/local safety checks and record VPS results explicitly as user-supplied evidence. Full step 3 remains unchecked until remaining scope is verified; no step 4 work or deployment is authorized by this handoff.
+
+
+### Autonomous cloud sequence — step 3 cloud acceptance — 2026-11-05
+- Abdullah superseded the pending mid-step Mac handoff: finish steps 3–5 and step 6 preparation in the cloud, prefer stub/synthetic checks, push each step and proceed automatically, then ONE final DEV deployment. Step-6 live test and agency steps 7+ remain gated. No earlier pending deploy command needs to be run during this sequence.
+- Current branch includes accepted local booking/retry work through 5625458 and the tested rollback-only DEV gate verifier through 549f4c5. `scripts/checks/run.sh 3` in this sequence: **4 PASS, 0 FAIL, 0 SKIP**. Check 3.4 uses read-only Twenty GET; no write executor was invoked. Existing verified coverage: 7 chain integration cases plus 3 deployed-gate verifier cases, with consent/quiet-hours/global+tenant kill blocking, worker-RLS/rollback checks and booking-hour rejection; native booking and retries are synthetic.
+- Step 3 is checked for the newly authorized CLOUD/STUB acceptance scope. This does not claim a DEV deployment, real call, real Cal.com booking or current remote n8n synchronization. The four previously approved synthetic Twenty writes/read-back remain the only external writeback evidence. Signed intake through a running VPS worker, actual external booking, and final DEV gate verification remain explicitly unverified until the final handoff/manual test as applicable.
+- No calls/SMS, new Twenty writes, workflow activation, live Alex edits, production deployment, DNS or secret disclosure. Continue immediately to step 4 under Abdullah's new instruction; do not start a mid-step VPS handoff.
