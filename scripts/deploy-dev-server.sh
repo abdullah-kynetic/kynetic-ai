@@ -43,7 +43,16 @@ with os.fdopen(fd,'w') as f:
 PY
 fi
 chmod 600 "$state/dev.env"
-compose() { docker compose --project-name kynetic-dev-portal --env-file "$state/dev.env" -f "$release/crm/deploy/dev/compose.yml" "$@"; }
+runtime_files=()
+build_targets=(app prepare)
+start_targets=(app)
+if [ -f "$state/runtime-override.json" ]; then
+  [ ! -L "$state/runtime-override.json" ] || exit 1
+  runtime_files=(-f "$state/runtime-override.json")
+  build_targets+=(worker)
+  start_targets+=(worker)
+fi
+compose() { docker compose --project-name kynetic-dev-portal --env-file "$state/dev.env" -f "$release/crm/deploy/dev/compose.yml" "${runtime_files[@]}" "$@"; }
 # Reject collisions rather than disturbing a pre-existing listener or unrelated project.
 if ss -ltnH 'sport = :3031' | read -r _; then
   [ -n "$(compose ps -q app)" ] || { echo 'Port 3031 is occupied by another service; no changes made.' >&2; exit 1; }
@@ -87,11 +96,11 @@ run_private() {
   "$@" 2>&1 | python3 "$release/crm/deploy/dev/redact-log.py" "$state/dev.env" "$log"
 }
 run_private caddy validate --config "$candidate" --adapter caddyfile
-run_private compose build app prepare
+run_private compose build "${build_targets[@]}"
 run_private compose up -d --wait --wait-timeout 120 postgres
 # prepare runs bootstrap/migrations and synthetic-only validation before app start.
 run_private compose run --rm prepare
-run_private compose up -d --no-deps --wait --wait-timeout 180 app
+run_private compose up -d --no-deps --wait --wait-timeout 180 "${start_targets[@]}"
 [ "$(curl -q -sS -o /dev/null -w '%{http_code}' --max-time 20 http://127.0.0.1:3031/api/health)" = 200 ]
 # The old open-mode image lacks /sign-in. Require the new auth behavior before recording success.
 [ "$(curl -q -sS -o /dev/null -w '%{http_code}' --max-time 20 http://127.0.0.1:3031/sign-in)" = 200 ]

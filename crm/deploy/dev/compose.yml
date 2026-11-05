@@ -15,6 +15,7 @@ x-app-env: &app-env
   OUTBOUND_ENABLED: 'false'
   ELEVENLABS_LIVE_ENABLED: 'false'
   DEV_PERSONA_SWITCHING: 'false'
+  TEST_PHONE: ${TEST_PHONE:-}
 
 services:
   postgres:

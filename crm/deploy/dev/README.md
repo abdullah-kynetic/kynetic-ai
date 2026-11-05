@@ -79,3 +79,35 @@ Success includes `PASS DEV_STEP3_GATES ... provider requests 0`, public auth che
 helper is invoked. If any check fails, the script exits nonzero; private diagnostics
 stay in the root-only dev deployment log. Send the printed summary to Codex, never
 credentials or raw private logs.
+
+### Repair the existing DEV runtime prerequisites
+
+After a read-only runtime diagnostic reports TEST_PHONE missing and worker absent,
+run `bash scripts/fix-dev-runtime.sh` from the Mac checkout. This reuses the deployed
+portal revision: it does not rebuild the app image, migrate/seed the database, edit
+Caddy/DNS, activate n8n or change any provider account. It recreates the DEV app with
+the privately entered TEST_PHONE and starts a restricted worker from the deployed
+tools image/source. It builds only tools targets for that worker and smoke checker.
+
+The SSH TTY prompts for the operator's own TEST_PHONE in E.164 with input hidden.
+Only the dedicated root-private dev.env stores the value; no number/key is placed
+in Git, command arguments or printed output. The runtime override always fixes
+providers to stub, outbound and live ElevenLabs off, and persona switching off.
+Subsequent DEV deployments preserve this override and configured phone.
+
+The restricted worker registers lead intake, event fanout and the sender-free DEV
+attempt queue only. Normal voice/SMS/email dispatch, n8n callbacks, notifications
+and backup jobs are not registered. A health marker is written only after startup.
+The worker runs as UID 1001, and its job handlers use the existing runtime DB roles.
+
+A smoke checker submits the same signed synthetic lead twice through the public
+DEV hook, verifies accepted/duplicate, waits for asynchronous processing and a
+future attempt deferred by the kill switch, and asserts no new call/message rows.
+It may create a missing signing secret for the synthetic demo-a tenant, without
+rotating an existing secret. Test contact/deal/consent/activity/job rows are retained
+as clearly tagged DEV evidence; the consent text does not authorize real contact.
+There is no Twenty write, calendar reservation, provider call/SMS or workflow
+activation. It prints the unchanged portal revision and the runtime-helper revision.
+
+This verifies a blocked synthetic worker path, not a live test. Calendar tools and
+any real send still require separate preparation and explicit owner approval.
