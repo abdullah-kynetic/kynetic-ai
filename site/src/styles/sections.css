@@ -205,3 +205,8 @@ footer.framer-34GLz .framer-z7as9h > a svg * { fill: inherit; stroke: none !impo
   .kn-sec { padding: 64px 16px; }
   .kn-cards, .kn-steps { grid-template-columns: 1fr; }
 }
+
+/* Nav: the right-hand button wrapper is wider than the button and overlapped the last link (Contact) now that the
+   bar has five links, swallowing clicks on its right half. Only the button itself takes pointer events. */
+nav .framer-3n0n49 { pointer-events: none; }
+nav .framer-3n0n49 a { pointer-events: auto; }
