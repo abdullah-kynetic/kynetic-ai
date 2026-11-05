@@ -26,7 +26,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const access = await decideAdminAccess(requestHeaders);
   if (access.kind === 'sign_in') unauthorized();
   if (access.kind === 'forbidden') forbidden();
-  if (access.kind !== 'ok') return null;
+  if (access.kind === 'second_factor') redirect('/staff/2fa');
   // Impersonation cannot reach the admin side (SECURITY 2.6): exit first.
   const viewAs = await resolveViewAs({
     user: access.user,

@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { getEnv } from '@/server/env';
 import { errorBody } from '@/server/errors';
 import { newNonce, securityHeaders } from '@/server/security/headers';
+import { getVerifiedSessionUser } from '@/server/auth';
 import { decideAdminAccess } from '@/server/admin/guard';
 import { isOriginAllowed } from '@/server/security/origin';
 
@@ -39,6 +40,14 @@ export async function proxy(request: NextRequest) {
         status: access.kind === 'sign_in' ? 401 : 403,
         headers: { ...headers, 'Cache-Control': 'no-store' }
       });
+    }
+  }
+
+  if (path === '/dashboard' || path.startsWith('/dashboard/')) {
+    const user = await getVerifiedSessionUser(request.headers);
+    if (!user) return NextResponse.redirect(new URL('/sign-in', request.url), 307);
+    if (user.twoFactor === 'enrol' || user.twoFactor === 'challenge') {
+      return NextResponse.redirect(new URL('/staff/2fa', request.url), 307);
     }
   }
 

@@ -57,6 +57,19 @@ describe('F-53 raw admin HTTP authorization before rendering', () => {
   });
 });
 
+describe('dashboard sign-in completion', () => {
+  it('redirects anonymous visitors to sign-in', async () => {
+    const response = await proxy(request('/dashboard'));
+    expect(response.status).toBe(307);
+    expect(response.headers.get('location')).toBe('https://dev.kyneticai.com/sign-in');
+  });
+  it('redirects pending staff sessions to TOTP instead of exposing dashboard data', async () => {
+    state.user = { ...admin, twoFactor: 'enrol' };
+    const response = await proxy(request('/dashboard'));
+    expect(response.headers.get('location')).toBe('https://dev.kyneticai.com/staff/2fa');
+  });
+});
+
 describe('dev-only persona switching', () => {
   const run = () =>
     switchPersona(request('/open/admin'), { params: Promise.resolve({ persona: 'admin' }) });
