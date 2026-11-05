@@ -1,0 +1,493 @@
+diff --git a/crm/src/server/appointments/service.ts b/crm/src/server/appointments/service.ts
+index e58b681..3f1f5b5 100644
+--- a/crm/src/server/appointments/service.ts
++++ b/crm/src/server/appointments/service.ts
+@@ -41,6 +41,13 @@ function run<T>(ctx: TenantContextInput, opts: { db?: Db; tx?: Tx }, fn: (tx: Tx
+   return opts.tx ? fn(opts.tx) : withTenant(ctx, fn, { db: opts.db });
+ }
+ 
++/** Serialize calendar mutations without requiring UPDATE privileges on the tenant row. */
++async function lockCalendar(tx: Tx) {
++  await tx.execute(
++    sql`select pg_advisory_xact_lock(hashtextextended('appointments:' || app_tenant_id()::text, 0))`
++  );
++}
++
+ async function tenantSettings(tx: Tx) {
+   const [row] = await tx
+     .select({ timezone: tenants.timezone, businessHours: tenants.businessHours })
+@@ -108,12 +115,7 @@ export async function bookAppointment(
+   const v = parseInput(appointmentInput, input);
+   if (v.endsAt <= v.startsAt) throw new ValidationError({ endsAt: ['after_starts_at'] });
+   return run(ctx, opts, async (tx) => {
+-    // Serializing on the tenant row makes the overlap check atomic across concurrent voice calls.
+-    await tx
+-      .select({ id: tenants.id })
+-      .from(tenants)
+-      .where(eq(tenants.id, sql`app_tenant_id()`))
+-      .for('update');
++    await lockCalendar(tx);
+     if (v.externalEventId) {
+       const [existing] = await tx
+         .select()
+@@ -210,6 +212,7 @@ export async function updateAppointment(
+     patch
+   );
+   return run(ctx, opts, async (tx) => {
++    await lockCalendar(tx);
+     const [before] = await tx
+       .select()
+       .from(appointments)
+diff --git a/crm/src/server/calls/outbound.ts b/crm/src/server/calls/outbound.ts
+index 925187c..1b2cb86 100644
+--- a/crm/src/server/calls/outbound.ts
++++ b/crm/src/server/calls/outbound.ts
+@@ -438,6 +438,8 @@ export function registerOutboundCallSubscriber(deps: { queue?: typeof enqueue }
+     'lead.created',
+     OUTBOUND_SUBSCRIBER_ID,
+     async (env) => {
++      // Synthetic intake is owned by the dedicated DEV queue, which has no sender.
++      if (env.payload.synthetic === true) return;
+       const contactId = env.payload.contactId;
+       if (typeof contactId !== 'string') return;
+       const dealId = typeof env.payload.dealId === 'string' ? env.payload.dealId : null;
+diff --git a/crm/src/server/jobs/queues.ts b/crm/src/server/jobs/queues.ts
+index 8baf475..1346837 100644
+--- a/crm/src/server/jobs/queues.ts
++++ b/crm/src/server/jobs/queues.ts
+@@ -26,6 +26,8 @@ export const QUEUES = {
+   'webhook.process': { ...retrying, policy: 'short' },
+   /** One job per outbound call attempt (F-78). A queued attempt is unique per tenant, contact, trigger and attempt. */
+   'call.outbound': { ...retrying, policy: 'short' },
++  /** Synthetic DEV attempts; explicit delayed scheduling only, never automatic provider retries. */
++  'dev.lead-attempt': { retryLimit: 0, policy: 'short' },
+   /** One delayed job per task/due-date version; the handler rechecks the live task before notifying. */
+   'task.due': { ...retrying, policy: 'short' } /** One rebuildable tenant/day metrics rollup. */,
+   'metrics.daily': { ...retrying, policy: 'short' },
+diff --git a/crm/src/server/leads/dev-chain.ts b/crm/src/server/leads/dev-chain.ts
+new file mode 100644
+index 0000000..c0b5fd1
+--- /dev/null
++++ b/crm/src/server/leads/dev-chain.ts
+@@ -0,0 +1,157 @@
++import { and, eq, sql } from 'drizzle-orm';
++import { z } from 'zod';
++import { bookAppointment } from '../appointments';
++import type { DevContactConfig } from '../consent/dev-contact';
++import { getWorkerDb, type Db, type Tx } from '../db/client';
++import { activities, webhookEvents } from '../db/schema';
++import { getEnv } from '../env';
++import { AppError } from '../errors';
++import { subscribe } from '../events';
++import { enqueue, registerWorker } from '../jobs';
++import { withTenant } from '../tenancy';
++import { parseInput } from '../validation';
++import { runDevAttempt, type DevRetry } from './dev-attempt';
++import { parseDevLead } from './dev-intake';
++import { assertDevPortal } from './dev-policy';
++import { LEAD_WEBHOOK_SOURCE } from './intake';
++
++export const DEV_LEAD_QUEUE = 'dev.lead-attempt';
++export const DEV_LEAD_SUBSCRIBER = 'dev-synthetic-lead-attempt';
++export const devLeadJobSchema = z.strictObject({
++  tenantId: z.uuid(),
++  contactId: z.uuid(),
++  dealId: z.uuid(),
++  webhookEventId: z.uuid(),
++  leadAt: z.iso.datetime(),
++  attempt: z.number().int().min(1).max(3)
++});
++export type DevLeadJob = z.infer<typeof devLeadJobSchema>;
++type ChainOptions = { db?: Db; config?: DevContactConfig; now?: Date; queue?: typeof enqueue };
++
++async function assertStoredDevLead(job: DevLeadJob, config: DevContactConfig, tx: Tx) {
++  assertDevPortal(config.APP_BASE_URL);
++  const [event] = await tx
++    .select()
++    .from(webhookEvents)
++    .where(and(eq(webhookEvents.id, job.webhookEventId), eq(webhookEvents.tenantId, job.tenantId)))
++    .limit(1);
++  if (!event || event.source !== LEAD_WEBHOOK_SOURCE)
++    throw new AppError('FORBIDDEN', { message: 'Stored DEV lead not found.' });
++  const lead = parseDevLead(event.payload, config);
++  const [linked] = await tx
++    .select({ id: activities.id })
++    .from(activities)
++    .where(
++      and(
++        eq(activities.contactId, job.contactId),
++        eq(activities.dealId, job.dealId),
++        sql`${activities.meta}->>'externalId' = ${lead.externalId}`,
++        sql`${activities.meta}->>'source' = ${lead.source}`,
++        sql`${activities.meta}->>'synthetic' = 'true'`
++      )
++    )
++    .limit(1);
++  if (!linked) throw new AppError('FORBIDDEN', { message: 'DEV lead linkage mismatch.' });
++}
++
++/** Queues IDs only, in the current transaction; quiet/kill deferrals keep their attempt number. */
++export function devRetryScheduler(job: DevLeadJob, tx: Tx, queue: typeof enqueue = enqueue) {
++  return async (retry: DevRetry) => {
++    const next = parseInput(devLeadJobSchema, { ...job, attempt: retry.job.attempt });
++    if (retry.job.contactId !== job.contactId)
++      throw new AppError('FORBIDDEN', { message: 'DEV retry contact mismatch.' });
++    await queue(DEV_LEAD_QUEUE, next, {
++      tx,
++      startAfter: retry.at,
++      singletonKey: `dev-step3:${job.tenantId}:DEV-${job.webhookEventId}:${next.attempt}`
++    });
++  };
++}
++
++/** No sender is accepted here. Runtime jobs can gate/defer, but cannot dial. */
++export async function runDevLeadJob(input: DevLeadJob, opts: ChainOptions = {}) {
++  const job = parseInput(devLeadJobSchema, input);
++  const config = opts.config ?? getEnv();
++  assertDevPortal(config.APP_BASE_URL);
++  const now = opts.now ?? new Date();
++  const age = now.getTime() - new Date(job.leadAt).getTime();
++  if (age < 0 || age >= 24 * 3_600_000) return { status: 'expired' as const };
++  const db = opts.db ?? getWorkerDb();
++  return withTenant(
++    { tenantId: job.tenantId, role: 'system' },
++    async (tx) => {
++      await assertStoredDevLead(job, config, tx);
++      return runDevAttempt(
++        { tenantId: job.tenantId, role: 'system' },
++        { contactId: job.contactId, externalId: `DEV-${job.webhookEventId}`, attempt: job.attempt },
++        { tx, config, now, schedule: devRetryScheduler(job, tx, opts.queue) }
++      );
++    },
++    { db }
++  );
++}
++
++/** Explicit simulation only: native dev-DB booking, never a Cal.com request or real reservation. */
++export async function bookDevSyntheticAppointment(
++  input: DevLeadJob,
++  slot: { startsAt: Date; endsAt: Date; simulation: true },
++  opts: ChainOptions & { providerMode?: 'stub' | 'live' } = {}
++) {
++  const job = parseInput(devLeadJobSchema, input);
++  const config = opts.config ?? getEnv();
++  assertDevPortal(config.APP_BASE_URL);
++  const providerMode = opts.providerMode ?? getEnv().PROVIDER_MODE;
++  if (slot.simulation !== true || providerMode !== 'stub' || config.OUTBOUND_ENABLED)
++    throw new AppError('FORBIDDEN', {
++      message: 'Booking rehearsal requires stub mode and outbound disabled.'
++    });
++  const db = opts.db ?? getWorkerDb();
++  return withTenant(
++    { tenantId: job.tenantId, role: 'system' },
++    async (tx) => {
++      await assertStoredDevLead(job, config, tx);
++      const appointment = await bookAppointment(
++        { tenantId: job.tenantId, role: 'system' },
++        {
++          contactId: job.contactId,
++          dealId: job.dealId,
++          startsAt: slot.startsAt,
++          endsAt: slot.endsAt,
++          externalEventId: `DEV-SIMULATION-${job.webhookEventId}`,
++          notes:
++            'DEV SYNTHETIC SIMULATION: internal test appointment only; no real calendar reservation.'
++        },
++        { tx, bookedBy: 'automation' }
++      );
++      if (appointment.contactId !== job.contactId || appointment.dealId !== job.dealId)
++        throw new AppError('FORBIDDEN', { message: 'DEV appointment linkage mismatch.' });
++      return appointment;
++    },
++    { db }
++  );
++}
++
++export function registerDevLeadSubscriber(opts: { queue?: typeof enqueue; baseUrl?: string } = {}) {
++  subscribe('lead.created', DEV_LEAD_SUBSCRIBER, async (event) => {
++    if (event.payload.synthetic !== true) return;
++    const baseUrl = opts.baseUrl ?? getEnv().APP_BASE_URL;
++    assertDevPortal(baseUrl);
++    const job = parseInput(devLeadJobSchema, {
++      tenantId: event.tenantId,
++      contactId: event.payload.contactId,
++      dealId: event.payload.dealId,
++      webhookEventId: event.payload.webhookEventId,
++      leadAt: event.occurredAt,
++      attempt: 1
++    });
++    await (opts.queue ?? enqueue)(DEV_LEAD_QUEUE, job, {
++      singletonKey: `dev-step3:${job.tenantId}:DEV-${job.webhookEventId}:1`
++    });
++  });
++}
++
++export async function registerDevLeadWorker(opts: ChainOptions = {}) {
++  await registerWorker<DevLeadJob>(DEV_LEAD_QUEUE, async (job) => {
++    await runDevLeadJob(job, opts);
++  });
++}
+diff --git a/crm/src/server/leads/intake.ts b/crm/src/server/leads/intake.ts
+index 5acae71..f64ef31 100644
+--- a/crm/src/server/leads/intake.ts
++++ b/crm/src/server/leads/intake.ts
+@@ -277,9 +277,7 @@ export async function processLead(
+           ...(lead.synthetic
+             ? {
+                 synthetic: true,
+-                businessState: lead.businessState,
+-                projectType: lead.projectType,
+-                budget: lead.budget
++                businessState: lead.businessState
+               }
+             : {})
+         }
+diff --git a/crm/src/server/worker.ts b/crm/src/server/worker.ts
+index 11d81e2..3095652 100644
+--- a/crm/src/server/worker.ts
++++ b/crm/src/server/worker.ts
+@@ -12,6 +12,7 @@ import { getSmsProvider } from './messaging/provider';
+ import { registerTwilioProcessor } from './messaging';
+ import { registerNotificationEmailWorker } from './notifications';
+ import { registerLeadProcessor } from './leads';
++import { registerDevLeadSubscriber, registerDevLeadWorker } from './leads/dev-chain';
+ import { registerResendProcessor } from './email';
+ import { registerWebhookWorker } from './webhooks';
+ import { registerTaskDueWorker } from './tasks';
+@@ -35,11 +36,13 @@ wireEmail(getEnv());
+ registerVoiceProcessor({ provider: getVoiceProvider('elevenlabs')! });
+ registerLeadProcessor();
+ registerOutboundCallSubscriber();
++registerDevLeadSubscriber();
+ registerTwilioProcessor({ provider: getSmsProvider() });
+ await registerEventWorkers();
+ registerResendProcessor();
+ await registerWebhookWorker();
+ await registerOutboundCallWorker();
++await registerDevLeadWorker();
+ await registerNotificationEmailWorker();
+ await registerTaskDueWorker();
+ registerAppointmentSubscriber();
+diff --git a/crm/tests/integration/dev-lead-chain.test.ts b/crm/tests/integration/dev-lead-chain.test.ts
+new file mode 100644
+index 0000000..278a3cb
+--- /dev/null
++++ b/crm/tests/integration/dev-lead-chain.test.ts
+@@ -0,0 +1,217 @@
++import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
++import { createDb } from '@/server/db/client';
++import { clearSubscribers, deliver, type EventEnvelope } from '@/server/events';
++import { enqueue, stopJobs } from '@/server/jobs';
++import { registerOutboundCallSubscriber, OUTBOUND_SUBSCRIBER_ID } from '@/server/calls/outbound';
++import {
++  handleLeadIntake,
++  issueLeadWebhookSecret,
++  registerLeadProcessor,
++  signLeadBody
++} from '@/server/leads';
++import { parseDevLead } from '@/server/leads/dev-intake';
++import {
++  bookDevSyntheticAppointment,
++  DEV_LEAD_QUEUE,
++  DEV_LEAD_SUBSCRIBER,
++  devRetryScheduler,
++  registerDevLeadSubscriber,
++  runDevLeadJob,
++  type DevLeadJob
++} from '@/server/leads/dev-chain';
++import { clearWebhookProcessors, processWebhookEvent } from '@/server/webhooks';
++import { withTenant } from '@/server/tenancy';
++import { createTestDatabase, type TestDatabase } from '../helpers/db';
++import { IDS, seedTwoTenants } from '../helpers/fixtures';
++
++let database: TestDatabase;
++let workerDb: ReturnType<typeof createDb>;
++let job: DevLeadJob;
++let envelope: EventEnvelope;
++const genericQueue = vi.fn(async () => 'unexpected-generic-job') as unknown as typeof enqueue;
++const phone = '+' + ['1', '555', '555', '0101'].join('');
++const config = {
++  APP_BASE_URL: 'https://dev.kyneticai.com',
++  TEST_PHONE: phone,
++  OUTBOUND_ENABLED: false
++};
++const midday = new Date('2026-11-05T18:00:00Z');
++
++beforeAll(async () => {
++  database = await createTestDatabase({ jobs: true });
++  await seedTwoTenants(database.admin);
++  workerDb = createDb(database.worker);
++  process.env.APP_BASE_URL = config.APP_BASE_URL;
++  process.env.TEST_PHONE = phone;
++  process.env.DATABASE_URL = database.urls.app;
++  process.env.DATABASE_URL_WORKER = database.urls.worker;
++  process.env.DATABASE_URL_AUTH = database.authUrl;
++  process.env.BETTER_AUTH_SECRET = 'x'.repeat(32);
++  process.env.APP_ENCRYPTION_KEY = 'y'.repeat(32);
++  process.env.PROVIDER_MODE = 'stub';
++  process.env.OUTBOUND_ENABLED = 'false';
++  clearSubscribers();
++  clearWebhookProcessors();
++  registerLeadProcessor();
++  registerOutboundCallSubscriber({ queue: genericQueue });
++  registerDevLeadSubscriber({ baseUrl: config.APP_BASE_URL });
++  const secret = await issueLeadWebhookSecret(IDS.tenantA, { db: workerDb });
++  const lead = {
++    externalId: 'DEV-real-db-chain',
++    source: 'dev_codex',
++    synthetic: true,
++    businessState: 'CA',
++    phone,
++    projectType: 'Synthetic roof',
++    budget: 'Synthetic budget',
++    consent: { capturedText: 'Synthetic test consent; no actual call.' }
++  };
++  const raw = JSON.stringify(lead);
++  const timestamp = Math.floor(Date.now() / 1000);
++  const request = () =>
++    new Request(config.APP_BASE_URL + '/api/hooks/leads/dev/' + IDS.tenantA, {
++      method: 'POST',
++      body: raw,
++      headers: {
++        'x-kynetic-timestamp': String(timestamp),
++        'x-kynetic-signature': signLeadBody(secret, timestamp, raw)
++      }
++    });
++  const invoke = () =>
++    handleLeadIntake(request(), IDS.tenantA, {
++      db: createDb(database.app),
++      workerDb,
++      validate: (input) => parseDevLead(input, config)
++    });
++  expect((await (await invoke()).json()).data.status).toBe('accepted');
++  expect((await (await invoke()).json()).data.status).toBe('duplicate');
++  const [stored] =
++    await database.admin`select id from webhook_events where source = 'lead_webhook' and tenant_id = ${IDS.tenantA}`;
++  expect(await processWebhookEvent(stored.id, { db: workerDb })).toBe('processed');
++  expect(await processWebhookEvent(stored.id, { db: workerDb })).toBe('already_processed');
++  const [event] =
++    await database.admin`select data from pgboss.job where name = 'event.dispatch' and data->'payload'->>'webhookEventId' = ${stored.id}`;
++  envelope = event.data as EventEnvelope;
++  await deliver(envelope, DEV_LEAD_SUBSCRIBER);
++  await deliver(envelope, DEV_LEAD_SUBSCRIBER);
++  const [queued] = await database.admin`select data from pgboss.job where name = ${DEV_LEAD_QUEUE}`;
++  job = queued.data as DevLeadJob;
++  job.leadAt = midday.toISOString();
++});
++afterAll(async () => {
++  clearSubscribers();
++  clearWebhookProcessors();
++  await stopJobs();
++  await database?.drop();
++});
++
++describe('signed synthetic intake -> durable dev queue -> native simulated booking', () => {
++  it('deduplicates intake and delivery, queues IDs only and never invokes generic outbound', async () => {
++    const [count] =
++      await database.admin`select count(*)::int as n from pgboss.job where name = ${DEV_LEAD_QUEUE}`;
++    expect(count.n).toBe(1);
++    expect(Object.keys(job).sort()).toEqual(
++      ['attempt', 'contactId', 'dealId', 'leadAt', 'tenantId', 'webhookEventId'].sort()
++    );
++    expect(envelope.payload).not.toHaveProperty('budget');
++    expect(envelope.payload).not.toHaveProperty('projectType');
++    await deliver(envelope, OUTBOUND_SUBSCRIBER_ID);
++    expect(genericQueue).not.toHaveBeenCalled();
++  });
++
++  it('durably defers the disabled outbound attempt with no sender and preserves its attempt', async () => {
++    // An active queue job can schedule one waiting successor with its stable singleton key.
++    await database.admin`update pgboss.job set state = 'active' where name = ${DEV_LEAD_QUEUE}`;
++    expect(await runDevLeadJob(job, { db: workerDb, config, now: midday })).toMatchObject({
++      status: 'deferred',
++      reason: 'outbound_disabled',
++      job: { attempt: 1 }
++    });
++    const [retry] =
++      await database.admin`select data, start_after from pgboss.job where name = ${DEV_LEAD_QUEUE} and state = 'created'`;
++    expect(retry.data.attempt).toBe(1);
++    expect(new Date(retry.start_after).getTime()).toBe(midday.getTime() + 60_000);
++  });
++
++  it('stops expired jobs and rejects a forged cross-tenant linkage', async () => {
++    expect(
++      await runDevLeadJob(job, {
++        db: workerDb,
++        config,
++        now: new Date(midday.getTime() + 24 * 3_600_000)
++      })
++    ).toEqual({ status: 'expired' });
++    await expect(
++      runDevLeadJob({ ...job, tenantId: IDS.tenantB }, { db: workerDb, config, now: midday })
++    ).rejects.toThrow('Stored DEV lead not found');
++    await expect(
++      runDevLeadJob({ ...job, contactId: IDS.ownerA }, { db: workerDb, config, now: midday })
++    ).rejects.toThrow('linkage mismatch');
++    await expect(
++      runDevLeadJob(job, {
++        db: workerDb,
++        config: { ...config, APP_BASE_URL: 'https://portal.kyneticai.com' },
++        now: midday
++      })
++    ).rejects.toThrow('dev-only');
++  });
++
++  it('stores a bounded delayed retry atomically and rolls it back with the transaction', async () => {
++    const ctx = { tenantId: job.tenantId, role: 'system' as const };
++    const retry = {
++      job: { contactId: job.contactId, externalId: `DEV-${job.webhookEventId}`, attempt: 2 },
++      key: `DEV-retry-${job.webhookEventId}:2`,
++      at: new Date(midday.getTime() + 90_000),
++      reason: 'provider_transient'
++    };
++    await expect(
++      withTenant(
++        ctx,
++        async (tx) => {
++          await devRetryScheduler(job, tx)(retry);
++          throw new Error('Synthetic rollback');
++        },
++        { db: workerDb }
++      )
++    ).rejects.toThrow('Synthetic rollback');
++    const [before] =
++      await database.admin`select count(*)::int as n from pgboss.job where name = ${DEV_LEAD_QUEUE} and data->>'attempt' = '2'`;
++    expect(before.n).toBe(0);
++    await withTenant(ctx, (tx) => devRetryScheduler(job, tx)(retry), { db: workerDb });
++    const [after] =
++      await database.admin`select data, start_after from pgboss.job where name = ${DEV_LEAD_QUEUE} and data->>'attempt' = '2'`;
++    expect(after.data.attempt).toBe(2);
++    expect(new Date(after.start_after).getTime()).toBe(retry.at.getTime());
++  });
++
++  it('books one native DEV simulation and deduplicates a replay without calling a calendar', async () => {
++    const slot = {
++      startsAt: midday,
++      endsAt: new Date(midday.getTime() + 30 * 60_000),
++      simulation: true as const
++    };
++    const opts = { db: workerDb, config, providerMode: 'stub' as const };
++    const [first, concurrent] = await Promise.all([
++      bookDevSyntheticAppointment(job, slot, opts),
++      bookDevSyntheticAppointment(job, slot, opts)
++    ]);
++    expect(concurrent.id).toBe(first.id);
++    const replay = await bookDevSyntheticAppointment(job, slot, opts);
++    expect(replay.id).toBe(first.id);
++    expect(first.contactId).toBe(job.contactId);
++    expect(first.dealId).toBe(job.dealId);
++    expect(first.notes).toContain('no real calendar reservation');
++    await expect(
++      bookDevSyntheticAppointment(job, slot, { ...opts, providerMode: 'live' })
++    ).rejects.toThrow('stub mode');
++    await expect(
++      bookDevSyntheticAppointment(job, slot, {
++        ...opts,
++        config: { ...config, OUTBOUND_ENABLED: true }
++      })
++    ).rejects.toThrow('outbound disabled');
++    const [count] =
++      await database.admin`select count(*)::int as n from appointments where external_event_id = ${'DEV-SIMULATION-' + job.webhookEventId}`;
++    expect(count.n).toBe(1);
++  });
++});
