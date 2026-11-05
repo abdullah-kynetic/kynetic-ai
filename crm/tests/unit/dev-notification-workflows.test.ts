@@ -91,6 +91,27 @@ describe('inactive DEV notification workflow stubs', () => {
     expect(() => run(kind, { ...eligible(kind), synthetic: false })).toThrow('Synthetic');
     expect(() => run(kind, { ...eligible(kind), id: 'unsafe\nidentity' })).toThrow('UUID');
   });
+  it('accepts native portal envelopes without letting payload override the root tenant identity', () => {
+    const [out] = run('missed-call', {
+      id,
+      tenantId: id,
+      name: 'call.completed',
+      payload: {
+        synthetic: true,
+        direction: 'inbound',
+        outcome: 'no_answer',
+        callId: recordId,
+        tenantId: recordId,
+        gate: { allowed: true }
+      }
+    });
+    expect(out.json).toMatchObject({
+      tenantId: id,
+      status: 'stub_preview',
+      dispatch_enabled: false
+    });
+  });
+
   it('does not prepare textback for outbound or answered calls', () => {
     expect(run('missed-call', { ...event, direction: 'outbound' })).toHaveLength(0);
     expect(run('missed-call', { ...event, outcome: 'answered' })).toHaveLength(0);

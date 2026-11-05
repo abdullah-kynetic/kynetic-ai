@@ -8,7 +8,9 @@ const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const now = Date.now();
 const output = [];
 for (const item of $input.all()) {
-  const event = item.json.body ?? item.json;
+  const envelope = item.json.body ?? item.json;
+  // Native portal envelopes carry event-specific fields in payload; root identity wins.
+  const event = { ...(envelope.payload ?? {}), ...envelope };
   if (event.synthetic !== true) throw new Error('Synthetic events only');
   if (!uuid.test(event.id ?? '') || !uuid.test(event.tenantId ?? '')) throw new Error('Stable event and tenant UUIDs required');
   let action;
