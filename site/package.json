@@ -8,7 +8,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "snapshot": "node scripts/snapshot.mjs",
-    "diff": "node tests/visual/diff.mjs"
+    "diff": "node tests/visual/diff.mjs",
+    "test": "node tests/functional.mjs && node tests/pages.mjs"
   },
   "dependencies": {
     "@tsparticles/engine": "^3.9.1",
