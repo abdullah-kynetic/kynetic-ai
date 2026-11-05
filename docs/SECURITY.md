@@ -668,4 +668,10 @@ Per Abdullah's explicit instruction, anonymous requests never select a default p
 
 `DEV_PERSONA_SWITCHING` defaults false and is forced false for `NODE_ENV=production`, even when configured true. In non-production it permits only an already authenticated, second-factor-verified Kynetic admin to preview an explicitly selected existing persona. Missing, malformed, unknown or unavailable selections never fall back to admin or another role. The `/open/[persona]` endpoint and menu are disabled without this flag. Admin authorization always uses the verified real session, independent of persona previews.
 
-This change restores session verification, not the previously removed sign-in UI, session-issuance routes or second-factor setup flow. Existing legitimate sessions can be verified; anonymous access fails closed. No provider login/email flow, production setting or deployment is performed by this work. Additional sign-in restoration must be handled explicitly before relying on new interactive logins.
+The initial dev change restored verification only. The approved main-merge follow-up below restores the missing sign-in and second-factor flows; anonymous access still fails closed. No production setting or deployment is changed by merging source.
+
+### Sign-in restoration before the approved main merge (2026-11-04)
+
+Restored the existing invitation-only Better Auth issuer, Google sign-in for allowlisted staff, single-use magic links for invited clients, PostgreSQL auth rate limits, staff TOTP/recovery-code setup and verification, and reset helper. `/sign-in`, `/api/auth/[...all]` and `/staff/2fa` are restored. The issuer and strict verifier use the same signed session-cookie name and database role/schema; the verifier still rejects disabled/revoked/expired sessions and does not trust client persona claims. Staff dashboard requests are redirected to TOTP until verified. Google/Resend configuration must be supplied through environment variables; no provider messages or production login are exercised by the local tests.
+
+The Node boot email wiring registers the existing transactional sender without sending a message. Magic-link URLs are HTML-escaped and hashed for idempotency, never logged; tests capture the callback or use fake fetch. Main merge authorization is source-only and preserves the separate explicit VPS-deployment handoff.

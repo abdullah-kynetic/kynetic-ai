@@ -3,7 +3,7 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { and, eq, gt, isNull } from 'drizzle-orm';
 import { getAuthDb, type Db } from '../db/client';
 import * as schema from '../db/schema';
-import { getEnv } from '../env';
+import { getAuth } from './index';
 import { authUsers } from './auth-schema';
 import {
   sessionExpired,
@@ -11,6 +11,7 @@ import {
   SESSION_UPDATE_AGE_SECONDS
 } from './lifetimes';
 import type { AuthUser } from './index';
+import type { Auth } from './create-auth';
 
 /** Existing session verification only. No sign-in, registration or provider route is exposed here. */
 export function createSessionAuth(opts: {
@@ -59,20 +60,11 @@ export function createSessionAuth(opts: {
 }
 
 type SessionAuth = ReturnType<typeof createSessionAuth>;
-let instance: SessionAuth | undefined;
-function getSessionAuth(): SessionAuth {
-  if (!instance) {
-    const env = getEnv();
-    instance = createSessionAuth({
-      db: getAuthDb(),
-      baseUrl: env.APP_BASE_URL,
-      secret: env.BETTER_AUTH_SECRET
-    });
-  }
-  return instance;
-}
-
-export type SessionDeps = { db?: Db; auth?: SessionAuth; now?: Date };
+export type SessionDeps = {
+  db?: Db;
+  auth?: Pick<SessionAuth, 'api'> | Pick<Auth, 'api'>;
+  now?: Date;
+};
 
 /** A signed cookie must resolve to a live, unexpired DB session and a current enabled user. */
 export async function getVerifiedSessionUser(
@@ -86,7 +78,7 @@ export async function getVerifiedSessionUser(
   });
   if (!hasSession) return null;
   try {
-    const auth = deps.auth ?? getSessionAuth();
+    const auth = deps.auth ?? getAuth();
     const found = await auth.api.getSession({
       headers,
       query: { disableCookieCache: true, disableRefresh: true }
