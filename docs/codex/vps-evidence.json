@@ -135,6 +135,28 @@
       "production_unchanged_reported": true,
       "reported_output": "PASS DEV_STEP3_GATES consent blocked; quiet hours deferred; global/tenant kill switches blocked; fixtures rolled back; provider requests 0\nPASS dev database: isolated kynetic-dev-portal Postgres volume; synthetic seed guard passed\nPASS dev app: 127.0.0.1:3031/api/health HTTP 200; providers stubbed; outbound disabled\nPASS dev auth locally: /sign-in HTTP 200; anonymous /admin HTTP 401\nPASS dev HTTPS site installed: dev.kyneticai.com -> 127.0.0.1:3031\nExisting Caddy site blocks retained; production containers and database not changed.\nPASS DEV_AUTH /sign-in HTTP 200; anonymous /admin HTTP 401 (no redirects followed)\nPASS 0.7 https://dev.kyneticai.com/ HTTP 200 (verified from Mac)\nPASS DEV_INTAKE_UNSIGNED HTTP 401; unsigned intake rejected; no provider test performed\nDEPLOYED_REVISION=05b24311861c2e28a19061c286eea40802ec28e5",
       "scope": "Portal deployment and gate-only rollback verification. Does not import/activate repository n8n workflows, deploy onboarding docs as portal features, start a dispatch worker, prove real booking/delivery, or complete step 6.3."
+    },
+    "dev_runtime_prerequisites": {
+      "source": "user_mac_terminal",
+      "observed_on": "2026-11-05",
+      "deployed_revision": "05b24311861c2e28a19061c286eea40802ec28e5",
+      "project": "kynetic-dev-portal",
+      "status": "BLOCKED",
+      "app": {
+        "elevenlabs_live_disabled": true,
+        "outbound_disabled": true,
+        "persona_disabled": true,
+        "provider_mode_stub": true,
+        "test_phone_configured": false
+      },
+      "worker_running": false,
+      "blockers": [
+        "TEST_PHONE_NOT_CONFIGURED_IN_DEV_APP",
+        "DEV_DISPATCH_WORKER_NOT_RUNNING"
+      ],
+      "changes_made": false,
+      "provider_requests": 0,
+      "live_test_authorized": false
     }
   }
 }
