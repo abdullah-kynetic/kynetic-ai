@@ -172,3 +172,12 @@ Decided:
 Replaced: D-018 item 2 and 3 as far as they make Retell the platform for Alex. Still stands from D-018: Vapi stays parked, and Nora and Emily stay on Retell workspace `kyneticai`, frozen.
 Note: Twenty and this repo number decisions differently after Oct 24. Twenty has D-023 as the offer and pricing decision; the repo branches `feat/brand-revamp` and `fix/a2p-privacy-terms` carry D-023 (site rebuild) and D-024 (offer). D-025 was the first number free in both. Flag for Abdullah: reconcile D-023/D-024 when those branches merge.
 
+## (number for Abdullah to assign) Kynetic AI is positioned as an AI growth partner, with a page per industry
+Status: decided
+Date: 2026-11-04
+Decided (Abdullah, in the website thread):
+1. The main site presents the whole partnership, for any business: audit the whole business, switch on the AI systems that apply, optional full AI overhaul (1 to 3 days on-site), ongoing partnership. We are not "AI consulting" as an identity.
+2. Systems shown as six equal cards: Speed-to-Lead (Alex), Follow-Up & Lead Recovery, Reputation & Online Presence, Operations & Back-Office Automation, Custom AI Systems & CRM, Full AI Overhaul. Only Alex is tagged Live; the rest claim no results.
+3. Pricing section is "Start with Alex". Everything else is scoped on the audit; the full overhaul including on-site days is custom-priced.
+4. One page per industry from a shared template (`site/src/niches/`). Remodelers first; Solar & Battery and Foundation Repair are "Coming soon". The Remodelers page stays `noindex` until its TODOs are resolved.
+Open: guarantee wording, add-on readiness, founder video, proof section (all marked TODO on the page). Twenty and this repo number decisions separately: flag, do not pick a number.
