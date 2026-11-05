@@ -26,6 +26,8 @@ export const QUEUES = {
   'webhook.process': { ...retrying, policy: 'short' },
   /** One job per outbound call attempt (F-78). A queued attempt is unique per tenant, contact, trigger and attempt. */
   'call.outbound': { ...retrying, policy: 'short' },
+  /** Synthetic DEV attempts; explicit delayed scheduling only, never automatic provider retries. */
+  'dev.lead-attempt': { retryLimit: 0, policy: 'short' },
   /** One delayed job per task/due-date version; the handler rechecks the live task before notifying. */
   'task.due': { ...retrying, policy: 'short' } /** One rebuildable tenant/day metrics rollup. */,
   'metrics.daily': { ...retrying, policy: 'short' },

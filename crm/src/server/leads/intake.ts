@@ -277,9 +277,7 @@ export async function processLead(
           ...(lead.synthetic
             ? {
                 synthetic: true,
-                businessState: lead.businessState,
-                projectType: lead.projectType,
-                budget: lead.budget
+                businessState: lead.businessState
               }
             : {})
         }
