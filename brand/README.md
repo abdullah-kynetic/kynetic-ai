@@ -46,7 +46,7 @@ Option A has no stacked lockup because its K is shared with the wordmark (see `l
 | Orange (mark) | `#D9662A` |
 | Near-black ink | `#14100c` |
 | Off-white | `#f4f1ea` |
-| Espresso | `#1C1916` |
+| Espresso | `#281F1C` |
 | Champagne (espresso backgrounds only) | `#C9A96E` |
 | Light page | `#faf8f5` |
 
@@ -74,7 +74,7 @@ Flat color only: no gradients, glows or shadows.
 ### Do
 - Use the supplied SVGs as they are and scale proportionally.
 - Keep the clear space X free on all sides.
-- Put the orange mark on flat `#faf8f5`, white or `#1C1916`.
+- Put the orange mark on flat `#faf8f5`, white or `#281F1C`.
 
 ### Don't
 - Recolor the orange, or swap the text colors outside the supplied pairs.
