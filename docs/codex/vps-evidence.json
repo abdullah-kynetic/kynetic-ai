@@ -5,9 +5,9 @@
       "observed_on": "2026-11-04",
       "url": "https://dev.kyneticai.com/",
       "http_status": 200,
-      "deployed_revision": "7b21cd751f85c9d3d7a0d13ed2e0bcb6279d629d",
-      "reported_output": "PASS dev database: isolated kynetic-dev-portal Postgres volume; synthetic seed guard passed\nPASS dev app: 127.0.0.1:3031/api/health HTTP 200; providers stubbed; outbound disabled\nPASS dev HTTPS site installed: dev.kyneticai.com -> 127.0.0.1:3031\nPASS 0.7 https://dev.kyneticai.com/ HTTP 200 (verified from Mac)\nDEPLOYED_REVISION=7b21cd751f85c9d3d7a0d13ed2e0bcb6279d629d",
-      "note": "Initial LibreSSL handshake error recovered by retry; final request returned 200. Report supplied by Abdullah in this chat."
+      "deployed_revision": "65551bffc05f7bdc10c50bd4ea211e47a8501784",
+      "reported_output": "PASS dev database: isolated kynetic-dev-portal Postgres volume; synthetic seed guard passed\nPASS dev app: 127.0.0.1:3031/api/health HTTP 200; providers stubbed; outbound disabled\nPASS dev auth locally: /sign-in HTTP 200; anonymous /admin HTTP 401\nPASS DEV_AUTH /sign-in HTTP 200; anonymous /admin HTTP 401 (no redirects followed)\nPASS 0.7 https://dev.kyneticai.com/ HTTP 200 (verified from Mac)\nDEPLOYED_REVISION=65551bffc05f7bdc10c50bd4ea211e47a8501784",
+      "note": "User-uploaded terminal output confirms newest auth deployment. Root check follows redirects; sign-in and admin auth probes do not. Existing production site blocks/containers/database were reported unchanged."
     },
     "1.7": {
       "source": "user_mac_terminal",
@@ -56,6 +56,26 @@
       "reported_output": "CHECK 1.7 root HTTP 200; unauthenticated /admin HTTP 200\nFAIL 1.7 real portal unavailable or unauthenticated /admin returns 200; no server changes made",
       "checker_revision": "aacd2741",
       "note": "Curl followed redirects. Final status alone does not distinguish an admin page from a sign-in page. No response body or redirect chain was collected. Subsequent manually entered PASS text was a shell command error, not check evidence."
+    },
+    "initial_dev_deployment": {
+      "source": "user_mac_terminal",
+      "observed_on": "2026-11-04",
+      "url": "https://dev.kyneticai.com/",
+      "http_status": 200,
+      "deployed_revision": "7b21cd751f85c9d3d7a0d13ed2e0bcb6279d629d",
+      "reported_output": "PASS dev database: isolated kynetic-dev-portal Postgres volume; synthetic seed guard passed\nPASS dev app: 127.0.0.1:3031/api/health HTTP 200; providers stubbed; outbound disabled\nPASS dev HTTPS site installed: dev.kyneticai.com -> 127.0.0.1:3031\nPASS 0.7 https://dev.kyneticai.com/ HTTP 200 (verified from Mac)\nDEPLOYED_REVISION=7b21cd751f85c9d3d7a0d13ed2e0bcb6279d629d",
+      "note": "Initial LibreSSL handshake error recovered by retry; final request returned 200. Report supplied by Abdullah in this chat."
+    },
+    "dev_auth_deployment": {
+      "source": "user_mac_terminal",
+      "observed_on": "2026-11-04",
+      "deployed_revision": "65551bffc05f7bdc10c50bd4ea211e47a8501784",
+      "sign_in_http_status": 200,
+      "anonymous_admin_http_status": 401,
+      "auth_follow_redirects": false,
+      "outbound_enabled": false,
+      "provider_mode": "stub",
+      "note": "Deploy script checks, not the exact headers used by scripts/checks/portal_check.py; no existing checker result is overwritten with different request settings."
     }
   }
 }
