@@ -52,7 +52,7 @@ Record actual approved values, not guesses. Values in the "Value" columns come s
 
 | Token | Value | Usage | Measured contrast |
 | --- | --- | --- | --- |
-| color.background | `#1C1916` | Canvas / espresso band | |
+| color.background | `#281F1C` | Canvas / espresso band | |
 | color.surface | `#26211C` | Cards | |
 | color.alt | `#221e1a` | Alternate bands (dark theme only) | |
 | color.border | `#3A332B` | Hairlines | 1.41:1 on bg (decorative only) |
