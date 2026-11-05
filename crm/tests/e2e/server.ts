@@ -1,3 +1,4 @@
+import { createHmac, randomBytes } from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -13,16 +14,24 @@ const secret = 'e2e-only-secret-not-for-real-use-0000';
 let db: TestDatabase | undefined;
 let child: ReturnType<typeof spawn> | undefined;
 
-// Open mode has no sign-in: a plain cookie picks the persona (see src/server/auth/open-mode.ts).
-function personaState(persona: 'owner' | 'admin' | 'va'): string {
+// Authenticated synthetic storage state. Production builds never enable persona switching.
+async function sessionState(persona: 'owner' | 'admin' | 'va'): Promise<string> {
+  const userId = { owner: IDS.ownerA, admin: IDS.admin, va: IDS.va }[persona];
+  const token = randomBytes(32).toString('hex');
+  await db!.admin`insert into sessions (user_id, token, expires_at, two_factor_verified_at)
+    values (${userId}, ${token}, now() + interval '1 hour', now())`;
+  if (persona !== 'owner')
+    await db!.admin`update users set two_factor_enabled = true where id = ${userId}`;
+  const signature = createHmac('sha256', secret).update(token).digest('base64');
   return JSON.stringify({
     cookies: [
       {
-        name: 'kynetic_open_as',
-        value: persona,
+        name: 'better-auth.session_token',
+        value: encodeURIComponent(`${token}.${signature}`),
         domain: 'localhost',
         path: '/',
-        httpOnly: false,
+        httpOnly: true,
+        secure: false,
         sameSite: 'Lax'
       }
     ],
@@ -72,9 +81,9 @@ async function main(): Promise<void> {
     values ('restore_test', 'ok', 4096, 'backups/synthetic/test.dump.enc', true)`;
 
   await mkdir('/tmp', { recursive: true });
-  await writeFile(storagePath, personaState('owner'));
-  await writeFile(adminStoragePath, personaState('admin'));
-  await writeFile(vaStoragePath, personaState('va'));
+  await writeFile(storagePath, await sessionState('owner'));
+  await writeFile(adminStoragePath, await sessionState('admin'));
+  await writeFile(vaStoragePath, await sessionState('va'));
 
   const env = {
     ...process.env,

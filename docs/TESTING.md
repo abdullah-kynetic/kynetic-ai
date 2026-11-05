@@ -575,3 +575,36 @@ Work branch, after 2d6594a. PostgreSQL 16 was disposable/local on loopback 55432
 ### Preview deployment preparation (2026-11-01)
 
 User approved a separate synthetic preview of work for visual review. Preview Compose now supplies DATABASE_URL_AUTH using a separately generated kynetic_auth password and explicitly sets PROVIDER_MODE=stub with outbound disabled. Existing preview state gets AUTH_PW on its next up without replacing other credentials. Bash syntax, YAML parsing and checks of the auth-role/stub/outbound settings pass locally. No Docker deployment or external health check ran: this environment has no configured VPS connection/credentials or TCP grants, and GitHub CLI authentication is invalid. Approval remains valid; access setup is the blocker, not another permission request.
+
+### Codex foundation verification (2026-11-04)
+
+`crm/tests/unit/kill-switch.test.ts` verifies the existing outbound gate's global and tenant kill switches, including the inbound SMS reply path and module protection. It uses transaction/consent test doubles and makes no provider requests. Run with `bun run test tests/unit/quiet-hours.test.ts tests/unit/contact-consent-status.test.ts tests/unit/kill-switch.test.ts` from `crm/`.
+
+The cloud executor cannot reach the portal domains. `bash scripts/checks/mac-portal.sh` is the read-only Mac handoff for check 1.7: root must be available and unauthenticated `/admin` must return a final non-200 HTTP response. Record the reported status codes in `docs/codex/PROGRESS.md`; a public admin response requires a separate live-system authorization before any change.
+
+### Verified sessions and dev-only HTTP check (2026-11-04)
+
+`bun run test tests/unit/auth-session.test.ts tests/unit/admin-auth-status.test.ts tests/unit/env.test.ts tests/unit/admin/guard.test.ts` exercises actual Better Auth signed-cookie verification through an in-memory session adapter, then live-user authorization through a transaction double. It covers missing/persona-only/forged cookies, expired/revoked/disabled-user sessions, non-admin denial, valid admin allowance and staff second-factor requirements. Proxy tests assert raw 401/403 before rendering (including prefetch headers); persona-route tests cover default-off, forced-off in production, and session/admin requirements.
+
+Check 1.7 now uses DEV_PORTAL_URL exclusively, refuses non-dev hosts, prints GET URL/headers and raw response status, and never follows redirects. Only 401/403 or 302/303/307 to same-origin `/sign-in` satisfy admin denial. A 404, 200, server error, foreign redirect, or transport failure is a failure. This supersedes the earlier production Mac handoff instructions above. `bash scripts/checks/mac-dev-portal.sh` runs the identical Python HTTP assertion from the Mac without deployment; it is the appropriate handoff when this executor cannot reach dev.
+
+The E2E fixture uses signed synthetic server sessions instead of anonymous persona cookies. The old open-mode integration suite now requires anonymous/persona-only requests to be rejected even with privileged users in the DB. Browser/integration suites are separate from the unit checks and were not exercised in this run.
+
+Check 1.7 Mac evidence can be supplied explicitly with `scripts/checks/run.sh 1 --vps-evidence docs/codex/vps-evidence.json`. The evidence path validates the exact unauthenticated request settings, dev URL, recent observation and checker revision, then applies the same status assertion. It labels the result USER MAC EVIDENCE; it is not a local network observation or evidence of deploying the current auth implementation.
+
+### Step 2 synthetic ElevenLabs provisioning (2026-11-04)
+
+`bun run test tests/unit/elevenlabs-dev-workflow.test.ts` from `crm/` verifies the actual workflow's embedded Code node using a VM with synthetic input/env and no I/O. Covers TEST_PHONE destination isolation, missing config, non-synthetic/FL/OK rejection, optional email, project type/budget, and disabled dispatch/inactive workflow. `python3 -m unittest discover -s tools -p test_codex_step2.py` verifies dry-run safety and repeated provisioning with mocked provider APIs; it never buys numbers or makes calls. Live setup verification uses read-only GETs and stable before/after configuration hashes, never live-agent writes.
+
+### Approved main merge: sign-in completion and full regression (2026-11-04)
+
+Restored the existing invitation-only auth issuer and UI, Google/staff TOTP flow, client magic-link callbacks, and PostgreSQL auth rate limits before merging the session-enforcement work. The issuer shares the verified __Host cookie configuration with the strict reader. Mocked callbacks/fetch capture sign-in email delivery; no real email/provider login is attempted. Added browser assertions for sign-in rendering, anonymous-admin raw 401, owner-admin 403, and verified admin access. Removed-route 404 tests use an authenticated owner so they test route removal rather than following the anonymous login redirect.
+
+Final validation on the merge candidate:
+- `bun run check`: typecheck, lint (warnings only), formatting and 468 unit tests passed.
+- `bun run test:integration`: 709 passed, 2 live R2 tests skipped; local disposable PostgreSQL 17.11 and matching client tools. Includes 29 restored auth/rate-limit/TOTP integration tests.
+- `bun run build`: passed, including /sign-in, /api/auth/[...all] and /staff/2fa.
+- `CI=true PLAYWRIGHT_CHROMIUM_PATH=/usr/bin/chromium bun run test:e2e`: 40 passed, 1 R2 logo test skipped; synthetic local DB, no external provider sends. Both owner and admin accessibility/theme/viewport scans passed.
+- Production deploy rehearsal passed against stubs; Python checker/evidence tests (7) and mocked DEV provisioning tests (2) passed.
+
+GitHub CI uses PostgreSQL 16; no workflow files were changed. The local suite above used PostgreSQL 17. No production deployment or external R2 validation is claimed.

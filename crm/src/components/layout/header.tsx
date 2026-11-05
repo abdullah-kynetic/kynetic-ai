@@ -1,4 +1,5 @@
 import React from 'react';
+import { personaSwitchingEnabled } from '@/server/auth/open-mode';
 import { SidebarTrigger } from '../ui/sidebar';
 import { Separator } from '../ui/separator';
 import { Breadcrumbs } from '../breadcrumbs';
@@ -22,7 +23,7 @@ export default function Header({ user }: { user: ShellUser }) {
         </div>
         <NotificationBell />
         <ThemeModeToggle />
-        <UserMenu user={user} />
+        <UserMenu user={user} showPersonas={personaSwitchingEnabled()} />
       </div>
     </header>
   );

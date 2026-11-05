@@ -1,0 +1,26 @@
+{
+  "elevenlabs": {
+    "name": "DEV-Alex Codex Setup",
+    "agent_id": "agent_9401m6kpwrd1fgx8cajfjenr9xxe",
+    "account_env": "ELEVENLABS_API_KEY_blitz",
+    "tools": [],
+    "phone_number_attached": false
+  },
+  "n8n": {
+    "repo_workflow": "n8n/workflows/dev/setup-safety-check.json",
+    "deployed": true,
+    "workflow_id": "wWsM69Xx1B8Mfy9s",
+    "active": false
+  },
+  "step2": {
+    "live_config_fingerprint_before": "3437184838c5afe9a02c9e80c9e3bb2bde1edbea11fdb58df6e3b3ae7f930bda",
+    "agent_id": "agent_0801m6mctqxpe71b4kb269f9bqd5",
+    "workflow_id": "hwjiTYVg91i5vIFS",
+    "twilio_number_sid": "PNf1d6c1d12f35bfd9b1c5ffe6f5ed206a",
+    "phone_number_id": "phnum_7801m6mctyyxeder81mx3gyffmbr",
+    "live_config_fingerprint_after": "3437184838c5afe9a02c9e80c9e3bb2bde1edbea11fdb58df6e3b3ae7f930bda",
+    "live_config_unchanged": true,
+    "inbound_hooks_disabled": true,
+    "workflow_active": false
+  }
+}

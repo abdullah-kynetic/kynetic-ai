@@ -1,7 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
-test('F-52: starter demo routes are gone', async ({ request }) => {
+test('F-52: starter demo routes are gone', async ({ authenticatedPage }) => {
+  const request = authenticatedPage.context().request;
   for (const path of ['/dashboard/kanban', '/dashboard/chat', '/api/users']) {
     const res = await request.get(path);
     expect(res.status(), path).toBe(404);

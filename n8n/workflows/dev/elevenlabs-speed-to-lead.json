@@ -1,0 +1,103 @@
+{
+  "name": "DEV - ElevenLabs Speed to Lead",
+  "active": false,
+  "tags": [
+    {
+      "name": "DEV"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "manual-dev-trigger",
+      "name": "Manual synthetic test only",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "prepare-dev-request",
+      "name": "Validate synthetic TEST_PHONE request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// n8n Code node, runOnceForAllItems. No I/O and no secret values in output.\nconst testPhone = $env.TEST_PHONE;\nif (typeof testPhone !== 'string' || !/^\\+[1-9]\\d{7,14}$/.test(testPhone)) {\n  throw new Error('TEST_PHONE must be configured as E.164; no destination fallback');\n}\nconst agentId = $env.DEV_ELEVENLABS_AGENT_ID;\nconst phoneId = $env.DEV_ELEVENLABS_PHONE_NUMBER_ID;\nif (!agentId || !phoneId) throw new Error('DEV agent and phone identifiers must be configured');\nreturn $input.all().map((item) => {\n  const lead = item.json.body ?? item.json;\n  if (lead.synthetic !== true) throw new Error('Synthetic test leads only');\n  if (['FL', 'OK'].includes(String(lead.business_state ?? '').trim().toUpperCase())) {\n    throw new Error('Business state is not supported');\n  }\n  const text = (value, fallback) => typeof value === 'string' && value.trim() ? value.trim().slice(0, 200) : fallback;\n  // Destination is always server configuration, never a submitted lead phone.\n  return { json: {\n    synthetic: true,\n    dispatch_enabled: false,\n    booking_mode: 'synthetic_only',\n    request: {\n      agent_id: agentId,\n      agent_phone_number_id: phoneId,\n      to_number: testPhone,\n      conversation_initiation_client_data: { dynamic_variables: {\n        first_name: text(lead.first_name, 'Synthetic Lead'),\n        company_name: 'DEV Synthetic Contractor',\n        project_type: text(lead.project_type, 'not provided'),\n        budget: text(lead.budget, 'not provided'),\n        timeline: text(lead.timeline, 'not provided'),\n        // Email is optional; never substitute a real recipient.\n        email: text(lead.email, '')\n      } }\n    }\n  } };\n});\n"
+      }
+    },
+    {
+      "id": "elevenlabs-dev-dispatch",
+      "name": "DEV ElevenLabs outbound - disabled until portal gate",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        0
+      ],
+      "disabled": true,
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/convai/twilio/outbound-call",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.request) }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "dev-booking-contract",
+      "name": "DEV Cal.com booking contract",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        220,
+        220
+      ],
+      "parameters": {
+        "content": "Synthetic phase only. Preserve project_type and budget; email optional. No real bookings or confirmation sends. Cal.com API reachability is checked read-only. Step 3 must connect the portal consent, quiet-hours, kill-switch and retry contract before the disabled dispatch node can run. Never activate this workflow."
+      }
+    }
+  ],
+  "connections": {
+    "Manual synthetic test only": {
+      "main": [
+        [
+          {
+            "node": "Validate synthetic TEST_PHONE request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate synthetic TEST_PHONE request": {
+      "main": [
+        [
+          {
+            "node": "DEV ElevenLabs outbound - disabled until portal gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "none",
+    "saveManualExecutions": false
+  }
+}
