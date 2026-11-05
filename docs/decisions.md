@@ -155,3 +155,7 @@ Note: Twenty and this repo number decisions differently after Oct 24. Twenty has
 ## 2026-11-04 — verified sessions replace anonymous admin open mode (dev branch)
 
 Abdullah explicitly requested removing the anonymous admin default, requiring verified server-side sessions for `/admin`, restricting persona switching to an explicit non-production flag, unit tests, and no deployment. This supersedes the anonymous open-mode behavior for the implementation on `dev/codex-setup`. Production remains unchanged. Existing role permissions (including authorized Kynetic support) remain intact. The checker now probes only DEV_PORTAL_URL under the no-production-request instruction; its results do not certify production access controls.
+
+## 2026-11-04 — tested main merges authorized; restore the missing sign-in flow
+
+Abdullah explicitly authorized merging completed/tested work into main so the existing authored commits can contribute to the GitHub profile. Preserve individual commits with a merge commit; do not squash or rewrite shared history. This overrides the earlier main prohibition for the approved merge. Restore and verify the missing invitation-only sign-in/session-issuance and staff 2FA paths before merging the session-enforcement work. Source merge does not authorize or trigger a manual VPS deployment, workflow activation or live-provider changes.

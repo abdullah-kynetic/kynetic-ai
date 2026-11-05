@@ -595,3 +595,16 @@ Check 1.7 Mac evidence can be supplied explicitly with `scripts/checks/run.sh 1 
 ### Step 2 synthetic ElevenLabs provisioning (2026-11-04)
 
 `bun run test tests/unit/elevenlabs-dev-workflow.test.ts` from `crm/` verifies the actual workflow's embedded Code node using a VM with synthetic input/env and no I/O. Covers TEST_PHONE destination isolation, missing config, non-synthetic/FL/OK rejection, optional email, project type/budget, and disabled dispatch/inactive workflow. `python3 -m unittest discover -s tools -p test_codex_step2.py` verifies dry-run safety and repeated provisioning with mocked provider APIs; it never buys numbers or makes calls. Live setup verification uses read-only GETs and stable before/after configuration hashes, never live-agent writes.
+
+### Approved main merge: sign-in completion and full regression (2026-11-04)
+
+Restored the existing invitation-only auth issuer and UI, Google/staff TOTP flow, client magic-link callbacks, and PostgreSQL auth rate limits before merging the session-enforcement work. The issuer shares the verified __Host cookie configuration with the strict reader. Mocked callbacks/fetch capture sign-in email delivery; no real email/provider login is attempted. Added browser assertions for sign-in rendering, anonymous-admin raw 401, owner-admin 403, and verified admin access. Removed-route 404 tests use an authenticated owner so they test route removal rather than following the anonymous login redirect.
+
+Final validation on the merge candidate:
+- `bun run check`: typecheck, lint (warnings only), formatting and 468 unit tests passed.
+- `bun run test:integration`: 709 passed, 2 live R2 tests skipped; local disposable PostgreSQL 17.11 and matching client tools. Includes 29 restored auth/rate-limit/TOTP integration tests.
+- `bun run build`: passed, including /sign-in, /api/auth/[...all] and /staff/2fa.
+- `CI=true PLAYWRIGHT_CHROMIUM_PATH=/usr/bin/chromium bun run test:e2e`: 40 passed, 1 R2 logo test skipped; synthetic local DB, no external provider sends. Both owner and admin accessibility/theme/viewport scans passed.
+- Production deploy rehearsal passed against stubs; Python checker/evidence tests (7) and mocked DEV provisioning tests (2) passed.
+
+GitHub CI uses PostgreSQL 16; no workflow files were changed. The local suite above used PostgreSQL 17. No production deployment or external R2 validation is claimed.
