@@ -4,8 +4,8 @@ set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 [ "$(git branch --show-current)" = dev/codex-setup ] || { echo 'Checkout dev/codex-setup first.' >&2; exit 1; }
 # Local edits are left untouched; the upload below contains only committed HEAD files.
-verify_step3="${1:-}"
-[ "$#" -le 1 ] && { [ -z "$verify_step3" ] || [ "$verify_step3" = --verify-step3 ]; } || { echo 'Usage: deploy-dev.sh [--verify-step3]' >&2; exit 1; }
+verify_step3=--verify-step3
+[ "$#" -le 1 ] && { [ "$#" -eq 0 ] || [ "$1" = --verify-step3 ]; } || { echo 'Usage: deploy-dev.sh [--verify-step3]' >&2; exit 1; }
 command -v ssh >/dev/null
 # Production deploy users/keys are forced-command credentials, unsuitable for dev setup.
 if [ -f "$HOME/.ssh/config" ]; then
@@ -57,4 +57,9 @@ admin_status="$(curl -q --silent --show-error --output /dev/null --write-out '%{
   echo "FAIL dev auth: /sign-in HTTP $signin_status; anonymous /admin HTTP $admin_status" >&2
   exit 1
 }
-printf 'PASS DEV_AUTH /sign-in HTTP 200; anonymous /admin HTTP 401 (no redirects followed)\nPASS 0.7 https://dev.kyneticai.com/ HTTP 200 (verified from Mac)\nDEPLOYED_REVISION=%s\n' "$revision"
+# The only intake probe is unsigned and has no valid tenant or lead: expect raw 401.
+unsigned_status="$(curl -q --silent --show-error --output /dev/null --write-out '%{http_code}' \
+  --max-time 30 --request POST --header 'Content-Type: application/json' --data '{}' \
+  https://dev.kyneticai.com/api/hooks/leads/dev/00000000-0000-4000-8000-000000000000)"
+[ "$unsigned_status" = 401 ] || { echo "FAIL DEV_INTAKE_UNSIGNED HTTP $unsigned_status (expected 401)" >&2; exit 1; }
+printf 'PASS DEV_AUTH /sign-in HTTP 200; anonymous /admin HTTP 401 (no redirects followed)\nPASS 0.7 https://dev.kyneticai.com/ HTTP 200 (verified from Mac)\nPASS DEV_INTAKE_UNSIGNED HTTP 401; unsigned intake rejected; no provider test performed\nDEPLOYED_REVISION=%s\n' "$revision"

@@ -59,8 +59,8 @@ is part of this script.
 
 ### Step 3 deployment and gate verification
 
-From the Mac checkout, pull `dev/codex-setup`, then run `bash scripts/step3-dev-handoff.sh`.
-The script deploys the dedicated dev stack and opts into the manual `verify` Compose
+From the Mac checkout, pull `dev/codex-setup`, then run `bash scripts/deploy-dev.sh`. The older step3-dev-handoff.sh is a compatibility alias.
+The script deploys the dedicated dev stack and always opts into the manual `verify` Compose
 profile. Its one-shot tools container checks runtime isolation, requires a database
 containing only allowed synthetic tenants, and tests the deployed consent, quiet-hours
 and global/tenant kill-switch code under the worker role/RLS. Temporary contact,

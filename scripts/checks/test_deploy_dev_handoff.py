@@ -17,7 +17,7 @@ class DevDeployHandoffTests(unittest.TestCase):
             ssh.write_text('''#!/usr/bin/env python3
 import os,sys
 command = sys.argv[-1]
-if command.startswith('sudo bash ') and os.environ.get('STEP3_TEST') == '1':
+if command.startswith('sudo bash '):
     if not command.endswith("'--verify-step3'"):
         raise SystemExit('Missing step-3 verifier flag')
     if os.environ.get('SERVER_TEST_FAIL') == '1':
@@ -79,15 +79,18 @@ if '%{http_code}' in sys.argv:
         result = self.run_handoff(200, 401, step3=True)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn('PASS DEV_INTAKE_UNSIGNED HTTP 401', result.stdout)
-        for status in [200, 403, 404]:
-            result = self.run_handoff(200, 401, step3=True, unsigned=status)
-            self.assertNotEqual(result.returncode, 0)
-            self.assertNotIn('PASS DEV_INTAKE_UNSIGNED', result.stdout)
+        for use_alias in [False, True]:
+            for status in [200, 403, 404]:
+                result = self.run_handoff(200, 401, step3=use_alias, unsigned=status)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertNotIn('PASS DEV_INTAKE_UNSIGNED', result.stdout)
+                self.assertNotIn('DEPLOYED_REVISION=', result.stdout)
 
     def test_step3_server_failure_stops_before_public_success(self):
-        result = self.run_handoff(200, 401, step3=True, server_fail=True)
-        self.assertNotEqual(result.returncode, 0)
-        self.assertNotIn('DEPLOYED_REVISION=', result.stdout)
+        for use_alias in [False, True]:
+            result = self.run_handoff(200, 401, step3=use_alias, server_fail=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertNotIn('DEPLOYED_REVISION=', result.stdout)
 
 
 if __name__ == '__main__':
