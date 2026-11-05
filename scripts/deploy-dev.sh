@@ -45,8 +45,14 @@ git archive HEAD crm scripts/deploy-dev-server.sh | ssh "${ssh_opts[@]}" "$host"
 # A TTY permits sudo authentication. No production deploy helper is used.
 ssh -t "${ssh_opts[@]}" "$host" "sudo bash '$remote_dir/scripts/deploy-dev-server.sh' '$remote_dir' '$revision'"
 # Wait for automatic HTTPS certificate issuance, then require the same final 200 as check 0.7.
-curl --fail --silent --show-error --location --output /dev/null --max-time 30 \
+curl -q --fail --silent --show-error --location --output /dev/null --max-time 30 \
   --retry 12 --retry-all-errors --retry-delay 5 https://dev.kyneticai.com/
-code="$(curl --location --silent --show-error --output /dev/null --write-out '%{http_code}' --max-time 60 https://dev.kyneticai.com/)"
+code="$(curl -q --location --silent --show-error --output /dev/null --write-out '%{http_code}' --max-time 60 https://dev.kyneticai.com/)"
 [ "$code" = 200 ] || { echo "FAIL 0.7 public HTTPS returned $code" >&2; exit 1; }
-printf 'PASS 0.7 https://dev.kyneticai.com/ HTTP 200 (verified from Mac)\nDEPLOYED_REVISION=%s\n' "$revision"
+signin_status="$(curl -q --silent --show-error --output /dev/null --write-out '%{http_code}' --max-time 30 https://dev.kyneticai.com/sign-in)"
+admin_status="$(curl -q --silent --show-error --output /dev/null --write-out '%{http_code}' --max-time 30 https://dev.kyneticai.com/admin)"
+[ "$signin_status" = 200 ] && [ "$admin_status" = 401 ] || {
+  echo "FAIL dev auth: /sign-in HTTP $signin_status; anonymous /admin HTTP $admin_status" >&2
+  exit 1
+}
+printf 'PASS DEV_AUTH /sign-in HTTP 200; anonymous /admin HTTP 401 (no redirects followed)\nPASS 0.7 https://dev.kyneticai.com/ HTTP 200 (verified from Mac)\nDEPLOYED_REVISION=%s\n' "$revision"

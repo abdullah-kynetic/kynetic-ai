@@ -45,3 +45,14 @@ and `DEPLOYED_REVISION=<40-character commit>`. The Mac follows the app's redirec
 matching the urllib behavior in check 0.7. Return these status lines to Codex as VPS
 handoff evidence; Codex must not claim that its network-restricted executor reached
 this host. No step is marked complete until that evidence arrives.
+
+## Step 3 auth handoff
+
+The deploy now verifies `/sign-in` returns 200 and anonymous `/admin` returns 401,
+without redirects, before writing the server's deployed-revision marker. The Mac repeats
+those checks against dev HTTPS and prints `PASS DEV_AUTH` plus `DEPLOYED_REVISION`.
+An older open-mode image returning 403 or a redirect is not sufficient for this handoff.
+Send the output back to Codex with "done" before step 3 continues. Outbound remains
+false, live ElevenLabs remains false, persona switching remains false, and providers
+remain stubbed. No call, SMS, Twenty write, workflow activation or production change
+is part of this script.

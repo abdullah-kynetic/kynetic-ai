@@ -90,7 +90,10 @@ run_private compose up -d --wait --wait-timeout 120 postgres
 # prepare runs bootstrap/migrations and synthetic-only validation before app start.
 run_private compose run --rm prepare
 run_private compose up -d --no-deps --wait --wait-timeout 180 app
-[ "$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 http://127.0.0.1:3031/api/health)" = 200 ]
+[ "$(curl -q -sS -o /dev/null -w '%{http_code}' --max-time 20 http://127.0.0.1:3031/api/health)" = 200 ]
+# The old open-mode image lacks /sign-in. Require the new auth behavior before recording success.
+[ "$(curl -q -sS -o /dev/null -w '%{http_code}' --max-time 20 http://127.0.0.1:3031/sign-in)" = 200 ]
+[ "$(curl -q -sS -o /dev/null -w '%{http_code}' --max-time 20 http://127.0.0.1:3031/admin)" = 401 ]
 # Refuse concurrent edits rather than restoring an obsolete production config.
 [ "$(sha256sum "$caddy_config" | cut -d ' ' -f 1)" = "$source_hash" ] || {
   echo 'Caddy config changed during the build; refusing to replace it.' >&2; exit 1;
@@ -110,5 +113,6 @@ ln -sfn "$release" "$root/current"
 printf '%s\n' "$revision" > "$state/deployed-revision"
 echo 'PASS dev database: isolated kynetic-dev-portal Postgres volume; synthetic seed guard passed'
 echo 'PASS dev app: 127.0.0.1:3031/api/health HTTP 200; providers stubbed; outbound disabled'
+echo 'PASS dev auth locally: /sign-in HTTP 200; anonymous /admin HTTP 401'
 echo 'PASS dev HTTPS site installed: dev.kyneticai.com -> 127.0.0.1:3031'
 echo 'Existing Caddy site blocks retained; production containers and database not changed.'
