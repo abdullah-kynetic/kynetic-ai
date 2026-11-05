@@ -5,7 +5,7 @@
 import { chromium } from 'playwright-core';
 
 const base = 'http://localhost:4321';
-const exe = '/home/box/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome';
+const exe = process.env.CHROME_PATH || '/home/box/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome';
 const browser = await chromium.launch({ executablePath: exe, args: ['--no-sandbox'] });
 const out = [];
 const ok = (name, pass, info = '') => { out.push({ name, pass, info }); console.log(`${pass ? 'PASS' : 'FAIL'} ${name} ${info}`); };
@@ -27,8 +27,8 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
 {
   const { ctx, page, errors, external } = await open(1440);
   // nav links scroll to their section
-  for (const [label, id] of [['Process', 'process'], ['Plans', 'plans'], ['Contact', 'contact']]) {
-    await page.evaluate(() => scrollTo(0, 0)); await page.waitForTimeout(400);
+  for (const [label, id] of [['Journey', 'journey'], ['Services', 'services'], ['Industries', 'industries'], ['Pricing', 'plans'], ['Contact', 'contact']]) {
+    await page.evaluate(() => scrollTo(0, 0)); await page.waitForTimeout(1500); // let the pill finish expanding
     await page.locator('nav a.framer-520aC', { hasText: new RegExp('^' + label + '$', 'i') }).first().click();
     await page.waitForTimeout(1500);
     const top = await page.evaluate((id) => document.getElementById(id).getBoundingClientRect().top, id);
@@ -130,7 +130,7 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
   await ham.click(); await page.waitForTimeout(1000);
   const hOpen = (await nav.boundingBox()).height;
   ok('mobile menu opens', (await nav.getAttribute('data-framer-name')) === 'Mobile open' && hOpen > hClosed + 50, `h ${Math.round(hClosed)}->${Math.round(hOpen)}`);
-  const link = nav.locator('.framer-1mmfnwb a', { hasText: /plans/i }).first();
+  const link = nav.locator('.framer-1mmfnwb a', { hasText: /pricing/i }).first();
   ok('mobile menu shows links', (await link.count()) > 0 && (await link.isVisible()));
   await link.click(); await page.waitForTimeout(1500);
   ok('mobile menu link closes the menu', (await nav.getAttribute('data-framer-name')) === 'Mobileclosed');
