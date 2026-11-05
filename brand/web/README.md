@@ -6,8 +6,8 @@ Generated from `../logo/mark.svg` and the lockups. Copy these files to the site'
 |---|---|
 | `favicon.ico` | 16/32/48 px, legacy and default |
 | `favicon.svg` | Modern browsers, orange mark on transparent |
-| `apple-touch-icon.png` | 180 px, mark on `#1C1916` with ~14% padding |
-| `icon-192.png`, `icon-512.png` | PWA icons, mark on `#1C1916` |
+| `apple-touch-icon.png` | 180 px, mark on `#281F1C` with ~14% padding |
+| `icon-192.png`, `icon-512.png` | PWA icons, mark on `#281F1C` |
 | `maskable-512.png` | PWA maskable icon, mark inside the 80% safe-zone circle |
 | `og-image-light.png`, `og-image-espresso.png` | 1200x630 social share images |
 | `site.webmanifest` | Name, colors and icon list |
@@ -19,7 +19,7 @@ Generated from `../logo/mark.svg` and the lockups. Copy these files to the site'
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#1C1916">
+<meta name="theme-color" content="#281F1C">
 <meta property="og:title" content="Kynetic AI">
 <meta property="og:description" content="AI voice agents that answer, qualify and book">
 <meta property="og:image" content="https://kyneticai.com/og-image-espresso.png">
