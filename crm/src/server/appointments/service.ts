@@ -41,6 +41,13 @@ function run<T>(ctx: TenantContextInput, opts: { db?: Db; tx?: Tx }, fn: (tx: Tx
   return opts.tx ? fn(opts.tx) : withTenant(ctx, fn, { db: opts.db });
 }
 
+/** Serialize calendar mutations without requiring UPDATE privileges on the tenant row. */
+async function lockCalendar(tx: Tx) {
+  await tx.execute(
+    sql`select pg_advisory_xact_lock(hashtextextended('appointments:' || app_tenant_id()::text, 0))`
+  );
+}
+
 async function tenantSettings(tx: Tx) {
   const [row] = await tx
     .select({ timezone: tenants.timezone, businessHours: tenants.businessHours })
@@ -108,12 +115,7 @@ export async function bookAppointment(
   const v = parseInput(appointmentInput, input);
   if (v.endsAt <= v.startsAt) throw new ValidationError({ endsAt: ['after_starts_at'] });
   return run(ctx, opts, async (tx) => {
-    // Serializing on the tenant row makes the overlap check atomic across concurrent voice calls.
-    await tx
-      .select({ id: tenants.id })
-      .from(tenants)
-      .where(eq(tenants.id, sql`app_tenant_id()`))
-      .for('update');
+    await lockCalendar(tx);
     if (v.externalEventId) {
       const [existing] = await tx
         .select()
@@ -210,6 +212,7 @@ export async function updateAppointment(
     patch
   );
   return run(ctx, opts, async (tx) => {
+    await lockCalendar(tx);
     const [before] = await tx
       .select()
       .from(appointments)
