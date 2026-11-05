@@ -17,7 +17,7 @@ Every lockup SVG in this folder already has X baked into its `viewBox` as paddin
 | `lockup-a-horizontal-light.svg` / `-espresso.svg` | Option A squared wordmark |
 | `clearspace-diagram.svg` | The figure above (the only file here with guides) |
 
-All files are transparent. Use `-light` on `#faf8f5` or white, `-dark` / `-espresso` on `#1C1916`.
+All files are transparent. Use `-light` on `#faf8f5` or white, `-dark` / `-espresso` on `#281F1C`.
 
 ## Option A has no stacked lockup
 
