@@ -11,6 +11,8 @@ import { initNav } from './nav';
 import { initLeakCalc } from './leak-calc';
 import { initForm } from './form';
 import { initLoops, initCodeLoop } from './loops';
+import { initReveal } from './reveal';
+import { initAuditModal } from './audit-modal';
 
 const start = () => {
   initAppear();
@@ -24,6 +26,8 @@ const start = () => {
   initForm();
   initLoops();
   initCodeLoop();
+  initReveal();
+  initAuditModal();
 };
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
