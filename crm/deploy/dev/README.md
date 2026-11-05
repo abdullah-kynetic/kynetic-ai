@@ -56,3 +56,26 @@ Send the output back to Codex with "done" before step 3 continues. Outbound rema
 false, live ElevenLabs remains false, persona switching remains false, and providers
 remain stubbed. No call, SMS, Twenty write, workflow activation or production change
 is part of this script.
+
+### Step 3 deployment and gate verification
+
+From the Mac checkout, pull `dev/codex-setup`, then run `bash scripts/step3-dev-handoff.sh`.
+The script deploys the dedicated dev stack and opts into the manual `verify` Compose
+profile. Its one-shot tools container checks runtime isolation, requires a database
+containing only allowed synthetic tenants, and tests the deployed consent, quiet-hours
+and global/tenant kill-switch code under the worker role/RLS. Temporary contact,
+consent, activity and tenant-switch changes are always rolled back. The fixture has
+no phone and only a reserved example.test email; no provider adapters, calls, SMS,
+email delivery, Twenty operations or dispatch workers run in this verifier.
+
+The tenant-switch case uses a test-only function argument to reach that switch;
+the deployed environment's `OUTBOUND_ENABLED` remains false throughout. A consenting
+daytime control is also checked so the quiet-hours case cannot pass merely because
+all requests are denied. This verifies gate decisions, not a real send, signed intake
+through a running worker, Cal.com booking or remote n8n workflow synchronization.
+
+Success includes `PASS DEV_STEP3_GATES ... provider requests 0`, public auth checks,
+`DEPLOYED_REVISION`, and `PASS DEV_INTAKE_UNSIGNED HTTP 401`. No production deploy
+helper is invoked. If any check fails, the script exits nonzero; private diagnostics
+stay in the root-only dev deployment log. Send the printed summary to Codex, never
+credentials or raw private logs.

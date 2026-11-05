@@ -10,13 +10,18 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class DevDeployHandoffTests(unittest.TestCase):
-    def run_handoff(self, signin, admin):
+    def run_handoff(self, signin, admin, *, step3=False, unsigned=401, server_fail=False):
         with tempfile.TemporaryDirectory() as tmp:
             folder = Path(tmp)
             ssh = folder / 'ssh'
             ssh.write_text('''#!/usr/bin/env python3
-import sys
+import os,sys
 command = sys.argv[-1]
+if command.startswith('sudo bash ') and os.environ.get('STEP3_TEST') == '1':
+    if not command.endswith("'--verify-step3'"):
+        raise SystemExit('Missing step-3 verifier flag')
+    if os.environ.get('SERVER_TEST_FAIL') == '1':
+        raise SystemExit(1)
 if 'mktemp -d' in command:
     print('/tmp/kynetic-dev-upload.fixture123')
 elif command.startswith('tar '):
@@ -29,10 +34,10 @@ elif not command.startswith('sudo bash '):
 import json,os,sys
 with open(os.environ['CURL_TEST_LOG'],'a') as f: f.write(json.dumps(sys.argv[1:])+'\\n')
 url = sys.argv[-1]
-if url not in ['https://dev.kyneticai.com/', 'https://dev.kyneticai.com/sign-in', 'https://dev.kyneticai.com/admin']:
+if url not in ['https://dev.kyneticai.com/', 'https://dev.kyneticai.com/sign-in', 'https://dev.kyneticai.com/admin', 'https://dev.kyneticai.com/api/hooks/leads/dev/00000000-0000-4000-8000-000000000000']:
     raise SystemExit('Refusing non-dev request')
 if '%{http_code}' in sys.argv:
-    print(os.environ['SIGNIN_TEST_STATUS'] if url.endswith('/sign-in') else os.environ['ADMIN_TEST_STATUS'] if url.endswith('/admin') else '200', end='')
+    print(os.environ['UNSIGNED_TEST_STATUS'] if '/api/hooks/' in url else os.environ['SIGNIN_TEST_STATUS'] if url.endswith('/sign-in') else os.environ['ADMIN_TEST_STATUS'] if url.endswith('/admin') else '200', end='')
 ''')
             ssh.chmod(0o755)
             curl.chmod(0o755)
@@ -42,13 +47,15 @@ if '%{http_code}' in sys.argv:
             env = {'PATH': str(folder) + ':' + os.environ['PATH'], 'HOME': str(folder),
                    'DEV_DEPLOY_SSH_HOST': 'test.invalid', 'DEV_DEPLOY_SSH_USER': 'ubuntu',
                    'DEV_DEPLOY_SSH_IDENTITY_FILE': str(identity), 'CURL_TEST_LOG': str(log),
-                   'SIGNIN_TEST_STATUS': str(signin), 'ADMIN_TEST_STATUS': str(admin)}
-            result = subprocess.run(['bash', 'scripts/deploy-dev.sh'], cwd=ROOT, env=env,
+                   'SIGNIN_TEST_STATUS': str(signin), 'ADMIN_TEST_STATUS': str(admin),
+                   'STEP3_TEST': '1' if step3 else '0', 'UNSIGNED_TEST_STATUS': str(unsigned),
+                   'SERVER_TEST_FAIL': '1' if server_fail else '0'}
+            result = subprocess.run(['bash', 'scripts/step3-dev-handoff.sh' if step3 else 'scripts/deploy-dev.sh'], cwd=ROOT, env=env,
                                     capture_output=True, text=True, timeout=30)
-            requests = [json.loads(line) for line in log.read_text().splitlines()]
+            requests = [json.loads(line) for line in log.read_text().splitlines()] if log.exists() else []
             for args in requests:
                 self.assertTrue(args[-1].startswith('https://dev.kyneticai.com/'))
-                if args[-1].endswith(('/sign-in', '/admin')):
+                if args[-1].endswith(('/sign-in', '/admin')) or '/api/hooks/' in args[-1]:
                     self.assertNotIn('--location', args)
                     self.assertIn('-q', args)
             return result
@@ -66,6 +73,21 @@ if '%{http_code}' in sys.argv:
                 self.assertNotEqual(result.returncode, 0)
                 self.assertNotIn('PASS DEV_AUTH', result.stdout)
                 self.assertNotIn('DEPLOYED_REVISION=', result.stdout)
+
+
+    def test_step3_requests_gate_verification_and_requires_unsigned_401(self):
+        result = self.run_handoff(200, 401, step3=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('PASS DEV_INTAKE_UNSIGNED HTTP 401', result.stdout)
+        for status in [200, 403, 404]:
+            result = self.run_handoff(200, 401, step3=True, unsigned=status)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertNotIn('PASS DEV_INTAKE_UNSIGNED', result.stdout)
+
+    def test_step3_server_failure_stops_before_public_success(self):
+        result = self.run_handoff(200, 401, step3=True, server_fail=True)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertNotIn('DEPLOYED_REVISION=', result.stdout)
 
 
 if __name__ == '__main__':

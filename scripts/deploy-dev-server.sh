@@ -5,6 +5,8 @@ umask 077
 [ "$(id -u)" = 0 ] || { echo 'Root is required for the dev directory and Caddy reload.' >&2; exit 1; }
 upload="${1:?missing upload directory}"
 revision="${2:?missing revision}"
+verify_step3="${3:-}"
+[ -z "$verify_step3" ] || [ "$verify_step3" = --verify-step3 ] || exit 1
 [[ "$upload" =~ ^/tmp/kynetic-dev-upload\.[a-zA-Z0-9]+$ ]] && [[ "$revision" =~ ^[0-9a-f]{40}$ ]] || exit 1
 root=/opt/kynetic-dev-portal
 state=/var/lib/kynetic-dev-portal
@@ -108,6 +110,11 @@ if ! cmp -s "$candidate" "$caddy_config"; then
     echo 'Caddy reload failed; original config restored.' >&2
     exit 1
   fi
+fi
+if [ "$verify_step3" = --verify-step3 ]; then
+  run_private compose --profile verify build verify-step3
+  run_private compose --profile verify run --rm --no-deps verify-step3
+  echo 'PASS DEV_STEP3_GATES consent blocked; quiet hours deferred; global/tenant kill switches blocked; fixtures rolled back; provider requests 0'
 fi
 ln -sfn "$release" "$root/current"
 printf '%s\n' "$revision" > "$state/deployed-revision"

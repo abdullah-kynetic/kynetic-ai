@@ -2,7 +2,7 @@
 # Run on the Mac. Deploy only the isolated dev stack, then verify its new signed intake route.
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
-bash scripts/deploy-dev.sh
+bash scripts/deploy-dev.sh --verify-step3
 # No signature or valid tenant: this must reject before parsing/storing a lead or queuing a call.
 status="$(curl -q --silent --show-error --output /dev/null --write-out '%{http_code}' \
   --max-time 30 --request POST --header 'Content-Type: application/json' --data '{}' \

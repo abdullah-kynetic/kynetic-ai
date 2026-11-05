@@ -85,6 +85,20 @@ services:
     restart: unless-stopped
     networks: [internal]
 
+  # Explicit one-shot verifier; never starts with the app or the standard worker.
+  verify-step3:
+    profiles: [verify]
+    build:
+      context: ../..
+      dockerfile: deploy/Dockerfile
+      target: tools
+    labels: *label
+    entrypoint: ['bun', 'src/server/leads/verify-dev-gates-cli.ts']
+    environment:
+      <<: *app-env
+      DATABASE_URL_SEED: postgres://postgres:${PG_SUPER_PW:?}@postgres:5432/kynetic
+    networks: [internal]
+
   worker:
     build:
       context: ../..

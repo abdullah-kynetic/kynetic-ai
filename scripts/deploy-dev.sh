@@ -4,6 +4,8 @@ set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 [ "$(git branch --show-current)" = dev/codex-setup ] || { echo 'Checkout dev/codex-setup first.' >&2; exit 1; }
 # Local edits are left untouched; the upload below contains only committed HEAD files.
+verify_step3="${1:-}"
+[ "$#" -le 1 ] && { [ -z "$verify_step3" ] || [ "$verify_step3" = --verify-step3 ]; } || { echo 'Usage: deploy-dev.sh [--verify-step3]' >&2; exit 1; }
 command -v ssh >/dev/null
 # Production deploy users/keys are forced-command credentials, unsuitable for dev setup.
 if [ -f "$HOME/.ssh/config" ]; then
@@ -43,7 +45,7 @@ remote_dir="$(ssh "${ssh_opts[@]}" "$host" 'umask 077; mktemp -d /tmp/kynetic-de
 [[ "$remote_dir" =~ ^/tmp/kynetic-dev-upload\.[a-zA-Z0-9]+$ ]] || { echo 'Unexpected remote staging path.' >&2; exit 1; }
 git archive HEAD crm scripts/deploy-dev-server.sh | ssh "${ssh_opts[@]}" "$host" "tar -xf - -C '$remote_dir'"
 # A TTY permits sudo authentication. No production deploy helper is used.
-ssh -t "${ssh_opts[@]}" "$host" "sudo bash '$remote_dir/scripts/deploy-dev-server.sh' '$remote_dir' '$revision'"
+ssh -t "${ssh_opts[@]}" "$host" "sudo bash '$remote_dir/scripts/deploy-dev-server.sh' '$remote_dir' '$revision' '$verify_step3'"
 # Wait for automatic HTTPS certificate issuance, then require the same final 200 as check 0.7.
 curl -q --fail --silent --show-error --location --output /dev/null --max-time 30 \
   --retry 12 --retry-all-errors --retry-delay 5 https://dev.kyneticai.com/
