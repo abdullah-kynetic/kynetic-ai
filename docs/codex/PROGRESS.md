@@ -6,7 +6,7 @@ Tick a step only when `scripts/checks/run.sh <n>` has no FAIL. Note SKIPs.
 - [x] 2 Alex on ElevenLabs
 - [x] 3 Lead→booking chain
 - [x] 4 Texts & alerts
-- [ ] 5 Onboarding
+- [x] 5 Onboarding
 - [ ] 6 Go-live (full test needs Abdullah's yes)
 
 ## Blockers
@@ -220,3 +220,9 @@ Appended at Abdullah's request; existing steps 0–6, their text, checks and com
 - 13 VM tests execute actual embedded Code bodies, testing eligibility, due/expiry timing, unconfirmed/cancelled suppression, gate blocks, privacy, recursion, test-phone configuration, inactive/disabled invariants, fake-sink deduplication and zero provider requests. Typecheck and touched-file lint passed (existing integration warnings). All DEV workflow hygiene checks pass.
 - Existing native SMS integration suite extended to assert quiet-hours/global-kill/tenant-kill denial calls no fake provider and creates no outgoing message. Together with existing consent/A2P blocks: **15/15 PASS** on disposable local PostgreSQL. Only in-memory fake deliveries in this suite; no real calls/SMS.
 - Second `scripts/checks/run.sh 4`: **3 PASS, 0 FAIL, 0 SKIP**, including read-only Twilio GET. Step 4 checked for CLOUD/STUB scope; actual delivery, credential binding, remote n8n import/activation, and production behavior remain unverified and unauthorized. No new Twenty write or VPS operation. Continue to step 5 automatically.
+
+
+### Step 5 documentation acceptance — 2026-11-05
+- Initial `scripts/checks/run.sh 5`: 0 PASS/5 FAIL because docs/onboarding did not exist. Added complete internal proposal, agreement drafting checklist, invoice procedure/tool choice, onboarding checklist and workspace setup docs. They cover scope/eligibility, consent/recording responsibilities, invite/session/RLS access, isolated DEV resources, HMAC/replay handling, booking/retry tests, notification previews and explicit release gates.
+- Commercial reference is existing D-017 (not invented agency pricing): first-three/standard Plan 1 amounts and 50/25/25 arithmetic are documented as historical references subject to the signed client quote. Both installment totals verified exactly with decimal arithmetic. Stripe is the existing invoice tool choice, but no Stripe/customer/invoice/send/charge operation occurred. Unagreed guarantees, legal schedules and future agency pricing stay unresolved for review rather than silently defaulted.
+- Second `scripts/checks/run.sh 5`: **5 PASS, 0 FAIL, 0 SKIP**. Documentation-only acceptance; no client signed anything, no actual legal/finance readiness is implied, no Twenty record was created/updated and no person contacted. Step 5 checked. Continue directly to step 6 preparation; the live-test gate remains mandatory.
