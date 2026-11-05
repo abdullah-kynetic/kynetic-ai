@@ -25,3 +25,27 @@ implemented and explicitly authorized. Nothing claims that a real booking succee
 
 No server configuration/restart is performed in step 2. If runtime environment or dev
 portal deployment changes are needed later, push and use the required Mac handoff.
+
+## Step 4 notification stubs
+
+The four `missed-call`, `reminder`, `owner-alert` and `error-alert` workflows are
+repository-only, inactive, manual synthetic rehearsals. Regenerate with
+`python3 tools/build_dev_notification_workflows.py`. Code bodies come from
+`notification-prepare.js`; no skill/reference contents were copied.
+
+Missed-call textback requires an inbound no-answer/voicemail event. Confirmations
+require a confirmed booking. Reminders additionally require explicit due/expiry
+timestamps and are skipped outside that interval; no reminder lead time is invented.
+Owner alerts cover client lead/qualified-call/confirmed-booking events. Error alerts
+suppress self-recursion and never include raw error bodies, names, stacks or URLs.
+Stable record/action keys support deduplication in the stub sink. No client contact
+information is copied to output; recipient is the TEST_PHONE placeholder only.
+
+A gate snapshot in synthetic input is merely a test fixture. It is **not** trusted
+authorization. Missing/denied snapshots block preparation and quiet hours defer it.
+All previews retain dispatch_enabled=false; the Twilio node is disabled with no
+credentials and automatic retry off. Manual/success/error payload storage is off.
+VM tests execute these exact Code bodies, including timing, deduplication and redaction.
+The portal's existing server-side sendSms/OutboundGate remains the only real SMS path;
+real delivery/activation is unverified and requires a separate explicit approval.
+These files do not configure or change any remote n8n workflow.
