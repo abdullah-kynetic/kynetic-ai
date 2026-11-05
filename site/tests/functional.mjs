@@ -77,21 +77,20 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
   // FAQ: static, answers visible
   const faqItems = page.locator('#faq .kn-faq__item');
   ok('FAQ: 5 questions, each with a visible answer', (await faqItems.count()) === 5 && (await page.locator('#faq dd:visible').count()) === 5);
-  // form validation
-  const form = page.locator('form').first();
-  await form.scrollIntoViewIfNeeded();
-  const submit = form.locator('button[type=submit]:visible').first();
+  // audit overlay validation
   let reqs = 0; page.on('request', (r) => { if (r.method() === 'POST') reqs++; });
-  await submit.click(); await page.waitForTimeout(500);
-  const invalid1 = await form.evaluate((f) => [...f.querySelectorAll('input,textarea')].filter((e) => !e.checkValidity()).map((e) => e.name));
-  ok('form: empty submit blocked by required validation', invalid1.includes('Name') && invalid1.includes('Email'), invalid1.join(','));
-  await form.locator('input[name=Name]').fill('Test User');
-  await form.locator('input[name=Email]').fill('not-an-email');
-  await submit.click(); await page.waitForTimeout(500);
-  const emailInvalid = await form.locator('input[name=Email]').evaluate((e) => !e.validity.valid && e.validity.typeMismatch);
-  ok('form: malformed email rejected', emailInvalid);
-  ok('form: no POST sent while invalid', reqs === 0, `posts=${reqs}`);
-  await page.evaluate(() => (document.querySelector('form').reset()));
+  await page.locator('[data-audit-open]').click(); await page.waitForTimeout(500);
+  const modal = page.locator('.am__step[data-step="1"]');
+  ok('audit overlay opens with the contact step', await modal.isVisible());
+  await modal.locator('button[type=submit]').click(); await page.waitForTimeout(300);
+  ok('audit overlay: empty name blocked', (await modal.locator('.am__err').innerText()).includes('name'));
+  await modal.locator('input[name=name]').fill('Test User');
+  await modal.locator('input[name=email]').fill('not-an-email');
+  await modal.locator('button[type=submit]').click(); await page.waitForTimeout(300);
+  ok('audit overlay: malformed email rejected', (await modal.locator('.am__err').innerText()).includes('email'));
+  ok('audit overlay: no POST sent while invalid', reqs === 0, `posts=${reqs}`);
+  await page.keyboard.press('Escape'); await page.waitForTimeout(200);
+  ok('audit overlay: Escape closes it', await page.evaluate(() => document.querySelector('.am').hidden));
   // appear animations: nothing in the hero may stay hidden after load + scroll through the page
   const H = await page.evaluate(() => document.documentElement.scrollHeight);
   for (let y = 0; y <= H; y += 300) { await page.evaluate((y) => scrollTo(0, y), y); await page.waitForTimeout(250); }

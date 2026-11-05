@@ -26,18 +26,19 @@ for (const width of [1440, 390]) {
     const { ctx, page, errors } = await open('/', width);
     const text = (await page.locator('body').innerText()).toLowerCase();
     ok(`${tag} home: pill is "AI growth partner" and is not an H1`, (await page.locator('#hero p', { hasText: /^AI growth partner$/ }).count()) === 1);
-    ok(`${tag} home: one broad H1`, (await page.locator('h1').count()) === 1 && (await page.locator('h1').innerText()).trim() === 'We Design, Build, and Run Custom AI Systems That Automate Your Operations, Cut Your Costs, and Scale Your Business.');
+    ok(`${tag} home: one broad H1`, (await page.locator('h1').count()) === 1 && (await page.locator('h1').innerText()).trim() === 'More Revenue, Less Busywork, and a Business That Runs Smarter.');
     ok(`${tag} home: hero CTA and microcopy`, (await page.locator('#hero a', { hasText: 'Book your free AI audit' }).count()) >= 1 && /A few short questions, then pick a time\. The call is free\./.test(await page.locator('#hero').innerText()));
     if (tag === 'desktop') { const lines = await page.locator('h1').evaluate((h) => Math.round(h.getBoundingClientRect().height / parseFloat(getComputedStyle(h).lineHeight))); ok('desktop home: H1 fits in about 3 lines', lines >= 2 && lines <= 4, `lines=${lines}`); }
     ok(`${tag} home: journey has 4 steps`, (await page.locator('#journey .kn-step').count()) === 4);
-    ok(`${tag} home: services has 4 equal group cards`, (await page.locator('#services .kn-card').count()) === 4 && (await page.locator('#services .kn-tag--live, #services .kn-card--link, #services .kn-card--soon').count()) === 0);
+    ok(`${tag} home: services has 6 system cards, only Alex is Live`, (await page.locator('#services .kn-card').count()) === 6 && (await page.locator('#services .kn-tag--live').count()) === 1 && (await page.locator('#services .kn-map').count()) === 1);
     ok(`${tag} home: industries is a single link card (no coming-soon cards)`, (await page.locator('#industries a[href="/remodelers"]').count()) === 1 && (await page.locator('#industries .kn-card').count()) === 1);
     ok(`${tag} home: pricing ladder has 4 steps, no calculator, no guarantee`, (await page.locator('#plans .kn-sec__eyebrow').textContent()).trim() === 'How pricing works' && (await page.locator('#plans .kn-step').count()) === 4 && (await page.locator('#plans [data-leak-calc], #plans .kn-pricing__guarantee').count()) === 0);
     ok(`${tag} home: no $10,000, no founding terms, no fixed add-on prices`, !/\$10,000|founding|\$3,000|\$2,500|\$1,500/i.test(await page.locator('#plans').innerText()));
     const body = (await page.locator('main, #main').first().innerText()).toLowerCase();
-    const outsideIndustries = await page.locator('#main').evaluate((m) => { const c = m.cloneNode(true); c.querySelector('#industries')?.remove(); return c.innerText.toLowerCase(); });
-    ok(`${tag} home: no industry or lead-specific language`, !/remodel|contractor|home service|60 seconds|missed call|\balex\b|\bleads?\b|speed-to-lead/.test(outsideIndustries));
-    ok(`${tag} home: contact blurb renders once`, text.split('want to see where ai can help your business').length === 2);
+    const heroText = (await page.locator('#hero').innerText()).toLowerCase();
+    ok(`${tag} home: hero has no industry, lead-speed or tool-first language`, !/remodel|contractor|home service|60 seconds|missed call|\balex\b|\bleads?\b|speed-to-lead|n8n|automation/.test(heroText));
+    ok(`${tag} home: no contact form, audit button opens the overlay`, (await page.locator('form:not(.am__step)').count()) === 0 && (await page.locator('#contact [data-audit-open]').count()) === 1);
+    ok(`${tag} home: no scarcity line`, !/few new clients a month/.test(text));
     ok(`${tag} home: no Nora card`, !/\bnora\b/.test(text));
     ok(`${tag} home: no "consulting" as identity`, !/consulting|consultancy/.test(text));
     ok(`${tag} home: no horizontal scroll`, !(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)));
@@ -47,13 +48,14 @@ for (const width of [1440, 390]) {
   // Remodelers
   {
     const { ctx, page, errors } = await open('/remodelers', width);
-    ok(`${tag} remodelers: label and outcome H1`, (await page.locator('.np-hero .np-badge').textContent()).trim() === 'Done-for-you AI System for remodelers' && (await page.locator('h1').count()) === 1 && (await page.locator('h1').innerText()).trim() === 'More booked estimates from the Meta and web leads you already pay for.');
+    ok(`${tag} remodelers: label and outcome H1`, (await page.locator('.np-hero .np-badge').textContent()).trim() === 'Done-for-you AI System for remodelers' && (await page.locator('h1').count()) === 1 && (await page.locator('h1').innerText()).trim() === 'We book remodelers 20% more appointments than last month in 30 days, or we work free until we do.');
     ok(`${tag} remodelers: noindex while draft`, (await page.locator('meta[name="robots"]').getAttribute('content')) === 'noindex, nofollow');
     ok(`${tag} remodelers: only Alex is Live, four add-ons with prices where mapped`, (await page.locator('.np-tag--live').count()) === 1 && (await page.locator('.np-addons li').count()) === 4 && (await page.locator('.np-addons__price', { hasText: '$2,500 + $500/mo' }).count()) === 1 && (await page.locator('.np-addons__price', { hasText: 'Scoped on your audit' }).count()) === 2);
     ok(`${tag} remodelers: animated Alex card present`, (await page.locator('.np-demo__steps li').count()) === 4);
     const cta = await page.locator('a.np-btn--primary').evaluateAll((as) => as.map((a) => a.getAttribute('href')));
     ok(`${tag} remodelers: every CTA goes to the qualifier, whose form posts to Cal`, cta.length >= 2 && cta.every((h) => h === '#book') && (await page.locator('form[data-qualifier]').getAttribute('action')).startsWith('https://cal.com/abdullah-kyneticai/'));
-    ok(`${tag} remodelers: draft items are not in the DOM (todo, video, guarantee, placeholders)`, (await page.locator('.np-todo, .np-video, #guarantee, .np-proof').count()) === 0);
+    ok(`${tag} remodelers: draft items are not in the DOM (todo, video, placeholders)`, (await page.locator('.np-pending, .np-video, .np-proof').count()) === 0);
+    ok(`${tag} remodelers: guarantee shows the locked line and 4 terms, no 14-day wording`, (await page.locator('#guarantee .np-guarantee__wording').innerText()).trim() === 'We book remodelers 20% more appointments than last month in 30 days, or we work free until we do.' && (await page.locator('#guarantee .np-guarantee__terms li').count()) === 4 && !/14 days|14-day/i.test(await page.locator('body').innerText()));
     ok(`${tag} remodelers: honest results line, no case cards`, (await page.locator('.np-honest').count()) === 1 && (await page.locator('.np-case').count()) === 0);
     ok(`${tag} remodelers: worked example present`, (await page.locator('[data-leak-calc]').count()) === 1);
     ok(`${tag} remodelers: no horizontal scroll`, !(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)));
