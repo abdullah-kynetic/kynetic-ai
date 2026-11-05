@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { parseDevLead } from '@/server/leads/dev-intake';
 import { createDb } from '@/server/db/client';
 import { clearSubscribers, registerEventWorkers, subscribe } from '@/server/events';
 import { stopJobs } from '@/server/jobs';
@@ -89,6 +90,35 @@ const count = async (table: string) =>
   Number((await db.admin.unsafe(`select count(*)::int as n from ${table}`))[0]!.n);
 
 describe('F-76 lead intake', () => {
+  it('authenticates before dev validation and never persists rejected synthetic leads', async () => {
+    const before = await count('webhook_events');
+    let validations = 0;
+    const testPhone = '+' + ['1', '555', '555', '0101'].join('');
+    const input = lead({
+      externalId: 'DEV-intake-integration',
+      source: 'dev_codex',
+      synthetic: true,
+      phone: testPhone,
+      businessState: 'FL'
+    });
+    const invoke = (signed: boolean) =>
+      handleLeadIntake(signedRequest(input, signed ? { secret: secretA } : {}), IDS.tenantA, {
+        db: appDb,
+        workerDb,
+        validate: (value) => {
+          validations++;
+          return parseDevLead(value, {
+            APP_BASE_URL: 'https://dev.kyneticai.com',
+            TEST_PHONE: testPhone
+          });
+        }
+      });
+    expect(await status(invoke(false))).toBe(401);
+    expect(validations).toBe(0);
+    expect(await status(invoke(true))).toBe(400);
+    expect(validations).toBe(1);
+    expect(await count('webhook_events')).toBe(before);
+  });
   it('accepts a valid signed lead, then the worker creates the contact, deal and lead.created', async () => {
     const body = lead({ consent: { capturedText: 'I agree to be called about my quote.' } });
     const res = await call(signedRequest(body, { secret: secretA }), IDS.tenantA);
