@@ -2,12 +2,12 @@
   "checks": {
     "0.7": {
       "source": "user_mac_terminal",
-      "observed_on": "2026-11-04",
+      "observed_on": "2026-11-05",
       "url": "https://dev.kyneticai.com/",
       "http_status": 200,
-      "deployed_revision": "65551bffc05f7bdc10c50bd4ea211e47a8501784",
-      "reported_output": "PASS dev database: isolated kynetic-dev-portal Postgres volume; synthetic seed guard passed\nPASS dev app: 127.0.0.1:3031/api/health HTTP 200; providers stubbed; outbound disabled\nPASS dev auth locally: /sign-in HTTP 200; anonymous /admin HTTP 401\nPASS DEV_AUTH /sign-in HTTP 200; anonymous /admin HTTP 401 (no redirects followed)\nPASS 0.7 https://dev.kyneticai.com/ HTTP 200 (verified from Mac)\nDEPLOYED_REVISION=65551bffc05f7bdc10c50bd4ea211e47a8501784",
-      "note": "User-uploaded terminal output confirms newest auth deployment. Root check follows redirects; sign-in and admin auth probes do not. Existing production site blocks/containers/database were reported unchanged."
+      "deployed_revision": "d0aa0eba1bf2033a3281133ab5cb5dfe5e75c866",
+      "reported_output": "PASS dev database: isolated kynetic-dev-portal Postgres volume; synthetic seed guard passed\nPASS dev app: 127.0.0.1:3031/api/health HTTP 200; providers stubbed; outbound disabled\nPASS dev auth locally: /sign-in HTTP 200; anonymous /admin HTTP 401\nPASS dev HTTPS site installed: dev.kyneticai.com -> 127.0.0.1:3031\nExisting Caddy site blocks retained; production containers and database not changed.\nPASS DEV_AUTH /sign-in HTTP 200; anonymous /admin HTTP 401 (no redirects followed)\nPASS 0.7 https://dev.kyneticai.com/ HTTP 200 (verified from Mac)\nDEPLOYED_REVISION=d0aa0eba1bf2033a3281133ab5cb5dfe5e75c866\nPASS DEV_INTAKE_UNSIGNED HTTP 401; unsigned intake rejected; no provider test performed",
+      "note": "Mac deployment output supplied by Abdullah; isolated database guard and disabled outbound/stub providers reported. No HTTP verification from this executor."
     },
     "1.7": {
       "source": "user_mac_terminal",
@@ -76,6 +76,32 @@
       "outbound_enabled": false,
       "provider_mode": "stub",
       "note": "Deploy script checks, not the exact headers used by scripts/checks/portal_check.py; no existing checker result is overwritten with different request settings."
+    },
+    "previous_auth_deployment_root": {
+      "source": "user_mac_terminal",
+      "observed_on": "2026-11-04",
+      "url": "https://dev.kyneticai.com/",
+      "http_status": 200,
+      "deployed_revision": "65551bffc05f7bdc10c50bd4ea211e47a8501784",
+      "reported_output": "PASS dev database: isolated kynetic-dev-portal Postgres volume; synthetic seed guard passed\nPASS dev app: 127.0.0.1:3031/api/health HTTP 200; providers stubbed; outbound disabled\nPASS dev auth locally: /sign-in HTTP 200; anonymous /admin HTTP 401\nPASS DEV_AUTH /sign-in HTTP 200; anonymous /admin HTTP 401 (no redirects followed)\nPASS 0.7 https://dev.kyneticai.com/ HTTP 200 (verified from Mac)\nDEPLOYED_REVISION=65551bffc05f7bdc10c50bd4ea211e47a8501784",
+      "note": "User-uploaded terminal output confirms newest auth deployment. Root check follows redirects; sign-in and admin auth probes do not. Existing production site blocks/containers/database were reported unchanged."
+    },
+    "step3_dev_intake_deployment": {
+      "source": "user_mac_terminal",
+      "observed_on": "2026-11-05",
+      "deployed_revision": "d0aa0eba1bf2033a3281133ab5cb5dfe5e75c866",
+      "url": "https://dev.kyneticai.com/api/hooks/leads/dev/00000000-0000-4000-8000-000000000000",
+      "method": "POST",
+      "request_body": "{}",
+      "authenticated": false,
+      "http_status": 401,
+      "sign_in_http_status": 200,
+      "anonymous_admin_http_status": 401,
+      "auth_follow_redirects": false,
+      "outbound_enabled": false,
+      "provider_mode": "stub",
+      "reported_output": "PASS dev database: isolated kynetic-dev-portal Postgres volume; synthetic seed guard passed\nPASS dev app: 127.0.0.1:3031/api/health HTTP 200; providers stubbed; outbound disabled\nPASS dev auth locally: /sign-in HTTP 200; anonymous /admin HTTP 401\nPASS dev HTTPS site installed: dev.kyneticai.com -> 127.0.0.1:3031\nExisting Caddy site blocks retained; production containers and database not changed.\nPASS DEV_AUTH /sign-in HTTP 200; anonymous /admin HTTP 401 (no redirects followed)\nPASS 0.7 https://dev.kyneticai.com/ HTTP 200 (verified from Mac)\nDEPLOYED_REVISION=d0aa0eba1bf2033a3281133ab5cb5dfe5e75c866\nPASS DEV_INTAKE_UNSIGNED HTTP 401; unsigned intake rejected; no provider test performed",
+      "note": "Confirms deployed unsigned intake denial only; does not verify signed intake, worker execution, booking, retries or Twenty writeback. Production unchanged per Mac output. Older exact-header check 1.7 remains separate."
     }
   }
 }
