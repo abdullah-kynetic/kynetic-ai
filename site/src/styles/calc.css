@@ -1,0 +1,12 @@
+/* Worked lost-revenue example (homepage pricing intro and niche pages). Example inputs only, never client results. */
+.kn-calc { max-width: 760px; margin: 0 auto 40px; background: var(--color-card); border: 1px solid var(--color-border); border-radius: 16px; padding: 28px; font-family: var(--font-sans); text-align: center; }
+.kn-calc__title { margin: 0 0 16px; font-family: var(--font-serif); font-weight: 600; font-size: 1.5rem; line-height: 1.2; color: var(--color-text); }
+.kn-calc__row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; text-align: left; }
+.kn-calc__f { display: flex; flex-direction: column; gap: 6px; font-size: .875rem; font-weight: 600; color: var(--color-text); }
+.kn-calc__f input { font: inherit; font-weight: 500; font-size: 1rem; color: var(--color-text); background: var(--color-page); border: 1px solid var(--color-border-input); border-radius: 8px; padding: 10px 12px; width: 100%; box-sizing: border-box; }
+.kn-calc__f input:focus-visible { outline: 2px solid var(--color-accent-text); outline-offset: 2px; }
+.kn-calc__formula { margin: 16px 0 4px; color: var(--color-muted); font-size: .9375rem; }
+.kn-calc__result { margin: 0; font-size: 1.125rem; color: var(--color-text); }
+.kn-calc__result strong { font-family: var(--font-serif); font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 600; color: var(--color-accent-text); display: inline-block; margin-right: 6px; }
+.kn-calc__note { margin: 10px 0 0; color: var(--color-muted); font-size: .875rem; }
+@media (max-width: 640px) { .kn-calc { padding: 20px 16px; } .kn-calc__row { grid-template-columns: 1fr; } }

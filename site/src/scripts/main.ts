@@ -8,7 +8,7 @@ import { initParticles } from './particles';
 import { initTicker } from './ticker';
 import { initButtons } from './buttons';
 import { initNav } from './nav';
-import { initFaq } from './faq';
+import { initLeakCalc } from './leak-calc';
 import { initForm } from './form';
 import { initLoops, initCodeLoop } from './loops';
 
@@ -20,7 +20,7 @@ const start = () => {
   initTicker();
   initButtons();
   initNav();
-  initFaq();
+  initLeakCalc();
   initForm();
   initLoops();
   initCodeLoop();

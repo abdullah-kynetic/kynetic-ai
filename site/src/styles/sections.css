@@ -210,3 +210,26 @@ footer.framer-34GLz .framer-z7as9h > a svg * { fill: inherit; stroke: none !impo
    bar has five links, swallowing clicks on its right half. Only the button itself takes pointer events. */
 nav .framer-3n0n49 { pointer-events: none; }
 nav .framer-3n0n49 a { pointer-events: auto; }
+
+/* Outcome-first rewrite: card subtitle, CTA step note, pricing ladder extras, FAQ with visible answers --------- */
+.kn-card__sub { margin: -4px 0 0; font-size: .8125rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--color-accent-text); }
+.kn-cards--one { grid-template-columns: minmax(0, 420px); justify-content: center; }
+.kn-cta-note { margin: 12px 0 0; font-size: .9375rem; line-height: 1.4; color: var(--color-muted); text-align: center; }
+.framer-k9y4gn .kn-cta-note { margin-top: 20px; }
+.kn-sec__cta { display: flex; flex-direction: column; align-items: center; margin-top: 32px; }
+.kn-sec__note--strong { color: var(--color-text); font-weight: 600; font-size: var(--text-lg); }
+.kn-own { max-width: 760px; margin: 32px auto 0; background: var(--color-card); border: 1px solid var(--color-border); border-radius: 12px; padding: 20px 24px; text-align: center; }
+.kn-own p { margin: 0; color: var(--color-muted); }
+.kn-own .kn-own__title { font-size: var(--text-sm); font-weight: var(--weight-semibold); letter-spacing: .08em; text-transform: uppercase; color: var(--color-gold-on-alt); margin-bottom: 6px; }
+.kn-faq { max-width: 860px; margin: 0 auto; display: grid; gap: 16px; }
+.kn-faq__item { background: var(--color-card); border: 1px solid var(--color-border); border-radius: 16px; padding: 24px 28px; }
+.kn-faq dt { font-family: var(--font-serif); font-weight: 600; font-size: 1.375rem; line-height: 1.25; color: var(--color-text); margin: 0 0 8px; }
+.kn-faq dd { margin: 0; font-size: var(--text-base); line-height: 1.6; color: var(--color-muted); }
+.kn-once { display: contents; }
+@media (max-width: 809.98px) {
+  #contact .framer-p8ntkt h2, #contact .framer-i53vje p { --framer-text-alignment: center !important; text-align: center !important; }
+  .kn-faq__item { padding: 20px; }
+}
+/* Team grid now holds two quotes: center them. */
+@media (min-width: 1100px) { .framer-FuH2f .framer-7gxjzy#benefitsgrid { grid-template-columns: repeat(2, minmax(0, 480px)); } }
+@media (min-width: 810px) and (max-width: 1099.98px) { .framer-FuH2f .framer-7gxjzy#benefitsgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
