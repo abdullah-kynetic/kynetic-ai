@@ -3,6 +3,7 @@
 import argparse, json, os, re, subprocess, sys, glob, urllib.request, urllib.error
 from vps_evidence import load_dev_auth_evidence, load_dev_portal_evidence
 from portal_check import check_dev_portal
+from workflow_retry import has_retry_or_error_branch
 from pathlib import Path
 
 LIVE_ALEX = "agent_8201m5afn2rbeb7v29xfkhh1pjef"
@@ -131,7 +132,7 @@ def s3():
     ok("3.1", bool(glob.glob("crm/src/app/api/hooks/leads/**/route.*", recursive=True)), "lead intake route")
     if not glob.glob("crm/tests/unit/chain/*"): out("FAIL", "3.2", "chain tests crm/tests/unit/chain: not built")
     else: npm("3.2", "test", "tests/unit/chain")
-    hit = [p for p in dev_wfs() if re.search(r"retry|retryOnFail|errorWorkflow", Path(p).read_text())]
+    hit = [p for p in dev_wfs() if has_retry_or_error_branch(json.loads(Path(p).read_text()))]
     ok("3.3", bool(hit), "dev workflow retry/error handling")
     http_check("3.4", "Twenty reachable", f"{TWENTY}/rest/companies?limit=1", ["TWENTY_API_KEY"], {"Authorization": f"Bearer {os.environ.get('TWENTY_API_KEY','')}"})
 

@@ -54,7 +54,8 @@
           "timeout": 15000
         }
       },
-      "retryOnFail": false
+      "retryOnFail": false,
+      "onError": "continueErrorOutput"
     },
     {
       "id": "dev-booking-contract",
@@ -67,6 +68,20 @@
       ],
       "parameters": {
         "content": "Synthetic phase only. Preserve project_type and budget; email optional. No real bookings or confirmation sends. Cal.com API reachability is checked read-only. Step 3 must connect the portal consent, quiet-hours, kill-switch and retry contract before the disabled dispatch node can run. Never activate this workflow."
+      }
+    },
+    {
+      "id": "dev-dispatch-error-review",
+      "name": "DEV dispatch error - manual review before retry",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        160
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Do not propagate provider error bodies, phone numbers, credentials or request payloads.\n// A failed dial may have reached the provider: no automatic second call.\nreturn $input.all().map(() => ({ json: { synthetic: true, dispatch_enabled: false, status: 'manual_review_required', retry_allowed: false, reason: 'uncertain_provider_result' } }));\n"
       }
     }
   ],
@@ -87,6 +102,18 @@
         [
           {
             "node": "DEV ElevenLabs outbound - disabled until portal gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DEV ElevenLabs outbound - disabled until portal gate": {
+      "main": [
+        [],
+        [
+          {
+            "node": "DEV dispatch error - manual review before retry",
             "type": "main",
             "index": 0
           }
