@@ -233,3 +233,10 @@ nav .framer-3n0n49 a { pointer-events: auto; }
 /* Team grid now holds two quotes: center them. */
 @media (min-width: 1100px) { .framer-FuH2f .framer-7gxjzy#benefitsgrid { grid-template-columns: repeat(2, minmax(0, 480px)); } }
 @media (min-width: 810px) and (max-width: 1099.98px) { .framer-FuH2f .framer-7gxjzy#benefitsgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Broad homepage: four service groups in a 2x2 grid; hero H1 sized to about three lines. */
+.kn-cards--four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 809px) { .kn-cards--four { grid-template-columns: 1fr; } }
+#hero h1.framer-text { --framer-font-size: clamp(2rem, 3.5vw, 3.1rem) !important; line-height: 1.12; max-width: 21em; margin-left: auto; margin-right: auto; }
+@media (max-width: 809px) { #hero h1.framer-text { --framer-font-size: clamp(1.75rem, 7vw, 2.25rem) !important; } }
+@media (max-width: 809px) { #hero .framer-1wviaoo { flex-wrap: wrap; justify-content: center; } }

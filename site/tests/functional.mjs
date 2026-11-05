@@ -77,12 +77,6 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
   // FAQ: static, answers visible
   const faqItems = page.locator('#faq .kn-faq__item');
   ok('FAQ: 5 questions, each with a visible answer', (await faqItems.count()) === 5 && (await page.locator('#faq dd:visible').count()) === 5);
-  // worked example recalculates
-  const calc = page.locator('#plans [data-leak-calc]');
-  await calc.scrollIntoViewIfNeeded();
-  ok('example: default is 40 x 20% x $35,000 = $280,000', (await calc.locator('[data-leak-out]').innerText()) === '$280,000');
-  await calc.locator('[data-leak="leads"]').fill('10');
-  ok('example: recalculates when an input changes', (await calc.locator('[data-leak-out]').innerText()) === '$70,000');
   // form validation
   const form = page.locator('form').first();
   await form.scrollIntoViewIfNeeded();

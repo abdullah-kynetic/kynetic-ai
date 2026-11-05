@@ -25,15 +25,19 @@ for (const width of [1440, 390]) {
   {
     const { ctx, page, errors } = await open('/', width);
     const text = (await page.locator('body').innerText()).toLowerCase();
-    ok(`${tag} home: eyebrow stays "Your AI growth partner" and is not an H1`, (await page.locator('#hero p', { hasText: /^Your AI growth partner$/ }).count()) === 1);
-    ok(`${tag} home: one outcome-first H1`, (await page.locator('h1').count()) === 1 && (await page.locator('h1').innerText()).trim() === 'Book more jobs from the leads and customers you already have.');
+    ok(`${tag} home: pill is "AI growth partner" and is not an H1`, (await page.locator('#hero p', { hasText: /^AI growth partner$/ }).count()) === 1);
+    ok(`${tag} home: one broad H1`, (await page.locator('h1').count()) === 1 && (await page.locator('h1').innerText()).trim() === 'We Design, Build, and Run Custom AI Systems That Automate Your Operations, Cut Your Costs, and Scale Your Business.');
+    ok(`${tag} home: hero CTA and microcopy`, (await page.locator('#hero a', { hasText: 'Book your free AI audit' }).count()) >= 1 && /A few short questions, then pick a time\. The call is free\./.test(await page.locator('#hero').innerText()));
+    if (tag === 'desktop') { const lines = await page.locator('h1').evaluate((h) => Math.round(h.getBoundingClientRect().height / parseFloat(getComputedStyle(h).lineHeight))); ok('desktop home: H1 fits in about 3 lines', lines >= 2 && lines <= 4, `lines=${lines}`); }
     ok(`${tag} home: journey has 4 steps`, (await page.locator('#journey .kn-step').count()) === 4);
-    ok(`${tag} home: services has 6 equal cards in one grid, only Alex Live`, (await page.locator('#services .kn-card').count()) === 6 && (await page.locator('#services .kn-tag--live').count()) === 1 && (await page.locator('#services .kn-card--link, #services .kn-card--soon').count()) === 0);
-    ok(`${tag} home: cards 2-6 say "Built for you after your audit"`, (await page.locator('#services .kn-tag', { hasText: 'Built for you after your audit' }).count()) === 5);
-    ok(`${tag} home: industries lists only Remodelers (no coming-soon cards)`, (await page.locator('#industries a[href="/remodelers"]').count()) === 1 && (await page.locator('#industries .kn-card').count()) === 1);
-    ok(`${tag} home: pricing ladder has 4 steps and the guarantee`, (await page.locator('#plans .kn-sec__eyebrow').textContent()).trim() === 'How pricing works' && (await page.locator('#plans .kn-step').count()) === 4 && /Booked appointments within 14 days of go-live/.test(await page.locator('#plans').innerText()));
+    ok(`${tag} home: services has 4 equal group cards`, (await page.locator('#services .kn-card').count()) === 4 && (await page.locator('#services .kn-tag--live, #services .kn-card--link, #services .kn-card--soon').count()) === 0);
+    ok(`${tag} home: industries is a single link card (no coming-soon cards)`, (await page.locator('#industries a[href="/remodelers"]').count()) === 1 && (await page.locator('#industries .kn-card').count()) === 1);
+    ok(`${tag} home: pricing ladder has 4 steps, no calculator, no guarantee`, (await page.locator('#plans .kn-sec__eyebrow').textContent()).trim() === 'How pricing works' && (await page.locator('#plans .kn-step').count()) === 4 && (await page.locator('#plans [data-leak-calc], #plans .kn-pricing__guarantee').count()) === 0);
     ok(`${tag} home: no $10,000, no founding terms, no fixed add-on prices`, !/\$10,000|founding|\$3,000|\$2,500|\$1,500/i.test(await page.locator('#plans').innerText()));
-    ok(`${tag} home: contact blurb renders once`, text.split('want to see where your business is leaking').length === 2);
+    const body = (await page.locator('main, #main').first().innerText()).toLowerCase();
+    const outsideIndustries = await page.locator('#main').evaluate((m) => { const c = m.cloneNode(true); c.querySelector('#industries')?.remove(); return c.innerText.toLowerCase(); });
+    ok(`${tag} home: no industry or lead-specific language`, !/remodel|contractor|home service|60 seconds|missed call|\balex\b|\bleads?\b|speed-to-lead/.test(outsideIndustries));
+    ok(`${tag} home: contact blurb renders once`, text.split('want to see where ai can help your business').length === 2);
     ok(`${tag} home: no Nora card`, !/\bnora\b/.test(text));
     ok(`${tag} home: no "consulting" as identity`, !/consulting|consultancy/.test(text));
     ok(`${tag} home: no horizontal scroll`, !(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)));

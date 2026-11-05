@@ -285,3 +285,7 @@ Verified locally: typecheck, 431 unit tests, all integration tests pass except t
 ### 2026-11-05 — site outcome-first rewrite (preview only)
 
 On `claude/project-thread-qptdya` (off `feat/positioning-remodelers`; no `dev` branch exists). Homepage and /remodelers rewritten to sell the result: outcome H1s, outcome-titled service cards, "How pricing works" ladder with a worked lost-revenue example, static FAQ with answers, Nora card and coming-soon industry cards removed. /remodelers: add-ons named by outcome, case-card component with an honest empty state, pre-call qualifier that pre-fills the Cal booking notes, and `PUBLIC_SHOW_DRAFTS=1` gating all TODO/video/guarantee/placeholder items (removed from the DOM by default). New guarantee wording and financing line need Abdullah approval before production. Pricing matches D-024 (D-017 is superseded). Not deployed to production; nothing pushed to main.
+
+### 2026-11-05 — homepage made broad (preview only)
+
+Homepage rewritten as an AI partner for established businesses: new H1 and pill, four broad service groups, industry/lead-specific language and the worked example and guarantee removed from the home page (they stay on /remodelers). The Industries section keeps one link card to /remodelers. "From $6,500" for the first system is still the D-024 Alex price, and the founder quote was reworded broadly: both need Abdullah to confirm before production.
