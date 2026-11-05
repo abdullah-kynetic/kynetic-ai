@@ -1,5 +1,5 @@
 // Functional smoke test of the built site (static server on :4321 serving dist/).
-// Covers nav links, mobile menu, FAQ expand/collapse, form validation, appear animations and console errors.
+// Covers nav links, mobile menu, static FAQ, worked example, form validation, appear animations and console errors.
 // Every non-localhost request is aborted, so nothing is ever sent externally.
 // Usage: node tests/functional.mjs
 import { chromium } from 'playwright-core';
@@ -74,27 +74,15 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
     const back = await sample(1200);
     ok('reversing mid-collapse is smooth', mid < w0 - 40 && mid > w1 + 40 && Math.abs(back[0] - mid) < 150 && back.at(-1) === w0, `mid=${mid} first=${back[0]} end=${back.at(-1)}`);
   }
-  // FAQ
-  await page.evaluate(() => document.getElementById('contact') && 0);
-  const rows = page.locator('.framer-Hzat5');
-  const n = await rows.count();
-  ok('FAQ rows present', n >= 5, `n=${n}`);
-  for (let i = 0; i < n; i++) {
-    const row = rows.nth(i);
-    await row.scrollIntoViewIfNeeded();
-    const h0 = (await row.boundingBox()).height;
-    await row.click(); await page.waitForTimeout(900);
-    const opened = (await row.getAttribute('data-framer-name')) === 'Open' && (await row.locator('[data-framer-name="Answer"]').count()) === 1;
-    const h1 = (await row.boundingBox()).height;
-    await row.click(); await page.waitForTimeout(900);
-    const closed = (await row.getAttribute('data-framer-name')) === 'Closed' && (await row.locator('[data-framer-name="Answer"]').count()) === 0;
-    const h2 = (await row.boundingBox()).height;
-    ok(`FAQ row ${i + 1} expands and collapses`, opened && closed && h1 > h0 && Math.abs(h2 - h0) < 2, `h ${Math.round(h0)}->${Math.round(h1)}->${Math.round(h2)}`);
-  }
-  // keyboard on FAQ
-  await rows.first().focus(); await page.keyboard.press('Enter'); await page.waitForTimeout(700);
-  ok('FAQ opens with Enter key', (await rows.first().getAttribute('data-framer-name')) === 'Open');
-  await page.keyboard.press('Enter'); await page.waitForTimeout(700);
+  // FAQ: static, answers visible
+  const faqItems = page.locator('#faq .kn-faq__item');
+  ok('FAQ: 5 questions, each with a visible answer', (await faqItems.count()) === 5 && (await page.locator('#faq dd:visible').count()) === 5);
+  // worked example recalculates
+  const calc = page.locator('#plans [data-leak-calc]');
+  await calc.scrollIntoViewIfNeeded();
+  ok('example: default is 40 x 20% x $35,000 = $280,000', (await calc.locator('[data-leak-out]').innerText()) === '$280,000');
+  await calc.locator('[data-leak="leads"]').fill('10');
+  ok('example: recalculates when an input changes', (await calc.locator('[data-leak-out]').innerText()) === '$70,000');
   // form validation
   const form = page.locator('form').first();
   await form.scrollIntoViewIfNeeded();
