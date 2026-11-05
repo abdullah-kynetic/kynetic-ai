@@ -30,8 +30,9 @@ for (const width of [1440, 390]) {
     ok(`${tag} home: hero CTA and microcopy`, (await page.locator('#hero a', { hasText: 'Book your free AI audit' }).count()) >= 1 && /A few short questions, then pick a time\. The call is free\./.test(await page.locator('#hero').innerText()));
     if (tag === 'desktop') { const lines = await page.locator('h1').evaluate((h) => Math.round(h.getBoundingClientRect().height / parseFloat(getComputedStyle(h).lineHeight))); ok('desktop home: H1 fits in about 3 lines', lines >= 2 && lines <= 4, `lines=${lines}`); }
     ok(`${tag} home: journey has 4 steps`, (await page.locator('#journey .kn-step').count()) === 4);
-    ok(`${tag} home: services has 6 system cards, only Alex is Live`, (await page.locator('#services .kn-card').count()) === 6 && (await page.locator('#services .kn-tag--live').count()) === 1 && (await page.locator('#services .kn-map').count()) === 1);
-    ok(`${tag} home: industries is a single link card (no coming-soon cards)`, (await page.locator('#industries a[href="/remodelers"]').count()) === 1 && (await page.locator('#industries .kn-card').count()) === 1);
+    ok(`${tag} home: services has 6 system cards, only Alex is Live`, (await page.locator('#services .kn-card').count()) === 6 && (await page.locator('#services .kn-cards--six .kn-tag--live').count()) === 1 && (await page.locator('#services .kn-map').count()) === 1);
+    ok(`${tag} home: industries has Remodelers (link) plus two coming-soon cards`, (await page.locator('#industries a[href="/remodelers"]').count()) === 1 && (await page.locator('#industries .kn-card').count()) === 3 && (await page.locator('#industries .kn-card--soon').count()) === 2);
+    ok(`${tag} home: AI Transformation and the optional on-site band are separate`, (await page.locator('#services .kn-onsite').count()) === 1 && (await page.locator('#services .kn-card__sub', { hasText: 'AI Transformation' }).count()) === 1 && (await page.locator('#services .kn-card', { hasText: /on-site/i }).count()) === 0);
     ok(`${tag} home: pricing ladder has 4 steps, no calculator, no guarantee`, (await page.locator('#plans .kn-sec__eyebrow').textContent()).trim() === 'How pricing works' && (await page.locator('#plans .kn-step').count()) === 4 && (await page.locator('#plans [data-leak-calc], #plans .kn-pricing__guarantee').count()) === 0);
     ok(`${tag} home: no $10,000, no founding terms, no fixed add-on prices`, !/\$10,000|founding|\$3,000|\$2,500|\$1,500/i.test(await page.locator('#plans').innerText()));
     const body = (await page.locator('main, #main').first().innerText()).toLowerCase();
@@ -72,7 +73,9 @@ for (const f of ['dist/index.html', 'dist/remodelers/index.html']) {
   const comments = [];
   $('*').contents().each((_, n) => { if (n.type === 'comment') comments.push(n.data); });
   const hay = ($('body').text() + ' ' + $('head title').text() + ' ' + $('meta[name=description]').attr('content') + ' ' + comments.join(' ')).toLowerCase();
-  const hits = ['todo', 'placeholder', '[draft', 'draft', 'goes here', 'client result', 'coming soon', 'page in progress'].filter((w) => hay.includes(w));
+  // "coming soon" and "page in progress" are intentional on the homepage industries cards only
+  const words = ['todo', 'placeholder', '[draft', 'draft', 'goes here', 'client result', ...(f === 'dist/index.html' ? [] : ['coming soon', 'page in progress'])];
+  const hits = words.filter((w) => hay.includes(w));
   ok(`${f}: no draft markers in text`, hits.length === 0, hits.join(','));
 }
 await browser.close();

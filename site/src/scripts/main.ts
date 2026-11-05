@@ -12,6 +12,7 @@ import { initLeakCalc } from './leak-calc';
 import { initForm } from './form';
 import { initLoops, initCodeLoop } from './loops';
 import { initReveal } from './reveal';
+import { initMapPop } from './map-pop';
 import { initAuditModal } from './audit-modal';
 
 const start = () => {
@@ -27,6 +28,7 @@ const start = () => {
   initLoops();
   initCodeLoop();
   initReveal();
+  initMapPop();
   initAuditModal();
 };
 

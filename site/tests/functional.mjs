@@ -91,6 +91,14 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
   ok('audit overlay: no POST sent while invalid', reqs === 0, `posts=${reqs}`);
   await page.keyboard.press('Escape'); await page.waitForTimeout(200);
   ok('audit overlay: Escape closes it', await page.evaluate(() => document.querySelector('.am').hidden));
+  // services map popovers
+  await page.evaluate(() => document.getElementById('services').scrollIntoView()); await page.waitForTimeout(1500);
+  await page.locator('.m-node[data-pop="1"]').hover(); await page.waitForTimeout(300);
+  ok('map: hovering a system shows its card', await page.locator('#pop1').isVisible() && (await page.locator('#pop1').innerText()).includes('Follow-Up'));
+  await page.locator('.m-node[data-pop="3"]').hover(); await page.waitForTimeout(300);
+  ok('map: only one card shows at a time', (await page.locator('.kn-pop:visible').count()) === 1 && await page.locator('#pop3').isVisible());
+  await page.mouse.move(5, 5); await page.waitForTimeout(300);
+  ok('map: leaving the system hides the card', (await page.locator('.kn-pop:visible').count()) === 0);
   // appear animations: nothing in the hero may stay hidden after load + scroll through the page
   const H = await page.evaluate(() => document.documentElement.scrollHeight);
   for (let y = 0; y <= H; y += 300) { await page.evaluate((y) => scrollTo(0, y), y); await page.waitForTimeout(250); }
