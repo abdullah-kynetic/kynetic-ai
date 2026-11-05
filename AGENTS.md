@@ -60,3 +60,31 @@ Live calls in checks are read-only (GET). Writes only to DEV resources.
 **5 Onboarding** — `docs/onboarding/` has proposal, contract, invoice (tool choice), checklist, workspace setup docs. 5.1 each file exists and non-empty.
 
 **6 Go-live** — 6.1 `docs/onboarding/walkthrough.md` exists · 6.2 email DNS records documented in `docs/onboarding/email-dns.md` · 6.3 MANUAL: full live test — requires Abdullah's yes. Codex stops here.
+
+## Agency continuation — NEW steps 7–12
+
+Append-only extension: steps 0–6 and their checks above remain unchanged. Steps 7–12 apply to the Kynetic agency side only. Start step 7 only after step 6 passes and Abdullah explicitly says yes to continuing. Follow steps 7–12 in order, with the same build/test/fix loop, small commits, dev branch, review checkpoints, and three-failure stop rule. The checks below are planned requirements; extend the runner for each new step when implementing it, without changing steps 0–6.
+
+All existing hard rules continue to apply. Develop against dev resources with synthetic data and stub providers. Keep outbound dispatch disabled except for a specifically approved test. Calls/texts may reach only TEST_PHONE through the DEV agent and dedicated DEV number; never live Alex or AM-1 Roofing. Consent remains server-side; quiet hours and kill switches must block sends. Keep DEV n8n workflows inactive. Preserve the Twenty restrictions and the exact-write dry run/approval requirement. Never print/commit secrets, edit `.github/`, or infer approval to deploy production. VPS operations continue through the committed Mac script handoff: push, provide commands starting with `git pull`, stop, and wait for Abdullah's output.
+
+Stop before any live dial, live Stripe operation, or step-6-style live test and wait for Abdullah's explicit yes for that action. Approval to continue the roadmap does not approve these actions. Email test recipients must also be explicitly agreed before a real email send; do not invent a recipient from TEST_PHONE.
+
+Product decisions remain OPEN: AI cold calling versus manual calling; dialer vendor; whether DMs are inbound, outbound or both; Stripe pricing; alert channel; and whether Kynetic is represented as a tenant. Ask Abdullah before implementing a dependent choice. Record confirmed decisions; do not silently choose defaults. Stub/dry-run checks must not send real alerts or digests to an unapproved destination.
+
+**7 Agency lead model** — inbound/outbound direction and channel fields for agency prospects; agency lead list; agency `new_lead` alert; scheduled metrics/report jobs.
+7.1 direction and channel required on agency leads · 7.2 `new_lead` fires for an agency lead (stub alert delivery until channel is agreed) · 7.3 metrics rollup runs on schedule, with metrics/report job scheduling verified.
+
+**8 Agency inbox + rates** — unified agency inbox; pick rate and reply rate on the agency dashboard, derived from call outcomes and inbound messages.
+8.1 inbox filters by channel and status · 8.2 pick% and reply% are displayed and unit-tested. Confirm rate definitions/denominators before implementing them.
+
+**9 Two-way messaging** — compose/reply SMS and email from the portal through server-side consent, quiet hours and kill switch; TEST_PHONE only for calls/texts, with an explicitly approved email test recipient if needed.
+9.1 unit tests prove consent, quiet hours and kill switch block sends · 9.2 MANUAL: one TEST_PHONE send only after Abdullah's explicit yes. Stub delivery remains the default; stop before the real send.
+
+**10 Outbound engine** — multi-step campaigns and dialer (choice TBD); campaign statistics.
+10.1 campaign steps run in stub mode · 10.2 dialer cannot target or modify live Alex. Stop and ask if AI/manual mode or dialer vendor is unset; do not substitute a vendor or live dial for the stub check.
+
+**11 Ops desk** — client health overview, onboarding, editable webhook/n8n/lead-secret UI, daily digest to Abdullah.
+11.1 lead-secret rotation works on DEV (new secret accepted, old secret rejected) · 11.2 digest dry-run. UI secrets must remain masked and must not enable live workflow edits/activation; digest delivery waits for the agreed alert channel and any required send approval.
+
+**12 Billing** — Stripe plans, invoices and dunning; pricing TBD.
+12.1 stub webhook handling · 12.2 no live charges without Abdullah's explicit yes. Ask for pricing before implementing dependent billing configuration; stop before any live Stripe operation.
