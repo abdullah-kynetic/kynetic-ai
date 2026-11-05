@@ -5,9 +5,9 @@
       "observed_on": "2026-11-05",
       "url": "https://dev.kyneticai.com/",
       "http_status": 200,
-      "deployed_revision": "d0aa0eba1bf2033a3281133ab5cb5dfe5e75c866",
-      "reported_output": "PASS dev database: isolated kynetic-dev-portal Postgres volume; synthetic seed guard passed\nPASS dev app: 127.0.0.1:3031/api/health HTTP 200; providers stubbed; outbound disabled\nPASS dev auth locally: /sign-in HTTP 200; anonymous /admin HTTP 401\nPASS dev HTTPS site installed: dev.kyneticai.com -> 127.0.0.1:3031\nExisting Caddy site blocks retained; production containers and database not changed.\nPASS DEV_AUTH /sign-in HTTP 200; anonymous /admin HTTP 401 (no redirects followed)\nPASS 0.7 https://dev.kyneticai.com/ HTTP 200 (verified from Mac)\nDEPLOYED_REVISION=d0aa0eba1bf2033a3281133ab5cb5dfe5e75c866\nPASS DEV_INTAKE_UNSIGNED HTTP 401; unsigned intake rejected; no provider test performed",
-      "note": "Mac deployment output supplied by Abdullah; isolated database guard and disabled outbound/stub providers reported. No HTTP verification from this executor."
+      "deployed_revision": "05b24311861c2e28a19061c286eea40802ec28e5",
+      "reported_output": "PASS DEV_STEP3_GATES consent blocked; quiet hours deferred; global/tenant kill switches blocked; fixtures rolled back; provider requests 0\nPASS dev database: isolated kynetic-dev-portal Postgres volume; synthetic seed guard passed\nPASS dev app: 127.0.0.1:3031/api/health HTTP 200; providers stubbed; outbound disabled\nPASS dev auth locally: /sign-in HTTP 200; anonymous /admin HTTP 401\nPASS dev HTTPS site installed: dev.kyneticai.com -> 127.0.0.1:3031\nExisting Caddy site blocks retained; production containers and database not changed.\nPASS DEV_AUTH /sign-in HTTP 200; anonymous /admin HTTP 401 (no redirects followed)\nPASS 0.7 https://dev.kyneticai.com/ HTTP 200 (verified from Mac)\nPASS DEV_INTAKE_UNSIGNED HTTP 401; unsigned intake rejected; no provider test performed\nDEPLOYED_REVISION=05b24311861c2e28a19061c286eea40802ec28e5",
+      "note": "Final Mac deployment output supplied by Abdullah. No independent HTTP verification from cloud executor; deployment uses stub providers with outbound disabled."
     },
     "1.7": {
       "source": "user_mac_terminal",
@@ -102,6 +102,39 @@
       "provider_mode": "stub",
       "reported_output": "PASS dev database: isolated kynetic-dev-portal Postgres volume; synthetic seed guard passed\nPASS dev app: 127.0.0.1:3031/api/health HTTP 200; providers stubbed; outbound disabled\nPASS dev auth locally: /sign-in HTTP 200; anonymous /admin HTTP 401\nPASS dev HTTPS site installed: dev.kyneticai.com -> 127.0.0.1:3031\nExisting Caddy site blocks retained; production containers and database not changed.\nPASS DEV_AUTH /sign-in HTTP 200; anonymous /admin HTTP 401 (no redirects followed)\nPASS 0.7 https://dev.kyneticai.com/ HTTP 200 (verified from Mac)\nDEPLOYED_REVISION=d0aa0eba1bf2033a3281133ab5cb5dfe5e75c866\nPASS DEV_INTAKE_UNSIGNED HTTP 401; unsigned intake rejected; no provider test performed",
       "note": "Confirms deployed unsigned intake denial only; does not verify signed intake, worker execution, booking, retries or Twenty writeback. Production unchanged per Mac output. Older exact-header check 1.7 remains separate."
+    },
+    "previous_step3_dev_root": {
+      "source": "user_mac_terminal",
+      "observed_on": "2026-11-05",
+      "url": "https://dev.kyneticai.com/",
+      "http_status": 200,
+      "deployed_revision": "d0aa0eba1bf2033a3281133ab5cb5dfe5e75c866",
+      "reported_output": "PASS dev database: isolated kynetic-dev-portal Postgres volume; synthetic seed guard passed\nPASS dev app: 127.0.0.1:3031/api/health HTTP 200; providers stubbed; outbound disabled\nPASS dev auth locally: /sign-in HTTP 200; anonymous /admin HTTP 401\nPASS dev HTTPS site installed: dev.kyneticai.com -> 127.0.0.1:3031\nExisting Caddy site blocks retained; production containers and database not changed.\nPASS DEV_AUTH /sign-in HTTP 200; anonymous /admin HTTP 401 (no redirects followed)\nPASS 0.7 https://dev.kyneticai.com/ HTTP 200 (verified from Mac)\nDEPLOYED_REVISION=d0aa0eba1bf2033a3281133ab5cb5dfe5e75c866\nPASS DEV_INTAKE_UNSIGNED HTTP 401; unsigned intake rejected; no provider test performed",
+      "note": "Mac deployment output supplied by Abdullah; isolated database guard and disabled outbound/stub providers reported. No HTTP verification from this executor."
+    },
+    "final_dev_deployment": {
+      "source": "user_mac_terminal",
+      "observed_on": "2026-11-05",
+      "deployed_revision": "05b24311861c2e28a19061c286eea40802ec28e5",
+      "url": "https://dev.kyneticai.com/",
+      "http_status": 200,
+      "sign_in_http_status": 200,
+      "anonymous_admin_http_status": 401,
+      "auth_follow_redirects": false,
+      "unsigned_intake_http_status": 401,
+      "gates": {
+        "consent": "blocked",
+        "quiet_hours": "deferred",
+        "global_kill": "blocked",
+        "tenant_kill": "blocked",
+        "fixtures": "rolled_back",
+        "provider_requests": 0
+      },
+      "provider_mode": "stub",
+      "outbound_enabled": false,
+      "production_unchanged_reported": true,
+      "reported_output": "PASS DEV_STEP3_GATES consent blocked; quiet hours deferred; global/tenant kill switches blocked; fixtures rolled back; provider requests 0\nPASS dev database: isolated kynetic-dev-portal Postgres volume; synthetic seed guard passed\nPASS dev app: 127.0.0.1:3031/api/health HTTP 200; providers stubbed; outbound disabled\nPASS dev auth locally: /sign-in HTTP 200; anonymous /admin HTTP 401\nPASS dev HTTPS site installed: dev.kyneticai.com -> 127.0.0.1:3031\nExisting Caddy site blocks retained; production containers and database not changed.\nPASS DEV_AUTH /sign-in HTTP 200; anonymous /admin HTTP 401 (no redirects followed)\nPASS 0.7 https://dev.kyneticai.com/ HTTP 200 (verified from Mac)\nPASS DEV_INTAKE_UNSIGNED HTTP 401; unsigned intake rejected; no provider test performed\nDEPLOYED_REVISION=05b24311861c2e28a19061c286eea40802ec28e5",
+      "scope": "Portal deployment and gate-only rollback verification. Does not import/activate repository n8n workflows, deploy onboarding docs as portal features, start a dispatch worker, prove real booking/delivery, or complete step 6.3."
     }
   }
 }
