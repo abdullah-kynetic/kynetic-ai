@@ -1,5 +1,7 @@
 # Kynetic AI — Working Context
 
+> Portal/agency DEV status (2026-11-06): [CURRENT_STATUS.md](docs/codex/CURRENT_STATUS.md). This is separate from the Twenty business roadmap mirrored below; no Twenty synchronization is claimed.
+
 Durable context for agent sessions. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Rules (non-negotiable)

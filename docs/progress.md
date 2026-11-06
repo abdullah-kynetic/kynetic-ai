@@ -1,5 +1,7 @@
 # Progress
 
+> Current portal/agency DEV snapshot (2026-11-06): [codex/CURRENT_STATUS.md](codex/CURRENT_STATUS.md). Older roadmap entries below retain their dated scope and do not establish current portal deployment or live readiness.
+
 Mirror of the Twenty roadmap ("Roadmap: all phases"). Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Portal implementation order (2026-11-01)

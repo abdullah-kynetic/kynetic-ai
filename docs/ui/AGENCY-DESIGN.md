@@ -1,5 +1,7 @@
 # Agency UI refinement
 
+> Current code/deployment/test summary: [CURRENT_STATUS.md](../codex/CURRENT_STATUS.md). Latest Unslop validation is 527 unit tests and 3 browser workflows; the earlier 523 count below is the pre-Unslop run.
+
 User request: apply Prompt Motion, Impeccable and Framer Motion ideas to improve the existing portal. Scope is the agency workspace on dev/codex-setup; no backend, provider, billing, authorization or deployment changes.
 
 ## Context and direction

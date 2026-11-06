@@ -1,5 +1,7 @@
 # Testing
 
+> Latest portal/agency validation (2026-11-06): **527 unit tests, 3 Chromium journeys, build/typecheck/lint PASS; agency checks 13 PASS / 0 FAIL / 2 manual SKIP**. See [current status](codex/CURRENT_STATUS.md) for deployment/approval limits. Earlier totals below are historical.
+
 Kynetic Client CRM & Portal. Target path in the build repo: `docs/TESTING.md`.
 
 Source order: `DECISIONS_locked.md` (Oct 25, 2026) wins over `SPEC_client_crm_portal.md`. `PRD.md` supplies the F-IDs (F-01 to F-106) and the milestone and module tags. Anything in none of these is marked `Decided 2026-10-25 (recommended option: ...)` or, if it needs outside information, `UNRESOLVED`. Commands not verified in a running repo are marked `Not configured`.

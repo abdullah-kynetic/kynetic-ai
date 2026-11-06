@@ -1,5 +1,7 @@
 # Agent Instructions (Codex + all agents)
 
+> Current portal/agency summary: [docs/codex/CURRENT_STATUS.md](docs/codex/CURRENT_STATUS.md). Read alongside PROGRESS.md to distinguish local acceptance, pushed code and user-confirmed DEV deployment.
+
 Background: `CLAUDE.md`, `docs/progress.md`, `docs/decisions.md`, `docs/known-issues.md`, `KYNETIC_CONTEXT.md` (IDs, pricing). Twenty CRM (https://crm.kyneticai.com) is the system of record. Skills: `.claude/skills/` (index `skills-breakdown.md`; use `n8n-code-javascript` for n8n Code nodes, `retell-builder`/`demo-profile-generator` for agent prompts). Portal/CRM app is `crm/` (Next.js + bun; its own `crm/AGENTS.md`). Old `portal/` is deleted. ElevenLabs files: `providers/elevenlabs/`. Check `tools/` before writing a new script.
 
 ## Hard rules (override anything else)

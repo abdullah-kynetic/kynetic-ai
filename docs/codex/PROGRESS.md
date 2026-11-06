@@ -1,4 +1,6 @@
-# Codex progress (steps 0–6)
+# Codex progress (steps 0–12)
+
+> **Current summary (2026-11-06):** [CURRENT_STATUS.md](CURRENT_STATUS.md). Tested implementation/audit: `1eb4b8e`; last confirmed DEV deploy: `c34b11a`. New UI awaits deployment; step-6 live test and step-9 real send remain gated. Dated blockers and acceptance notes below are historical evidence, not all current blockers.
 Tick a step only when `scripts/checks/run.sh <n>` has no FAIL. Note SKIPs.
 
 - [x] 0 Dev setup
@@ -330,3 +332,8 @@ Agency-only roadmap; existing steps 0–6 and their completion state are unchang
 - Typecheck/production build/lint PASS; **527 unit tests PASS**; **3 Chromium workflows PASS**, including mobile/dark axe, keyboard/reduced-motion/no-JS and overflow checks; checks 7–12 **13 PASS / 0 FAIL / 2 manual SKIP**. Date-specific tests protect against prior-day shifts and DST errors. Fresh disposable local PostgreSQL only. No check failed three times.
 - Prompt Motion retry failed at proxy CONNECT with HTTP 403 before reading website content. Current runtime observations explicitly report enforced restricted policy and omit prompt-motion.com. Intended all-domain access is not reflected in this session; no bypass attempted. Public GitHub access works.
 - Updated synthetic-only local screenshot previews and review doc. No deploy or VPS operation: deployed DEV remains c34b11a. No calls/SMS/email, Stripe charges, Twenty/n8n writes, main/.github changes or secret output. Existing untracked portal/ untouched.
+
+### Status-resource synchronization — 2026-11-06
+- Added CURRENT_STATUS.md as the portal/agency summary and linked it from AGENTS.md, KYNETIC_CONTEXT.md, docs/progress.md, TESTING.md, the original Codex prompt template, agency review and design review. Historical roadmap/step 0–6 text and evidence retained.
+- Corrected agency review's stale pre-deployment description: base code confirmed deployed c34b11a; UI/Unslop implementation and audit through 1eb4b8e pushed/tested but not deployed. Latest validation is 527 unit cases, 3 Chromium workflows and 13 agency checks, with 2 manual live-check skips. No new test run inferred from this documentation-only update.
+- Older runtime/provider resource JSON files remain dated observations; did not invent new verification or clear the worker/TEST_PHONE blockers. No Twenty/Notion/external status record updated, no deploy or provider operation.

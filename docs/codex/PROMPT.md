@@ -1,1 +1,3 @@
+Status entry point: read [CURRENT_STATUS.md](CURRENT_STATUS.md), AGENTS.md and PROGRESS.md before using this original one-step prompt template. Current user instructions and recorded authorizations take precedence over the template.
+
 Read AGENTS.md and docs/codex/PROGRESS.md. Work on branch dev/codex-setup only (never main). Start at the lowest unchecked step. Build, run `scripts/checks/run.sh <step>`, fix until there are no FAILs (max 3 tries per check, then write a blocker and stop). When the step passes, update PROGRESS.md, commit as abdullah-kynetic with no AI trailer, push the branch, and stop for my review. Do only one step.
