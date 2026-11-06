@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { getAgencyRates } from '@/server/agency/inbox';
+import { percent } from '@/server/agency/rates';
 import { US_STATE_CODES } from '@/server/agency/dialer-policy';
 import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
@@ -56,10 +58,11 @@ export default async function AgencyPage({
       : {}),
     ...(channels.includes(query.channel ?? '') ? { channel: query.channel } : {})
   };
-  const [{ stages }, data, alerts] = await Promise.all([
+  const [{ stages }, data, alerts, rates] = await Promise.all([
     getAgencyPipeline(caller),
     listAgencyLeads(caller, filter),
-    listAgencyAlerts(caller)
+    listAgencyAlerts(caller),
+    getAgencyRates(caller)
   ]);
   return (
     <PageContainer
@@ -72,7 +75,21 @@ export default async function AgencyPage({
           @example.test email, and provide a reason when moving to Lost.
         </p>
       )}
+      <section aria-label='Seven-day agency rates' className='mb-4 rounded border p-4'>
+        <h2>Last seven days</h2>
+        <p>
+          Pick rate {percent(rates.pickRate)} ({rates.picked}/{rates.attempted} calls) · Reply rate{' '}
+          {percent(rates.replyRate)} ({rates.replied}/{rates.contacted} messaged prospects)
+        </p>
+        <p className='text-sm'>
+          Replies count unique prospects after outreach in this window. Failed messages and
+          simulated sends are excluded.
+        </p>
+      </section>
       <nav aria-label='Agency tools' className='mb-4 flex flex-wrap gap-4'>
+        <Link href='/admin/agency/inbox' className='underline'>
+          Inbox
+        </Link>
         <Link href='/admin/agency/dialer' className='inline-flex min-h-11 items-center underline'>
           Human dialer
         </Link>
