@@ -59,7 +59,9 @@ export default async function Compose({
             className='block min-h-32 w-full border p-3'
           />
         </label>
-        <Button disabled={!leads.length}>Save draft</Button>
+        <Button type='submit' disabled={!leads.length}>
+          Save draft
+        </Button>
       </form>
       <h2 className='font-semibold'>Recent drafts</h2>
       <div className='space-y-3'>
@@ -72,7 +74,7 @@ export default async function Compose({
             <p>{d.subject}</p>
             <p className='whitespace-pre-wrap'>{d.body}</p>
             <form action={previewMessageAction.bind(null, d.id)}>
-              <Button variant='outline' disabled={d.status === 'simulated'}>
+              <Button type='submit' variant='outline' disabled={d.status === 'simulated'}>
                 Check gates / simulate
               </Button>
             </form>

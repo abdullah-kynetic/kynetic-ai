@@ -56,7 +56,7 @@ export default async function Inbox({
             ))}
           </select>
         </label>
-        <Button>Filter</Button>
+        <Button type='submit'>Filter</Button>
       </form>
       <section className='space-y-3' aria-label='Conversations'>
         {rows.length ? (
@@ -108,7 +108,9 @@ export default async function Inbox({
           Message
           <textarea name='body' required maxLength={5000} className='block w-full border p-2' />
         </label>
-        <Button disabled={!leads.length}>Save log</Button>
+        <Button type='submit' disabled={!leads.length}>
+          Save log
+        </Button>
       </form>
     </PageContainer>
   );

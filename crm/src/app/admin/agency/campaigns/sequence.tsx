@@ -60,12 +60,16 @@ export async function CampaignSequence({
               </label>
             </fieldset>
           ))}
-          <Button variant='outline'>Save sequence</Button>
+          <Button type='submit' variant='outline'>
+            Save sequence
+          </Button>
         </form>
       )}
       {!!steps.length && (
         <form action={enrollSequence.bind(null, id)}>
-          <Button variant='outline'>Enroll assigned leads</Button>
+          <Button type='submit' variant='outline'>
+            Enroll assigned leads
+          </Button>
         </form>
       )}
       <p>
@@ -88,7 +92,9 @@ export async function CampaignSequence({
               <form
                 action={completeSequence.bind(null, id, t.contact_id, t.step_index, 'simulate')}
               >
-                <Button variant='outline'>Simulate step</Button>
+                <Button type='submit' variant='outline'>
+                  Simulate step
+                </Button>
               </form>
               <form
                 action={completeSequence.bind(
@@ -99,7 +105,9 @@ export async function CampaignSequence({
                   'manual_complete'
                 )}
               >
-                <Button variant='outline'>Mark manually completed</Button>
+                <Button type='submit' variant='outline'>
+                  Mark manually completed
+                </Button>
               </form>
             </div>
           )}

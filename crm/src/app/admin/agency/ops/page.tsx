@@ -75,7 +75,7 @@ export default async function AgencyOps() {
             defaultValue={settings?.workflow_id}
           />
         </label>
-        <Button>Save draft configuration</Button>
+        <Button type='submit'>Save draft configuration</Button>
       </form>
       <section className='space-y-3'>
         <h2 className='font-semibold'>Agency DEV lead secret</h2>
@@ -87,7 +87,9 @@ export default async function AgencyOps() {
           Rotation invalidates the previous signing secret. Secret values are never displayed here.
         </p>
         <form action={rotateAgencySecretAction}>
-          <Button variant='outline'>Rotate agency DEV secret</Button>
+          <Button type='submit' variant='outline'>
+            Rotate agency DEV secret
+          </Button>
         </form>
       </section>
     </PageContainer>

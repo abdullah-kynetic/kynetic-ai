@@ -75,7 +75,9 @@ export default async function AgencyBilling({
             placeholder='Amounts must total the setup fee'
           />
         </label>
-        <Button disabled={!deals.length}>Save deal terms</Button>
+        <Button type='submit' disabled={!deals.length}>
+          Save deal terms
+        </Button>
       </form>
       <section>
         <h2 className='font-semibold'>Agreed draft terms</h2>
@@ -126,7 +128,9 @@ export default async function AgencyBilling({
           Due date
           <Input id='billing-dueOn' name='dueOn' type='date' required />
         </label>
-        <Button disabled={!data.terms.length}>Create draft</Button>
+        <Button type='submit' disabled={!data.terms.length}>
+          Create draft
+        </Button>
       </form>
       <section className='space-y-3'>
         <h2 className='font-semibold'>Invoices — stub ledger</h2>
@@ -142,7 +146,7 @@ export default async function AgencyBilling({
                     key={type}
                     action={simulateInvoiceAction.bind(null, i.id, i.amount_cents, type)}
                   >
-                    <Button variant='outline'>
+                    <Button type='submit' variant='outline'>
                       Simulate {type.replace('invoice.', '').replaceAll('_', ' ')}
                     </Button>
                   </form>
@@ -155,7 +159,9 @@ export default async function AgencyBilling({
       <section className='my-6 space-y-3'>
         <h2 className='font-semibold'>Overdue reminder drafts</h2>
         <form action={dunningAction}>
-          <Button variant='outline'>Draft overdue reminders</Button>
+          <Button type='submit' variant='outline'>
+            Draft overdue reminders
+          </Button>
         </form>
         {data.reminders.map((d) => (
           <p key={d.id}>{d.body}</p>
