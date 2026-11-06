@@ -34,12 +34,13 @@ for (const width of [1440, 390]) {
     ok(`${tag} home: industries has Remodelers (link) plus two coming-soon cards`, (await page.locator('#industries a[href="/remodelers"]').count()) === 1 && (await page.locator('#industries .kn-card').count()) === 3 && (await page.locator('#industries .kn-card--soon').count()) === 2);
     ok(`${tag} home: AI Transformation card mentions optional on-site days`, /2 to 3 days on-site/.test(await page.locator('#pop5').textContent()));
     ok(`${tag} home: every system card has a usual-way and a with-Kynetic column`, (await page.locator('#services .kn-pop__col--now').count()) === 6 && (await page.locator('#services .kn-pop__col--new').count()) === 6);
-    ok(`${tag} home: pricing ladder has 4 steps, no calculator, no guarantee`, (await page.locator('#plans .kn-sec__eyebrow').textContent()).trim() === 'How pricing works' && (await page.locator('#plans .kn-step').count()) === 4 && (await page.locator('#plans [data-leak-calc], #plans .kn-pricing__guarantee').count()) === 0);
+    ok(`${tag} home: pricing is a short section (no repeated step cards, no calculator, no guarantee)`, (await page.locator('#plans .kn-sec__eyebrow').textContent()).trim() === 'How pricing works' && (await page.locator('#plans .kn-step').count()) === 0 && (await page.locator('#plans [data-leak-calc], #plans .kn-pricing__guarantee').count()) === 0);
+    ok(`${tag} home: the call-is-free microcopy appears once`, text.split('a few short questions, then pick a time').length === 2);
     ok(`${tag} home: no $10,000, no founding terms, no fixed add-on prices`, !/\$10,000|founding|\$3,000|\$2,500|\$1,500/i.test(await page.locator('#plans').innerText()));
     const body = (await page.locator('main, #main').first().innerText()).toLowerCase();
     const heroText = (await page.locator('#hero').innerText()).toLowerCase();
     ok(`${tag} home: hero has no industry, lead-speed or tool-first language`, !/remodel|contractor|home service|60 seconds|missed call|\balex\b|\bleads?\b|speed-to-lead|n8n|automation/.test(heroText));
-    ok(`${tag} home: no contact form, audit button opens the overlay`, (await page.locator('form:not(.am__step)').count()) === 0 && (await page.locator('#contact [data-audit-open]').count()) === 1);
+    ok(`${tag} home: no contact form, audit buttons are present`, (await page.locator('form:not(.am__step)').count()) === 0 && (await page.locator('#hero a[href*="cal.com"]').count()) >= 1);
     ok(`${tag} home: no scarcity line`, !/few new clients a month/.test(text));
     ok(`${tag} home: no Nora card`, !/\bnora\b/.test(text));
     ok(`${tag} home: no "consulting" as identity`, !/consulting|consultancy/.test(text));

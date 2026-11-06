@@ -32,7 +32,7 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
     await page.locator('nav a.framer-520aC', { hasText: new RegExp('^' + label + '$', 'i') }).first().click();
     await page.waitForTimeout(1500);
     const top = await page.evaluate((id) => document.getElementById(id).getBoundingClientRect().top, id);
-    ok(`desktop nav "${label}" scrolls to #${id}`, Math.abs(top) < 120, `top=${Math.round(top)}`);
+    ok(`desktop nav "${label}" scrolls to #${id}`, id === 'contact' ? top > 0 && top < 900 : Math.abs(top) < 120, `top=${Math.round(top)}`); // the slim contact strip sits at the very end of the page, so it cannot reach the top
     ok(`desktop nav "${label}" updates hash`, (await page.evaluate(() => location.hash)) === '#' + id);
   }
   // nav collapses to the compact pill once scrollY passes min(viewport, hero bottom), and expands 80px above that line
@@ -79,7 +79,7 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
   ok('FAQ: 5 questions, each with a visible answer', (await faqItems.count()) === 5 && (await page.locator('#faq dd:visible').count()) === 5);
   // audit overlay validation
   let reqs = 0; page.on('request', (r) => { if (r.method() === 'POST') reqs++; });
-  await page.locator('[data-audit-open]').click(); await page.waitForTimeout(500);
+  await page.locator('#hero a[href*="cal.com"]').first().click(); await page.waitForTimeout(500);
   const modal = page.locator('.am__step[data-step="1"]');
   ok('audit overlay opens with the contact step', await modal.isVisible());
   await modal.locator('button[type=submit]').click(); await page.waitForTimeout(300);

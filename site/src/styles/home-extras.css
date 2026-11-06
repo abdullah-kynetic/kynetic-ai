@@ -132,3 +132,5 @@ html.am-lock { overflow: hidden; }
 .kn-pop__col--new li { color: var(--espresso-text); }
 .kn-pop__col--new li::before { background: var(--espresso-accent-text); }
 @media (max-width: 809px) { .kn-pop { width: auto; } .kn-pop__cols { grid-template-columns: 1fr; } }
+.kn-contact--slim { padding: 8px 16px 40px; background: var(--color-page); }
+.kn-contact--slim .kn-contact__lines { margin: 0; }
