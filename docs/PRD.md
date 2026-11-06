@@ -1,5 +1,8 @@
 # Product Requirements Document
 
+> **Completion navigation:** [COMPLETION-PLAN.md](codex/COMPLETION-PLAN.md) is the sole active engineering checklist; [PROGRESS.md](codex/PROGRESS.md) indexes evidence. This file remains a specification, decision or test reference with its original dates/scope. Historical next-task/wave instructions do not supersede the active plan or safety gates.
+
+
 Kynetic Client CRM & Portal. Target path in the build repo: `docs/PRD.md`.
 
 Source order: `DECISIONS_locked.md` (Oct 25, 2026) wins over `SPEC_client_crm_portal.md`. Anything in neither is marked `Decided 2026-10-25 (recommended option approved: ...)`. Project-level facts that come from neither (earlier project decisions) are cited as such and are not treated as locked.
