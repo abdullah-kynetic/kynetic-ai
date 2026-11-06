@@ -134,3 +134,10 @@ html.am-lock { overflow: hidden; }
 @media (max-width: 809px) { .kn-pop { width: auto; } .kn-pop__cols { grid-template-columns: 1fr; } }
 .kn-contact--slim { padding: 8px 16px 40px; background: var(--color-page); }
 .kn-contact--slim .kn-contact__lines { margin: 0; }
+
+/* Skip link and "what changes for you" pillars */
+.kn-skip { position: absolute; left: 16px; top: -60px; z-index: 1100; background: var(--color-card); color: var(--color-text); border: 2px solid var(--color-accent-text); border-radius: 10px; padding: 10px 16px; font-family: var(--font-sans); font-weight: 600; text-decoration: none; }
+.kn-skip:focus { top: 12px; }
+.kn-pillar__n { font-family: var(--font-sans); font-weight: 600; font-size: 1rem; color: var(--color-accent-text); }
+.kn-pillar { transition: transform .25s cubic-bezier(.44, 0, .56, 1), border-color .25s, box-shadow .25s; }
+.kn-pillar:hover { transform: translateY(-4px); border-color: var(--color-accent); box-shadow: 0 12px 28px rgba(20, 16, 12, .08); }

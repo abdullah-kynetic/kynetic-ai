@@ -120,6 +120,8 @@ export function initAuditModal() {
     open(a);
   });
   if (location.hash === '#audit') open();
+  window.addEventListener('hashchange', () => { if (location.hash === '#audit') open(); });
+  document.querySelector('.kn-skip')?.addEventListener('click', (e) => { e.preventDefault(); open(e.currentTarget as HTMLElement); });
 
   f1.addEventListener('submit', (e) => {
     e.preventDefault();
