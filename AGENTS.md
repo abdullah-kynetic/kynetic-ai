@@ -88,3 +88,8 @@ Product decisions remain OPEN: AI cold calling versus manual calling; dialer ven
 
 **12 Billing** — Stripe plans, invoices and dunning; pricing TBD.
 12.1 stub webhook handling · 12.2 no live charges without Abdullah's explicit yes. Ask for pricing before implementing dependent billing configuration; stop before any live Stripe operation.
+
+
+## Current agency build authorization — 2026-11-05
+
+Abdullah explicitly requested building steps 7–12 now, continuing between steps, before he runs the final tests. This supersedes the earlier step-6-completion prerequisite for CLOUD/DEV IMPLEMENTATION only. It does not approve a live test, outreach, live Stripe, DNS, production operations or unresolved product defaults. Preserve steps 0–6 and continue testing/pushing small commits on dev/codex-setup; keep unknown choices configurable/unselected and ask before selecting them.
