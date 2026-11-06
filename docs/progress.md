@@ -1,5 +1,8 @@
 # Progress
 
+> **HISTORICAL — dated business/portal progress mirror.** The active engineering completion checklist is [COMPLETION-PLAN.md](codex/COMPLETION-PLAN.md); current evidence index: [PROGRESS.md](codex/PROGRESS.md). Preserve the old roadmap, task statuses, approvals and log below. Their "current/next" headings are historical, not a competing execution plan. Twenty remains the business system of record; no external record was synchronized in this cleanup.
+
+
 > Current portal/agency DEV snapshot (2026-11-06): [codex/CURRENT_STATUS.md](codex/CURRENT_STATUS.md). Older roadmap entries below retain their dated scope and do not establish current portal deployment or live readiness.
 
 Mirror of the Twenty roadmap ("Roadmap: all phases"). Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
