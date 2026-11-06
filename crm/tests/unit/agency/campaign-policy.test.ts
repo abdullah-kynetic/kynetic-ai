@@ -14,7 +14,11 @@ it('manual mode has no vendor/agent/send capability', () => {
 it.each(['deleted', 'optedOut', 'replied', 'booked', 'closed'] as const)('stops for %s', (key) => {
   expect(
     campaignStop({
-      ...{ deleted: false, optedOut: false, replied: false, booked: false, closed: false },
+      deleted: false,
+      optedOut: false,
+      replied: false,
+      booked: false,
+      closed: false,
       [key]: true
     })
   ).not.toBeNull();

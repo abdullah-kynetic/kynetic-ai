@@ -116,7 +116,7 @@ describe('M16-01/M16-02/M16-05 F-05/F-14/F-17 isolated agency workspace', () => 
       );
     }
     const data = await listAgencyLeads(admin, {}, { db });
-    expect(data.leads).toHaveLength(8);
+    expect(data.leads).toHaveLength(11);
     expect(data.counts.every((c) => c.count === 1)).toBe(true);
     expect((await listAgencyLeads(admin, { direction: 'outbound' }, { db })).leads).toHaveLength(4);
     expect((await listAgencyLeads(admin, { channel: 'cold_call' }, { db })).leads).toHaveLength(1);

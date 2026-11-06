@@ -28,7 +28,7 @@ export default async function AgencyBilling({
     getAgencyBilling(caller),
     searchParams
   ]);
-  const deals = leads.flatMap((l) => l.deal ? [{ id: l.deal.dealId, name: l.firstName }] : []);
+  const deals = leads.flatMap((l) => (l.deal ? [{ id: l.deal.dealId, name: l.firstName }] : []));
   return (
     <PageContainer
       pageTitle='Agency billing'
@@ -53,17 +53,27 @@ export default async function AgencyBilling({
             ))}
           </select>
         </label>
-        <label>
+        <label htmlFor='billing-setup'>
           Setup fee (USD)
-          <Input name='setup' required placeholder='Enter agreed fee' inputMode='decimal' />
+          <Input
+            id='billing-setup'
+            name='setup'
+            required
+            placeholder='Enter agreed fee'
+            inputMode='decimal'
+          />
         </label>
-        <label>
+        <label htmlFor='billing-monthly'>
           Optional monthly fee (USD)
-          <Input name='monthly' inputMode='decimal' />
+          <Input id='billing-monthly' name='monthly' inputMode='decimal' />
         </label>
-        <label>
+        <label htmlFor='billing-installments'>
           Optional setup installments (USD, comma separated)
-          <Input name='installments' placeholder='Amounts must total the setup fee' />
+          <Input
+            id='billing-installments'
+            name='installments'
+            placeholder='Amounts must total the setup fee'
+          />
         </label>
         <Button disabled={!deals.length}>Save deal terms</Button>
       </form>
@@ -96,18 +106,25 @@ export default async function AgencyBilling({
             <option value='monthly'>Monthly</option>
           </select>
         </label>
-        <label>
+        <label htmlFor='billing-installment'>
           Setup installment number
-          <Input type='number' name='installment' min={0} max={11} defaultValue={0} />
+          <Input
+            id='billing-installment'
+            type='number'
+            name='installment'
+            min={0}
+            max={11}
+            defaultValue={0}
+          />
         </label>
         <p className='text-sm'>0 is the first installment; use 0 when there are no installments.</p>
-        <label>
+        <label htmlFor='billing-period'>
           Monthly billing period
-          <Input name='period' type='month' />
+          <Input id='billing-period' name='period' type='month' />
         </label>
-        <label>
+        <label htmlFor='billing-dueOn'>
           Due date
-          <Input name='dueOn' type='date' required />
+          <Input id='billing-dueOn' name='dueOn' type='date' required />
         </label>
         <Button disabled={!data.terms.length}>Create draft</Button>
       </form>

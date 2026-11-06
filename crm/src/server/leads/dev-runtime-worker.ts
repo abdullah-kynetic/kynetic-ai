@@ -3,6 +3,8 @@ import { pathToFileURL } from 'node:url';
 import { getEnv, type Env } from '../env';
 import { registerEventWorkers } from '../events';
 import { stopJobs } from '../jobs';
+import { registerAgencyMaintenanceWorker } from '../agency/scheduling';
+import { registerAgencyDigestWorker } from '../agency/ops';
 import { registerWebhookWorker } from '../webhooks';
 import { registerDevLeadSubscriber, registerDevLeadWorker } from './dev-chain';
 import { assertDevPortal } from './dev-policy';
@@ -40,6 +42,8 @@ export async function startDevSyntheticWorker(opts: { pollingIntervalSeconds?: n
   await registerEventWorkers(opts);
   await registerWebhookWorker(opts);
   await registerDevLeadWorker();
+  await registerAgencyMaintenanceWorker();
+  await registerAgencyDigestWorker();
 }
 
 async function main() {

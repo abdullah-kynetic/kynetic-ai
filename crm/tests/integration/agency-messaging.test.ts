@@ -78,3 +78,27 @@ it('server consent and quiet hours block; an allowed stub is idempotent', async 
     )
   ).rejects.toMatchObject({ code: 'NOT_FOUND' });
 });
+
+it('email also requires consent and respects quiet hours without an inbound reply bypass', async () => {
+  const email = (
+    await saveAgencyMessage(
+      caller,
+      { contactId, channel: 'email', subject: 'DEV', body: 'Synthetic email preview' },
+      { db: a.db }
+    )
+  ).id;
+  const opts = { db: a.db, now: open, outboundEnabledForTest: true };
+  expect(await previewAgencyMessage(caller, email, opts)).toMatchObject({
+    status: 'blocked',
+    reason: 'no_consent'
+  });
+  await a.test
+    .admin`insert into consents(tenant_id,contact_id,channel,kind,source,captured_text) values(${a.tenantId},${contactId},'email','express_written','staff','Synthetic email fixture only')`;
+  expect(
+    await previewAgencyMessage(caller, email, { ...opts, now: new Date('2026-11-05T10:00:00Z') })
+  ).toMatchObject({ status: 'blocked', reason: 'quiet_hours' });
+  expect(await previewAgencyMessage(caller, email, opts)).toMatchObject({
+    status: 'simulated',
+    result: { providerRequests: 0 }
+  });
+});

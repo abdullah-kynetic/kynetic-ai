@@ -37,9 +37,10 @@ export async function CampaignSequence({
                   ))}
                 </select>
               </label>
-              <label>
+              <label htmlFor={`sequence-${id}-delay${n}`}>
                 Days after prior step
                 <Input
+                  id={`sequence-${id}-delay${n}`}
                   type='number'
                   name={`delay${n}`}
                   min={0}
@@ -47,9 +48,10 @@ export async function CampaignSequence({
                   defaultValue={steps[n]?.delayDays ?? 0}
                 />
               </label>
-              <label>
+              <label htmlFor={`sequence-${id}-instructions${n}`}>
                 Task instructions
                 <Input
+                  id={`sequence-${id}-instructions${n}`}
                   name={`instructions${n}`}
                   required={!n}
                   maxLength={2000}

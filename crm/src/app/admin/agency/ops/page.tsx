@@ -44,9 +44,10 @@ export default async function AgencyOps() {
       <form action={saveOpsAction} className='my-8 max-w-xl space-y-3'>
         <h2 className='font-semibold'>DEV integration draft</h2>
         <p>Saving metadata does not execute or activate a workflow or enable webhook dispatch.</p>
-        <label>
+        <label htmlFor='ops-devWebhookUrl'>
           DEV lead webhook URL
           <Input
+            id='ops-devWebhookUrl'
             name='devWebhookUrl'
             type='url'
             required
@@ -55,18 +56,24 @@ export default async function AgencyOps() {
             }
           />
         </label>
-        <label>
+        <label htmlFor='ops-workflowName'>
           Inactive DEV workflow name
           <Input
+            id='ops-workflowName'
             name='workflowName'
             required
             defaultValue={settings?.workflow_name}
             placeholder='DEV - ...'
           />
         </label>
-        <label>
+        <label htmlFor='ops-workflowId'>
           Workflow ID
-          <Input name='workflowId' required defaultValue={settings?.workflow_id} />
+          <Input
+            id='ops-workflowId'
+            name='workflowId'
+            required
+            defaultValue={settings?.workflow_id}
+          />
         </label>
         <Button>Save draft configuration</Button>
       </form>

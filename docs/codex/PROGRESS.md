@@ -149,7 +149,7 @@ Tick a step only when `scripts/checks/run.sh <n>` has no FAIL. Note SKIPs.
 
 ## NEW agency roadmap — steps 7–12 (2026-11-05)
 
-Appended at Abdullah's request; existing steps 0–6, their text, checks and completion state are unchanged. These steps cover only the Kynetic agency side. All six are unstarted and gated on step 6 passing AND Abdullah explicitly saying yes to continue. The current step-3 Mac deployment handoff is still pending; this roadmap update is not deployment evidence or authorization for a live test.
+Agency-only roadmap; existing steps 0–6 and their completion state are unchanged. Abdullah subsequently authorized cloud/stub development before the step-6 live test and answered the product questions. Current local acceptance is recorded below; it is not deployment evidence or authorization for live sends, charges or a live test. Step 9 retains its manual-send gate.
 
 - [x] 7 Agency lead model — required inbound/outbound direction and channel on agency prospects; agency lead list; agency `new_lead` alert; schedule metrics/report jobs. Checks: required fields enforced; `new_lead` fires with stub delivery; metrics rollup runs on schedule and metrics/report scheduling is verified.
 - [x] 8 Agency inbox + rates — unified agency inbox and dashboard pick%/reply% from call outcomes/inbound messages. Checks: channel/status filters; displayed, unit-tested rates. Confirm rate definitions/denominators before implementation.
@@ -294,3 +294,8 @@ Appended at Abdullah's request; existing steps 0–6, their text, checks and com
 - Per-deal USD setup/optional monthly fees and exact installment totals; no fixed plans/prices invented. Immutable invoice draft snapshots and billing-period idempotency reject conflicting recreations. Stripe-shaped stub event processor is admin/session-service scoped, not an unauthenticated public webhook; it rejects livemode, wrong amount/ID, replay mutations and stale state regression. Paid remains terminal.
 - Manual overdue reminder generation creates drafts only, deduplicates per invoice/day and hides paid reminders. UI supports terms, draft invoices and explicit event simulation. There is no Stripe SDK/API operation, automatic invoice delivery or charge path.
 - Step 12 runner **2 PASS/0 FAIL/1 SKIP** (live Stripe intentionally not run). Typecheck passes after correcting the UI's existing single-deal projection. Cloud/stub scope complete; real Stripe connectivity, signed external webhook endpoint, actual invoices/charges and deployed behavior remain unverified/gated.
+
+### Agency regression and runtime wiring — 2026-11-05
+- All **523 unit tests PASS**; **28 integration cases PASS** across eight agency suites plus restricted DEV runtime smoke; added five further database cases for campaign opt-out/booking/closure/deletion stops and email consent/quiet-hours, **9/9 focused cases PASS**. Existing source-category expectations updated to 11 (new inbound SMS/email/DM), and legacy invalid-state dialer fixtures now insert via local admin after intake rejection rather than expecting intake to accept them.
+- Whole-app lint passes with existing warnings after fixing new explicit form-label associations. Production Next build (including typecheck) passes. Python checker regression **23/23 PASS**. No assertion weakened to accept missing safety.
+- Restricted sender-free DEV worker now registers agency maintenance/digest consumers; no provider/sender registration added. Existing runtime smoke still passes. Schedules are locally durable/consumable; no deployed clock execution is claimed.

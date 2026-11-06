@@ -46,9 +46,9 @@ export default async function Compose({
             <option>email</option>
           </select>
         </label>
-        <label>
+        <label htmlFor='compose-subject'>
           Subject (email)
-          <Input name='subject' maxLength={200} />
+          <Input id='compose-subject' name='subject' maxLength={200} />
         </label>
         <label>
           Message

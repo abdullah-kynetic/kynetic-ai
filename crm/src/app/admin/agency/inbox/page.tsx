@@ -68,11 +68,13 @@ export default async function Inbox({
               <time>{String(m.at)}</time>
               {m.subject && <p>{m.subject}</p>}
               <p className='whitespace-pre-wrap'>{m.body}</p>
-              <Link
-                href={`/admin/agency/compose?contactId=${m.contact_id}&channel=${m.channel === 'dm' ? 'sms' : m.channel}`}
-              >
-                Compose reply
-              </Link>
+              {m.channel !== 'dm' && (
+                <Link
+                  href={`/admin/agency/compose?contactId=${m.contact_id}&channel=${m.channel === 'dm' ? 'sms' : m.channel}`}
+                >
+                  Compose reply
+                </Link>
+              )}
             </article>
           ))
         ) : (
@@ -98,9 +100,9 @@ export default async function Inbox({
             <option>outbound</option>
           </select>
         </label>
-        <label>
+        <label htmlFor='inbox-platform'>
           Platform
-          <Input name='platform' required maxLength={80} />
+          <Input id='inbox-platform' name='platform' required maxLength={80} />
         </label>
         <label>
           Message
