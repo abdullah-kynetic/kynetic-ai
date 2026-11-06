@@ -337,3 +337,8 @@ Agency-only roadmap; existing steps 0–6 and their completion state are unchang
 - Added CURRENT_STATUS.md as the portal/agency summary and linked it from AGENTS.md, KYNETIC_CONTEXT.md, docs/progress.md, TESTING.md, the original Codex prompt template, agency review and design review. Historical roadmap/step 0–6 text and evidence retained.
 - Corrected agency review's stale pre-deployment description: base code confirmed deployed c34b11a; UI/Unslop implementation and audit through 1eb4b8e pushed/tested but not deployed. Latest validation is 527 unit cases, 3 Chromium workflows and 13 agency checks, with 2 manual live-check skips. No new test run inferred from this documentation-only update.
 - Older runtime/provider resource JSON files remain dated observations; did not invent new verification or clear the worker/TEST_PHONE blockers. No Twenty/Notion/external status record updated, no deploy or provider operation.
+
+
+## 2026-11-06 — Detailed remaining-work report saved to Twenty
+
+At Abdullah’s explicit request, saved the detailed 21-part remaining build/integration/test report as `docs/codex/REMAINING-WORK.md` and created a standalone DEV documentation note with an actual Markdown attachment in self-hosted Twenty. Upload completion verified 22,089 bytes; note readback matches the local Markdown; attachment relation/file ID verified. No existing client/lead records changed and no deployment or provider action performed. The cloud Twenty connector returned WORKSPACE_SUSPENDED, so the upload used the existing self-hosted API with its env credential. IDs and content hash: `remaining-work-twenty-evidence.json`. Existing step status and approval gates remain unchanged.

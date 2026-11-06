@@ -40,6 +40,8 @@ Recorded in [vps-evidence.json](vps-evidence.json), `agency_dev_deployment`: DEV
 
 It does **not** verify authenticated agency screens, actual scheduled execution, worker readiness, TEST_PHONE configuration, real booking, messaging or Stripe. The earlier worker/TEST_PHONE blockers are historical observations; no newer readiness result clears them. [dev-live-test-readiness.json](dev-live-test-readiness.json) and [dev-resources.json](dev-resources.json) retain their original observed facts/resource IDs rather than fabricated refreshes.
 
+Full detailed build/integration/verification backlog: [REMAINING-WORK.md](REMAINING-WORK.md). A matching Markdown attachment and readable note were created in Twenty at Abdullah’s request; see [upload evidence](remaining-work-twenty-evidence.json). This documentation does not clear any outstanding checks.
+
 ## Remaining work and approval gates
 
 1. Separate Mac DEV deployment for the new UI; then verify authenticated screens and actual agency worker/schedule execution on DEV.
