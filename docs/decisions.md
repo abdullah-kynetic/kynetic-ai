@@ -1,5 +1,8 @@
 # Decisions
 
+> **Completion navigation:** [COMPLETION-PLAN.md](codex/COMPLETION-PLAN.md) is the sole active engineering checklist; [PROGRESS.md](codex/PROGRESS.md) indexes evidence. This file remains a specification, decision or test reference with its original dates/scope. Historical next-task/wave instructions do not supersede the active plan or safety gates.
+
+
 Mirror of the Twenty decision notes. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one. Do not reopen these without asking.
 
 ## D-001: Price is $1,500 setup + $997/mo
