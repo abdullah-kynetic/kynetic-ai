@@ -88,7 +88,7 @@ export function AgencySubmitButton({
       <motion.span
         initial={false}
         animate={{ opacity: pending ? 0.7 : 1 }}
-        transition={{ duration: reduced ? 0 : 0.12 }}
+        transition={{ duration: reduced ? 0 : 0.12, ease: transition.ease }}
       >
         <span
           className='agency-submit-label'

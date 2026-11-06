@@ -1,3 +1,4 @@
+import { agencyDateTime } from '@/components/agency/format';
 import Link from 'next/link';
 import PageContainer from '@/components/agency/page';
 import { AgencySubmitButton as Button } from '@/components/agency/motion';
@@ -34,7 +35,12 @@ export default async function AgencyOps() {
           <article className='rounded border p-3' key={c.tenantId}>
             <h3>{c.name}</h3>
             <p>
-              {c.healthTone} · Score {c.healthScore} · {c.integrationErrors} integration errors ·{' '}
+              {c.healthTone === 'red'
+                ? 'Needs attention'
+                : c.healthTone === 'yellow'
+                  ? 'Review'
+                  : 'Healthy'}{' '}
+              · Score {c.healthScore} · {c.integrationErrors} integration errors ·{' '}
               {c.goLiveAt ? 'Live' : 'Onboarding'}
             </p>
             <Link href={`/admin/clients/${c.tenantId}/checklist`}>Onboarding checklist</Link>
@@ -82,7 +88,7 @@ export default async function AgencyOps() {
           <h2 className='font-semibold'>Agency DEV lead secret</h2>
           <p>
             {secret.isSet ? '•••••••• (configured)' : 'Not configured'} · Last rotation{' '}
-            {secret.rotatedAt ?? 'Never'}
+            {secret.rotatedAt ? agencyDateTime(secret.rotatedAt) : 'Never'}
           </p>
           <p>
             Rotation invalidates the previous signing secret. Secret values are never displayed

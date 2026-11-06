@@ -1,3 +1,4 @@
+import { agencyChannel } from '@/components/agency/format';
 import { getAgencyRates } from '@/server/agency/inbox';
 import { percent } from '@/server/agency/rates';
 import { US_STATE_CODES } from '@/server/agency/dialer-policy';
@@ -111,13 +112,16 @@ export default async function AgencyPage({
         <h2 id='agency-leads' className='text-lg font-semibold'>
           Leads
         </h2>
-        <div className='flex flex-wrap gap-2'>
+        <dl className='agency-source-counts' aria-label='Lead source counts'>
           {data.counts.map((c) => (
-            <span key={`${c.direction}-${c.channel}`} className='rounded border px-3 py-2 text-sm'>
-              {c.direction} · {c.channel.replaceAll('_', ' ')}: {c.count}
-            </span>
+            <div key={`${c.direction}-${c.channel}`}>
+              <dt>
+                {c.direction === 'inbound' ? 'Inbound' : 'Outbound'} · {agencyChannel(c.channel)}
+              </dt>
+              <dd>{c.count}</dd>
+            </div>
           ))}
-        </div>
+        </dl>
         <form className='flex flex-wrap items-end gap-3'>
           <div>
             <Label htmlFor='filterDirection'>Direction</Label>
@@ -153,7 +157,7 @@ export default async function AgencyPage({
           </Button>
         </form>
         <p className='text-muted-foreground text-sm'>
-          Latest 50 matching leads. Counts include all live agency leads.
+          Latest 50 matching leads. Counts include all active agency prospects.
         </p>
         <ul className='space-y-3'>
           {data.leads.map((lead) => (

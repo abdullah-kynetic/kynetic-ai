@@ -1,3 +1,4 @@
+import { agencyDate, agencyBillingCycle } from '@/components/agency/format';
 import Link from 'next/link';
 import PageContainer, { AgencyEmptyState, AgencyStatus } from '@/components/agency/page';
 import { AgencySubmitButton as Button } from '@/components/agency/motion';
@@ -102,17 +103,16 @@ export default async function AgencyBilling({
           </label>
           <label htmlFor='billing-installment'>
             Setup installment number
-            <Input
-              id='billing-installment'
-              type='number'
-              name='installment'
-              min={0}
-              max={11}
-              defaultValue={0}
-            />
+            <select id='billing-installment' name='installment' defaultValue='0'>
+              {Array.from({ length: 12 }, (_, index) => (
+                <option key={index} value={index}>
+                  Installment {index + 1}
+                </option>
+              ))}
+            </select>
           </label>
           <p className='text-sm'>
-            0 is the first installment; use 0 when there are no installments.
+            Choose the first installment when the setup fee is paid in full.
           </p>
           <label htmlFor='billing-period'>
             Monthly billing period
@@ -148,8 +148,9 @@ export default async function AgencyBilling({
         {data.invoices.map((i) => (
           <article key={i.id} className='agency-panel space-y-4'>
             <p>
-              {i.cycle_key} · <strong>{usd(i.amount_cents)}</strong> ·{' '}
-              <AgencyStatus value={i.status} /> · Due {String(i.due_on)}
+              {agencyBillingCycle(i.cycle_key)} · <strong>{usd(i.amount_cents)}</strong> ·{' '}
+              <AgencyStatus value={i.status} /> · Due{' '}
+              <time dateTime={String(i.due_on)}>{agencyDate(String(i.due_on))}</time>
             </p>
             <div className='flex flex-wrap gap-3'>
               {(['invoice.finalized', 'invoice.paid', 'invoice.payment_failed'] as const).map(

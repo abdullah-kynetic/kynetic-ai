@@ -1,3 +1,4 @@
+import { agencyDateTime } from '@/components/agency/format';
 import Link from 'next/link';
 import PageContainer, { AgencyEmptyState, AgencyStatus } from '@/components/agency/page';
 import { AgencySubmitButton as Button } from '@/components/agency/motion';
@@ -72,14 +73,7 @@ export default async function Inbox({
                     <span>
                       {m.channel.toUpperCase()} · {m.direction}
                     </span>
-                    <time>
-                      {new Date(m.at).toLocaleString('en-US', {
-                        timeZone: 'America/Los_Angeles',
-                        dateStyle: 'medium',
-                        timeStyle: 'short'
-                      })}{' '}
-                      PT
-                    </time>
+                    <time dateTime={m.at}>{agencyDateTime(m.at)}</time>
                   </div>
                   {m.subject && <p>{m.subject}</p>}
                   <p className='agency-message-body'>{m.body}</p>

@@ -1,3 +1,5 @@
+import { agencyDateTime, agencyChannel } from '@/components/agency/format';
+import { AgencyStatus } from '@/components/agency/page';
 import { AgencySubmitButton as Button } from '@/components/agency/motion';
 import { Input } from '@/components/ui/input';
 import { agencyCampaignStats, listAgencyCampaignTasks } from '@/server/agency/campaign-engine';
@@ -76,43 +78,50 @@ export async function CampaignSequence({
         {stats.map((s) => `${s.result.replaceAll('_', ' ')}: ${s.count}`).join(' · ') ||
           'No completed steps.'}
       </p>
-      {tasks.map((t) => (
-        <article key={t.contact_id} className='rounded border p-3'>
-          <p>
-            {t.name} · {t.state} {t.stop_reason ?? ''} · Step {t.step_index + 1} · Due{' '}
-            {String(t.due_at)}
-          </p>
-          {steps[t.step_index] && (
-            <p>
-              {steps[t.step_index].channel}: {steps[t.step_index].instructions}
-            </p>
-          )}
-          {t.state === 'active' && (
-            <div className='flex gap-3'>
-              <form
-                action={completeSequence.bind(null, id, t.contact_id, t.step_index, 'simulate')}
-              >
-                <Button type='submit' variant='outline'>
-                  Simulate step
-                </Button>
-              </form>
-              <form
-                action={completeSequence.bind(
-                  null,
-                  id,
-                  t.contact_id,
-                  t.step_index,
-                  'manual_complete'
-                )}
-              >
-                <Button type='submit' variant='outline'>
-                  Mark manually completed
-                </Button>
-              </form>
+      <div className='agency-task-list'>
+        {tasks.map((t) => (
+          <article key={t.contact_id}>
+            <div className='agency-task-heading'>
+              <h4>{t.name}</h4>
+              <AgencyStatus value={t.state} />
             </div>
-          )}
-        </article>
-      ))}
+            <p className='agency-task-meta'>
+              {t.state === 'complete' ? 'Sequence complete' : `Step ${t.step_index + 1}`} · Due{' '}
+              <time dateTime={t.due_at}>{agencyDateTime(t.due_at)}</time>
+              {t.stop_reason && ` · ${t.stop_reason.replaceAll('_', ' ')}`}
+            </p>
+            {steps[t.step_index] && (
+              <p>
+                {agencyChannel(steps[t.step_index].channel)}: {steps[t.step_index].instructions}
+              </p>
+            )}
+            {t.state === 'active' && (
+              <div className='flex gap-3'>
+                <form
+                  action={completeSequence.bind(null, id, t.contact_id, t.step_index, 'simulate')}
+                >
+                  <Button type='submit' variant='outline'>
+                    Simulate step
+                  </Button>
+                </form>
+                <form
+                  action={completeSequence.bind(
+                    null,
+                    id,
+                    t.contact_id,
+                    t.step_index,
+                    'manual_complete'
+                  )}
+                >
+                  <Button type='submit' variant='outline'>
+                    Mark manually completed
+                  </Button>
+                </form>
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
     </section>
   );
 }
