@@ -1,5 +1,8 @@
 # Build plan
 
+> **HISTORICAL — superseded as an execution plan.** Use [COMPLETION-PLAN.md](codex/COMPLETION-PLAN.md) for the sole active checklist. Preserve the IDs, decisions, source observations and scoped evidence below; old status/next-task/ownership claims are not current acceptance or authorization. Conflicts and remaining requirements are mapped in the active plan.
+
+
 The whole Client CRM & Portal, broken into small tasks, ordered so building can run continuously in waves. Sources: `docs/PRD.md` (features), `docs/ARCHITECTURE.md` (milestones and contracts), `docs/DATABASE.md`, `docs/SECURITY.md`, `docs/DESIGN_SYSTEM.md`, `docs/CODE_STYLE.md`, `docs/TESTING.md`. Decisions: `docs/DECISIONS.md`.
 
 Rules for using this file:
