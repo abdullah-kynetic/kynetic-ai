@@ -1,5 +1,8 @@
 # M12–M20 audit and wave 30 delivery
 
+> **HISTORICAL — superseded as an execution plan.** Use [COMPLETION-PLAN.md](codex/COMPLETION-PLAN.md) for the sole active checklist. Preserve the IDs, decisions, source observations and scoped evidence below; old status/next-task/ownership claims are not current acceptance or authorization. Conflicts and remaining requirements are mapped in the active plan.
+
+
 **Current order (2026-11-01):** n8n automations remain deferred. M16-01 through M16-06 are implemented locally, including the synthetic human dialer, never-dial guards and campaigns. Latest increment passed build/typecheck, 425 unit, 63 integration and two mobile/browser accessibility scenarios. Next portal task: proposal drafts. No real agency migration or live provider operation is implied; login/auth work stays last.
 
 **Latest progress (2026-11-01):** M13-06 database regression now passes; M12-01 technical review complete. Wave 31 local implementation completed M12-03, M12-05 and M13-02. M12-02 awaits explicit supersede confirmation; M15-04 formatter is tested but workflow validation is blocked by connector errors. Current evidence is in BUILD_PLAN, TESTING and progress; the original audit below records the earlier baseline.
