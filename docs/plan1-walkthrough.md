@@ -1,5 +1,8 @@
 # Plan 1 walkthrough: top to bottom (Oct 8, 2026)
 
+> **HISTORICAL — October 8 business walkthrough.** Current completion work follows [COMPLETION-PLAN.md](codex/COMPLETION-PLAN.md). Old tasks, prices, dates and live-system instructions below are preserved as history only; no old approval is renewed.
+
+
 > **Point-in-time snapshot (2026-10-08).** Task counts, node counts and dates below are as of that day and are not kept current. For current state read `docs/progress.md`.
 
 Plain-language map of everything between today and the first signed client. Mirrors the Twenty note "PLAN 1 WALKTHROUGH: top to bottom" and the 33 [P1] tasks. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
