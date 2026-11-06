@@ -1,5 +1,8 @@
 # Alex on ElevenLabs: n8n workflow build spec
 
+> **HISTORICAL — planning snapshot, not current instructions.** The active completion checklist is [COMPLETION-PLAN.md](../codex/COMPLETION-PLAN.md). Requirements and unresolved decisions are carried forward there. Old live-agent IDs, prices, dates, workflow activation or deployment instructions do not grant permission; all current safety and action-specific approval gates remain.
+
+
 Status: spec only (2026-10-28). Nothing here is built or changed live. Every step that touches n8n, ElevenLabs, Twilio or Twenty needs Abdullah's yes on that exact change (KYNETIC_CONTEXT rules 1 and 2). Decisions: D-014, D-020, D-025. Go-live plan: `ALEX-ELEVENLABS-GOLIVE.md`.
 
 ## Goal
