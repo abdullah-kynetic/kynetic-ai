@@ -1,5 +1,8 @@
 # Repo audit (2026-10-22)
 
+> **HISTORICAL — planning snapshot, not current instructions.** The active completion checklist is [COMPLETION-PLAN.md](../codex/COMPLETION-PLAN.md). Requirements and unresolved decisions are carried forward there. Old live-agent IDs, prices, dates, workflow activation or deployment instructions do not grant permission; all current safety and action-specific approval gates remain.
+
+
 Read from source at `cbb5046`; nothing run against a live system, `tools/*.py` not executed. Ordered by consequence. "Verified" = I read the cited lines.
 
 ## Fix first
