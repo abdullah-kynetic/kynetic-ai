@@ -614,3 +614,9 @@ GitHub CI uses PostgreSQL 16; no workflow files were changed. The local suite ab
 Run `bash scripts/checks/agency-local.sh` with Bun, psql and TEST_DATABASE_ADMIN_URL pointing to a disposable loopback PostgreSQL maintenance database. It refuses remote databases and performs no deploy/provider calls. Browser opt-in: AGENCY_BROWSER_CHECKS=1 with Playwright Chromium installed (or PLAYWRIGHT_CHROMIUM_PATH configured). Detailed review is in [AGENCY-REVIEW.md](codex/AGENCY-REVIEW.md).
 
 Verified: step checks 13 PASS/0 FAIL/2 manual SKIP; 523 unit cases; 33 agency/restricted-runtime integration cases; production build/typecheck and lint; one Chromium journey spanning all agency screens, plus mobile axe scans (zero violations); 23 Python checker tests. Manual skips are TEST_PHONE delivery and live Stripe. No real delivery or deployed verification is implied.
+
+### Agency UI refinement and motion (2026-11-05)
+
+The existing agency roadmap browser test now also covers 390px overflow, keyboard active-route state, reduced-motion CSS, dark-theme axe, and authenticated no-JavaScript rendering. Run it together with m16-agency.spec.ts and m16-dialer-campaigns.spec.ts using disposable local PostgreSQL, PROVIDER_MODE=stub and OUTBOUND_ENABLED=false. All three pass, with 523 unit tests, typecheck/build/lint, and agency step checks still passing. Wait for #nprogress to be removed before stable-state axe checks; the old role=progressbar query did not identify that library's transient loader.
+
+[Design scope and screenshots](ui/AGENCY-DESIGN.md). No new dependency, backend behavior or real provider request. These results do not establish a new DEV deployment.

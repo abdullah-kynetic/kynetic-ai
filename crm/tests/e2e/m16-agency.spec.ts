@@ -27,7 +27,8 @@ test('M16 F-05/F-14/F-17: admin uses an isolated synthetic agency workspace', as
   );
   await adminPage.getByLabel('Direction', { exact: true }).selectOption('inbound');
   await adminPage.getByRole('button', { name: 'Filter', exact: true }).click();
-  await expect(adminPage.getByText('No leads match these filters.')).toBeVisible();
+  // Other browser scenarios may have created inbound fixtures. This outbound row must disappear.
+  await expect(row).toHaveCount(0);
   await adminPage.goto('/admin/agency');
   await adminPage.setViewportSize({ width: 390, height: 844 });
   const axe = await new AxeBuilder({ page: adminPage })

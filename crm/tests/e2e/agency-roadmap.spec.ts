@@ -93,19 +93,62 @@ test('agency roadmap: alerts, inbox, blocked compose, manual sequence, ops and b
   await invoiceForm.getByRole('button', { name: 'Create draft', exact: true }).click();
   await expect(adminPage.getByRole('article')).toContainText('$50.00');
   await adminPage.getByRole('button', { name: 'Simulate payment failed', exact: true }).click();
-  await expect(adminPage.getByRole('article')).toContainText('past_due');
+  await expect(adminPage.getByRole('article').locator('[data-state="past_due"]')).toBeVisible();
   await adminPage.getByRole('button', { name: 'Draft overdue reminders' }).click();
   await expect(adminPage.getByText(/^Draft reminder:/)).toBeVisible();
+  await adminPage.setViewportSize({ width: 1440, height: 1000 });
+  await adminPage.goto('/admin/agency');
+  await adminPage.screenshot({ path: '/tmp/kynetic-agency-after-desktop.png', fullPage: true });
+  await adminPage.goto('/admin/agency/inbox');
+  await adminPage.screenshot({ path: '/tmp/kynetic-inbox-after-desktop.png', fullPage: true });
   await adminPage.setViewportSize({ width: 390, height: 844 });
   for (const path of ['inbox', 'compose', 'campaigns', 'ops', 'billing']) {
     await adminPage.goto(`/admin/agency/${path}`);
     await expect(adminPage.getByRole('heading', { level: 1 })).toBeVisible();
-    await expect(adminPage.getByRole('progressbar')).toHaveCount(0);
+    await expect(adminPage.locator('#nprogress')).toHaveCount(0);
     const axe = await new AxeBuilder({ page: adminPage })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
       .analyze();
     expect(axe.violations, `${path} accessibility`).toEqual([]);
+    expect(
+      await adminPage.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+      `${path} horizontal overflow`
+    ).toBe(true);
+    await adminPage.screenshot({ path: `/tmp/kynetic-${path}-after-mobile.png`, fullPage: true });
   }
+  await adminPage.emulateMedia({ reducedMotion: 'reduce' });
+  const navigation = adminPage.getByRole('navigation', { name: 'Agency navigation', exact: true });
+  const composeLink = navigation.getByRole('link', { name: 'Compose', exact: true });
+  await composeLink.focus();
+  await expect(composeLink).toBeFocused();
+  await adminPage.keyboard.press('Enter');
+  await expect(navigation.getByRole('link', { name: 'Compose', exact: true })).toHaveAttribute(
+    'aria-current',
+    'page'
+  );
+  const durations = await adminPage
+    .getByRole('button', { name: 'Save draft', exact: true })
+    .evaluate((el) => getComputedStyle(el).transitionDuration);
+  expect(durations.split(',').every((v) => parseFloat(v) === 0)).toBe(true);
+  await adminPage.getByRole('button', { name: 'Toggle theme', exact: true }).click();
+  await expect(adminPage.locator('html')).toHaveClass(/dark/);
+  await expect(adminPage.locator('#nprogress')).toHaveCount(0);
+  const darkAxe = await new AxeBuilder({ page: adminPage })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+    .analyze();
+  expect(darkAxe.violations, 'dark/reduced-motion accessibility').toEqual([]);
+  await adminPage.screenshot({ path: '/tmp/kynetic-compose-dark-mobile.png', fullPage: true });
+  const noJs = await adminPage
+    .context()
+    .browser()!
+    .newContext({ javaScriptEnabled: false, storageState: '/tmp/kynetic-crm-e2e-admin.json' });
+  const basicPage = await noJs.newPage();
+  await basicPage.goto(
+    'http://localhost:' + (process.env.E2E_PORT ?? 3100) + '/admin/agency/inbox'
+  );
+  await expect(basicPage.getByRole('heading', { name: 'Agency inbox', exact: true })).toBeVisible();
+  await expect(basicPage.getByRole('button', { name: 'Save log', exact: true })).toBeVisible();
+  await noJs.close();
   for (const page of [authenticatedPage, vaPage]) {
     await page.goto('/admin/agency/billing');
     await expect(
