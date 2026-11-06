@@ -413,3 +413,71 @@ Every task is retained, including historical done rows, to avoid losing unverifi
 | M20-05 | Client health score and renewal alerts | todo | 7, 8 |
 | M20-06 | Support requests from clients | done | 8, 9 |
 | M20-07 | Referrals and case-study tracking | todo | 8 (later) |
+
+## Traceability: automation ownership and older business plans
+
+The following mappings preserve requirements rather than adopting historical workflow ownership/activation claims. [automation-map.md](../automation-map.md), [audit-M12-M20.md](../audit-M12-M20.md) and [portal-n8n-contract.md](../portal-n8n-contract.md) remain technical/historical references. Portal consent remains authoritative at dispatch; an n8n decision is not sufficient permission.
+
+| Automation-map ID | Requirement | Active step(s) |
+| --- | --- | --- |
+| B1 | Form/Meta/Angi/LSA intake and source adapters | 4 |
+| B2 | Dedupe, persist and show lead | 4, 5 |
+| B3 | Consent/quiet hours/internal DNC/state rules and decision audit/parity | 2, 4 |
+| B4 | Consented client callback latency, with safety taking precedence | 4, 6, 9 |
+| B5 | Signed outcome/transcript/recording relay and disclosure | 2, 6, 7 |
+| B6 | Cal availability/reservation and reconciliation | 6 |
+| B7 | Retries, cadence conflict, caps and fresh gates | 4, 6 |
+| B8 | Follow-up delivery only after consent/A2P/provider approval | 6 |
+| B9 | Booking stage projection without equating attendance | 5, 6 |
+| B10 | Confirmations/reminders, due/expiry/cancellation | 6 |
+| B11 | No-show/reschedule recovery | 5, 6 |
+| B12 | Tenant owner new/hot-lead alerts, dedup and approved channel | 6, 7 |
+| B13 | Missed-call/after-hours/reactivation and migration parity | 4, 6 |
+| B14 | Paid event and two-hour review-request timer, no double send | 6, 8 |
+| B15 | Actual daily metric schedule and data reconciliation | 3, 7 |
+| B16 | Weekly client summary, generation separate from approved delivery | 7 |
+| B17 | Monthly storage-backed report/download and scheduling | 3, 7 |
+| B18 | STOP/HELP/opt-out revocation and pending-work cancellation | 4, 6 |
+| B19 | Failed-workflow alerts without recursive storms or secret leaks | 3, 6 |
+| A1 | Agency site-form/booking inbound intake | 4, 5 |
+| A2 | Channel/source lists, safe import and attribution | 4, 5 |
+| A3 | Manual queue/script/outcomes, repeated attempts/callbacks | 5 |
+| A4 | Campaign tasks, stop rules and performance | 5, 7 |
+| A5 | Agency shared-record Leads/Pipeline with new stage semantics | 5 |
+| A6 | Human-approved proposal drafts | 8 |
+| A7 | Per-deal Stripe draft invoices, separately approved provider writes | 8 |
+| A8 | Payment reconciliation and draft dunning | 8 |
+| A9 | Won-deal tenant/secret/checklist/access setup | 2, 8 |
+| A10 | Pacific daily digest, approved delivery channel | 3, 7 |
+| A11 | Agency funnel/rates/attribution/financial reporting | 7, 8 |
+| A12 | PII-free one-way Twenty summary backup, unresolved direction decision | 3, 8 |
+
+| Older source / requirement | Active step(s) | Retained disposition |
+| --- | --- | --- |
+| PLAN1-REMAINING / 1.3, 1.4, 3.6, 7.1 | 2, 4, 6, 9, 10 | A2P/counsel, emergency opt-out, authenticated webhook, launch gate; no messages to counsel in this task |
+| PLAN1 / 3.5 and Alex N8N spec paths 1–3 | 4, 6, 9 | Caller identity, retries/duplicates, malformed payload, initiation failure, signed post-call, call-ID dedup, config variables, optional email, project type/budget; no live/old agent reuse |
+| PLAN1 / 4.1–4.2, prospect follow-ups | 5, 8 | Human sales opener/demo/objection/voicemail scripts, calculator and approved follow-up drafts; not AI cold calling |
+| PLAN1 / 4.3–4.4 | 7, 8 | Real unit costs and guarantee options; historical price conflict cannot choose contract terms |
+| PLAN1 / 4.5–4.8 | 8 | Proposal/agreement/legal review and custom milestone invoices; nothing auto-sent on won |
+| PLAN1 / 3.7, 5.1–5.4 | 6, 8 | Parameterized new-client template, onboarding intake/checklist, voice-first/day-of-close SOP; new DEV resources only |
+| PLAN1 / 5.5–5.8 | 7, 8 | Source-fed client dashboard, weekly/monthly reports, retention/check-in and referral ask; delivery remains gated |
+| PLAN1 / 6.1 | 8, 9 | Timed fake-client rehearsal with Quentin, service-timeline estimates from measurements |
+| PLAN1 / 2.1–2.5 and KI-011/012 | 4, 5 | Public-source quality, owner/phone certainty, import/refill, rate limits/wrong-business audit, unknown research files and Treg rotation; no assumed permission to hand-dial |
+| PLAN1 / 3.9, P2 demos | 6, 8 (later) | Old bake-off superseded by chosen ElevenLabs for DEV callback; inbound/reputation/recovery/chat/quotes/insurance demos are later, never modify Emily/Nora/Demo records |
+| PLAN1 / dated targets and owner gate | 1, 5, 10 | Old dial counts/deadlines not current commitments; owner/front-desk qualification conflict requires decision |
+| PORTAL-BUILDOUT / phases A–B, F-106 | 2, 3, 8 | Real-data readiness, signed idempotent company→tenant mapping, secure provisioning; sync ownership/direction unresolved, no external sync write |
+| PORTAL-BUILDOUT / phases C/E, F-105 | 8 (later depth) | Service catalog/scope templates, proposal format/approval, critical-path estimator, guided onboarding/docs; reuse current proposal drafts |
+| PORTAL-BUILDOUT / phases D/F | 6–8 | Actual call/metrics feeder, recording/transcript privacy, per-deal milestone billing; legacy ingest consumer fate unresolved |
+| PORTAL-BUILDOUT / phase G | 5, 9 | Existing brand/tokens, client one-glance and admin command center, accessible mobile; existing UI polish reused |
+| PORTAL-BUILDOUT / F-104 | 7, 8 (later) | Optional AI proposal/welcome/summary drafts only, human approval before delivery |
+| Alex GOLIVE / free versus paid, number/tools/webhook, A2P restore | 6, 9 | Historical live-agent instructions do not authorize edits; current DEV agent/number only, recheck account/tool readiness and explicit test approval |
+| Alex N8N spec / prerequisites/config/test plan/activation order | 2–4, 6, 9 | Env-only secrets, authenticated raw-body signatures, dynamic variables, no-connection/duplicate/opt-out/booking/retry cases; activation is independently gated |
+| AUDIT / findings 1–3 | 2, 3 | Protected-ID tool guards, webhook auth, non-destructive backup behavior; findings are historical, need source confirmation |
+| AUDIT / findings 4–12 | 1, 3, 6, 10 | Stale counts/IDs/config literals/env docs, missing feeder, deployment-script drift, branch-only artifacts and growing progress log; no deletion or protected edits |
+| KI-002–008 | 2, 3, 4, 6, 10 | Emergency opt-out/counsel, A2P, protected Emily legacy Notion nodes, webhook auth, password/backup/isolation/session/proxy/TOTP/logging gaps |
+| KI-011/012/013, resolved KI-014 and resolved email KI-013 | 1, 2, 4–6, 9 | Qualification/data-source disputes, enrichment, open-mode versus restored-session evidence; historical fixes require scoped current regression, not blanket closure |
+| REVIEW-SUMMARY / GP launch gaps | 2, 3, 6, 8–10 | Domain/email, private storage/branding, R2/object restore, monitoring, pricing snapshots, onboarding/admin tools, Terms/Privacy and documents all retained |
+| PRD / F-90–F-97 and BUILD_PLAN M9 | 2, 4, 5, 9 | CSV/XLSX import expectations, mapping/dry-run/undo/retention, never trigger outreach; XLSX refusal is implemented limitation, not feature acceptance |
+| docs/progress, decisions, source/locked spec, legacy Retell build | 1–10 | Dated business/technical history retained; no renewed permission to execute old active/live instructions |
+
+The task supplied screenshot-derived requirements as text; no screenshot was independently inspected in this cleanup. Their full acceptance is in step 5 and the semantic assertions in steps 6–9. Any omitted image-specific detail remains NOT ASSESSED, not implicitly implemented.
