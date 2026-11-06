@@ -38,3 +38,7 @@ No DEV/VPS deploy is performed by this work. Browser evidence uses disposable lo
 Synthetic-only browser captures: [original inbox](previews/inbox-before.png), [updated desktop inbox](previews/inbox-desktop.png), [updated mobile inbox](previews/inbox-mobile.png), and [dark mobile compose](previews/compose-dark-mobile.png). Screenshots are evidence of local behavior, not deployed DEV observations.
 
 Verified typecheck/build/lint, 523 unit tests, 13 agency step checks (two separately gated live checks skipped), and three browser flows. Five light mobile accessibility scans and one dark/reduced-motion scan have zero violations. Keyboard activation/current navigation state, no horizontal overflow at 390px, and authenticated no-JavaScript content all pass.
+
+## Follow-up Unslop pass
+
+Applied [Unslop by Damir Sokolovsky / @heydamir](https://github.com/heydamir/unslop), CC BY 4.0, as targeted polish of the existing direction. See [the audit, nine passes and verification](UNSLOP-REVIEW.md). New previews cover neutral source counts, quieter campaign rows and human-readable billing/date labels; the brand and section order are retained.
