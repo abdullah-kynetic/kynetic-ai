@@ -78,3 +78,19 @@ Keep dev/codex-setup, small tested commits as abdullah-kynetic <abdullah@kynetic
 **Acceptance/evidence:** table-driven invalid input, unsupported FL/OK, protected recipient/AM-1, missing consent, opt-out/STOP, global/tenant kill, quiet/business-hour edges/DST, caps and retry exhaustion; prove no sink invocation when blocked. A valid synthetic signed lead persists before any dispatch; replay creates no extra attempt/contact/deal. Booking/reply/opt-out/closure prevent retries. Verify stale delayed jobs recheck gates and uncertain outcomes reconcile before retry.
 
 **Gates:** fake clocks/providers and local synthetic DB first; signed DEV-only smoke via Mac when requested; keep outbound disabled. Real call/SMS requires separate explicit yes and TEST_PHONE through the dedicated DEV agent/number. Twenty writes require exact dry run and yes. Do Not Call registry lookup remains deferred; internal do-not-contact and all other safety rules remain required. No emergency bypass may silently override an opt-out.
+
+## 5. Agency sales workflow
+
+**Status: PARTIAL. Scope/dependencies:** Leads, Pipeline, manual call history/callbacks, campaigns, manual DM tracking, daily work and shared CRM records. Depends on steps 2–4; reconcile schema/stages before migrating data.
+
+**Reuse:** isolated agency tenant, direction/channel fields, contacts/companies/deals, lead list, native pipeline/Kanban, transactional in-app new_lead alerts, manual call logger, campaign engine, timeline/tasks and manual inbound/outbound DM feed. Existing Kanban implementation is reuse, not proof of the requested agency board.
+
+**Missing implementation:** separate untouched/retry prospects in Leads from engaged opportunities in Pipeline through views of shared records, with stable contact/deal links and no copying. Configure: Interested/callback needed → Demo/audit booked → Completed → Proposal sent → Contract sent → Signed/awaiting payment → Paid → Onboarding → Active. Keep no-show/reschedule, nurture, lost and do-not-contact as explicit separate handling. Define Completed as attended/completed demo, never merely booked.
+
+Add dated callbacks, repeated call attempts/history and requeue rules; current first-pass logger excludes a prospect after one outcome. Include owner, value, next action, stage age, filters, count/value/weighted totals, persistent drag/drop, optimistic-version conflicts, undo, audit and keyboard/mobile move alternatives. Validate undo after concurrent edits without overwriting newer work. Home needs today's calls/tasks and a needs-attention queue; clients/businesses/contacts/deals, inbox/calendar/contracts must be discoverable. Real-data import/enrichment needs validation/deduplication and synthetic separation, not relaxed DEV guards.
+
+**Missing verification:** exact stage model, existing board behavior under concurrency, cofounder ownership/handoffs, callback due times, repeated attempts, campaign pause/resume and enrolled-sequence immutability, stops and attribution. Manual tracking remains the chosen scope; no new dialer or AI cold calls.
+
+**Acceptance/evidence:** one prospect can change views/stages without duplicate records; moves survive reload and show actor/time; stale moves conflict; safe undo; keyboard/touch parity. Fixtures prove retries/callbacks appear when due, blocked leads never queue, repeated attempts dedupe by event, campaigns stop on reply/booking/opt-out/closure. Stage movement alone sends nothing, reserves nothing, invites nobody and charges nothing.
+
+**Gates:** local seeded/browser tests first; authenticated DEV walkthrough later; any real-data import or external tracking write requires separate approval. Human call logging never authorizes placing a call. Keep TEST_PHONE-only external testing and protected business rules.
