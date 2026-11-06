@@ -1,5 +1,8 @@
 # Agent Instructions
 
+> **Current task entry point:** AGENTS.md and [COMPLETION-PLAN.md](docs/codex/COMPLETION-PLAN.md), then the [evidence index](docs/codex/PROGRESS.md). AGENTS.md overrides this file. Old progress and business decisions remain history/reference; the ten-step plan replaces old execution numbering without weakening any safety rule.
+
+
 Kynetic AI repo. Twenty CRM (crm.kyneticai.com) is the system of record; this repo mirrors it. On a mismatch, flag it with both values rather than picking one. `AGENTS.md` points here.
 
 ## Session protocol
