@@ -155,7 +155,7 @@ Appended at Abdullah's request; existing steps 0–6, their text, checks and com
 - [x] 8 Agency inbox + rates — unified agency inbox and dashboard pick%/reply% from call outcomes/inbound messages. Checks: channel/status filters; displayed, unit-tested rates. Confirm rate definitions/denominators before implementation.
 - [ ] 9 Two-way messaging — SMS/email compose and reply through server-side consent, quiet hours and kill switch. Checks: unit tests prove blocks; one TEST_PHONE send only after Abdullah's explicit yes. Email recipient requires agreement before any real email send.
 - [x] 10 Outbound engine — multi-step campaigns, dialer and campaign stats. Checks: campaign steps run in stub mode; dialer cannot target/modify live Alex. AI/manual mode and vendor unset: stop and ask before implementing the dependent choice.
-- [ ] 11 Ops desk — client health overview, onboarding, editable webhook/n8n/lead-secret UI, daily digest to Abdullah. Checks: DEV secret rotation accepts new/rejects old secret; digest dry-run. Keep secret values masked and retain workflow safety rules.
+- [x] 11 Ops desk — client health overview, onboarding, editable webhook/n8n/lead-secret UI, daily digest to Abdullah. Checks: DEV secret rotation accepts new/rejects old secret; digest dry-run. Keep secret values masked and retain workflow safety rules.
 - [ ] 12 Billing — Stripe plans, invoices and dunning. Ask for pricing first. Checks: stub webhooks; no live charges without explicit yes. Stop before any live Stripe operation.
 
 ### Agency continuation constraints and unresolved decisions
@@ -284,3 +284,8 @@ Appended at Abdullah's request; existing steps 0–6, their text, checks and com
 ### Step 10 manual campaign acceptance — 2026-11-05
 - Editable call/SMS/email/manual-DM sequences with explicit delays, enrollment, due tasks, manual completion, stub simulation and separate history/statistics. Enrolled plans cannot be silently rewritten; retries use step cursor/idempotency. No vendor/agent/API/send jobs exist in the engine. Existing manual call logging remains separate from simulated/task completion counts.
 - Current replies, bookings, opt-out/DNC, unavailable contacts and closed deals stop task advancement. Normal UI runs no timer-based outbound dispatch. Step 10 runner **2 PASS/0 FAIL/0 SKIP**, typecheck passes. Integration exercises durable enrollment, due delays, retry deduplication, zero calls/messages and reply stop. No external action/deploy.
+
+### Step 11 local ops acceptance — 2026-11-05
+- Agency operations page reuses read-only client health/onboarding rollups, stores inert DEV integration binding drafts with strict host/name validation, and exposes masked agency-only secret status/rotation. No external workflow API operation or runtime dispatch configuration is changed. Existing onboarding checklist is linked.
+- Daily digest is scheduled 8 a.m. America/Los_Angeles (DST-aware pg-boss timezone), has a dry-run preview, and posts an idempotent in-app agency summary only. External delivery stays off. Active admin role is rechecked for scheduled publisher; no membership access granted.
+- Step 11 runner **2 PASS/0 FAIL/0 SKIP** on disposable local PostgreSQL, including native new/old-signature secret rotation tests, masked encrypted storage, safe configuration rejection, schedule persistence, in-app-only digest and role denial. Typecheck passes. Actual deployed DEV rotation/scheduler execution remains unverified; no VPS operation.

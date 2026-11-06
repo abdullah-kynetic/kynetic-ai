@@ -1,6 +1,7 @@
 import { and, count, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
 import { SYNTHETIC_PHONE, US_STATE_CODES } from './dialer-policy';
 import { z } from 'zod';
+import { scheduleAgencyDigest } from './ops';
 import { emitEvent } from '../events';
 import { scheduleAgencyMaintenance } from './scheduling';
 import { getDb, type Db, type Tx } from '../db/client';
@@ -41,7 +42,10 @@ export async function getAgencyWorkspace(
       opts
     );
     const row = rows[0];
-    if (row && create) await scheduleAgencyMaintenance(row.tenant_id);
+    if (row && create) {
+      await scheduleAgencyMaintenance(row.tenant_id);
+      await scheduleAgencyDigest(row.tenant_id, caller.id);
+    }
     return row
       ? { tenantId: row.tenant_id, name: row.name, slug: row.slug, created: row.created }
       : null;

@@ -34,6 +34,7 @@ export const QUEUES = {
   'automation.step': { ...retrying, policy: 'short' },
   'report.monthly': { ...retrying, policy: 'short' },
   'backup.run': { ...retrying, policy: 'short' },
+  'agency.digest': { ...retrying, policy: 'short' },
   'agency.maintenance': { ...retrying, policy: 'short' }
 } as const satisfies Record<string, QueueDef>;
 
