@@ -1,5 +1,8 @@
 # Decisions log
 
+> **Completion navigation:** [COMPLETION-PLAN.md](codex/COMPLETION-PLAN.md) is the sole active engineering checklist; [PROGRESS.md](codex/PROGRESS.md) indexes evidence. This file remains a specification, decision or test reference with its original dates/scope. Historical next-task/wave instructions do not supersede the active plan or safety gates.
+
+
 Dated log of every decision for the Kynetic Client CRM & Portal. Newest entries go at the bottom of each section. Each entry has an ID, the date, who decided, the decision, and the docs it touches.
 
 Rules:
