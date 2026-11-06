@@ -59,6 +59,10 @@ Then: confirm the post-call webhook URL is set on the agent, web-call test Alex,
 Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-11-06 (systems build Phase 1: inventory and specs, read-only)
+- Added `docs/build-inventory.md`, `docs/architecture-decisions.md` (proposed D-S01..D-S11, no D-numbers assigned) and `docs/systems/` (16 per-system docs with requirement traceability, plus the verbatim handoff). Evidence from repo, n8n VPS MCP (names only) and Twenty metadata; baseline `crm` unit tests 468/468 pass. Nothing written to Twenty, n8n or any vendor; no live agent inspected.
+- Open conflicts flagged in the inventory: `TWENTY_API_KEY` references vs the standing env names, Cloud vs VPS n8n IDs/state, A2P status (KI-003 vs verified 10-28), portal DB vs Twenty as system of record.
+
 ### 2026-10-29 (CRM portal M10-01 security review)
 - Fixed the contacts phone-fragment GIN index to lead with `tenant_id` (`b7b8e57`) and wired shared PostgreSQL auth IP/email limits (`8256212`). Focused auth/rate-limit tests (19), baseline CRM test (13), header tests (3), and webhook/service-token test suites passed. Typecheck passed.
 - Initial M10-01 review state: authenticated API/search/export-import rate limits were not wired, exact Bun-lock audit and restore evidence were pending, and CI secret scanning/log-redaction plus production edge configuration were open. Details and subsequent resolution are recorded in `docs/security-review-M10-01.md`.
