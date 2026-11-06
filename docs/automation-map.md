@@ -1,5 +1,8 @@
 # Automation map (draft, 2026-10-31)
 
+> **HISTORICAL — superseded as an execution plan.** Use [COMPLETION-PLAN.md](codex/COMPLETION-PLAN.md) for the sole active checklist. Preserve the IDs, decisions, source observations and scoped evidence below; old status/next-task/ownership claims are not current acceptance or authorization. Conflicts and remaining requirements are mapped in the active plan.
+
+
 Replaces the missing `docs/automation-map-draft.md`. Status comes from the Oct 30 brief plus a quick look at `crm/src/server` on branch `work`. Anything not checked in code is marked "not confirmed".
 
 Rules from Abdullah's answers (2026-10-30):
