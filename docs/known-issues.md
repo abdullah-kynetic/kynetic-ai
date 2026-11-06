@@ -1,5 +1,8 @@
 # Known issues
 
+> **Issue/evidence reference, not an active plan.** Current completion checklist: [COMPLETION-PLAN.md](codex/COMPLETION-PLAN.md). Dated issue states below have not been externally refreshed. In particular, duplicate KI-013 headings refer to different issues; use their titles/dates. Restored DEV session evidence does not certify production. No issues are silently closed here.
+
+
 Mirror of open problems tracked in Twenty. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Open
