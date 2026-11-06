@@ -3,11 +3,10 @@
     "0.7": {
       "source": "user_mac_terminal",
       "observed_on": "2026-11-05",
+      "deployed_revision": "c34b11aa359c933410bfec5522d9ced32cdc3e7e",
       "url": "https://dev.kyneticai.com/",
       "http_status": 200,
-      "deployed_revision": "05b24311861c2e28a19061c286eea40802ec28e5",
-      "reported_output": "PASS DEV_STEP3_GATES consent blocked; quiet hours deferred; global/tenant kill switches blocked; fixtures rolled back; provider requests 0\nPASS dev database: isolated kynetic-dev-portal Postgres volume; synthetic seed guard passed\nPASS dev app: 127.0.0.1:3031/api/health HTTP 200; providers stubbed; outbound disabled\nPASS dev auth locally: /sign-in HTTP 200; anonymous /admin HTTP 401\nPASS dev HTTPS site installed: dev.kyneticai.com -> 127.0.0.1:3031\nExisting Caddy site blocks retained; production containers and database not changed.\nPASS DEV_AUTH /sign-in HTTP 200; anonymous /admin HTTP 401 (no redirects followed)\nPASS 0.7 https://dev.kyneticai.com/ HTTP 200 (verified from Mac)\nPASS DEV_INTAKE_UNSIGNED HTTP 401; unsigned intake rejected; no provider test performed\nDEPLOYED_REVISION=05b24311861c2e28a19061c286eea40802ec28e5",
-      "note": "Final Mac deployment output supplied by Abdullah. No independent HTTP verification from cloud executor; deployment uses stub providers with outbound disabled."
+      "reported_output": "PASS DEV_STEP3_GATES consent blocked; quiet hours deferred; global/tenant kill switches blocked; fixtures rolled back; provider requests 0\nPASS dev database: isolated kynetic-dev-portal Postgres volume; synthetic seed guard passed\nPASS dev app: 127.0.0.1:3031/api/health HTTP 200; providers stubbed; outbound disabled\nPASS dev auth locally: /sign-in HTTP 200; anonymous /admin HTTP 401\nPASS dev HTTPS site installed: dev.kyneticai.com -> 127.0.0.1:3031\nExisting Caddy site blocks retained; production containers and database not changed.\nPASS DEV_AUTH /sign-in HTTP 200; anonymous /admin HTTP 401 (no redirects followed)\nPASS 0.7 https://dev.kyneticai.com/ HTTP 200 (verified from Mac)\nPASS DEV_INTAKE_UNSIGNED HTTP 401; unsigned intake rejected; no provider test performed\nDEPLOYED_REVISION=c34b11aa359c933410bfec5522d9ced32cdc3e7e"
     },
     "1.7": {
       "source": "user_mac_terminal",
@@ -29,6 +28,39 @@
       "admin_location": "",
       "reported_output": "RESPONSE 1.7 {\"url\": \"https://dev.kyneticai.com/admin\", \"raw_status\": 403, \"location\": \"\"}\nRESPONSE 1.7 {\"url\": \"https://dev.kyneticai.com/\", \"raw_status\": 307, \"location\": \"/dashboard\"}\nPASS 1.7 DEV-only Mac HTTP evidence: root 307, /admin 403; no deployment performed",
       "note": "User-supplied terminal attachment confirms exact no-redirect dev check. Auth implementation has not been deployed; last reported deployed revision remains 7b21cd751f85c9d3d7a0d13ed2e0bcb6279d629d."
+    },
+    "agency_dev_deployment": {
+      "source": "user_mac_terminal",
+      "observed_on": "2026-11-05",
+      "deployed_revision": "c34b11aa359c933410bfec5522d9ced32cdc3e7e",
+      "url": "https://dev.kyneticai.com/",
+      "http_status": 200,
+      "sign_in_http_status": 200,
+      "anonymous_admin_http_status": 401,
+      "auth_follow_redirects": false,
+      "unsigned_intake_http_status": 401,
+      "gates": {
+        "consent": "blocked",
+        "quiet_hours": "deferred",
+        "global_kill": "blocked",
+        "tenant_kill": "blocked",
+        "fixtures": "rolled_back",
+        "provider_requests": 0
+      },
+      "provider_mode": "stub",
+      "outbound_enabled": false,
+      "production_unchanged_reported": true,
+      "reported_output": "PASS DEV_STEP3_GATES consent blocked; quiet hours deferred; global/tenant kill switches blocked; fixtures rolled back; provider requests 0\nPASS dev database: isolated kynetic-dev-portal Postgres volume; synthetic seed guard passed\nPASS dev app: 127.0.0.1:3031/api/health HTTP 200; providers stubbed; outbound disabled\nPASS dev auth locally: /sign-in HTTP 200; anonymous /admin HTTP 401\nPASS dev HTTPS site installed: dev.kyneticai.com -> 127.0.0.1:3031\nExisting Caddy site blocks retained; production containers and database not changed.\nPASS DEV_AUTH /sign-in HTTP 200; anonymous /admin HTTP 401 (no redirects followed)\nPASS 0.7 https://dev.kyneticai.com/ HTTP 200 (verified from Mac)\nPASS DEV_INTAKE_UNSIGNED HTTP 401; unsigned intake rejected; no provider test performed\nDEPLOYED_REVISION=c34b11aa359c933410bfec5522d9ced32cdc3e7e",
+      "scope": "User-supplied DEV deployment/auth/unsigned-intake/rollback-gate evidence only. Agency screen behavior, actual scheduled jobs, worker readiness, TEST_PHONE configuration and live delivery/Stripe are not verified by these markers."
+    },
+    "previous_pre_agency_root": {
+      "source": "user_mac_terminal",
+      "observed_on": "2026-11-05",
+      "url": "https://dev.kyneticai.com/",
+      "http_status": 200,
+      "deployed_revision": "05b24311861c2e28a19061c286eea40802ec28e5",
+      "reported_output": "PASS DEV_STEP3_GATES consent blocked; quiet hours deferred; global/tenant kill switches blocked; fixtures rolled back; provider requests 0\nPASS dev database: isolated kynetic-dev-portal Postgres volume; synthetic seed guard passed\nPASS dev app: 127.0.0.1:3031/api/health HTTP 200; providers stubbed; outbound disabled\nPASS dev auth locally: /sign-in HTTP 200; anonymous /admin HTTP 401\nPASS dev HTTPS site installed: dev.kyneticai.com -> 127.0.0.1:3031\nExisting Caddy site blocks retained; production containers and database not changed.\nPASS DEV_AUTH /sign-in HTTP 200; anonymous /admin HTTP 401 (no redirects followed)\nPASS 0.7 https://dev.kyneticai.com/ HTTP 200 (verified from Mac)\nPASS DEV_INTAKE_UNSIGNED HTTP 401; unsigned intake rejected; no provider test performed\nDEPLOYED_REVISION=05b24311861c2e28a19061c286eea40802ec28e5",
+      "note": "Final Mac deployment output supplied by Abdullah. No independent HTTP verification from cloud executor; deployment uses stub providers with outbound disabled."
     }
   },
   "investigations": {
