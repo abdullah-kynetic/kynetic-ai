@@ -275,3 +275,8 @@ Appended at Abdullah's request; existing steps 0–6, their text, checks and com
 - Unified agency inbox reads tenant-scoped SMS/email plus manually logged inbound/outbound DMs, with channel/status/contact filters and compose links. Staff admin guard rejects VA and view-as access; cross-tenant DM writes reject. No DM platform connected.
 - Dashboard displays agreed seven-day pick/reply percentages and numerator/denominator counts. Reply cohort is unique successfully messaged prospects within the window, requiring an inbound reply after outreach; duplicate replies, failed messages and agency stub delivery excluded. Empty denominators display an em dash.
 - Step 8 runner **2 PASS/0 FAIL/0 SKIP**; typecheck passes. No deployment or outreach.
+
+### Step 9 cloud/stub implementation — 2026-11-05
+- Added admin-only SMS/email compose/reply drafts and gate previews. Draft persistence is isolated; stub delivery imports no network adapter, honors the native outbound gate without inbound-reply bypass, and adds email quiet-hours enforcement. Successful previews are explicitly simulated and idempotent; rates exclude them. Global outbound remains off, so normal previews report blocked.
+- Step 9 runner **2 PASS/0 FAIL/1 SKIP**: six policy unit cases prove denied gates never invoke a sink; PostgreSQL integration proves global/tenant kills, consent, quiet hours, successful stub idempotency and cross-tenant refusal. Initial fixture used the wrong phone-number column, corrected to native provider_sid/purpose. Typecheck passed.
+- Step 9 remains unchecked overall: 9.2 real TEST_PHONE send NOT RUN and requires explicit approval; no real email recipient/provider sender selected. No live delivery path enabled, no send/deploy performed.

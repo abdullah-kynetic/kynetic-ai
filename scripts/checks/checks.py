@@ -175,6 +175,7 @@ def s8():
     agency_test('8.2', 'test', 'tests/unit/agency/rates.test.ts')
 
 def s9():
+    agency_test('9.1.unit', 'test', 'tests/unit/agency/messaging-policy.test.ts')
     agency_test('9.1', 'test:integration', 'tests/integration/agency-messaging.test.ts')
     out('SKIP', '9.2', 'MANUAL TEST_PHONE send requires explicit yes; not performed')
 

@@ -87,6 +87,9 @@ export default async function AgencyPage({
         </p>
       </section>
       <nav aria-label='Agency tools' className='mb-4 flex flex-wrap gap-4'>
+        <Link href='/admin/agency/compose' className='underline'>
+          Compose
+        </Link>
         <Link href='/admin/agency/inbox' className='underline'>
           Inbox
         </Link>
