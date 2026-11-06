@@ -1,0 +1,87 @@
+{
+  "name": "DEV - sys-sandbox-dispatch",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "sys-trigger",
+      "name": "Manual (synthetic input only)",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// n8n Code node, runOnceForAllItems. Pure function: no I/O, no secrets, no Date.now().\n// Input item.json: { tenant_id, environment, system, channel, now, contact, lease, config }\n// Output item.json: { decision, reason, rule, evaluated_at, next_eligible_at, ... } (allow|defer|suppress|human_review)\n// Proposed contract version 1.0-proposed. Rule order = spec section 4.1 priority (safety first).\nconst BLOCKED_OWNER_STATES = ['FL', 'OK'];\nfunction localHour(iso, tz) {\n  const parts = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', hourCycle: 'h23' }).formatToParts(new Date(iso));\n  return Number(parts.find((p) => p.type === 'hour').value);\n}\nfunction validTz(tz) {\n  if (typeof tz !== 'string' || !tz) return false;\n  try { new Intl.DateTimeFormat('en-US', { timeZone: tz }); return true; } catch (e) { return false; }\n}\nfunction decide(i) {\n  const out = (decision, reason, rule, extra) => Object.assign(\n    { decision, reason, rule, evaluated_at: i.now, tenant_id: i.tenant_id, channel: i.channel, system: i.system }, extra || {});\n  const c = i.contact || {};\n  const cfg = i.config || {};\n  if (!i.tenant_id || !i.now || !['sms', 'voice', 'email'].includes(i.channel)) {\n    return out('human_review', 'invalid_input', 'input.validate');\n  }\n  // 1. Safety / suppression\n  if (cfg.active !== true) return out('suppress', 'tenant_inactive', 'safety.tenant_active');\n  if (!cfg.enabled || cfg.enabled[i.channel] !== true) return out('suppress', 'channel_disabled', 'safety.channel_enabled');\n  if (i.environment === 'production' && cfg.production_activation_approved !== true) {\n    return out('suppress', 'production_not_approved', 'safety.production_gate');\n  }\n  if (c.suppressed_global === true || c.suppressed_tenant === true) return out('suppress', 'suppressed', 'safety.suppression');\n  if (c.dnc === true) return out('suppress', 'dnc', 'safety.dnc');\n  if (c.opted_out && (c.opted_out[i.channel] === true || c.opted_out.all === true)) {\n    return out('suppress', 'opted_out', 'safety.opt_out');\n  }\n  // Owner/business eligibility uses the owner state only, never the service address state.\n  const ownerState = String(c.owner_state || '').trim().toUpperCase();\n  if (!ownerState) return out('human_review', 'owner_state_unknown', 'safety.owner_eligibility');\n  if (BLOCKED_OWNER_STATES.includes(ownerState)) return out('suppress', 'owner_ineligible', 'safety.owner_eligibility');\n  // 2. Human ownership\n  if (c.human_owned === true) return out('defer', 'human_owned', 'human.ownership');\n  // Consent (restrictive default): no consent for this channel, no automated contact.\n  const channels = (c.consent && c.consent.channels) || [];\n  const wanted = i.channel === 'voice' ? 'phone_call' : i.channel;\n  if (!channels.includes(wanted)) return out('suppress', 'no_consent', 'consent.channel');\n  // 3. Lease (parallel campaign ownership)\n  const l = i.lease;\n  if (l && l.expires_at && Date.parse(l.expires_at) > Date.parse(i.now) &&\n      !(l.system === i.system && l.conversation_id === i.conversation_id)) {\n    return out('defer', 'lease_held', 'coordination.lease', { lease_holder: l.system, next_eligible_at: l.expires_at });\n  }\n  // 4. Quiet hours in the contact's verified timezone; unknown timezone = no automated send.\n  if (!validTz(c.timezone)) return out('human_review', 'unknown_timezone', 'time.timezone');\n  const q = cfg.quiet_hours || { start: 8, end: 21 };\n  const inWindow = (iso) => { const h = localHour(iso, c.timezone); return h >= q.start && h < q.end; };\n  if (!inWindow(i.now)) {\n    let t = Date.parse(i.now);\n    for (let n = 0; n < 192; n++) { // step 15 min, max 48h\n      t += 15 * 60 * 1000;\n      if (inWindow(new Date(t).toISOString())) return out('defer', 'quiet_hours', 'time.quiet_hours', { next_eligible_at: new Date(t).toISOString() });\n    }\n    return out('human_review', 'no_send_window', 'time.quiet_hours');\n  }\n  return out('allow', 'all_checks_passed', 'allow');\n}\nreturn $input.all().map((item) => ({ json: Object.assign({}, item.json, { policy: decide(item.json) }) }));\n"
+      },
+      "id": "sys-policy",
+      "name": "Policy decide",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// n8n Code node, runOnceForAllItems. SINK ADAPTER: never performs I/O. Captures the command and returns a stable fake provider id.\n// Transport-layer dry run (decision D-S03): non-test recipients are rejected here, regardless of what upstream nodes decided.\nconst SINK_VERSION = '1.0-proposed';\nfunction fakeId(key) {\n  let h = 2166136261;\n  for (let n = 0; n < key.length; n++) { h ^= key.charCodeAt(n); h = Math.imul(h, 16777619) >>> 0; }\n  return 'fake_msg_' + h.toString(16).padStart(8, '0');\n}\nfunction isTestRecipient(channel, to) {\n  if (typeof to !== 'string') return false;\n  if (channel === 'email') return to.toLowerCase().endsWith('@invalid.example');\n  return /^[+]1555010[0-9]{4}$/.test(to);\n}\nreturn $input.all().map((item) => {\n  const cmd = item.json.command || {};\n  if (item.json.policy && item.json.policy.decision !== 'allow') {\n    return { json: { sink: { status: 'blocked_by_policy', sink_version: SINK_VERSION, reason: item.json.policy.reason } } };\n  }\n  if (!cmd.idempotency_key) throw new Error('idempotency_key required');\n  if (!isTestRecipient(cmd.channel, cmd.to)) {\n    return { json: { sink: { status: 'rejected_non_test_recipient', sink_version: SINK_VERSION, provider_id: null } } };\n  }\n  return { json: { sink: {\n    status: 'captured', sink_version: SINK_VERSION, external_effect: false,\n    provider_id: fakeId(cmd.idempotency_key), idempotency_key: cmd.idempotency_key,\n    channel: cmd.channel, tenant_id: cmd.tenant_id, segments: cmd.channel === 'sms' ? Math.max(1, Math.ceil(String(cmd.body || '').length / 160)) : 0\n  } } };\n});\n"
+      },
+      "id": "sys-sink",
+      "name": "Sink send (no external effect)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "DEV sandbox. Source of truth: templates/shared/policy-decide.js and sink-send.js. No HTTP node, no credentials. Inactive."
+      },
+      "id": "sys-note",
+      "name": "Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -160
+      ]
+    }
+  ],
+  "connections": {
+    "Manual (synthetic input only)": {
+      "main": [
+        [
+          {
+            "node": "Policy decide",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Policy decide": {
+      "main": [
+        [
+          {
+            "node": "Sink send (no external effect)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": false
+  },
+  "active": false
+}

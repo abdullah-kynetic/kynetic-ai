@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "kynetic/canonical-event/1.0-proposed",
+  "title": "CanonicalEvent (proposed 1.0)",
+  "type": "object",
+  "required": ["schema_version", "event_id", "event_type", "tenant_id", "environment", "occurred_at", "source", "subject", "trace"],
+  "properties": {
+    "schema_version": { "const": "1.0-proposed" },
+    "event_id": { "type": "string", "minLength": 1 },
+    "event_type": { "type": "string", "pattern": "^[a-z_]+[.][a-z_]+$" },
+    "tenant_id": { "type": "string", "minLength": 1 },
+    "environment": { "enum": ["local", "sandbox", "staging", "production"] },
+    "occurred_at": { "type": "string", "format": "date-time" },
+    "source": { "type": "object", "required": ["kind", "external_id"], "properties": { "kind": { "type": "string" }, "external_id": { "type": "string" } } },
+    "subject": { "type": "object", "required": ["person_ref"], "properties": { "person_ref": { "type": "string" }, "phone_e164": { "type": "string", "pattern": "^[+][1-9][0-9]{7,14}$" }, "email": { "type": "string" }, "timezone": { "type": "string" } } },
+    "consent_refs": { "type": "array", "items": { "type": "string" } },
+    "trace": { "type": "object", "required": ["correlation_id"], "properties": { "correlation_id": { "type": "string" }, "causation_id": { "type": ["string", "null"] } } }
+  },
+  "additionalProperties": true
+}

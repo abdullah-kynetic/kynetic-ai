@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "kynetic/policy-decision/1.0-proposed",
+  "title": "PolicyDecision (proposed 1.0)",
+  "type": "object",
+  "required": ["decision", "reason", "rule", "evaluated_at"],
+  "properties": {
+    "decision": { "enum": ["allow", "defer", "suppress", "human_review"] },
+    "reason": { "type": "string" },
+    "rule": { "type": "string" },
+    "evaluated_at": { "type": "string" },
+    "next_eligible_at": { "type": "string" }
+  }
+}

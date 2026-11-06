@@ -52,3 +52,16 @@ UNKNOWN: n8n version/edition, execution mode, persistence, reverse proxy, error-
 ## 6. Sandbox capability (to verify later, not tested)
 
 ElevenLabs: free tier is demo-only (D-025); sandbox agents recorded in `docs/codex/dev-resources.json` unverified. Twilio: one number, A2P per above; trial limits unverified. Cal.com: free plan; webhooks/ETag behavior unverified. Twenty: single production instance; no sandbox workspace found. Unsupported behavior => mock.
+
+## 7. Artifacts created in Phase 2a (2026-11-06)
+
+| Artifact | Where | Notes |
+|---|---|---|
+| Policy engine (Code-node source) | `templates/shared/policy-decide.js` | Pure; allow/defer/suppress/human_review; suppression, DNC, opt-out, FL/OK owner (not service address), consent, lease, quiet hours in contact tz, unknown tz -> human review |
+| Sink adapter (Code-node source) | `templates/shared/sink-send.js` | No I/O; rejects non-test recipients; stable fake provider ids; SMS segment count |
+| JSON Schemas | `templates/shared/schemas/canonical-event.schema.json`, `policy-decision.schema.json` | version `1.0-proposed` |
+| Repo copy of workflow | `n8n/workflows/dev/sys-sandbox-dispatch.json` | Manual trigger -> Policy decide -> Sink send; inactive; no credentials; no HTTP node |
+| **n8n VPS workflow (live write)** | `MOqT97N0ItVyKIno` "DEV - sys-sandbox-dispatch", tag DEV, **inactive**, personal project of abdullah@kyneticai.com | Created via n8n MCP; one pinned test run (execution 1, success, opted-out synthetic input); no credentials attached |
+| Tests | `crm/tests/unit/systems-policy-sink.test.ts` (16 tests) | Run the exact Code-node source from the workflow JSON via `vm` |
+
+No Twenty, ElevenLabs, Retell, Twilio or Cal.com write was made. Nothing was activated.
