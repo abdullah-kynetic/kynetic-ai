@@ -1,5 +1,8 @@
 # docs: the mirror of Twenty
 
+> **Current engineering entry point:** [COMPLETION-PLAN.md](codex/COMPLETION-PLAN.md), then [PROGRESS.md](codex/PROGRESS.md). The older read-order below is retained for business history; progress.md is historical. Current user instructions and AGENTS.md govern documentation edits. No Twenty write is authorized by mirroring rules.
+
+
 One job: record state, decisions and gotchas so a cold session does not guess. Twenty is canonical.
 
 ## Files (read first, in this order)
