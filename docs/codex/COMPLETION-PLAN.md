@@ -346,3 +346,70 @@ Every task is retained, including historical done rows, to avoid losing unverifi
 | M11-02 | Admin OPM status and task list per client | done | 8 |
 | M11-03 | Owner Online Presence tab and `ReportSection` for the monthly report | done | 8 |
 | M11-04 | M11 gate | done | 9 (plus owning step) |
+
+## Traceability: historical BUILD_PLAN M12–M20
+
+Every task is retained, including historical done rows, to avoid losing unverified sub-scope. Source: [BUILD_PLAN.md](../BUILD_PLAN.md). The old status below is **not adopted** as current acceptance; each row requires the active step’s local/DEV/external evidence. Original resume notes/PR references remain in the source. Later/deferred labels do not erase acceptance.
+
+| Legacy ID | Requirement | Historical status (claim) | Active step(s) |
+| --- | --- | --- | --- |
+| M12-01 | Write the portal/n8n contract doc: events n8n sends, endpoints the portal exposes, signing, retries, idempotency | done | 2, 4 |
+| M12-02 | Record decisions 3, 4, 7, 8 in `docs/DECISIONS.md` | todo | 1, 2, 4 |
+| M12-03 | Portal endpoint: n8n posts a "contact decision" (allow or deny, reason, rule that fired). Stored on the lead timeline. | done | 2, 4 |
+| M12-04 | Portal kill switch n8n reads before any send (global and per tenant) | todo | 4 |
+| M12-05 | Admin screen to issue a tenant's lead-webhook secret and show the n8n URL | done | 2, 8 |
+| M12-06 | Shared n8n sub-workflow "may I contact" (consent, quiet hours, state rules, DNC, frequency caps) reading portal data | todo | 4 |
+| M12-07 | Gate parity test: same inputs through the old portal gate and the n8n sub-workflow give the same answer | todo | 4, 9 |
+| M12-08 | M12 gate: review of decisions, risk list, kill switch | todo | 4, 9 |
+| M13-01 | n8n workflow: form/Meta/Angi/LSA lead in, post to portal, check contact decision, start call | todo | 4, 6 |
+| M13-02 | ElevenLabs adapter in the portal (stub and real behind a switch) | done | 4, 6 |
+| M13-03 | Call result flow: provider webhook to n8n to portal (outcome, transcript, recording link) | todo | 4, 6 |
+| M13-04 | Retry schedule in n8n (5 min, 1 hour, next day, max 4), each retry re-checks contact decision | todo | 4, 6 |
+| M13-05 | Booking through Cal.com from the call, relayed to portal | todo | 4, 6 |
+| M13-06 | Fix deal-to-booked rule (`booked` vs `Estimate Booked`) | done | 4, 6 |
+| M13-07 | New-lead alert and hot-lead alert by email | todo | 4, 6 |
+| M13-08 | Opt-out and STOP handling end to end | todo | 4, 6 |
+| M13-09 | M13 gate: full fake run, lead to call to booking to report data | todo | 9 |
+| M13-10 | Replace the Retell outbound-speed-to-lead n8n workflow with the ElevenLabs lead chain (same Alex, same agent role). The old workflow stays inactive until the new one passes, then is archived only with Abdullah's yes. Nora and Emily are not touched. | todo | 6, 9 |
+| M14-01 | Sequence steps in n8n (SMS and email) with the contact decision before each send | todo | 6 |
+| M14-02 | Appointment reminders (24h, 2h) | todo | 6 |
+| M14-03 | No-show recovery | todo | 6 |
+| M14-04 | Portal "payment received" event, Paid button and 2-hour review-request timer | todo | 8, 6 |
+| M14-06 | n8n review-request workflow: email now, text after A2P, contact decision before each send | todo | 6, 8 |
+| M14-07 | First two invoicing adapters in n8n (systems chosen with Abdullah once a client's system is known; Stripe test mode is the default first) | todo | 8 |
+| M14-08 | Retire portal-side sending: turn off the portal's own sequence, text-back, reactivation and reminder sends (module flags off), then remove that code once the n8n versions pass. Keep the tables and records. | todo | 4, 6, 9 |
+| M14-05 | Missed-call text-back, after-hours reply, reactivation moved or kept | todo | 6 |
+| M15-01 | n8n schedule that triggers daily metrics per tenant | todo | 7 |
+| M15-02 | Weekly client email from n8n (counts, bookings, link to portal) | todo | 7 |
+| M15-03 | Monthly report scheduling | todo | 7 |
+| M15-04 | Error alerts for failed n8n workflows to email | todo | 7 |
+| M15-05 | SMS alert to Abdullah (blocked until A2P) | todo | 7 |
+| M16-01 | Create Kynetic as its own tenant (synthetic data first) | done | 5 |
+| M16-02 | Lead sources inbound vs outbound; outbound split by channel (cold call, SMS, email, DM) | done | 5 |
+| M16-03 | Human dialer queue: next lead, script, DNC flag, one-tap outcome log | done | 5 |
+| M16-04 | Campaigns | done | 5 |
+| M16-05 | Agency pipeline stages (confirmed: New, Contacted, Interested, Proposal Sent, Won, Lost, Nurture) | done | 5 |
+| M16-06 | Never-dial list guard (AM-1 Roofing, FL, OK, DNC) in the dialer | done | 5 |
+| M17-01 | Proposal builder (draft, never auto-sent; Problem, Agentic Solution, Roadmap, ROI) | done | 8 |
+| M17-02 | Price plans as data | todo | 8 |
+| M17-03 | Client onboarding checklist and tenant creation from a won deal (no live provider calls) | todo | 8 |
+| M17-06 | Auto-created Alex demo when a client profile is created (copy a template agent with the client's name; demo number only reachable by Abdullah; real provider calls need his yes; never touches Nora or Emily) | todo | 6, 8 |
+| M17-04 | Stripe draft invoices from n8n (needs Abdullah's yes before any real Stripe write) | todo | 8 |
+| M17-05 | Payment received and dunning (test mode) | todo | 8 |
+| M18-01 | Twenty one-way backup of Kynetic data and tenant summaries (no personal data) | todo | 3, 8 |
+| M18-02 | Daily digest to Abdullah | todo | 7 |
+| M18-03 | Twilio click-to-call dialer (later, only after A2P and volume) | todo | 5 (deferred) |
+| M18-04 | Update docs, progress, known issues | todo | 1 |
+| M18-05 | Delete the retired `portal/` folder and update `CLAUDE.md`, `KYNETIC_CONTEXT.md` and the system map. Needs Abdullah's yes; first record the fate of `/api/ingest/results` (M10-07). | done (PR pending, 2026-11-02) | 1, 10 |
+| M19-01 | Ad spend and cost-per-lead on the client dashboard (Meta spend pulled by n8n, stored by portal) | todo | 7 (later) |
+| M19-02 | Alex usage and cost tracking per tenant, with a monthly spend cap that pauses calls | todo | 4, 7, 8 |
+| M19-03 | Recording-disclosure check on every call (opener present in transcript, flag if missing) | todo | 2, 6, 7 |
+| M19-04 | Client offboarding: stop all sends, export their data, mark tenant inactive | todo | 2, 4, 8 |
+| M19-05 | Client staff roles and invites recheck against the new flows (built in M8; verify only) | todo | 2, 9 |
+| M20-01 | Lead sourcing import into outbound lists (Meta Ad Library and Maps results through n8n) | todo | 4, 5 |
+| M20-02 | Outbound email and DM tracking (human-sent; portal logs and checks DNC; no automated sends, per D-007) | todo | 5, 6 |
+| M20-03 | Contracts and e-sign tracking (draft, sent, signed; provider chosen by Abdullah) | todo | 8 |
+| M20-04 | Revenue and expenses view for Kynetic | todo | 7, 8 (later depth) |
+| M20-05 | Client health score and renewal alerts | todo | 7, 8 |
+| M20-06 | Support requests from clients | done | 8, 9 |
+| M20-07 | Referrals and case-study tracking | todo | 8 (later) |
