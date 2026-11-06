@@ -1,5 +1,8 @@
 # Testing
 
+> **Completion navigation:** [COMPLETION-PLAN.md](codex/COMPLETION-PLAN.md) is the sole active engineering checklist; [PROGRESS.md](codex/PROGRESS.md) indexes evidence. This file remains a specification, decision or test reference with its original dates/scope. Historical next-task/wave instructions do not supersede the active plan or safety gates.
+
+
 > Latest portal/agency validation (2026-11-06): **527 unit tests, 3 Chromium journeys, build/typecheck/lint PASS; agency checks 13 PASS / 0 FAIL / 2 manual SKIP**. See [current status](codex/CURRENT_STATUS.md) for deployment/approval limits. Earlier totals below are historical.
 
 Kynetic Client CRM & Portal. Target path in the build repo: `docs/TESTING.md`.
