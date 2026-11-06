@@ -211,3 +211,138 @@ Each row retains the unfinished implementation **and** unverified behavior in th
 | 10 Outbound engine | 5 | Manual selected; repeated attempts/callbacks and campaign lifecycle/attribution |
 | 11 Ops | 2, 7, 8 | Deployed rotation/schedules, applied DEV bindings, health and digest correctness |
 | 12 Billing | 8 | Stub only; real test Stripe/webhooks/contracts/reconciliation remain |
+
+## Traceability: historical BUILD_PLAN M0–M11
+
+Every task is retained, including historical done rows, to avoid losing unverified sub-scope. Source: [BUILD_PLAN.md](../BUILD_PLAN.md). The old status below is **not adopted** as current acceptance; each row requires the active step’s local/DEV/external evidence. Original resume notes/PR references remain in the source. Later/deferred labels do not erase acceptance.
+
+| Legacy ID | Requirement | Historical status (claim) | Active step(s) |
+| --- | --- | --- | --- |
+| M0-01 | Create the repo app from the starter; remove Clerk, chat and demo pages | done | 2, 3 |
+| M0-02 | CI and tooling: lint, typecheck, Vitest, Playwright scaffold, GitHub Actions; record the real commands in TESTING and CODE_STYLE | done | 2, 3 |
+| M0-03 | Docker Compose (app, worker, postgres, caddy), Zod env validation, `/api/health` | done | 2, 3 |
+| M0-04 | Database roles, extensions, session-variable helper functions, `app_enable_tenant_rls` | done | 2, 3 |
+| M0-05 | Baseline migration part A: tenancy, users, memberships, invitations, modules, secrets, audit, terms, billing and onboarding tables | done | 2, 3 |
+| M0-06 | Baseline migration part B: CRM tables (companies, custom fields, contacts, pipelines, deals, activities, tasks, notes) | done | 2, 3 |
+| M0-07 | Baseline migration part C: calls, messages, consents, webhooks, integrations, alex_configs, appointments, metrics, automations, notifications, imports, documents | done | 2, 3 |
+| M0-08 | `withTenant`, `withPlatform`, two-tenant and role test fixtures, cross-tenant isolation suite | done | 2, 3 |
+| M0-09 | SECURITY DEFINER roll-up functions and the NOLOGIN `kynetic_rollup` role | done | 2, 3 |
+| M0-10 | Better-Auth: Google sign-in, email magic links, server sessions, account linking rules, `src/server/auth` facade | done | 2, 3 |
+| M0-11 | Roles and permission checks: `requireUser`, `requireRole`, `requireKynetic`, deny-by-default matrix | done | 2, 3 |
+| M0-12 | Admin TOTP two-factor: enrol, recovery codes, enforcement, reset by another admin | done | 2, 3 |
+| M0-13 | Module mechanism: `tenant_modules`, `requireModule`, `<ModuleGate>`, 403 MODULE_DISABLED, nav registry | done | 9 (plus owning step) |
+| M0-14 | Audit helper and append-only `audit_log` (before and after) | done | 2, 3 |
+| M0-15 | Events (`emitEvent`, `subscribe`), jobs facade on pg-boss, idempotent webhook ingest (`ingestWebhook`) | done | 2, 3 |
+| M0-16 | Consent service: `canContact`, record and revoke consent, DNC entries | done | 2, 3 |
+| M0-17 | `notify()`, notifications table access, `recordActivity()` | done | 2, 3 |
+| M0-18 | `OutboundGate` stub with kill-switch check; `enrollInSequence` stub | done | 9 (plus owning step) |
+| M0-19 | Adapter interfaces and fakes for voice, SMS, email; storage `{put,get,remove}` interface with a local fake | done | 2, 3 |
+| M0-20 | Service tokens (hashed) and bearer auth for `/api/service/*` | done | 2, 3 |
+| M0-21 | Error shape, Zod helpers, Postgres rate limiter, security headers, Origin/CSRF check | done | 2, 3 |
+| M0-22 | Secrets: envelope encryption for `tenant_secrets`, env-key handling | done | 2, 3 |
+| M0-23 | App shell: rebrand tokens, layout, sidebar, header, dark-mode toggle, Kynetic-branded sign-in page | done | 2, 3 |
+| M0-24 | Base UI components (buttons, inputs, table, dialog, toast, badge, empty and error states) | done | 2, 3 |
+| M0-25 | Terms and Privacy acceptance page | done | 2, 3 |
+| M0-26 | Seed data: module catalog and prices, automation templates, two synthetic demo tenants | done | 2, 3 |
+| M0-27 | Preview environment pipeline: per branch, own database, synthetic seed only | done | 3, 9 |
+| M0-28 | M0 gate: run all M0 acceptance tests, update TESTING statuses, confirm docs match, record resume notes | done | 9 (plus owning step) |
+| M1-01 | Contacts service: CRUD, E.164 normalisation, duplicate detection, soft delete, tags, owner, `contact.*` and manual `lead.created` events | done | 5 |
+| M1-02 | Leads list page: table, search, filters, sort, column toggle, paging, URL-saved state | done | 5 |
+| M1-03 | Contact detail page: details, phones and emails, consent status, slots for timeline and deals | done | 5 |
+| M1-04 | Slide-out create and edit panel with duplicate warning | done | 5 |
+| M1-05 | Companies service and pages (CRM Lite) | done | 5 |
+| M1-06 | Custom fields: definitions, values, settings UI, list and detail rendering (CRM Full) | done | 5 |
+| M1-07 | Bulk actions: tag, assign, status, delete; enrol-in-sequence stub (CRM Full) | done | 5 |
+| M1-08 | Merge duplicate contacts: survivor selection, move deals, notes and activities, soft-remove the loser, `contact.merged` | done | 5 |
+| M1-09 | M1 gate: acceptance, TESTING statuses, docs | done | 9 (plus owning step) |
+| M2-01 | Pipelines, stages and deals services; default stages seeded per tenant; `deal.*` events | done | 5 |
+| M2-02 | Kanban board page: drag between stages, counts and totals, optimistic move with undo, filters | done | 5, 9 |
+| M2-03 | Deal detail and slide-out (value, service type, expected close, source, lost reason) | done | 5 |
+| M2-04 | Multi-contact deals with roles (CRM Full) | done | 5 |
+| M2-05 | Configurable stages settings page (CRM Lite) | done | 5 |
+| M2-06 | M2 gate | done | 9 (plus owning step) |
+| M3-01 | Activities read API and timeline UI on contact and deal | done | 5 |
+| M3-02 | Tasks service, My Tasks view (overdue, today, upcoming), task slide-out (CRM Lite) | done | 5 |
+| M3-03 | Rich-text notes with @mentions and pin (CRM Lite) | done | 5 |
+| M3-04 | Task-due job and notifications | done | 5 |
+| M3-05 | M3 gate | done | 9 (plus owning step) |
+| M4-01 | ElevenLabs voice adapter: start outbound call, verify webhook, parse call result | done | 4, 6 |
+| M4-02 | Retell fallback adapter | done | 4, 6 |
+| M4-03 | R2 storage adapter and signed URL minting | done | 4, 6 |
+| M4-04 | Lead intake endpoint `/api/hooks/leads/:tenantKey` (signed token) | done | 4, 6 |
+| M4-05 | Call-end processing job: write `calls`, `activities`, copy recording to R2, store transcript and summary | done | 4, 6 |
+| M4-06 | Outbound call start on `lead.created`: call windows, retries, real `OutboundGate` | done | 9 (plus owning step) |
+| M4-07 | Compliance enforcement: quiet hours 8am to 9pm lead-local, DNC, disclosure, recording flag | done | 4, 6 |
+| M4-08 | Twilio SMS adapter, status and inbound webhooks, STOP and HELP into consents | done | 4, 6 |
+| M4-09 | Resend adapter, webhook, bounce and complaint suppression | done | 4, 6 |
+| M4-10 | Calls list page | done | 4, 6 |
+| M4-11 | Call detail page: player, transcript, summary, extracted fields, flag for review | done | 4, 6 |
+| M4-12 | Messages log page (SMS and email, delivery status) | done | 4, 6 |
+| M4-13 | `alex_configs` service and read-only Alex settings view | done | 4, 6 |
+| M4-14 | M4 gate | done | 9 (plus owning step) |
+| M5-01 | Availability function (business hours, existing appointments, buffers) | done | 6 |
+| M5-02 | Appointments service and booking endpoints for the voice tool (token per tenant) | done | 6 |
+| M5-03 | Appointments calendar page (month, week, day); create, reschedule, cancel | done | 6 |
+| M5-04 | Appointment events to timeline and notifications | done | 6 |
+| M5-05 | M5 gate | done | 9 (plus owning step) |
+| M6-01 | `metrics_daily` roll-up job per the PRD metric definitions | done | 7 |
+| M6-02 | Seed fixture with hand-computed expected dashboard numbers | done | 7 |
+| M6-03 | Dashboard page: stat cards vs baseline, trend and source charts, activity feed | done | 7 |
+| M6-04 | Guarantee progress component | done | 7 |
+| M6-05 | Reports service, `ReportSection` registry, monthly ROI report job (email and page) | done | 7 |
+| M6-06 | Reports page | done | 7 |
+| M6-07 | M6 gate | done | 9 (plus owning step) |
+| M7-01 | Automation templates, toggles per tenant and settings UI | done | 4, 6 |
+| M7-02 | Sequence engine: steps, delays, stop on reply or booking; `enrollInSequence` | done | 4, 6 |
+| M7-03 | Stage-move rules and alerts (deal won email, hot-lead SMS to owner) | done | 4, 6 |
+| M7-04 | Notifications UI: bell, popover, full page with tabs, email delivery | done | 4, 6 |
+| M7-05 | `quote_followup` module | done | 4, 6 |
+| M7-06 | `after_hours` module | done | 4, 6 |
+| M7-07 | `missed_call_textback` module | done | 4, 6 |
+| M7-08 | `reactivation` module and `reactivation_batches` | done | 4, 6 |
+| M7-09 | `followup_bundle` admin switch | done | 4, 6 |
+| M7-10 | Service API routes and signed outbound events for n8n | done | 4, 6 |
+| M7-11 | M7 gate | done | 9 (plus owning step) |
+| M8a-01 | Admin layout and navigation, all-clients entry point | done | 2, 8 |
+| M8a-02 | 30-second onboarding form: tenant, owner invite, modules, templates, branding | done | 2, 8 |
+| M8a-03 | User management across tenants: invite, deactivate, reset, roles | done | 2, 8 |
+| M8a-04 | View as client with banner, read-only default, logged sessions | done | 2, 8 |
+| M8a-05 | Audit log viewer with filters | done | 2, 8 |
+| M8a-06 | Modules panel: toggle per tenant, CRM level, history | done | 2, 8 |
+| M8a-07 | Plan and tier fields and billing tab | done | 2, 8 |
+| M8a-08 | Onboarding checklist and owner setup progress card | done | 2, 8 |
+| M8a-09 | M8a gate | done | 9 (plus owning step) |
+| M8b-01 | All-clients table with MRR, leads in 30 days, booking rate, guarantee status | done | 2, 8 |
+| M8b-02 | Health score job and chips | done | 2, 8 |
+| M8b-03 | Integration health: per-client and global, A2P status, delivery failures, bounces | done | 2, 8 |
+| M8b-04 | Per-client Alex config admin, prompt versions, test call | done | 2, 8 |
+| M8b-05 | Backups: nightly encrypted dump to R2, retention, restore test job, backups page, manual backup | done | 2, 8 |
+| M8b-06 | Flagged-call review queue (admin side of F-28) | done | 2, 8 |
+| M8b-07 | Operations tools: kill switch, webhook replay, job viewer, suspend, 2FA reset, demo reseed | done | 2, 8 |
+| M8b-08 | M8b gate | done | 9 (plus owning step) |
+| M9-01 | Import engine part 1: file intake (csv, xlsx, size and row limits, signature check), column mapping, mapping templates | done | 5, 9 |
+| M9-02 | Import engine part 2: dry-run validation, dedupe on E.164 phone and lower-case email, duplicate rule skip or fill-blanks, report | done | 5, 9 |
+| M9-03 | Import engine part 3: commit job, source and batch tags, no-outreach guarantee, undo with edited-record list | done | 5, 9 |
+| M9-04 | Import wizard UI (upload, map, preview, report, commit) | done | 5, 9 |
+| M9-05 | Import history page and undo UI | done | 5, 9 |
+| M9-06 | Global search and Cmd+K (CRM Full) | done | 5, 9 |
+| M9-07 | CSV export per table view (CRM Full, permissioned) | done | 5, 9 |
+| M9-08 | Branding settings: logo upload, color with contrast check, business name | done | 5, 9 |
+| M9-09 | Business settings: hours, service area, services, transfer number, team | done | 5, 9 |
+| M9-10 | Client Alex settings: pause and call hours only | done | 5, 9 |
+| M9-11 | Settings pages: tags and notification preferences (Lite) | done | 5, 9 |
+| M9-12 | Documents page and admin upload | done | 5, 9 |
+| M9-13 | Mobile polish pass on daily-use pages | done | 5, 9 |
+| M9-14 | M9 gate | done | 9 (plus owning step) |
+| M10-01 | Security review against the SEC checklist; fix findings | done | 2, 9 |
+| M10-02 | Load test and set numeric limits | done | 9, 10 |
+| M10-03 | Restore drill on the production-like stack | done | 3, 10 |
+| M10-04 | WCAG 2.2 AA audit: axe plus manual keyboard and screen-reader pass | blocked | 9 |
+| M10-05 | Production server setup: compose project, Cloudflare, Caddy, deploy script, monitoring and alerts | blocked | 3, 10 |
+| M10-06 | Email domain and DNS records (SPF, DKIM, DMARC) | blocked | 6, 10 |
+| M10-07 | Pre-go-live gates checklist, synthetic demo tenant script, old portal and `/api/ingest/results` fate recorded | blocked | 9, 10 |
+| M10-08 | Pilot client onboarding using the real flow (with Abdullah's yes) | blocked | 8–10 |
+| M11-01 | OPM tables and services (`presence_items`, `review_snapshots`) | done | 8 |
+| M11-02 | Admin OPM status and task list per client | done | 8 |
+| M11-03 | Owner Online Presence tab and `ReportSection` for the monthly report | done | 8 |
+| M11-04 | M11 gate | done | 9 (plus owning step) |
