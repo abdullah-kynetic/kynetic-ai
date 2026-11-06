@@ -50,3 +50,17 @@ Keep dev/codex-setup, small tested commits as abdullah-kynetic <abdullah@kynetic
 **Acceptance/evidence:** anonymous admin 401/403; non-admin 403; verified active admin allowed; missing/invalid second factor denied; disabled/expired sessions denied. Cross-tenant tests must fail before mutation. Malformed/old/unsigned hooks fail; valid synthetic signatures pass once. Compare credential separation by safe assertions, never printing values. Record current dependency/security regression evidence separately from the Oct 29 review.
 
 **Gates:** local synthetic tests first; actual DEV auth and role checks via Mac handoff when needed; invite/email delivery requires an approved recipient, and DNS/provider configuration needs specific approval. No live portal request/change is implied. Counsel and A2P readiness remain external prerequisites, not automatically resolved by server-side code.
+
+## 3. Runtime/recovery
+
+**Status: PARTIAL. Scope/dependencies:** isolated DEV deployment, worker/queue execution, schedules, migrations, storage, backups, restore and rollback. Depends on steps 1–2; services must be operational before provider tests.
+
+**Reuse:** scripts/deploy-dev.sh and server helper; isolated kynetic-dev-portal database/volume and loopback 3031; Caddy DEV site; restricted sender-free runtime worker; pg-boss schedules; existing migration, backup and storage infrastructure.
+
+**Missing implementation:** only source-confirmed gaps in release markers, worker health, dead-letter/retry visibility, recoverable jobs, backfill, retention and approved backup destinations. Do not rebuild deployment or change production routing.
+
+**Missing verification:** newest UI revision on DEV; actual worker readiness and TEST_PHONE configuration without printing it; least-privilege DB roles; queue consumers; scheduled execution; migration compatibility; off-server database/object backups and an isolated restore; rollback safety. The historical missing TEST_PHONE/stopped-worker diagnostic has no newer clearance. A helper being prepared is not evidence it ran.
+
+**Acceptance/evidence:** deploy requested revision to DEV only; health/auth/gate markers and unchanged production evidence; synthetic durable job goes queued→running→completed; restart/crash recovery and duplicate suppression; observe schedules in Pacific time including DST; failed job does not stall others. Restore database plus objects into an isolated target, verify counts/tenant isolation, test rollback/migration recovery. Document RPO/RTO from actual exercises rather than inventing targets or outcomes.
+
+**Gates:** local disposable database and fake storage first. VPS deploy/restart/configuration/DEV URL checking requires push, one committed Mac script, stop and wait for output. Keep providers stubbed/outbound off, persona switching off and all DEV workflows inactive. Production backup/restore changes and DNS are separate approvals. Never equate app health with worker health.
