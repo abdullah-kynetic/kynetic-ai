@@ -1,5 +1,8 @@
 # Kynetic portal and agency — remaining build and verification work
 
+> **HISTORICAL — November 6 remaining-work snapshot.** All 21 sections are carried into [COMPLETION-PLAN.md](COMPLETION-PLAN.md), the sole active checklist. The body below is preserved; this local navigation banner was added after the Twenty upload. The uploaded Markdown/note and its recorded original content hash are unchanged; no Twenty synchronization is claimed.
+
+
 Updated: 2026-11-06. Branch: `dev/codex-setup`.
 
 This document preserves the detailed remaining-work review requested by Abdullah. It separates missing implementation, integrations to connect, and behavior still to prove on DEV. It does not change steps 0–6 or authorize external tests, production operations, outreach, Stripe charges, workflow activation or additional CRM mutations.
