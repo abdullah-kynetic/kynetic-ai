@@ -1,5 +1,8 @@
 # Portal build-out: the client dashboard (portal.kyneticai.com)
 
+> **HISTORICAL — planning snapshot, not current instructions.** The active completion checklist is [COMPLETION-PLAN.md](../codex/COMPLETION-PLAN.md). Requirements and unresolved decisions are carried forward there. Old live-agent IDs, prices, dates, workflow activation or deployment instructions do not grant permission; all current safety and action-specific approval gates remain.
+
+
 Plan only. Nothing here is built or deployed. Source read at `5888b13`; the live server was not touched. Facts about Twenty and the live portal that I did not read are marked **[unverified]**.
 
 ## 1. What exists today (verified from `portal/`)
