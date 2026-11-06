@@ -213,6 +213,18 @@ export const navGroups: NavGroup[] = [
  */
 export const adminNavGroups: NavGroup[] = [
   {
+    label: 'Agency',
+    items: [
+      {
+        title: 'Agency workspace',
+        url: '/admin/agency',
+        icon: 'kanban',
+        isActive: false,
+        items: []
+      }
+    ]
+  },
+  {
     label: 'Clients',
     items: [
       {
