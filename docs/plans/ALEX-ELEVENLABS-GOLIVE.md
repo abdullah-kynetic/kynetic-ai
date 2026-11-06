@@ -1,5 +1,8 @@
 # Alex on ElevenLabs: go-live plan (2026-10-25)
 
+> **HISTORICAL — planning snapshot, not current instructions.** The active completion checklist is [COMPLETION-PLAN.md](../codex/COMPLETION-PLAN.md). Requirements and unresolved decisions are carried forward there. Old live-agent IDs, prices, dates, workflow activation or deployment instructions do not grant permission; all current safety and action-specific approval gates remain.
+
+
 Decision: D-025. Every live step needs Abdullah's exact yes. Mode now: **demos only on the free tier** until the first client signs.
 
 ## Current state
