@@ -164,3 +164,50 @@ Add dated callbacks, repeated call attempts/history and requeue rules; current f
 **Acceptance/evidence:** review exact revision, schema compatibility, dependency/security results, scoped E2E evidence, consent/A2P/legal requirements and approved sender/provider configuration. Approval must identify target/action/revision; deployment must preserve protected services and produce health/auth/gate/worker/queue evidence. Verify only explicitly approved production journeys, monitor provider outcomes/failures and document recovery owner. No force push, main merge or .github edit in this docs task. A later production source/merge decision requires its own instruction.
 
 **Gates:** documentation/readiness review is local; production/VPS work remains Mac-script handoff with push, stop and output verification. DNS, workflow activation, live calls/messages/bookings/Stripe and protected integration actions remain independent gates even after a deployment approval. A successful DEV deploy, polished UI or local green test suite is never production approval.
+
+## Traceability: November 6 remaining-work review
+
+Each row retains the unfinished implementation **and** unverified behavior in the named historical section of [REMAINING-WORK.md](REMAINING-WORK.md), also uploaded as kynetic-remaining-work-2026-11-06.md. Mapping is coverage, not acceptance. No additional Twenty read/write was performed in this consolidation.
+
+| Historical report section | Active step(s) | Carried-forward acceptance or gate |
+| --- | --- | --- |
+| 1 Latest UI deployment | 3, 9 | Current revision, authenticated screen checks, stub/outbound-off/auth preservation |
+| 2 Actual DEV workflows | 5–9 | Real-session persisted lead/inbox/campaign/ops/billing walkthrough and logs |
+| 3 Accounts/cofounders | 2, 9 | Explicit identities, 2FA, session recovery/revocation, role/view-as denial |
+| 4 Background worker | 3 | TEST_PHONE readiness, restricted consumers, job transitions, restart/recovery |
+| 5 Signed intake | 4, 9 | Valid signature, durable processing, replay/cross-tenant denial, zero denied sends |
+| 6 DEV ElevenLabs tools | 6, 9 | Designated DEV agent/number, authenticated booking tools, result reconciliation |
+| 7 Actual calendar booking | 6 | Real versus simulated appointment, timezone, idempotency, partial failure |
+| 8 Twenty writeback | 4, 6, 8 | Stable object mapping, retry without redial/rebook, exact dry run and approval |
+| 9 Four notifications | 6 | Fresh server gates, stale suppression, error redaction/recursion, inactive workflows |
+| 10 Real agency leads | 4, 5 | Real/test separation, business fields, imports/dedup, assignment, protected states |
+| 11 Inbox ingestion | 6 | Signed receiving identity routing, threads/status/order/opt-out, pagination |
+| 12 Actual SMS/email | 6 | Dispatch adapter, stored approved recipients, idempotency, outcomes, draft editing |
+| 13 Email/DNS | 2, 6, 10 | Sender verification, SPF/DKIM/DMARC/MX preservation, approved recipient/DNS |
+| 14 Manual calls/campaigns | 5 | Repeated attempts, dated callbacks, due work, safe enrolled edits and stop rules |
+| 15 Metrics correctness | 7 | Manual/native reconciliation, seven-day cohorts, attribution, timezone/backfill |
+| 16 Reports/schedules | 3, 7 | Persist/download authorized artifact, generate≠deliver, observe actual clocks |
+| 17 Ops desk | 2, 8 | Inert versus applied bindings, secure rotation/provisioning, health/digest freshness |
+| 18 Real Stripe | 8 | Signed webhooks, real test-mode objects/reconciliation, custom pricing, no live charges |
+| 19 Won-deal onboarding | 8, 9 | Documents, client/access/configuration/checklist with explicit transition gates |
+| 20 Full live test | 9 | Exact separate approval, one scoped provider action, reconciliation and outbound reset |
+| 21 Production/reliability | 10 | Approved release, restore/rollback/monitoring, no inferred production certification |
+| Non-scope, suggested sequence and user inputs | 1–10 | Retain explicit deferrals, dependency order and recipient/account/provider choices below |
+
+## Traceability: former Codex steps 0–12
+
+| Old step | Active steps | Remaining scope despite historical local acceptance |
+| --- | --- | --- |
+| 0 Dev setup | 2, 3, 6 | Actual runtime/senders/tools; isolated deploy evidence does not prove provider operation |
+| 1 Foundation | 2, 9, 10 | DEV auth is separate from production; regression and human access checks remain |
+| 2 Alex on ElevenLabs | 6, 9 | Resource/GET checks do not prove tools, actual calendar booking or live delivery |
+| 3 Lead→booking chain | 4, 6, 9 | Signed DEV runtime, real booking, retry outcomes and approved CRM writeback |
+| 4 Texts/alerts | 6 | Inactive workflow/stub formatter checks do not establish actual dispatch |
+| 5 Onboarding documents | 8, 9 | File existence does not prove contract/client/billing delivery lifecycle |
+| 6 Go-live | 9, 10 | Original full live-test approval and production release are separate gates |
+| 7 Agency lead model | 3, 5, 7 | Required model/alerts exist locally; deployed execution and richer real data unverified |
+| 8 Inbox/rates | 6, 7 | Real ingestion/threading, consistent rollups/cohorts and deployed evidence |
+| 9 Messaging | 4, 6, 9 | Real adapter absent; original manual 9.2 send explicitly unrun |
+| 10 Outbound engine | 5 | Manual selected; repeated attempts/callbacks and campaign lifecycle/attribution |
+| 11 Ops | 2, 7, 8 | Deployed rotation/schedules, applied DEV bindings, health and digest correctness |
+| 12 Billing | 8 | Stub only; real test Stripe/webhooks/contracts/reconciliation remain |
