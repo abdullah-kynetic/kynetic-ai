@@ -608,3 +608,9 @@ Final validation on the merge candidate:
 - Production deploy rehearsal passed against stubs; Python checker/evidence tests (7) and mocked DEV provisioning tests (2) passed.
 
 GitHub CI uses PostgreSQL 16; no workflow files were changed. The local suite above used PostgreSQL 17. No production deployment or external R2 validation is claimed.
+
+### Agency steps 7–12 (2026-11-05)
+
+Run `bash scripts/checks/agency-local.sh` with Bun, psql and TEST_DATABASE_ADMIN_URL pointing to a disposable loopback PostgreSQL maintenance database. It refuses remote databases and performs no deploy/provider calls. Browser opt-in: AGENCY_BROWSER_CHECKS=1 with Playwright Chromium installed (or PLAYWRIGHT_CHROMIUM_PATH configured). Detailed review is in [AGENCY-REVIEW.md](codex/AGENCY-REVIEW.md).
+
+Verified: step checks 13 PASS/0 FAIL/2 manual SKIP; 523 unit cases; 33 agency/restricted-runtime integration cases; production build/typecheck and lint; one Chromium journey spanning all agency screens, plus mobile axe scans (zero violations); 23 Python checker tests. Manual skips are TEST_PHONE delivery and live Stripe. No real delivery or deployed verification is implied.
