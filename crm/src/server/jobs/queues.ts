@@ -33,7 +33,8 @@ export const QUEUES = {
   'metrics.daily': { ...retrying, policy: 'short' },
   'automation.step': { ...retrying, policy: 'short' },
   'report.monthly': { ...retrying, policy: 'short' },
-  'backup.run': { ...retrying, policy: 'short' }
+  'backup.run': { ...retrying, policy: 'short' },
+  'agency.maintenance': { ...retrying, policy: 'short' }
 } as const satisfies Record<string, QueueDef>;
 
 export type QueueName = keyof typeof QUEUES;

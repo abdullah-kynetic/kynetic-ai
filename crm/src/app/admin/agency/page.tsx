@@ -7,7 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { decideAdminAccess } from '@/server/admin';
-import { getAgencyWorkspace, getAgencyPipeline, listAgencyLeads } from '@/server/agency';
+import {
+  getAgencyWorkspace,
+  getAgencyPipeline,
+  listAgencyLeads,
+  listAgencyAlerts
+} from '@/server/agency';
 import { isViewingAs } from '../view-as-guard';
 import {
   createAgencyWorkspaceAction,
@@ -51,9 +56,10 @@ export default async function AgencyPage({
       : {}),
     ...(channels.includes(query.channel ?? '') ? { channel: query.channel } : {})
   };
-  const [{ stages }, data] = await Promise.all([
+  const [{ stages }, data, alerts] = await Promise.all([
     getAgencyPipeline(caller),
-    listAgencyLeads(caller, filter)
+    listAgencyLeads(caller, filter),
+    listAgencyAlerts(caller)
   ]);
   return (
     <PageContainer
@@ -87,6 +93,18 @@ export default async function AgencyPage({
         Synthetic workspace · Use fictional names and @example.test emails. No outreach starts from
         this page.
       </p>
+      <section aria-label='Agency alerts' className='mb-6 space-y-2'>
+        <h2 className='font-semibold'>Agency alerts</h2>
+        {alerts.length ? (
+          alerts.map((a) => (
+            <p key={a.id}>
+              {a.title} · {a.body}
+            </p>
+          ))
+        ) : (
+          <p>No alerts yet.</p>
+        )}
+      </section>
       <section className='mb-8 space-y-4' aria-labelledby='agency-add-lead'>
         <h2 id='agency-add-lead' className='text-lg font-semibold'>
           Add a synthetic lead

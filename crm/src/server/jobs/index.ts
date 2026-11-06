@@ -28,7 +28,7 @@ export async function getBoss(role: Role): Promise<PgBoss> {
       migrate: false,
       createSchema: false,
       supervise: role === 'worker',
-      schedule: false,
+      schedule: role === 'worker',
       registerInstance: false
     });
     b.on('error', (e) =>
