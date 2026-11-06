@@ -94,3 +94,17 @@ Add dated callbacks, repeated call attempts/history and requeue rules; current f
 **Acceptance/evidence:** one prospect can change views/stages without duplicate records; moves survive reload and show actor/time; stale moves conflict; safe undo; keyboard/touch parity. Fixtures prove retries/callbacks appear when due, blocked leads never queue, repeated attempts dedupe by event, campaigns stop on reply/booking/opt-out/closure. Stage movement alone sends nothing, reserves nothing, invites nobody and charges nothing.
 
 **Gates:** local seeded/browser tests first; authenticated DEV walkthrough later; any real-data import or external tracking write requires separate approval. Human call logging never authorizes placing a call. Keep TEST_PHONE-only external testing and protected business rules.
+
+## 6. Communications/booking
+
+**Status: PARTIAL. Scope/dependencies:** shared inbox ingestion, threaded SMS/email, real dispatch, calendar availability/booking, DEV ElevenLabs tools, notifications, reminders and no-show recovery. Depends on steps 2–5 and ready restricted runtime.
+
+**Reuse:** native SMS/email records, Twilio inbound/status and Resend hooks, agency drafts/stub sink, gate previews, sender adapters, appointment/calendar services, DEV ElevenLabs inventory, inactive DEV notification workflows. bookDevSyntheticAppointment is internal simulation, not a Cal reservation.
+
+**Missing implementation:** route agency receiving identities to the right tenant/prospect; unknown-sender handling; thread IDs/reply headers; search/pagination/unread/assignment as needed; final-boundary approved-recipient resolution; real agency dispatch adapter, durable idempotency and delivery/failure/bounce/complaint state. Separate agency configuration from implicit alex_core voice enablement. Add draft editing, calendar/event-type mapping, authenticated availability/booking handlers, identity/timezone propagation, reschedule/cancel, missed-call/after-hours/reactivation behavior and stale reminder/no-show suppression.
+
+**Missing verification:** designated DEV agent has working booking tools (latest recorded GET had zero referenced booking tools), dedicated number assignment, sender/domain and A2P readiness, actual provider callbacks, duplicate/out-of-order events, real reservation reconciliation. A reachable Cal API or attached number is not a complete booking test.
+
+**Acceptance/evidence:** signed inbound event appears once in correct thread/workspace; opt-out blocks future jobs; voicemail is not human pickup; any reply is not positive reply. Gate denial yields zero provider calls. Stub success is visibly simulated/excluded from real metrics. Retry/timeout never duplicates a send/reservation; partial calendar/portal success reconciles. Booked ≠ attended; no-show creates one safe recovery task/draft, rescheduling cancels obsolete reminders. Server authorization rechecks before every workflow-dispatched send; snapshot consent is not a permit. Reconcile exact Twenty writeback separately with dry run and approval.
+
+**Gates:** local fake providers first; DEV ingestion/gates/synthetic booking without network actions next; real delivery/reservation/invitation requires an exact approved plan. Calls/SMS only TEST_PHONE via DEV agent and dedicated DEV number; email recipient separately agreed. Keep n8n workflows inactive; no live Alex, Nora, Emily or existing workflow changes. DNS/provider credentials/activation remain independent approvals.
