@@ -36,3 +36,17 @@ Keep dev/codex-setup, small tested commits as abdullah-kynetic <abdullah@kynetic
 **Gates:** local documentation/source inspection only now. Future read-only DEV observation must retain provenance. External/provider writes are not baseline evidence and are not authorized.
 
 **Recorded baseline, not rerun in this cleanup:** implementation/audit 1eb4b8e; prior status synchronization c290951; report save f5ce33b; confirmed DEV c34b11aa359c933410bfec5522d9ced32cdc3e7e from Abdullah's Mac output. Historical local results: 527 unit PASS, three Chromium journeys PASS, 13 agency checks PASS/0 FAIL/two manual SKIP, build/typecheck/lint pass with existing warnings. Those results do not cover all requirements below. Latest UI remains unconfirmed on DEV; signed-runtime repair, worker readiness and external booking/delivery remain unverified.
+
+## 2. Security/access
+
+**Status: PARTIAL. Scope/dependencies:** authentication, 2FA, roles, tenant isolation, request signatures, safe secrets and privacy. Depends on step 1 inventory; protects every later step.
+
+**Reuse:** verified signed-cookie/DB sessions, active-admin and view-as guards, Better Auth, RLS/tenant services, API rate limits, signed intake/provider hooks, encrypted native secret rotation, existing security tests/review.
+
+**Missing implementation:** close any source-confirmed gaps in invitations/recovery, disabled-user sessions, webhook replay protection, redaction, audit coverage and credential least privilege. Do not reintroduce anonymous admin or client-persona fallback. Implement protected-ID guards in tooling if the historical audit finding remains reproducible; never exercise those tools against protected resources.
+
+**Missing verification:** actual Abdullah/cofounder identities and roles; real sign-in/2FA/recovery; expiry/sign-out/revocation; owner/VA/view-as denial; cross-tenant A/B read/write/export/storage/job isolation; webhook raw-body signatures, stale timestamps, duplicates and wrong tenants; rotation invalidates old signatures without displaying secrets. Recheck KI-002/005/006/007/008/013 and the duplicate KI-013 labels by title/date rather than assuming the same issue.
+
+**Acceptance/evidence:** anonymous admin 401/403; non-admin 403; verified active admin allowed; missing/invalid second factor denied; disabled/expired sessions denied. Cross-tenant tests must fail before mutation. Malformed/old/unsigned hooks fail; valid synthetic signatures pass once. Compare credential separation by safe assertions, never printing values. Record current dependency/security regression evidence separately from the Oct 29 review.
+
+**Gates:** local synthetic tests first; actual DEV auth and role checks via Mac handoff when needed; invite/email delivery requires an approved recipient, and DNS/provider configuration needs specific approval. No live portal request/change is implied. Counsel and A2P readiness remain external prerequisites, not automatically resolved by server-side code.
