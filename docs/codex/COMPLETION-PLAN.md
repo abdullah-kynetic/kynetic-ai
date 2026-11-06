@@ -64,3 +64,17 @@ Keep dev/codex-setup, small tested commits as abdullah-kynetic <abdullah@kynetic
 **Acceptance/evidence:** deploy requested revision to DEV only; health/auth/gate markers and unchanged production evidence; synthetic durable job goes queued→running→completed; restart/crash recovery and duplicate suppression; observe schedules in Pacific time including DST; failed job does not stall others. Restore database plus objects into an isolated target, verify counts/tenant isolation, test rollback/migration recovery. Document RPO/RTO from actual exercises rather than inventing targets or outcomes.
 
 **Gates:** local disposable database and fake storage first. VPS deploy/restart/configuration/DEV URL checking requires push, one committed Mac script, stop and wait for output. Keep providers stubbed/outbound off, persona switching off and all DEV workflows inactive. Production backup/restore changes and DNS are separate approvals. Never equate app health with worker health.
+
+## 4. Lead intake/safety
+
+**Status: PARTIAL. Scope/dependencies:** signed source intake, normalization, attribution capture, deduplication, consent, local business/quiet hours, opt-outs, frequency/attempt caps, retries and global/tenant kills. Depends on steps 2–3.
+
+**Reuse:** crm/src/app/api/hooks/leads/, crm/src/server/leads/, crm/src/server/consent/, outbound gate, durable webhook jobs, chain unit/integration tests, signed DEV smoke helper and rollback gate verifier.
+
+**Missing implementation:** assess source-specific form/Meta/Angi/LSA mappings, post-call result/failure normalization, reusable authenticated n8n gate reads, parity and per-attempt audit. Preserve UTM/source/campaign identifiers end to end. Resolve retry-policy contradictions before configuring cadence. Keep server-side consent and fresh final-boundary checks even if n8n orchestrates.
+
+**Missing verification:** valid signed DEV intake, exactly one contact/deal under duplicate/replayed events, async processing/restart, zero provider requests on denied gates, quiet-hours future scheduling, opt-out cancellation of pending work, cross-tenant secret denial and live-config-independent clock tests. Existing Mac gates/unsigned rejection do not prove this full journey. Existing approved synthetic Twenty evidence does not prove continuous writeback.
+
+**Acceptance/evidence:** table-driven invalid input, unsupported FL/OK, protected recipient/AM-1, missing consent, opt-out/STOP, global/tenant kill, quiet/business-hour edges/DST, caps and retry exhaustion; prove no sink invocation when blocked. A valid synthetic signed lead persists before any dispatch; replay creates no extra attempt/contact/deal. Booking/reply/opt-out/closure prevent retries. Verify stale delayed jobs recheck gates and uncertain outcomes reconcile before retry.
+
+**Gates:** fake clocks/providers and local synthetic DB first; signed DEV-only smoke via Mac when requested; keep outbound disabled. Real call/SMS requires separate explicit yes and TEST_PHONE through the dedicated DEV agent/number. Twenty writes require exact dry run and yes. Do Not Call registry lookup remains deferred; internal do-not-contact and all other safety rules remain required. No emergency bypass may silently override an opt-out.
