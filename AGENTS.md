@@ -1,6 +1,8 @@
 # Agent Instructions (Codex + all agents)
 
-> Current portal/agency summary: [docs/codex/CURRENT_STATUS.md](docs/codex/CURRENT_STATUS.md). Read alongside PROGRESS.md to distinguish local acceptance, pushed code and user-confirmed DEV deployment.
+> **Active completion checklist: [docs/codex/COMPLETION-PLAN.md](docs/codex/COMPLETION-PLAN.md).** New steps 1–10 replace old execution numbering; old runner/check IDs below remain historical compatibility references. Current user instructions authorize this documentation consolidation only.
+
+> Historical portal/agency summary: [docs/codex/CURRENT_STATUS.md](docs/codex/CURRENT_STATUS.md). Read alongside PROGRESS.md to distinguish local acceptance, pushed code and user-confirmed DEV deployment.
 
 Background: `CLAUDE.md`, `docs/progress.md`, `docs/decisions.md`, `docs/known-issues.md`, `KYNETIC_CONTEXT.md` (IDs, pricing). Twenty CRM (https://crm.kyneticai.com) is the system of record. Skills: `.claude/skills/` (index `skills-breakdown.md`; use `n8n-code-javascript` for n8n Code nodes, `retell-builder`/`demo-profile-generator` for agent prompts). Portal/CRM app is `crm/` (Next.js + bun; its own `crm/AGENTS.md`). Old `portal/` is deleted. ElevenLabs files: `providers/elevenlabs/`. Check `tools/` before writing a new script.
 
@@ -34,16 +36,20 @@ Background: `CLAUDE.md`, `docs/progress.md`, `docs/decisions.md`, `docs/known-is
 | `GIT_*` | commit identity |
 | `TEST_PHONE`, `PORTAL_URL`, `DEV_PORTAL_URL` | add if missing; checks SKIP without them |
 
-## The loop
-1. Read `docs/codex/PROGRESS.md`; pick the lowest unchecked step.
-2. Build toward that step's checks (below).
-3. Run `scripts/checks/run.sh <step>`. Output is PASS/FAIL/SKIP per check; exit nonzero on any FAIL.
-4. Fix and rerun (max 3 tries per check, then rule 12).
-5. When the step has no FAIL: tick it in PROGRESS.md (note any SKIPs and why), commit, push the branch, and STOP. Each step boundary is a review checkpoint.
+## The loop — active plan
+1. Read `docs/codex/COMPLETION-PLAN.md` and the concise `docs/codex/PROGRESS.md` evidence index. Select the lowest incomplete dependency within the user's authorized scope. Documentation-only tasks do not authorize building or testing integrations.
+2. Reuse existing implementation; distinguish missing code from missing verification. Define concrete acceptance and local/DEV/approved external boundaries before execution.
+3. Map acceptance explicitly to existing `scripts/checks/run.sh <legacy-step>` IDs and relevant tests; these scripts still use old IDs, not new plan numbers. Output is PASS/FAIL/SKIP; exit nonzero on FAIL. New-plan coverage may require additional tests in a separately authorized implementation task; never weaken existing assertions.
+4. Build/test/fix only when authorized; max three consecutive failures on one check, then hard rule 12. Preserve failure history and approval stops.
+5. Record dated revision/environment-bound evidence and SKIPs in the active plan/index, preserving history. Make small complete docs/code commits as required, push the dev branch and stop at review/approval boundaries unless the current user explicitly authorized continuing. A local pass is not deployed or live acceptance.
 
 Live calls in checks are read-only (GET). Writes only to DEV resources.
 
-## Steps and checks (ids match `scripts/checks/checks.py`)
+## HISTORICAL steps and checks — compatibility IDs only
+
+The following original step definitions are preserved unchanged as historical requirements/check-runner references. They are superseded as an ACTIVE checklist by COMPLETION-PLAN.md, not deleted or renumbered in code. Original step 6 live-test approval still applies to new step 9; original 9.2 send approval remains separate. Do not execute historical main/prod/activation wording without current specific authorization.
+
+### Original definitions (ids match `scripts/checks/checks.py`)
 **0 Dev setup** — separate dev portal + db, DEV n8n workflows reaching only TEST_PHONE, dev Alex on Blitz.
 0.1 required env present · 0.2 `crm/.env.dev.example` exists (no values) · 0.3 `n8n/workflows/dev/` has ≥1 workflow JSON · 0.4 every dev workflow named `DEV -`, tagged DEV, inactive, no hardcoded phone except `{{TEST_PHONE}}` placeholder · 0.5 n8n API reachable · 0.6 a `DEV-` agent exists on Blitz · 0.7 DEV_PORTAL_URL returns 200.
 
@@ -63,7 +69,7 @@ Live calls in checks are read-only (GET). Writes only to DEV resources.
 
 **6 Go-live** — 6.1 `docs/onboarding/walkthrough.md` exists · 6.2 email DNS records documented in `docs/onboarding/email-dns.md` · 6.3 MANUAL: full live test — requires Abdullah's yes. Codex stops here.
 
-## Agency continuation — NEW steps 7–12
+## HISTORICAL agency continuation — original steps 7–12
 
 Append-only extension: steps 0–6 and their checks above remain unchanged. Steps 7–12 apply to the Kynetic agency side only. Start step 7 only after step 6 passes and Abdullah explicitly says yes to continuing. Follow steps 7–12 in order, with the same build/test/fix loop, small commits, dev branch, review checkpoints, and three-failure stop rule. The checks below are planned requirements; extend the runner for each new step when implementing it, without changing steps 0–6.
 
@@ -92,9 +98,14 @@ Product decisions remain OPEN: AI cold calling versus manual calling; dialer ven
 12.1 stub webhook handling · 12.2 no live charges without Abdullah's explicit yes. Ask for pricing before implementing dependent billing configuration; stop before any live Stripe operation.
 
 
-## Current agency build authorization — 2026-11-05
+## HISTORICAL agency build authorization — 2026-11-05
 
 Abdullah explicitly requested building steps 7–12 now, continuing between steps, before he runs the final tests. This supersedes the earlier step-6-completion prerequisite for CLOUD/DEV IMPLEMENTATION only. It does not approve a live test, outreach, live Stripe, DNS, production operations or unresolved product defaults. Preserve steps 0–6 and continue testing/pushing small commits on dev/codex-setup; keep unknown choices configurable/unselected and ask before selecting them.
 
 ## Confirmed agency decisions — 2026-11-05
 Abdullah answered the step 7–12 questions and authorized resuming cloud implementation. Use the existing isolated agency tenant; verified active admins only (Abdullah and explicitly provisioned cofounders), never infer access by email. In-app immediate new-lead alerts, daily 8 a.m. America/Los_Angeles summary, monthly reports. Inbox combines SMS/email and manually logged inbound/outbound DMs. Default rates window seven days: picked-up calls / attempted calls, and contacted prospects who reply / contacted prospects. Calling is manual outside the portal plus outcome logging, no dialer provider or AI calls. Editable manual follow-up tasks stop on reply, booking, opt-out or closure. Per-deal editable USD setup/optional recurring/installment drafts, manual invoice delivery and reminder drafts; prices never defaulted. Reuse existing email/SMS adapter foundations in stub mode; sender configuration and every real send/Stripe action remain separately gated. Client ops uses existing admin health/onboarding and masked integration configuration. Continue between steps without mid-build deploys.
+
+
+## Documentation consolidation — 2026-11-06
+
+Abdullah designated COMPLETION-PLAN.md as the sole current completion checklist. Earlier numbering, wave order and prerequisite wording above are retained historically, with conflicts recorded in that plan. Confirmed agency decisions and ALL safety rules/working conventions remain binding. This task does not renew old implementation/deploy/provider permissions. Retain verified server-side auth, server-side consent, quiet hours, opt-outs, global/tenant kills, synthetic DEV/stub defaults, manual agency calls/DM tracking, custom per-deal pricing, recipient restrictions, protected resources and exact external-write approvals. Stage changes must not silently send messages, reserve appointments, invite users or charge money.
