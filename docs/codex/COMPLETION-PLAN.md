@@ -150,3 +150,17 @@ Add dated callbacks, repeated call attempts/history and requeue rules; current f
 **Acceptance/evidence:** synthetic intake→lead/pipeline→manual contact→demo booking/attendance→proposal/contract→payment→onboarding→client operations/report/support; opt-out/no-show/lost/nurture branches; crash/replay/timeout recovery. Browser coverage includes keyboard/touch, mobile overflow/targets, dark/reduced motion, pending/error/empty states and no-JS where supported. Confirm anonymous/non-admin/cross-tenant denial after each relevant change. Include manual screen-reader evidence and scoped numeric performance limits.
 
 **Gates:** local synthetic acceptance then DEV revision-bound walkthrough via Mac. Before any real action, present exact action/recipient/agent/number/provider writes, dry-run payload, expected records, retry/recovery and restoration plan; wait for yes. Old step-6 full live test and old step-9.2 TEST_PHONE send remain separate explicit approvals under this new numbering. Reconcile uncertain actions before retry, prohibit unexpected follow-ups and restore outbound off. Three consecutive failures on one check means record blocker, commit/push and wait; this reorganization does not reset counters.
+
+## 10. Production release
+
+**Status: BLOCKED. Scope/dependencies:** readiness review, explicit release approval, production deployment, verification and monitoring. Blocked on unverified steps 2–9, runtime/provider prerequisites and absent explicit production approval. No production action is authorized by this plan.
+
+**Reuse:** tested deployment/rollback infrastructure, migration conventions, health checks, backup/restore and monitoring foundations; reuse does not authorize the legacy production deploy path.
+
+**Missing implementation:** close only readiness-review-confirmed gaps in monitoring thresholds, stuck-job alerting, log rotation, private diagnostics, release runbook and recovery ownership. Maintain strict separation between DEV/test records and real operations.
+
+**Missing verification:** current production configuration and least-privilege credentials, isolation, approved accounts, backup/restore, migration/rollback, worker/schedules and provider readiness; human-approved release scope, outstanding risk acceptance and rollback trigger. Historical production assertions are not current observations.
+
+**Acceptance/evidence:** review exact revision, schema compatibility, dependency/security results, scoped E2E evidence, consent/A2P/legal requirements and approved sender/provider configuration. Approval must identify target/action/revision; deployment must preserve protected services and produce health/auth/gate/worker/queue evidence. Verify only explicitly approved production journeys, monitor provider outcomes/failures and document recovery owner. No force push, main merge or .github edit in this docs task. A later production source/merge decision requires its own instruction.
+
+**Gates:** documentation/readiness review is local; production/VPS work remains Mac-script handoff with push, stop and output verification. DNS, workflow activation, live calls/messages/bookings/Stripe and protected integration actions remain independent gates even after a deployment approval. A successful DEV deploy, polished UI or local green test suite is never production approval.
