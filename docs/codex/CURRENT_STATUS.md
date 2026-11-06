@@ -1,5 +1,8 @@
 # Current portal and agency status
 
+> **HISTORICAL — November 6 status snapshot, superseded as the current checklist.** Read [COMPLETION-PLAN.md](COMPLETION-PLAN.md) and the concise [evidence index](PROGRESS.md). The results and revision distinctions below retain their original scope; the short remaining-work list is not an alternative plan.
+
+
 Updated **2026-11-06**, America/Los_Angeles. This is the current summary for portal/agency work on **dev/codex-setup**. [PROGRESS.md](PROGRESS.md) retains the chronological evidence and original step checklists. It does not update or supersede the separate Twenty business roadmap.
 
 ## Code versus deployment
