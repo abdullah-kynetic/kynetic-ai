@@ -119,3 +119,16 @@ html.am-lock { overflow: hidden; }
   .kn-map .kn-pop { position: static; display: block !important; width: auto; margin: 0 0 14px; pointer-events: auto; border-color: var(--color-border); }
   .kn-map .kn-pop[hidden] { display: block !important; }
 }
+
+/* Hover card: how it is usually done vs with Kynetic */
+.kn-pop { width: min(460px, 94%); }
+.kn-pop__cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px; }
+.kn-pop__col { border-radius: 12px; padding: 12px 14px; background: var(--color-alt); }
+.kn-pop__col--new { background: var(--espresso-band); }
+.kn-pop__label { margin: 0 0 8px !important; font-size: 11px !important; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--color-muted) !important; }
+.kn-pop__col--new .kn-pop__label { color: var(--espresso-gold) !important; }
+.kn-pop__col li { font-size: .875rem; line-height: 1.4; }
+.kn-pop__col--now li::before { background: var(--color-border-input); }
+.kn-pop__col--new li { color: var(--espresso-text); }
+.kn-pop__col--new li::before { background: var(--espresso-accent-text); }
+@media (max-width: 809px) { .kn-pop { width: auto; } .kn-pop__cols { grid-template-columns: 1fr; } }

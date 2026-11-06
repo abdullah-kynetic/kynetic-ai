@@ -21,10 +21,14 @@ export function initMapPop() {
     pop.hidden = false;
     n.classList.add('is-open');
     active = n;
-    const m = map.getBoundingClientRect(), r = n.getBoundingClientRect(), pw = pop.offsetWidth, ph = pop.offsetHeight;
-    const leftNode = r.left + r.width / 2 < m.left + m.width / 2;
-    let x = leftNode ? r.right - m.left + 14 : r.left - m.left - pw - 14;
-    x = Math.max(0, Math.min(x, m.width - pw));
+    // Fit the card in the gap between the two node columns, so it never covers a neighbouring system.
+    const m = map.getBoundingClientRect(), r = n.getBoundingClientRect();
+    const gapL = Math.max(...nodes.filter((x) => +x.dataset.pop! < 3).map((x) => x.getBoundingClientRect().right));
+    const gapR = Math.min(...nodes.filter((x) => +x.dataset.pop! >= 3).map((x) => x.getBoundingClientRect().left));
+    const w = Math.max(300, Math.min(420, gapR - gapL - 24));
+    pop.style.width = `${w}px`;
+    const ph = pop.offsetHeight;
+    const x = Math.max(0, Math.min((gapL + gapR) / 2 - m.left - w / 2, m.width - w));
     let y = r.top - m.top + r.height / 2 - ph / 2;
     y = Math.max(-8, Math.min(y, m.height - ph + 8));
     pop.style.left = `${x}px`;
