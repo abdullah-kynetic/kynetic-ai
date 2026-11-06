@@ -76,7 +76,7 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
   }
   // FAQ: static, answers visible
   const faqItems = page.locator('#faq .kn-faq__item');
-  ok('FAQ: 5 questions, each with a visible answer', (await faqItems.count()) === 5 && (await page.locator('#faq dd:visible').count()) === 5);
+  ok('FAQ: 3 questions, each with a visible answer', (await faqItems.count()) === 3 && (await page.locator('#faq dd:visible').count()) === 3);
   // audit overlay validation
   let reqs = 0; page.on('request', (r) => { if (r.method() === 'POST') reqs++; });
   await page.locator('#hero a[href*="cal.com"]').first().click(); await page.waitForTimeout(500);
