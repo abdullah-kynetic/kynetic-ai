@@ -1,5 +1,8 @@
 # Agency steps 7–12 — local review
 
+> **Test/screen guide, not an active completion checklist.** Use [COMPLETION-PLAN.md](COMPLETION-PLAN.md) and [PROGRESS.md](PROGRESS.md). Original step IDs below name existing runner coverage only. Local/stub acceptance does not establish the new agency workflow or provider readiness.
+
+
 > Current status: [CURRENT_STATUS.md](CURRENT_STATUS.md). Agency base code was deployed to DEV at `c34b11a` per Mac output; subsequent UI refinements through `1eb4b8e` await deployment. Latest tests: 527 unit cases, 3 browser workflows.
 
 All implementation is on dev/codex-setup. Nothing in this work deploys or changes production. The previous step-6 live-test gate remains; step 9's real TEST_PHONE send is also pending. Source and local tests do not establish deployed behavior.
