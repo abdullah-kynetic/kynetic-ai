@@ -1,5 +1,7 @@
 # Outbound speed to lead: v1 build plan (task 3.5)
 
+> **HISTORICAL — legacy Retell build/approval record.** The sole active project checklist is [COMPLETION-PLAN.md](../../../docs/codex/COMPLETION-PLAN.md). The dated current-state and approval instructions below are preserved as history; they do not authorize provider calls, existing agent/workflow edits, protected resources or renewed activation. Current DEV callback work uses the designated DEV ElevenLabs resources, not this legacy plan.
+
 Status: BUILT and running (updated Oct 17, 2026). This file began as the Oct 8 proposal and still carries that plan for reference; the sections marked APPROVAL were the approval gates for the original build and are historical. Only "Current state" is kept current. Live-system changes still need Abdullah's yes (KYNETIC_CONTEXT.md rules 1 and 2). Decisions behind this plan: D-010, D-011, D-012, D-013, D-014.
 
 ## Current state (Oct 17, 2026)
