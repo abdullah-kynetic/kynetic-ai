@@ -1,5 +1,8 @@
 # CRM docs cross-review (final, 2026-10-25)
 
+> **HISTORICAL — October 25 cross-review.** Active completion checklist: [COMPLETION-PLAN.md](codex/COMPLETION-PLAN.md). Preserve the reviewed specifications and decisions; historical "final", pricing and implementation claims are not a current release certification. Conflicts remain listed in the active plan.
+
+
 Reviewed the 8 docs against each other, `SPEC_client_crm_portal.md` and `DECISIONS_locked.md` (DECISIONS wins). On 2026-10-25 Abdullah approved every open decision; items he did not rule on explicitly took the recommended option and are marked "Decided 2026-10-25" in the docs. Nothing is deployed or merged.
 
 ## Where the docs are
