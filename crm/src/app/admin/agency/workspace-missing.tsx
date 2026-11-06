@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import PageContainer from '@/components/layout/page-container';
+import PageContainer from '@/components/agency/page';
 
 /** Shown instead of an error when the synthetic agency workspace has not been created yet. */
 export function AgencyWorkspaceMissing({ pageTitle }: { pageTitle: string }) {

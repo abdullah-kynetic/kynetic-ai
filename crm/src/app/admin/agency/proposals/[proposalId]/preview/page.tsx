@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { headers } from 'next/headers';
 import { forbidden, notFound } from 'next/navigation';
-import PageContainer from '@/components/layout/page-container';
+import PageContainer from '@/components/agency/page';
 import { decideAdminAccess } from '@/server/admin';
 import { getAgencyProposal, PROPOSAL_SECTIONS } from '@/server/proposals';
 import { ModuleDisabledError } from '@/server/modules';

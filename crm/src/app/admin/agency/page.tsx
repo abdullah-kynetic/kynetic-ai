@@ -1,11 +1,10 @@
-import Link from 'next/link';
 import { getAgencyRates } from '@/server/agency/inbox';
 import { percent } from '@/server/agency/rates';
 import { US_STATE_CODES } from '@/server/agency/dialer-policy';
 import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
-import PageContainer from '@/components/layout/page-container';
-import { Button } from '@/components/ui/button';
+import PageContainer from '@/components/agency/page';
+import { AgencySubmitButton as Button } from '@/components/agency/motion';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { decideAdminAccess } from '@/server/admin';
@@ -75,126 +74,39 @@ export default async function AgencyPage({
           @example.test email, and provide a reason when moving to Lost.
         </p>
       )}
-      <section aria-label='Seven-day agency rates' className='mb-4 rounded border p-4'>
+      <section aria-label='Seven-day agency rates' className='agency-metrics'>
         <h2>Last seven days</h2>
+        <dl>
+          <div>
+            <dt>Pick rate</dt>
+            <dd>
+              {percent(rates.pickRate)}
+              <span>
+                {rates.picked} answered / {rates.attempted} attempted calls
+              </span>
+            </dd>
+          </div>
+          <div>
+            <dt>Reply rate</dt>
+            <dd>
+              {percent(rates.replyRate)}
+              <span>
+                {rates.replied} replies / {rates.contacted} messaged prospects
+              </span>
+            </dd>
+          </div>
+        </dl>
         <p>
-          Pick rate {percent(rates.pickRate)} ({rates.picked}/{rates.attempted} calls) · Reply rate{' '}
-          {percent(rates.replyRate)} ({rates.replied}/{rates.contacted} messaged prospects)
-        </p>
-        <p className='text-sm'>
           Replies count unique prospects after outreach in this window. Failed messages and
           simulated sends are excluded.
         </p>
       </section>
-      <nav aria-label='Agency tools' className='mb-4 flex flex-wrap gap-4'>
-        <Link href='/admin/agency/billing' className='underline'>
-          Billing
-        </Link>
-        <Link href='/admin/agency/ops' className='underline'>
-          Operations
-        </Link>
-        <Link href='/admin/agency/compose' className='underline'>
-          Compose
-        </Link>
-        <Link href='/admin/agency/inbox' className='underline'>
-          Inbox
-        </Link>
-        <Link href='/admin/agency/dialer' className='inline-flex min-h-11 items-center underline'>
-          Human dialer
-        </Link>
-        <Link
-          href='/admin/agency/campaigns'
-          className='inline-flex min-h-11 items-center underline'
-        >
-          Campaigns
-        </Link>
-        <Link
-          href='/admin/agency/proposals'
-          className='inline-flex min-h-11 items-center underline'
-        >
-          Proposal drafts
-        </Link>
-      </nav>
-      <p className='mb-6 rounded-md border p-3'>
+
+      <p className='agency-notice'>
         Synthetic workspace · Use fictional names and @example.test emails. No outreach starts from
         this page.
       </p>
-      <section aria-label='Agency alerts' className='mb-6 space-y-2'>
-        <h2 className='font-semibold'>Agency alerts</h2>
-        {alerts.length ? (
-          alerts.map((a) => (
-            <p key={a.id}>
-              {a.title} · {a.body}
-            </p>
-          ))
-        ) : (
-          <p>No alerts yet.</p>
-        )}
-      </section>
-      <section className='mb-8 space-y-4' aria-labelledby='agency-add-lead'>
-        <h2 id='agency-add-lead' className='text-lg font-semibold'>
-          Add a synthetic lead
-        </h2>
-        <form action={createAgencyLeadAction} className='grid max-w-3xl gap-4 sm:grid-cols-2'>
-          <div className='space-y-2'>
-            <Label htmlFor='firstName'>Name</Label>
-            <Input id='firstName' name='firstName' maxLength={200} required />
-          </div>
-          <div className='space-y-2'>
-            <Label htmlFor='email'>Synthetic email</Label>
-            <Input
-              id='email'
-              name='email'
-              type='email'
-              placeholder='prospect@example.test'
-              required
-            />
-          </div>
-          <div className='space-y-2'>
-            <Label htmlFor='phone'>Synthetic phone (optional)</Label>
-            <Input id='phone' name='phone' type='tel' placeholder='+12025550123' />
-            <p className='text-muted-foreground text-sm'>
-              Use a reserved +1 area-code 555-01xx number.
-            </p>
-          </div>
-          <div className='space-y-2'>
-            <Label htmlFor='state'>State (required for dialer)</Label>
-            <select id='state' name='state' className={`${selectClass} w-full`}>
-              <option value=''>Unknown</option>
-              {US_STATE_CODES.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-            <p className='text-muted-foreground text-sm'>
-              Florida and Oklahoma are excluded from the dialer.
-            </p>
-          </div>
-          <div className='space-y-2 sm:col-span-2'>
-            <Label htmlFor='source'>Lead source</Label>
-            <select id='source' name='source' className={`${selectClass} w-full`}>
-              <optgroup label='Inbound'>
-                {['form', 'booking', 'referral', 'other'].map((c) => (
-                  <option key={c} value={`inbound:${c}`}>
-                    {c}
-                  </option>
-                ))}
-              </optgroup>
-              <optgroup label='Outbound'>
-                {['cold_call', 'sms', 'email', 'dm'].map((c) => (
-                  <option key={c} value={`outbound:${c}`}>
-                    {c.replaceAll('_', ' ')}
-                  </option>
-                ))}
-              </optgroup>
-            </select>
-          </div>
-          <Button type='submit' className='sm:col-span-2'>
-            Add lead
-          </Button>
-        </form>
-      </section>
+
       <section className='mb-8 space-y-4' aria-labelledby='agency-leads'>
         <h2 id='agency-leads' className='text-lg font-semibold'>
           Leads
@@ -290,6 +202,82 @@ export default async function AgencyPage({
         {data.leads.length === 0 && (
           <p className='text-muted-foreground'>No leads match these filters.</p>
         )}
+      </section>
+      <section aria-label='Agency alerts' className='agency-alerts'>
+        <h2 className='font-semibold'>Agency alerts</h2>
+        {alerts.length ? (
+          alerts.map((a) => (
+            <p key={a.id}>
+              {a.title} · {a.body}
+            </p>
+          ))
+        ) : (
+          <p>No alerts yet.</p>
+        )}
+      </section>
+      <section className='mb-8 space-y-4' aria-labelledby='agency-add-lead'>
+        <h2 id='agency-add-lead' className='text-lg font-semibold'>
+          Add a synthetic lead
+        </h2>
+        <form action={createAgencyLeadAction} className='agency-form grid gap-4 sm:grid-cols-2'>
+          <div className='space-y-2'>
+            <Label htmlFor='firstName'>Name</Label>
+            <Input id='firstName' name='firstName' maxLength={200} required />
+          </div>
+          <div className='space-y-2'>
+            <Label htmlFor='email'>Synthetic email</Label>
+            <Input
+              id='email'
+              name='email'
+              type='email'
+              placeholder='prospect@example.test'
+              required
+            />
+          </div>
+          <div className='space-y-2'>
+            <Label htmlFor='phone'>Synthetic phone (optional)</Label>
+            <Input id='phone' name='phone' type='tel' placeholder='+12025550123' />
+            <p className='text-muted-foreground text-sm'>
+              Use a reserved +1 area-code 555-01xx number.
+            </p>
+          </div>
+          <div className='space-y-2'>
+            <Label htmlFor='state'>State (required for dialer)</Label>
+            <select id='state' name='state' className={`${selectClass} w-full`}>
+              <option value=''>Unknown</option>
+              {US_STATE_CODES.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+            <p className='text-muted-foreground text-sm'>
+              Florida and Oklahoma are excluded from the dialer.
+            </p>
+          </div>
+          <div className='space-y-2 sm:col-span-2'>
+            <Label htmlFor='source'>Lead source</Label>
+            <select id='source' name='source' className={`${selectClass} w-full`}>
+              <optgroup label='Inbound'>
+                {['form', 'booking', 'referral', 'other'].map((c) => (
+                  <option key={c} value={`inbound:${c}`}>
+                    {c}
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label='Outbound'>
+                {['cold_call', 'sms', 'email', 'dm'].map((c) => (
+                  <option key={c} value={`outbound:${c}`}>
+                    {c.replaceAll('_', ' ')}
+                  </option>
+                ))}
+              </optgroup>
+            </select>
+          </div>
+          <Button type='submit' className='sm:col-span-2'>
+            Add lead
+          </Button>
+        </form>
       </section>
       <section className='space-y-3' aria-labelledby='agency-stages'>
         <h2 id='agency-stages' className='text-lg font-semibold'>

@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { AgencySubmitButton as Button } from '@/components/agency/motion';
 import { Input } from '@/components/ui/input';
 import { agencyCampaignStats, listAgencyCampaignTasks } from '@/server/agency/campaign-engine';
 import type { CampaignStep } from '@/server/agency/campaign-policy';

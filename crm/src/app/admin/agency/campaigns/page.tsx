@@ -2,8 +2,8 @@ import Link from 'next/link';
 import { CampaignSequence } from './sequence';
 import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
-import PageContainer from '@/components/layout/page-container';
-import { Button } from '@/components/ui/button';
+import PageContainer from '@/components/agency/page';
+import { AgencySubmitButton as Button } from '@/components/agency/motion';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { decideAdminAccess } from '@/server/admin';
@@ -41,7 +41,7 @@ export default async function CampaignsPage({
       {query.error && (
         <p role='alert'>Use a unique campaign name and a script between 1 and 5,000 characters.</p>
       )}
-      <form action={createCampaignAction} className='mb-8 max-w-2xl space-y-4'>
+      <form action={createCampaignAction} className='agency-form mb-8 max-w-2xl'>
         <div>
           <Label htmlFor='name'>Campaign name</Label>
           <Input id='name' name='name' maxLength={120} required />
@@ -68,7 +68,7 @@ export default async function CampaignsPage({
         {campaigns.map((c) => (
           <section
             key={c.id}
-            className='space-y-3 rounded border p-4'
+            className='agency-panel space-y-4'
             aria-labelledby={`campaign-${c.id}`}
           >
             <h2 id={`campaign-${c.id}`} className='text-lg font-semibold'>

@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import PageContainer from '@/components/layout/page-container';
-import { Button } from '@/components/ui/button';
+import PageContainer, { AgencyEmptyState, AgencyStatus } from '@/components/agency/page';
+import { AgencySubmitButton as Button } from '@/components/agency/motion';
 import { Input } from '@/components/ui/input';
 import { agencyCaller } from '../caller';
 import { getAgencyWorkspace, listAgencyLeads } from '@/server/agency';
@@ -41,44 +41,92 @@ export default async function AgencyBilling({
           different terms.
         </p>
       )}
-      <form action={saveTermsAction} className='my-6 max-w-xl space-y-3'>
-        <h2 className='font-semibold'>Deal pricing</h2>
-        <label>
-          Deal
-          <select name='dealId' required>
-            {deals.map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label htmlFor='billing-setup'>
-          Setup fee (USD)
-          <Input
-            id='billing-setup'
-            name='setup'
-            required
-            placeholder='Enter agreed fee'
-            inputMode='decimal'
-          />
-        </label>
-        <label htmlFor='billing-monthly'>
-          Optional monthly fee (USD)
-          <Input id='billing-monthly' name='monthly' inputMode='decimal' />
-        </label>
-        <label htmlFor='billing-installments'>
-          Optional setup installments (USD, comma separated)
-          <Input
-            id='billing-installments'
-            name='installments'
-            placeholder='Amounts must total the setup fee'
-          />
-        </label>
-        <Button type='submit' disabled={!deals.length}>
-          Save deal terms
-        </Button>
-      </form>
+      <div className='agency-columns'>
+        <form action={saveTermsAction} className='agency-form'>
+          <h2 className='font-semibold'>Deal pricing</h2>
+          <label>
+            Deal
+            <select name='dealId' required>
+              {deals.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label htmlFor='billing-setup'>
+            Setup fee (USD)
+            <Input
+              id='billing-setup'
+              name='setup'
+              required
+              placeholder='Enter agreed fee'
+              inputMode='decimal'
+            />
+          </label>
+          <label htmlFor='billing-monthly'>
+            Optional monthly fee (USD)
+            <Input id='billing-monthly' name='monthly' inputMode='decimal' />
+          </label>
+          <label htmlFor='billing-installments'>
+            Optional setup installments (USD, comma separated)
+            <Input
+              id='billing-installments'
+              name='installments'
+              placeholder='Amounts must total the setup fee'
+            />
+          </label>
+          <Button type='submit' disabled={!deals.length}>
+            Save deal terms
+          </Button>
+        </form>
+
+        <form action={createInvoiceAction} className='agency-form'>
+          <h2 className='font-semibold'>Create invoice draft</h2>
+          <label>
+            Deal
+            <select name='dealId' required>
+              {data.terms.map((t) => (
+                <option key={t.deal_id} value={t.deal_id}>
+                  {deals.find((d) => d.id === t.deal_id)?.name ?? 'Deal'}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Fee
+            <select name='kind'>
+              <option value='setup'>Setup</option>
+              <option value='monthly'>Monthly</option>
+            </select>
+          </label>
+          <label htmlFor='billing-installment'>
+            Setup installment number
+            <Input
+              id='billing-installment'
+              type='number'
+              name='installment'
+              min={0}
+              max={11}
+              defaultValue={0}
+            />
+          </label>
+          <p className='text-sm'>
+            0 is the first installment; use 0 when there are no installments.
+          </p>
+          <label htmlFor='billing-period'>
+            Monthly billing period
+            <Input id='billing-period' name='period' type='month' />
+          </label>
+          <label htmlFor='billing-dueOn'>
+            Due date
+            <Input id='billing-dueOn' name='dueOn' type='date' required />
+          </label>
+          <Button type='submit' disabled={!data.terms.length}>
+            Create draft
+          </Button>
+        </form>
+      </div>
       <section>
         <h2 className='font-semibold'>Agreed draft terms</h2>
         {data.terms.map((t) => (
@@ -89,55 +137,19 @@ export default async function AgencyBilling({
           </p>
         ))}
       </section>
-      <form action={createInvoiceAction} className='my-6 max-w-xl space-y-3'>
-        <h2 className='font-semibold'>Create invoice draft</h2>
-        <label>
-          Deal
-          <select name='dealId' required>
-            {data.terms.map((t) => (
-              <option key={t.deal_id} value={t.deal_id}>
-                {deals.find((d) => d.id === t.deal_id)?.name ?? 'Deal'}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Fee
-          <select name='kind'>
-            <option value='setup'>Setup</option>
-            <option value='monthly'>Monthly</option>
-          </select>
-        </label>
-        <label htmlFor='billing-installment'>
-          Setup installment number
-          <Input
-            id='billing-installment'
-            type='number'
-            name='installment'
-            min={0}
-            max={11}
-            defaultValue={0}
-          />
-        </label>
-        <p className='text-sm'>0 is the first installment; use 0 when there are no installments.</p>
-        <label htmlFor='billing-period'>
-          Monthly billing period
-          <Input id='billing-period' name='period' type='month' />
-        </label>
-        <label htmlFor='billing-dueOn'>
-          Due date
-          <Input id='billing-dueOn' name='dueOn' type='date' required />
-        </label>
-        <Button type='submit' disabled={!data.terms.length}>
-          Create draft
-        </Button>
-      </form>
-      <section className='space-y-3'>
+      <section className='agency-ledger my-8 space-y-3'>
         <h2 className='font-semibold'>Invoices — stub ledger</h2>
+        {!data.invoices.length && (
+          <AgencyEmptyState
+            title='No invoice drafts yet'
+            description='Save deal terms, then create a setup or monthly invoice draft. No payment is collected.'
+          />
+        )}
         {data.invoices.map((i) => (
-          <article key={i.id} className='rounded border p-3'>
+          <article key={i.id} className='agency-panel space-y-4'>
             <p>
-              {i.cycle_key} · {usd(i.amount_cents)} · {i.status} · Due {String(i.due_on)}
+              {i.cycle_key} · <strong>{usd(i.amount_cents)}</strong> ·{' '}
+              <AgencyStatus value={i.status} /> · Due {String(i.due_on)}
             </p>
             <div className='flex flex-wrap gap-3'>
               {(['invoice.finalized', 'invoice.paid', 'invoice.payment_failed'] as const).map(

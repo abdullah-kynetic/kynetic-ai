@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import PageContainer from '@/components/layout/page-container';
-import { Button } from '@/components/ui/button';
+import PageContainer, { AgencyEmptyState, AgencyStatus } from '@/components/agency/page';
+import { AgencySubmitButton as Button } from '@/components/agency/motion';
 import { Input } from '@/components/ui/input';
 import { agencyCaller } from '../caller';
 import { getAgencyWorkspace, listAgencyLeads } from '@/server/agency';
@@ -28,58 +28,74 @@ export default async function Compose({
     >
       <Link href='/admin/agency/inbox'>Agency inbox</Link>
       {q.saved && <p role='status'>Draft saved.</p>}
-      <form action={saveMessageAction} className='my-6 max-w-xl space-y-4'>
-        <label>
-          Prospect
-          <select name='contactId' required defaultValue={q.contactId}>
-            {leads.map((l) => (
-              <option key={l.id} value={l.id}>
-                {l.firstName}
-              </option>
+      <div className='agency-columns'>
+        <form action={saveMessageAction} className='agency-form'>
+          <h2>New draft</h2>
+          <label>
+            Prospect
+            <select name='contactId' required defaultValue={q.contactId}>
+              {leads.map((l) => (
+                <option key={l.id} value={l.id}>
+                  {l.firstName}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Channel
+            <select name='channel' defaultValue={q.channel === 'email' ? 'email' : 'sms'}>
+              <option>sms</option>
+              <option>email</option>
+            </select>
+          </label>
+          <label htmlFor='compose-subject'>
+            Subject (email)
+            <Input id='compose-subject' name='subject' maxLength={200} />
+          </label>
+          <label>
+            Message
+            <textarea
+              name='body'
+              required
+              maxLength={5000}
+              className='block min-h-32 w-full border p-3'
+            />
+          </label>
+          <Button type='submit' disabled={!leads.length}>
+            Save draft
+          </Button>
+        </form>
+        <section>
+          <h2>Recent drafts</h2>
+          {!drafts.length && (
+            <AgencyEmptyState
+              title='Your drafts will appear here'
+              description='Save a message on the left, then check its delivery gates. Nothing is sent.'
+            />
+          )}
+          <div className='agency-list'>
+            {drafts.map((d) => (
+              <article key={d.id}>
+                <div className='agency-message-heading'>
+                  <span className='text-sm font-medium'>{d.channel.toUpperCase()}</span>
+                  <AgencyStatus value={d.status} />
+                </div>
+                {d.block_reason && (
+                  <p className='text-sm text-muted-foreground'>
+                    {d.block_reason.replaceAll('_', ' ')}
+                  </p>
+                )}
+                <p>{d.subject}</p>
+                <p className='agency-message-body'>{d.body}</p>
+                <form action={previewMessageAction.bind(null, d.id)}>
+                  <Button type='submit' variant='outline' disabled={d.status === 'simulated'}>
+                    Check gates / simulate
+                  </Button>
+                </form>
+              </article>
             ))}
-          </select>
-        </label>
-        <label>
-          Channel
-          <select name='channel' defaultValue={q.channel === 'email' ? 'email' : 'sms'}>
-            <option>sms</option>
-            <option>email</option>
-          </select>
-        </label>
-        <label htmlFor='compose-subject'>
-          Subject (email)
-          <Input id='compose-subject' name='subject' maxLength={200} />
-        </label>
-        <label>
-          Message
-          <textarea
-            name='body'
-            required
-            maxLength={5000}
-            className='block min-h-32 w-full border p-3'
-          />
-        </label>
-        <Button type='submit' disabled={!leads.length}>
-          Save draft
-        </Button>
-      </form>
-      <h2 className='font-semibold'>Recent drafts</h2>
-      <div className='space-y-3'>
-        {drafts.map((d) => (
-          <article key={d.id} className='rounded border p-4'>
-            <p>
-              {d.channel} · {d.status}
-              {d.block_reason ? ` · ${d.block_reason.replaceAll('_', ' ')}` : ''}
-            </p>
-            <p>{d.subject}</p>
-            <p className='whitespace-pre-wrap'>{d.body}</p>
-            <form action={previewMessageAction.bind(null, d.id)}>
-              <Button type='submit' variant='outline' disabled={d.status === 'simulated'}>
-                Check gates / simulate
-              </Button>
-            </form>
-          </article>
-        ))}
+          </div>
+        </section>
       </div>
     </PageContainer>
   );
