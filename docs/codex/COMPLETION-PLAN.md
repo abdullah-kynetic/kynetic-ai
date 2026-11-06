@@ -481,3 +481,52 @@ The following mappings preserve requirements rather than adopting historical wor
 | docs/progress, decisions, source/locked spec, legacy Retell build | 1–10 | Dated business/technical history retained; no renewed permission to execute old active/live instructions |
 
 The task supplied screenshot-derived requirements as text; no screenshot was independently inspected in this cleanup. Their full acceptance is in step 5 and the semantic assertions in steps 6–9. Any omitted image-specific detail remains NOT ASSESSED, not implicitly implemented.
+
+## Explicit later items and genuine deferrals
+
+These are retained requirements or excluded product choices, not extra numbered steps. No deferral waives an applicable security/safety gate. Promote a later item into the owning step only with explicit scope and acceptance.
+
+| Item / source | Owning step | Disposition and re-entry condition |
+| --- | --- | --- |
+| Do Not Call registry lookup | 4 | Explicitly deferred by Abdullah; internal DNC/opt-outs/protected-recipient blocks remain mandatory |
+| AI cold calling / vendor dialer / M18-03 click-to-call | 5 | Not selected; manual own-phone calling plus logging is current scope. Vendor/AI change requires a new decision and approval |
+| Live DM account integrations | 6 | Manual inbound/outbound DM tracking selected; choose platform/scopes before proposing account integration |
+| Landing-page conversion analytics | 7 | Explicit later item; preserve UTM/source and stable prospect/deal/event links now. Define consent-aware sessions, form starts/submits, conversion denominators and duplicate/bot exclusions before implementation |
+| Ad spend/CPL, advanced funnel/attribution | 7 | M19-01 retained later; define spend source, currency, attribution model/window and reconciled cost-per-lead before connectors |
+| Revenue/expenses, margin/MRR/churn, team/cost reports | 7, 8 | Core definitions/record sources need audit; deeper dashboards later. Include user/owner workload, attempts/outcomes, revenue/cost allocation and provider spend; do not infer these from invoice stubs |
+| Client usage/spend caps | 4, 7, 8 | M19-02 retained operational safety requirement before cost-sensitive live usage; not dismissed as decorative analytics |
+| Additional invoice/CRM/OPM connectors | 6, 8 | M14-07/F-97/vendor-specific OPM later until first-client systems and access chosen; Google Drive/Sheets/Docs remain prohibited |
+| E-sign provider | 8 | Contract lifecycle retained now; provider not chosen, stop before external integration/send rather than inventing one |
+| Full proposal catalog/critical-path estimator/AI drafts | 8 | F-104/105 later expansion beyond existing drafts, preserve measurements/templates and human approval |
+| Referral/case-study/reputation/GBP/chat/insurance demos | 6, 8 | M20-07 and P2 later; verify client permission, explicit module scope and no protected agent/demo edits |
+| PRD client owner import, per-staff Google calendar sync, per-call client costs | 2, 5–8 | F-95, F-25, F-29 later; current agency requirements do not automatically enable all client upsells |
+| PRD custom domains, PWA, public self-booking, custom report builder | 3, 6, 7, 9 | F-40/45/46/50 later; DNS/network/security scope must be agreed before release |
+| Other PRD Later capabilities | 1–9 | F-09/11/18/21/23, F-56/59/67/68/69 and client-owner 2FA remain later per original spec, not silently removed. Audit exact feature text before promotion; staff 2FA remains required |
+| Visual workflow builder / starter chat demos | 1, 5, 9 | F-34/F-52 explicitly skipped in original v1; no authority to reintroduce routes/features |
+| Legacy portal/sender deletion and cutover | 1, 3, 6, 10 | Not authorized. Confirm consumers, retention, parity and migration/rollback before requesting exact retirement approval; preserve unrelated portal/ work |
+| Deadline, sales targets, formal launch scope | 1, 10 | Historical dates/counts are not renewed. Set an actual release scope/date with Abdullah; no invented promise |
+
+## Conflict register and instruction precedence
+
+| Conflict | Evidence | Current safe handling / unresolved decision |
+| --- | --- | --- |
+| Old 0–12 / M waves / proposed 13–22 versus ten-step checklist | AGENTS, BUILD_PLAN and current request | This plan is active. Old numeric runner IDs retain their original meaning; never run scripts/checks/run.sh 6 expecting new step 6 coverage. A future execution task must explicitly map existing check IDs and add missing acceptance without weakening assertions. No 13–22 checklist was located; do not fabricate its history |
+| Earlier preserve-0–6 wording versus replace active numbering | Historical user instructions and AGENTS | Preserve old text/check evidence historically; latest instruction changes active documentation only, not scripts or historical results |
+| Anonymous open mode/auth-last versus verified sessions | Historical progress/KI-013; restored auth and Mac anonymous 401 | Verified server-side auth and staff 2FA stay required; old persona/open-mode instructions are historical, not authorization |
+| n8n-only consent versus portal enforcement | automation-map B3, proposed DC-TBD supersedes, current hard rule | Retain server consent/final-boundary kill/quiet checks. n8n may orchestrate but cannot grant permission or replace them. Ownership decision and parity remain to reconcile; no sender removal |
+| Three attempts/90 sec/+10/+60 versus max four/5 min/hour/day | D-020, Alex spec versus M13-04/B7 | Preserve current restrictive caps/gates. Explicitly decide intended callback policy before configuring/migrating cadence; this docs task selects neither |
+| Legacy stage names versus screenshot-derived agency stages | M16-05 versus latest supplied requirements | New agency target in step 5; reuse records/board, define migration and client/agency distinction before implementation. No data rewritten now |
+| Fixed price histories versus per-deal USD terms | D-017, DC-049/REVIEW-SUMMARY, latest answers | Use explicitly agreed per-deal terms, no invented/default legacy amounts; preserve historical contracts and pricing decisions unchanged |
+| Twenty canonical/no v1 push versus agency portal/sync/summary backup | D-006, DC-043, F-106, M18-01 and earlier writeback evidence | This repo plan governs completion work; Twenty remains business system of record. Direction/ownership and PII boundaries need explicit decision before new sync; no Twenty write in this task, including the previously uploaded report |
+| Old agent/workflow reuse/activation permission versus DEV-only limits | Alex go-live/spec, legacy Retell plan | Do not edit live Alex/Nora/Emily/Retell tools/existing workflows. DEV naming/inactive restrictions and action-specific approval prevail; old preapprovals do not authorize current writes |
+| Old auto-send/invoice/invite on won versus no silent stage effects | Old onboarding/PRD alerts versus latest request | Stage changes may create visible internal tasks/drafts, never silently send, book, invite or charge. Explicitly design approval boundaries before enabling automation |
+| Historical prod deploy/main/branch work instructions versus current branch/task | D-022, BUILD_PLAN, prior merge authorization | Current task stays docs-only on existing dev/codex-setup, no main/PR/force push/.github/provider action. All future VPS work uses Mac handoff; production needs separate approval |
+| Old A2P/provider/workflow state claims disagree | Dated known issues/resource snapshots | Unknown until current authorized read-only evidence; no inferred activation, sender readiness or account upgrade |
+| XLSX promised versus deliberately refused | PRD import specification and M9-01 evidence | Carry implementation gap as an explicit limitation; choose whether to implement or obtain scope deferral, never mark supported |
+| AGENTS overrides CLAUDE versus historical doc decision authority | Root guidance, technical/locked specs | Current user instructions govern this cleanup; retain all hard rules and log unresolved product/technical decisions. Do not weaken restrictions based on an old plan's imperative |
+
+## Evidence and next execution action
+
+Current evidence is indexed in [PROGRESS.md](PROGRESS.md); full dated Codex history is in [PROGRESS-HISTORY.md](PROGRESS-HISTORY.md). Historical report and upload evidence remain untouched as evidence, with historical navigation banners. Technical specifications and decision records retain their detail; they are not independent active checklists.
+
+**Next execution action, not started here:** finish step 1's code/evidence reconciliation on the current revision: validate the highest-risk open/partial mappings (auth/roles, worker/readiness, agency Kanban/repeated calls, report persistence and real provider paths), then propose the smallest step-2/3/4 work slice using existing tests and original runner IDs. Do not start a deployment, external probe/test, provider write or live action from this documentation task. Keep unrelated untracked portal/ intact. Ask only for unresolved choices when dependent implementation is actually ready.
