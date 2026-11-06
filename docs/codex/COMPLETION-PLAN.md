@@ -506,6 +506,44 @@ These are retained requirements or excluded product choices, not extra numbered 
 | Legacy portal/sender deletion and cutover | 1, 3, 6, 10 | Not authorized. Confirm consumers, retention, parity and migration/rollback before requesting exact retirement approval; preserve unrelated portal/ work |
 | Deadline, sales targets, formal launch scope | 1, 10 | Historical dates/counts are not renewed. Set an actual release scope/date with Abdullah; no invented promise |
 
+## Traceability: every PRD Later/Skip row
+
+This table preserves the complete Later/Skip inventory from [PRD.md](../PRD.md). Some agency capabilities have since entered scope; the old label does not defer the current agency requirement. Client upsell scope remains distinct. Other Must/Should requirements retain their milestone acceptance through the full BUILD_PLAN mapping above and the specification reference.
+
+| Feature | Original requirement | Historical priority | Active owner / current disposition |
+| --- | --- | --- | --- |
+| F-04 | As an admin, I need custom dashboard tabs per client | Later | 7 — later custom client dashboard tabs |
+| F-09 | As a team, I need saved views shared across users | Later | 5 — later shared saved views |
+| F-11 | As a user, I want company logo and enrichment | Later | 5 — later logo/enrichment, no guessed personal data |
+| F-13 | Conditional and computed fields | Skip | 5 — explicitly skipped conditional/computed fields |
+| F-18 | As an owner, I want more than one pipeline | Later | 5 — later multiple client pipelines; required agency stage model remains active |
+| F-21 | Recurring tasks | Later | 5 — later general recurring tasks; required dated callbacks remain active |
+| F-23 | File attachments on notes (job-site photos) | Later | 5, 8 — later note-file uploads with private storage |
+| F-25 | Google Calendar two-way sync per staff member | Later | 6 — later per-staff Google calendar sync; Cal booking remains active |
+| F-29 | Per-call cost shown to clients | Later | 7, 8 — later client-visible per-call cost; internal usage/caps retained |
+| F-34 | Visual workflow builder for clients | Skip | 5 — explicitly skipped visual workflow builder |
+| F-40 | Custom domain per client | Later | 3, 10 — later custom client domains, DNS approval required |
+| F-45 | Installable PWA | Later | 9 — later PWA/offline shell |
+| F-46 | Public booking page per client | Later | 6 — later public self-booking; authenticated booking remains active |
+| F-47 | Two-way texting inbox | Later | 6 — agency inbox/dispatch active, broader client takeover/templates separately scoped |
+| F-48 | Reviews | Later | 6, 8 — later reviews/OPM; payment-trigger timer retained with no automatic send permission |
+| F-50 | Custom report builder | Later | 7 — later custom report builder; persisted standard reports required |
+| F-51 | Quotes and invoices | Later | 8 — agency per-deal contract/billing active; broader client quote suite later |
+| F-52 | Starter chat and AI chat demo pages | Skip | 5, 9 — explicitly skipped starter/AI chat demo routes |
+| F-56 | Provision Twilio number and voice agent automatically | Later | 6, 8 — later automatic provisioning; synthetic demo stub acceptance retained, real writes gated |
+| F-59 | Prompt versioning with diff and rollback | Later | 6 — later prompt versioning; no live-agent rollback permission |
+| F-64 | Usage and cost | Later | 7, 8 — internal costs/caps retained; deeper margin analytics later |
+| F-65 | Phase 2: Kynetic's own pipeline | Later | 5 — agency workflow active; replacement of Twenty remains unresolved |
+| F-66 | Phase 2: Billing and MRR | Later | 8 — per-deal billing active; deeper MRR/churn later |
+| F-67 | Phase 2: $100K goal tracker | Later | 7 — later goal tracker, no invented financial targets |
+| F-68 | Phase 2: Email templates | Later | 6, 8 — later template/sync expansion, pricing per deal |
+| F-69 | Phase 2: Audit tool link | Later | 5, 8 — later prospect audit-tool link/results |
+| F-95 | As an owner, I want to import my own data later | Later | 2, 5 — later owner/staff import, admin import safety still required |
+| F-97 | As Kynetic, I want direct connectors to the tools clients already use | Later | 6, 8 — later chosen connectors; Google services remain prohibited |
+| F-104 | AI-drafted admin messages and weekly owner summary | Later | 7, 8 — later human-approved AI drafts |
+| F-105 | Service catalog, proposal builder and timeline estimator | Later | 8 — proposal drafts reused; full catalog/estimator later expansion |
+| F-106 | Twenty to portal client sync | Later | 8 — later signed Twenty→tenant sync; direction/ownership approval unresolved |
+
 ## Conflict register and instruction precedence
 
 | Conflict | Evidence | Current safe handling / unresolved decision |
