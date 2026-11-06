@@ -108,3 +108,17 @@ Add dated callbacks, repeated call attempts/history and requeue rules; current f
 **Acceptance/evidence:** signed inbound event appears once in correct thread/workspace; opt-out blocks future jobs; voicemail is not human pickup; any reply is not positive reply. Gate denial yields zero provider calls. Stub success is visibly simulated/excluded from real metrics. Retry/timeout never duplicates a send/reservation; partial calendar/portal success reconciles. Booked ≠ attended; no-show creates one safe recovery task/draft, rescheduling cancels obsolete reminders. Server authorization rechecks before every workflow-dispatched send; snapshot consent is not a permit. Reconcile exact Twenty writeback separately with dry run and approval.
 
 **Gates:** local fake providers first; DEV ingestion/gates/synthetic booking without network actions next; real delivery/reservation/invitation requires an exact approved plan. Calls/SMS only TEST_PHONE via DEV agent and dedicated DEV number; email recipient separately agreed. Keep n8n workflows inactive; no live Alex, Nora, Emily or existing workflow changes. DNS/provider credentials/activation remain independent approvals.
+
+## 7. Metrics/reporting
+
+**Status: PARTIAL. Scope/dependencies:** seven-day pickup/reply rates, funnels, stage conversion, attribution, daily digest, client weekly summaries, persisted downloadable reports and schedules. Depends on reliable steps 3–6 event models; step 8 supplies payment/cost data.
+
+**Reuse:** dashboard cohort/rate functions, native daily metrics, agency manual call events, report generators/storage worker, transactional in-app alerts and Pacific 08:00 digest/hourly maintenance schedules.
+
+**Missing implementation:** reconcile agency_call_attempts with native calls rollups; unify dashboard/daily/monthly definitions; persist agency report artifacts independently of owner-email delivery; admin-authorized download/viewer; retry/backfill/regeneration and overdue schedule visibility. Campaign attribution must exclude pre-assignment events. Capture UTM/source/campaign through intake, deal, booking and payment.
+
+**Missing verification:** deployed schedule execution; DST/month boundaries; late/corrected events; historical outages; report storage existence and access isolation; zero-denominator cohorts. Current generateMonthlyReport metadata can exist without stored content; scheduled row creation is not a downloadable report.
+
+**Acceptance/evidence:** fixed datasets reconcile dashboard/funnel/campaign/digest/report totals with explicit numerator/denominator. Default seven days; pickup = human-answered/attempted calls (not voicemail); reply = contacted prospects who reply/contacted prospects, with explicit outreach/reply-window cohort. Track positive replies separately. Booked, attended, signed, paid and active are distinct. Exclude failed/stub/synthetic activity from real performance. Verify unique events, costs/currency, attribution and timezone boundaries. Report object is retrievable, correctly scoped and downloadable, not merely marked ready.
+
+**Gates:** synthetic reconciliation/sender-free generation first; actual DEV schedule evidence via Mac handoff; external weekly/email/SMS report delivery needs approved channel/recipient and consent policy. Landing-page sessions→lead conversion analytics, ad spend/CPL and deeper finance/team dashboards are explicit later sub-items, not silently dropped or claimed built (see deferrals). Preserve attribution now so later analytics are possible.
