@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { CampaignSequence } from './sequence';
 import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
 import PageContainer from '@/components/layout/page-container';
@@ -104,6 +105,7 @@ export default async function CampaignsPage({
                 Assign
               </Button>
             </form>
+            <CampaignSequence caller={caller} id={c.id} steps={c.steps} />
             <Link
               href={`/admin/agency/dialer?campaignId=${c.id}`}
               className='inline-flex min-h-11 items-center underline'

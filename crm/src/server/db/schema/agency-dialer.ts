@@ -1,6 +1,7 @@
 import { sql } from 'drizzle-orm';
 import {
   check,
+  jsonb,
   foreignKey,
   pgTable,
   primaryKey,
@@ -21,6 +22,10 @@ export const agencyCampaigns = pgTable(
       .references(() => agencyWorkspaces.tenantId, { onDelete: 'restrict' }),
     name: text().notNull(),
     script: text().notNull(),
+    steps: jsonb()
+      .$type<import('../../agency/campaign-policy').CampaignStep[]>()
+      .notNull()
+      .default([]),
     createdBy: uuid('created_by')
       .notNull()
       .references(() => users.id),
