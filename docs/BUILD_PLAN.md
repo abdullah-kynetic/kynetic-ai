@@ -34,6 +34,7 @@ Rules for using this file:
 Resume notes must contain, in this order: `branch:`; `last commit:` (short hash); `done so far:`; `files touched:`; `tests:` (which pass, which fail, what command); `next step:` (one concrete action); `watch out:` (anything surprising). A new thread reads the task row, the Implements sections, the branch diff against `main`, then continues from `next step`. It sets the status back to `in-progress` and adds `resumed: <date>`.
 
 ## Summary
+- Audit 2026-11-08: the Status column is a documented claim, not acceptance. Evidence by feature is in `docs/audit/2026-11-08-code-evidence.md`; the weighted scorecard lives in Twenty.
 - 128 tasks in 13 milestone groups and 29 waves.
 - Proposed 2026-10-31, not yet approved: 60 more tasks in M12 to M20 (see "M12 to M20 All-in-one portal" below).
 - Models: Sonnet 76, Opus 29, Haiku 23.
