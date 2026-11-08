@@ -1,5 +1,7 @@
 # Progress
 
+> **Canonical plan (2026-11-08):** the business roadmap, progress baseline and scorecard live in Twenty, not here: roadmap note `7bfdcb7e`, baseline v1 note `603fe300`, scorecard note `5c44b12e`. GitHub owns technical tracking only (code, PRs, CI, deploy evidence: `docs/audit/2026-11-08-code-evidence.md`). `docs/codex/COMPLETION-PLAN.md` on branch `dev/codex-setup` is technical detail, not a competing roadmap. Do not keep a second editable acceptance list in this repo.
+
 Mirror of the Twenty roadmap ("Roadmap: all phases"). Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Portal implementation order (2026-11-01)
