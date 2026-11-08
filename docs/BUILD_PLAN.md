@@ -270,7 +270,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M11-04 | M11 gate | AGENTS; T | M11-01, M11-02, M11-03 | All M11 rows pass | S | Haiku | no | 26 | done | Focused presence and baseline integration tests (20 passed), M11 browser flow (1 passed), typecheck and production build pass. No vendor connector was built; vendor selection remains unresolved and out of v1 status-only scope. |
 
 
-## M12 to M20 All-in-one portal (proposed 2026-10-31, waits for Abdullah's approval)
+## M12 to M20 All-in-one portal (proposed 2026-10-31, agreed by Abdullah 2026-10-31 and 2026-11-01; DC-TBD-01..13 numbered by him)
 
 Source of the decisions: `docs/DECISIONS.md` section "All-in-one portal, 2026-10-30/31". Companion: `docs/automation-map.md`. Nothing here is built. n8n workflows are built inactive and never activated without Abdullah's yes. Real provider calls, deploys, DNS, and writes to Retell, Twenty or Notion each need his specific yes. Waves are assigned when approved.
 
