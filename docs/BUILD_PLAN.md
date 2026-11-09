@@ -1,7 +1,6 @@
 # Build plan
 
-> **HISTORICAL — superseded as an execution plan.** Use [COMPLETION-PLAN.md](codex/COMPLETION-PLAN.md) for the sole active checklist. Preserve the IDs, decisions, source observations and scoped evidence below; old status/next-task/ownership claims are not current acceptance or authorization. Conflicts and remaining requirements are mapped in the active plan.
-
+> **Canonical plan (2026-11-08, precedence restated 2026-11-08 PST):** the business roadmap, progress baseline and scorecard live in Twenty: roadmap note `7bfdcb7e`, baseline v1 note `603fe300`, scorecard note `5c44b12e`. Operating summary: `docs/STATUS.md`. GitHub owns technical tracking only (code, PRs, CI, deploy evidence: `docs/audit/2026-11-08-code-evidence.md`). Task rows that say CRM Lite or CRM Full are the internal capability gates the code still implements. They are not current commercial tiers, and the prices in `docs/DECISIONS.md` DC-049 are historical. The Status column is a claim, not acceptance, and not the business scorecard. `docs/codex/COMPLETION-PLAN.md` is historical evidence, not a competing roadmap (2026-11-09 PST). The portal code is on `main`. Do not continue `dev/codex-setup`. Do not keep a second editable acceptance list in this repo.
 
 The whole Client CRM & Portal, broken into small tasks, ordered so building can run continuously in waves. Sources: `docs/PRD.md` (features), `docs/ARCHITECTURE.md` (milestones and contracts), `docs/DATABASE.md`, `docs/SECURITY.md`, `docs/DESIGN_SYSTEM.md`, `docs/CODE_STYLE.md`, `docs/TESTING.md`. Decisions: `docs/DECISIONS.md`.
 
@@ -37,6 +36,7 @@ Rules for using this file:
 Resume notes must contain, in this order: `branch:`; `last commit:` (short hash); `done so far:`; `files touched:`; `tests:` (which pass, which fail, what command); `next step:` (one concrete action); `watch out:` (anything surprising). A new thread reads the task row, the Implements sections, the branch diff against `main`, then continues from `next step`. It sets the status back to `in-progress` and adds `resumed: <date>`.
 
 ## Summary
+- Audit 2026-11-08: the Status column is a documented claim, not acceptance. Evidence by feature is in `docs/audit/2026-11-08-code-evidence.md`; the weighted scorecard lives in Twenty.
 - 128 tasks in 13 milestone groups and 29 waves.
 - Proposed 2026-10-31, not yet approved: 60 more tasks in M12 to M20 (see "M12 to M20 All-in-one portal" below).
 - Models: Sonnet 76, Opus 29, Haiku 23.
@@ -273,7 +273,7 @@ The milestone waves from the spec still hold: M0 first and alone; M1, M4 and M8a
 | M11-04 | M11 gate | AGENTS; T | M11-01, M11-02, M11-03 | All M11 rows pass | S | Haiku | no | 26 | done | Focused presence and baseline integration tests (20 passed), M11 browser flow (1 passed), typecheck and production build pass. No vendor connector was built; vendor selection remains unresolved and out of v1 status-only scope. |
 
 
-## M12 to M20 All-in-one portal (proposed 2026-10-31, waits for Abdullah's approval)
+## M12 to M20 All-in-one portal (proposed 2026-10-31, agreed by Abdullah 2026-10-31 and 2026-11-01; DC-TBD-01..13 numbered by him)
 
 Source of the decisions: `docs/DECISIONS.md` section "All-in-one portal, 2026-10-30/31". Companion: `docs/automation-map.md`. Nothing here is built. n8n workflows are built inactive and never activated without Abdullah's yes. Real provider calls, deploys, DNS, and writes to Retell, Twenty or Notion each need his specific yes. Waves are assigned when approved.
 

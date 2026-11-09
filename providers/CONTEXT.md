@@ -1,6 +1,8 @@
 # providers: voice platform bake-off and ElevenLabs go-live
 
-One job: records for Alex's voice platform. ElevenLabs v1 strict is the platform (D-025).
+> Records only. Current direction is `docs/STATUS.md`. Do not change or invoke live Alex `agent_8201m5afn2rbeb7v29xfkhh1pjef`. The A2P text-restore note below is not approval to edit that agent and is not approval for cold SMS. `docs/plans/ALEX-ELEVENLABS-GOLIVE.md` already carries a superseded-as-status banner.
+
+One job: records for Alex's voice platform. ElevenLabs v1 strict is the platform (D-025). Retell is parked for Alex.
 
 ## Files
 - `elevenlabs/golive/`: v1 prompt before and after the text promise was removed (2026-10-22), plus the restore note.

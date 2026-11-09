@@ -15,7 +15,7 @@ One job: answer "what is X" and "what else moves if I change X" without reading 
 - Slice order: catalog, nouns, verbs, change-impact index, re-verify. A person reads each slice before the next starts.
 
 ## No-touch (nothing in this map may suggest editing these)
-Nora (agent, LLM, workflow), Emily, Retell agent tools, Kynetic Restoration (Demo) records and build files, the AM-1 Roofing number, `.env` files and every secret, template workflow `KYQIVtxwDcXVKmk3`. IDs: `../../KYNETIC_CONTEXT.md`.
+Nora (agent, LLM, workflow), Emily, Retell agent tools, live ElevenLabs Alex `agent_8201m5afn2rbeb7v29xfkhh1pjef`, Kynetic Restoration (Demo) records and build files, the AM-1 Roofing number, `.env` files and every secret, template workflow `KYQIVtxwDcXVKmk3`. IDs: `../../KYNETIC_CONTEXT.md`. Current direction: `../STATUS.md`. The name-collision list in `CLAUDE.md` is a historical slice and still calls Alex a Retell agent.
 
 ## Status
 Slices 1-4 done. Open: the remaining stub entries, and slice 5 (re-verify Hits / Does not hit after a person has read them).

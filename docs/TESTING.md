@@ -1,9 +1,6 @@
 # Testing
 
-> **Completion navigation:** [COMPLETION-PLAN.md](codex/COMPLETION-PLAN.md) is the sole active engineering checklist; [PROGRESS.md](codex/PROGRESS.md) indexes evidence. This file remains a specification, decision or test reference with its original dates/scope. Historical next-task/wave instructions do not supersede the active plan or safety gates.
-
-
-> Latest portal/agency validation (2026-11-06): **527 unit tests, 3 Chromium journeys, build/typecheck/lint PASS; agency checks 13 PASS / 0 FAIL / 2 manual SKIP**. See [current status](codex/CURRENT_STATUS.md) for deployment/approval limits. Earlier totals below are historical.
+> **Technical test plan for the portal codebase (scope banner, 2026-11-08 PST).** Not the business roadmap. Rows that treat CRM Lite/Full as paid upsells, and the founding-price line, are the historical 2026-10-25 menu. Current precedence: `docs/STATUS.md`. `lite` / `full` remain internal capability gates to test. Do not quote the dollar amounts as the current price. This banner does not change tests or schema.
 
 Kynetic Client CRM & Portal. Target path in the build repo: `docs/TESTING.md`.
 

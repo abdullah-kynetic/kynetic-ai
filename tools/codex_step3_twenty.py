@@ -6,7 +6,6 @@ import json
 import os
 from pathlib import Path
 import re
-import subprocess
 import urllib.error
 import urllib.request
 from urllib.parse import urlparse
@@ -153,7 +152,7 @@ def request(method, path, body=None):
         raise RuntimeError('Disallowed Twenty request')
     req = urllib.request.Request(BASE + path, method=method,
         data=json.dumps(body).encode() if body is not None else None,
-        headers={'Authorization': 'Bearer ' + os.environ['TWENTY_API_KEY'], 'Content-Type': 'application/json'})
+        headers={'Authorization': 'Bearer ' + os.environ['TWENTY_SELFHOST_API_KEY'], 'Content-Type': 'application/json'})
     class NoRedirect(urllib.request.HTTPRedirectHandler):
         def redirect_request(self, *args, **kwargs):
             return None
@@ -178,16 +177,7 @@ def main():
         print('PLAN_SHA256=' + plan_hash(plan))
         print('DRY RUN ONLY: no API request or write performed. Explicit Abdullah approval required before --apply.')
         return
-    if subprocess.check_output(['git', 'branch', '--show-current'], cwd=ROOT, text=True).strip() != 'dev/codex-setup':
-        raise RuntimeError('Apply requires dev/codex-setup')
-    target = urlparse(os.environ.get('DEV_PORTAL_URL', ''))
-    if target.scheme != 'https' or target.hostname != 'dev.kyneticai.com' or target.username or target.password:
-        raise RuntimeError('Apply requires DEV_PORTAL_URL')
-    if not os.environ.get('TWENTY_API_KEY'):
-        raise RuntimeError('TWENTY_API_KEY is required')
-    state = apply_plan(plan, args.approved_plan_sha256, STATE, request)
-    print('PASS synthetic Twenty test writeback; completed operations: ' + str(len(state['completed'])))
-
+    raise RuntimeError('DEV environment retired until after go-live (2026-11-09 PST). This apply path does not run. See docs/STATUS.md.')
 
 if __name__ == '__main__':
     try:

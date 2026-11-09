@@ -6,9 +6,6 @@
 Mirror of open problems tracked in Twenty. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Open
-### KI-015: Portal integration schema checks fail on agency tables (medium)
-Found 2026-11-09 on `dev/codex-setup` while running the full integration suite. `baseline-ops`, `schema-drift`, and `isolation` fail because agency tables from migrations 1008–1013 are in Postgres but not in the Drizzle schema or the `DATABASE.md` entity list. The auth work in D-026 does not add tables. Fix: bring the Drizzle schema, the entity list, and the two-tenant seed in line with those migrations, then rerun the three files.
-
 ### KI-002: TCPA emergency branch opt-out gap (high)
 Emergency calls and urgent notifications may reach someone who opted out.
 Fix: counsel sign-off (task 1.4). Also feeds the agreement rewrite (task 4.7, 4.8).
@@ -16,6 +13,7 @@ Fix: counsel sign-off (task 1.4). Also feeds the agreement rewrite (task 4.7, 4.
 ### KI-003: Twilio A2P not registered, SMS filtered (high)
 SMS from +16692660586 never arrived on Sep 22.
 Fix: finish A2P 10DLC registration (task 1.3).
+Update 2026-11-08 PST: `docs/progress.md` records campaign CJUDEQY as verified on 2026-10-28, and also says the text wording and SMS tool are not restored (D-025 item 4). This pass did not re-check Twilio, so both statements stay. A verified campaign is not permission for cold SMS. DNC, consent, and quiet hours still apply.
 
 ### KI-004: Emily workflow still has 13 Notion nodes (medium)
 Fix: replace with Twenty nodes, needs approval (task 3.2).
@@ -50,6 +48,8 @@ Found 2026-10-19 (read-only review of Twenty).
 Fix: Abdullah to say where the research files are, confirm the Treg rotation, and approve or reject the D-002 reword.
 
 ### KI-013: Portal has no sign-in (open mode) (high)
+Update 2026-11-08 PST: the 2026-11-08 ledger labels HTTP 200 on `/admin` as inference (a sign-in page can also return 200) and the deployed revision as partly memory-based. The docs pass on this date did not probe the portal and does not confirm production exposure or a deploy. The release risk stays open until a dated anonymous probe of the deployed revision shows a denial. The 2026-11-08 note follows.
+Update 2026-11-08: main `49019b93` (merged 2026-11-05) restores invitation-only sign-in, staff TOTP and verified sessions, and persona switching only works outside production with DEV_PERSONA_SWITCHING (checked in code; typecheck and 468 unit tests pass). It is NOT deployed: live portal.kyneticai.com still runs `350bf67` and `/admin` returns HTTP 200 with no sign-in (checked 2026-11-08). Still open until main is deployed and the first invites are created. Original note follows.
 Found 2026-11-02 (DC-TBD-15). Anyone who can reach an open-mode build acts as the Kynetic admin or any client. Fine for local use and synthetic data. Do NOT deploy it to a public address with real client data until network access control or sign-in is back. The live portal.kyneticai.com still runs the Oct 29 build with sign-in; deploying main replaces that with the open build. Fix: restore auth (git history before the open-mode commit has it) or add Cloudflare Access first.
 
 ### KI-012: Lead enrichment: phone certainty, rate limits, wrong-business matches (medium)
@@ -60,6 +60,10 @@ Found 2026-10-20.
 - Apify account `kyneticai` is Free with a $5 monthly cap (cycle ends 2026-10-29), not $30.
 Fix: hand-dial a sample, counsel answer, and keep the audit step in every run.
 
+## Open (docs reconciliation leftovers, 2026-11-08 PST)
+### KI-017: Production is still the pre-consolidation release (high)
+Found 2026-11-09. portal.kyneticai.com is release `350bf673` (1 admin user, about 13 tenants). The portal line moving onto `main` is not deployed. Migrations `1007` through `1013` have not been applied to that database. The separate DEV environment is retired until after go-live, so there is no second portal to rehearse on. Do not deploy, migrate, or recreate DEV without an explicit yes.
+
 ## Gotchas
 - Cloud sessions deny hosts not in the environment's allowed domains. Firecrawl returned 403 until `api.firecrawl.dev` was allowed (2026-10-19). A scrape of Facebook, BBB, the Texas Comptroller and similar sites needs those domains allowed too.
 - Never modify Nora (agent_4c34644a04c74e27253e80167b, n8n 2PFWFqBM0wabADk6).
@@ -68,12 +72,20 @@ Fix: hand-dial a sample, counsel answer, and keep the audit step in every run.
 - The Retell MCP runs through npx (`.mcp.json`) but its code tool needs Deno, and it is often unavailable. Use tools/retell.py.
 
 - Twenty refuses the same website domain on two companies. The Kynetic Roofing (Demo) company has no website field set because AM-1 Roofing Inc already uses am1roofing.com; the website lives in the profile note.
-- The n8n workflow "n8n Facebook Ad Form" (`KYQIVtxwDcXVKmk3`) is SOURCE TEMPLATE 05 imported as-is (Google Sheets, Vapi, Azure). Do not activate it and do not run it. The real outbound workflow is "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`): 38 nodes and active as of the Oct 17 read-only check, including a calling-hours gate and a fallback normalize step. See KI-009 for the go-live question.
+- The n8n workflow "n8n Facebook Ad Form" (`KYQIVtxwDcXVKmk3`) is SOURCE TEMPLATE 05 imported as-is (Google Sheets, Vapi, Azure). Do not activate it and do not run it. Do not create Google Sheets. The Oct 17 read found the Retell workflow "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`) at 38 nodes and active, including a calling-hours gate and a fallback normalize step. That is a historical observation of the parked Retell path (KI-009). It is not an instruction to activate a workflow. Current Alex work is ElevenLabs through n8n on the VPS, and live agent `agent_8201m5afn2rbeb7v29xfkhh1pjef` must not be changed or invoked.
+- `TWENTY_API_KEY` is a dead name (KI-016). Use `TWENTY_BASE_URL` and `TWENTY_SELFHOST_API_KEY`. Never REST DELETE on Twenty.
+- `docs/codex/COMPLETION-PLAN.md` is not the roadmap (KI-015, resolved 2026-11-09). The portal line is `main`. The separate DEV environment is retired until after go-live (KI-017).
 - Vapi is parked (D-018). Its workflows were renamed and deactivated. The builder prompt was removed from main (recoverable via tag `archive/pre-reorg-2026-10-17`) and is not a spec to run.
 - The Retell post call webhook in n8n has no auth (unguessable path only) because Retell signs requests instead of sending a custom header. Part of KI-005.
 - The Kynetic Roofing (Demo) company record carries the real AM-1 office phone (D-016 amended). Never dial it from the demo or any test.
 
 ## Resolved
+### KI-016: Checker read the dead Twenty key name (low)
+Approved Twenty env names are `TWENTY_BASE_URL` and `TWENTY_SELFHOST_API_KEY`. `TWENTY_API_KEY` is dead. Resolved 2026-11-09 in PR #141: `scripts/checks/checks.py` check 3.4 uses the supported names and skips when the key is unset. That fix is in the portal-line consolidation. Do not put the dead name back into `.env.example`.
+
+### KI-015: Branch completion plan claimed to be the active checklist (medium)
+Found 2026-11-08. `docs/codex/COMPLETION-PLAN.md` called itself the one active checklist. Resolved 2026-11-09: the file is marked historical evidence, `docs/STATUS.md` stays the entry point, and the portal code is consolidated onto `main`. The old checklist body remains under that banner. It is not the plan.
+
 ### KI-014: CRM portal M10-01 security gate had high findings (high)
 Found 2026-10-29: authenticated API, search, and tenant import/export rate limits were declared but not enforced, and the exact Bun lock production audit was unavailable. Resolved 2026-10-29: `withApi` now enforces 120/min per authenticated user; contacts list and Cmd+K search enforce 30/min per user; import uploads and CSV export share 5/hour per tenant. Disposable PostgreSQL integration tests prove 429 responses at each limit. Supervisor ran `bun audit --prod` against `bun.lock` (366 packages, no production vulnerabilities); a moderate development-only esbuild advisory remains low. M10-01 is done; production edge/header/CI secret-scanner verification remains open. Evidence: `docs/security-review-M10-01.md`.
 
@@ -94,3 +106,6 @@ The "Kynetic VPS" session's auto-mode classifier blocks `portal-new-deploy deplo
 
 ### KI-001: Leaked Cal.com key in git history (was high)
 A key starting cal_live_f64 was committed Aug 23, carried in from the Inflate AI reference files. Confirmed Oct 4, 2026 it was a live key on Abdullah's own Cal.com account (abdullah@kyneticai.com). Deleted in Cal.com and replaced with a new key, entered into Emily's two Retell Cal tools (check_availability_cal, book_appointment_cal on llm_b520d8a6b9bf754f19285a8a6185), event type 7025524 (Water Damage Assessment). Confirmed both tools show the new key and validate. The old key value stays in git history; it is dead in Cal.com so that no longer matters.
+
+### Contact merge copies consent grants (number to be assigned) (audit 2026-11-08)
+Main's `mergeContacts` (`crm/src/server/contacts/service.ts`, consent copy block) copies all consent rows, grants included, to the surviving contact and writes no consent-state audit entry. The 2026-10-26 decision for M1-08 is that grants never carry, opt-outs and DNC always carry, and the audit entry records both contacts' consent and opt-out state. That behavior is on PR #113 (DC-112 row), which is still open and stacked on a closed base; DC-112 is not in main's `docs/DECISIONS.md`. Not fixed here.

@@ -6,7 +6,6 @@ import json
 import os
 from pathlib import Path
 import re
-import subprocess
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -141,16 +140,7 @@ def main():
     if not args.apply:
         print('DRY RUN: create four NEW DEV-tagged inactive notification stubs; SMS disabled, no credentials, no executions or activation.')
         return
-    if subprocess.check_output(['git', 'branch', '--show-current'], cwd=ROOT, text=True).strip() != 'dev/codex-setup':
-        raise RuntimeError('Importer requires dev/codex-setup')
-    target = urllib.parse.urlparse(os.environ.get('DEV_PORTAL_URL', ''))
-    if target.scheme != 'https' or target.hostname != 'dev.kyneticai.com' or target.username or target.password:
-        raise RuntimeError('Importer requires DEV_PORTAL_URL')
-    if not os.environ.get('n8n_vps'):
-        raise RuntimeError('n8n_vps is required')
-    state = apply(workflows, STATE, request)
-    print('PASS four DEV notification workflows imported; inactive, DEV tagged, SMS disabled, credentials absent; executions 0')
-
+    raise RuntimeError('DEV environment retired until after go-live (2026-11-09 PST). This apply path does not run. See docs/STATUS.md.')
 
 if __name__ == '__main__':
     try:

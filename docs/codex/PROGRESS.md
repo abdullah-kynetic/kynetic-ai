@@ -1,6 +1,10 @@
-# Completion status and evidence index
+# Codex progress (steps 0–6)
 
-Updated **2026-11-06**, America/Los_Angeles. **One active checklist: [COMPLETION-PLAN.md](COMPLETION-PLAN.md).** Old steps 0–12 and milestones are historical evidence IDs, not the new execution order.
+> Technical log only. Not the business roadmap and not an active checklist. Current direction is `docs/STATUS.md`. As of 2026-11-09 PST the portal code line is `main` and the separate DEV environment is retired until after go-live. `docs/codex/COMPLETION-PLAN.md` is historical evidence, not the plan. Do not tick the boxes below as the next business step.
+
+Tick a step only when a task has explicitly resumed that historical check and `scripts/checks/run.sh <n>` has no FAIL. Note SKIPs.
+
+Updated **2026-11-06**, America/Los_Angeles. The table below is a historical evidence index. It is not an active checklist. The operating order is `docs/STATUS.md`. Old steps 0–12 and milestones are historical evidence IDs.
 
 | New step | Current status | Evidence limit / next verification |
 | --- | --- | --- |

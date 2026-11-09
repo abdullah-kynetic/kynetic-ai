@@ -1,18 +1,18 @@
-# Kynetic — current completion plan
+# Kynetic — completion plan (historical evidence)
 
-> **[2026-11-09 | HISTORICAL, NOT AUTHORITY]** This file calls itself the one active completion checklist. It is not. The operating plan is the five steps: Twenty ROADMAP note `7bfdcb7e`, SCORECARD `5c44b12e`, and `docs/STATUS.md` on main. Its PARTIAL/BLOCKED statuses are self-reported and unverified. Kept as a technical evidence index for the `dev/codex-setup` work; do not execute it as the plan and do not merge this branch to install it as the plan.
+> **[2026-11-09 PST | HISTORICAL, NOT AUTHORITY]** This file is not the operating plan. The operating plan is the five steps in `docs/STATUS.md` (Twenty ROADMAP note `7bfdcb7e`, SCORECARD `5c44b12e`). The 2026-11-09 decision puts the portal code on `main` and retires the separate DEV environment until after go-live. Do not execute this file as the plan. Do not continue `dev/codex-setup`. Do not deploy from this file.
 
-Updated **2026-11-06**, America/Los_Angeles. This is the **one active completion checklist**, replacing old steps 0–12, milestone/wave execution order, and any proposed 13–22 numbering. Old IDs remain evidence references; they are not the new step numbers. This consolidation authorizes documentation only, not implementation, deployment or external tests.
+Updated **2026-11-06**, America/Los_Angeles. The checklist below is that day's self-reported index. PARTIAL/BLOCKED statuses are unverified. Old IDs remain evidence references. It does not authorize implementation, deployment, or external tests.
 
-## How to use this plan
+## How to read this record
 
 Status vocabulary: **NOT ASSESSED** = insufficient review; **PARTIAL** = some implementation/evidence exists but acceptance is incomplete; **BLOCKED** = a named permission, dependency or external prerequisite prevents completion; **VERIFIED** = all scoped acceptance has dated, revision-bound evidence. An unchecked external gate cannot be relabeled VERIFIED because stub tests pass. Status applies to the whole step, with blocked sub-gates named separately.
 
-Start with step 1's baseline evidence reconciliation before executing dependent work. Reuse existing implementation. Record source revision, environment, exact command/test, actual result, fixture/provider mode, evidence path and approval reference for each acceptance result. Keep local, deployed DEV and approved external outcomes separate. A historical done tick is a claim to reconcile, not proof of operational completeness. Do not calculate a completion percentage from these unequal steps.
+Do not start work from this file. The 2026-11-06 text said to start with step 1 before executing dependent work. That instruction is withdrawn. When reading an old result, keep source revision, environment, command, result, fixture mode, and approval separate, and keep local, deployed, and approved-external outcomes separate. A historical done tick is not proof of operational completeness.
 
-Keep dev/codex-setup, small tested commits as abdullah-kynetic <abdullah@kyneticai.com>, no AI/coauthor trailers, no force push or main merge. Preserve the Mac-script VPS handoff and three-consecutive-failure stop rule. All existing safety rules remain binding; the conflict register below documents old wording without weakening it.
+New portal work branches off `main`. Commits stay abdullah-kynetic <abdullah@kyneticai.com>, with no AI or coauthor trailers. The separate DEV environment and its Mac deploy scripts are retired until after go-live. All existing safety rules remain binding; the conflict register below documents old wording without weakening it.
 
-## Active checklist
+## Historical checklist
 
 - [ ] 1. Baseline audit — PARTIAL
 - [ ] 2. Security/access — PARTIAL

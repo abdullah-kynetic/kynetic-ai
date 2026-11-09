@@ -46,7 +46,10 @@ const LABELS: Record<string, { label: string; note?: string }> = {
     label: 'Follow-up bundle',
     note: 'Quote follow-up, reactivation and missed-call text-back together.'
   },
-  crm: { label: 'CRM', note: 'Lite or Full, on top of the base portal.' }
+  crm: {
+    label: 'CRM',
+    note: 'One configurable CRM. The capability set (lite or full) is an internal flag, not a sold tier.'
+  }
 };
 
 const describe = (s: { enabled: boolean; level: Level } | null) =>
@@ -108,8 +111,8 @@ export function ModulesPanel(props: {
                     disabled={busy || !m.enabled}
                     onChange={(e) => change('crm', true, e.target.value as 'lite' | 'full')}
                   >
-                    <option value='lite'>Lite</option>
-                    <option value='full'>Full</option>
+                    <option value='lite'>Core capabilities (lite)</option>
+                    <option value='full'>Extended capabilities (full)</option>
                   </select>
                 )}
                 {m.moduleKey === 'platform' ? (

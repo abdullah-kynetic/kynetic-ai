@@ -1,6 +1,8 @@
 # outbound-speed-to-lead: Alex, Plan 1
 
-One job: spec the outbound speed-to-lead agent (call a new Meta-ad lead within 60 seconds, qualify, book).
+> Historical Retell spec. Alex's current platform is ElevenLabs (D-025). Do not run `create-outbound --apply` from this folder as the current build, and do not edit live Alex `agent_8201m5afn2rbeb7v29xfkhh1pjef`. Direction: `docs/STATUS.md`.
+
+One job: spec the parked Retell outbound speed-to-lead agent (call a new Meta-ad lead within 60 seconds, qualify, book).
 
 ## Inputs
 - `PROMPT.md` (Alex prompt), `agent.config.json` (agent, LLM, Cal settings), `FORM_SPEC.md` (lead form), `N8N_MAPPING.md` (n8n node map), `demo-business/` (Kynetic Roofing demo facts).

@@ -7,7 +7,7 @@ Rebuilt 2026-10-17 from what is actually in this repo. Scan the **Trigger Signal
 | Skill | One-line summary | Trigger signals |
 |---|---|---|
 | `build-log` | End-of-session update of `docs/progress.md`, `docs/decisions.md`, `docs/known-issues.md` | "wrap up", "log this", "document what we did", natural end of a work session |
-| `retell-builder` | Build or update a Retell voice agent with `tools/retell.py` (dry-run first) | "build a voice agent", "set up Retell", "create/change the Alex outbound agent", new client voice agent |
+| `retell-builder` | Parked Retell track only, dry-run first via `tools/retell.py`. Current Alex work is ElevenLabs through n8n on the VPS and does not start by editing a Retell agent or the live ElevenLabs agent. | "set up Retell", an explicit Retell-only task. Not the default for "change Alex". |
 | `brand-profile` | Skill 1: full Brand Profile from an intake form plus GBP data; the source of truth every downstream skill reads | "new client onboarding", "brand profile", signed client with intake form |
 | `demo-profile-generator` | Skill 1, demo mode: Brand Profile from a single `raw-data.json`, no intake form | "demo profile", a `raw-data.json` path or pasted GBP JSON, prospect before outreach |
 | `n8n-code-javascript` | JavaScript in n8n Code nodes (modes, data access, return format, helpers). Notes: `DATA_ACCESS.md`, `COMMON_PATTERNS.md`, `ERROR_PATTERNS.md`, `BUILTIN_FUNCTIONS.md` | writing or debugging a Code node, `$input` / `$json` / `$helpers.httpRequest`, `DateTime`, Code node error |
@@ -39,7 +39,7 @@ The old n8n writeups (`n8n-mcp-tools-expert`, `n8n-workflow-patterns`, `n8n-node
 | Task | Skill |
 |---|---|
 | Wrap up a session | `build-log` |
-| Build or change a Retell agent | `retell-builder` |
+| Build or change a parked Retell agent (not current Alex) | `retell-builder` |
 | Onboard a signed client | `brand-profile` |
 | Profile a prospect from GBP data | `demo-profile-generator` |
 | Write Code-node JavaScript | `n8n-code-javascript` |

@@ -1,7 +1,6 @@
 # Plan 1: what is left, and the most effective way to do it
 
-> **HISTORICAL — planning snapshot, not current instructions.** The active completion checklist is [COMPLETION-PLAN.md](../codex/COMPLETION-PLAN.md). Requirements and unresolved decisions are carried forward there. Old live-agent IDs, prices, dates, workflow activation or deployment instructions do not grant permission; all current safety and action-specific approval gates remain.
-
+> **Superseded as a status source (2026-11-09).** Current plan and status: Twenty ROADMAP note `7bfdcb7e` and `docs/STATUS.md`. Kept as technical/historical detail; do not treat any checklist below as current.
 
 Source: Twenty tasks not DONE, read 2026-10-22 (read-only; 51 tasks). Task statuses can lag reality; where the repo disagrees I say so. "Live change" means it needs Abdullah's exact yes. Order follows the goal: clients 1-2 signed, everything repeatable automated.
 
