@@ -6,6 +6,18 @@ Mirror of the Twenty roadmap ("Roadmap: all phases"). Twenty is canonical; this 
 
 N8n automations are deferred by Abdullah. Continue portal features with synthetic fixtures; login/auth work stays last. M16 agency workspace, source tracking, pipeline UI, human dialer/never-dial checks and campaigns are locally verified. M17-01 proposal drafts are also locally verified. Next: wave 38 won-deal onboarding and price-plan data (pricing decision gate remains). Live systems remain unchanged.
 
+## Status check 2026-11-08 (read-only review; supersedes older blocker lists below)
+
+Checked directly: GitHub, repo code (typecheck clean, 468/468 unit tests on main `49019b93`), live HTTP, n8n workflow list, Twenty.
+- Not launch-ready. Twenty has 0 opportunities; no Alex workflow is active in n8n (all Retell, 11Labs and DEV Alex workflows are inactive); only the website contact form workflow `WxIh0Hw4lQodY1Xa` is active and it has not been tested.
+- Live portal is still open (KI-013). Main has sign-in restored (2026-11-05) but is not deployed.
+- Codex build steps 0 to 2 done (dev setup, foundation, Alex on ElevenLabs DEV). Steps 3 to 6 not done: lead-to-booking chain, texts and alerts, onboarding, go-live. "Done" in BUILD_PLAN means built and locally verified, not working end to end.
+- A DEV Twilio voice number was bought and assigned to a DEV ElevenLabs agent (2026-11-04); dev portal runs at dev.kyneticai.com on an older revision.
+- Website: www.kyneticai.com serves the positioning build (from `feat/positioning-remodelers`, not on main); /remodelers still has red TODO boxes (guarantee wording, video, add-ons, testimonials).
+- Twilio A2P campaign CJUDEQY verified 2026-10-28; text wording and SMS tool not restored yet (D-025 item 4).
+- Open PRs: #136 (brand revamp, likely stale vs. the live site), #134 (lead pipeline, supersedes #36), #113 (M1-08, stacked on a closed base), #34/#37/#38/#39 (old site stack), #36. Abdullah decides closures.
+- Full report: project file handoff/launch-readiness-2026-11-08.md. Twenty tasks were refreshed the same day (1.3 and 3.10 marked done; four launch-blocker tasks added).
+
 ## Current plan
 Plan 1 only: the outbound speed-to-lead agent at the D-017 price (first 3 clients $4,675, clients 4 and up $8,500, three Stripe invoices at 50/25/25). Gate of 5 paying clients before Plan 2 (D-013). Task titles in Twenty carry [P1]/[P2]; Emily inbound and all upsell systems are [P2].
 
