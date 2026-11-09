@@ -91,6 +91,33 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
   ok('audit overlay: no POST sent while invalid', reqs === 0, `posts=${reqs}`);
   await page.keyboard.press('Escape'); await page.waitForTimeout(200);
   ok('audit overlay: Escape closes it', await page.evaluate(() => document.querySelector('.am').hidden));
+  // audit application: 7 questions, two endings (later routes win in Playwright, so this overrides the abort)
+  const posts = [];
+  await page.route(/n8n\.kyneticai\.com\/webhook/, (r) => { posts.push(JSON.parse(r.request().postData())); r.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' }); });
+  const runFlow = async (investIdx) => {
+    await page.locator('#hero a[href*="cal.com"]').first().click(); await page.waitForTimeout(400);
+    await page.locator('.am input[name=name]').fill('Test Person');
+    await page.locator('.am input[name=email]').fill('test@example.com');
+    await page.locator('.am [data-step="1"] button[type=submit]').click();
+    await page.locator('.am input[name=phone]').fill('2015550123');
+    await page.locator('.am [data-step="2"] button[type=submit]').click();
+    await page.locator('.am input[name=company]').fill('Test Co');
+    await page.locator('.am [data-step="3"] button[type=submit]').click();
+    for (const [i, key] of ['type', 'revenue', 'fix', 'invest'].entries()) {
+      await page.locator(`.am [data-step="${4 + i}"]`).waitFor({ state: 'visible' });
+      await page.locator(`.am [data-step="${4 + i}"] .am__opt`).nth(key === 'invest' ? investIdx : 1).click();
+      if (key === 'invest') await page.locator('.am [data-step="7"] button[type=submit]').click();
+      await page.waitForTimeout(450);
+    }
+  };
+  await runFlow(0);
+  ok('application: lowest investment shows the not-a-fit page', await page.locator('.am [data-step="nofit"]').isVisible());
+  ok('application: not-a-fit answers are still sent, flagged unqualified', posts.length === 1 && posts[0].qualified === false && posts[0].answers.invest === 'Under $5,000' && posts[0].phone === '2015550123');
+  await page.keyboard.press('Escape'); await page.waitForTimeout(200);
+  await runFlow(2);
+  ok('application: any other investment shows the booking page', await page.locator('.am [data-step="book"]').isVisible() && (await page.locator('#am-cal-frame').getAttribute('src')).includes('cal.com/abdullah-kyneticai'));
+  ok('application: qualified answers sent', posts.length === 2 && posts[1].qualified === true && posts[1].message.includes('QUALIFIED'));
+  await page.keyboard.press('Escape'); await page.waitForTimeout(200);
   // services map popovers
   await page.evaluate(() => document.getElementById('services').scrollIntoView()); await page.waitForTimeout(1500);
   await page.locator('.m-node[data-pop="1"]').hover(); await page.waitForTimeout(300);

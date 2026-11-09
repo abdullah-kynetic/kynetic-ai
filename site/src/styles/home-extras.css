@@ -38,6 +38,18 @@ html.am-lock { overflow: hidden; }
 .am__chip:hover span { transform: translateY(-1px); border-color: var(--color-accent-text); }
 .am__chip input:checked + span { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-on-accent); font-weight: 600; }
 .am__chip input:focus-visible + span { outline: 2px solid var(--color-accent-text); outline-offset: 2px; }
+.am__hint { margin: -8px 0 0; color: var(--color-muted); line-height: 1.55; }
+.am__eyebrow { margin: 0; font-size: .75rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--color-accent-text); }
+.am__opts { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.am__opt { flex-direction: row !important; align-items: center; gap: 14px !important; font-weight: 500 !important; cursor: pointer; border: 1px solid var(--color-border-input); background: var(--color-card); border-radius: 16px; padding: 14px 16px; transition: border-color .2s, background-color .2s, transform .2s; position: relative; }
+.am__opt input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.am__opt:hover { border-color: var(--color-accent-text); transform: translateY(-1px); }
+.am__key { flex: none; width: 28px; height: 28px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--color-border-input); font-size: .8125rem; font-weight: 700; color: var(--color-muted); background: var(--color-page); transition: background-color .2s, color .2s, border-color .2s; }
+.am__opt:has(input:checked) { border-color: var(--color-accent); background: var(--color-alt); }
+.am__opt:has(input:checked) .am__key { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-on-accent); }
+.am__opt:has(input:focus-visible) { outline: 2px solid var(--color-accent-text); outline-offset: 2px; }
+.am__cal { width: 100%; height: 520px; border: 1px solid var(--color-border); border-radius: 18px; background: var(--color-card); }
+.am__link { color: var(--color-accent-text); text-decoration: underline; text-underline-offset: 2px; font-size: .9375rem; align-self: flex-start; }
 .am__sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 .am__done p { margin: 0; color: var(--color-muted); line-height: 1.6; }
 .am__done .am__btn { align-self: flex-start; }
