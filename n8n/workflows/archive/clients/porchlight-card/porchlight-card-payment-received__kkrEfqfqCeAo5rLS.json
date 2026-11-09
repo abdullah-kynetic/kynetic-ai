@@ -1,0 +1,340 @@
+{
+  "active": false,
+  "connections": {
+    "Load Call List": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Match Business and Check Category",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Match Business and Check Category": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Row Found?",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Send Welcome and Ad Form",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Alert Abdullah",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Parse Paid Checkout": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Load Call List",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Row Found?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Mark Row Paid",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Create Paid Row",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Stripe Checkout Webhook": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Parse Paid Checkout",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "kkrEfqfqCeAo5rLS",
+  "name": "Porchlight Card: Payment Received",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "c55c2184-3b50-4be0-83f9-ef433b085691",
+      "name": "Stripe Checkout Webhook",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {},
+        "path": "porchlight-stripe-REDACTED_WEBHOOK_SUFFIX",
+        "responseMode": "onReceived"
+      },
+      "position": [
+        0,
+        300
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "39bf6542-ca0d-41e8-b4d5-65fad15cca4e"
+    },
+    {
+      "id": "46acb827-84a3-4b8c-93b9-efd3828040d1",
+      "name": "Parse Paid Checkout",
+      "parameters": {
+        "jsCode": "const raw = $input.first().json;\nconst b = raw.body || raw;\nif (!b || b.type !== 'checkout.session.completed') return [];\nconst s = (b.data || {}).object || {};\nif (s.payment_link !== 'plink_1UJI6EIS4aUrWHCx5vvMB20F') return [];\nif (s.payment_status !== 'paid' || s.livemode !== true) return [];\nconst cd = s.customer_details || {};\nconst cfs = s.custom_fields || [];\nlet category = '';\nfor (const f of cfs) { if (f.key === 'category' && f.text) category = String(f.text.value || '').trim(); }\nconst businessName = String(cd.business_name || cd.individual_name || cd.name || '').trim();\nconst d = String(cd.phone || '').replace(/\\D/g, '').slice(-10);\nreturn [{ json: {\n  sessionId: s.id,\n  paymentIntent: s.payment_intent || '',\n  paymentUrl: s.payment_intent ? 'https://dashboard.stripe.com/payments/' + s.payment_intent : 'https://dashboard.stripe.com/checkout/sessions/' + s.id,\n  amount: (s.amount_total || 0) / 100,\n  businessName: businessName,\n  nameKey: businessName.toLowerCase().replace(/[^a-z0-9]/g, ''),\n  contactName: String(cd.individual_name || cd.name || '').trim(),\n  firstName: String(cd.individual_name || cd.name || '').trim().split(' ')[0] || 'there',\n  email: String(cd.email || '').toLowerCase(),\n  phone: d.length === 10 ? '(' + d.slice(0, 3) + ') ' + d.slice(3, 6) + '-' + d.slice(6) : String(cd.phone || ''),\n  phoneDigits: d,\n  category: category,\n  paidAt: new Date((s.created || Math.floor(Date.now() / 1000)) * 1000).toISOString().slice(0, 10)\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        220,
+        300
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "executeOnce": true,
+      "id": "06942bb3-ec0c-4efd-b8d0-c73cbce3ca7e",
+      "name": "Load Call List",
+      "parameters": {
+        "authentication": "oAuth2",
+        "dataSourceId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REDACTED_NOTION_DATA_SOURCE_ID"
+        },
+        "filterType": "none",
+        "operation": "getAll",
+        "resource": "databasePage",
+        "returnAll": true,
+        "simple": true
+      },
+      "position": [
+        440,
+        300
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 3
+    },
+    {
+      "id": "91c8a4eb-bb94-48cc-9b48-2e930247c6a5",
+      "name": "Match Business and Check Category",
+      "parameters": {
+        "jsCode": "const inp = $('Parse Paid Checkout').first().json;\nconst rows = $input.all().map(function (i) { return i.json; });\nconst norm = function (s) { return String(s || '').toLowerCase().replace(/[^a-z0-9]/g, ''); };\nconst digits = function (s) { return String(s || '').replace(/\\D/g, '').slice(-10); };\nconst val = function (r, key) { return r[key] !== undefined && r[key] !== null ? r[key] : ''; };\nlet match = null;\nfor (const r of rows) { const e = String(val(r, 'property_customer_email')).toLowerCase(); if (inp.email && e && e === inp.email) { match = r; break; } }\nif (!match) for (const r of rows) { const p = digits(val(r, 'property_phone')); if (inp.phoneDigits && p && p === inp.phoneDigits) { match = r; break; } }\nif (!match) for (const r of rows) {\n  const n = norm(r.name || val(r, 'property_business_name'));\n  if (n && inp.nameKey && n.length >= 5 && inp.nameKey.length >= 5 && (n === inp.nameKey || n.indexOf(inp.nameKey) >= 0 || inp.nameKey.indexOf(n) >= 0)) { match = r; break; }\n}\nif (match && String(val(match, 'property_stripe_payment')).indexOf(inp.paymentIntent || inp.sessionId) >= 0) return [];\nconst paidStages = ['Paid', 'Ad received', 'Ad approved'];\nconst paidRows = rows.filter(function (r) { return paidStages.indexOf(String(val(r, 'property_sale_stage'))) >= 0; });\nconst alreadyPaid = match && paidStages.indexOf(String(val(match, 'property_sale_stage'))) >= 0;\nconst paidCount = paidRows.length + (alreadyPaid ? 0 : 1);\nconst catKey = norm(inp.category).replace(/s$/, '');\nconst conflicts = paidRows.filter(function (r) {\n  if (match && r.id === match.id) return false;\n  const a = norm(val(r, 'property_niche')).replace(/s$/, '');\n  const c = norm(val(r, 'property_category')).replace(/s$/, '');\n  return catKey.length >= 4 && ((a && (a.indexOf(catKey) >= 0 || catKey.indexOf(a) >= 0)) || (c && (c.indexOf(catKey) >= 0 || catKey.indexOf(c) >= 0)));\n}).map(function (r) { return r.name || val(r, 'property_business_name'); });\nconst props = {\n  'Sale Stage': { select: { name: 'Paid' } },\n  'Paid Date': { date: { start: inp.paidAt } },\n  'Customer Email': { email: inp.email || null },\n  'Stripe Payment': { url: inp.paymentUrl }\n};\nconst note = 'Paid $' + inp.amount + ' via Stripe on ' + inp.paidAt + '. Contact: ' + inp.contactName + ', ' + inp.phone + '. Category entered at checkout: ' + inp.category;\nconst createProps = Object.assign({}, props, {\n  'Business Name': { title: [{ text: { content: inp.businessName || 'Unknown business' } }] },\n  'Phone': { phone_number: inp.phone || null },\n  'Call Notes': { rich_text: [{ text: { content: note + '. Created automatically, not matched to an existing Call List row.' } }] }\n});\nreturn [{ json: {\n  found: !!match,\n  pageId: match ? match.id : '',\n  pageUrl: match ? match.url : '',\n  updateBody: { properties: props },\n  createBody: { parent: { database_id: 'REDACTED_NOTION_DATABASE_ID' }, properties: createProps },\n  paidCount: paidCount,\n  conflicts: conflicts,\n  inp: inp\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        660,
+        300
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "b148512f-9d05-4c87-9324-fe0cc123fc4d",
+      "name": "Row Found?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.found }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        }
+      },
+      "position": [
+        880,
+        200
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "b0c8fed9-3a5e-4f4f-a675-15f94b898896",
+      "name": "Mark Row Paid",
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "authentication": "predefinedCredentialType",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            }
+          ]
+        },
+        "jsonBody": "={{ JSON.stringify($json.updateBody) }}",
+        "method": "PATCH",
+        "nodeCredentialType": "notionOAuth2Api",
+        "sendBody": true,
+        "sendHeaders": true,
+        "specifyBody": "json",
+        "url": "=https://api.notion.com/v1/pages/{{ $json.pageId }}"
+      },
+      "position": [
+        1100,
+        100
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "7674b70b-928d-4aca-a898-50958e39b7d2",
+      "name": "Create Paid Row",
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "authentication": "predefinedCredentialType",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            }
+          ]
+        },
+        "jsonBody": "={{ JSON.stringify($json.createBody) }}",
+        "method": "POST",
+        "nodeCredentialType": "notionOAuth2Api",
+        "sendBody": true,
+        "sendHeaders": true,
+        "specifyBody": "json",
+        "url": "https://api.notion.com/v1/pages"
+      },
+      "position": [
+        1100,
+        300
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dil4wMogas9aOWKP",
+          "name": "Abdullah Kynetic account"
+        }
+      },
+      "id": "74d66402-4182-4797-9a84-523f672b4ae5",
+      "name": "Send Welcome and Ad Form",
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "emailType": "html",
+        "message": "=<p>Hi {{ $json.inp.firstName }},</p><p>Thanks for reserving the <b>{{ $json.inp.category || \"your category\" }}</b> spot on the Porchlight Card, Irving 75063 Edition. Your payment went through and your category is locked in. No other business in your category will be on this card.</p><p><b>Next step:</b> send us your ad details and logo here. It takes about 2 minutes:<br><a href=\"https://abdullah-kyneticai.app.n8n.cloud/form/porchlight-ad\">https://abdullah-kyneticai.app.n8n.cloud/form/porchlight-ad</a></p><p>We will email you a proof of your ad before anything prints. The card mails to about 2,500 homes in 4 to 6 weeks.</p><p>Questions? Call or text REDACTED_PHONE.</p><p>Abdullah<br>Kynetic Marketing</p>",
+        "operation": "send",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Kynetic Marketing"
+        },
+        "resource": "message",
+        "sendTo": "={{ $json.inp.email }}",
+        "subject": "=You're on the Porchlight Card, {{ $json.inp.businessName }}"
+      },
+      "position": [
+        880,
+        420
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "webhookId": "34419b61-af4b-42a8-a0f9-aae5ba8c6813"
+    },
+    {
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dil4wMogas9aOWKP",
+          "name": "Abdullah Kynetic account"
+        }
+      },
+      "id": "178b4e79-22d4-4bac-ad76-30d6fec09cd0",
+      "name": "Alert Abdullah",
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "emailType": "html",
+        "message": "=<p><b>{{ $json.inp.businessName }}</b> paid ${{ $json.inp.amount }} for the <b>{{ $json.inp.category }}</b> spot.</p><p>Contact: {{ $json.inp.contactName }}, {{ $json.inp.phone }}, {{ $json.inp.email }}<br>Stripe: {{ $json.inp.paymentUrl }}</p><p><b>Spots paid:</b> {{ $json.paidCount }} of 16</p>{{ $json.conflicts.length ? \"<p style=\\\"color:#b00020\\\"><b>Category conflict:</b> already sold to \" + $json.conflicts.join(\", \") + \". Call this customer today and offer a different category or a refund.</p>\" : \"\" }}<p>{{ $json.found ? \"Marked Paid in the 75063 Call List: \" + $json.pageUrl : \"No matching row found, so a new row was created in the 75063 Call List.\" }}</p><p>They were emailed the ad intake form link automatically.</p>",
+        "operation": "send",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Porchlight Card Bot"
+        },
+        "resource": "message",
+        "sendTo": "abdullah@kyneticai.com",
+        "subject": "={{ $json.conflicts.length ? \"CATEGORY CONFLICT: \" : \"\" }}Porchlight spot paid: {{ $json.inp.businessName }} ({{ $json.paidCount }} of 16)"
+      },
+      "position": [
+        880,
+        600
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "webhookId": "0076abde-bb49-47f0-bffe-cef9324bafcf"
+    },
+    {
+      "id": "911132f4-74ae-4e00-9933-73e072d27ea0",
+      "name": "Sticky Note e243c37d",
+      "parameters": {
+        "color": 4,
+        "content": "## Porchlight Card: Payment Received\nStripe sends checkout.session.completed here for the $300 payment link. Only the Porchlight link counts. It marks the business Paid in the 75063 Call List, emails the customer the ad intake form, and alerts Abdullah with the spot count and any category conflict. Stripe retries are ignored.",
+        "height": 180,
+        "width": 560
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "versionCounter": 1
+}
