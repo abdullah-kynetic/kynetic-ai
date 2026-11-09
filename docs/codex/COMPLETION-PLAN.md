@@ -1,5 +1,7 @@
 # Kynetic — current completion plan
 
+> **[2026-11-09 | HISTORICAL, NOT AUTHORITY]** This file calls itself the one active completion checklist. It is not. The operating plan is the five steps: Twenty ROADMAP note `7bfdcb7e`, SCORECARD `5c44b12e`, and `docs/STATUS.md` on main. Its PARTIAL/BLOCKED statuses are self-reported and unverified. Kept as a technical evidence index for the `dev/codex-setup` work; do not execute it as the plan and do not merge this branch to install it as the plan.
+
 Updated **2026-11-06**, America/Los_Angeles. This is the **one active completion checklist**, replacing old steps 0–12, milestone/wave execution order, and any proposed 13–22 numbering. Old IDs remain evidence references; they are not the new step numbers. This consolidation authorizes documentation only, not implementation, deployment or external tests.
 
 ## How to use this plan
