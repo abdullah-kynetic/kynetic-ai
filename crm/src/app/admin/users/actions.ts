@@ -9,7 +9,10 @@ import {
   resetClientUser,
   type StaffCaller
 } from '@/server/admin';
-import { requireUser } from '@/server/auth';
+import { requireUser, resetStaffTwoFactor, sendSecurityNotice } from '@/server/auth';
+import { getAuthDb } from '@/server/db/client';
+import { users } from '@/server/db/schema';
+import { eq } from 'drizzle-orm';
 import { AppError } from '@/server/errors';
 import { refuseDuringViewAs } from '../view-as-guard';
 import { headers } from 'next/headers';
@@ -73,8 +76,35 @@ export const reactivateUserAction = async (userId: string) =>
   run('User reactivated.', (who) => reactivateUser(who, userId));
 
 export const resetClientUserAction = async (userId: string) =>
-  run('User signed out everywhere. They sign in again with Google or a new link.', (who) =>
+  run('User signed out everywhere. They sign in again with a new email code.', (who) =>
     resetClientUser(who, userId)
+  );
+
+async function notifyTotpReset(userId: string): Promise<void> {
+  try {
+    const [row] = await getAuthDb()
+      .select({ email: users.email })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+    if (!row) return;
+    await sendSecurityNotice({
+      email: row.email,
+      subject: 'Your Kynetic authenticator was reset',
+      text: 'A Kynetic admin reset your authenticator. Sign in with Google and enroll again. If this was not expected, contact another admin.',
+      html: '<p>A Kynetic admin reset your authenticator. Sign in with Google and enroll again. If this was not expected, contact another admin.</p>',
+      idempotencyKey: `totp-reset:${userId}:${Date.now()}`
+    });
+  } catch {
+    // The reset is already committed. A missing mailer must not undo it.
+  }
+}
+
+export const resetStaffTwoFactorAction = async (userId: string) =>
+  run('Authenticator reset. They sign in with Google and enroll again.', (who) =>
+    resetStaffTwoFactor({ id: who.id, kyneticRole: who.kyneticRole }, userId, {
+      notify: notifyTotpReset
+    })
   );
 
 export const changeMembershipRoleAction = async (

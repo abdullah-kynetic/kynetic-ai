@@ -47,6 +47,21 @@ describe('M10-01 auth rate limits (SECURITY 5.4)', () => {
     ).rejects.toMatchObject({ code: 'RATE_LIMITED' });
   });
 
+  it('limits email-code sends to ten per hour per normalized email', async () => {
+    const request = (ip: string, email: string) =>
+      new Request('https://portal.example.test/api/auth/email-otp/send', {
+        method: 'POST',
+        headers: { 'x-forwarded-for': ip, 'content-type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+    for (let i = 0; i < 10; i++) {
+      await enforceAuthRequestRateLimits(request(`203.0.113.${i + 1}`, 'Member@Example.test'), db);
+    }
+    await expect(
+      enforceAuthRequestRateLimits(request('203.0.113.50', 'member@example.test'), db)
+    ).rejects.toMatchObject({ code: 'RATE_LIMITED' });
+  });
+
   it('does not charge sign-out or verification callbacks to sign-in limits', async () => {
     const request = new Request('https://portal.example.test/api/auth/sign-out', {
       method: 'POST',

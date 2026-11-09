@@ -330,6 +330,13 @@
       "when": 1793580000000,
       "tag": "1013_agency_billing",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1793583000000,
+      "tag": "1014_email_otp_and_totp_recovery",
+      "breakpoints": true
     }
   ]
 }

@@ -50,10 +50,25 @@ export class UnauthenticatedError extends Error {
 }
 
 type MagicLinkSender = (msg: { email: string; url: string }) => Promise<void>;
+type SignInCodeSender = (msg: { email: string; code: string }) => Promise<void>;
+export type SecurityNotice = {
+  email: string;
+  subject: string;
+  text: string;
+  html: string;
+  idempotencyKey: string;
+};
+type SecurityNoticeSender = (msg: SecurityNotice) => Promise<void>;
 
 // Kept on globalThis so the sender wired in instrumentation is visible to route handlers.
 const SENDER_KEY = Symbol.for('kynetic.magicLinkSender');
-type SenderSlot = { [SENDER_KEY]?: MagicLinkSender };
+const CODE_KEY = Symbol.for('kynetic.signInCodeSender');
+const NOTICE_KEY = Symbol.for('kynetic.securityNoticeSender');
+type SenderSlot = {
+  [SENDER_KEY]?: MagicLinkSender;
+  [CODE_KEY]?: SignInCodeSender;
+  [NOTICE_KEY]?: SecurityNoticeSender;
+};
 let instance: Auth | undefined;
 
 /** Wired at boot to the email adapter. Until then no link is sent. */
@@ -65,6 +80,30 @@ export function setMagicLinkSender(fn: MagicLinkSender | undefined): void {
 export async function sendMagicLinkEmail(msg: { email: string; url: string }): Promise<void> {
   const sender = (globalThis as SenderSlot)[SENDER_KEY];
   if (!sender) throw new Error('No email sender is configured for sign-in links');
+  await sender(msg);
+}
+
+/** Wired at boot. Until then a sign-in code is not sent. */
+export function setSignInCodeSender(fn: SignInCodeSender | undefined): void {
+  (globalThis as SenderSlot)[CODE_KEY] = fn;
+}
+
+/** Deliver a one-time sign-in code. Throws when no sender is configured. */
+export async function sendSignInCode(msg: { email: string; code: string }): Promise<void> {
+  const sender = (globalThis as SenderSlot)[CODE_KEY];
+  if (!sender) throw new Error('No email sender is configured for sign-in codes');
+  await sender(msg);
+}
+
+/** Wired at boot for security notices such as an authenticator reset. */
+export function setSecurityNoticeSender(fn: SecurityNoticeSender | undefined): void {
+  (globalThis as SenderSlot)[NOTICE_KEY] = fn;
+}
+
+/** Deliver a security notice. Throws when no sender is configured. */
+export async function sendSecurityNotice(msg: SecurityNotice): Promise<void> {
+  const sender = (globalThis as SenderSlot)[NOTICE_KEY];
+  if (!sender) throw new Error('No email sender is configured for security notices');
   await sender(msg);
 }
 

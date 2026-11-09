@@ -68,18 +68,20 @@ async function totp(userId: string, offset: number): Promise<string> {
 const events = (userId: string) =>
   db.admin`select action, after from audit_log where actor_user_id = ${userId} order by created_at, id`;
 
-/** Enrols a staff user end to end and returns headers of the verified session plus the recovery codes. */
+/** Enrols a staff user end to end and returns headers of the verified session. */
 async function enrol(userId: string) {
   const h = await signIn(userId);
   const res = await auth.api.enableTwoFactor({ body: {}, headers: h, asResponse: true });
-  const { backupCodes } = (await res.json()) as { backupCodes: string[] };
+  const body = (await res.json()) as { totpURI?: string; backupCodes?: string[] };
+  expect(body.totpURI).toMatch(/^otpauth:\/\/totp\//);
+  expect(body.backupCodes).toBeUndefined();
   const ok = await auth.api.verifyTOTP({
     body: { code: await totp(userId, 0) },
     headers: h,
     asResponse: true
   });
   expect(ok.status).toBe(200);
-  return { headers: cookieOf(ok, h), backupCodes };
+  return { headers: cookieOf(ok, h), totpURI: body.totpURI ?? '' };
 }
 
 describe('M0-12 staff TOTP enforcement (F-98)', () => {
@@ -108,12 +110,13 @@ describe('M0-12 staff TOTP enforcement (F-98)', () => {
     });
   });
 
-  it('enrols: secret, ten recovery codes stored hashed, session verified, audited', async () => {
+  it('enrols: secret, no backup codes, session verified, audited', async () => {
     const h = await signIn(IDS.admin);
     const res = await auth.api.enableTwoFactor({ body: {}, headers: h, asResponse: true });
-    const body = (await res.json()) as { totpURI: string; backupCodes: string[] };
+    const body = (await res.json()) as { totpURI: string; backupCodes?: string[] };
     expect(body.totpURI).toMatch(/^otpauth:\/\/totp\//);
-    expect(body.backupCodes).toHaveLength(10);
+    expect(body.backupCodes).toBeUndefined();
+    expect(JSON.stringify(body)).not.toMatch(/backup/i);
 
     // A wrong first code does not enrol, and is logged.
     await expect(
@@ -134,10 +137,7 @@ describe('M0-12 staff TOTP enforcement (F-98)', () => {
     const [row] =
       await db.admin`select backup_codes, verified from two_factors where user_id = ${IDS.admin}`;
     expect(row.verified).toBe(true);
-    const stored = JSON.parse(row.backup_codes) as string[];
-    expect(stored).toHaveLength(10);
-    for (const code of body.backupCodes) expect(row.backup_codes).not.toContain(code);
-    expect(stored.every((c) => /^h1:[0-9a-f]{64}$/.test(c))).toBe(true);
+    expect(row.backup_codes).toBe('[]');
 
     const log = (await events(IDS.admin)).map((e) => e.action);
     expect(log).toEqual(['auth.2fa_failed', 'auth.2fa_enrolled']);
@@ -191,30 +191,19 @@ describe('M0-12 staff TOTP enforcement (F-98)', () => {
     expect(ok.status).toBe(200);
   });
 
-  it('a recovery code signs in once and is then spent', async () => {
-    const { backupCodes } = await enrol(IDS.va);
+  it('refuses backup codes and regeneration after enrolment', async () => {
+    const { headers } = await enrol(IDS.va);
+    expect((await getSessionUser(headers, deps()))?.twoFactor).toBe('verified');
     const h = await signIn(IDS.va);
-    const used = backupCodes[0];
-    const ok = await auth.api.verifyBackupCode({
-      body: { code: used },
-      headers: h,
-      asResponse: true
-    });
-    expect(ok.status).toBe(200);
-    expect(await getSessionUser(h, deps())).toMatchObject({ twoFactor: 'verified' });
-    const [row] = await db.admin`select backup_codes from two_factors where user_id = ${IDS.va}`;
-    expect(JSON.parse(row.backup_codes)).toHaveLength(9);
-
-    const h2 = await signIn(IDS.va);
     await expect(
-      auth.api.verifyBackupCode({ body: { code: used }, headers: h2 })
-    ).rejects.toMatchObject({
-      status: 'UNAUTHORIZED'
+      auth.api.verifyBackupCode({ body: { code: 'unused-code' }, headers: h })
+    ).rejects.toMatchObject({ status: 'FORBIDDEN' });
+    await expect(auth.api.generateBackupCodes({ body: {}, headers })).rejects.toMatchObject({
+      status: 'FORBIDDEN'
     });
-    expect((await getSessionUser(h2, deps()))?.twoFactor).toBe('challenge');
-    const log = await events(IDS.va);
-    expect(log.map((e) => e.action)).toContain('auth.2fa_recovery_used');
-    expect(log.find((e) => e.action === 'auth.2fa_recovery_used')?.after).toEqual({ remaining: 9 });
+    expect((await getSessionUser(h, deps()))?.twoFactor).toBe('challenge');
+    const [row] = await db.admin`select backup_codes from two_factors where user_id = ${IDS.va}`;
+    expect(row.backup_codes).toBe('[]');
   });
 
   it('refuses disable, secret read-back and recovery-code regeneration before verification', async () => {
@@ -259,8 +248,8 @@ describe('M0-12 reset by another admin', () => {
 
     const h = await signIn(IDS.va);
     expect((await getSessionUser(h, deps()))?.twoFactor).toBe('enrol');
-    const { backupCodes } = await enrol(IDS.va);
-    expect(backupCodes).toHaveLength(10);
+    const { totpURI } = await enrol(IDS.va);
+    expect(totpURI).toMatch(/^otpauth:\/\/totp\//);
   });
 
   it('refuses your own account, a VA caller and a client user, and changes nothing', async () => {

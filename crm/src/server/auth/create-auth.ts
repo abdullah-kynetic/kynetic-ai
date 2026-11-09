@@ -75,13 +75,17 @@ export function createAuth(deps: AuthDeps) {
           }
         }
       : {},
-    hooks: twoFactorHooks(deps.db, deps.secret),
+    hooks: twoFactorHooks(deps.db),
     plugins: [
       twoFactor({
         issuer: 'Kynetic',
         // Staff sign in with Google and have no password to confirm with.
         allowPasswordless: true,
-        backupCodeOptions: { storeBackupCodes: recoveryCodeStorage(deps.secret) }
+        // Backup codes are not issued. The plugin still writes the column; it stores an empty list.
+        backupCodeOptions: {
+          customBackupCodesGenerate: () => [],
+          storeBackupCodes: recoveryCodeStorage(deps.secret)
+        }
       }),
       magicLink({
         expiresIn: MAGIC_LINK_TTL_SECONDS,

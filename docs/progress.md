@@ -89,6 +89,19 @@ Then: confirm the post-call webhook URL is set on the agent, web-call test Alex,
 Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-11-09 — portal sign-in: email codes, QR authenticator, separate sign-up
+
+Abdullah asked for four auth changes on `crm/`. Built on `cursor/portal-auth-otp-qr-2f76`. After PR #143, `main` (`5efc6c0f`) holds the portal line and this branch was merged onto that `main`. Not deployed.
+
+1. Staff TOTP enrolment shows a QR code. Backup codes are not returned, stored as an empty list, or accepted. "Can't scan the code?" reveals the key.
+2. Clients type a one-time email code. It is sent only for an active membership or a live invitation, and not for staff. Other addresses get the same message and no email. Codes expire in 10 minutes, lock after five misses, and are rate limited. Audit rows store an address hash, not the code. Outbound email stays off unless Resend is configured; tests capture the sender.
+3. `/sign-up` is invite activation (code, then name). `/sign-in` is log-in. Uninvited sign-up creates no account.
+4. `/sign-in/help` resends a client code and explains staff recovery. An admin resets another staff authenticator from Users (audited). The sole admin uses `crm/scripts/emergency-reset-staff-totp.ts`. No passwords.
+
+The earlier schema-list, schema-drift, and isolation failures were fixed on `main` in the consolidation (agency tables declared in the Drizzle schema). They pass on this branch. The duplicate open KI-015 for that drift was dropped; KI-015 on `main` is the resolved completion-plan note.
+
+Anonymous browser visits to `/admin` and its pages redirect to `/sign-in` with a `next` return path. API requests still get 401. A staff session that still needs TOTP is sent to `/staff/2fa` with the same return path. Signed-in clients stay forbidden.
+
 ### 2026-11-09 (single portal line)
 - Abdullah decided to stop the second portal line. The portal code from `dev/codex-setup` is consolidated onto a branch for merge into `main` (merge commit, history kept). `main` becomes the production build for portal.kyneticai.com. The separate DEV environment is retired until after go-live. `scripts/deploy-dev.sh`, `scripts/deploy-dev-server.sh`, `scripts/fix-dev-runtime.sh`, and `scripts/checks/mac-dev-runtime.sh` now refuse to run. No GitHub workflow was deploying that branch on push. No VPS, DNS, or live service was touched. Production remains release `350bf673`.
 - The first CI check on that pull request failed because migrations `1008`–`1013` created agency tables that were not in the Drizzle schema or the integration allow-lists. Those tables were declared and excluded from the two-tenant seed, same as the earlier agency tables. Auth code was not changed. The end-to-end job then failed because the synthetic browser server left `PROVIDER_MODE` at its live default, so the agency compose preview refused to run. That server now forces stub mode and outbound off.

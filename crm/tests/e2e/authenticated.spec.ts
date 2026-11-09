@@ -8,10 +8,28 @@ test('signed-in owner can open the CRM dashboard', async ({ authenticatedPage })
 
 test('sign-in page renders and anonymous admin requests get raw 401', async ({ page, request }) => {
   await page.goto('/sign-in');
-  await expect(page.getByRole('heading', { name: 'Sign in', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Log in', exact: true })).toBeVisible();
   await expect(page.getByLabel('Work email', { exact: true })).toBeVisible();
   const response = await request.get('/admin', { maxRedirects: 0 });
   expect(response.status()).toBe(401);
+  const api = await request.get('/api/admin', {
+    maxRedirects: 0,
+    headers: { accept: 'application/json' }
+  });
+  expect(api.status()).toBe(401);
+});
+
+test('anonymous browser visits to admin pages redirect to sign-in', async ({ page }) => {
+  for (const path of ['/admin', '/admin/agency', '/admin/users']) {
+    await page.goto(path);
+    await expect(page).toHaveURL(new RegExp(`/sign-in\\?next=${encodeURIComponent(path)}`));
+    await expect(page.getByRole('heading', { name: 'Log in', exact: true })).toBeVisible();
+  }
+  const fetched = await page.request.get('/admin/users', {
+    maxRedirects: 0,
+    headers: { accept: 'application/json' }
+  });
+  expect(fetched.status()).toBe(401);
 });
 
 test('verified non-admin cannot open admin, while verified admin can', async ({

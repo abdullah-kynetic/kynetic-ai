@@ -14,12 +14,18 @@ export const LOCK_MINUTES = 15;
 const TOTP_REPLAY_TTL_SECONDS = 120;
 
 const VERIFY_TOTP = '/two-factor/verify-totp';
-const VERIFY_BACKUP = '/two-factor/verify-backup-code';
 const ENABLE = '/two-factor/enable';
-const REGENERATE = '/two-factor/generate-backup-codes';
-// Anything else under /two-factor or /totp is refused: no disable (reset is an admin action), no
-// secret URI read-back, no email or SMS codes.
-const ALLOWED = new Set([ENABLE, VERIFY_TOTP, VERIFY_BACKUP, REGENERATE]);
+// Backup codes, disable, and secret read-back are refused. Reset is an admin action (or the
+// sole-admin emergency script). Enrolment shows a QR code, not recovery codes.
+const ALLOWED = new Set([ENABLE, VERIFY_TOTP]);
+
+/** Drop backup codes from an enrolment payload before it can reach the client. */
+export function withoutBackupCodes<T extends Record<string, unknown>>(
+  body: T
+): Omit<T, 'backupCodes'> {
+  const { backupCodes: _ignored, ...rest } = body;
+  return rest;
+}
 
 const HASH_PREFIX = 'h1:';
 
@@ -54,7 +60,7 @@ const err = (
 type Pending = { userId: string; sessionId: string; enrolling: boolean; replayKey?: string };
 const pendingKey = '__kyneticTwoFactor';
 
-export function twoFactorHooks(db: Db, secret: string) {
+export function twoFactorHooks(db: Db) {
   const one = async <T>(q: ReturnType<typeof sql>): Promise<T | undefined> =>
     ((await db.execute(q)) as unknown as T[])[0];
 
@@ -90,9 +96,6 @@ export function twoFactorHooks(db: Db, secret: string) {
     );
     // Two-factor is for Kynetic staff only in v1; client owners stay Later.
     if (!user?.kynetic_role) throw err('FORBIDDEN', 'Not available.', 'TWO_FACTOR_NOT_AVAILABLE');
-    const session = await one<{ verified: boolean }>(
-      sql`select two_factor_verified_at is not null as verified from sessions where id = ${found.session.id}`
-    );
 
     if (path === ENABLE) {
       if (user.two_factor_enabled)
@@ -101,10 +104,6 @@ export function twoFactorHooks(db: Db, secret: string) {
           'Already enrolled. Ask another admin to reset it.',
           'TWO_FACTOR_ENROLLED'
         );
-      return;
-    }
-    if (path === REGENERATE) {
-      if (!session?.verified) throw err('FORBIDDEN', 'Verify first.', 'TWO_FACTOR_REQUIRED');
       return;
     }
 
@@ -135,16 +134,29 @@ export function twoFactorHooks(db: Db, secret: string) {
         throw err('UNAUTHORIZED', 'Invalid code.', 'INVALID_CODE');
       }
       pending.replayKey = key;
-      return;
     }
-    // Recovery codes are stored hashed, so look the submitted one up by its hash.
-    return { context: { body: { ...body, code: hashRecoveryCode(secret, body.code) } } };
   });
 
   const after = createAuthMiddleware(async (ctx) => {
+    if (ctx.path === ENABLE) {
+      const found = await getSessionFromCtx(ctx);
+      if (found && !(ctx.context.returned instanceof APIError)) {
+        await db.execute(
+          sql`update two_factors set backup_codes = '[]' where user_id = ${found.user.id}`
+        );
+      }
+      if (
+        ctx.context.returned &&
+        typeof ctx.context.returned === 'object' &&
+        !(ctx.context.returned instanceof APIError)
+      ) {
+        return withoutBackupCodes(ctx.context.returned as Record<string, unknown>);
+      }
+    }
+
     const pending = (ctx.context as unknown as Record<string, Pending | undefined>)[pendingKey];
-    if (!pending || (ctx.path !== VERIFY_TOTP && ctx.path !== VERIFY_BACKUP)) return;
-    const method = ctx.path === VERIFY_TOTP ? 'totp' : 'recovery_code';
+    if (!pending || ctx.path !== VERIFY_TOTP) return;
+    const method = 'totp';
     const { userId } = pending;
 
     if (ctx.context.returned instanceof APIError) {
@@ -170,13 +182,6 @@ export function twoFactorHooks(db: Db, secret: string) {
       sql`update two_factors set failed_verification_count = 0, locked_until = null where user_id = ${userId}`
     );
     if (pending.enrolling) await audit(userId, 'auth.2fa_enrolled', { method });
-    if (method === 'recovery_code') {
-      const row = await one<{ backup_codes: string }>(
-        sql`select backup_codes from two_factors where user_id = ${userId}`
-      );
-      const left = row ? (JSON.parse(row.backup_codes) as unknown[]).length : null;
-      await audit(userId, 'auth.2fa_recovery_used', { remaining: left });
-    }
   });
 
   return { before, after };

@@ -12,6 +12,7 @@ import {
   deactivateUserAction,
   reactivateUserAction,
   resetClientUserAction,
+  resetStaffTwoFactorAction,
   type ActionResult
 } from './actions';
 
@@ -38,6 +39,7 @@ export function UserActions({
 }) {
   const [pending, start] = React.useTransition();
   const [confirm, setConfirm] = React.useState(false);
+  const [resetTotp, setResetTotp] = React.useState(false);
   const isAdmin = viewerRole === 'admin';
   const isStaff = row.kyneticRole !== null;
 
@@ -84,6 +86,11 @@ export function UserActions({
         </NativeSelect>
       )}
       {isAdmin && isStaff && (
+        <Button size='sm' variant='outline' disabled={pending} onClick={() => setResetTotp(true)}>
+          Reset authenticator
+        </Button>
+      )}
+      {isAdmin && isStaff && (
         <NativeSelect
           size='sm'
           aria-label={`Kynetic role of ${row.email}`}
@@ -115,6 +122,29 @@ export function UserActions({
           Reactivate
         </Button>
       )}
+      <Modal
+        title={`Reset authenticator for ${row.email}?`}
+        description='This removes their authenticator and signs them out everywhere. They enroll again at the next sign-in. The reset is written to the audit log.'
+        isOpen={resetTotp}
+        onClose={() => setResetTotp(false)}
+      >
+        <div className='flex w-full items-center justify-end space-x-2 pt-6'>
+          <Button variant='outline' onClick={() => setResetTotp(false)}>
+            Cancel
+          </Button>
+          <LoadingButton
+            loading={pending}
+            onClick={() =>
+              run(
+                () => resetStaffTwoFactorAction(row.userId),
+                () => setResetTotp(false)
+              )
+            }
+          >
+            Reset authenticator
+          </LoadingButton>
+        </div>
+      </Modal>
       <Modal
         title={`Deactivate ${row.email}?`}
         description='They are signed out everywhere right away and cannot sign in until you reactivate them. Pending invites are revoked.'
