@@ -46,7 +46,10 @@ const LABELS: Record<string, { label: string; note?: string }> = {
     label: 'Follow-up bundle',
     note: 'Quote follow-up, reactivation and missed-call text-back together.'
   },
-  crm: { label: 'CRM', note: 'One configurable CRM. The capability set (lite or full) is an internal flag, not a sold tier.' }
+  crm: {
+    label: 'CRM',
+    note: 'One configurable CRM. The capability set (lite or full) is an internal flag, not a sold tier.'
+  }
 };
 
 const describe = (s: { enabled: boolean; level: Level } | null) =>

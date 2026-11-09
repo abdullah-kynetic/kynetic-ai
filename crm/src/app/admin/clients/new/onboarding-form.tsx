@@ -198,8 +198,12 @@ export function OnboardingForm() {
         <FieldRow id='crmLevel' label='CRM capability set (internal)' error={fe?.crmLevel}>
           <NativeSelect id='crmLevel' name='crmLevel' defaultValue=''>
             <NativeSelectOption value=''>None (base portal, CRM not configured)</NativeSelectOption>
-            <NativeSelectOption value='lite'>Core CRM capabilities (internal flag: lite)</NativeSelectOption>
-            <NativeSelectOption value='full'>Extended CRM capabilities: custom fields, bulk actions (internal flag: full)</NativeSelectOption>
+            <NativeSelectOption value='lite'>
+              Core CRM capabilities (internal flag: lite)
+            </NativeSelectOption>
+            <NativeSelectOption value='full'>
+              Extended CRM capabilities: custom fields, bulk actions (internal flag: full)
+            </NativeSelectOption>
           </NativeSelect>
         </FieldRow>
       </div>
