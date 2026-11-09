@@ -95,13 +95,16 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
   // audit application: 7 questions, two endings (later routes win in Playwright, so this overrides the abort)
   const posts = [];
   await page.route(/n8n\.kyneticai\.com\/webhook/, (r) => { posts.push(JSON.parse(r.request().postData())); r.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' }); });
+  const openAudit = async () => { await page.locator('#hero a[href*="cal.com"]').first().click(); await page.waitForTimeout(500); };
   const runFlow = async (investIdx) => {
-    await page.locator('#hero a[href*="cal.com"]').first().click(); await page.waitForTimeout(400);
+    await page.evaluate(() => localStorage.clear()); await page.goto(base + '/', { waitUntil: 'load' });
+    await openAudit();
     await page.locator('.am input[name=name]').fill('Test Person');
     await page.locator('.am input[name=phone]').fill('2015550123');
     await page.locator('.am input[name=email]').fill('test@example.com');
     await page.locator('.am [data-step="1"] button[type=submit]').click();
-    await page.locator('.am input[name=company]').fill('Test Co, testco.com');
+    await page.locator('.am input[name=company]').fill('Test Co');
+    await page.locator('.am input[name=site]').fill('testco.com');
     await page.locator('.am [data-step="2"] button[type=submit]').click();
     await page.locator('.am [data-step="3"] .am__opt').nth(4).click(); // Something else
     await page.locator('.am input[name=other]').fill('Pest control');
@@ -115,13 +118,26 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
     await page.waitForTimeout(900);
   };
   await runFlow(0);
-  ok('application: lowest investment shows the not-a-fit page', await page.locator('.am [data-step="nofit"]').isVisible());
-  ok('application: not-a-fit answers are still sent, flagged unqualified', posts.length === 1 && posts[0].qualified === false && posts[0].answers.invest === 'Under $5,000' && posts[0].phone === '2015550123' && posts[0].answers.niche === 'Other: Pest control' && posts[0].website === 'testco.com');
+  ok('application: lowest investment opens the /not-a-fit/ page', page.url().endsWith('/not-a-fit/') && (await page.locator('h1').innerText()).includes("not the right fit"));
+  ok('application: not-a-fit answers are still sent, flagged unqualified', posts.length === 1 && posts[0].qualified === false && posts[0].answers.invest === 'Under $5,000' && posts[0].phone === '2015550123' && posts[0].answers.niche === 'Other: Pest control' && posts[0].website === 'testco.com' && posts[0].company === 'Test Co');
+  // coming back resumes on the last step with the answer filled in, and changing it moves on to booking
+  await page.goto(base + '/', { waitUntil: 'load' }); await openAudit();
+  ok('resume: after not-a-fit the form reopens on step 7 with the answer filled in', await page.locator('.am [data-step="7"]').isVisible() && await page.locator('.am [data-step="7"] input:checked').getAttribute('value') === 'Under $5,000');
+  await page.locator('.am [data-step="7"] .am__opt').nth(2).click(); await page.waitForTimeout(900);
+  ok('application: changed answer shows the booking page and re-sends as an update', await page.locator('.am [data-step="book"]').isVisible() && (await page.locator('#am-cal-frame').getAttribute('src')).includes('cal.com/abdullah-kyneticai') && posts.length === 2 && posts[1].qualified === true && posts[1].updated === true && posts[1].message.includes('QUALIFIED'));
   await page.keyboard.press('Escape'); await page.waitForTimeout(200);
-  await runFlow(2);
-  ok('application: any other investment shows the booking page', await page.locator('.am [data-step="book"]').isVisible() && (await page.locator('#am-cal-frame').getAttribute('src')).includes('cal.com/abdullah-kyneticai'));
-  ok('application: qualified answers sent', posts.length === 2 && posts[1].qualified === true && posts[1].message.includes('QUALIFIED'));
+  await openAudit();
+  ok('resume: after booking the form reopens on the calendar', await page.locator('.am [data-step="book"]').isVisible());
+  await page.locator('.am [data-step="book"] [data-back]').click(); await page.waitForTimeout(300);
+  await page.locator('.am [data-step="7"] [data-back]').click(); await page.waitForTimeout(300);
+  ok('back: walks to earlier steps with answers kept', await page.locator('.am [data-step="6"]').isVisible() && (await page.locator('.am input[name=fixFirst]').inputValue()) === 'One place to see leads');
+  await page.reload({ waitUntil: 'load' }); await openAudit();
+  ok('resume: leaving and returning lands on the step they were on', await page.locator('.am [data-step="6"]').isVisible() && (await page.locator('.am input[name=fixFirst]').inputValue()) === 'One place to see leads');
+  await page.locator('.am [data-step="6"] button[type=submit]').click(); await page.waitForTimeout(400);
+  await page.locator('.am [data-step="7"] button[type=submit]').click(); await page.waitForTimeout(900);
+  ok('next: OK walks forward through filled answers without re-sending', await page.locator('.am [data-step="book"]').isVisible() && posts.length === 2);
   await page.keyboard.press('Escape'); await page.waitForTimeout(200);
+  await page.evaluate(() => localStorage.clear()); await page.goto(base + '/', { waitUntil: 'load' });
   // services map popovers
   await page.evaluate(() => document.getElementById('services').scrollIntoView()); await page.waitForTimeout(1500);
   await page.locator('.m-node[data-pop="1"]').hover(); await page.waitForTimeout(300);

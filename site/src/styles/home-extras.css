@@ -212,3 +212,16 @@ html.am-lock { overflow: hidden; }
 .am--end:has([data-step="book"]:not([hidden])) .am__body { padding-top: 0; }
 .am__opt, .am input[type=text], .am input[type=tel], .am input[type=email] { font-size: 1.0625rem; }
 .am__btn { font-size: 1.0625rem; }
+.am__okrow { display: flex; justify-content: flex-end; }
+.am__okrow[hidden] { display: none; }
+.am__okrow .am__btn { width: min(100%, 50%); }
+.am__bookback { padding: 0 clamp(20px, 5vw, 40px) 24px; display: flex; }
+/* /not-a-fit/ page, laid out like J&T's */
+body:has(.nf) { background: var(--color-page); }
+.nf { min-height: 100dvh; display: flex; flex-direction: column; font-family: var(--font-sans); color: var(--color-text); background: radial-gradient(60% 50% at 85% 10%, rgba(217, 102, 42, .08), transparent 70%), var(--color-page); }
+.nf__nav { display: flex; justify-content: center; padding: 20px 16px; }
+.nf__nav a { display: inline-flex; padding: 14px 28px; background: var(--color-card); border: 1px solid var(--color-border); border-radius: 999px; }
+.nf__main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px 16px 80px; }
+.nf__card { width: min(640px, 100%); box-sizing: border-box; text-align: center; background: var(--color-card); border: 1px solid var(--color-border); border-radius: 36px; padding: clamp(32px, 6vw, 64px); display: flex; flex-direction: column; align-items: center; gap: 20px; box-shadow: 0 24px 60px rgba(20, 16, 12, .08); }
+.nf__title { margin: 0; font-family: var(--font-serif); font-weight: 600; font-size: clamp(2.25rem, 6vw, 3.25rem); line-height: 1.1; }
+.nf__card p { margin: 0; color: var(--color-muted); font-size: 1.125rem; line-height: 1.65; max-width: 480px; }
