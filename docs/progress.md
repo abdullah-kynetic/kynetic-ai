@@ -1,12 +1,16 @@
 # Progress
 
-> **Canonical plan (2026-11-08):** the business roadmap, progress baseline and scorecard live in Twenty, not here: roadmap note `7bfdcb7e`, baseline v1 note `603fe300`, scorecard note `5c44b12e`. GitHub owns technical tracking only (code, PRs, CI, deploy evidence: `docs/audit/2026-11-08-code-evidence.md`). `docs/codex/COMPLETION-PLAN.md` on branch `dev/codex-setup` is technical detail, not a competing roadmap. Do not keep a second editable acceptance list in this repo.
+> **Canonical plan (2026-11-08, precedence restated 2026-11-09):** the business roadmap, progress baseline and scorecard live in Twenty: roadmap note `7bfdcb7e`, baseline v1 note `603fe300`, scorecard note `5c44b12e`. GitHub owns technical tracking only (code, PRs, CI, deploy evidence: `docs/audit/2026-11-08-code-evidence.md`). The operating summary, offer, pricing precedence, and the docs-reconciliation journal are in `docs/STATUS.md`. `docs/codex/COMPLETION-PLAN.md` on branch `dev/codex-setup` (`81496f99`) calls itself the one active completion checklist. That branch file is a historical artifact, not a competing roadmap, and it was not edited here. Do not merge it as the plan. Do not keep a second editable acceptance list in this repo.
 
-Mirror of the Twenty roadmap ("Roadmap: all phases"). Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
+This file is the dated log. On a mismatch with Twenty, flag both values. The 2026-11-09 docs pass did not read Twenty and did not change the frozen scorecard weights.
 
-## Portal implementation order (2026-11-01)
+## Historical marker (2026-11-09)
 
-N8n automations are deferred by Abdullah. Continue portal features with synthetic fixtures; login/auth work stays last. M16 agency workspace, source tracking, pipeline UI, human dialer/never-dial checks and campaigns are locally verified. M17-01 proposal drafts are also locally verified. Next: wave 38 won-deal onboarding and price-plan data (pricing decision gate remains). Live systems remain unchanged.
+The headings below through Blockers record older operating orders: Plan 1 at the D-017 price, the five-client gate, Retell as the platform, an open bake-off, auth-last, and n8n-deferred. They are kept. The five-step order in `docs/STATUS.md` supersedes them. Do not execute those sections as the current plan.
+
+## Portal implementation order (2026-11-01, historical)
+
+N8n automations were deferred by Abdullah on this date. The instruction then was to continue portal features with synthetic fixtures and to leave login/auth work last. M16 agency workspace, source tracking, pipeline UI, human dialer/never-dial checks and campaigns were locally verified. M17-01 proposal drafts were also locally verified. The "next" line then was wave 38 won-deal onboarding and price-plan data. That sequencing is not current: portal access protection is part of step 2, and Alex-on-n8n is part of step 3. Activation of a workflow still needs a yes. Live systems were unchanged by that session.
 
 ## Audit 2026-11-08 (code and deployment evidence)
 
@@ -14,25 +18,25 @@ Evidence ledger: `docs/audit/2026-11-08-code-evidence.md` (levels: documented, b
 - "Codex steps 3-6 not done" is true of main only. Branch `dev/codex-setup` (99 commits ahead, unmerged, no PR, no CI run) records steps 3-5 and agency steps 7-12 as done on DEV, plus its own `docs/codex/COMPLETION-PLAN.md` (a technical evidence index, not the business plan). Those are self-reported and not verified here.
 - Live portal still returns 200 on `/admin` (checked 2026-11-08); main's sign-in work is merged and CI-green but not deployed.
 - Closed as duplicate or superseded (branches kept): #36 (duplicate of #134), #34, #37, #38 (contained in #136), #39 (palette decision). Kept open: #136 (only PR path for the Astro site; live www was built from `feat/positioning-remodelers`, not main), #113 (see KI entry), #134.
-- Flag, not edited here: pricing in D-017 conflicts with the live site's pricing (the site branch refers to a D-023 that does not exist in `docs/decisions.md`); the unified-CRM decision of 2026-11-08 is not implemented (module gate and plan fields still model Lite/Full).
+- Flag, as written on 2026-11-08: pricing in D-017 conflicts with the live site's pricing (the site branch refers to a D-023 that does not exist in `docs/decisions.md`); the unified-CRM decision of 2026-11-08 is not implemented (module gate and plan fields still model Lite/Full). 2026-11-09 reading: do not choose again between D-017 and D-023. Twenty D-023 (2026-10-24) is the pricing authority. The Nov 5 guarantee is separate. Lite/Full stays an internal code flag. See `docs/STATUS.md`.
 
-## Status check 2026-11-08 (read-only review; supersedes older blocker lists below)
+## Status check 2026-11-08 (read-only review; superseded the October blocker list, and is itself a dated snapshot)
 
 Checked directly: GitHub, repo code (typecheck clean, 468/468 unit tests on main `49019b93`), live HTTP, n8n workflow list, Twenty.
 - Not launch-ready. Twenty has 0 opportunities; no Alex workflow is active in n8n (all Retell, 11Labs and DEV Alex workflows are inactive); only the website contact form workflow `WxIh0Hw4lQodY1Xa` is active and it has not been tested.
-- Live portal is still open (KI-013). Main has sign-in restored (2026-11-05) but is not deployed.
+- Portal access, as written that day: live portal treated as open (KI-013); main's sign-in restore (2026-11-05) treated as not deployed. 2026-11-09 reading: the ledger labels HTTP 200 on `/admin` as inference. This docs pass did not probe production and does not confirm a deploy or an exposed admin page.
 - Codex build steps 0 to 2 done (dev setup, foundation, Alex on ElevenLabs DEV). Steps 3 to 6 not done: lead-to-booking chain, texts and alerts, onboarding, go-live. "Done" in BUILD_PLAN means built and locally verified, not working end to end.
 - A DEV Twilio voice number was bought and assigned to a DEV ElevenLabs agent (2026-11-04); dev portal runs at dev.kyneticai.com on an older revision.
 - Website: www.kyneticai.com serves the positioning build (from `feat/positioning-remodelers`, not on main); /remodelers still has red TODO boxes (guarantee wording, video, add-ons, testimonials).
-- Twilio A2P campaign CJUDEQY verified 2026-10-28; text wording and SMS tool not restored yet (D-025 item 4).
+- Twilio A2P campaign CJUDEQY was recorded as verified 2026-10-28; text wording and SMS tool not restored yet (D-025 item 4). That record is not permission for cold SMS, and this pass did not re-check Twilio.
 - Open PRs: #136 (brand revamp, likely stale vs. the live site), #134 (lead pipeline, supersedes #36), #113 (M1-08, stacked on a closed base), #34/#37/#38/#39 (old site stack), #36. Abdullah decides closures.
 - Full report: project file handoff/launch-readiness-2026-11-08.md. Twenty tasks were refreshed the same day (1.3 and 3.10 marked done; four launch-blocker tasks added).
 
-## Current plan
-Plan 1 only: the outbound speed-to-lead agent at the D-017 price (first 3 clients $4,675, clients 4 and up $8,500, three Stripe invoices at 50/25/25). Gate of 5 paying clients before Plan 2 (D-013). Task titles in Twenty carry [P1]/[P2]; Emily inbound and all upsell systems are [P2].
+## Historical plan (superseded 2026-11-09)
+Plan 1 only: the outbound speed-to-lead agent at the D-017 price (first 3 clients $4,675, clients 4 and up $8,500, three Stripe invoices at 50/25/25). Gate of 5 paying clients before Plan 2 (D-013). Task titles in Twenty carried [P1]/[P2]; Emily inbound and all upsell systems were [P2]. Do not quote this price. Twenty D-023 (2026-10-24) is the later pricing authority. The five-client gate is not the operating order.
 
-## Current phase
-Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Retell is the platform and Vapi is parked (D-018). Active files: `retell/builds/outbound-speed-to-lead/`. The separate CRM portal remains in local M10 hardening; it is not part of the Twenty roadmap.
+## Historical phase (superseded 2026-11-09)
+Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. This section's "Retell is the platform" line is historical. D-025 moved Alex to ElevenLabs. Vapi stays parked (D-018). Files in `retell/builds/outbound-speed-to-lead/` are the parked spec. The CRM portal is technical work in this repo and is not a second business roadmap.
 
 ## Done
 - 2026-11-03: replaced the 13 pitch-client workspaces on the live portal (portal.kyneticai.com) with the agreed set from PR #127 (5 Houston-area roofers, 3 pool builders, 2 window/door, 3 remodelers). The wrong 10 roofers and the 3 earlier remodeler rows were removed with `db:remove:tenants` (PRs #130, #132); the 4 `audit_log` rows for them were kept on purpose. Live is on `350bf67`. Backups in `/var/backups` (`portal-new-pre-replace2-20261103T060432Z.dump` is the pre-swap one). No calls, leads, reviews or revenue were loaded.
@@ -50,19 +54,19 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Rete
 - PR #16 merged: Claude sessions commit as `abdullah-kynetic` (`.claude/settings.json`, CLAUDE.md).
 - CRM portal M10-01 local security gate completed 2026-10-29 with no open high findings. Evidence and medium production-verification items are in `docs/security-review-M10-01.md`; this does not claim production sign-off.
 
-## In progress
+## In progress (historical)
 - 3.5 outbound build. Prep is in the repo. On 2026-10-17 a read-only check found `m2YJwZ1l8DTzyEkw` active with the Alex agent ID (`agent_71e3cfc8384aa38a910a506b53`) set in Call Settings and Retry Call Settings and the "Retell API (outbound)" credential attached. Go-live approved by Abdullah on 2026-10-18 (KI-009). Alex prompt v1.2.3 is on branch `claude/alex-demo-live-test`, not merged or published. Blocked on Abdullah; see Blockers.
 - Voice provider bake-off (Retell vs Bland vs ElevenLabs) for Alex. **Testing, no decision: Retell stays (D-018) unless a challenger clearly wins on the shared scorecard.** Control is Retell Alex Lab. ElevenLabs is furthest along; Bland has a test track and no results yet. Both live on unmerged branches (`claude/provider-test-elevenlabs`, `claude/provider-test-bland`), not on main. Current state, agent IDs and rules: the "Voice provider bake-off" section of KYNETIC_CONTEXT.md; running log: `providers/elevenlabs/RESULTS.md` on the branch and the Twenty note "VOICE PROVIDER BAKE-OFF". Twenty has no task for it yet.
 
 - Lead engine (Lane A, tasks 2.1/2.2/2.4/2.5): Run B, the Apify DFW pilot, a Treg test and a Firecrawl-only script are done and audited; nothing is built in Modal/n8n. Full state, results and a start prompt for a new session: `docs/lead-engine-handoff.md` (branch `claude/modest-thompson-h9atoy`; Twenty note "LEAD ENGINE: Run B + pilots handoff (Oct 19-20, 2026)"). Next: add a geography filter and AI-receptionist detector to `tools/lead_enrich.py`, run the remaining ~17 roofers, scale the Treg test. Dialing is planned for Tue Oct 20 and needs about 3,000 owner-gated numbers; the lead pool is not there yet (7.1 launch gate).
 
-## Paused (D-010, Oct 6, 2026 — inbound is near-done, left alone until a client demo needs it)
+## Paused (historical; D-010, Oct 6, 2026 — inbound is near-done, left alone until a client demo needs it)
 - 3.1 Repoint Emily's 4 tool webhooks and post-call webhook, greeting says Emily. Approved, URL only.
 - 3.2 Swap Emily's 13 Notion nodes for Twenty nodes. Needs approval of the node-by-node plan.
 - 3.3 Publish the Retell agent (Emily build copy). Was blocked on voice; no longer blocked, but not current work.
 - 3.4 Test 3 call paths. Blocked on 3.3 and 1.3.
 
-## Next (active focus)
+## Next (historical; not the active focus)
 - 3.5 Finish the outbound agent. Decisions 2 and 3 are resolved in D-014 (n8n form, two endpoints, light pre-call gate). Nothing left to confirm there. The n8n workflow exists (38 nodes, active as of the Oct 17 read; see KI-009). What is left is confirming go-live, the KYC check, and a test. See Blockers.
 - 3.6 Compliance for the outbound workflow: SMS opt-out, Contact relation, webhook auth (KI-005).
 - 1.3 Twilio A2P registration for +16692660586 (manual). Voice goes first (D-004).
@@ -71,7 +75,7 @@ Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. Rete
 
 - 3.10 Self-hosting n8n on the VPS: planning only (Twenty task 3.10; see the 2026-10-18 log entry). Step 1 is a read-only export and size check of the cloud workflows; step 2 is a written plan. No n8n change without Abdullah's yes on that specific change.
 
-## Blockers
+## Blockers (historical, as of 2026-10-18)
 Updated 2026-10-18 (go-live approved); earlier read-only check of n8n 2026-10-17. Confirm against Twenty task 3.5. The Oct 15 end-to-end call (see Done) suggests items 2 and 3 below are already cleared; Abdullah to confirm.
 All on Abdullah, for 3.5:
 1. ~~Confirm the go-live state of `m2YJwZ1l8DTzyEkw`~~ Approved live by Abdullah on 2026-10-18 (KI-009 resolved). Nothing changed in n8n.
@@ -292,4 +296,12 @@ Verified: typecheck, lint, format, build, 431 unit tests, 6 new integration test
 Abdullah asked to delete all authentication and sign-in until the end (DC-TBD-15). Done on `claude/project-thread-qyeivs`: `getSessionUser` and `requireUser` now return an existing user chosen by the `kynetic_open_as` cookie (admin by default; `/open/<persona>` and the account menu switch it); no sessions, magic links, Google sign-in, TOTP or terms gate. Deleted the sign-in, accept-terms and staff 2FA pages, the Better-Auth route and client, create-auth, two-factor, gate, lifetimes and the auth rate limiter, the magic-link email wiring, the `better-auth` package, and the tests for them. The database tables (sessions, accounts, terms) are untouched. RLS, the permissions matrix, view-as and audit still apply. `bun run demo` now just starts the synthetic server on port 3000.
 
 Verified locally: typecheck, 431 unit tests, all integration tests pass except the p95 speed test, which also fails on current main on this machine (CI limit is 5000 ms), 38 browser tests pass. Not verified: CI on this branch. Not deployed. Live portal.kyneticai.com still runs the Oct 29 build; see KI-013 before deploying this one. `BETTER_AUTH_SECRET` is still a required env var; harmless, to be dropped when auth is rebuilt.
+
+### 2026-11-09 — documentation authority reconciliation
+
+Docs only, on `cursor/docs-authority-reconcile-1883`. No application code, schema, workflow, Twenty write, deploy, or live probe. Journal and readiness table: `docs/STATUS.md`.
+
+Entry instructions now start at that file. Historical operating orders (Retell as Alex's platform, the open bake-off, D-017 as the price to quote, the five-client gate, build-everything-first, auth-last, n8n-deferred, the AI commit trailer, `TWENTY_API_KEY`, and the lowest-unchecked Codex step) are marked historical. Their original text stays. Twenty D-023 remains the pricing authority over D-017. The Nov 5 remodeler guarantee is recorded separately. The Nov 6 price proposal is recorded as not approved. No new D-number was assigned, because Twenty's sequence already diverges from this file.
+
+`dev/codex-setup` `docs/codex/COMPLETION-PLAN.md` (`81496f99`) still calls itself the one active checklist. This pass did not edit that branch. Frozen scorecard weights and the 23/53/24 snapshot were not changed. `scripts/checks/checks.py` still reads the dead Twenty key name.
 

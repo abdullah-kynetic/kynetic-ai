@@ -1,5 +1,7 @@
 # Code and deployment evidence ledger, 2026-11-08
 
+> Reading note, 2026-11-09: this ledger was not re-run. Row A3 labels HTTP 200 on `/admin` as inference. Headline 3 is that day's observation, not a new production verification. Headline 2's `docs/codex/COMPLETION-PLAN.md` lives only on `dev/codex-setup` and is not authority. Do not merge that branch to install it as the plan. Frozen weights were not changed.
+
 Observed 2026-11-08 22:30-23:10Z by the "Audit code and deployment evidence" thread. Read-only on every live system. No project code, migration or test was executed; test and CI evidence below is attributable GitHub Actions output or a quoted self-report, labelled as such.
 
 Levels used: **DOC** documented only; **BRANCH** implemented on an unmerged branch; **MERGED** on main; **TESTED** attributable CI run on that commit; **DEPLOYED** observed running; **VERIFIED** observed working end to end. Each row also says FACT (I read or observed it), INFERENCE, or UNKNOWN.

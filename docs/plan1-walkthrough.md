@@ -1,6 +1,6 @@
 # Plan 1 walkthrough: top to bottom (Oct 8, 2026)
 
-> **Point-in-time snapshot (2026-10-08).** Task counts, node counts and dates below are as of that day and are not kept current. For current state read `docs/progress.md`.
+> **Point-in-time snapshot (2026-10-08), historical as a plan (2026-11-09).** Task counts, node counts, prices, and the five-client / build-everything-first gates below are as of that day. They are not the current order. Current direction: `docs/STATUS.md`. Dated log: `docs/progress.md`. Do not quote the D-017 amounts in the next paragraph.
 
 Plain-language map of everything between today and the first signed client. Mirrors the Twenty note "PLAN 1 WALKTHROUGH: top to bottom" and the 33 [P1] tasks. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 

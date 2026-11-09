@@ -10,6 +10,7 @@ Fix: counsel sign-off (task 1.4). Also feeds the agreement rewrite (task 4.7, 4.
 ### KI-003: Twilio A2P not registered, SMS filtered (high)
 SMS from +16692660586 never arrived on Sep 22.
 Fix: finish A2P 10DLC registration (task 1.3).
+Update 2026-11-09: `docs/progress.md` records campaign CJUDEQY as verified on 2026-10-28, and also says the text wording and SMS tool are not restored (D-025 item 4). This pass did not re-check Twilio, so both statements stay. A verified campaign is not permission for cold SMS. DNC, consent, and quiet hours still apply.
 
 ### KI-004: Emily workflow still has 13 Notion nodes (medium)
 Fix: replace with Twenty nodes, needs approval (task 3.2).
@@ -44,6 +45,7 @@ Found 2026-10-19 (read-only review of Twenty).
 Fix: Abdullah to say where the research files are, confirm the Treg rotation, and approve or reject the D-002 reword.
 
 ### KI-013: Portal has no sign-in (open mode) (high)
+Update 2026-11-09: the 2026-11-08 ledger labels HTTP 200 on `/admin` as inference (a sign-in page can also return 200) and the deployed revision as partly memory-based. The docs pass on this date did not probe the portal and does not confirm production exposure or a deploy. The release risk stays open until a dated anonymous probe of the deployed revision shows a denial. The 2026-11-08 note follows.
 Update 2026-11-08: main `49019b93` (merged 2026-11-05) restores invitation-only sign-in, staff TOTP and verified sessions, and persona switching only works outside production with DEV_PERSONA_SWITCHING (checked in code; typecheck and 468 unit tests pass). It is NOT deployed: live portal.kyneticai.com still runs `350bf67` and `/admin` returns HTTP 200 with no sign-in (checked 2026-11-08). Still open until main is deployed and the first invites are created. Original note follows.
 Found 2026-11-02 (DC-TBD-15). Anyone who can reach an open-mode build acts as the Kynetic admin or any client. Fine for local use and synthetic data. Do NOT deploy it to a public address with real client data until network access control or sign-in is back. The live portal.kyneticai.com still runs the Oct 29 build with sign-in; deploying main replaces that with the open build. Fix: restore auth (git history before the open-mode commit has it) or add Cloudflare Access first.
 
@@ -55,6 +57,13 @@ Found 2026-10-20.
 - Apify account `kyneticai` is Free with a $5 monthly cap (cycle ends 2026-10-29), not $30.
 Fix: hand-dial a sample, counsel answer, and keep the audit step in every run.
 
+## Open (docs reconciliation leftovers, 2026-11-09)
+### KI-015: Branch completion plan still claims to be the active checklist (medium)
+`dev/codex-setup` at `81496f99b2dd20a88e6cbc080b33e0a73e76a2aa` (2026-11-06) contains `docs/codex/COMPLETION-PLAN.md`, which calls itself the one active completion checklist. Main's `docs/STATUS.md` warns that the file is not authority. The 2026-11-09 docs pass did not edit that branch. Do not merge the branch in order to install that file as the plan. A later edit on that branch can add the same warning. Until then the branch copy remains wrong if read alone.
+
+### KI-016: Checker still reads the dead Twenty key name (low)
+Approved Twenty env names are `TWENTY_BASE_URL` and `TWENTY_SELFHOST_API_KEY`. `TWENTY_API_KEY` is dead. `scripts/checks/checks.py` check 3.4 still sends `TWENTY_API_KEY`. The 2026-11-09 docs pass did not change the checker. Do not put the dead name back into `.env.example` to make the check pass.
+
 ## Gotchas
 - Cloud sessions deny hosts not in the environment's allowed domains. Firecrawl returned 403 until `api.firecrawl.dev` was allowed (2026-10-19). A scrape of Facebook, BBB, the Texas Comptroller and similar sites needs those domains allowed too.
 - Never modify Nora (agent_4c34644a04c74e27253e80167b, n8n 2PFWFqBM0wabADk6).
@@ -63,7 +72,9 @@ Fix: hand-dial a sample, counsel answer, and keep the audit step in every run.
 - The Retell MCP runs through npx (`.mcp.json`) but its code tool needs Deno, and it is often unavailable. Use tools/retell.py.
 
 - Twenty refuses the same website domain on two companies. The Kynetic Roofing (Demo) company has no website field set because AM-1 Roofing Inc already uses am1roofing.com; the website lives in the profile note.
-- The n8n workflow "n8n Facebook Ad Form" (`KYQIVtxwDcXVKmk3`) is SOURCE TEMPLATE 05 imported as-is (Google Sheets, Vapi, Azure). Do not activate it and do not run it. The real outbound workflow is "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`): 38 nodes and active as of the Oct 17 read-only check, including a calling-hours gate and a fallback normalize step. See KI-009 for the go-live question.
+- The n8n workflow "n8n Facebook Ad Form" (`KYQIVtxwDcXVKmk3`) is SOURCE TEMPLATE 05 imported as-is (Google Sheets, Vapi, Azure). Do not activate it and do not run it. Do not create Google Sheets. The Oct 17 read found the Retell workflow "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`) at 38 nodes and active, including a calling-hours gate and a fallback normalize step. That is a historical observation of the parked Retell path (KI-009). It is not an instruction to activate a workflow. Current Alex work is ElevenLabs through n8n on the VPS, and live agent `agent_8201m5afn2rbeb7v29xfkhh1pjef` must not be changed or invoked.
+- `TWENTY_API_KEY` is a dead name (KI-016). Use `TWENTY_BASE_URL` and `TWENTY_SELFHOST_API_KEY`. Never REST DELETE on Twenty.
+- `dev/codex-setup:docs/codex/COMPLETION-PLAN.md` is not the roadmap (KI-015).
 - Vapi is parked (D-018). Its workflows were renamed and deactivated. The builder prompt was removed from main (recoverable via tag `archive/pre-reorg-2026-10-17`) and is not a spec to run.
 - The Retell post call webhook in n8n has no auth (unguessable path only) because Retell signs requests instead of sending a custom header. Part of KI-005.
 - The Kynetic Roofing (Demo) company record carries the real AM-1 office phone (D-016 amended). Never dial it from the demo or any test.

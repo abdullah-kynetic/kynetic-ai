@@ -1,16 +1,18 @@
 # Lead engine handoff (state as of 2026-10-20)
 
-Single entry point for anyone (human or Claude session) taking over the lead-sourcing work for Plan 1. Everything below is backed by files in this repo on branch `claude/modest-thompson-h9atoy`; Twenty has a mirror note "LEAD ENGINE: Run B + pilots handoff (Oct 19-20, 2026)". Twenty is canonical; on a mismatch, flag it.
+> **Historical research handoff (classified 2026-11-09).** Not the current sales plan and not a second roadmap. Current outreach is human cold calls to remodelers until the first three clients are signed (`docs/STATUS.md`). Do not quote the D-017 prices below. Do not add an AI commit trailer. DNC scrub, consent, and quiet hours still apply. A2P approval is not permission for cold SMS. The research record is kept.
+
+Point-in-time entry for the lead-sourcing work as of 2026-10-20. Everything below is backed by files in this repo on branch `claude/modest-thompson-h9atoy`; Twenty has a mirror note "LEAD ENGINE: Run B + pilots handoff (Oct 19-20, 2026)". Twenty is the business source of truth; on a mismatch, flag both values. This pass did not re-read that note.
 
 ## 1. Goal and hard rules
-- Goal: a repeatable, cheap way to get independent local businesses that are running Meta (Facebook/Instagram) ads, with the owner's name (sourced) and the best published phone. Plan 1 (outbound AI speed-to-lead agent, $4,675 for the first 3 clients, $8,500 after) is sold to them. Dialing target is 75 owner calls a day; the launch gate needs about 3,000 owner-gated numbers (task 7.1).
+- Goal, as of 2026-10-20: a repeatable, cheap way to get independent local businesses that are running Meta (Facebook/Instagram) ads, with the owner's name (sourced) and the best published phone. The price and volume lines that followed ($4,675 / $8,500, 75 owner calls a day, about 3,000 numbers before a launch gate) are historical. Do not quote them and do not treat that gate as current.
 - A human cold-calls the owners. No AI calls to prospects (D-007).
 - Public sources only. No logins, no CAPTCHA solving, no contacting any business, no form submissions or test leads.
 - No people-search or data-broker sites (Lane A rule; the reason is not recorded, see KI-011). Do not record home addresses or consumer-only phone numbers.
 - Never guess an owner or phone. Every non-unknown cell needs a source URL; owner names need a verbatim quote.
 - Do not change Twenty, n8n or Retell without a yes on that specific change (CLAUDE.md).
 - Open compliance question: using Treg's phone finder (personal mobile numbers) for cold calls is not cleared. TCPA/DNC counsel task 1.4 is still open. Treat the phone finder as off until counsel answers.
-- Commits: author `abdullah-kynetic <abdullah@kyneticai.com>`, at most one trailer `Co-authored-by: Claude <noreply@anthropic.com>`.
+- Commits: author `abdullah-kynetic <abdullah@kyneticai.com>`. Historical instruction in this file allowed one `Co-authored-by: Claude` trailer. That instruction is withdrawn. No AI trailer.
 
 ## 2. What was tested, in order
 | # | Date | Test | Files |
@@ -66,7 +68,9 @@ Single entry point for anyone (human or Claude session) taking over the lead-sou
 - Twenty (crm.kyneticai.com): notes "Lead Engine: research, ICP and method (Lane A)", "Search List + How Searches Ran", "MUSE PROMPT: Wave 1 North DFW census", "Qualifying Checks + Oct 13 Scraping (Superseded Demo)", "Kynetic Prospecting Plan", and the new handoff note; tasks 2.1, 2.2, 2.4, 2.5, 7.1.
 - Scratch outputs from the Apify and Treg runs lived in the old cloud session only and are not in the repo.
 
-## 7. Prompt to start the new project
+## 7. Prompt to start the new project (historical; do not paste as current work)
+
+The fenced prompt is the Oct 20 handoff. Its "next steps" are not the five-step order. The commit trailer inside it is withdrawn.
 ```
 You are taking over the lead-sourcing work for Kynetic AI's Plan 1 (outbound AI speed-to-lead agent). Repo: abdullah-kynetic/kynetic-ai, branch claude/modest-thompson-h9atoy. Twenty CRM (crm.kyneticai.com) is the system of record.
 
@@ -74,7 +78,7 @@ Before doing anything, read in this order: CLAUDE.md, docs/progress.md, docs/dec
 
 Goal: a repeatable, low-cost pipeline that finds independent local businesses running Meta ads and returns the owner's name and best published phone, for a human to cold-call. Current best stack: Apify actor solidcode/meta-ads-library-scraper for the census, a free code filter, tools/lead_enrich.py (Firecrawl) for BBB/registry/site, Treg only for gaps under a cost cap, Muse or a person only for HOLD rows.
 
-Hard rules: a human makes the calls; public sources only; no logins, CAPTCHAs, form submissions or contacting businesses; no people-search or data-broker sites; never guess an owner or phone (unknown beats a guess, and every claim needs a source URL); do not change Twenty, n8n, Retell or Modal without my yes on that specific change; do not use Treg's phone finder until counsel (task 1.4) clears it; keep Treg spend under $0.50 per test; never print or commit keys. Commits are authored abdullah-kynetic <abdullah@kyneticai.com> with at most the trailer Co-authored-by: Claude <noreply@anthropic.com>.
+Hard rules: a human makes the calls; public sources only; no logins, CAPTCHAs, form submissions or contacting businesses; no people-search or data-broker sites; never guess an owner or phone (unknown beats a guess, and every claim needs a source URL); do not change Twenty, n8n, Retell or Modal without my yes on that specific change; do not use Treg's phone finder until counsel (task 1.4) clears it; keep Treg spend under $0.50 per test; never print or commit keys. Commits are authored abdullah-kynetic <abdullah@kyneticai.com> with no AI trailer. The Oct 20 wording of this prompt allowed a Claude co-author trailer. That wording is withdrawn.
 
-Next steps, in order: (1) add to tools/lead_enrich.py a geography/franchise filter, an AI-receptionist/chat-widget detector and a phone-conflict report; (2) run the remaining ~17 roofers from the Apify list and score the output against the audited statuses in docs/lead-engine-pilot-apify.md; (3) once it holds up, propose (do not build) the Modal + n8n + Twenty architecture in section 5 of the handoff and wait for my yes; (4) end the session with the build-log skill. Report cost (Apify dollars, Firecrawl credits, Treg dollars), time and hit rates every run.
+Next steps recorded on 2026-10-20, not the current five-step order: (1) add to tools/lead_enrich.py a geography/franchise filter, an AI-receptionist/chat-widget detector and a phone-conflict report; (2) run the remaining ~17 roofers from the Apify list and score the output against the audited statuses in docs/lead-engine-pilot-apify.md; (3) once it holds up, propose (do not build) the Modal + n8n + Twenty architecture in section 5 of the handoff and wait for my yes; (4) end the session with the build-log skill. Report cost (Apify dollars, Firecrawl credits, Treg dollars), time and hit rates every run.
 ```
