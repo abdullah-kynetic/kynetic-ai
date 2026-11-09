@@ -2,7 +2,7 @@
 
 Durable context for agent sessions. Twenty is the business source of truth. GitHub is the technical execution record. On a mismatch, flag both values. Current operating order, offer, and pricing precedence: `docs/STATUS.md`. Sections below marked historical keep their original text so the ids stay findable.
 
-## Current direction (2026-11-09)
+## Current direction (2026-11-08 PST)
 
 - Five steps, one roadmap (Twenty note `7bfdcb7e`): consolidate the plan; sales-ready foundation in parallel with productizing Alex, one CRM, scheduling, essential follow-up, and demo templates; cold-call remodelers until the first three clients are signed; then deliver, measure, and expand. Broader systems stay later.
 - Alex runs on ElevenLabs through n8n on the VPS. Retell is parked for Alex. The live agent `agent_8201m5afn2rbeb7v29xfkhh1pjef` is protected: do not change it and do not invoke it.
@@ -38,7 +38,7 @@ This replaces $1,500 setup + $997/mo (D-001).
 
 ## Two plans (D-013, historical)
 
-The five-client gate and "build everything first" (D-003) are not the operating order. The five steps in `docs/STATUS.md` superseded them on 2026-11-09. Original text follows.
+The five-client gate and "build everything first" (D-003) are not the operating order. The five steps in `docs/STATUS.md` superseded them on 2026-11-08 PST. Original text follows.
 
 - **Plan 1, now:** only the outbound speed-to-lead agent, sold to owners already running Meta ads, at the D-017 price.
 - **Gate:** 5 paying Plan 1 clients before Plan 2. Quentin's partnership terms still finalize at 5.
@@ -102,7 +102,7 @@ ElevenLabs won. Retell does not stay the Alex platform. The notes below are the 
 ## Twenty
 
 - **Self-hosted since 2026-10-15:** Twenty v2.46.0 at https://crm.kyneticai.com (OVH VPS, Docker in `/opt/twenty`, systemd unit `twenty.service`). MCP connector: https://crm.kyneticai.com/mcp. Nightly backup at 2:00 AM to `/var/backups/twenty` (14 days), plus age-encrypted copies in R2 bucket `kynetic-twenty-backups` (30 days).
-- Twenty Cloud was the untouched rollback copy until about 2026-10-29. Whether its keys were revoked after that date was not checked in the 2026-11-09 docs pass. Do not write to it.
+- Twenty Cloud was the untouched rollback copy until about 2026-10-29. Whether its keys were revoked after that date was not checked in the 2026-11-08 PST docs pass. Do not write to it.
 - API keys are rate-limited to 100 requests per 60 seconds. Never use REST DELETE on either instance; soft-delete in the UI only. Env names: `TWENTY_BASE_URL` and `TWENTY_SELFHOST_API_KEY`. `TWENTY_API_KEY` is dead.
 - n8n credential "Twenty account" `41C04qbmnbi0GI2P`, node `@blackswampai/n8n-nodes-twentycrm`.
 - Custom objects: client_accounts, client_jobs, end_customers, customer_interactions, call_logs, invoices, expenses. Opportunity stages: DEMO_BOOKED → DEMO_HELD / NO_SHOW → PROPOSAL_SENT → CLOSED_WON/LOST.

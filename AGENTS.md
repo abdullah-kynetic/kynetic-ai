@@ -35,7 +35,7 @@ Do not start at the lowest unchecked Codex step. That loop is historical and is 
 | `GIT_*` | commit identity |
 | `TEST_PHONE`, `PORTAL_URL`, `DEV_PORTAL_URL` | add if missing; checks SKIP without them |
 
-`TWENTY_API_KEY` is dead. It remains named inside `scripts/checks/checks.py` (check 3.4). That checker was not updated in the 2026-11-09 docs pass. A missing dead name skips the check. Do not add the dead name back to satisfy the checker.
+`TWENTY_API_KEY` is dead. It remains named inside `scripts/checks/checks.py` (check 3.4). That checker was not updated in the 2026-11-08 PST docs pass. A missing dead name skips the check. Do not add the dead name back to satisfy the checker.
 
 ## Historical Codex loop (not the current plan)
 

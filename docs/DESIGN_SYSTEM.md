@@ -1,6 +1,6 @@
 # Design System
 
-> **Technical UI rules (scope banner, 2026-11-09).** Not the business roadmap. A Lite/Full module list in this file is the historical 2026-10-25 capability split. Current precedence: `docs/STATUS.md`.
+> **Technical UI rules (scope banner, 2026-11-08 PST).** Not the business roadmap. A Lite/Full module list in this file is the historical 2026-10-25 capability split. Current precedence: `docs/STATUS.md`.
 
 Kynetic Client CRM & Portal. Written 2026-10-25. Feature IDs match the PRD.
 

@@ -1,6 +1,6 @@
-# STATUS: start here for project status (2026-11-09)
+# STATUS: start here for project status (2026-11-08 PST)
 
-A pointer, not a second scoreboard. Twenty is the business source of truth. GitHub is the technical execution record (code, pull requests, CI, and deploy evidence). On a mismatch, flag both values. This docs pass did not read or write Twenty.
+A pointer, not a second scoreboard. Twenty is the business source of truth. GitHub is the technical execution record (code, pull requests, CI, and deploy evidence). On a mismatch, flag both values. This GitHub docs pass did not read or write Twenty. The parallel Twenty cleanup is recorded below from the parent's verification.
 
 ## Current direction
 
@@ -39,18 +39,30 @@ These stay as recorded in `docs/audit/2026-11-08-code-evidence.md`. This pass ra
 
 ## What this repo is for
 
-Technical evidence: `docs/audit/2026-11-08-code-evidence.md`. Dated log: `docs/progress.md`. Business history plus the 2026-11-09 precedence note: `docs/decisions.md`. Gotchas: `docs/known-issues.md`. Rules and ids: `KYNETIC_CONTEXT.md`. `docs/BUILD_PLAN.md` is the portal technical task list. Its Status column is a claim, not acceptance, and not the business scorecard.
+Technical evidence: `docs/audit/2026-11-08-code-evidence.md`. Dated log: `docs/progress.md`. Business history plus the 2026-11-08 PST precedence note: `docs/decisions.md`. Gotchas: `docs/known-issues.md`. Rules and ids: `KYNETIC_CONTEXT.md`. `docs/BUILD_PLAN.md` is the portal technical task list. Its Status column is a claim, not acceptance, and not the business scorecard.
+
+## Twenty cleanup (parent-reported, 2026-11-08 PST)
+
+A parallel Twenty cleanup finished on 2026-11-08 PST. The parent verified the worker result. This GitHub pass did not read Twenty. The figures below are that verification, not an independent live read.
+
+- 11 notes and 23 tasks were updated. The readback covered all 34 of those updates.
+- All 63 tasks are mapped. The missing Step 2 tag was fixed.
+- Current direction, voice provider, one CRM, and the Nov 5 guarantee were reconciled. History was preserved.
+- Baseline note `603fe300` is unchanged.
+- Counts after that cleanup: 88 notes and 63 tasks (52 TODO, 4 IN_PROGRESS, 7 DONE).
+- Left untouched: stale `dueAt` values, schema, customer records, and live systems.
+- Claude-only scorecard files were outside that readback.
 
 ## Branch artifact (not authority)
 
 `dev/codex-setup` at `81496f99b2dd20a88e6cbc080b33e0a73e76a2aa` (2026-11-06) contains `docs/codex/COMPLETION-PLAN.md`. That file calls itself the one active completion checklist. It is a historical branch artifact. It is not the roadmap. Do not merge that branch in order to install the file as the plan. This pass did not edit `dev/codex-setup`. Main's `docs/codex/PROGRESS.md` is the older Codex log, not a checklist to execute.
 
-## Docs reconciliation (2026-11-09)
+## Docs reconciliation (2026-11-08 PST)
 
 | Surface | Change on this branch | Still limited |
 |---|---|---|
 | Entry instructions (`CLAUDE.md`, `AGENTS.md`, `KYNETIC_CONTEXT.md`, `docs/CONTEXT.md`, `docs/codex/PROMPT.md`, folder `CONTEXT.md` files on the Alex path) | Point here. Retell-as-current, the five-client gate, build-everything-first, the AI commit trailer, the dead `TWENTY_API_KEY` name, and the "lowest unchecked Codex step" default are marked historical. | `scripts/checks/checks.py` still reads `TWENTY_API_KEY`. It was not modified. |
-| `docs/decisions.md`, `docs/progress.md` | Old gates marked superseded. Headings below the historical marker are history. | Twenty was not edited, so the CRM can still show older wording until a separate Twenty pass. |
+| `docs/decisions.md`, `docs/progress.md` | Old gates marked superseded. Headings below the historical marker are history. | Twenty wording for direction, provider, one CRM, and the guarantee was reconciled in the parent-verified cleanup above. This GitHub pass did not read Twenty. Still untouched there: stale due dates, schema, customer records, live systems, and Claude-only files outside that readback. |
 | Portal technical docs (`docs/PRD.md`, `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/BUILD_PLAN.md`, `docs/REVIEW-SUMMARY.md`, plus `docs/TESTING.md`, `docs/DATABASE.md`, `docs/DESIGN_SYSTEM.md`) | Banner: technical scope. Lite/Full and the Oct 25 prices are historical commercial terms. Internal `lite`/`full` flags stay documented because the code still has them. | No code or schema change. Module levels still exist in the app. |
 | `docs/plans/ALEX-ELEVENLABS-N8N-SPEC.md`, `docs/lead-engine-handoff.md`, `docs/plan1-walkthrough.md` | Classified historical. Existing superseded banners on other plan files were left in place. | The bodies still contain old prices and old steps under the banner. |
 | Scorecard | Weights and 23/53/24 left as recorded. | Not a rescore. Step 1's narrow 100 is not extended to this cleanup. |

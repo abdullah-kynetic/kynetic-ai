@@ -1,6 +1,6 @@
 # Architecture
 
-> **Technical architecture for the portal codebase (scope banner, 2026-11-09).** Not the business roadmap. Current direction: `docs/STATUS.md`. Lite/Full language below is the 2026-10-25 internal capability split the code still implements. It is not a current commercial tier. The "login/auth stays last" and "n8n deferred" notes later in this file are historical sequencing from 2026-11-01. `dev/codex-setup:docs/codex/COMPLETION-PLAN.md` is not authority. This banner does not change schema or code.
+> **Technical architecture for the portal codebase (scope banner, 2026-11-08 PST).** Not the business roadmap. Current direction: `docs/STATUS.md`. Lite/Full language below is the 2026-10-25 internal capability split the code still implements. It is not a current commercial tier. The "login/auth stays last" and "n8n deferred" notes later in this file are historical sequencing from 2026-11-01. `dev/codex-setup:docs/codex/COMPLETION-PLAN.md` is not authority. This banner does not change schema or code.
 
 Kynetic Client CRM & Portal.
 

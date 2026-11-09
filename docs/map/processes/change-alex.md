@@ -9,7 +9,7 @@ verified_at: 5888b13
 
 # change-alex
 
-> Stale as of 2026-11-09. This process is the parked Retell path. Do not run it against live ElevenLabs Alex `agent_8201m5afn2rbeb7v29xfkhh1pjef`. Current direction: `docs/STATUS.md`.
+> Stale as of 2026-11-08 PST. This process is the parked Retell path. Do not run it against live ElevenLabs Alex `agent_8201m5afn2rbeb7v29xfkhh1pjef`. Current direction: `docs/STATUS.md`.
 
 Historical movement: edit the Retell spec, show a dry run, get a yes, then create or update in Retell.
 

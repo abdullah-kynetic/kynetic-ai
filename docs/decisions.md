@@ -1,8 +1,8 @@
 # Decisions
 
-Mirror of the Twenty decision notes. Twenty is the business source of truth. On a mismatch, flag both values. Do not reopen these without asking. This 2026-11-09 pass did not read Twenty.
+Mirror of the Twenty decision notes. Twenty is the business source of truth. On a mismatch, flag both values. Do not reopen these without asking. This GitHub pass did not read Twenty. The parallel cleanup is the parent-reported verification in `docs/STATUS.md`.
 
-## Precedence note (2026-11-09)
+## Precedence note (2026-11-08 PST)
 
 No new D-number. Twenty and this file already number decisions differently after Oct 24 (see the note on D-025). Assigning the next integer here would pretend to be the next Twenty decision.
 
@@ -17,11 +17,11 @@ This note is the current operating precedence for the entries it names. Original
 - DNC scrub, stored consent, and quiet hours are required. A2P approval is not permission for cold SMS.
 
 ## D-001: Price is $1,500 setup + $997/mo
-Status: superseded by D-017 (2026-10-13). D-017 is itself superseded as pricing authority by the 2026-11-09 precedence note. Do not quote this price.
+Status: superseded by D-017 (2026-10-13). D-017 is itself superseded as pricing authority by the 2026-11-08 PST precedence note. Do not quote this price.
 Date: 2026-10-01
 Why: Replaces the $750 founding setup. Guarantee terms are still not set.
 Replaced: $750 setup + $997/mo.
-Superseded by: D-017 (first 3 clients $4,675, clients 4 and up $8,500, three Stripe invoices at 50/25/25). Those D-017 amounts are historical as of the 2026-11-09 precedence note.
+Superseded by: D-017 (first 3 clients $4,675, clients 4 and up $8,500, three Stripe invoices at 50/25/25). Those D-017 amounts are historical as of the 2026-11-08 PST precedence note.
 
 ## D-002: Owner gate
 Status: decided
@@ -29,7 +29,7 @@ Date: 2026-10-01
 Why: Call only the business owner at a number tied to the owner. Drop businesses with a receptionist or front desk, because they already have someone answering.
 
 ## D-003: Build everything first, then switch outreach on once
-Status: historical. Superseded for operating order by the 2026-11-09 precedence note. Original text kept.
+Status: historical. Superseded for operating order by the 2026-11-08 PST precedence note. Original text kept.
 Date: 2026-10-01
 Why: After outreach is on it only speeds up. Never sign clients faster than a client can be set up.
 
@@ -72,7 +72,7 @@ Scope: Inbound (Emily) build is paused — considered near-done, touched again o
 Replaced: D-005's parenthetical "(one agent for inbound and outbound)" description of Emily, and the open/unconfirmed status of Decision 1 in the ACTIVE BUILD PLAN note.
 
 ## D-013: Two plans. Plan 1 is the outbound agent only; five paying clients before Plan 2
-Status: historical. The price in this entry was superseded by D-017, and D-017 is superseded as pricing authority by the 2026-11-09 precedence note. The five-client gate is superseded for operating order by that note. Original text kept.
+Status: historical. The price in this entry was superseded by D-017, and D-017 is superseded as pricing authority by the 2026-11-08 PST precedence note. The five-client gate is superseded for operating order by that note. Original text kept.
 Date: 2026-10-06
 Why: The outbound pitch gets us in front of qualified owners and makes money fastest. The full system is what we follow through on once we have credibility.
 Plan 1: sell only the outbound speed to lead agent to owners already running Meta ads. Price is D-017, which replaces the $1,500 setup + $997/mo figure this decision originally used. Gate: 5 paying clients (Quentin's partnership terms still finalize at 5). Plan 2 (Revenue Recovery System): Reputation Engine, Inbound AI Receptionist (Emily), Lead Recovery and Nurture. After the gate, either stay on Plan 1 and sell the three as upsells to the same clients (if Plan 1 scales well) or reassess and bring Plan 2 forward as its own pitch. Plan 2 pricing is undecided.
@@ -112,7 +112,7 @@ Date: 2026-10-06
 Why: Keeps v1 small and testable. (1) Hang up on voicemail, log as voicemail, retry; leaving a voicemail is TBD. (2) First call within about 60 seconds of form submit, retries at 5 min, 1 hour, next day, max 4 attempts, run by a scheduled sweeper over Twenty. (3) gpt-4.1 + 11labs-Cimo, revisit after test calls. (4) Human transfer deferred past v1. (5) Retell webhook filtered to the final analyzed event replaces the polling loop; structured outcome from Retell native post-call analysis; Twenty record ID passed in call metadata.
 
 ## D-017: Plan 1 price is $4,675 for the first 3 clients and $8,500 after that
-Status: historical. Superseded as pricing authority by Twenty D-023 (approved 2026-10-24; see the 2026-11-09 precedence note). Do not quote these amounts. Original text kept. Quentin signed off on this entry on the date below.
+Status: historical. Superseded as pricing authority by Twenty D-023 (approved 2026-10-24; see the 2026-11-08 PST precedence note). Do not quote these amounts. Original text kept. Quentin signed off on this entry on the date below.
 Date: 2026-10-13
 Why: Final price for the outbound speed-to-lead package. The first 3 clients pay $4,675. Clients 4 and up pay $8,500. Each client is billed as three Stripe invoices: 50% at the start, 25% when the system is built and sent for testing, and 25% at completion. Not a monthly subscription.
 Replaced: D-001, and the price line originally in D-013.
@@ -153,7 +153,7 @@ Why: Abdullah said he is fine with the `bob-box-ovh-vps` key keeping full root o
 Decided: Portal deploys go through `/usr/local/sbin/portal-deploy` (via the restricted `deploy` key). `portal/deploy/deploy.sh` is not used for routine deploys, because both overwrite `/opt/portal/src`. The `bob-box-ovh-vps` key keeps full administrator access.
 
 ## D-025: ElevenLabs is the voice platform for Alex (v1 strict); text promise removed until Twilio A2P approves
-Status: decided for the platform choice. Item 4 is limited by the 2026-11-09 precedence note: it is not approval to edit live agent `agent_8201m5afn2rbeb7v29xfkhh1pjef` and it is not approval for cold SMS.
+Status: decided for the platform choice. Item 4 is limited by the 2026-11-08 PST precedence note: it is not approval to edit live agent `agent_8201m5afn2rbeb7v29xfkhh1pjef` and it is not approval for cold SMS.
 Date: 2026-10-25 (verdict given 2026-10-22)
 Why: The Retell vs ElevenLabs bake-off (task 3.9) is closed. Abdullah called the verdict: ElevenLabs wins, and the v1 strict prompt goes live ("v1 is perfect"). v1 is the only prompt with a clean booked call (Oct 21, 0 stacked questions in 19 turns, median response delay 0.14 s). The 13-point scorecard, the v2 re-run and edge scripts 3, 4 and 6 were not run; the verdict is Abdullah's call.
 Decided:

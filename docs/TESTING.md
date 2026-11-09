@@ -1,6 +1,6 @@
 # Testing
 
-> **Technical test plan for the portal codebase (scope banner, 2026-11-09).** Not the business roadmap. Rows that treat CRM Lite/Full as paid upsells, and the founding-price line, are the historical 2026-10-25 menu. Current precedence: `docs/STATUS.md`. `lite` / `full` remain internal capability gates to test. Do not quote the dollar amounts as the current price. This banner does not change tests or schema.
+> **Technical test plan for the portal codebase (scope banner, 2026-11-08 PST).** Not the business roadmap. Rows that treat CRM Lite/Full as paid upsells, and the founding-price line, are the historical 2026-10-25 menu. Current precedence: `docs/STATUS.md`. `lite` / `full` remain internal capability gates to test. Do not quote the dollar amounts as the current price. This banner does not change tests or schema.
 
 Kynetic Client CRM & Portal. Target path in the build repo: `docs/TESTING.md`.
 

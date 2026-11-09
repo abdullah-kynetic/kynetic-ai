@@ -1,10 +1,10 @@
 # Progress
 
-> **Canonical plan (2026-11-08, precedence restated 2026-11-09):** the business roadmap, progress baseline and scorecard live in Twenty: roadmap note `7bfdcb7e`, baseline v1 note `603fe300`, scorecard note `5c44b12e`. GitHub owns technical tracking only (code, PRs, CI, deploy evidence: `docs/audit/2026-11-08-code-evidence.md`). The operating summary, offer, pricing precedence, and the docs-reconciliation journal are in `docs/STATUS.md`. `docs/codex/COMPLETION-PLAN.md` on branch `dev/codex-setup` (`81496f99`) calls itself the one active completion checklist. That branch file is a historical artifact, not a competing roadmap, and it was not edited here. Do not merge it as the plan. Do not keep a second editable acceptance list in this repo.
+> **Canonical plan (2026-11-08, precedence restated 2026-11-08 PST):** the business roadmap, progress baseline and scorecard live in Twenty: roadmap note `7bfdcb7e`, baseline v1 note `603fe300`, scorecard note `5c44b12e`. GitHub owns technical tracking only (code, PRs, CI, deploy evidence: `docs/audit/2026-11-08-code-evidence.md`). The operating summary, offer, pricing precedence, and the docs-reconciliation journal are in `docs/STATUS.md`. `docs/codex/COMPLETION-PLAN.md` on branch `dev/codex-setup` (`81496f99`) calls itself the one active completion checklist. That branch file is a historical artifact, not a competing roadmap, and it was not edited here. Do not merge it as the plan. Do not keep a second editable acceptance list in this repo.
 
-This file is the dated log. On a mismatch with Twenty, flag both values. The 2026-11-09 docs pass did not read Twenty and did not change the frozen scorecard weights.
+This file is the dated log. On a mismatch with Twenty, flag both values. The GitHub docs pass did not read Twenty and did not change the frozen scorecard weights. The parallel Twenty cleanup is the parent-reported verification in `docs/STATUS.md`.
 
-## Historical marker (2026-11-09)
+## Historical marker (2026-11-08 PST)
 
 The headings below through Blockers record older operating orders: Plan 1 at the D-017 price, the five-client gate, Retell as the platform, an open bake-off, auth-last, and n8n-deferred. They are kept. The five-step order in `docs/STATUS.md` supersedes them. Do not execute those sections as the current plan.
 
@@ -18,13 +18,13 @@ Evidence ledger: `docs/audit/2026-11-08-code-evidence.md` (levels: documented, b
 - "Codex steps 3-6 not done" is true of main only. Branch `dev/codex-setup` (99 commits ahead, unmerged, no PR, no CI run) records steps 3-5 and agency steps 7-12 as done on DEV, plus its own `docs/codex/COMPLETION-PLAN.md` (a technical evidence index, not the business plan). Those are self-reported and not verified here.
 - Live portal still returns 200 on `/admin` (checked 2026-11-08); main's sign-in work is merged and CI-green but not deployed.
 - Closed as duplicate or superseded (branches kept): #36 (duplicate of #134), #34, #37, #38 (contained in #136), #39 (palette decision). Kept open: #136 (only PR path for the Astro site; live www was built from `feat/positioning-remodelers`, not main), #113 (see KI entry), #134.
-- Flag, as written on 2026-11-08: pricing in D-017 conflicts with the live site's pricing (the site branch refers to a D-023 that does not exist in `docs/decisions.md`); the unified-CRM decision of 2026-11-08 is not implemented (module gate and plan fields still model Lite/Full). 2026-11-09 reading: do not choose again between D-017 and D-023. Twenty D-023 (2026-10-24) is the pricing authority. The Nov 5 guarantee is separate. Lite/Full stays an internal code flag. See `docs/STATUS.md`.
+- Flag, as written on 2026-11-08: pricing in D-017 conflicts with the live site's pricing (the site branch refers to a D-023 that does not exist in `docs/decisions.md`); the unified-CRM decision of 2026-11-08 is not implemented (module gate and plan fields still model Lite/Full). 2026-11-08 PST reading: do not choose again between D-017 and D-023. Twenty D-023 (2026-10-24) is the pricing authority. The Nov 5 guarantee is separate. Lite/Full stays an internal code flag. See `docs/STATUS.md`.
 
 ## Status check 2026-11-08 (read-only review; superseded the October blocker list, and is itself a dated snapshot)
 
 Checked directly: GitHub, repo code (typecheck clean, 468/468 unit tests on main `49019b93`), live HTTP, n8n workflow list, Twenty.
 - Not launch-ready. Twenty has 0 opportunities; no Alex workflow is active in n8n (all Retell, 11Labs and DEV Alex workflows are inactive); only the website contact form workflow `WxIh0Hw4lQodY1Xa` is active and it has not been tested.
-- Portal access, as written that day: live portal treated as open (KI-013); main's sign-in restore (2026-11-05) treated as not deployed. 2026-11-09 reading: the ledger labels HTTP 200 on `/admin` as inference. This docs pass did not probe production and does not confirm a deploy or an exposed admin page.
+- Portal access, as written that day: live portal treated as open (KI-013); main's sign-in restore (2026-11-05) treated as not deployed. 2026-11-08 PST reading: the ledger labels HTTP 200 on `/admin` as inference. This docs pass did not probe production and does not confirm a deploy or an exposed admin page.
 - Codex build steps 0 to 2 done (dev setup, foundation, Alex on ElevenLabs DEV). Steps 3 to 6 not done: lead-to-booking chain, texts and alerts, onboarding, go-live. "Done" in BUILD_PLAN means built and locally verified, not working end to end.
 - A DEV Twilio voice number was bought and assigned to a DEV ElevenLabs agent (2026-11-04); dev portal runs at dev.kyneticai.com on an older revision.
 - Website: www.kyneticai.com serves the positioning build (from `feat/positioning-remodelers`, not on main); /remodelers still has red TODO boxes (guarantee wording, video, add-ons, testimonials).
@@ -32,10 +32,10 @@ Checked directly: GitHub, repo code (typecheck clean, 468/468 unit tests on main
 - Open PRs: #136 (brand revamp, likely stale vs. the live site), #134 (lead pipeline, supersedes #36), #113 (M1-08, stacked on a closed base), #34/#37/#38/#39 (old site stack), #36. Abdullah decides closures.
 - Full report: project file handoff/launch-readiness-2026-11-08.md. Twenty tasks were refreshed the same day (1.3 and 3.10 marked done; four launch-blocker tasks added).
 
-## Historical plan (superseded 2026-11-09)
+## Historical plan (superseded 2026-11-08 PST)
 Plan 1 only: the outbound speed-to-lead agent at the D-017 price (first 3 clients $4,675, clients 4 and up $8,500, three Stripe invoices at 50/25/25). Gate of 5 paying clients before Plan 2 (D-013). Task titles in Twenty carried [P1]/[P2]; Emily inbound and all upsell systems were [P2]. Do not quote this price. Twenty D-023 (2026-10-24) is the later pricing authority. The five-client gate is not the operating order.
 
-## Historical phase (superseded 2026-11-09)
+## Historical phase (superseded 2026-11-08 PST)
 Phase 3, outbound speed-to-lead build only (D-010). Lane B, the build lane. This section's "Retell is the platform" line is historical. D-025 moved Alex to ElevenLabs. Vapi stays parked (D-018). Files in `retell/builds/outbound-speed-to-lead/` are the parked spec. The CRM portal is technical work in this repo and is not a second business roadmap.
 
 ## Done
@@ -297,11 +297,13 @@ Abdullah asked to delete all authentication and sign-in until the end (DC-TBD-15
 
 Verified locally: typecheck, 431 unit tests, all integration tests pass except the p95 speed test, which also fails on current main on this machine (CI limit is 5000 ms), 38 browser tests pass. Not verified: CI on this branch. Not deployed. Live portal.kyneticai.com still runs the Oct 29 build; see KI-013 before deploying this one. `BETTER_AUTH_SECRET` is still a required env var; harmless, to be dropped when auth is rebuilt.
 
-### 2026-11-09 — documentation authority reconciliation
+### 2026-11-08 PST — documentation authority reconciliation
 
 Docs only, on `cursor/docs-authority-reconcile-1883`. No application code, schema, workflow, Twenty write, deploy, or live probe. Journal and readiness table: `docs/STATUS.md`.
 
 Entry instructions now start at that file. Historical operating orders (Retell as Alex's platform, the open bake-off, D-017 as the price to quote, the five-client gate, build-everything-first, auth-last, n8n-deferred, the AI commit trailer, `TWENTY_API_KEY`, and the lowest-unchecked Codex step) are marked historical. Their original text stays. Twenty D-023 remains the pricing authority over D-017. The Nov 5 remodeler guarantee is recorded separately. The Nov 6 price proposal is recorded as not approved. No new D-number was assigned, because Twenty's sequence already diverges from this file.
 
 `dev/codex-setup` `docs/codex/COMPLETION-PLAN.md` (`81496f99`) still calls itself the one active checklist. This pass did not edit that branch. Frozen scorecard weights and the 23/53/24 snapshot were not changed. `scripts/checks/checks.py` still reads the dead Twenty key name.
+
+Follow-up the same evening, still docs only: the parent verified a parallel Twenty cleanup (11 notes and 23 tasks updated, readback of all 34, all 63 tasks mapped, missing Step 2 tag fixed, baseline `603fe300` unchanged, 88 notes and 63 tasks at 52 TODO / 4 IN_PROGRESS / 7 DONE). Direction, provider, one CRM, and the guarantee were reconciled there, with history kept. Stale due dates, schema, customer records, live systems, and Claude-only files were left untouched. This repo pass did not read Twenty. The counts are the parent's verification.
 

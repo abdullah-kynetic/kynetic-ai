@@ -10,7 +10,7 @@ verified_at: cbb5046 (source files unchanged since 67763e6)
 
 # Alex (the Plan 1 outbound agent)
 
-> Stale as of 2026-11-09. This card is the parked Retell spec. Current Alex is ElevenLabs agent `agent_8201m5afn2rbeb7v29xfkhh1pjef`, which must not be changed or invoked. Direction: `docs/STATUS.md`.
+> Stale as of 2026-11-08 PST. This card is the parked Retell spec. Current Alex is ElevenLabs agent `agent_8201m5afn2rbeb7v29xfkhh1pjef`, which must not be changed or invoked. Direction: `docs/STATUS.md`.
 
 The Retell agent "Outbound Speed to Lead (Kynetic Roofing demo)", called Alex. The repo holds its spec, not the live agent.
 

@@ -1,6 +1,6 @@
 # Lead engine handoff (state as of 2026-10-20)
 
-> **Historical research handoff (classified 2026-11-09).** Not the current sales plan and not a second roadmap. Current outreach is human cold calls to remodelers until the first three clients are signed (`docs/STATUS.md`). Do not quote the D-017 prices below. Do not add an AI commit trailer. DNC scrub, consent, and quiet hours still apply. A2P approval is not permission for cold SMS. The research record is kept.
+> **Historical research handoff (classified 2026-11-08 PST).** Not the current sales plan and not a second roadmap. Current outreach is human cold calls to remodelers until the first three clients are signed (`docs/STATUS.md`). Do not quote the D-017 prices below. Do not add an AI commit trailer. DNC scrub, consent, and quiet hours still apply. A2P approval is not permission for cold SMS. The research record is kept.
 
 Point-in-time entry for the lead-sourcing work as of 2026-10-20. Everything below is backed by files in this repo on branch `claude/modest-thompson-h9atoy`; Twenty has a mirror note "LEAD ENGINE: Run B + pilots handoff (Oct 19-20, 2026)". Twenty is the business source of truth; on a mismatch, flag both values. This pass did not re-read that note.
 

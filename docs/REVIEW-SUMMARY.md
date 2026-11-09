@@ -1,6 +1,6 @@
 # CRM docs cross-review (final, 2026-10-25)
 
-> **Historical cross-review (scope banner, 2026-11-09).** This file records what was consistent on 2026-10-25. It is not current commercial authority and not the business roadmap. "What is final" below still states CRM Lite/Full as paid upsells and quotes the Oct 25 prices. Those terms are historical. The CRM is one configurable deliverable. Internal `lite`/`full` flags remain in the code. Current direction: `docs/STATUS.md`. The existing text is kept.
+> **Historical cross-review (scope banner, 2026-11-08 PST).** This file records what was consistent on 2026-10-25. It is not current commercial authority and not the business roadmap. "What is final" below still states CRM Lite/Full as paid upsells and quotes the Oct 25 prices. Those terms are historical. The CRM is one configurable deliverable. Internal `lite`/`full` flags remain in the code. Current direction: `docs/STATUS.md`. The existing text is kept.
 
 Reviewed the 8 docs against each other, `SPEC_client_crm_portal.md` and `DECISIONS_locked.md` (DECISIONS wins). On 2026-10-25 Abdullah approved every open decision; items he did not rule on explicitly took the recommended option and are marked "Decided 2026-10-25" in the docs. Nothing is deployed or merged.
 
