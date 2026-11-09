@@ -1,6 +1,6 @@
 # Systems build: master index (refined)
 
-Refines `source-handoff-2026-11-06.md` (the original handoff, kept verbatim). Phase 1 only: inventory and specification, read-only. Evidence: `docs/build-inventory.md`. Decisions/departures: `docs/architecture-decisions.md`.
+One-page summary: [OVERVIEW.md](OVERVIEW.md). Refines `source-handoff-2026-11-06.md` (the original handoff, kept verbatim). Phase 1 only: inventory and specification, read-only. Evidence: `docs/build-inventory.md`. Decisions/departures: `docs/architecture-decisions.md`.
 
 Treat every design statement as a proposal until verified. Vendor APIs, webhook behavior, n8n node behavior and consent rules are **not yet verified** against current documentation (no vendor docs were fetched in Phase 1; this is the first item of Phase 2).
 
