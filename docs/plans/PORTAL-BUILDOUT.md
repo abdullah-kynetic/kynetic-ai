@@ -1,5 +1,7 @@
 # Portal build-out: the client dashboard (portal.kyneticai.com)
 
+> **Superseded as a status source (2026-11-09).** Current plan and status: Twenty ROADMAP note `7bfdcb7e` and `docs/STATUS.md`. Kept as technical/historical detail; do not treat any checklist below as current.
+
 Plan only. Nothing here is built or deployed. Source read at `5888b13`; the live server was not touched. Facts about Twenty and the live portal that I did not read are marked **[unverified]**.
 
 ## 1. What exists today (verified from `portal/`)

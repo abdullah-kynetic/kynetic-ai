@@ -1,5 +1,7 @@
 # Automation map (draft, 2026-10-31)
 
+> **Superseded as a status source (2026-11-09).** Current plan and status: Twenty ROADMAP note `7bfdcb7e` and `docs/STATUS.md`. Kept as technical/historical detail; do not treat any checklist below as current.
+
 Replaces the missing `docs/automation-map-draft.md`. Status comes from the Oct 30 brief plus a quick look at `crm/src/server` on branch `work`. Anything not checked in code is marked "not confirmed".
 
 Rules from Abdullah's answers (2026-10-30):
