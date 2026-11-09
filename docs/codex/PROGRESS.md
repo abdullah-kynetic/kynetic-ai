@@ -1,5 +1,8 @@
 # Codex progress (steps 0–6)
-Tick a step only when `scripts/checks/run.sh <n>` has no FAIL. Note SKIPs.
+
+> Technical log only. Not the business roadmap and not an active checklist. Current direction is `docs/STATUS.md`. Branch `dev/codex-setup` (`81496f99`, 2026-11-06) has a later log and a `docs/codex/COMPLETION-PLAN.md` that calls itself the one active completion checklist. That branch file is not authority. Do not merge it as the plan, and do not tick the boxes below as the next business step. This copy on main stops at the 2026-11-04 step-2 record.
+
+Tick a step only when a task has explicitly resumed that historical check and `scripts/checks/run.sh <n>` has no FAIL. Note SKIPs.
 
 - [x] 0 Dev setup
 - [x] 1 Foundation

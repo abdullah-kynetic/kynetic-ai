@@ -1,6 +1,8 @@
 # Outbound speed to lead: v1 build plan (task 3.5)
 
-Status: BUILT and running (updated Oct 17, 2026). This file began as the Oct 8 proposal and still carries that plan for reference; the sections marked APPROVAL were the approval gates for the original build and are historical. Only "Current state" is kept current. Live-system changes still need Abdullah's yes (KYNETIC_CONTEXT.md rules 1 and 2). Decisions behind this plan: D-010, D-011, D-012, D-013, D-014.
+> Historical Retell snapshot, last updated Oct 17, 2026. "BUILT and running" describes that Retell workflow on that date. It is not the current Alex platform. ElevenLabs is the platform (D-025). Do not publish this agent, do not activate its workflow, and do not edit live Alex `agent_8201m5afn2rbeb7v29xfkhh1pjef`. Current direction: `docs/STATUS.md`.
+
+This file began as the Oct 8 proposal and still carries that plan for reference; the sections marked APPROVAL were the approval gates for the original build and are historical. The "Current state" section below is the Oct 17 record, not a living status. Live-system changes still need Abdullah's yes (KYNETIC_CONTEXT.md rules 1 and 2). Decisions behind this plan: D-010, D-011, D-012, D-013, D-014.
 
 ## Current state (Oct 17, 2026)
 Read-only check of Retell, n8n and Twenty on Oct 17. The Oct 8 to Oct 12 text this replaces is in git history.

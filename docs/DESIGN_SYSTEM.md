@@ -1,5 +1,7 @@
 # Design System
 
+> **Technical UI rules (scope banner, 2026-11-08 PST).** Not the business roadmap. A Lite/Full module list in this file is the historical 2026-10-25 capability split. Current precedence: `docs/STATUS.md`.
+
 Kynetic Client CRM & Portal. Written 2026-10-25. Feature IDs match the PRD.
 
 **Source precedence:** `DECISIONS_locked.md` wins over `SPEC_client_crm_portal.md`. Brand values come only from `/mnt/project-files/kynetic-brand/rebrand-warm/` (`tokens.css`, `tokens.json`, `palette.html`, `site-color-map.md`). The older purple files in `kynetic-brand/` root are retired and must not be used (2026-10-23 rebrand replaces purple everywhere, including the portal).

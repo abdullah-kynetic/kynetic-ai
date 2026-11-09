@@ -1,5 +1,7 @@
 # Testing
 
+> **Technical test plan for the portal codebase (scope banner, 2026-11-08 PST).** Not the business roadmap. Rows that treat CRM Lite/Full as paid upsells, and the founding-price line, are the historical 2026-10-25 menu. Current precedence: `docs/STATUS.md`. `lite` / `full` remain internal capability gates to test. Do not quote the dollar amounts as the current price. This banner does not change tests or schema.
+
 Kynetic Client CRM & Portal. Target path in the build repo: `docs/TESTING.md`.
 
 Source order: `DECISIONS_locked.md` (Oct 25, 2026) wins over `SPEC_client_crm_portal.md`. `PRD.md` supplies the F-IDs (F-01 to F-106) and the milestone and module tags. Anything in none of these is marked `Decided 2026-10-25 (recommended option: ...)` or, if it needs outside information, `UNRESOLVED`. Commands not verified in a running repo are marked `Not configured`.

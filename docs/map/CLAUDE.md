@@ -1,5 +1,7 @@
 # System map of kynetic-ai
 
+> Historical map slice. Current operating order is `../STATUS.md`. Name collisions below still describe Alex as the Retell agent. That platform choice is parked (D-025). Do not treat a card marked `live` as the business plan until its status is re-checked. `dev/codex-setup:docs/codex/COMPLETION-PLAN.md` is not authority.
+
 A walkable edit map of this repo: what the nouns are, and what else moves if you change one. The repo stays the source of truth; cards cite it and never replace it. Status: slices 1-4 done (catalog, 20 verified object cards, 5 process cards, change index) plus the plans in `../plans/`. Slice 5 (re-verify) pending your read.
 
 ## Where to go

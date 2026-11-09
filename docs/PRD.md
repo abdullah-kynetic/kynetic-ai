@@ -1,5 +1,7 @@
 # Product Requirements Document
 
+> **Technical requirements for the portal codebase (scope banner, 2026-11-08 PST).** This file is not the business roadmap. Current direction, offer, and pricing precedence: `docs/STATUS.md`. Decision 1, decision 12, F-85, F-86, and the module-catalog prices are the 2026-10-25 Lite/Full commercial menu. That menu is historical. The CRM is one configurable deliverable. Rows that say `crm (Lite)` or `crm (Full)` remain the internal capability split the code still gates on. This banner does not change schema or code. Do not quote the dollar amounts below as the current price. `dev/codex-setup:docs/codex/COMPLETION-PLAN.md` is not authority.
+
 Kynetic Client CRM & Portal. Target path in the build repo: `docs/PRD.md`.
 
 Source order: `DECISIONS_locked.md` (Oct 25, 2026) wins over `SPEC_client_crm_portal.md`. Anything in neither is marked `Decided 2026-10-25 (recommended option approved: ...)`. Project-level facts that come from neither (earlier project decisions) are cited as such and are not treated as locked.
@@ -256,6 +258,8 @@ These are not rows in the spec's feature tables. They are needed for the locked 
 | F-106 | Twenty to portal client sync | `POST /api/sync/clients` (HMAC, idempotent on `tenants.twenty_company_id`) so a Closed-Won company in Twenty creates the tenant. In v1 an admin creates the tenant with F-55 and may paste the Twenty company id for reference. | Given the same company twice, then one tenant. | Later | Unscheduled | platform |
 
 ## Module catalog
+
+> Prices in this catalog are the historical 2026-10-25 menu (see the scope banner). `lite` and `full` are internal capability levels, not current commercial tiers.
 Each module is a per-tenant flag (F-70). With a module off: its UI is hidden, its server routes and actions return 403, its jobs no-op, and its data is retained. Prices below are from DECISIONS_locked.md and are reference only in v1 (billing is Phase 2).
 
 | Module key | What it is | Backend features | T1 (<$15K) monthly / setup | T2 ($15K to $30K) | T3 ($30K+) |
@@ -287,7 +291,7 @@ Founding clients: fixed $6,500 setup covering the first 3 months, then $1,500/mo
 ## Decisions log
 Approved by Abdullah on 2026-10-25. Numbers are kept so other docs can cite them (PRD OD-n). "Recommended option approved" means Abdullah told us to take the recommended option for anything not decided explicitly.
 
-1. DECIDED (explicit, Abdullah 2026-10-25, replaces the earlier recommendation). Alex-only clients get the base portal: leads, pipeline kanban, appointments, Alex call logs and reports (plus the messages log, notifications and settings). CRM Lite and CRM Full are paid upsells toggled per tenant on top of that. M0 builds the base portal and the module mechanism, so Lite and Full ship as gated modules. Lite adds companies, tasks, notes, configurable stages and settings pages; Full adds custom fields, bulk actions, multi-contact deals, search, export and sequence enrollment. Admin-run onboarding import (F-90 to F-94) is platform.
+1. HISTORICAL COMMERCIAL TIER (explicit, Abdullah 2026-10-25). Superseded as a sellable offer by the 2026-11-08 PST precedence in `docs/STATUS.md`. The split below remains the internal capability the code implements. Original decision: Alex-only clients get the base portal: leads, pipeline kanban, appointments, Alex call logs and reports (plus the messages log, notifications and settings). CRM Lite and CRM Full are paid upsells toggled per tenant on top of that. M0 builds the base portal and the module mechanism, so Lite and Full ship as gated modules. Lite adds companies, tasks, notes, configurable stages and settings pages; Full adds custom fields, bulk actions, multi-contact deals, search, export and sequence enrollment. Admin-run onboarding import (F-90 to F-94) is platform.
 2. DECIDED (explicit). Better-Auth with Google sign-in and email magic links (F-71; defined in SECURITY 2.1). Admin 2FA is in v1 (F-98).
 3. DECIDED (recommended option approved). ElevenLabs is the primary voice provider; the Retell adapter stays as a fallback. Abdullah assigns the D-number in the repo decision log (this project does not assign one).
 4. DECIDED (recommended option approved). Drizzle ORM, pg-boss and Resend are confirmed.
@@ -298,7 +302,7 @@ Approved by Abdullah on 2026-10-25. Numbers are kept so other docs can cite them
 9. DECIDED (recommended option approved). Recordings and transcripts kept 12 months, then deleted (the call row stays). Messages 24 months. Consent records 5 years after revocation. Audit log 24 months. Webhook payloads 30 days. Raw import files 30 days after commit. On client exit: the owner can export, Kynetic deletes the tenant after a 30-day grace period (manual runbook in v1).
 10. DECIDED (recommended option approved). Health score: five inputs at 20% each; green at 70 or above, yellow 40 to 69, red below 40. Guarantee target and start date live on `tenants` (`guarantee_target_bookings`, `guarantee_start_date`).
 11. DECIDED (recommended option approved). One domain, portal.kyneticai.com, for everyone. Per-client subdomains are Later (F-40).
-12. DECIDED (explicit, updated 2026-10-25). Founding clients: $6,500 setup covering 3 months, then $1,500/mo (DECISIONS_locked). CRM Lite is $1,000 setup + $500/mo and CRM Full is $2,000 setup + $750/mo, on top of the main system. The old $3.5K and $6.5K CRM setup fees and the 25% founding discount on add-on setup are dropped. The older $4,675 figure is dropped.
+12. HISTORICAL PRICE MENU (explicit, updated 2026-10-25). Superseded as the current price by the 2026-11-08 PST precedence in `docs/STATUS.md`. Do not quote these amounts. Original decision: founding clients: $6,500 setup covering 3 months, then $1,500/mo (DECISIONS_locked). CRM Lite is $1,000 setup + $500/mo and CRM Full is $2,000 setup + $750/mo, on top of the main system. The old $3.5K and $6.5K CRM setup fees and the 25% founding discount on add-on setup are dropped. The older $4,675 figure is dropped.
 13. DECIDED. Accessibility: WCAG 2.2 AA (explicit). Performance targets (recommended option approved): mobile LCP at or under 2.5 s at p75; list API reads under 500 ms at p95 with 10,000 contacts; search under 500 ms at p95. UNRESOLVED: the delivery date (needs Abdullah's date).
 14. DECIDED (recommended option approved). D-007 ("phone only, by a human") governs Kynetic's own prospecting. Alex calling a client's own inbound leads is allowed, subject to consent, DNC, quiet hours and the compliance gate. Abdullah can overrule this at any time.
 15. DECIDED (explicit, Abdullah 2026-10-25, replaces the earlier reopening). The "Metric definitions" section above is approved as written.

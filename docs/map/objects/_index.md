@@ -5,7 +5,7 @@
 Format: `slug | cluster | universe | status | owning path`.
 
 ## alex
-- alex-agent | alex | live | verified | retell/builds/outbound-speed-to-lead/agent.config.json (live agent id in KYNETIC_CONTEXT.md)
+- alex-agent | alex | leftover | stale | retell/builds/outbound-speed-to-lead/agent.config.json (parked Retell spec; live ElevenLabs id is protected in KYNETIC_CONTEXT.md)
 - alex-prompt | alex | live | verified | retell/builds/outbound-speed-to-lead/PROMPT.md (v1.2.3 is on branch claude/alex-demo-live-test, not main)
 - alex-demo-business | alex | live | stub | retell/builds/outbound-speed-to-lead/demo-business/
 - alex-form-spec | alex | live | verified | retell/builds/outbound-speed-to-lead/FORM_SPEC.md
@@ -15,7 +15,7 @@ Format: `slug | cluster | universe | status | owning path`.
 - outbound-speed-to-lead-workflow | lead | live | verified | n8n/workflows/active/outbound-speed-to-lead__m2YJwZ1l8DTzyEkw.json (cloud copy; VPS copy not in repo)
 - twenty-lead-objects | lead | live | verified | KYNETIC_CONTEXT.md "Twenty" (endCustomer, customerInteraction, client_accounts)
 - cal-roof-inspection-event | lead | live | stub | KYNETIC_CONTEXT.md (event type 7404470)
-- pricing-d017 | lead | live | verified | docs/decisions.md D-017
+- pricing-d017 | lead | leftover | stale | docs/decisions.md D-017 (historical; precedence in docs/STATUS.md)
 
 ## n8n
 - n8n-backup-copy | n8n | live | verified | n8n/workflows/, n8n/manifest.json, tools/n8n_backup.py
@@ -34,7 +34,7 @@ Format: `slug | cluster | universe | status | owning path`.
 - upsell-workflows | plan2 | leftover | stub | n8n/workflows/archive/ (review chain, reactivation sender + reply handler, missed-call text-back, appointment setter); Twenty tasks tagged [P2] LATER UPSELL
 
 ## bakeoff (voice provider test, parallel to Plan 1; no decision logged)
-- bakeoff-summary | bakeoff | ghost | verified | providers/BAKEOFF_SUMMARY.md on branch claude/provider-test-elevenlabs (not on main); Twenty note "VOICE PROVIDER BAKE-OFF" and task 3.9 are canonical
+- bakeoff-summary | bakeoff | ghost | stale | providers/BAKEOFF_SUMMARY.md on branch claude/provider-test-elevenlabs (not on main); verdict is D-025, not an open test
 - bakeoff-elevenlabs-agents | bakeoff | ghost | stub | ElevenLabs v1/v2 agents on the second account; ids in Twenty note, not in this repo
 - bakeoff-11labs-workflow | bakeoff | ghost | stub | VPS n8n xlmyRd5jBBBu8LX7 (inactive; agent and phone-number ids still placeholders when read 2026-10-22); not in repo
 
