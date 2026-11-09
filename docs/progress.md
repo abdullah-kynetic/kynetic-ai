@@ -91,6 +91,7 @@ Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3
 ## Log
 ### 2026-11-09 (single portal line)
 - Abdullah decided to stop the second portal line. The portal code from `dev/codex-setup` is consolidated onto a branch for merge into `main` (merge commit, history kept). `main` becomes the production build for portal.kyneticai.com. The separate DEV environment is retired until after go-live. `scripts/deploy-dev.sh`, `scripts/deploy-dev-server.sh`, `scripts/fix-dev-runtime.sh`, and `scripts/checks/mac-dev-runtime.sh` now refuse to run. No GitHub workflow was deploying that branch on push. No VPS, DNS, or live service was touched. Production remains release `350bf673`.
+- The first CI check on that pull request failed because migrations `1008`–`1013` created agency tables that were not in the Drizzle schema or the integration allow-lists. Those tables were declared and excluded from the two-tenant seed, same as the earlier agency tables. Auth code was not changed.
 
 ### 2026-10-29 (CRM portal M10-01 security review)
 - Fixed the contacts phone-fragment GIN index to lead with `tenant_id` (`b7b8e57`) and wired shared PostgreSQL auth IP/email limits (`8256212`). Focused auth/rate-limit tests (19), baseline CRM test (13), header tests (3), and webhook/service-token test suites passed. Typecheck passed.

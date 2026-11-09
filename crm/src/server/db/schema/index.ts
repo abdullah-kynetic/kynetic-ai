@@ -7,5 +7,6 @@ export * from './contact-decisions';
 export * from './call-result-receipts';
 export * from './agency';
 export * from './agency-dialer';
+export * from './agency-desk';
 export * from './proposals';
 export * from './support';
