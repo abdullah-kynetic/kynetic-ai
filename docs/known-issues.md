@@ -89,3 +89,6 @@ The "Kynetic VPS" session's auto-mode classifier blocks `portal-new-deploy deplo
 
 ### KI-001: Leaked Cal.com key in git history (was high)
 A key starting cal_live_f64 was committed Aug 23, carried in from the Inflate AI reference files. Confirmed Oct 4, 2026 it was a live key on Abdullah's own Cal.com account (abdullah@kyneticai.com). Deleted in Cal.com and replaced with a new key, entered into Emily's two Retell Cal tools (check_availability_cal, book_appointment_cal on llm_b520d8a6b9bf754f19285a8a6185), event type 7025524 (Water Damage Assessment). Confirmed both tools show the new key and validate. The old key value stays in git history; it is dead in Cal.com so that no longer matters.
+
+### Contact merge copies consent grants (number to be assigned) (audit 2026-11-08)
+Main's `mergeContacts` (`crm/src/server/contacts/service.ts`, consent copy block) copies all consent rows, grants included, to the surviving contact and writes no consent-state audit entry. The 2026-10-26 decision for M1-08 is that grants never carry, opt-outs and DNC always carry, and the audit entry records both contacts' consent and opt-out state. That behavior is on PR #113 (DC-112 row), which is still open and stacked on a closed base; DC-112 is not in main's `docs/DECISIONS.md`. Not fixed here.

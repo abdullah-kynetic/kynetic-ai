@@ -1,10 +1,20 @@
 # Progress
 
+> **Canonical plan (2026-11-08):** the business roadmap, progress baseline and scorecard live in Twenty, not here: roadmap note `7bfdcb7e`, baseline v1 note `603fe300`, scorecard note `5c44b12e`. GitHub owns technical tracking only (code, PRs, CI, deploy evidence: `docs/audit/2026-11-08-code-evidence.md`). `docs/codex/COMPLETION-PLAN.md` on branch `dev/codex-setup` is technical detail, not a competing roadmap. Do not keep a second editable acceptance list in this repo.
+
 Mirror of the Twenty roadmap ("Roadmap: all phases"). Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Portal implementation order (2026-11-01)
 
 N8n automations are deferred by Abdullah. Continue portal features with synthetic fixtures; login/auth work stays last. M16 agency workspace, source tracking, pipeline UI, human dialer/never-dial checks and campaigns are locally verified. M17-01 proposal drafts are also locally verified. Next: wave 38 won-deal onboarding and price-plan data (pricing decision gate remains). Live systems remain unchanged.
+
+## Audit 2026-11-08 (code and deployment evidence)
+
+Evidence ledger: `docs/audit/2026-11-08-code-evidence.md` (levels: documented, branch, merged, tested, deployed, verified). Twenty remains the business source of truth; this repo holds technical evidence only. Corrections to the lines below:
+- "Codex steps 3-6 not done" is true of main only. Branch `dev/codex-setup` (99 commits ahead, unmerged, no PR, no CI run) records steps 3-5 and agency steps 7-12 as done on DEV, plus its own `docs/codex/COMPLETION-PLAN.md` (a technical evidence index, not the business plan). Those are self-reported and not verified here.
+- Live portal still returns 200 on `/admin` (checked 2026-11-08); main's sign-in work is merged and CI-green but not deployed.
+- Closed as duplicate or superseded (branches kept): #36 (duplicate of #134), #34, #37, #38 (contained in #136), #39 (palette decision). Kept open: #136 (only PR path for the Astro site; live www was built from `feat/positioning-remodelers`, not main), #113 (see KI entry), #134.
+- Flag, not edited here: pricing in D-017 conflicts with the live site's pricing (the site branch refers to a D-023 that does not exist in `docs/decisions.md`); the unified-CRM decision of 2026-11-08 is not implemented (module gate and plan fields still model Lite/Full).
 
 ## Status check 2026-11-08 (read-only review; supersedes older blocker lists below)
 
