@@ -1,5 +1,7 @@
 # portal-new restricted deploy tooling
 
+> **Production target (2026-11-09 PST):** deploy only a `main` commit, and only after Abdullah's yes, to portal.kyneticai.com. This folder is the live switch (`/opt/portal-new`: postgres, app, worker). It does not deploy the retired DEV environment. A merge into `main` is not itself a deploy.
+
 Scripts for deploying the `portal-new` Compose project on the OVH VPS (`/opt/portal-new`) through one
 restricted SSH key, instead of a personal login. Nothing here is installed yet; this folder is for review.
 

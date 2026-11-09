@@ -1,5 +1,8 @@
 # Portal / n8n contract — M12-01 (F-76, F-77, F-89)
 
+> **Completion navigation:** [COMPLETION-PLAN.md](codex/COMPLETION-PLAN.md) is the sole active engineering checklist; [PROGRESS.md](codex/PROGRESS.md) indexes evidence. This file remains a specification, decision or test reference with its original dates/scope. Historical next-task/wave instructions do not supersede the active plan or safety gates.
+
+
 Drafted 2026-10-31; technical source review completed 2026-11-01 for local implementation. Audited against `3ff1685` on `work`. This document distinguishes existing interfaces from proposed interfaces; it does not enable n8n sending or supersede locked decisions. SECURITY 3.1 and the portal OutboundGate remain in force until M12 parity and owner sign-off. No workflows are activated by this contract.
 
 ## Existing transport

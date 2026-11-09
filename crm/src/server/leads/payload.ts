@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { businessStateSchema } from './dev-policy';
 import { CONSENT_CHANNELS } from '../consent/types';
 import { emailSchema, FIELD_LIMITS } from '../validation';
 
@@ -44,6 +45,10 @@ export const leadPayloadSchema = z
     phone: phoneSchema.optional(),
     email: emailSchema.optional(),
     serviceType: text(FIELD_LIMITS.name).optional(),
+    projectType: text(FIELD_LIMITS.name).optional(),
+    budget: text(200).optional(),
+    businessState: businessStateSchema.optional(),
+    synthetic: z.literal(true).optional(),
     message: text(FIELD_LIMITS.customText).optional(),
     address: z
       .strictObject({

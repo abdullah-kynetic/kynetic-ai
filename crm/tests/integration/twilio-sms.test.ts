@@ -123,6 +123,38 @@ describe('M4-08 sendSms gating (F-74)', () => {
     await tdb.admin`update phone_numbers set a2p_status = 'approved' where e164 = ${A_NUMBER}`;
   });
 
+  it('quiet hours and global/tenant kill switches block the actual sendSms dispatcher', async () => {
+    const lead = await newLead();
+    const { provider } = setup();
+    const req = {
+      contactId: lead.id,
+      module: 'alex_core' as const,
+      body: 'DEV synthetic safety check',
+      idempotencyKey: 'dev-step4-blocks'
+    };
+    expect(
+      await sendSms(system, req, { provider, now: new Date('2026-10-27T05:00:00Z'), gate })
+    ).toMatchObject({ status: 'blocked', reason: 'quiet_hours' });
+    expect(
+      await sendSms(system, req, { provider, now: NOON, gate: { outboundEnabled: false } })
+    ).toMatchObject({ status: 'blocked', reason: 'outbound_disabled' });
+    const [before] =
+      await tdb.admin`select config from tenant_modules where tenant_id = ${IDS.tenantA} and module_key = 'platform'`;
+    try {
+      await tdb.admin`update tenant_modules set config = config || '{"outbound_kill_switch":true}'::jsonb where tenant_id = ${IDS.tenantA} and module_key = 'platform'`;
+      expect(await sendSms(system, req, { provider, now: NOON, gate })).toMatchObject({
+        status: 'blocked',
+        reason: 'outbound_disabled'
+      });
+    } finally {
+      await tdb.admin`update tenant_modules set config = ${tdb.admin.json(before.config)} where tenant_id = ${IDS.tenantA} and module_key = 'platform'`;
+    }
+    expect(provider.sent).toHaveLength(0);
+    const [messages] =
+      await tdb.admin`select count(*)::int as n from messages where contact_id = ${lead.id}`;
+    expect(messages.n).toBe(0);
+  });
+
   it('sends once approved, stores the message and activity', async () => {
     const lead = await newLead();
     const { provider } = setup();

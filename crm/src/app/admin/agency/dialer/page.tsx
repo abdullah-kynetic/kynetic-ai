@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { headers } from 'next/headers';
 import { forbidden, notFound } from 'next/navigation';
-import PageContainer from '@/components/layout/page-container';
-import { Button } from '@/components/ui/button';
+import PageContainer from '@/components/agency/page';
+import { AgencySubmitButton as Button } from '@/components/agency/motion';
 import { Label } from '@/components/ui/label';
 import { decideAdminAccess } from '@/server/admin';
 import { getAgencyWorkspace } from '@/server/agency';

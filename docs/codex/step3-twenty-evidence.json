@@ -1,0 +1,22 @@
+{
+  "observed_on": "2026-11-05",
+  "source": "codex_read_after_write",
+  "target": "https://crm.kyneticai.com",
+  "plan_sha256": "2b0f6ff220c883f621acfc90558e4eb48f2b2ee78a70fe1bf18f520ab49e00ec",
+  "approved_by": "Abdullah, explicit yes in chat",
+  "completed_operations": 4,
+  "created": {
+    "clientAccount": "f1460266-6c18-4c91-9edf-f853d6ba1485",
+    "endCustomer": "59fdd0d2-3e4d-4295-a0c6-52779555b80d",
+    "interaction": "e083274a-d29c-4fc6-86c4-9c434a5af738"
+  },
+  "verified": {
+    "all_names_dev": true,
+    "relations_only_new_records": true,
+    "lead_status": "BOOKED",
+    "last_outcome": "BOOKED",
+    "attempt_count": 0,
+    "booking_simulation_only": true
+  },
+  "no_calls_messages_or_calendar_reservations": true
+}

@@ -16,6 +16,18 @@ This note is the current operating precedence for the entries it names. Original
 - The CRM is one configurable deliverable. Lite and Full are not current commercial tiers. Portal `lite` / `full` flags remain internal capability. No code or schema change was made with this note.
 - DNC scrub, stored consent, and quiet hours are required. A2P approval is not permission for cold SMS.
 
+## Decision note (2026-11-09 PST)
+
+No new D-number. Twenty and this file number decisions differently after Oct 24 (see D-025 and the 2026-11-08 precedence note). Assigning the next integer here would pretend to be the next Twenty decision.
+
+Abdullah decided to stop running two portal lines.
+
+- The portal implementation from `dev/codex-setup` becomes `main`. `main` is then the single build deployed to production at portal.kyneticai.com.
+- A separate DEV environment is retired until after go-live. Do not deploy `dev.kyneticai.com`. Recreate a DEV environment only after go-live.
+- `docs/codex/COMPLETION-PLAN.md` stays historical evidence. This decision does not install that file as the plan.
+- This decision does not deploy, change DNS, or touch the live VPS. Production stays on release `350bf673` until a later explicit yes.
+- The 2026-11-08 PST precedence note still governs offer, pricing, and the five-step order.
+
 ## D-001: Price is $1,500 setup + $997/mo
 Status: superseded by D-017 (2026-10-13). D-017 is itself superseded as pricing authority by the 2026-11-08 PST precedence note. Do not quote this price.
 Date: 2026-10-01

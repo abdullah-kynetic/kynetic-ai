@@ -37,10 +37,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   const defaultOpen = cookieStore.get('sidebar_state')?.value !== 'false';
   const { user, role } = access;
+  const groups =
+    role === 'admin' ? adminNavGroups : adminNavGroups.filter((group) => group.label !== 'Agency');
   return (
     // The admin side is platform-only and takes no tenant (DESIGN_SYSTEM: Kynetic orange chrome).
     <ModulesProvider modules={{ keys: ['platform'], crmLevel: null }}>
-      <KBar groups={adminNavGroups}>
+      <KBar groups={groups}>
         <SidebarProvider defaultOpen={defaultOpen}>
           <a
             href='#main-content'
@@ -48,7 +50,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           >
             Skip to content
           </a>
-          <AppSidebar tenant={null} groups={adminNavGroups} />
+          <AppSidebar tenant={null} groups={groups} />
           <SidebarInset id='main-content' tabIndex={-1} className='scroll-mt-16'>
             <Header user={{ name: user.name, email: user.email, roleLabel: roleLabel(role) }} />
             {children}

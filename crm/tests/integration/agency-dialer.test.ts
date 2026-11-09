@@ -71,8 +71,12 @@ afterAll(async () => {
 describe('M16-03/M16-04/M16-06 F-05/F-19 human queue and campaigns', () => {
   it('hides protected businesses/numbers, FL/OK, DNC, unknown state, unsafe numbers and closed leads', async () => {
     allowed = (await lead('Allowed synthetic')).contactId;
-    for (const state of ['FL', 'OK'])
-      blocked.push((await lead(`Excluded ${state}`, { state })).contactId);
+    for (const state of ['FL', 'OK']) {
+      const fixture = await lead(`Excluded ${state}`);
+      // Simulate a legacy/imported invalid row; new intake now rejects these states.
+      await tdb.admin`update contacts set address=jsonb_build_object('state',${state}::text) where id=${fixture.contactId}`;
+      blocked.push(fixture.contactId);
+    }
     blocked.push((await lead('Unknown region', { state: undefined })).contactId);
     blocked.push((await lead('No phone', { phone: undefined })).contactId);
     blocked.push((await lead('AM-1 Roofing synthetic')).contactId);

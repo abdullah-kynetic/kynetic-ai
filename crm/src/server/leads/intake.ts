@@ -51,7 +51,12 @@ export async function issueLeadWebhookSecret(
   return secret;
 }
 
-export type LeadIntakeOpts = { db?: Db; workerDb?: Db; now?: Date };
+export type LeadIntakeOpts = {
+  db?: Db;
+  workerDb?: Db;
+  now?: Date;
+  validate?: (input: unknown) => LeadPayload;
+};
 
 /** The route body. Throws AppError for 401, 400 and 429; returns the Response otherwise. */
 export async function handleLeadIntake(
@@ -99,7 +104,7 @@ export async function handleLeadIntake(
   } catch {
     throw new AppError('VALIDATION_FAILED', { fieldErrors: { '': ['invalid_json'] } });
   }
-  const lead = parseInput(leadPayloadSchema, json);
+  const lead = opts.validate ? opts.validate(json) : parseInput(leadPayloadSchema, json);
 
   // 4. Store once, queue the processing. (source, external_id) is unique across all tenants, so the
   // tenant id is part of the external id.
@@ -252,6 +257,9 @@ export async function processLead(
         meta: {
           source: lead.source,
           externalId: lead.externalId,
+          ...(lead.synthetic ? { synthetic: true, businessState: lead.businessState } : {}),
+          ...(lead.projectType ? { projectType: lead.projectType } : {}),
+          ...(lead.budget ? { budget: lead.budget } : {}),
           ...(lead.message ? { message: lead.message } : {}),
           ...(existing ? { contactReused: true } : {})
         }
@@ -261,7 +269,18 @@ export async function processLead(
         name: 'lead.created',
         tenantId,
         actor: { type: 'system' },
-        payload: { contactId, dealId, source: lead.source, webhookEventId }
+        payload: {
+          contactId,
+          dealId,
+          source: lead.source,
+          webhookEventId,
+          ...(lead.synthetic
+            ? {
+                synthetic: true,
+                businessState: lead.businessState
+              }
+            : {})
+        }
       });
       return { contactId, dealId, contactReused: !!existing };
     },

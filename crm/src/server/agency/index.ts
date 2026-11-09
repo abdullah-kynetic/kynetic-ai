@@ -1,6 +1,9 @@
 import { and, count, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
 import { SYNTHETIC_PHONE, US_STATE_CODES } from './dialer-policy';
 import { z } from 'zod';
+import { scheduleAgencyDigest } from './ops';
+import { emitEvent } from '../events';
+import { scheduleAgencyMaintenance } from './scheduling';
 import { getDb, type Db, type Tx } from '../db/client';
 import { contacts, dealContacts, deals, pipelineStages, pipelines } from '../db/schema';
 import { createContact } from '../contacts';
@@ -39,6 +42,10 @@ export async function getAgencyWorkspace(
       opts
     );
     const row = rows[0];
+    if (row && create) {
+      await scheduleAgencyMaintenance(row.tenant_id);
+      await scheduleAgencyDigest(row.tenant_id, caller.id);
+    }
     return row
       ? { tenantId: row.tenant_id, name: row.name, slug: row.slug, created: row.created }
       : null;
@@ -102,13 +109,17 @@ export const syntheticLeadSchema = z
       .transform((v) => v.toLowerCase())
       .refine((v) => v.endsWith('@example.test')),
     phone: z.string().regex(SYNTHETIC_PHONE).optional(),
-    state: z.enum(US_STATE_CODES as [string, ...string[]]).optional(),
+    state: z
+      .enum(US_STATE_CODES as [string, ...string[]])
+      .refine((value) => !['FL', 'OK'].includes(value), 'unsupported_business_state')
+      .optional(),
     direction: z.enum(['inbound', 'outbound']),
     channel: z.enum(['form', 'booking', 'referral', 'other', 'cold_call', 'sms', 'email', 'dm'])
   })
   .superRefine((v, ctx) => {
-    const outbound = ['cold_call', 'sms', 'email', 'dm'].includes(v.channel);
-    if (outbound !== (v.direction === 'outbound'))
+    const outbound = ['cold_call'].includes(v.channel);
+    const inbound = ['form', 'booking', 'referral', 'other'].includes(v.channel);
+    if ((outbound && v.direction !== 'outbound') || (inbound && v.direction !== 'inbound'))
       ctx.addIssue({ code: 'custom', path: ['channel'], message: 'direction_channel_mismatch' });
   });
 
@@ -117,6 +128,9 @@ export const AGENCY_SOURCES = [
   ['inbound', 'booking'],
   ['inbound', 'referral'],
   ['inbound', 'other'],
+  ['inbound', 'sms'],
+  ['inbound', 'email'],
+  ['inbound', 'dm'],
   ['outbound', 'cold_call'],
   ['outbound', 'sms'],
   ['outbound', 'email'],
@@ -147,6 +161,14 @@ export async function createAgencyLead(caller: StaffCaller, raw: unknown, opts: 
         { title: input.firstName, contactId: contact.id, source: contact.source ?? undefined },
         { tx }
       );
+      await tx.execute(sql`insert into agency_alerts (tenant_id,kind,title,body,event_key)
+        values (${tenantId},'new_lead','New agency lead','A prospect was added to the agency pipeline.',${`lead/${contact.id}`})`);
+      await emitEvent(tx, {
+        name: 'agency.lead.created',
+        tenantId,
+        actor: { type: 'user', id: caller.id },
+        payload: { contactId: contact.id, dealId: deal.id }
+      });
       return { contactId: contact.id, dealId: deal.id };
     },
     opts
@@ -258,6 +280,25 @@ export async function moveAgencyDeal(
         dealId,
         { stageId, ...(opts.lostReason ? { lostReason: opts.lostReason } : {}) },
         { tx }
+      ),
+    opts
+  );
+}
+
+export async function listAgencyAlerts(caller: StaffCaller, opts: { db?: Db } = {}) {
+  return inAgency(
+    caller,
+    async (tx) =>
+      Array.from(
+        await tx.execute<{
+          id: string;
+          kind: string;
+          title: string;
+          body: string;
+          created_at: string;
+        }>(
+          sql`select id,kind,title,body,created_at from agency_alerts order by created_at desc,id desc limit 30`
+        )
       ),
     opts
   );

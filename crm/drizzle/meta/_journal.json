@@ -288,6 +288,48 @@
       "when": 1793562000000,
       "tag": "1007_view_as_optional_reason",
       "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1793565000000,
+      "tag": "1008_agency_alerts",
+      "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1793568000000,
+      "tag": "1009_agency_dm",
+      "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1793571000000,
+      "tag": "1010_agency_message_drafts",
+      "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1793574000000,
+      "tag": "1011_agency_campaign_steps",
+      "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1793577000000,
+      "tag": "1012_agency_ops",
+      "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "7",
+      "when": 1793580000000,
+      "tag": "1013_agency_billing",
+      "breakpoints": true
     }
   ]
 }

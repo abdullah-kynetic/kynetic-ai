@@ -1,0 +1,364 @@
+diff --git a/crm/src/server/agency/index.ts b/crm/src/server/agency/index.ts
+index 9a390fd..0729c67 100644
+--- a/crm/src/server/agency/index.ts
++++ b/crm/src/server/agency/index.ts
+@@ -1,6 +1,9 @@
+ import { and, count, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
+ import { SYNTHETIC_PHONE, US_STATE_CODES } from './dialer-policy';
+ import { z } from 'zod';
++import { notify } from '../notifications';
++import { emitEvent } from '../events';
++import { scheduleAgencyMaintenance } from './scheduling';
+ import { getDb, type Db, type Tx } from '../db/client';
+ import { contacts, dealContacts, deals, pipelineStages, pipelines } from '../db/schema';
+ import { createContact } from '../contacts';
+@@ -39,6 +42,7 @@ export async function getAgencyWorkspace(
+       opts
+     );
+     const row = rows[0];
++    if (row && create) await scheduleAgencyMaintenance(row.tenant_id);
+     return row
+       ? { tenantId: row.tenant_id, name: row.name, slug: row.slug, created: row.created }
+       : null;
+@@ -102,7 +106,10 @@ export const syntheticLeadSchema = z
+       .transform((v) => v.toLowerCase())
+       .refine((v) => v.endsWith('@example.test')),
+     phone: z.string().regex(SYNTHETIC_PHONE).optional(),
+-    state: z.enum(US_STATE_CODES as [string, ...string[]]).optional(),
++    state: z
++      .enum(US_STATE_CODES as [string, ...string[]])
++      .refine((value) => !['FL', 'OK'].includes(value), 'unsupported_business_state')
++      .optional(),
+     direction: z.enum(['inbound', 'outbound']),
+     channel: z.enum(['form', 'booking', 'referral', 'other', 'cold_call', 'sms', 'email', 'dm'])
+   })
+@@ -147,6 +154,23 @@ export async function createAgencyLead(caller: StaffCaller, raw: unknown, opts:
+         { title: input.firstName, contactId: contact.id, source: contact.source ?? undefined },
+         { tx }
+       );
++      await notify(
++        tx,
++        {
++          userId: caller.id,
++          type: 'new_lead',
++          title: 'New agency lead',
++          body: 'A prospect was added to the agency pipeline.',
++          link: '/admin/agency'
++        },
++        { enqueueEmail: async () => undefined }
++      );
++      await emitEvent(tx, {
++        name: 'agency.lead.created',
++        tenantId,
++        actor: { type: 'user', id: caller.id },
++        payload: { contactId: contact.id, dealId: deal.id }
++      });
+       return { contactId: contact.id, dealId: deal.id };
+     },
+     opts
+diff --git a/crm/src/server/jobs/index.ts b/crm/src/server/jobs/index.ts
+index b14f7fb..c46ec9c 100644
+--- a/crm/src/server/jobs/index.ts
++++ b/crm/src/server/jobs/index.ts
+@@ -28,7 +28,7 @@ export async function getBoss(role: Role): Promise<PgBoss> {
+       migrate: false,
+       createSchema: false,
+       supervise: role === 'worker',
+-      schedule: false,
++      schedule: role === 'worker',
+       registerInstance: false
+     });
+     b.on('error', (e) =>
+diff --git a/crm/src/server/jobs/queues.ts b/crm/src/server/jobs/queues.ts
+index 1346837..af34024 100644
+--- a/crm/src/server/jobs/queues.ts
++++ b/crm/src/server/jobs/queues.ts
+@@ -33,7 +33,8 @@ export const QUEUES = {
+   'metrics.daily': { ...retrying, policy: 'short' },
+   'automation.step': { ...retrying, policy: 'short' },
+   'report.monthly': { ...retrying, policy: 'short' },
+-  'backup.run': { ...retrying, policy: 'short' }
++  'backup.run': { ...retrying, policy: 'short' },
++  'agency.maintenance': { ...retrying, policy: 'short' }
+ } as const satisfies Record<string, QueueDef>;
+ 
+ export type QueueName = keyof typeof QUEUES;
+diff --git a/crm/src/server/worker.ts b/crm/src/server/worker.ts
+index 3095652..4fc22e0 100644
+--- a/crm/src/server/worker.ts
++++ b/crm/src/server/worker.ts
+@@ -8,6 +8,7 @@ import { getEnv } from './env';
+ import { wireEmail } from './email/wire';
+ import { registerEventWorkers } from './events';
+ import { stopJobs } from './jobs';
++import { registerAgencyMaintenanceWorker } from './agency/scheduling';
+ import { getSmsProvider } from './messaging/provider';
+ import { registerTwilioProcessor } from './messaging';
+ import { registerNotificationEmailWorker } from './notifications';
+@@ -47,6 +48,7 @@ await registerNotificationEmailWorker();
+ await registerTaskDueWorker();
+ registerAppointmentSubscriber();
+ await registerMetricsWorker();
++await registerAgencyMaintenanceWorker();
+ registerAutomationSubscribers();
+ registerStageRuleSubscribers();
+ registerAfterHoursSubscriber();
+diff --git a/scripts/checks/checks.py b/scripts/checks/checks.py
+index 8395064..825379e 100644
+--- a/scripts/checks/checks.py
++++ b/scripts/checks/checks.py
+@@ -159,15 +159,47 @@ def s6():
+         p = Path(f"docs/onboarding/{f}.md"); ok(cid, p.exists() and p.stat().st_size > 200, f"docs/onboarding/{f}.md")
+     out("SKIP", "6.3", "full live test: MANUAL, needs Abdullah's yes — stop here")
+ 
+-STEPS = [s0, s1, s2, s3, s4, s5, s6]
++def agency_test(cid, script, path, *args):
++    if not Path('crm', path).exists(): return out('FAIL', cid, 'not built: ' + path)
++    if script == 'test:integration' and not env('TEST_DATABASE_ADMIN_URL'):
++        return out('SKIP', cid, 'local Postgres integration: set TEST_DATABASE_ADMIN_URL')
++    npm(cid, script, path, *args)
++
++def s7():
++    agency_test('7.1', 'test', 'tests/unit/agency/lead-model.test.ts')
++    agency_test('7.2', 'test:integration', 'tests/integration/agency-phase7.test.ts', '-t', 'new_lead')
++    agency_test('7.3', 'test:integration', 'tests/integration/agency-phase7.test.ts', '-t', 'scheduled')
++
++def s8():
++    agency_test('8.1', 'test:integration', 'tests/integration/agency-inbox.test.ts')
++    agency_test('8.2', 'test', 'tests/unit/agency/rates.test.ts')
++
++def s9():
++    agency_test('9.1', 'test:integration', 'tests/integration/agency-messaging.test.ts')
++    out('SKIP', '9.2', 'MANUAL TEST_PHONE send requires explicit yes; not performed')
++
++def s10():
++    agency_test('10.1', 'test:integration', 'tests/integration/agency-campaign-engine.test.ts')
++    agency_test('10.2', 'test', 'tests/unit/agency/campaign-policy.test.ts')
++
++def s11():
++    agency_test('11.1', 'test:integration', 'tests/integration/lead-webhooks-admin-m12.test.ts')
++    agency_test('11.2', 'test:integration', 'tests/integration/agency-ops.test.ts')
++
++def s12():
++    agency_test('12.1', 'test:integration', 'tests/integration/agency-billing.test.ts')
++    agency_test('12.2', 'test', 'tests/unit/agency/billing-policy.test.ts')
++    out('SKIP', '12.3', 'Live Stripe/charges require explicit yes; not performed')
++
++STEPS = [s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12]
+ if __name__ == "__main__":
+     parser = argparse.ArgumentParser()
+-    parser.add_argument("step", nargs="?", default="all", choices=["all", *map(str, range(7))])
++    parser.add_argument("step", nargs="?", default="all", choices=["all", *map(str, range(13))])
+     parser.add_argument("--vps-evidence", help="Explicit user-reported Mac evidence for checks 0.7 and 1.7")
+     args = parser.parse_args()
+     a = args.step
+     VPS_EVIDENCE = args.vps_evidence
+-    for i in (range(7) if a == "all" else [int(a)]):
++    for i in (range(13) if a == "all" else [int(a)]):
+         print(f"== step {i} =="); STEPS[i]()
+     print(f"PASS={R['PASS']} FAIL={R['FAIL']} SKIP={R['SKIP']}")
+     sys.exit(1 if R["FAIL"] else 0)
+diff --git a/scripts/checks/run.sh b/scripts/checks/run.sh
+index 56c877e..f74e8c3 100755
+--- a/scripts/checks/run.sh
++++ b/scripts/checks/run.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Usage: scripts/checks/run.sh <step 0-6|all>
++# Usage: scripts/checks/run.sh <step 0-12|all>
+ set -euo pipefail
+ cd "$(dirname "$0")/../.."
+ exec python3 scripts/checks/checks.py "${@:-all}"
+diff --git a/crm/src/server/agency/scheduling.ts b/crm/src/server/agency/scheduling.ts
+new file mode 100644
+index 0000000..88e5180
+--- /dev/null
++++ b/crm/src/server/agency/scheduling.ts
+@@ -0,0 +1,65 @@
++import { eq } from 'drizzle-orm';
++import { z } from 'zod';
++import { getWorkerDb, type Db } from '../db/client';
++import { agencyWorkspaces, reports } from '../db/schema';
++import { AppError } from '../errors';
++import { scheduleRecurring, registerWorker } from '../jobs';
++import { rollupMetricsDaily } from '../metrics';
++import { generateMonthlyReport } from '../reports';
++import { withTenant } from '../tenancy';
++
++export const AGENCY_MAINTENANCE_CRON = '0 * * * *'; // UTC hourly reconciliation; no delivery.
++export async function scheduleAgencyMaintenance(tenantId: string) {
++  z.uuid().parse(tenantId);
++  await scheduleRecurring(
++    'app',
++    'agency.maintenance',
++    AGENCY_MAINTENANCE_CRON,
++    { tenantId },
++    `agency-maintenance/${tenantId}`
++  );
++}
++export async function runAgencyMaintenance(
++  job: { tenantId: string },
++  opts: { db?: Db; now?: Date } = {}
++) {
++  z.uuid().parse(job.tenantId);
++  const db = opts.db ?? getWorkerDb();
++  const now = opts.now ?? new Date();
++  const ctx = { tenantId: job.tenantId, role: 'system' as const };
++  await withTenant(
++    ctx,
++    async (tx) => {
++      const [workspace] = await tx
++        .select()
++        .from(agencyWorkspaces)
++        .where(eq(agencyWorkspaces.tenantId, job.tenantId))
++        .limit(1);
++      if (!workspace) throw new AppError('FORBIDDEN');
++    },
++    { db }
++  );
++  const yesterday = new Date(now.getTime() - 86_400_000).toISOString().slice(0, 10);
++  await rollupMetricsDaily({ tenantId: job.tenantId, day: yesterday }, { db });
++  await rollupMetricsDaily({ tenantId: job.tenantId, day: now.toISOString().slice(0, 10) }, { db });
++  const previous = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1))
++    .toISOString()
++    .slice(0, 10);
++  const exists = await withTenant(
++    ctx,
++    (tx) =>
++      tx.select({ id: reports.id }).from(reports).where(eq(reports.periodStart, previous)).limit(1),
++    { db }
++  );
++  if (!exists.length) await generateMonthlyReport(ctx, previous, { db });
++  return {
++    rolledUp: [yesterday, now.toISOString().slice(0, 10)],
++    reportPeriod: previous,
++    delivered: false
++  };
++}
++export async function registerAgencyMaintenanceWorker() {
++  await registerWorker<{ tenantId: string }>('agency.maintenance', async (job) => {
++    await runAgencyMaintenance(job);
++  });
++}
+diff --git a/crm/tests/integration/agency-phase7.test.ts b/crm/tests/integration/agency-phase7.test.ts
+new file mode 100644
+index 0000000..9ef53c5
+--- /dev/null
++++ b/crm/tests/integration/agency-phase7.test.ts
+@@ -0,0 +1,83 @@
++import { afterAll, beforeAll, describe, expect, it } from 'vitest';
++import { createAgencyLead, getAgencyWorkspace, listAgencyLeads } from '@/server/agency';
++import { runAgencyMaintenance, AGENCY_MAINTENANCE_CRON } from '@/server/agency/scheduling';
++import { createDb, type Db } from '@/server/db/client';
++import { stopJobs } from '@/server/jobs';
++import { createTestDatabase, type TestDatabase } from '../helpers/db';
++import { IDS, seedTwoTenants } from '../helpers/fixtures';
++let test: TestDatabase;
++let db: Db;
++let tenantId: string;
++const caller = { id: IDS.admin, kyneticRole: 'admin' as const };
++beforeAll(async () => {
++  test = await createTestDatabase({ jobs: true });
++  await seedTwoTenants(test.admin);
++  db = createDb(test.app);
++  Object.assign(process.env, {
++    APP_BASE_URL: 'https://dev.kyneticai.com',
++    DATABASE_URL: test.urls.app,
++    DATABASE_URL_WORKER: test.urls.worker,
++    DATABASE_URL_AUTH: test.authUrl,
++    BETTER_AUTH_SECRET: 'x'.repeat(32),
++    APP_ENCRYPTION_KEY: 'y'.repeat(32),
++    PROVIDER_MODE: 'stub',
++    OUTBOUND_ENABLED: 'false'
++  });
++  tenantId = (await getAgencyWorkspace(caller, true, { db }))!.tenantId;
++});
++afterAll(async () => {
++  await stopJobs();
++  await test?.drop();
++});
++describe('agency step 7', () => {
++  it('new_lead is transactional/in-app only and source fields filter correctly', async () => {
++    const lead = await createAgencyLead(
++      caller,
++      {
++        firstName: 'DEV Agency',
++        email: 'new-agency@example.test',
++        direction: 'inbound',
++        channel: 'form',
++        state: 'CA'
++      },
++      { db }
++    );
++    const notifications =
++      await test.admin`select kind, user_id from notifications where tenant_id=${tenantId}`;
++    expect(notifications).toEqual([{ kind: 'new_lead', user_id: caller.id }]);
++    const events =
++      await test.admin`select data from pgboss.job where name='event.dispatch' and data->>'tenantId'=${tenantId} and data->>'name'='agency.lead.created'`;
++    expect(events).toHaveLength(1);
++    expect(events[0].data.payload.contactId).toBe(lead.contactId);
++    expect(
++      await test.admin`select id from pgboss.job where name in ('notification.email','call.outbound') and data->>'tenantId'=${tenantId}`
++    ).toHaveLength(0);
++    expect(
++      (await listAgencyLeads(caller, { direction: 'inbound', channel: 'form' }, { db })).leads
++    ).toHaveLength(1);
++    expect((await listAgencyLeads(caller, { direction: 'outbound' }, { db })).leads).toHaveLength(
++      0
++    );
++  });
++  it('scheduled maintenance has one durable schedule and rebuilds metrics/report idempotently without delivery', async () => {
++    await getAgencyWorkspace(caller, true, { db });
++    const schedules =
++      await test.admin`select cron, data from pgboss.schedule where name='agency.maintenance'`;
++    expect(schedules).toHaveLength(1);
++    expect(schedules[0].cron).toBe(AGENCY_MAINTENANCE_CRON);
++    expect(schedules[0].data).toEqual({ tenantId });
++    const opts = { db: createDb(test.worker), now: new Date('2026-11-05T18:00:00Z') };
++    expect(await runAgencyMaintenance({ tenantId }, opts)).toMatchObject({
++      delivered: false,
++      reportPeriod: '2026-10-01'
++    });
++    await runAgencyMaintenance({ tenantId }, opts);
++    expect(await test.admin`select day from metrics_daily where tenant_id=${tenantId}`).toHaveLength(
++      2
++    );
++    expect(await test.admin`select id from reports where tenant_id=${tenantId}`).toHaveLength(1);
++    await expect(runAgencyMaintenance({ tenantId: IDS.tenantA }, opts)).rejects.toMatchObject({
++      code: 'FORBIDDEN'
++    });
++  });
++});
+diff --git a/crm/tests/unit/agency/lead-model.test.ts b/crm/tests/unit/agency/lead-model.test.ts
+new file mode 100644
+index 0000000..831bb8a
+--- /dev/null
++++ b/crm/tests/unit/agency/lead-model.test.ts
+@@ -0,0 +1,27 @@
++import { describe, expect, it } from 'vitest';
++import { syntheticLeadSchema } from '@/server/agency';
++const lead = {
++  firstName: 'Synthetic',
++  email: 'agency@example.test',
++  direction: 'inbound',
++  channel: 'form'
++};
++describe('agency required source model', () => {
++  it('requires both direction and channel', () => {
++    expect(syntheticLeadSchema.safeParse(lead).success).toBe(true);
++    for (const key of ['direction', 'channel']) {
++      const missing = { ...lead };
++      delete missing[key as keyof typeof missing];
++      expect(syntheticLeadSchema.safeParse(missing).success).toBe(false);
++    }
++  });
++  it.each(['FL', 'OK'])('rejects excluded business state %s', (state) => {
++    expect(syntheticLeadSchema.safeParse({ ...lead, state }).success).toBe(false);
++  });
++  it('does not accept real emails or contradictory source directions', () => {
++    expect(syntheticLeadSchema.safeParse({ ...lead, email: 'customer@example.com' }).success).toBe(
++      false
++    );
++    expect(syntheticLeadSchema.safeParse({ ...lead, channel: 'cold_call' }).success).toBe(false);
++  });
++});

@@ -3,6 +3,7 @@
 import argparse, json, os, re, subprocess, sys, glob, urllib.request, urllib.error
 from vps_evidence import load_dev_auth_evidence, load_dev_portal_evidence
 from portal_check import check_dev_portal
+from workflow_retry import has_retry_or_error_branch
 from pathlib import Path
 
 LIVE_ALEX = "agent_8201m5afn2rbeb7v29xfkhh1pjef"
@@ -138,7 +139,7 @@ def s3():
     ok("3.1", bool(glob.glob("crm/src/app/api/hooks/leads/**/route.*", recursive=True)), "lead intake route")
     if not glob.glob("crm/tests/unit/chain/*"): out("FAIL", "3.2", "chain tests crm/tests/unit/chain: not built")
     else: npm("3.2", "test", "tests/unit/chain")
-    hit = [p for p in dev_wfs() if re.search(r"retry|retryOnFail|errorWorkflow", Path(p).read_text())]
+    hit = [p for p in dev_wfs() if has_retry_or_error_branch(json.loads(Path(p).read_text()))]
     ok("3.3", bool(hit), "dev workflow retry/error handling")
     url, need, headers = twenty_check_args()
     http_check("3.4", "Twenty reachable (read-only GET)", url, need, headers)
@@ -166,15 +167,48 @@ def s6():
         p = Path(f"docs/onboarding/{f}.md"); ok(cid, p.exists() and p.stat().st_size > 200, f"docs/onboarding/{f}.md")
     out("SKIP", "6.3", "full live test: MANUAL, needs Abdullah's yes — stop here")
 
-STEPS = [s0, s1, s2, s3, s4, s5, s6]
+def agency_test(cid, script, path, *args):
+    if not Path('crm', path).exists(): return out('FAIL', cid, 'not built: ' + path)
+    if script == 'test:integration' and not env('TEST_DATABASE_ADMIN_URL'):
+        return out('SKIP', cid, 'local Postgres integration: set TEST_DATABASE_ADMIN_URL')
+    npm(cid, script, path, *args)
+
+def s7():
+    agency_test('7.1', 'test', 'tests/unit/agency/lead-model.test.ts')
+    agency_test('7.2', 'test:integration', 'tests/integration/agency-phase7.test.ts', '-t', 'new_lead')
+    agency_test('7.3', 'test:integration', 'tests/integration/agency-phase7.test.ts', '-t', 'scheduled')
+
+def s8():
+    agency_test('8.1', 'test:integration', 'tests/integration/agency-inbox.test.ts')
+    agency_test('8.2', 'test', 'tests/unit/agency/rates.test.ts')
+
+def s9():
+    agency_test('9.1.unit', 'test', 'tests/unit/agency/messaging-policy.test.ts')
+    agency_test('9.1', 'test:integration', 'tests/integration/agency-messaging.test.ts')
+    out('SKIP', '9.2', 'MANUAL TEST_PHONE send requires explicit yes; not performed')
+
+def s10():
+    agency_test('10.1', 'test:integration', 'tests/integration/agency-campaign-engine.test.ts')
+    agency_test('10.2', 'test', 'tests/unit/agency/campaign-policy.test.ts')
+
+def s11():
+    agency_test('11.1', 'test:integration', 'tests/integration/lead-webhooks-admin-m12.test.ts')
+    agency_test('11.2', 'test:integration', 'tests/integration/agency-ops.test.ts')
+
+def s12():
+    agency_test('12.1', 'test:integration', 'tests/integration/agency-billing.test.ts')
+    agency_test('12.2', 'test', 'tests/unit/agency/billing-policy.test.ts')
+    out('SKIP', '12.3', 'Live Stripe/charges require explicit yes; not performed')
+
+STEPS = [s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12]
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("step", nargs="?", default="all", choices=["all", *map(str, range(7))])
+    parser.add_argument("step", nargs="?", default="all", choices=["all", *map(str, range(13))])
     parser.add_argument("--vps-evidence", help="Explicit user-reported Mac evidence for checks 0.7 and 1.7")
     args = parser.parse_args()
     a = args.step
     VPS_EVIDENCE = args.vps_evidence
-    for i in (range(7) if a == "all" else [int(a)]):
+    for i in (range(13) if a == "all" else [int(a)]):
         print(f"== step {i} =="); STEPS[i]()
     print(f"PASS={R['PASS']} FAIL={R['FAIL']} SKIP={R['SKIP']}")
     sys.exit(1 if R["FAIL"] else 0)

@@ -438,6 +438,8 @@ export function registerOutboundCallSubscriber(deps: { queue?: typeof enqueue } 
     'lead.created',
     OUTBOUND_SUBSCRIBER_ID,
     async (env) => {
+      // Synthetic intake is owned by the dedicated DEV queue, which has no sender.
+      if (env.payload.synthetic === true) return;
       const contactId = env.payload.contactId;
       if (typeof contactId !== 'string') return;
       const dealId = typeof env.payload.dealId === 'string' ? env.payload.dealId : null;

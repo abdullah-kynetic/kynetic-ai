@@ -1,0 +1,12 @@
+{
+  "created_at": "2026-11-06",
+  "target": "https://crm.kyneticai.com",
+  "note_id": "834a4ff9-902d-4d09-a16a-1de15bdc40b8",
+  "attachment_id": "a4b062f0-2ef7-42fe-9c5d-103138c79f96",
+  "file_id": "00f5e529-99af-4270-9786-c9ce1cb0e0eb",
+  "file_bytes": 22089,
+  "sha256": "c023d026d35092beeee803a6835e9aa71375c83ba695a69601c5cca41f2f5b87",
+  "source": "docs/codex/REMAINING-WORK.md",
+  "note_markdown_readback_matches": true,
+  "authorization": "Abdullah explicitly requested the full report as a Markdown file in Twenty. Standalone documentation only; no client/lead records modified."
+}

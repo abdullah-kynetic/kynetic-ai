@@ -28,7 +28,7 @@ export async function getBoss(role: Role): Promise<PgBoss> {
       migrate: false,
       createSchema: false,
       supervise: role === 'worker',
-      schedule: false,
+      schedule: role === 'worker',
       registerInstance: false
     });
     b.on('error', (e) =>
@@ -45,10 +45,11 @@ export async function scheduleRecurring(
   queue: QueueName,
   cron: string,
   payload: object,
-  key: string
+  key: string,
+  tz?: string
 ): Promise<void> {
   const b = await getBoss(role);
-  await b.schedule(queue, cron, payload, { key });
+  await b.schedule(queue, cron, payload, { key, ...(tz ? { tz } : {}) });
 }
 
 export async function stopJobs(): Promise<void> {

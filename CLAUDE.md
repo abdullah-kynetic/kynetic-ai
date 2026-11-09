@@ -2,9 +2,11 @@
 
 Kynetic AI repo. Twenty CRM (crm.kyneticai.com) is the business source of truth. GitHub is the technical execution record. On a mismatch, flag it with both values. Current operating order: `docs/STATUS.md`. `AGENTS.md` carries the same hard rules for every agent.
 
+Portal line (2026-11-09 PST): `main` is the single portal build for production at portal.kyneticai.com. A deploy still needs an explicit yes. The separate DEV environment is retired until after go-live. Do not continue `dev/codex-setup`. `docs/codex/COMPLETION-PLAN.md` is historical evidence, not the plan.
+
 ## Session protocol
 
-Read `docs/STATUS.md` first. Then `docs/progress.md` (dated log; headings marked historical are history), `docs/decisions.md` (history plus the 2026-11-08 PST precedence note; disagree out loud and wait), `docs/known-issues.md` (gotchas; don't fix on your own initiative), and `KYNETIC_CONTEXT.md` (rules and IDs; never guess an ID or a price).
+Read `docs/STATUS.md` first. Then `docs/progress.md` (dated log; headings marked historical are history), `docs/decisions.md` (history plus the 2026-11-08 PST precedence note and the 2026-11-09 PST portal-line note; disagree out loud and wait), `docs/known-issues.md` (gotchas; don't fix on your own initiative), and `KYNETIC_CONTEXT.md` (rules and IDs; never guess an ID or a price).
 
 ## Hard rules
 

@@ -1,6 +1,10 @@
 # Progress
 
-> **Canonical plan (2026-11-08, precedence restated 2026-11-08 PST):** the business roadmap, progress baseline and scorecard live in Twenty: roadmap note `7bfdcb7e`, baseline v1 note `603fe300`, scorecard note `5c44b12e`. GitHub owns technical tracking only (code, PRs, CI, deploy evidence: `docs/audit/2026-11-08-code-evidence.md`). The operating summary, offer, pricing precedence, and the docs-reconciliation journal are in `docs/STATUS.md`. `docs/codex/COMPLETION-PLAN.md` on branch `dev/codex-setup` (`81496f99`) calls itself the one active completion checklist. That branch file is a historical artifact, not a competing roadmap, and it was not edited here. Do not merge it as the plan. Do not keep a second editable acceptance list in this repo.
+> **Canonical plan (2026-11-08, precedence restated 2026-11-08 PST; portal line 2026-11-09 PST):** the business roadmap, progress baseline and scorecard live in Twenty: roadmap note `7bfdcb7e`, baseline v1 note `603fe300`, scorecard note `5c44b12e`. GitHub owns technical tracking only (code, PRs, CI, deploy evidence: `docs/audit/2026-11-08-code-evidence.md`). The operating summary, offer, pricing precedence, and the docs-reconciliation journal are in `docs/STATUS.md`. `docs/codex/COMPLETION-PLAN.md` is historical evidence, not a competing roadmap. Do not keep a second editable acceptance list in this repo.
+
+## Portal line (2026-11-09 PST)
+
+One portal line on `main`. The separate DEV environment is retired until after go-live. Production at portal.kyneticai.com is still release `350bf673`; this change does not deploy. Details: `docs/STATUS.md` and the 2026-11-09 decision note in `docs/decisions.md`.
 
 This file is the dated log. On a mismatch with Twenty, flag both values. The GitHub docs pass did not read Twenty and did not change the frozen scorecard weights. The parallel Twenty cleanup is the parent-reported verification in `docs/STATUS.md`.
 
@@ -85,6 +89,10 @@ Then: confirm the post-call webhook URL is set on the agent, web-call test Alex,
 Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-11-09 (single portal line)
+- Abdullah decided to stop the second portal line. The portal code from `dev/codex-setup` is consolidated onto a branch for merge into `main` (merge commit, history kept). `main` becomes the production build for portal.kyneticai.com. The separate DEV environment is retired until after go-live. `scripts/deploy-dev.sh`, `scripts/deploy-dev-server.sh`, `scripts/fix-dev-runtime.sh`, and `scripts/checks/mac-dev-runtime.sh` now refuse to run. No GitHub workflow was deploying that branch on push. No VPS, DNS, or live service was touched. Production remains release `350bf673`.
+- The first CI check on that pull request failed because migrations `1008`–`1013` created agency tables that were not in the Drizzle schema or the integration allow-lists. Those tables were declared and excluded from the two-tenant seed, same as the earlier agency tables. Auth code was not changed. The end-to-end job then failed because the synthetic browser server left `PROVIDER_MODE` at its live default, so the agency compose preview refused to run. That server now forces stub mode and outbound off.
+
 ### 2026-10-29 (CRM portal M10-01 security review)
 - Fixed the contacts phone-fragment GIN index to lead with `tenant_id` (`b7b8e57`) and wired shared PostgreSQL auth IP/email limits (`8256212`). Focused auth/rate-limit tests (19), baseline CRM test (13), header tests (3), and webhook/service-token test suites passed. Typecheck passed.
 - Initial M10-01 review state: authenticated API/search/export-import rate limits were not wired, exact Bun-lock audit and restore evidence were pending, and CI secret scanning/log-redaction plus production edge configuration were open. Details and subsequent resolution are recorded in `docs/security-review-M10-01.md`.

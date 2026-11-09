@@ -1,6 +1,6 @@
 # Product Requirements Document
 
-> **Technical requirements for the portal codebase (scope banner, 2026-11-08 PST).** This file is not the business roadmap. Current direction, offer, and pricing precedence: `docs/STATUS.md`. Decision 1, decision 12, F-85, F-86, and the module-catalog prices are the 2026-10-25 Lite/Full commercial menu. That menu is historical. The CRM is one configurable deliverable. Rows that say `crm (Lite)` or `crm (Full)` remain the internal capability split the code still gates on. This banner does not change schema or code. Do not quote the dollar amounts below as the current price. `dev/codex-setup:docs/codex/COMPLETION-PLAN.md` is not authority.
+> **Technical requirements for the portal codebase (scope banner, 2026-11-08 PST).** This file is not the business roadmap. Current direction, offer, and pricing precedence: `docs/STATUS.md`. Decision 1, decision 12, F-85, F-86, and the module-catalog prices are the 2026-10-25 Lite/Full commercial menu. That menu is historical. The CRM is one configurable deliverable. Rows that say `crm (Lite)` or `crm (Full)` remain the internal capability split the code still gates on. This banner does not change schema or code. Do not quote the dollar amounts below as the current price. `docs/codex/COMPLETION-PLAN.md` is historical evidence, not authority. Do not continue `dev/codex-setup`.
 
 Kynetic Client CRM & Portal. Target path in the build repo: `docs/PRD.md`.
 

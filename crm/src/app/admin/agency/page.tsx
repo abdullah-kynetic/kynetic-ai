@@ -1,13 +1,20 @@
-import Link from 'next/link';
+import { agencyChannel } from '@/components/agency/format';
+import { getAgencyRates } from '@/server/agency/inbox';
+import { percent } from '@/server/agency/rates';
 import { US_STATE_CODES } from '@/server/agency/dialer-policy';
 import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
-import PageContainer from '@/components/layout/page-container';
-import { Button } from '@/components/ui/button';
+import PageContainer from '@/components/agency/page';
+import { AgencySubmitButton as Button } from '@/components/agency/motion';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { decideAdminAccess } from '@/server/admin';
-import { getAgencyWorkspace, getAgencyPipeline, listAgencyLeads } from '@/server/agency';
+import {
+  getAgencyWorkspace,
+  getAgencyPipeline,
+  listAgencyLeads,
+  listAgencyAlerts
+} from '@/server/agency';
 import { isViewingAs } from '../view-as-guard';
 import {
   createAgencyWorkspaceAction,
@@ -51,9 +58,11 @@ export default async function AgencyPage({
       : {}),
     ...(channels.includes(query.channel ?? '') ? { channel: query.channel } : {})
   };
-  const [{ stages }, data] = await Promise.all([
+  const [{ stages }, data, alerts, rates] = await Promise.all([
     getAgencyPipeline(caller),
-    listAgencyLeads(caller, filter)
+    listAgencyLeads(caller, filter),
+    listAgencyAlerts(caller),
+    getAgencyRates(caller)
   ]);
   return (
     <PageContainer
@@ -66,32 +75,155 @@ export default async function AgencyPage({
           @example.test email, and provide a reason when moving to Lost.
         </p>
       )}
-      <nav aria-label='Agency tools' className='mb-4 flex flex-wrap gap-4'>
-        <Link href='/admin/agency/dialer' className='inline-flex min-h-11 items-center underline'>
-          Human dialer
-        </Link>
-        <Link
-          href='/admin/agency/campaigns'
-          className='inline-flex min-h-11 items-center underline'
-        >
-          Campaigns
-        </Link>
-        <Link
-          href='/admin/agency/proposals'
-          className='inline-flex min-h-11 items-center underline'
-        >
-          Proposal drafts
-        </Link>
-      </nav>
-      <p className='mb-6 rounded-md border p-3'>
+      <section aria-label='Seven-day agency rates' className='agency-metrics'>
+        <h2>Last seven days</h2>
+        <dl>
+          <div>
+            <dt>Pick rate</dt>
+            <dd>
+              {percent(rates.pickRate)}
+              <span>
+                {rates.picked} answered / {rates.attempted} attempted calls
+              </span>
+            </dd>
+          </div>
+          <div>
+            <dt>Reply rate</dt>
+            <dd>
+              {percent(rates.replyRate)}
+              <span>
+                {rates.replied} replies / {rates.contacted} messaged prospects
+              </span>
+            </dd>
+          </div>
+        </dl>
+        <p>
+          Replies count unique prospects after outreach in this window. Failed messages and
+          simulated sends are excluded.
+        </p>
+      </section>
+
+      <p className='agency-notice'>
         Synthetic workspace · Use fictional names and @example.test emails. No outreach starts from
         this page.
       </p>
+
+      <section className='mb-8 space-y-4' aria-labelledby='agency-leads'>
+        <h2 id='agency-leads' className='text-lg font-semibold'>
+          Leads
+        </h2>
+        <dl className='agency-source-counts' aria-label='Lead source counts'>
+          {data.counts.map((c) => (
+            <div key={`${c.direction}-${c.channel}`}>
+              <dt>
+                {c.direction === 'inbound' ? 'Inbound' : 'Outbound'} · {agencyChannel(c.channel)}
+              </dt>
+              <dd>{c.count}</dd>
+            </div>
+          ))}
+        </dl>
+        <form className='flex flex-wrap items-end gap-3'>
+          <div>
+            <Label htmlFor='filterDirection'>Direction</Label>
+            <select
+              id='filterDirection'
+              name='direction'
+              defaultValue={query.direction ?? ''}
+              className={`${selectClass} block`}
+            >
+              <option value=''>All</option>
+              <option value='inbound'>Inbound</option>
+              <option value='outbound'>Outbound</option>
+            </select>
+          </div>
+          <div>
+            <Label htmlFor='filterChannel'>Channel</Label>
+            <select
+              id='filterChannel'
+              name='channel'
+              defaultValue={query.channel ?? ''}
+              className={`${selectClass} block`}
+            >
+              <option value=''>All</option>
+              {channels.map((c) => (
+                <option key={c} value={c}>
+                  {c.replaceAll('_', ' ')}
+                </option>
+              ))}
+            </select>
+          </div>
+          <Button type='submit' variant='outline'>
+            Filter
+          </Button>
+        </form>
+        <p className='text-muted-foreground text-sm'>
+          Latest 50 matching leads. Counts include all active agency prospects.
+        </p>
+        <ul className='space-y-3'>
+          {data.leads.map((lead) => (
+            <li
+              key={lead.id}
+              className='flex flex-wrap items-center justify-between gap-3 rounded border p-4'
+            >
+              <div>
+                <p className='font-medium'>{lead.firstName}</p>
+                <p className='text-muted-foreground text-sm'>
+                  {lead.email} · {lead.source?.replace('agency_', '').replaceAll('_', ' ')}
+                </p>
+              </div>
+              {lead.deal && (
+                <form
+                  action={moveAgencyDealAction.bind(null, lead.deal.dealId)}
+                  className='flex flex-wrap items-end gap-2'
+                >
+                  <div>
+                    <Label htmlFor={`stage-${lead.id}`}>Stage</Label>
+                    <select
+                      id={`stage-${lead.id}`}
+                      name='stageId'
+                      defaultValue={lead.deal.stageId}
+                      className={`${selectClass} block`}
+                    >
+                      {stages.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <Label htmlFor={`lost-${lead.id}`}>Reason (if Lost)</Label>
+                    <Input id={`lost-${lead.id}`} name='lostReason' maxLength={500} />
+                  </div>
+                  <Button type='submit' variant='outline'>
+                    Move
+                  </Button>
+                </form>
+              )}
+            </li>
+          ))}
+        </ul>
+        {data.leads.length === 0 && (
+          <p className='text-muted-foreground'>No leads match these filters.</p>
+        )}
+      </section>
+      <section aria-label='Agency alerts' className='agency-alerts'>
+        <h2 className='font-semibold'>Agency alerts</h2>
+        {alerts.length ? (
+          alerts.map((a) => (
+            <p key={a.id}>
+              {a.title} · {a.body}
+            </p>
+          ))
+        ) : (
+          <p>No alerts yet.</p>
+        )}
+      </section>
       <section className='mb-8 space-y-4' aria-labelledby='agency-add-lead'>
         <h2 id='agency-add-lead' className='text-lg font-semibold'>
           Add a synthetic lead
         </h2>
-        <form action={createAgencyLeadAction} className='grid max-w-3xl gap-4 sm:grid-cols-2'>
+        <form action={createAgencyLeadAction} className='agency-form grid gap-4 sm:grid-cols-2'>
           <div className='space-y-2'>
             <Label htmlFor='firstName'>Name</Label>
             <Input id='firstName' name='firstName' maxLength={200} required />
@@ -150,102 +282,6 @@ export default async function AgencyPage({
             Add lead
           </Button>
         </form>
-      </section>
-      <section className='mb-8 space-y-4' aria-labelledby='agency-leads'>
-        <h2 id='agency-leads' className='text-lg font-semibold'>
-          Leads
-        </h2>
-        <div className='flex flex-wrap gap-2'>
-          {data.counts.map((c) => (
-            <span key={`${c.direction}-${c.channel}`} className='rounded border px-3 py-2 text-sm'>
-              {c.direction} · {c.channel.replaceAll('_', ' ')}: {c.count}
-            </span>
-          ))}
-        </div>
-        <form className='flex flex-wrap items-end gap-3'>
-          <div>
-            <Label htmlFor='filterDirection'>Direction</Label>
-            <select
-              id='filterDirection'
-              name='direction'
-              defaultValue={query.direction ?? ''}
-              className={`${selectClass} block`}
-            >
-              <option value=''>All</option>
-              <option value='inbound'>Inbound</option>
-              <option value='outbound'>Outbound</option>
-            </select>
-          </div>
-          <div>
-            <Label htmlFor='filterChannel'>Channel</Label>
-            <select
-              id='filterChannel'
-              name='channel'
-              defaultValue={query.channel ?? ''}
-              className={`${selectClass} block`}
-            >
-              <option value=''>All</option>
-              {channels.map((c) => (
-                <option key={c} value={c}>
-                  {c.replaceAll('_', ' ')}
-                </option>
-              ))}
-            </select>
-          </div>
-          <Button type='submit' variant='outline'>
-            Filter
-          </Button>
-        </form>
-        <p className='text-muted-foreground text-sm'>
-          Latest 50 matching leads. Counts include all live agency leads.
-        </p>
-        <ul className='space-y-3'>
-          {data.leads.map((lead) => (
-            <li
-              key={lead.id}
-              className='flex flex-wrap items-center justify-between gap-3 rounded border p-4'
-            >
-              <div>
-                <p className='font-medium'>{lead.firstName}</p>
-                <p className='text-muted-foreground text-sm'>
-                  {lead.email} · {lead.source?.replace('agency_', '').replaceAll('_', ' ')}
-                </p>
-              </div>
-              {lead.deal && (
-                <form
-                  action={moveAgencyDealAction.bind(null, lead.deal.dealId)}
-                  className='flex flex-wrap items-end gap-2'
-                >
-                  <div>
-                    <Label htmlFor={`stage-${lead.id}`}>Stage</Label>
-                    <select
-                      id={`stage-${lead.id}`}
-                      name='stageId'
-                      defaultValue={lead.deal.stageId}
-                      className={`${selectClass} block`}
-                    >
-                      {stages.map((s) => (
-                        <option key={s.id} value={s.id}>
-                          {s.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <Label htmlFor={`lost-${lead.id}`}>Reason (if Lost)</Label>
-                    <Input id={`lost-${lead.id}`} name='lostReason' maxLength={500} />
-                  </div>
-                  <Button type='submit' variant='outline'>
-                    Move
-                  </Button>
-                </form>
-              )}
-            </li>
-          ))}
-        </ul>
-        {data.leads.length === 0 && (
-          <p className='text-muted-foreground'>No leads match these filters.</p>
-        )}
       </section>
       <section className='space-y-3' aria-labelledby='agency-stages'>
         <h2 id='agency-stages' className='text-lg font-semibold'>

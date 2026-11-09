@@ -7,6 +7,8 @@ const booleanString = z.enum(['true', 'false']).transform((v) => v === 'true');
 export const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   DEV_PERSONA_SWITCHING: booleanString.default(false),
+  // Dev-only validation happens at the dev boundary; unrelated production paths do not use it.
+  TEST_PHONE: z.string().optional(),
   APP_BASE_URL: z.url(),
   DATABASE_URL: z.string().startsWith('postgres'),
   DATABASE_URL_AUTH: z.string().startsWith('postgres'),
