@@ -29,14 +29,9 @@ approved synthetic Twenty writes. No further Twenty write is authorized by those
 old test IDs or by rerunning a dry-run tool. The repo workflows are stubs; gate
 snapshots in input are not server-side send permits.
 
-## 2. ONE final DEV deployment
+## 2. DEV deployment (retired 2026-11-09 PST)
 
-After cloud steps 3–5 pass and step-6 preparation passes, push dev/codex-setup.
-From the Mac checkout at ~/kynetic-ai, pull the branch and run
-`bash scripts/deploy-dev.sh`. The script enforces that branch, uploads committed
-files only and deploys the dedicated dev portal/database at dev.kyneticai.com.
-It retains stub providers, outbound disabled, persona switching disabled and
-loopback port 3031; it does not invoke a production deploy helper or start n8n.
+Do not run this step. The separate DEV environment is retired until after go-live, and `scripts/deploy-dev.sh` refuses to deploy. The production target is the `main` build at portal.kyneticai.com, and only after an explicit yes. The old instruction was: after cloud steps 3–5 pass, push `dev/codex-setup` and run `bash scripts/deploy-dev.sh` from the Mac checkout. That instruction is withdrawn.
 
 Required output: isolated synthetic DB guard, healthy app, sign-in 200, anonymous
 admin 401 without redirects, rollback-only consent/quiet/kill verifier with zero

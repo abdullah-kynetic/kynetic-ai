@@ -1,9 +1,17 @@
-# Current portal and agency status
+# Current portal status
 
-> **HISTORICAL — November 6 status snapshot, superseded as the current checklist.** Read [COMPLETION-PLAN.md](COMPLETION-PLAN.md) and the concise [evidence index](PROGRESS.md). The results and revision distinctions below retain their original scope; the short remaining-work list is not an alternative plan.
+Updated **2026-11-09 PST**. Canonical status is [../STATUS.md](../STATUS.md). This file restates the same portal facts.
 
+- One portal line. The portal implementation that was on `dev/codex-setup` is the code for `main`.
+- `main` is the only build that may be deployed to production at portal.kyneticai.com, and only after an explicit yes.
+- The separate DEV environment (`dev.kyneticai.com`, `scripts/deploy-dev.sh`, `crm/deploy/dev/`) is retired until after go-live. Do not deploy it. Do not continue `dev/codex-setup`.
+- [COMPLETION-PLAN.md](COMPLETION-PLAN.md) is historical evidence, not the operating plan. The operating order is the five steps in `docs/STATUS.md`.
+- This note does not deploy. Live production remains release `350bf673` until that yes.
+- [PROGRESS.md](PROGRESS.md) is a technical log, not a second roadmap.
 
-Updated **2026-11-06**, America/Los_Angeles. This is the current summary for portal/agency work on **dev/codex-setup**. [PROGRESS.md](PROGRESS.md) retains the chronological evidence and original step checklists. It does not update or supersede the separate Twenty business roadmap.
+## Historical snapshot (2026-11-06)
+
+The sections below are the 2026-11-06 DEV snapshot. They are not the current operating status. They do not update or supersede the Twenty business roadmap.
 
 ## Code versus deployment
 

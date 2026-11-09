@@ -8,7 +8,7 @@ One job: record state, decisions and gotchas so a cold session does not guess. T
 `STATUS.md` (current direction) then `progress.md` (dated log; headings marked historical are history) then `decisions.md` (history plus the 2026-11-08 PST precedence note) then `known-issues.md` (gotchas). `KYNETIC_CONTEXT.md` is at the repo root.
 Point-in-time, not state: `plan1-walkthrough.md`, `counsel-email.md`, `counsel-questions.md`, `lead-engine-handoff.md`.
 Portal technical requirements (`PRD.md`, `ARCHITECTURE.md`, `DECISIONS.md`, `BUILD_PLAN.md`, and the sibling spec docs) describe the codebase. Their Lite/Full prices are historical commercial terms. They are not the business roadmap.
-`codex/PROGRESS.md` on main is a historical Codex log. `codex/COMPLETION-PLAN.md` exists only on branch `dev/codex-setup` and is not authority. Do not merge that file in as the plan.
+`codex/PROGRESS.md` is a historical Codex log. `codex/COMPLETION-PLAN.md` is historical evidence, not authority (2026-11-09 PST). The portal code is on `main`. Do not continue `dev/codex-setup`.
 
 ## Rules
 - Writer: the `build-log` skill at session end. Append a dated entry; do not rewrite past decisions (mark superseded). New D-numbers stay unassigned when Twenty's sequence may differ. The 2026-11-08 PST precedence note is the current operating record and does not claim a Twenty D-number.

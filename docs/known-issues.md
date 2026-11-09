@@ -61,11 +61,8 @@ Found 2026-10-20.
 Fix: hand-dial a sample, counsel answer, and keep the audit step in every run.
 
 ## Open (docs reconciliation leftovers, 2026-11-08 PST)
-### KI-015: Branch completion plan still claims to be the active checklist (medium)
-`dev/codex-setup` at `81496f99b2dd20a88e6cbc080b33e0a73e76a2aa` (2026-11-06) contains `docs/codex/COMPLETION-PLAN.md`, which calls itself the one active completion checklist. Main's `docs/STATUS.md` warns that the file is not authority. The 2026-11-08 PST docs pass did not edit that branch. Do not merge the branch in order to install that file as the plan. A later edit on that branch can add the same warning. Until then the branch copy remains wrong if read alone.
-
-### KI-016: Checker read the dead Twenty key name (low) — RESOLVED 2026-11-09 (branch fix/twenty-key-crm-tier-labels, PR pending merge)
-Approved Twenty env names are `TWENTY_BASE_URL` and `TWENTY_SELFHOST_API_KEY`. `TWENTY_API_KEY` is dead. `scripts/checks/checks.py` check 3.4 used to send `TWENTY_API_KEY`; it now uses the supported names and skips when the key is unset, with offline tests. Do not put the dead name back into `.env.example`.
+### KI-017: Production is still the pre-consolidation release (high)
+Found 2026-11-09. portal.kyneticai.com is release `350bf673` (1 admin user, about 13 tenants). The portal line moving onto `main` is not deployed. Migrations `1007` through `1013` have not been applied to that database. The separate DEV environment is retired until after go-live, so there is no second portal to rehearse on. Do not deploy, migrate, or recreate DEV without an explicit yes.
 
 ## Gotchas
 - Cloud sessions deny hosts not in the environment's allowed domains. Firecrawl returned 403 until `api.firecrawl.dev` was allowed (2026-10-19). A scrape of Facebook, BBB, the Texas Comptroller and similar sites needs those domains allowed too.
@@ -77,12 +74,18 @@ Approved Twenty env names are `TWENTY_BASE_URL` and `TWENTY_SELFHOST_API_KEY`. `
 - Twenty refuses the same website domain on two companies. The Kynetic Roofing (Demo) company has no website field set because AM-1 Roofing Inc already uses am1roofing.com; the website lives in the profile note.
 - The n8n workflow "n8n Facebook Ad Form" (`KYQIVtxwDcXVKmk3`) is SOURCE TEMPLATE 05 imported as-is (Google Sheets, Vapi, Azure). Do not activate it and do not run it. Do not create Google Sheets. The Oct 17 read found the Retell workflow "Outbound Speed to Lead" (`m2YJwZ1l8DTzyEkw`) at 38 nodes and active, including a calling-hours gate and a fallback normalize step. That is a historical observation of the parked Retell path (KI-009). It is not an instruction to activate a workflow. Current Alex work is ElevenLabs through n8n on the VPS, and live agent `agent_8201m5afn2rbeb7v29xfkhh1pjef` must not be changed or invoked.
 - `TWENTY_API_KEY` is a dead name (KI-016). Use `TWENTY_BASE_URL` and `TWENTY_SELFHOST_API_KEY`. Never REST DELETE on Twenty.
-- `dev/codex-setup:docs/codex/COMPLETION-PLAN.md` is not the roadmap (KI-015).
+- `docs/codex/COMPLETION-PLAN.md` is not the roadmap (KI-015, resolved 2026-11-09). The portal line is `main`. The separate DEV environment is retired until after go-live (KI-017).
 - Vapi is parked (D-018). Its workflows were renamed and deactivated. The builder prompt was removed from main (recoverable via tag `archive/pre-reorg-2026-10-17`) and is not a spec to run.
 - The Retell post call webhook in n8n has no auth (unguessable path only) because Retell signs requests instead of sending a custom header. Part of KI-005.
 - The Kynetic Roofing (Demo) company record carries the real AM-1 office phone (D-016 amended). Never dial it from the demo or any test.
 
 ## Resolved
+### KI-016: Checker read the dead Twenty key name (low)
+Approved Twenty env names are `TWENTY_BASE_URL` and `TWENTY_SELFHOST_API_KEY`. `TWENTY_API_KEY` is dead. Resolved 2026-11-09 in PR #141: `scripts/checks/checks.py` check 3.4 uses the supported names and skips when the key is unset. That fix is in the portal-line consolidation. Do not put the dead name back into `.env.example`.
+
+### KI-015: Branch completion plan claimed to be the active checklist (medium)
+Found 2026-11-08. `docs/codex/COMPLETION-PLAN.md` called itself the one active checklist. Resolved 2026-11-09: the file is marked historical evidence, `docs/STATUS.md` stays the entry point, and the portal code is consolidated onto `main`. The old checklist body remains under that banner. It is not the plan.
+
 ### KI-014: CRM portal M10-01 security gate had high findings (high)
 Found 2026-10-29: authenticated API, search, and tenant import/export rate limits were declared but not enforced, and the exact Bun lock production audit was unavailable. Resolved 2026-10-29: `withApi` now enforces 120/min per authenticated user; contacts list and Cmd+K search enforce 30/min per user; import uploads and CSV export share 5/hour per tenant. Disposable PostgreSQL integration tests prove 429 responses at each limit. Supervisor ran `bun audit --prod` against `bun.lock` (366 packages, no production vulnerabilities); a moderate development-only esbuild advisory remains low. M10-01 is done; production edge/header/CI secret-scanner verification remains open. Evidence: `docs/security-review-M10-01.md`.
 

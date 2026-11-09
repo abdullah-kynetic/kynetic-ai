@@ -2,7 +2,7 @@
 # Local synthetic verification only. No deployment or provider API checks.
 set -euo pipefail
 cd "$(dirname "$0")/../.."
-[[ "$(git branch --show-current)" == dev/codex-setup ]] || { echo 'Use dev/codex-setup.' >&2; exit 1; }
+# Local synthetic checks only. Portal work branches off main. This script does not deploy.
 command -v bun >/dev/null || { echo 'Install Bun before running agency checks.' >&2; exit 1; }
 command -v psql >/dev/null || { echo 'Install the PostgreSQL client before running agency checks.' >&2; exit 1; }
 python3 - <<'PY'

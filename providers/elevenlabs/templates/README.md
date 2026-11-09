@@ -7,9 +7,9 @@ no real bookings or confirmation promises. Synthetic booking/tool behavior belon
 the step-3 test chain before any real calendar write is considered.
 
 `python3 tools/codex_step2.py` shows the provisioning plan without API calls.
-`--apply` is the explicit provisioning mode, restricted to `dev/codex-setup`. It uses
-only environment credentials, records newly created resource IDs immediately, and
-resumes without buying duplicate phone numbers or creating duplicate agents/workflows.
+`--apply` is retired with the DEV environment (2026-11-09 PST). It does not run. Do not check out `dev/codex-setup` to provision. The withdrawn mode used
+only environment credentials, recorded newly created resource IDs immediately, and
+resumed without buying duplicate phone numbers or creating duplicate agents/workflows.
 The step-2 resources already exist; do not manually import the template again.
 
 The DEV Twilio number is newly provisioned, separate from the existing caller number.

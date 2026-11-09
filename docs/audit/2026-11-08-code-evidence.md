@@ -1,6 +1,6 @@
 # Code and deployment evidence ledger, 2026-11-08
 
-> Reading note, 2026-11-08 PST: this ledger was not re-run. Row A3 labels HTTP 200 on `/admin` as inference. Headline 3 is that day's observation, not a new production verification. Headline 2's `docs/codex/COMPLETION-PLAN.md` lives only on `dev/codex-setup` and is not authority. Do not merge that branch to install it as the plan. Frozen weights were not changed.
+> Reading note, 2026-11-08 PST: this ledger was not re-run. Row A3 labels HTTP 200 on `/admin` as inference. Headline 3 is that day's observation, not a new production verification. Headline 2's `docs/codex/COMPLETION-PLAN.md` is not authority. Frozen weights were not changed. 2026-11-09 PST: the portal code moved onto the `main` line and the separate DEV environment was retired until after go-live. That decision does not install the completion plan as the roadmap, and it does not re-run this ledger.
 
 Observed 2026-11-08 22:30-23:10Z by the "Audit code and deployment evidence" thread. Read-only on every live system. No project code, migration or test was executed; test and CI evidence below is attributable GitHub Actions output or a quoted self-report, labelled as such.
 

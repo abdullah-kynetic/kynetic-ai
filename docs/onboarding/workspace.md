@@ -7,12 +7,7 @@ run and Abdullah's yes; never DELETE or touch Kynetic Restoration (Demo).
 
 ## Isolated development workspace
 
-Use `dev/codex-setup` and `https://dev.kyneticai.com`. The dedicated Compose project
-is `kynetic-dev-portal`, its app binds only to loopback port 3031, and its Postgres
-volume is separate from the live portal. Keep PROVIDER_MODE=stub,
-OUTBOUND_ENABLED=false, ELEVENLABS_LIVE_ENABLED=false and DEV_PERSONA_SWITCHING=false.
-The synthetic seed guard must pass before using the database. No production URL,
-container, database, Caddy site, deploy user or live Alex belongs in this workspace.
+Retired 2026-11-09 PST until after go-live. Do not deploy `https://dev.kyneticai.com` and do not continue `dev/codex-setup`. The production target is the `main` build at portal.kyneticai.com, and only after an explicit yes. The notes below describe the dedicated Compose project that used to exist (`kynetic-dev-portal`, loopback port 3031, its own Postgres volume, PROVIDER_MODE=stub, OUTBOUND_ENABLED=false, ELEVENLABS_LIVE_ENABLED=false, DEV_PERSONA_SWITCHING=false). They are not a setup procedure.
 
 Use the names-only [dev env example](../../crm/.env.dev.example). Inject credentials
 at runtime; do not paste keys, phone values, populated env files, tokens or private
