@@ -61,8 +61,8 @@ Fix: hand-dial a sample, counsel answer, and keep the audit step in every run.
 ### KI-015: Branch completion plan still claims to be the active checklist (medium)
 `dev/codex-setup` at `81496f99b2dd20a88e6cbc080b33e0a73e76a2aa` (2026-11-06) contains `docs/codex/COMPLETION-PLAN.md`, which calls itself the one active completion checklist. Main's `docs/STATUS.md` warns that the file is not authority. The 2026-11-08 PST docs pass did not edit that branch. Do not merge the branch in order to install that file as the plan. A later edit on that branch can add the same warning. Until then the branch copy remains wrong if read alone.
 
-### KI-016: Checker still reads the dead Twenty key name (low)
-Approved Twenty env names are `TWENTY_BASE_URL` and `TWENTY_SELFHOST_API_KEY`. `TWENTY_API_KEY` is dead. `scripts/checks/checks.py` check 3.4 still sends `TWENTY_API_KEY`. The 2026-11-08 PST docs pass did not change the checker. Do not put the dead name back into `.env.example` to make the check pass.
+### KI-016: Checker read the dead Twenty key name (low) — RESOLVED 2026-11-09 (branch fix/twenty-key-crm-tier-labels, PR pending merge)
+Approved Twenty env names are `TWENTY_BASE_URL` and `TWENTY_SELFHOST_API_KEY`. `TWENTY_API_KEY` is dead. `scripts/checks/checks.py` check 3.4 used to send `TWENTY_API_KEY`; it now uses the supported names and skips when the key is unset, with offline tests. Do not put the dead name back into `.env.example`.
 
 ## Gotchas
 - Cloud sessions deny hosts not in the environment's allowed domains. Firecrawl returned 403 until `api.firecrawl.dev` was allowed (2026-10-19). A scrape of Facebook, BBB, the Texas Comptroller and similar sites needs those domains allowed too.

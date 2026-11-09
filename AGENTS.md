@@ -11,7 +11,7 @@ Do not start at the lowest unchecked Codex step. That loop is historical and is 
 4. n8n: never activate, publish, or edit live workflows (`n8n/workflows/active/`). Create new workflows only when a task says so, named `DEV - ...` and tagged `DEV`, inactive unless Abdullah says yes on that workflow.
 5. ElevenLabs: Blitz account (`ELEVENLABS_API_KEY_blitz`) is the DEV account. Never modify, publish, or invoke live Alex `agent_8201m5afn2rbeb7v29xfkhh1pjef`. Create only NEW agents named `DEV-...` when a task explicitly asks for a DEV agent.
 6. No calls or texts to real people. The only allowed destination is `$TEST_PHONE` (Abdullah), and only when a task explicitly allows a test. If `TEST_PHONE` is unset, do not call or text at all. AM-1 Roofing is do-not-call, always.
-7. Twenty: use `TWENTY_BASE_URL` and `TWENTY_SELFHOST_API_KEY` only. `TWENTY_API_KEY` is a dead name. Never REST DELETE. Never touch "Kynetic Restoration (Demo)" records. `scripts/checks/checks.py` still reads the dead name; do not revive it, and do not change that checker inside a docs-only task.
+7. Twenty: use `TWENTY_BASE_URL` and `TWENTY_SELFHOST_API_KEY` only. `TWENTY_API_KEY` is a dead name. Never REST DELETE. Never touch "Kynetic Restoration (Demo)" records. `scripts/checks/checks.py` check 3.4 reads the supported names (fixed 2026-11-09). Never revive the dead name.
 8. Never touch Nora, Emily, existing Retell agents/tools, or `retell/builds/kynetic-restoration/`.
 9. Never use Google Drive, Google Docs, or Google Sheets.
 10. Florida- or Oklahoma-based businesses are not taken as clients (reject in intake logic). No HIPAA work.
@@ -35,7 +35,7 @@ Do not start at the lowest unchecked Codex step. That loop is historical and is 
 | `GIT_*` | commit identity |
 | `TEST_PHONE`, `PORTAL_URL`, `DEV_PORTAL_URL` | add if missing; checks SKIP without them |
 
-`TWENTY_API_KEY` is dead. It remains named inside `scripts/checks/checks.py` (check 3.4). That checker was not updated in the 2026-11-08 PST docs pass. A missing dead name skips the check. Do not add the dead name back to satisfy the checker.
+`TWENTY_API_KEY` is dead. Check 3.4 in `scripts/checks/checks.py` now uses `TWENTY_BASE_URL` and `TWENTY_SELFHOST_API_KEY` and skips when the key is unset (offline tests: `scripts/checks/test_twenty_check.py`). Do not add the dead name back.
 
 ## Historical Codex loop (not the current plan)
 
@@ -62,7 +62,7 @@ Live calls in checks are read-only (GET). Writes only to DEV resources.
 2.1 template `providers/elevenlabs/templates/alex.json` exists, no live agent id · 2.2 DEV Alex has a phone number attached · 2.3 dev workflow `DEV - ElevenLabs Speed to Lead` exists in repo and mentions `project_type` and `budget` · 2.4 Cal.com API reachable · 2.5 live Alex unchanged (read-only GET OK).
 
 **3 Lead→booking chain** — form/ad → portal → checks → call ≤60s → booking → Twenty writeback → retries.
-3.1 intake endpoint code exists (`crm/src/app/api/hooks/leads/`, `crm/src/server/leads/`) · 3.2 chain tests (`crm/tests/unit/chain/`) pass incl. FL/OK reject, consent block, quiet-hours defer, kill switch, retry · 3.3 dev workflow has retry/error branch · 3.4 Twenty reachable (SKIP without key; the checker still looks for the dead `TWENTY_API_KEY` name).
+3.1 intake endpoint code exists (`crm/src/app/api/hooks/leads/`, `crm/src/server/leads/`) · 3.2 chain tests (`crm/tests/unit/chain/`) pass incl. FL/OK reject, consent block, quiet-hours defer, kill switch, retry · 3.3 dev workflow has retry/error branch · 3.4 Twenty reachable (SKIP without `TWENTY_SELFHOST_API_KEY`).
 
 **4 Texts & alerts** — missed-call text, confirmations/reminders, owner alerts, error alerts.
 4.1 dev workflows exist for each of the 4 (names contain `missed-call`, `reminder`, `owner-alert`, `error-alert`) · 4.2 all SMS nodes target TEST_PHONE placeholder only · 4.3 Twilio account reachable (GET).

@@ -127,13 +127,21 @@ def s2():
     else:
         c, _ = el(f"/v1/convai/agents/{LIVE_ALEX}"); ok("2.5", c == 200, "live Alex readable (unchanged)", f"HTTP {c}")
 
+def twenty_check_args(environ=None):
+    """URL, required env names and headers for check 3.4. Supported names only: TWENTY_BASE_URL (optional,
+    defaults to TWENTY) and TWENTY_SELFHOST_API_KEY. Values are never printed."""
+    e = os.environ if environ is None else environ
+    base = (e.get("TWENTY_BASE_URL") or TWENTY).rstrip("/")
+    return f"{base}/rest/companies?limit=1", ["TWENTY_SELFHOST_API_KEY"], {"Authorization": f"Bearer {e.get('TWENTY_SELFHOST_API_KEY', '')}"}
+
 def s3():
     ok("3.1", bool(glob.glob("crm/src/app/api/hooks/leads/**/route.*", recursive=True)), "lead intake route")
     if not glob.glob("crm/tests/unit/chain/*"): out("FAIL", "3.2", "chain tests crm/tests/unit/chain: not built")
     else: npm("3.2", "test", "tests/unit/chain")
     hit = [p for p in dev_wfs() if re.search(r"retry|retryOnFail|errorWorkflow", Path(p).read_text())]
     ok("3.3", bool(hit), "dev workflow retry/error handling")
-    http_check("3.4", "Twenty reachable", f"{TWENTY}/rest/companies?limit=1", ["TWENTY_API_KEY"], {"Authorization": f"Bearer {os.environ.get('TWENTY_API_KEY','')}"})
+    url, need, headers = twenty_check_args()
+    http_check("3.4", "Twenty reachable (read-only GET)", url, need, headers)
 
 def s4():
     names = " ".join(Path(p).name.lower() for p in dev_wfs())
