@@ -1,5 +1,7 @@
 # docs: the mirror of Twenty
 
+> Status entry point: `docs/STATUS.md` (links the Twenty scorecard).
+
 One job: record state, decisions and gotchas so a cold session does not guess. Twenty is canonical.
 
 ## Files (read first, in this order)

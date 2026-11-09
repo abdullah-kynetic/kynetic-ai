@@ -1,5 +1,7 @@
 # Repo audit (2026-10-22)
 
+> **Superseded as a status source (2026-11-09).** Current plan and status: Twenty ROADMAP note `7bfdcb7e` and `docs/STATUS.md`. Kept as technical/historical detail; do not treat any checklist below as current.
+
 Read from source at `cbb5046`; nothing run against a live system, `tools/*.py` not executed. Ordered by consequence. "Verified" = I read the cited lines.
 
 ## Fix first

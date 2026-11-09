@@ -1,5 +1,7 @@
 # Plan 1: what is left, and the most effective way to do it
 
+> **Superseded as a status source (2026-11-09).** Current plan and status: Twenty ROADMAP note `7bfdcb7e` and `docs/STATUS.md`. Kept as technical/historical detail; do not treat any checklist below as current.
+
 Source: Twenty tasks not DONE, read 2026-10-22 (read-only; 51 tasks). Task statuses can lag reality; where the repo disagrees I say so. "Live change" means it needs Abdullah's exact yes. Order follows the goal: clients 1-2 signed, everything repeatable automated.
 
 ## 0. Flags before anything else
