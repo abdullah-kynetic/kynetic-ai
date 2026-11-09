@@ -12,7 +12,16 @@ const SENT = 'If you have access, we sent a code to that email. It expires in 10
 
 type Mode = 'login' | 'signup' | 'help';
 
-export function SignInForm({ googleEnabled, mode }: { googleEnabled: boolean; mode: Mode }) {
+export function SignInForm({
+  googleEnabled,
+  mode,
+  nextPath = null
+}: {
+  googleEnabled: boolean;
+  mode: Mode;
+  /** Already checked with safeNextPath. Staff Google returns here after sign-in. */
+  nextPath?: string | null;
+}) {
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [phase, setPhase] = useState<'email' | 'code'>('email');
@@ -66,7 +75,7 @@ export function SignInForm({ googleEnabled, mode }: { googleEnabled: boolean; mo
       setError(data.message || 'That code did not work. Request a new one.');
       return;
     }
-    window.location.assign(data.next);
+    window.location.assign(data.next === '/dashboard' && nextPath ? nextPath : data.next);
   }
 
   const google = googleEnabled && mode !== 'help' && (
@@ -78,8 +87,10 @@ export function SignInForm({ googleEnabled, mode }: { googleEnabled: boolean; mo
         onClick={() =>
           authClient.signIn.social({
             provider: 'google',
-            callbackURL: '/dashboard',
-            errorCallbackURL: '/sign-in?error=google'
+            callbackURL: nextPath ?? '/dashboard',
+            errorCallbackURL: nextPath
+              ? `/sign-in?error=google&next=${encodeURIComponent(nextPath)}`
+              : '/sign-in?error=google'
           })
         }
       >

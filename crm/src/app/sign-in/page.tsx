@@ -1,5 +1,6 @@
 import { AuthFrame } from '@/components/auth/auth-frame';
 import { SignInForm } from '@/components/auth/sign-in-form';
+import { safeNextPath } from '@/lib/return-path';
 import { getEnv } from '@/server/env';
 import type { Metadata } from 'next';
 
@@ -15,10 +16,11 @@ const ERRORS: Record<string, string> = {
 export default async function SignInPage({
   searchParams
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; next?: string }>;
 }) {
-  const { error } = await searchParams;
+  const { error, next } = await searchParams;
   const env = getEnv();
+  const nextPath = safeNextPath(next);
   return (
     <AuthFrame
       title='Log in'
@@ -29,7 +31,7 @@ export default async function SignInPage({
           {ERRORS[error]}
         </p>
       )}
-      <SignInForm googleEnabled={Boolean(env.GOOGLE_CLIENT_ID)} mode='login' />
+      <SignInForm googleEnabled={Boolean(env.GOOGLE_CLIENT_ID)} mode='login' nextPath={nextPath} />
     </AuthFrame>
   );
 }

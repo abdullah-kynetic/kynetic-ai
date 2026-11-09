@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import { useState } from 'react';
 
-type Props = { state: 'enrol' | 'challenge' };
+type Props = { state: 'enrol' | 'challenge'; nextPath?: string | null };
 
 function TotpQr({ uri }: { uri: string }) {
   const matrix = totpQrMatrix(uri);
@@ -40,7 +40,7 @@ async function post(path: string, body: unknown): Promise<{ ok: boolean; data: u
   return { ok: res.ok, data: await res.json().catch(() => ({})) };
 }
 
-export function TwoFactorForm({ state }: Props) {
+export function TwoFactorForm({ state, nextPath = null }: Props) {
   const [setup, setSetup] = useState<{ uri: string; key: string } | null>(null);
   const [showKey, setShowKey] = useState(false);
   const [code, setCode] = useState('');
@@ -73,7 +73,7 @@ export function TwoFactorForm({ state }: Props) {
     const { ok } = await post('verify-totp', { code });
     setBusy(false);
     if (!ok) return setError('That code did not work.');
-    window.location.assign('/dashboard');
+    window.location.assign(nextPath ?? '/dashboard');
   }
 
   const form = (
