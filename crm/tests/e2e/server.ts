@@ -10,6 +10,9 @@ const baseUrl = `http://localhost:${port}`;
 const storagePath = join('/tmp', 'kynetic-crm-e2e-owner.json');
 const adminStoragePath = join('/tmp', 'kynetic-crm-e2e-admin.json');
 const vaStoragePath = join('/tmp', 'kynetic-crm-e2e-va.json');
+const enrolStoragePath = join('/tmp', 'kynetic-crm-e2e-enrol.json');
+const ENROL_USER = 'cccccccc-0000-4000-8000-0000000000e1';
+const RESET_USER = 'cccccccc-0000-4000-8000-0000000000e2';
 const secret = 'e2e-only-secret-not-for-real-use-0000';
 let db: TestDatabase | undefined;
 let child: ReturnType<typeof spawn> | undefined;
@@ -81,9 +84,34 @@ async function main(): Promise<void> {
     values ('restore_test', 'ok', 4096, 'backups/synthetic/test.dump.enc', true)`;
 
   await mkdir('/tmp', { recursive: true });
+  await db.admin`insert into users (id, email, name, kynetic_role) values
+    (${ENROL_USER}, 'enrol-va@example.test', 'Enrol VA', 'va'),
+    (${RESET_USER}, 'reset-va@example.test', 'Reset VA', 'va')`;
+  await db.admin`update users set two_factor_enabled = true where id = ${RESET_USER}`;
+  const enrolToken = randomBytes(32).toString('hex');
+  await db.admin`insert into sessions (user_id, token, expires_at)
+    values (${ENROL_USER}, ${enrolToken}, now() + interval '1 hour')`;
+  const enrolSignature = createHmac('sha256', secret).update(enrolToken).digest('base64');
   await writeFile(storagePath, await sessionState('owner'));
   await writeFile(adminStoragePath, await sessionState('admin'));
   await writeFile(vaStoragePath, await sessionState('va'));
+  await writeFile(
+    enrolStoragePath,
+    JSON.stringify({
+      cookies: [
+        {
+          name: 'better-auth.session_token',
+          value: encodeURIComponent(`${enrolToken}.${enrolSignature}`),
+          domain: 'localhost',
+          path: '/',
+          httpOnly: true,
+          secure: false,
+          sameSite: 'Lax'
+        }
+      ],
+      origins: []
+    })
+  );
 
   const env = {
     ...process.env,

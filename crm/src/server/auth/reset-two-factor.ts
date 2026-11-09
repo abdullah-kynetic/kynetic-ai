@@ -1,6 +1,7 @@
 import { sql } from 'drizzle-orm';
 import type { Db } from '../db/client';
 import { withPlatform } from '../tenancy';
+import { ForbiddenError } from './errors';
 
 /**
  * An admin resets another staff member's TOTP (F-98, F-101). The database function refuses a non-admin
@@ -14,7 +15,7 @@ export async function resetStaffTwoFactor(
   targetUserId: string,
   opts: { db?: Db; notify?: (userId: string) => Promise<void> } = {}
 ): Promise<void> {
-  if (actor.kyneticRole !== 'admin') throw new Error('Only an admin can reset two-factor');
+  if (actor.kyneticRole !== 'admin') throw new ForbiddenError('Only an admin can reset two-factor');
   await withPlatform(
     { userId: actor.id, role: 'admin' },
     (tx) => tx.execute(sql`select admin_reset_staff_two_factor(${targetUserId}::uuid)`),

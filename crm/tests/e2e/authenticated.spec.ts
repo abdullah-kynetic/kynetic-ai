@@ -8,7 +8,7 @@ test('signed-in owner can open the CRM dashboard', async ({ authenticatedPage })
 
 test('sign-in page renders and anonymous admin requests get raw 401', async ({ page, request }) => {
   await page.goto('/sign-in');
-  await expect(page.getByRole('heading', { name: 'Sign in', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Log in', exact: true })).toBeVisible();
   await expect(page.getByLabel('Work email', { exact: true })).toBeVisible();
   const response = await request.get('/admin', { maxRedirects: 0 });
   expect(response.status()).toBe(401);

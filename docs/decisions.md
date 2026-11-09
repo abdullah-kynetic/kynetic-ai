@@ -129,7 +129,7 @@ Replaced: D-012 item 2 (retries at 5 minutes, 1 hour and next day, maximum 4 att
 Note: the first attempt was tested end to end on Oct 15. The retry path has not run yet.
 
 ## D-021: Portal access is invite-only; Google sign-in is for clients only
-Status: decided
+Status: partially superseded by D-026 (2026-11-09). Invite-only access still stands. Passwords, client-only Google, and backup codes do not.
 Date: 2026-10-17
 Why: Abdullah wants only people he invites to be able to sign in, with no public sign-up. Industry practice (OWASP authentication and forgot-password cheat sheets, NIST SP 800-63B) is closed registration with single-use expiring invite tokens, generic responses that don't reveal who has an account, length-based password rules with a breached-password screen and no composition or rotation rules, and MFA with a recovery path for privileged users.
 Decided: Accounts are created only by an admin invite; the invitee sets their own password. Google sign-in is allowed only for a client user that already exists and has a verified matching Google email; it never creates accounts. Admins stay on password + TOTP (+ recovery codes) because an OAuth round trip cannot ask for TOTP.
@@ -154,6 +154,17 @@ Decided:
 Replaced: D-018 item 2 and 3 as far as they make Retell the platform for Alex. Still stands from D-018: Vapi stays parked, and Nora and Emily stay on Retell workspace `kyneticai`, frozen.
 Note: Twenty and this repo number decisions differently after Oct 24. Twenty has D-023 as the offer and pricing decision; the repo branches `feat/brand-revamp` and `fix/a2p-privacy-terms` carry D-023 (site rebuild) and D-024 (offer). D-025 was the first number free in both. Flag for Abdullah: reconcile D-023/D-024 when those branches merge.
 
+
+## D-026: Portal clients use email codes; staff use Google plus a QR authenticator
+Status: decided
+Date: 2026-11-09
+Why: Abdullah asked for the portal sign-in to match how people actually use it. Clients should type a one-time email code. Staff should enroll TOTP from a QR code. Backup codes are easy to lose and were removed. The portal stays invite-only, with no passwords.
+Decided:
+1. Client log-in and first-time sign-up both use a 6-digit email code. A code is sent only for an active membership or a valid pending invitation, and never for staff. Every other address gets the same message and no email. Codes expire in 10 minutes, allow five tries, and are rate limited with the existing sign-in rules. Sends and failures are audited as a hash of the address, never the code.
+2. Sign-up is invite activation (code, then a name). Log-in is for people who already have access. Uninvited sign-up creates no account.
+3. Staff sign in with Google, then scan a QR code. The setup key stays hidden until "Can't scan the code?". Backup codes are not shown and cannot be used.
+4. Another admin resets a staff authenticator from Users. That is audited, signs the person out, and emails them when a mailer is configured. The only admin uses `crm/scripts/emergency-reset-staff-totp.ts` with the database owner URL. Magic links stay on the server for links already issued. The log-in page does not offer them.
+Replaced: the password, client-only Google, and backup-code parts of D-021. Invite-only access from D-021 still stands.
 
 ## 2026-11-04 — verified sessions replace anonymous admin open mode (dev branch)
 

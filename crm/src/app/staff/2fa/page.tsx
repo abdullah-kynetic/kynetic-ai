@@ -1,7 +1,8 @@
+import { AuthFrame } from '@/components/auth/auth-frame';
+import { requireUser, UnauthenticatedError } from '@/server/auth';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { requireUser, UnauthenticatedError } from '@/server/auth';
 import { TwoFactorForm } from './two-factor-form';
 
 export const metadata: Metadata = { title: 'Two-factor sign-in', robots: { index: false } };
@@ -15,15 +16,19 @@ export default async function StaffTwoFactorPage() {
     if (user.twoFactor !== 'enrol' && user.twoFactor !== 'challenge') redirect('/dashboard');
     state = user.twoFactor;
   } catch (e) {
-    if (e instanceof UnauthenticatedError) redirect('/');
+    if (e instanceof UnauthenticatedError) redirect('/sign-in');
     throw e;
   }
   return (
-    <main className='mx-auto flex min-h-svh max-w-md flex-col justify-center gap-6 p-6'>
-      <h1 className='text-xl font-semibold'>
-        {state === 'enrol' ? 'Set up two-factor sign-in' : 'Enter your code'}
-      </h1>
+    <AuthFrame
+      title={state === 'enrol' ? 'Set up your authenticator' : 'Enter your authenticator code'}
+      lede={
+        state === 'enrol'
+          ? 'Scan the QR code. Backup codes are not used.'
+          : 'Enter the 6-digit code from your authenticator app.'
+      }
+    >
       <TwoFactorForm state={state} />
-    </main>
+    </AuthFrame>
   );
 }

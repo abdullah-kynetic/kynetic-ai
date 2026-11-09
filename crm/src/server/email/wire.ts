@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { setEmailProvider } from '@/server/adapters/email';
 import { ResendEmailProvider } from '@/server/adapters/email/resend';
-import { setMagicLinkSender } from '@/server/auth';
+import { setMagicLinkSender, setSecurityNoticeSender, setSignInCodeSender } from '@/server/auth';
 import { getEnv, type Env } from '@/server/env';
 
 export type EmailWiring = 'resend' | 'none';
@@ -28,6 +28,8 @@ export function wireEmail(env: Env = getEnv()): EmailWiring {
   if (!env.RESEND_API_KEY) {
     setEmailProvider(undefined);
     setMagicLinkSender(undefined);
+    setSignInCodeSender(undefined);
+    setSecurityNoticeSender(undefined);
     console.log(
       JSON.stringify({ level: 'info', msg: 'email provider not configured', provider: 'none' })
     );
@@ -49,6 +51,31 @@ export function wireEmail(env: Env = getEnv()): EmailWiring {
       html: `<p>Use the link below to sign in. It expires in 15 minutes.</p><p><a href="${escapeHtml(url)}">Sign in to Kynetic AI</a></p>`,
       text: `Use this link to sign in to Kynetic AI. It expires in 15 minutes: ${url}`,
       idempotencyKey: `magic-link:${createHash('sha256').update(url).digest('hex')}`
+    });
+  });
+  setSignInCodeSender(async ({ email, code }) => {
+    const digest = createHash('sha256').update(`${email}:${code}`).digest('hex');
+    await provider.send({
+      tenantId: 'platform',
+      to: email,
+      fromName: 'Kynetic AI',
+      fromAddress: env.EMAIL_FROM_ADDRESS,
+      subject: 'Your Kynetic sign-in code',
+      html: `<p>Your sign-in code is <strong>${escapeHtml(code)}</strong>.</p><p>It expires in 10 minutes. If you did not ask for it, you can ignore this email.</p>`,
+      text: `Your Kynetic sign-in code is ${code}. It expires in 10 minutes. If you did not ask for it, you can ignore this email.`,
+      idempotencyKey: `sign-in-code:${digest}`
+    });
+  });
+  setSecurityNoticeSender(async (msg) => {
+    await provider.send({
+      tenantId: 'platform',
+      to: msg.email,
+      fromName: 'Kynetic AI',
+      fromAddress: env.EMAIL_FROM_ADDRESS,
+      subject: msg.subject,
+      html: msg.html,
+      text: msg.text,
+      idempotencyKey: msg.idempotencyKey
     });
   });
   console.log(

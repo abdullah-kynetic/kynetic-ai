@@ -1,7 +1,14 @@
 import { createHash } from 'node:crypto';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { getEmailProvider, setEmailProvider } from '@/server/adapters/email';
-import { sendMagicLinkEmail, setMagicLinkSender } from '@/server/auth';
+import {
+  sendMagicLinkEmail,
+  sendSecurityNotice,
+  sendSignInCode,
+  setMagicLinkSender,
+  setSecurityNoticeSender,
+  setSignInCodeSender
+} from '@/server/auth';
 import { parseEnv } from '@/server/env';
 import { wireEmail } from '@/server/email/wire';
 
@@ -17,6 +24,8 @@ const baseEnv = {
 afterEach(() => {
   setEmailProvider(undefined);
   setMagicLinkSender(undefined);
+  setSignInCodeSender(undefined);
+  setSecurityNoticeSender(undefined);
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
 });
@@ -60,6 +69,12 @@ describe('wireEmail', () => {
     );
     expect(body.text).toContain(url);
     expect(body.text).toContain('expires in 15 minutes');
+
+    await sendSignInCode({ email: 'owner@example.test', code: '123456' });
+    const codeBody = JSON.parse(String(request?.init?.body)) as { subject: string; text: string };
+    expect(codeBody.subject).toBe('Your Kynetic sign-in code');
+    expect(codeBody.text).toContain('123456');
+    expect(codeBody.text).toContain('10 minutes');
   });
 
   it('leaves both email senders unset when Resend is not configured', async () => {
@@ -69,5 +84,17 @@ describe('wireEmail', () => {
     await expect(
       sendMagicLinkEmail({ email: 'owner@example.test', url: 'https://portal.example.test/magic' })
     ).rejects.toThrow('No email sender is configured for sign-in links');
+    await expect(sendSignInCode({ email: 'owner@example.test', code: '123456' })).rejects.toThrow(
+      'No email sender is configured for sign-in codes'
+    );
+    await expect(
+      sendSecurityNotice({
+        email: 'owner@example.test',
+        subject: 'notice',
+        text: 'notice',
+        html: '<p>notice</p>',
+        idempotencyKey: 'totp-reset:test'
+      })
+    ).rejects.toThrow('No email sender is configured for security notices');
   });
 });

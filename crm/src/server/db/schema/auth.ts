@@ -28,7 +28,7 @@ export const sessions = pgTable(
     userAgent: text('user_agent'),
     createdAt: ts('created_at').defaultNow().notNull(),
     updatedAt: ts('updated_at').defaultNow().notNull(),
-    /** Set once a staff member passes TOTP or a recovery code on this session (M0-12). */
+    /** Set once a staff member passes TOTP on this session (M0-12). */
     twoFactorVerifiedAt: ts('two_factor_verified_at')
   },
   (t) => [index('sessions_user_idx').on(t.userId)]
@@ -72,8 +72,8 @@ export const verifications = pgTable(
   (t) => [index('verifications_identifier_idx').on(t.identifier)]
 );
 
-// Two-factor secret and recovery-code hashes (M0-12, F-98). The secret is encrypted by the library;
-// recovery codes are stored as keyed hashes. Failure counters back our own lockout.
+// Two-factor secret (M0-12, F-98). The secret is encrypted by the library. backup_codes stays
+// because the plugin requires the column; enrolment stores an empty list and codes are not accepted.
 export const twoFactors = pgTable('two_factors', {
   id: uuid().defaultRandom().primaryKey().notNull(),
   userId: uuid('user_id')

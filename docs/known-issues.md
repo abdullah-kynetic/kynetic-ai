@@ -6,6 +6,9 @@
 Mirror of open problems tracked in Twenty. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Open
+### KI-015: Portal integration schema checks fail on agency tables (medium)
+Found 2026-11-09 on `dev/codex-setup` while running the full integration suite. `baseline-ops`, `schema-drift`, and `isolation` fail because agency tables from migrations 1008–1013 are in Postgres but not in the Drizzle schema or the `DATABASE.md` entity list. The auth work in D-026 does not add tables. Fix: bring the Drizzle schema, the entity list, and the two-tenant seed in line with those migrations, then rerun the three files.
+
 ### KI-002: TCPA emergency branch opt-out gap (high)
 Emergency calls and urgent notifications may reach someone who opted out.
 Fix: counsel sign-off (task 1.4). Also feeds the agreement rewrite (task 4.7, 4.8).

@@ -64,6 +64,17 @@ Then: confirm the post-call webhook URL is set on the agent, web-call test Alex,
 Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-11-09 — portal sign-in: email codes, QR authenticator, separate sign-up
+
+Abdullah asked for four auth changes on `crm/` while `dev/codex-setup` is still the working branch (a separate PR is merging that branch into `main`). Built on `cursor/portal-auth-otp-qr-2f76`, not deployed.
+
+1. Staff TOTP enrolment shows a QR code. Backup codes are not returned, stored as an empty list, or accepted. "Can't scan the code?" reveals the key.
+2. Clients type a one-time email code. It is sent only for an active membership or a live invitation, and not for staff. Other addresses get the same message and no email. Codes expire in 10 minutes, lock after five misses, and are rate limited. Audit rows store an address hash, not the code. Outbound email stays off unless Resend is configured; tests capture the sender.
+3. `/sign-up` is invite activation (code, then name). `/sign-in` is log-in. Uninvited sign-up creates no account.
+4. `/sign-in/help` resends a client code and explains staff recovery. An admin resets another staff authenticator from Users (audited). The sole admin uses `crm/scripts/emergency-reset-staff-totp.ts`. No passwords.
+
+Verified locally: typecheck, lint on the changed files, format, production build, 531 unit tests, auth integration tests (email code, TOTP, rate limit, magic link) 37 passed. Chromium covered sign-up, log-in, the neutral code screen, QR enrolment, and the admin reset dialog. Full integration suite: 742 passed; 5 failed in schema-list, schema-drift, and isolation. Those failures are the existing agency tables versus `DATABASE.md` and the Drizzle schema, not this change. Not deployed. No live email, VPS, DNS, or provider call.
+
 ### 2026-10-29 (CRM portal M10-01 security review)
 - Fixed the contacts phone-fragment GIN index to lead with `tenant_id` (`b7b8e57`) and wired shared PostgreSQL auth IP/email limits (`8256212`). Focused auth/rate-limit tests (19), baseline CRM test (13), header tests (3), and webhook/service-token test suites passed. Typecheck passed.
 - Initial M10-01 review state: authenticated API/search/export-import rate limits were not wired, exact Bun-lock audit and restore evidence were pending, and CI secret scanning/log-redaction plus production edge configuration were open. Details and subsequent resolution are recorded in `docs/security-review-M10-01.md`.

@@ -6,10 +6,13 @@ const AUTH_RATE_LIMITED_PATHS = [
   '/sign-in/',
   '/sign-up/',
   '/magic-link/verify',
+  '/email-otp/',
   '/request-password-reset',
   '/forget-password',
   '/send-verification-email'
 ];
+
+const EMAIL_LIMITED_PATHS = new Set(['/sign-in/magic-link', '/email-otp/send']);
 
 function authPath(request: Request): string | undefined {
   const pathname = new URL(request.url).pathname;
@@ -28,7 +31,7 @@ export async function enforceAuthRequestRateLimits(
   if (!path) return;
 
   await enforceRateLimit(db, RATE_LIMITS.authIp, clientIp(request));
-  if (request.method !== 'POST' || path !== '/sign-in/magic-link') return;
+  if (request.method !== 'POST' || !EMAIL_LIMITED_PATHS.has(path)) return;
 
   const payload = (await request
     .clone()
