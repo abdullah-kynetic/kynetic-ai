@@ -85,6 +85,7 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
   await modal.locator('button[type=submit]').click(); await page.waitForTimeout(300);
   ok('audit overlay: empty name blocked', (await modal.locator('.am__err').innerText()).includes('name'));
   await modal.locator('input[name=name]').fill('Test User');
+  await modal.locator('input[name=phone]').fill('2015550123');
   await modal.locator('input[name=email]').fill('not-an-email');
   await modal.locator('button[type=submit]').click(); await page.waitForTimeout(300);
   ok('audit overlay: malformed email rejected', (await modal.locator('.am__err').innerText()).includes('email'));
@@ -97,22 +98,25 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
   const runFlow = async (investIdx) => {
     await page.locator('#hero a[href*="cal.com"]').first().click(); await page.waitForTimeout(400);
     await page.locator('.am input[name=name]').fill('Test Person');
+    await page.locator('.am input[name=phone]').fill('2015550123');
     await page.locator('.am input[name=email]').fill('test@example.com');
     await page.locator('.am [data-step="1"] button[type=submit]').click();
-    await page.locator('.am input[name=phone]').fill('2015550123');
+    await page.locator('.am input[name=company]').fill('Test Co, testco.com');
     await page.locator('.am [data-step="2"] button[type=submit]').click();
-    await page.locator('.am input[name=company]').fill('Test Co');
-    await page.locator('.am [data-step="3"] button[type=submit]').click();
-    for (const [i, key] of ['type', 'revenue', 'fix', 'invest'].entries()) {
-      await page.locator(`.am [data-step="${4 + i}"]`).waitFor({ state: 'visible' });
-      await page.locator(`.am [data-step="${4 + i}"] .am__opt`).nth(key === 'invest' ? investIdx : 1).click();
-      if (key === 'invest') await page.locator('.am [data-step="7"] button[type=submit]').click();
-      await page.waitForTimeout(450);
-    }
+    await page.locator('.am [data-step="3"] .am__opt').nth(4).click(); // Something else
+    await page.locator('.am input[name=other]').fill('Pest control');
+    await page.locator('.am [data-step="3"] .am__other button').click();
+    await page.locator('.am [data-step="4"] .am__opt').nth(1).click();
+    await page.locator('.am input[name=teamTime]').fill('Follow-ups');
+    await page.locator('.am [data-step="5"] button[type=submit]').click();
+    await page.locator('.am input[name=fixFirst]').fill('One place to see leads');
+    await page.locator('.am [data-step="6"] button[type=submit]').click();
+    await page.locator('.am [data-step="7"] .am__opt').nth(investIdx).click();
+    await page.waitForTimeout(900);
   };
   await runFlow(0);
   ok('application: lowest investment shows the not-a-fit page', await page.locator('.am [data-step="nofit"]').isVisible());
-  ok('application: not-a-fit answers are still sent, flagged unqualified', posts.length === 1 && posts[0].qualified === false && posts[0].answers.invest === 'Under $5,000' && posts[0].phone === '2015550123');
+  ok('application: not-a-fit answers are still sent, flagged unqualified', posts.length === 1 && posts[0].qualified === false && posts[0].answers.invest === 'Under $5,000' && posts[0].phone === '2015550123' && posts[0].answers.niche === 'Other: Pest control' && posts[0].website === 'testco.com');
   await page.keyboard.press('Escape'); await page.waitForTimeout(200);
   await runFlow(2);
   ok('application: any other investment shows the booking page', await page.locator('.am [data-step="book"]').isVisible() && (await page.locator('#am-cal-frame').getAttribute('src')).includes('cal.com/abdullah-kyneticai'));

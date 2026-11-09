@@ -189,3 +189,26 @@ html.am-lock { overflow: hidden; }
 .kn-pillar--feature .kn-card__title { font-family: var(--font-sans); font-size: 1.25rem; font-weight: 700; margin-top: 24px; }
 @media (max-width: 1099px) { .kn-cards--four-up { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 809px) { .kn-cards--four-up { grid-template-columns: 1fr; } .kn-sec__head--left .kn-sec__title { font-size: clamp(2rem, 8vw, 2.5rem); } .kn-pillar--feature { min-height: 0; } }
+
+/* application layout, matched to the J&T flow */
+.am__step form, form.am__step { gap: 20px; }
+.am__btn { align-self: flex-end; width: min(100%, 50%); min-width: 160px; }
+.am__backlink { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; border: 0; background: none; padding: 8px 0; font: inherit; font-weight: 600; color: var(--color-muted); cursor: pointer; margin-top: 4px; }
+.am__backlink:hover { color: var(--color-text); }
+.am__backlink:focus-visible { outline: 2px solid var(--color-accent-text); outline-offset: 3px; border-radius: 6px; }
+.am input[type=text], .am input[type=tel], .am input[type=email] { border-radius: 999px; padding: 18px 24px; }
+.am__other { display: flex; flex-direction: column; gap: 16px; }
+.am__other[hidden] { display: none; }
+.am__book { gap: 0; margin: -28px calc(-1 * clamp(20px, 5vw, 40px)) -32px; }
+.am__bookhead { padding: 28px clamp(20px, 5vw, 40px) 24px; background: var(--color-alt); display: flex; flex-direction: column; gap: 12px; }
+.am__bookhead p { margin: 0; color: var(--color-muted); line-height: 1.6; font-size: 1.0625rem; }
+.am__book .am__cal { border-radius: 0; border-left: 0; border-right: 0; }
+.am__book .am__link { padding: 16px clamp(20px, 5vw, 40px) 24px; }
+.am__nofit { align-items: center; text-align: center; gap: 18px; padding: 24px 0 12px; }
+.am__nofit .am__q { justify-content: center; font-size: clamp(2rem, 5vw, 2.75rem); }
+.am__nofit p { max-width: 460px; }
+.am--end .am__progress { display: none; }
+.am--end .am__body { padding-top: 32px; }
+.am--end:has([data-step="book"]:not([hidden])) .am__body { padding-top: 0; }
+.am__opt, .am input[type=text], .am input[type=tel], .am input[type=email] { font-size: 1.0625rem; }
+.am__btn { font-size: 1.0625rem; }
