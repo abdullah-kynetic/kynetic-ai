@@ -1,6 +1,6 @@
 ---
 type: process
-status: verified
+status: stale
 consumes: [alex-prompt, alex-agent]
 produces: [alex-agent]
 verified_on: 2026-10-22
@@ -9,7 +9,9 @@ verified_at: 5888b13
 
 # change-alex
 
-Edit the spec, show a dry run, get a yes, then create or update in Retell.
+> Stale as of 2026-11-08 PST. This process is the parked Retell path. Do not run it against live ElevenLabs Alex `agent_8201m5afn2rbeb7v29xfkhh1pjef`. Current direction: `docs/STATUS.md`.
+
+Historical movement: edit the Retell spec, show a dry run, get a yes, then create or update in Retell.
 
 ## Input -> Movement -> Output
 Input: edited `PROMPT.md` / `agent.config.json`. Movement: `python tools/retell.py create-outbound` prints the LLM and agent payloads (Cal key redacted) and sends nothing. Output: a NEW unpublished agent and LLM only after `--apply`; an existing Alex is never edited by this path.

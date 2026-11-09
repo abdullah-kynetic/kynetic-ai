@@ -1,5 +1,7 @@
 # Architecture
 
+> **Technical architecture for the portal codebase (scope banner, 2026-11-08 PST).** Not the business roadmap. Current direction: `docs/STATUS.md`. Lite/Full language below is the 2026-10-25 internal capability split the code still implements. It is not a current commercial tier. The "login/auth stays last" and "n8n deferred" notes later in this file are historical sequencing from 2026-11-01. `dev/codex-setup:docs/codex/COMPLETION-PLAN.md` is not authority. This banner does not change schema or code.
+
 Kynetic Client CRM & Portal.
 
 Sources, in order: `DECISIONS_locked.md` (Oct 25, 2026; wins on any conflict), `SPEC_client_crm_portal.md`, `docs/PRD.md` (feature IDs F-01 to F-106, module catalog, acceptance criteria; authoritative for IDs, module keys and milestone tags), and the existing `portal/` in `abdullah-kynetic/kynetic-ai` (Next.js 16, Postgres RLS, Auth.js v5 beta, live on the OVH VPS at portal.kyneticai.com). Project memory (2026-10-22): Abdullah chose ElevenLabs as the voice platform, reversing Retell (D-018, not yet re-decided in the repo).
@@ -470,7 +472,9 @@ Tenant-scoped send-state and contact-policy readers implement the minimal inputs
 
 `POST /api/service/call-results` implements the normalized bearer-authenticated result path, distinct from native provider-signature hooks. It accepts an existing tenant-owned contact and matching configured agent, records an immutable receipt, and reuses `writeCallInTransaction` exported by the calls facade. The shared persistence routine preserves existing disclosure, retention, DNC, activity and completion-event behavior; native/relay completions serialize on the tenant/provider/call advisory lock. Relay event identities also serialize before applying effects. An already-completed native call returns conflict on the relay path. A relay recording reference must point into the same tenant's calls storage area; it is never fetched from an arbitrary URL. Recording upload/ingestion and an actual n8n graph are not implemented by this endpoint. No sender cutover or native hook removal occurs.
 
-### Portal-first sequence and agency workspace (2026-11-01)
+### Portal-first sequence and agency workspace (2026-11-01, historical sequencing)
+
+The paragraph below is the 2026-11-01 order. It is not current. Portal access protection is step 2 in `docs/STATUS.md`, and Alex-on-n8n is step 3. Activating a workflow still needs a yes. "CRM Full" in the following sentences is the internal capability flag, not a commercial tier.
 
 Abdullah deferred n8n automation work and requested the remaining portal build. The synthetic-only M16 workspace may proceed ahead of M12-08's deferred integration gate. This changes implementation order; existing contact/outbound enforcement and live approval requirements remain. Remaining login/auth work stays last.
 

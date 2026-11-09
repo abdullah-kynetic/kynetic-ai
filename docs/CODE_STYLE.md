@@ -1,5 +1,7 @@
 # Code Style
 
+> **Technical style for the portal codebase (scope banner, 2026-11-08 PST).** Not the business roadmap. Current direction: `docs/STATUS.md`. The "app repo does not exist yet" line below is the Oct 25 draft. The app is `crm/`. Commit trailers stay empty (no AI co-author line).
+
 Kynetic Client CRM & Portal. Applies to every coding session and every milestone (M0-M10). Layout and contracts are owned by `ARCHITECTURE.md`; where this file and ARCHITECTURE.md differ, ARCHITECTURE.md wins and this file is corrected.
 
 **Sources and precedence.** `DECISIONS_locked.md` (Oct 25, 2026) wins over `SPEC_client_crm_portal.md`. Feature IDs and module keys come from `docs/PRD.md` (F-01 to F-106). Anything in none of these is marked `Decided 2026-10-25 (recommended option: ...)` or, if it needs outside information, `UNRESOLVED`. Commands not yet verified in the repo are `Not configured`.

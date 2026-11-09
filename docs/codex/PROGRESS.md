@@ -1,4 +1,8 @@
-# Completion status and evidence index
+# Codex progress (steps 0–6)
+
+> Technical log only. Not the business roadmap and not an active checklist. Current direction is `docs/STATUS.md`. Branch `dev/codex-setup` (`81496f99`, 2026-11-06) has a later log and a `docs/codex/COMPLETION-PLAN.md` that calls itself the one active completion checklist. That branch file is not authority. Do not merge it as the plan, and do not tick the boxes below as the next business step. This copy on main stops at the 2026-11-04 step-2 record.
+
+Tick a step only when a task has explicitly resumed that historical check and `scripts/checks/run.sh <n>` has no FAIL. Note SKIPs.
 
 Updated **2026-11-06**, America/Los_Angeles. **One active checklist: [COMPLETION-PLAN.md](COMPLETION-PLAN.md).** Old steps 0–12 and milestones are historical evidence IDs, not the new execution order.
 
