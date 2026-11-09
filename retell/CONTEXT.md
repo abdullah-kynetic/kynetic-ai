@@ -1,9 +1,11 @@
 # retell: voice agent builds and prompt style
 
-One job: hold the specs for Retell voice agents. The live agents are in Retell, not here.
+> Parked track for Alex. Current Alex platform is ElevenLabs through n8n on the VPS (`docs/STATUS.md`). Do not change or invoke live Alex `agent_8201m5afn2rbeb7v29xfkhh1pjef`. Nora, Emily, and Kynetic Restoration (Demo) stay protected.
+
+One job: hold the specs for Retell voice agents. The Retell agents are in Retell, not here.
 
 ## Map
-- `builds/outbound-speed-to-lead/`: Plan 1 Alex (live spec). Start at `BUILD_PLAN.md` "Current state".
+- `builds/outbound-speed-to-lead/`: parked Retell Alex spec. Its "Current state" is an Oct 17 snapshot, not the current platform.
 - `builds/emily-speed-to-lead/`: Plan 2 Emily, paused.
 - `builds/kynetic-restoration/`: protected demo IDs. Do not edit.
 - `builds/_inflate-original/`: reference export. Leave alone.
