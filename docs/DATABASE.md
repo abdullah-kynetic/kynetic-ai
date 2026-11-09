@@ -1,5 +1,7 @@
 # DATABASE: Kynetic Client CRM & Portal
 
+> **Technical schema document (scope banner, 2026-11-09).** Not the business roadmap. `module_prices` figures and Lite/Full level notes below are the historical 2026-10-25 commercial menu plus the internal capability flag the schema still stores. Current precedence: `docs/STATUS.md`. Do not quote those amounts as the current price. This banner does not change the schema.
+
 Status: Draft for review. Not approved.
 Sources, in order of precedence: `DECISIONS_locked.md` (Oct 25 2026, wins on conflict), `PRD.md` (feature IDs F-01 to F-106, module keys, open decisions), `SPEC_client_crm_portal.md` (data model, section 5), and the existing portal schema in `portal/drizzle/0000_init.sql` to `0002_recovery_codes.sql` (current VPS portal, read only).
 

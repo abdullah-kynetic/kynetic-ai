@@ -1,5 +1,7 @@
 # Alex on ElevenLabs: n8n workflow build spec
 
+> **Historical build spec (classified 2026-11-09).** Not a status source and not the next execution checklist. Current direction: `docs/STATUS.md`. Do not activate or publish the workflow this spec describes. Do not change or invoke live Alex `agent_8201m5afn2rbeb7v29xfkhh1pjef`. Do not create Google Drive, Docs, or Sheets files. Gmail alert steps below are part of the old spec, not a new authorization. `ALEX-ELEVENLABS-GOLIVE.md` already has a superseded-as-status banner. `dev/codex-setup:docs/codex/COMPLETION-PLAN.md` is not authority.
+
 Status: spec only (2026-10-28). Nothing here is built or changed live. Every step that touches n8n, ElevenLabs, Twilio or Twenty needs Abdullah's yes on that exact change (KYNETIC_CONTEXT rules 1 and 2). Decisions: D-014, D-020, D-025. Go-live plan: `ALEX-ELEVENLABS-GOLIVE.md`.
 
 ## Goal

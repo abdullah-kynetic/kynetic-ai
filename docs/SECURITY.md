@@ -1,5 +1,7 @@
 # Security
 
+> **Technical security rules for the portal codebase (scope banner, 2026-11-09).** Not the business roadmap. Current direction: `docs/STATUS.md`. DNC scrub, stored consent, and quiet hours are required operating controls. Twilio A2P approval is not permission for cold SMS. Counsel items in this file stay open. This banner does not change the controls.
+
 Kynetic Client CRM & Portal. Owner: Abdullah. Status: draft for review, Oct 25, 2026.
 
 **Sources.** `SPEC_client_crm_portal.md`, `DECISIONS_locked.md` (these win over the spec), `docs/PRD.md` (authoritative for feature IDs F-01 to F-106, module keys and the module catalog, and for open decision numbers "OD-n"), `docs/CODE_STYLE.md` (error codes, logging), and the Kynetic hard rules.

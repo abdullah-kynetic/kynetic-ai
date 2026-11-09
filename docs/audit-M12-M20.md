@@ -2,7 +2,7 @@
 
 > **Superseded as a status source (2026-11-09).** Current plan and status: Twenty ROADMAP note `7bfdcb7e` and `docs/STATUS.md`. Kept as technical/historical detail; do not treat any checklist below as current.
 
-**Current order (2026-11-01):** n8n automations remain deferred. M16-01 through M16-06 are implemented locally, including the synthetic human dialer, never-dial guards and campaigns. Latest increment passed build/typecheck, 425 unit, 63 integration and two mobile/browser accessibility scenarios. Next portal task: proposal drafts. No real agency migration or live provider operation is implied; login/auth work stays last.
+**Order recorded 2026-11-01 (historical; the banner above wins):** n8n automations remain deferred. M16-01 through M16-06 are implemented locally, including the synthetic human dialer, never-dial guards and campaigns. Latest increment passed build/typecheck, 425 unit, 63 integration and two mobile/browser accessibility scenarios. Next portal task: proposal drafts. No real agency migration or live provider operation is implied; login/auth work stays last.
 
 **Latest progress (2026-11-01):** M13-06 database regression now passes; M12-01 technical review complete. Wave 31 local implementation completed M12-03, M12-05 and M13-02. M12-02 awaits explicit supersede confirmation; M15-04 formatter is tested but workflow validation is blocked by connector errors. Current evidence is in BUILD_PLAN, TESTING and progress; the original audit below records the earlier baseline.
 
