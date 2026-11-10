@@ -91,7 +91,10 @@ export function enforceExportImportRateLimit(db: Db, tenantId: string, now?: Dat
   return enforceRateLimit(db, RATE_LIMITS.exportImportTenant, tenantId, now);
 }
 
-/** Counters are short-lived. The M0-15 job runner calls this on a schedule. */
+/** Hourly. The worker schedules this; counters are short-lived. */
+export const RATE_LIMIT_PURGE_CRON = '15 * * * *';
+
+/** Counters are short-lived. The worker calls this on RATE_LIMIT_PURGE_CRON. */
 export async function purgeExpiredRateLimits(db: Db, now: Date = new Date()): Promise<number> {
   const rows = await db
     .delete(rateLimits)

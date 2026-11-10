@@ -1,4 +1,4 @@
-import { and, count, eq, gte, isNull } from 'drizzle-orm';
+import { and, count, eq, gte, isNull, sql } from 'drizzle-orm';
 import { STATE_RULES } from '../compliance';
 import { canContact } from '../consent';
 import type { Tx } from '../db/client';
@@ -8,10 +8,12 @@ import {
   calls,
   contacts,
   phoneNumbers,
+  platformSettings,
   tenantModules,
   tenants
 } from '../db/schema';
 import { getEnv } from '../env';
+import { zonedMonthStart } from '../schedules/calendar';
 import { withTenant, type TenantContextInput } from '../tenancy';
 import {
   CONTACT_CALL_CAPS,
@@ -27,11 +29,10 @@ const DAY_MS = 24 * HOUR_MS;
  * The single guard every call and SMS passes through (CODE_STYLE, SECURITY 3.9). Feature code never
  * reaches a provider adapter without an allow from here, and a deny means no provider call.
  *
- * Checks run cheapest and most final first: global kill switch, tenant suspended, module off, Alex
- * paused (calls and texts), SMS not approved, rate caps, and last `canContact` (consent, DNC, quiet
- * hours), whose allow or deny is the one activity row a passing send writes. Every earlier deny
- * writes a "blocked: reason" activity of its own. The kill switch is read on each call, so a queued
- * job cannot slip past it.
+ * Checks run cheapest and most final first: env kill switch, portal-wide pause, tenant kill switch,
+ * suspended tenant, spend cap (calls only), module off, Alex paused (calls and texts), SMS not
+ * approved, rate caps, and last `canContact` (consent, DNC, quiet hours). The env flag is read on
+ * each call and always wins. No code path here can turn that flag on. A portal pause only tightens.
  */
 export async function checkOutbound(
   ctx: TenantContextInput,
@@ -71,25 +72,47 @@ async function configDecision(
 ): Promise<GateDecision | null> {
   if (!outboundEnabled) return deny('outbound_disabled');
 
+  const [settings] = await tx
+    .select({ outboundPaused: platformSettings.outboundPaused })
+    .from(platformSettings)
+    .where(eq(platformSettings.singleton, true))
+    .limit(1);
+  if (settings?.outboundPaused) return deny('global_pause');
+
   const [tenant] = await tx
-    .select({ status: tenants.status })
+    .select({
+      status: tenants.status,
+      offboardedAt: tenants.offboardedAt,
+      monthlySpendCapCents: tenants.monthlySpendCapCents,
+      timezone: tenants.timezone
+    })
     .from(tenants)
     .where(eq(tenants.id, ctx.tenantId))
     .limit(1);
-  if (!tenant || tenant.status === 'suspended' || tenant.status === 'offboarded') {
-    return deny('tenant_suspended');
-  }
+  if (!tenant) return deny('tenant_suspended');
 
   const [platform] = await tx
     .select({ config: tenantModules.config })
     .from(tenantModules)
     .where(and(eq(tenantModules.tenantId, ctx.tenantId), eq(tenantModules.moduleKey, 'platform')))
     .limit(1);
-  if (
+  const kill =
     (platform?.config as { outbound_kill_switch?: unknown } | undefined)?.outbound_kill_switch ===
-    true
+    true;
+  if (kill && tenant.offboardedAt) return deny('tenant_kill');
+  if (kill) return deny('outbound_disabled');
+  if (tenant.status === 'suspended' || tenant.status === 'offboarded') {
+    return deny('tenant_suspended');
+  }
+
+  if (
+    req.channel === 'phone_call' &&
+    tenant.monthlySpendCapCents != null &&
+    (await monthCallCostCents(tx, ctx.tenantId, now, tenant.timezone ?? 'UTC')) >=
+      tenant.monthlySpendCapCents
   ) {
-    return deny('outbound_disabled');
+    await rememberSpendCap(tx, ctx.tenantId);
+    return deny('spend_cap');
   }
 
   const [mod] = await tx
@@ -127,6 +150,38 @@ async function configDecision(
     return deny('rate_cap');
   }
   return null;
+}
+
+async function monthCallCostCents(
+  tx: Tx,
+  tenantId: string,
+  now: Date,
+  timeZone: string
+): Promise<number> {
+  const start = zonedMonthStart(now, timeZone).toISOString();
+  const [row] = await tx
+    .select({ cents: sql<number>`coalesce(sum(${calls.costCents}), 0)::int` })
+    .from(calls)
+    .where(and(eq(calls.tenantId, tenantId), gte(calls.startedAt, start)))
+    .limit(1);
+  return Number(row?.cents ?? 0);
+}
+
+/** One in-app notice and one audit row per tenant per month. A failure still blocks the call. */
+async function rememberSpendCap(tx: Tx, tenantId: string): Promise<void> {
+  if (typeof tx.execute !== 'function') return;
+  try {
+    await tx.execute(sql`select note_spend_cap_reached(${tenantId}::uuid)`);
+  } catch (error) {
+    console.error(
+      JSON.stringify({
+        level: 'error',
+        msg: 'spend cap note failed',
+        tenantId,
+        error: error instanceof Error ? error.name : 'unknown'
+      })
+    );
+  }
 }
 
 async function overCallCap(

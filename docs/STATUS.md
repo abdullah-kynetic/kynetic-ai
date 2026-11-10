@@ -2,6 +2,10 @@
 
 A pointer, not a second scoreboard. Twenty is the business source of truth. GitHub is the technical execution record (code, pull requests, CI, and deploy evidence). On a mismatch, flag both values. This GitHub docs pass did not read or write Twenty. The parallel Twenty cleanup is recorded below from the parent's verification.
 
+## Portal batch 3 (2026-11-10, not deployed)
+
+The admin side can pause every call and text from Operations. That pause only adds a block. `OUTBOUND_ENABLED=false` still stops everything, and nothing in this batch can turn that switch on. Usage for each client is on `/admin/usage` for Kynetic staff: minutes, calls, texts, emails, provider cost, the fee already stored, and whether a spend cap is close or reached. Clients do not see cost. An admin can offboard a client by typing the slug. That suspends the client, stops automations, revokes service tokens, and queues a zip of their records. The 30-day date on screen is a reminder only. Nobody is deleted automatically. Failed jobs and a morning admin digest show up in the portal. Weekly client email and the monthly report link exist and stay off unless both the server flag and the per-client toggle are on. No live call, text, or email was sent.
+
 ## Portal line (2026-11-09 PST)
 
 Abdullah stopped the second portal line. The portal implementation that lived on `dev/codex-setup` is the code for `main`. `main` is the only build that may be deployed to production at portal.kyneticai.com, and only after an explicit yes. A separate DEV environment is retired until after go-live: do not deploy `dev.kyneticai.com`, and do not keep working on `dev/codex-setup`. New work branches off `main`. This note does not deploy. Live production is `main` `ac0192af` (PR #146) as of 2026-11-09 evening PST; further deploys still need an explicit yes unless Abdullah has already authorized the operator to ship ready batches.

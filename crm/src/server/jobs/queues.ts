@@ -41,7 +41,20 @@ export const QUEUES = {
   /** Lists tenants whose local day matches the report schedule and enqueues report.monthly. */
   'report.fanout': { ...retrying, policy: 'short' },
   /** Clears data that has passed the PRD decision 9 retention windows. */
-  'retention.purge': { ...retrying, policy: 'short' }
+  'retention.purge': { ...retrying, policy: 'short' },
+  /** One rebuildable tenant/day usage rollup. */
+  'usage.daily': { ...retrying, policy: 'short' },
+  /** Lists operating tenants and enqueues usage.daily. */
+  'usage.fanout': { ...retrying, policy: 'short' },
+  /** Monday client email. The handler no-ops unless both email flags are on. */
+  'client.weekly_email': { ...retrying, policy: 'short' },
+  'client.weekly_fanout': { ...retrying, policy: 'short' },
+  /** In-app daily digest for Kynetic admins. Email stays off unless ADMIN_ALERT_EMAIL_ENABLED. */
+  'admin.digest': { ...retrying, policy: 'short' },
+  /** Deletes expired rate-limit counters. */
+  'security.rate_limit_purge': { ...retrying, policy: 'short' },
+  /** One zip export for an offboarded client. */
+  'tenant.export': { ...retrying, policy: 'short' }
 } as const satisfies Record<string, QueueDef>;
 
 export type QueueName = keyof typeof QUEUES;

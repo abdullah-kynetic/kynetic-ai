@@ -121,5 +121,21 @@ A key starting cal_live_f64 was committed Aug 23, carried in from the Inflate AI
 Found 2026-11-10. PRD decision 17 and F-90 call for `.csv` and `.xlsx`. No safe spreadsheet parser was a dependency, so the import screen refused `.xlsx`.
 Resolved 2026-11-10 in PR #150: `.xlsx` is accepted with `read-excel-file` 9.3.14, which returns stored cell values and does not calculate formulas. A formula with no cached value fails that row in the dry run. Zip entry count and uncompressed size are capped before inflate. `.xlsm` and `.xls` stay refused, including a macro file renamed to `.xlsx`. `bun audit` reported no vulnerabilities for the dependency set.
 
+### KI-022: Clients do not see usage or provider cost (open)
+
+Found 2026-11-10. `/admin/usage` is staff-only. `calls.cost.read` stays limited to Kynetic admin and VA. A client usage page is blocked until someone decides whether clients should see provider cost. Do not add that page in the meantime.
+
+### KI-023: Message provider cost is not stored (open)
+
+Found 2026-11-10. `messages` has no cost column. The usage rollup counts SMS and email, stores message cost as 0, and marks the day "cost unknown" when a message was sent or a call has no cost. Do not invent a price to fill the gap. The recorded monthly fee still comes from `tenant_billing_modules` as stored.
+
+### KI-024: Twenty summary push is not built (open)
+
+Found 2026-11-10. Blueprint AU-29 would push a summary into Twenty. This batch did not build it. Twenty stays untouched.
+
+### KI-025: Offboarded clients are not deleted (open)
+
+Found 2026-11-10. Offboarding sets `offboarded_at` and `deletion_due_on` (30 days later) and queues a record export. Nothing deletes the client, the rows, or the files. The date is a reminder. The manual steps are in `docs/runbooks/offboarding.md`. A deletion still needs an explicit yes.
+
 ### KI-019: Audit-log archive destination is not defined (low)
 Found 2026-11-10. PRD decision 9 keeps the audit log 24 months online, then archived. `audit_log` is append-only, and no archive store is named. The retention purge does not delete audit rows. Recordings, messages, revoked consents, import files, and webhook payloads follow the decided windows.

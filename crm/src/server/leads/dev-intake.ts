@@ -4,7 +4,7 @@ import { AppError, ValidationError, errorResponse } from '../errors';
 import { parseInput } from '../validation';
 import { handleLeadIntake, type LeadIntakeOpts } from './intake';
 import { leadPayloadSchema } from './payload';
-import { assertDevPortal, businessStateSchema } from './dev-policy';
+import { assertDevLeadHook, assertDevPortal, businessStateSchema } from './dev-policy';
 
 export const devLeadPayloadSchema = leadPayloadSchema.safeExtend({
   synthetic: z.literal(true),
@@ -34,6 +34,7 @@ export async function devLeadIntakeResponse(
 ) {
   try {
     const config = getEnv();
+    assertDevLeadHook(config.NODE_ENV);
     assertDevPortal(config.APP_BASE_URL);
     return await handleLeadIntake(request, tenantKey, {
       ...opts,

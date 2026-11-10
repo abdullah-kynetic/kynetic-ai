@@ -11,16 +11,22 @@ export function parseReportDay(value: unknown): number {
   return parsed;
 }
 
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
+
+export function safeTimeZone(timeZone: string): string {
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone }).format(new Date());
+    return timeZone;
+  } catch {
+    return 'UTC';
+  }
+}
+
 export function zonedDate(
   now: Date,
   timeZone: string
 ): { year: number; month: number; day: number } {
-  let zone = timeZone;
-  try {
-    new Intl.DateTimeFormat('en-US', { timeZone: zone }).format(now);
-  } catch {
-    zone = 'UTC';
-  }
+  const zone = safeTimeZone(timeZone);
   const parts = new Intl.DateTimeFormat('en-US', {
     timeZone: zone,
     year: 'numeric',
@@ -30,6 +36,79 @@ export function zonedDate(
   const read = (type: Intl.DateTimeFormatPartTypes) =>
     Number(parts.find((part) => part.type === type)?.value);
   return { year: read('year'), month: read('month'), day: read('day') };
+}
+
+/** Local hour 0–23 and weekday 1 (Monday) through 7 (Sunday). */
+export function zonedClock(
+  now: Date,
+  timeZone: string
+): { year: number; month: number; day: number; hour: number; weekday: number } {
+  const zone = safeTimeZone(timeZone);
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: zone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    weekday: 'short',
+    hourCycle: 'h23'
+  }).formatToParts(now);
+  const read = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((part) => part.type === type)?.value ?? '';
+  const date = zonedDate(now, zone);
+  const weekdayIndex = WEEKDAYS.indexOf(read('weekday') as (typeof WEEKDAYS)[number]);
+  const weekday = weekdayIndex === 0 ? 7 : weekdayIndex;
+  return { ...date, hour: Number(read('hour')), weekday };
+}
+
+/** UTC instant when it is 00:00 on the first of the local month. */
+export function zonedMonthStart(now: Date, timeZone: string): Date {
+  const zone = safeTimeZone(timeZone);
+  const { year, month } = zonedDate(now, zone);
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: zone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23'
+  });
+  let guess = new Date(Date.UTC(year, month - 1, 1));
+  for (let i = 0; i < 4; i += 1) {
+    const parts = formatter.formatToParts(guess);
+    const read = (type: Intl.DateTimeFormatPartTypes) =>
+      Number(parts.find((part) => part.type === type)?.value);
+    const seen = Date.UTC(
+      read('year'),
+      read('month') - 1,
+      read('day'),
+      read('hour'),
+      read('minute'),
+      read('second')
+    );
+    const wanted = Date.UTC(year, month - 1, 1);
+    guess = new Date(guess.getTime() + (wanted - seen));
+  }
+  return guess;
+}
+
+function isoDate(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
+/** Monday through Sunday of the week before the local date of `now`. */
+export function previousWeekRange(now: Date, timeZone: string): { from: string; to: string } {
+  const local = zonedClock(now, timeZone);
+  const today = new Date(Date.UTC(local.year, local.month - 1, local.day));
+  const thisMonday = new Date(today);
+  thisMonday.setUTCDate(today.getUTCDate() - (local.weekday - 1));
+  const lastMonday = new Date(thisMonday);
+  lastMonday.setUTCDate(thisMonday.getUTCDate() - 7);
+  const lastSunday = new Date(thisMonday);
+  lastSunday.setUTCDate(thisMonday.getUTCDate() - 1);
+  return { from: isoDate(lastMonday), to: isoDate(lastSunday) };
 }
 
 /** First UTC day of the calendar month before `month` (1–12). */

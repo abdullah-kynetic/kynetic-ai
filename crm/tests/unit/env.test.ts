@@ -14,6 +14,8 @@ describe('F-87 env validation', () => {
   it('accepts a complete environment and defaults the kill switch to off', () => {
     const env = parseEnv(valid);
     expect(env.OUTBOUND_ENABLED).toBe(false);
+    expect(env.ADMIN_ALERT_EMAIL_ENABLED).toBe(false);
+    expect(env.CLIENT_EMAIL_ENABLED).toBe(false);
     expect(env.DEV_PERSONA_SWITCHING).toBe(false);
   });
 

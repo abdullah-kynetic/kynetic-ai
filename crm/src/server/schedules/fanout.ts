@@ -3,10 +3,20 @@ import type { Db } from '../db/client';
 import { reports, tenantModules, tenants } from '../db/schema';
 import { enqueue, registerWorker, scheduleRecurring, type QueueName } from '../jobs';
 import { withSystem, withTenant, type TenantContextInput } from '../tenancy';
-import { addUtcDays, parseReportDay, previousMonthStart, utcDay, zonedDate } from './calendar';
+import {
+  addUtcDays,
+  parseReportDay,
+  previousMonthStart,
+  previousWeekRange,
+  utcDay,
+  zonedClock,
+  zonedDate
+} from './calendar';
 
 export const METRICS_FANOUT_CRON = '5 * * * *';
 export const REPORT_FANOUT_CRON = '20 * * * *';
+export const USAGE_FANOUT_CRON = '35 * * * *';
+export const WEEKLY_EMAIL_FANOUT_CRON = '10 * * * *';
 
 type ScheduledTenant = { tenantId: string; timezone: string; reportDay: number };
 type Send = (
@@ -103,7 +113,14 @@ export async function readReportSchedule(ctx: TenantContextInput, opts: { db?: D
   return withTenant(
     ctx,
     async (tx) => {
-      const [tenant] = await tx.select({ timezone: tenants.timezone }).from(tenants).limit(1);
+      const [tenant] = await tx
+        .select({
+          timezone: tenants.timezone,
+          weeklyEmailEnabled: tenants.weeklyEmailEnabled,
+          reportEmailEnabled: tenants.reportEmailEnabled
+        })
+        .from(tenants)
+        .limit(1);
       const [mod] = await tx
         .select({ config: tenantModules.config })
         .from(tenantModules)
@@ -112,11 +129,58 @@ export async function readReportSchedule(ctx: TenantContextInput, opts: { db?: D
       const config = mod?.config as { reportDayOfMonth?: unknown } | undefined;
       return {
         day: parseReportDay(config?.reportDayOfMonth),
-        timezone: tenant?.timezone ?? 'UTC'
+        timezone: tenant?.timezone ?? 'UTC',
+        weeklyEmailEnabled: tenant?.weeklyEmailEnabled ?? false,
+        reportEmailEnabled: tenant?.reportEmailEnabled ?? false
       };
     },
     opts
   );
+}
+
+/** Same tenant list and day window as metrics, written into usage_daily. */
+export async function runUsageFanout(
+  opts: { db?: Db; now?: Date; send?: Send } = {}
+): Promise<{ queued: number }> {
+  const now = opts.now ?? new Date();
+  const send = opts.send ?? ((queue, payload, extra) => enqueue(queue, payload, extra));
+  const days = [utcDay(now), utcDay(addUtcDays(now, -1))];
+  let queued = 0;
+  for (const tenant of await listScheduledTenants(opts)) {
+    for (const day of days) {
+      const id = await send(
+        'usage.daily',
+        { tenantId: tenant.tenantId, day },
+        { singletonKey: `usage/${tenant.tenantId}/${day}` }
+      );
+      if (id) queued += 1;
+    }
+  }
+  return { queued };
+}
+
+/**
+ * Monday, from 08:00 in the tenant's timezone. The handler still refuses to send unless both
+ * the env flag and the per-client toggle are on.
+ */
+export async function runWeeklyEmailFanout(
+  opts: { db?: Db; now?: Date; send?: Send } = {}
+): Promise<{ queued: number }> {
+  const now = opts.now ?? new Date();
+  const send = opts.send ?? ((queue, payload, extra) => enqueue(queue, payload, extra));
+  let queued = 0;
+  for (const tenant of await listScheduledTenants(opts)) {
+    const local = zonedClock(now, tenant.timezone);
+    if (local.weekday !== 1 || local.hour < 8) continue;
+    const range = previousWeekRange(now, tenant.timezone);
+    const id = await send(
+      'client.weekly_email',
+      { tenantId: tenant.tenantId, from: range.from, to: range.to },
+      { singletonKey: `weekly/${tenant.tenantId}/${range.from}` }
+    );
+    if (id) queued += 1;
+  }
+  return { queued };
 }
 
 export async function registerScheduleWorkers(): Promise<void> {
@@ -125,6 +189,12 @@ export async function registerScheduleWorkers(): Promise<void> {
   });
   await registerWorker('report.fanout', async () => {
     await runReportFanout();
+  });
+  await registerWorker('usage.fanout', async () => {
+    await runUsageFanout();
+  });
+  await registerWorker('client.weekly_fanout', async () => {
+    await runWeeklyEmailFanout();
   });
 }
 
@@ -142,5 +212,13 @@ export async function scheduleTenantJobs(): Promise<void> {
     REPORT_FANOUT_CRON,
     {},
     'report-monthly-fanout'
+  );
+  await scheduleRecurring('worker', 'usage.fanout', USAGE_FANOUT_CRON, {}, 'usage-daily-fanout');
+  await scheduleRecurring(
+    'worker',
+    'client.weekly_fanout',
+    WEEKLY_EMAIL_FANOUT_CRON,
+    {},
+    'weekly-email-fanout'
   );
 }

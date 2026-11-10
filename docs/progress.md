@@ -93,6 +93,18 @@ Then: confirm the post-call webhook URL is set on the agent, web-call test Alex,
 Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-11-10 — admin pause, usage, offboarding, and emails that stay off
+
+Batch 3 on `cursor/admin-ops-safety-123d`, rebased onto main after PR #150. Migration `1018_admin_ops_safety`. Not merged and not deployed. `PROVIDER_MODE` and `OUTBOUND_ENABLED` are unchanged. New flags `ADMIN_ALERT_EMAIL_ENABLED` and `CLIENT_EMAIL_ENABLED` default to false.
+
+- Operations can pause every call and text. The pause only tightens. The env switch still wins.
+- `/admin/usage` shows per-client minutes, messages, provider cost, the stored fee, margin, and cap status, with a CSV export. A spend cap blocks new calls and notifies admins once a month. Clients see none of this (KI-022). Message cost stays unknown (KI-023).
+- Offboarding types the slug, suspends the client, stops automations, revokes service tokens, and queues a zip of records. Deletion stays manual (KI-025, `docs/runbooks/offboarding.md`).
+- Failed jobs and the 08:00 Pacific admin digest are in-app. Email for those is off unless the new flag is on.
+- Weekly client email and the monthly report link use the same dashboard numbers and stay off unless the server flag and the per-client toggle are both on.
+- Expired rate-limit rows are purged hourly. The dev lead hook, the component gallery, and `/open` refuse in production unless the gallery flag is explicitly set. The gallery "Add a lead" control is a disabled "Demo only" button.
+- Twenty summary push was not built (KI-024).
+
 ### 2026-11-10 — portal systems, templates, remodeling, 30-day guarantee
 
 Built on `cursor/portal-systems-library-a5c5`, rebased onto `main` after PR #146. Admin client overview, per-client system settings (module toggles plus the automations already specified for each module), template library, client My systems with an audited "Request this" (no payment), remodeling industry template with editable default stages, and the dashboard guarantee changed from a 60-day booking count to 20% more booked appointments than last month over 30 days. `tenants.guarantee_baseline_bookings` is the admin override. `guarantee_target_bookings` stays in the database and is no longer the tracker target. Plan 2 names (Reputation Engine, inbound receptionist, lead recovery and nurture) are coming-soon cards with no invented modules, stages, or automations. Migration renumbered to `1016_systems_templates_guarantee` because `1015` is the schedules/retention migration from PR #146.

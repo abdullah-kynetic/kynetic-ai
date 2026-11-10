@@ -358,6 +358,13 @@
       "when": 1793592000000,
       "tag": "1017_agency_sales_tools",
       "breakpoints": true
+    },
+    {
+      "idx": 51,
+      "version": "7",
+      "when": 1793595000000,
+      "tag": "1018_admin_ops_safety",
+      "breakpoints": true
     }
   ]
 }

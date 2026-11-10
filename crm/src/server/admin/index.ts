@@ -60,6 +60,15 @@ export { placeAdminTestCall, updateAdminAlexConfig } from './alex-config';
 export { auditManualBackup, listBackups, runBackup, type BackupJob } from './backups';
 export { replayWebhook, setOutboundKillSwitch, suspendTenant } from './operations-tools';
 export {
+  listStaffNotifications,
+  listUsageMonth,
+  readOutboundPause,
+  setClientEmailFlags,
+  setMonthlySpendCap,
+  setOutboundPaused
+} from './platform-controls';
+export { listTenantExports, offboardTenant } from './offboarding';
+export {
   getAdminChecklist,
   updateChecklistStep,
   markGoLive,

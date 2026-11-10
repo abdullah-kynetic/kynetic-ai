@@ -17,6 +17,9 @@ export type DenyReason =
   | 'tenant_suspended'
   | 'alex_paused'
   | 'outbound_disabled'
+  | 'global_pause'
+  | 'tenant_kill'
+  | 'spend_cap'
   | 'sms_not_approved'
   | 'rate_cap';
 

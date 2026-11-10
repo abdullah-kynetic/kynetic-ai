@@ -2,6 +2,10 @@
 
 Updated **2026-11-10**. Canonical status is [../STATUS.md](../STATUS.md). This file restates the same portal facts.
 
+## Portal code note (2026-11-10, batch 3)
+
+Batch 3 adds an admin outbound pause that cannot turn sending on, a staff-only usage page with spend caps, offboarding with a manual 30-day deletion date, in-app failed-job alerts and a morning admin digest, and weekly plus monthly client emails that stay off by default. Migration `1018_admin_ops_safety` on this branch, after PR #150 took `1017`. `PROVIDER_MODE` and `OUTBOUND_ENABLED` are unchanged. `ADMIN_ALERT_EMAIL_ENABLED` and `CLIENT_EMAIL_ENABLED` default to false. Not merged and not deployed.
+
 ## Portal code note (2026-11-10)
 
 PR #146 is live at portal.kyneticai.com as `main` `ac0192af` (migration `1015`). This systems/templates branch adds migration `1016` and is not yet the live tip until merged and deployed. See `docs/STATUS.md`.
