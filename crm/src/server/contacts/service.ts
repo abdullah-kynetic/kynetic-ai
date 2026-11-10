@@ -1,7 +1,7 @@
 import { and, desc, eq, inArray, isNull, ne, or, sql, type SQL } from 'drizzle-orm';
 import { audit } from '../audit';
 import type { Db, Tx } from '../db/client';
-import { contacts, memberships } from '../db/schema';
+import { consents, contacts, memberships } from '../db/schema';
 import { AppError, ValidationError } from '../errors';
 import { validateCustomValues } from '../custom-fields';
 import { emitEvent } from '../events';
@@ -380,6 +380,12 @@ export async function restoreContact(
   });
 }
 
+function earlierTimestamp(a: string | null, b: string | null): string | null {
+  if (!a) return b;
+  if (!b) return a;
+  return a < b ? a : b;
+}
+
 /**
  * Merge two live contacts in one transaction. The selected survivor keeps its identity; all
  * contact-linked history moves to it, while the loser remains as evidence and is hidden from live
@@ -439,14 +445,50 @@ export async function mergeContacts(
         )
       );
     }
-    // Consent history is append-only by design. Copy the evidence to the survivor and leave the
-    // loser rows untouched, so the merge never rewrites or deletes compliance records.
-    await tx.execute(sql`
+    // Grants stay with the contact who gave them. Opt-outs and DNC carry so the survivor cannot
+    // be contacted around a refusal. Loser rows stay in place; consent rows are not rewritten.
+    const consentState = async (contactId: string) => {
+      const rows = await tx
+        .select({
+          channel: consents.channel,
+          kind: consents.kind,
+          source: consents.source,
+          revokedAt: consents.revokedAt,
+          capturedAt: consents.capturedAt
+        })
+        .from(consents)
+        .where(eq(consents.contactId, contactId))
+        .orderBy(consents.capturedAt)
+        .limit(50);
+      return rows.map((row) => ({
+        channel: row.channel,
+        kind: row.kind,
+        source: row.source,
+        revoked: row.revokedAt !== null,
+        capturedAt: row.capturedAt
+      }));
+    };
+    const beforeConsent = {
+      survivor: {
+        id: survivorId,
+        doNotCallAt: survivor.doNotCallAt,
+        consents: await consentState(survivorId)
+      },
+      loser: {
+        id: loserId,
+        doNotCallAt: loser.doNotCallAt,
+        consents: await consentState(loserId)
+      }
+    };
+    const copied = await tx.execute<{ id: string }>(sql`
       INSERT INTO consents
         (tenant_id, contact_id, channel, kind, source, captured_text, wording_version, ip, captured_at, revoked_at)
       SELECT tenant_id, ${survivorId}::uuid, channel, kind, source, captured_text, wording_version, ip, captured_at, revoked_at
       FROM consents
-      WHERE tenant_id = app_tenant_id() AND contact_id = ${loserId}::uuid`);
+      WHERE tenant_id = app_tenant_id()
+        AND contact_id = ${loserId}::uuid
+        AND kind IN ('opt_out', 'dnc')
+      RETURNING id`);
 
     const unique = (values: string[]) => [...new Set(values.filter(Boolean))];
     const mergedPhones = unique([...survivor.phones, ...loser.phones]);
@@ -468,6 +510,7 @@ export async function mergeContacts(
         primaryEmail: survivor.primaryEmail ?? loser.primaryEmail,
         address: Object.keys(survivor.address as object).length ? survivor.address : loser.address,
         timezone: survivor.timezone ?? loser.timezone,
+        doNotCallAt: earlierTimestamp(survivor.doNotCallAt, loser.doNotCallAt),
         source: survivor.source ?? loser.source,
         tags: mergedTags,
         ownerId: survivor.ownerId ?? loser.ownerId,
@@ -489,8 +532,16 @@ export async function mergeContacts(
       action: 'contact.merge',
       entity: 'contact',
       entityId: survivorId,
-      before: { survivorId, loserId },
-      after: { survivorId, loserId, moved: true }
+      before: beforeConsent,
+      after: {
+        survivorId,
+        loserId,
+        moved: true,
+        grantsCopied: 0,
+        restrictionsCopied: copied.length,
+        doNotCallAt: after.doNotCallAt,
+        consents: await consentState(survivorId)
+      }
     });
     await emitEvent(tx, {
       name: 'contact.merged',

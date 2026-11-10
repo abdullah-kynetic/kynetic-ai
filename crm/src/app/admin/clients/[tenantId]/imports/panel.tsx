@@ -200,6 +200,9 @@ export function ImportPanel({
     <div className='grid max-w-3xl gap-6'>
       <section className='grid gap-3 rounded border p-4'>
         <h2 className='text-lg font-semibold'>Upload CSV</h2>
+        <p className='text-sm text-muted-foreground'>
+          CSV files only, up to 10 MB. Excel workbooks (.xlsx, .xls) are not accepted.
+        </p>
         <label>
           Record type
           <select
@@ -233,7 +236,7 @@ export function ImportPanel({
           />
         </label>
         <label>
-          CSV file (up to 10 MB)
+          CSV file
           <input
             className='mt-1 block min-h-11'
             type='file'

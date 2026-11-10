@@ -354,4 +354,51 @@ describe('M1-08 contact merge', () => {
     );
     expect(ev?.tenantId).toBe(IDS.tenantA);
   });
+
+  it('carries opt-outs and DNC, leaves grants on the merged-away contact, and audits both states', async () => {
+    const survivor = await createContact(
+      ctx.ownerA(),
+      { firstName: 'Grant Survivor', phones: ['415-555-0196'] },
+      opts
+    );
+    const loser = await createContact(
+      ctx.ownerA(),
+      { firstName: 'Grant Loser', phones: ['415-555-0197'] },
+      { ...opts, acknowledgeDuplicates: true }
+    );
+    await tdb.admin`update contacts set do_not_call_at = now() - interval '2 days' where id = ${loser.id}`;
+    await tdb.admin`
+      insert into consents (tenant_id, contact_id, channel, kind, source, captured_text) values
+      (${IDS.tenantA}, ${loser.id}, 'phone_call', 'express_written', 'form', 'private grant wording'),
+      (${IDS.tenantA}, ${loser.id}, 'sms', 'opt_out', 'sms_keyword', 'stop')`;
+
+    await mergeContacts(ctx.ownerA(), survivor.id, loser.id, opts);
+
+    const survivorConsents = await tdb.admin`
+      select channel, kind from consents where contact_id = ${survivor.id} order by kind`;
+    expect(survivorConsents).toEqual([{ channel: 'sms', kind: 'opt_out' }]);
+    const loserKinds = (
+      await tdb.admin`select kind from consents where contact_id = ${loser.id} order by kind`
+    ).map((row) => row.kind);
+    expect(loserKinds).toEqual(['express_written', 'opt_out']);
+    const [survivorRow] =
+      await tdb.admin`select do_not_call_at from contacts where id = ${survivor.id}`;
+    expect(survivorRow.do_not_call_at).not.toBeNull();
+    const [auditRow] = await tdb.admin`
+      select before, after from audit_log
+      where action = 'contact.merge' and entity_id = ${survivor.id}
+      order by created_at desc limit 1`;
+    expect(auditRow.before.loser.consents).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ kind: 'express_written', channel: 'phone_call' }),
+        expect.objectContaining({ kind: 'opt_out', channel: 'sms' })
+      ])
+    );
+    expect(auditRow.after.grantsCopied).toBe(0);
+    expect(auditRow.after.restrictionsCopied).toBe(1);
+    expect(auditRow.after.consents).toEqual([
+      expect.objectContaining({ kind: 'opt_out', channel: 'sms' })
+    ]);
+    expect(JSON.stringify(auditRow)).not.toContain('private grant wording');
+  });
 });

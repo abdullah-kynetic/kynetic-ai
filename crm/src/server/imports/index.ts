@@ -1,4 +1,5 @@
 export {
+  classifyImportUpload,
   createImportBatch,
   IMPORT_MAX_BYTES,
   IMPORT_MAX_ROWS,

@@ -75,12 +75,26 @@ export default async function AdminHomePage() {
                     Manage
                   </Link>
                   {user.kyneticRole === 'admin' && (
-                    <Link
-                      className='ml-3 min-h-11 inline-flex items-center underline'
-                      href={`/admin/clients/${row.tenantId}/webhooks`}
-                    >
-                      Webhooks
-                    </Link>
+                    <>
+                      <Link
+                        className='ml-3 min-h-11 inline-flex items-center underline'
+                        href={`/admin/clients/${row.tenantId}/webhooks`}
+                      >
+                        Webhooks
+                      </Link>
+                      <Link
+                        className='ml-3 min-h-11 inline-flex items-center underline'
+                        href={`/admin/clients/${row.tenantId}/reports`}
+                      >
+                        Reports
+                      </Link>
+                      <Link
+                        className='ml-3 min-h-11 inline-flex items-center underline'
+                        href={`/admin/clients/${row.tenantId}/service-tokens`}
+                      >
+                        Service tokens
+                      </Link>
+                    </>
                   )}
                 </TableCell>
               </TableRow>

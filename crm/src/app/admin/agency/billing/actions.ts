@@ -11,6 +11,18 @@ import {
 } from '@/server/agency/billing';
 import { dollarsToCents } from '@/server/agency/billing-policy';
 import { AppError } from '@/server/errors';
+
+function billingError(error: unknown, fallback: 'terms' | 'invoice' | 'reminder'): string {
+  if (error instanceof AppError && error.code === 'FORBIDDEN') return 'blocked';
+  if (error instanceof AppError && error.code === 'CONFLICT') return 'invoice';
+  if (
+    error instanceof AppError ||
+    (error instanceof Error && error.message.startsWith('Enter a USD'))
+  )
+    return fallback;
+  throw error;
+}
+
 export async function saveTermsAction(form: FormData) {
   const caller = await agencyCaller();
   try {
@@ -31,7 +43,7 @@ export async function saveTermsAction(form: FormData) {
       !(error instanceof Error && error.message.startsWith('Enter a USD'))
     )
       throw error;
-    redirect('/admin/agency/billing?error=terms');
+    redirect(`/admin/agency/billing?error=${billingError(error, 'terms')}`);
   }
   revalidatePath('/admin/agency/billing');
 }
@@ -47,12 +59,16 @@ export async function createInvoiceAction(form: FormData) {
     });
   } catch (error) {
     if (!(error instanceof AppError)) throw error;
-    redirect('/admin/agency/billing?error=invoice');
+    redirect(`/admin/agency/billing?error=${billingError(error, 'invoice')}`);
   }
   revalidatePath('/admin/agency/billing');
 }
 export async function dunningAction() {
-  await draftAgencyDunning(await agencyCaller());
+  try {
+    await draftAgencyDunning(await agencyCaller());
+  } catch (error) {
+    redirect(`/admin/agency/billing?error=${billingError(error, 'reminder')}`);
+  }
   revalidatePath('/admin/agency/billing');
 }
 export async function simulateInvoiceAction(

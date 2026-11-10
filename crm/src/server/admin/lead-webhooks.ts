@@ -1,75 +1,53 @@
 import { randomBytes } from 'node:crypto';
-import { and, eq, isNull } from 'drizzle-orm';
 import { z } from 'zod';
 import { audit } from '../audit';
-import { getWorkerDb, type Db, type Tx } from '../db/client';
-import { tenantModules, tenants, users } from '../db/schema';
+import type { Db } from '../db/client';
 import { AppError } from '../errors';
-import { requireModule } from '../modules';
-import { listTenantSecretStatus, writeTenantSecret } from '../secrets';
+import { listTenantSecretStatus, readTenantSecret, writeTenantSecret } from '../secrets';
 import type { Keyring } from '../secrets/crypto';
-import { withTenant } from '../tenancy';
+import { setPlatformSetting } from './report-schedule';
+import { asTenantAdmin, readPlatformConfig } from './tenant-admin';
 import type { StaffCaller } from './users';
 
 const binding = { provider: 'lead_webhook', name: 'signing_secret' } as const;
+export const N8N_PUSH_SECRET = { provider: 'n8n', name: 'event_webhook' } as const;
 type Options = { db?: Db; keyring?: Keyring };
 
-async function asAdmin<T>(
-  caller: StaffCaller,
-  tenantId: string,
-  opts: Options,
-  fn: (tx: Tx) => Promise<T>
-): Promise<T> {
-  if (caller.kyneticRole !== 'admin') throw new AppError('FORBIDDEN');
-  if (!z.uuid().safeParse(tenantId).success) throw new AppError('NOT_FOUND');
-  return withTenant(
-    { tenantId, userId: caller.id, role: 'admin' },
-    async (tx) => {
-      await requireModule({ tenantId, role: 'admin' }, 'platform', { tx });
-      // Recheck database role/disabled status before the privileged secret-store operation.
-      const [user] = await tx
-        .select({ role: users.kyneticRole })
-        .from(users)
-        .where(and(eq(users.id, caller.id), isNull(users.disabledAt)))
-        .limit(1);
-      if (user?.role !== 'admin') throw new AppError('FORBIDDEN');
-      const [tenant] = await tx
-        .select({ id: tenants.id })
-        .from(tenants)
-        .where(eq(tenants.id, tenantId))
-        .limit(1);
-      if (!tenant) throw new AppError('NOT_FOUND');
-      return fn(tx);
-    },
-    { db: opts.db ?? getWorkerDb() }
-  );
-}
+const n8nUrlSchema = z
+  .string()
+  .trim()
+  .max(500)
+  .refine((value) => {
+    try {
+      const url = new URL(value);
+      return (
+        url.protocol === 'https:' && !url.username && !url.password && !url.search && !url.hash
+      );
+    } catch {
+      return false;
+    }
+  }, 'https_url');
 
 export async function getLeadWebhookSettings(
   caller: StaffCaller,
   tenantId: string,
   opts: Options = {}
 ) {
-  return asAdmin(caller, tenantId, opts, async (tx) => {
+  return asTenantAdmin(caller, tenantId, opts, async (tx) => {
     const statuses = await listTenantSecretStatus(tx, tenantId);
     const secret = statuses.find((s) => s.provider === binding.provider && s.name === binding.name);
-    const [platform] = await tx
-      .select({ config: tenantModules.config })
-      .from(tenantModules)
-      .where(eq(tenantModules.moduleKey, 'platform'))
-      .limit(1);
-    const config = platform?.config as { n8nWebhookUrl?: unknown } | undefined;
-    const parsed = z.url().safeParse(config?.n8nWebhookUrl);
-    let n8nUrl: string | null = null;
-    if (parsed.success) {
-      const url = new URL(parsed.data);
-      if (url.protocol === 'https:' && !url.username && !url.password && !url.search && !url.hash)
-        n8nUrl = url.toString();
-    }
+    const push = statuses.find(
+      (s) => s.provider === N8N_PUSH_SECRET.provider && s.name === N8N_PUSH_SECRET.name
+    );
+    const config = await readPlatformConfig(tx);
+    const parsed = n8nUrlSchema.safeParse(config.n8nWebhookUrl);
     return {
       tenantId,
       leadPath: `/api/hooks/leads/${tenantId}`,
-      n8nUrl,
+      n8nUrl: parsed.success ? new URL(parsed.data).toString() : null,
+      n8nSecret: push
+        ? { isSet: true, rotatedAt: push.rotatedAt }
+        : { isSet: false, rotatedAt: null },
       secret: secret
         ? { isSet: true, rotatedAt: secret.rotatedAt }
         : { isSet: false, rotatedAt: null }
@@ -83,7 +61,7 @@ export async function rotateLeadWebhookSecret(
   tenantId: string,
   opts: Options = {}
 ) {
-  return asAdmin(caller, tenantId, opts, async (tx) => {
+  return asTenantAdmin(caller, tenantId, opts, async (tx) => {
     const secret = randomBytes(32).toString('base64url');
     await writeTenantSecret(tx, { tenantId, ...binding }, secret, { keyring: opts.keyring });
     await audit(tx, {
@@ -94,4 +72,50 @@ export async function rotateLeadWebhookSecret(
     });
     return { secret };
   });
+}
+
+/**
+ * Saves the n8n push URL and, when a secret is provided, encrypts it. The secret is never
+ * returned and any plaintext copy in module config is removed by admin_set_platform_setting.
+ */
+export async function setN8nPushConfig(
+  caller: StaffCaller,
+  tenantId: string,
+  input: { url: string; secret?: string },
+  opts: Options = {}
+) {
+  const url = n8nUrlSchema.safeParse(input.url);
+  if (!url.success)
+    throw new AppError('VALIDATION_FAILED', {
+      message: 'Enter an https URL with no user, password, query, or fragment.'
+    });
+  const secret = input.secret?.trim() ?? '';
+  if (secret && (secret.length < 8 || secret.length > 200))
+    throw new AppError('VALIDATION_FAILED', {
+      message: 'The n8n secret must be 8 to 200 characters.'
+    });
+  return asTenantAdmin(caller, tenantId, opts, async (tx) => {
+    await setPlatformSetting(tx, tenantId, 'n8nWebhookUrl', url.data);
+    if (secret) {
+      await writeTenantSecret(tx, { tenantId, ...N8N_PUSH_SECRET }, secret, {
+        keyring: opts.keyring
+      });
+      await audit(tx, {
+        action: 'n8n.push.secret',
+        entity: 'tenant',
+        entityId: tenantId,
+        after: { provider: N8N_PUSH_SECRET.provider, name: N8N_PUSH_SECRET.name }
+      });
+    }
+    return { url: new URL(url.data).toString(), secretWritten: Boolean(secret) };
+  });
+}
+
+/** Worker delivery reads the encrypted secret. Plaintext module config is not a credential. */
+export async function readN8nPushSecret(
+  tx: Parameters<typeof readTenantSecret>[0],
+  tenantId: string,
+  opts: { keyring?: Keyring } = {}
+) {
+  return readTenantSecret(tx, { tenantId, ...N8N_PUSH_SECRET }, opts);
 }

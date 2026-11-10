@@ -2,6 +2,7 @@ import PageContainer from '@/components/layout/page-container';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { loadShellContext } from '@/server/shell';
 import { listReports } from '@/server/reports';
+import { readReportSchedule } from '@/server/schedules';
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
@@ -14,9 +15,13 @@ export default async function ReportsPage() {
   if (!shell) redirect('/sign-in');
   if (!shell.tenant) redirect('/dashboard');
   const ctx = { tenantId: shell.tenant.id, userId: shell.user.id, role: shell.role };
-  const reports = await listReports(ctx);
+  const [reports, schedule] = await Promise.all([listReports(ctx), readReportSchedule(ctx)]);
   return (
     <PageContainer pageTitle='Reports' pageDescription='Monthly return and activity reports.'>
+      <p className='mb-4'>
+        The monthly ROI report is generated on day {schedule.day} of each month ({schedule.timezone}
+        ).
+      </p>
       <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
         {reports.length ? (
           reports.map((report) => (

@@ -337,6 +337,13 @@
       "when": 1793583000000,
       "tag": "1014_email_otp_and_totp_recovery",
       "breakpoints": true
+    },
+    {
+      "idx": 48,
+      "version": "7",
+      "when": 1793586000000,
+      "tag": "1015_schedules_retention_settings",
+      "breakpoints": true
     }
   ]
 }

@@ -28,6 +28,8 @@ import {
   registerMissedCallTextbackSubscriber
 } from './automations';
 import { registerReportWorker } from './reports';
+import { registerRetentionWorker, scheduleRetentionPurge } from './retention/purge';
+import { registerScheduleWorkers, scheduleTenantJobs } from './schedules';
 import { registerN8nEventSubscribers } from './integrations/n8n';
 import { registerWorker, scheduleRecurring } from './jobs';
 import { handleBackupJob, type BackupJob } from './admin/backups';
@@ -73,6 +75,10 @@ await scheduleRecurring(
 );
 await registerAutomationWorker();
 await registerReportWorker();
+await registerScheduleWorkers();
+await registerRetentionWorker();
+await scheduleTenantJobs();
+await scheduleRetentionPurge();
 console.log(JSON.stringify({ level: 'info', msg: 'worker started' }));
 
 for (const signal of ['SIGTERM', 'SIGINT'] as const) {

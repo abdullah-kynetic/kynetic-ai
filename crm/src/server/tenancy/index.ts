@@ -1,5 +1,6 @@
 export { withTenant } from './withTenant';
 export { withPlatform } from './withPlatform';
+export { withSystem } from './withSystem';
 export {
   appRoleSchema,
   KYNETIC_ROLES,

@@ -33,13 +33,18 @@ export default async function AgencyBilling({
   return (
     <PageContainer
       pageTitle='Agency billing'
-      pageDescription='Custom USD deal terms, invoice drafts and reminder drafts. No live Stripe charges or delivery.'
+      pageDescription='Custom USD deal terms, invoice drafts and reminder drafts. Saving stays local. This page does not charge a card or call Stripe.'
     >
       <Link href='/admin/agency'>Agency dashboard</Link>
       {q.error && (
         <p role='alert'>
-          Check the amounts and installment total. Invoice periods cannot be recreated with
-          different terms.
+          {q.error === 'blocked'
+            ? 'Live charges and delivery are blocked. Nothing was sent or charged. Terms, drafts and reminders can still be saved.'
+            : q.error === 'invoice'
+              ? 'That billing period already has an invoice with different terms.'
+              : q.error === 'reminder'
+                ? 'The reminder draft could not be saved. Nothing was sent.'
+                : 'Check the amounts. Installments must add up to the setup fee.'}
         </p>
       )}
       <div className='agency-columns'>

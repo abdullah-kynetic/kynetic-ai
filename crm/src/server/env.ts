@@ -95,3 +95,9 @@ export function getEnv(): Env {
   cached ??= parseEnv(process.env);
   return cached;
 }
+
+/** Tests that flip PROVIDER_MODE need a fresh parse. Production calls never use this. */
+export function resetEnvCacheForTests(): void {
+  if (process.env.NODE_ENV !== 'test') throw new Error('resetEnvCacheForTests is test-only');
+  cached = undefined;
+}
