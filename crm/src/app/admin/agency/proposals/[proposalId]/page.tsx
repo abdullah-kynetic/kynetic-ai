@@ -49,6 +49,12 @@ export default async function ProposalPage({
         >
           Preview saved draft
         </Link>
+        <Link
+          href={`/admin/agency/contracts?deal=${data.proposal.dealId}`}
+          className='inline-flex min-h-11 items-center underline'
+        >
+          Contract
+        </Link>
       </nav>
       <p className='mb-6 rounded border p-3'>
         Internal draft · Nothing is sent or published. Preview shows the last saved content.

@@ -79,7 +79,6 @@ export const agencyCallAttempts = pgTable(
     loggedAt: timestamp('logged_at', { withTimezone: true, mode: 'string' }).notNull().defaultNow()
   },
   (t) => [
-    unique('agency_call_attempts_tenant_id_contact_id_key').on(t.tenantId, t.contactId),
     unique('agency_call_attempts_tenant_id_event_id_key').on(t.tenantId, t.eventId),
     foreignKey({
       columns: [t.tenantId, t.contactId],

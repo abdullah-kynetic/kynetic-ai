@@ -1416,7 +1416,7 @@ Migration `1004_agency_dialer_campaigns` adds three agency-owned tables. Their t
 - `agency_campaign_leads`: tenant/campaign/contact composite PK and tenant-scoped FKs. Assignment is idempotent.
 - `agency_call_attempts`: UUID id, tenant/contact/event, validated-request hash, bounded manual outcome/notes, actor and server timestamp. Tenant/contact and tenant/event are unique. Runtime UPDATE/DELETE revoked. History is separate from AI/provider calls, costs and metrics; no provider identifier is stored.
 
-All three use FORCE RLS. Outcome writes lock the event/contact, recheck current eligibility, and atomically commit history, timeline/audit and DNC effects. Same event/body returns the prior ID; changed body or already-logged contact conflicts. Leads leave the first-pass queue after an outcome. Callback is history only; no automatic retry/requeue or reminder is added.
+All three use FORCE RLS. Outcome writes lock the event/contact, recheck current eligibility, and atomically commit history, timeline/audit and DNC effects. Same event/body returns the prior ID; changed body conflicts. A later outcome for the same contact is allowed only when a scheduled callback is due. Migration 1017 drops the one-attempt unique key on `(tenant_id, contact_id)` and keeps the event unique key.
 
 The synthetic lead form optionally accepts a reserved +1 area-code 555-01xx phone and a known US state/DC code. Unknown/conflicting state excludes the candidate. Campaign reports summarize manual outcomes for assigned live contacts, including pre-assignment history; they are not attribution calculations. Assignment choices keep the latest-50 lead limit.
 
@@ -1429,3 +1429,15 @@ Migration 1005 adds `agency_proposals`: one working draft per synthetic agency d
 Migration `1006_support_requests` adds `support_requests` (tenant_id, subject 1-200, body 1-5000, status `open`/`in_progress`/`resolved`, submitted_by, created_at, updated_at, resolved_at). Standard FORCE RLS applies. The app and worker roles can SELECT and INSERT their own tenant's rows; UPDATE and DELETE are revoked. Kynetic staff (admin and VA) read every client's requests with `admin_list_support_requests()` and change status with `admin_set_support_request_status(id, status)`, both SECURITY DEFINER functions owned by `kynetic_rollup` that check the role, refuse view-as and read-only sessions, and write an audit row for each status change. Nothing is sent, queued or emitted.
 
 Migration `1016_systems_templates_guarantee` adds `tenants.guarantee_baseline_bookings` and `system_requests` (tenant_id, module_key, status `open`, requested_by, created_at). One row per tenant and module. The app role can SELECT and INSERT its own tenant's rows; UPDATE and DELETE are revoked. A client insert is audited as `system.request`. Staff read every client's rows with `admin_list_system_requests()`. The baseline column is written only by `admin_update_tenant_commercial`, which audits `tenant.commercial_update`. Nothing is charged or sent.
+
+## Agency sales tools and document versions (2026-11-10)
+
+Migration `1017_agency_sales_tools` adds five agency-tenant tables. Each has `tenant_id` referencing `agency_workspaces`, FORCE RLS on `app.tenant_id`, and runtime DELETE revoked. A client tenant reads zero rows.
+
+- `agency_contracts`: deal, title, status `draft`/`sent`/`signed`/`void`, sent_on, signed_on, notes, and an optional `signed_file_key` for a PDF kept in tenant-prefixed storage. No email or e-sign provider is called.
+- `agency_expenses`: date, vendor, category, amount in cents, note, and `deleted_at` for a soft delete.
+- `agency_revenue_entries`: date, amount in cents, note, optional deal, and `deleted_at`. Won-deal revenue is read from `deals.value_cents` where `won_at` is set. It is not copied into this table.
+- `agency_referrals`: referrer name, optional contact, status `new`/`approved`/`declined`, reward note, and the admin who approved it.
+- `agency_case_studies`: optional client tenant, status `idea`/`drafting`/`approved`/`published`, URL, and note.
+
+`tenant_documents` gains `deleted_at` and `superseded_by`. Delete and replace are soft. The stored object stays. A client read or download of a deleted or superseded id returns no row. `agency_campaign_history` gains `recorded_by` and `note`, and its result check adds `done`, `skipped`, and `rescheduled`. The one-row-per-step unique key is dropped so a reschedule and a later completion can both be recorded. `agency_call_attempts` keeps its event unique key and drops the one-row-per-contact unique key so a due callback can be logged again.

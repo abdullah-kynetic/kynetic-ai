@@ -143,17 +143,13 @@ export const agencyCampaignHistory = pgTable(
     stepIndex: integer('step_index').notNull(),
     channel: text().notNull(),
     result: text().notNull(),
+    recordedBy: uuid('recorded_by').references(() => users.id),
+    note: text(),
     recordedAt: timestamp('recorded_at', { withTimezone: true, mode: 'string' })
       .notNull()
       .defaultNow()
   },
   (t) => [
-    unique('agency_campaign_history_tenant_id_campaign_id_contact_id_step_index_key').on(
-      t.tenantId,
-      t.campaignId,
-      t.contactId,
-      t.stepIndex
-    ),
     foreignKey({
       columns: [t.tenantId, t.campaignId, t.contactId],
       foreignColumns: [
@@ -169,7 +165,7 @@ export const agencyCampaignHistory = pgTable(
     ),
     check(
       'agency_campaign_history_result_check',
-      sql`${t.result} in ('simulated','manual_complete')`
+      sql`${t.result} in ('simulated','manual_complete','done','skipped','rescheduled')`
     )
   ]
 );

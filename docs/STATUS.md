@@ -16,6 +16,11 @@ PR #146 is live: daily metrics and monthly report fanout, admin service tokens, 
 
 This branch then adds the per-client systems library, template apply, remodeling industry, client My systems requests, and the 30-day 20% booking guarantee tracker (admin baseline override). Migration `1016_systems_templates_guarantee`. Not yet deployed from this note alone.
 
+## Agency sales tools (2026-11-10)
+
+This note records code on the batch 4 branch. It does not deploy or migrate production. Migration `1017_agency_sales_tools` follows `1016_systems_templates_guarantee`.
+
+The agency workspace can schedule a Pacific-time callback, mark a campaign step done, skip it, or reschedule it, and export a proposal PDF. Contracts, expenses, referrals, and case studies are tracked by hand. None of those actions place a call, send a text or email, or charge a card. "Simulate Stripe event" and "Simulate step" stay available outside production and are refused when `NODE_ENV` is production. Excel `.xlsx` import is available (KI-018). Retell cannot be saved as an Alex provider. Prices are still not in the proposal PDF (KI-021). Stored files for a deleted or replaced document are kept (KI-020).
 
 ## Current direction
 

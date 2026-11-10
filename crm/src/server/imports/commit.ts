@@ -18,7 +18,7 @@ import { AppError } from '../errors';
 import { withTenant, type TenantContextInput } from '../tenancy';
 import { createContactSchema } from '../contacts/schemas';
 import { parseInput } from '../validation';
-import { parseImportCsv } from './csv';
+import { loadImportTable } from './table';
 import type { ContactDryRun, ContactMapping } from './dry-run';
 import { mappingSchema, previewContacts } from './dry-run';
 import { recordConsent, revokeConsent } from '../consent';
@@ -78,7 +78,7 @@ export async function commitContactBatch(
       if (!batch) throw new AppError('NOT_FOUND');
       if (
         !batch.fileKey ||
-        batch.fileType !== 'csv' ||
+        (batch.fileType !== 'csv' && batch.fileType !== 'xlsx') ||
         !['dry_run_ok', 'dry_run_failed'].includes(batch.status)
       ) {
         throw new AppError('CONFLICT', {
@@ -90,8 +90,9 @@ export async function commitContactBatch(
       if (!mapping.success || !stored || !batch.fileSha256) throw new AppError('CONFLICT');
       if (createHash('sha256').update(stored.body).digest('hex') !== batch.fileSha256)
         throw new AppError('CONFLICT');
-      const rows = parseImportCsv(stored.body);
-      const report = previewContacts(rows, mapping.data, { phones: [], emails: [] });
+      const table = await loadImportTable(batch.fileType, stored.body);
+      const rows = table.rows;
+      const report = previewContacts(rows, mapping.data, { phones: [], emails: [] }, table.blocked);
       if (report.total !== batch.rowsTotal)
         throw new AppError('CONFLICT', {
           message: 'The uploaded file no longer matches its dry run.'
@@ -137,7 +138,11 @@ export async function commitContactBatch(
       let skipped = 0;
       let failed = 0;
 
-      for (const row of data) {
+      for (const [index, row] of data.entries()) {
+        if (table.blocked.has(index + 2)) {
+          failed++;
+          continue;
+        }
         const parsed = parseRow(row, header, mapping.data);
         if (!parsed) {
           failed++;

@@ -6,6 +6,12 @@
 Mirror of open problems tracked in Twenty. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Open
+### KI-020: Soft-deleted document files are not purged (low)
+Found 2026-11-10. Admin delete and replace hide a PDF from the client and set `tenant_documents.deleted_at` or `superseded_by`. The storage object is kept. There is no job that removes those objects after a retention window.
+
+### KI-021: Proposal PDF has no price (low)
+Found 2026-11-10. The proposal PDF and preview say "Pricing to be confirmed". The price schedule is not in this repo, and a catalog or estimator is blocked. Do not invent a number.
+
 ### KI-002: TCPA emergency branch opt-out gap (high)
 Emergency calls and urgent notifications may reach someone who opted out.
 Fix: counsel sign-off (task 1.4). Also feeds the agreement rewrite (task 4.7, 4.8).
@@ -112,7 +118,8 @@ Main's `mergeContacts` copied every consent row, grants included, onto the survi
 A key starting cal_live_f64 was committed Aug 23, carried in from the Inflate AI reference files. Confirmed Oct 4, 2026 it was a live key on Abdullah's own Cal.com account (abdullah@kyneticai.com). Deleted in Cal.com and replaced with a new key, entered into Emily's two Retell Cal tools (check_availability_cal, book_appointment_cal on llm_b520d8a6b9bf754f19285a8a6185), event type 7025524 (Water Damage Assessment). Confirmed both tools show the new key and validate. The old key value stays in git history; it is dead in Cal.com so that no longer matters.
 
 ### KI-018: Excel import is still refused (medium)
-Found 2026-11-10. PRD decision 17 and F-90 call for `.csv` and `.xlsx`. No safe spreadsheet parser is a dependency, so the import screen and the upload route accept CSV only and refuse `.xlsx`, `.xlsm`, and `.xls` before storage. Do not add a parser that evaluates formulas.
+Found 2026-11-10. PRD decision 17 and F-90 call for `.csv` and `.xlsx`. No safe spreadsheet parser was a dependency, so the import screen refused `.xlsx`.
+Resolved 2026-11-10: `.xlsx` is accepted with `read-excel-file` 9.3.14, which returns stored cell values and does not calculate formulas. A formula with no cached value fails that row in the dry run. Zip entry count and uncompressed size are capped before inflate. `.xlsm` and `.xls` stay refused, including a macro file renamed to `.xlsx`. `bun audit` reported no vulnerabilities for the dependency set.
 
 ### KI-019: Audit-log archive destination is not defined (low)
 Found 2026-11-10. PRD decision 9 keeps the audit log 24 months online, then archived. `audit_log` is append-only, and no archive store is named. The retention purge does not delete audit rows. Recordings, messages, revoked consents, import files, and webhook payloads follow the decided windows.

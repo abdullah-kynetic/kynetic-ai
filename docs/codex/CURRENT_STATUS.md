@@ -13,6 +13,7 @@ On this branch, client metrics and monthly reports are enqueued per operating te
 - The separate DEV environment (`dev.kyneticai.com`, `scripts/deploy-dev.sh`, `crm/deploy/dev/`) is retired until after go-live. Do not deploy it. Do not continue `dev/codex-setup`.
 - [COMPLETION-PLAN.md](COMPLETION-PLAN.md) is historical evidence, not the operating plan. The operating order is the five steps in `docs/STATUS.md`.
 - This note does not deploy. Live production remains release `350bf673` until that yes.
+- 2026-11-10: batch 4 adds agency callbacks, manual campaign completion, proposal PDF export, contract and finance tracking, soft document delete and replace, safe `.xlsx` import, and a parked Retell provider. No outbound send and no deploy.
 - [PROGRESS.md](PROGRESS.md) is a technical log, not a second roadmap.
 - The client portal now has a per-tenant admin overview, per-client system settings, a template library (industry templates plus the module catalog; Plan 2 names are coming soon), a client My systems page, a remodeling onboarding template, and a 30-day booking guarantee. Applying a template is idempotent and audited. A "Request this" button files an audited request and takes no payment. This note does not deploy.
 - GitHub `main` after PR #146 is `ac0192af`, which is live on portal.kyneticai.com. This branch rebases on that tip and renumbers its migration to `1016`.

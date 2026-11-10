@@ -351,6 +351,13 @@
       "when": 1793589000000,
       "tag": "1016_systems_templates_guarantee",
       "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "7",
+      "when": 1793592000000,
+      "tag": "1017_agency_sales_tools",
+      "breakpoints": true
     }
   ]
 }

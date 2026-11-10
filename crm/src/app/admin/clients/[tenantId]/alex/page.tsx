@@ -48,14 +48,22 @@ export default async function AdminAlexConfigPage({
       <form action={updateAlexConfigAction.bind(null, tenantId)} className='max-w-xl space-y-5'>
         <div className='space-y-2'>
           <Label htmlFor='provider'>Provider</Label>
+          {config.provider === 'retell' ? (
+            <p className='rounded border px-3 py-2'>
+              Retell <span className='font-medium'>Parked</span>
+              <span className='text-muted-foreground block text-sm'>
+                Retell is parked and cannot be saved. ElevenLabs is the only provider for new saves.
+              </span>
+            </p>
+          ) : null}
           <select
             id='provider'
             name='provider'
-            defaultValue={config.provider}
+            defaultValue={config.provider === 'retell' ? '' : 'elevenlabs'}
             className='bg-background border-input min-h-11 w-full rounded-md border px-3'
           >
+            {config.provider === 'retell' ? <option value=''>Keep parked Retell</option> : null}
             <option value='elevenlabs'>ElevenLabs</option>
-            <option value='retell'>Retell</option>
           </select>
         </div>
         <div className='space-y-2'>

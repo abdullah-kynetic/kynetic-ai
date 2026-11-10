@@ -33,6 +33,7 @@ export async function updateAdminAlexConfig(
 ) {
   const input = inputSchema.safeParse(raw);
   if (!input.success) throw new ValidationError({ config: ['invalid'] });
+  if (input.data.provider === 'retell') throw new ValidationError({ provider: ['retell_parked'] });
   return withTenant(
     { ...ctx, role: 'admin' },
     async (tx) => {

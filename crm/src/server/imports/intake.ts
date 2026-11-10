@@ -7,16 +7,18 @@ import { AppError, ValidationError } from '../errors';
 import { getStorage, tenantKey } from '../adapters/storage';
 import { withTenant, type TenantContextInput } from '../tenancy';
 import { can, type Actor } from '../auth/permissions';
-import { IMPORT_MAX_ROWS, parseImportCsv } from './csv';
+import { IMPORT_MAX_ROWS } from './csv';
 import { requireModule } from '../modules';
+import { isXlsxReject, loadImportTable } from './table';
 
 export const IMPORT_MAX_BYTES = 10 * 1024 * 1024;
 export { IMPORT_MAX_ROWS };
 
-/** Excel workbooks are not accepted until a safe parser is a dependency. CSV is the upload path. */
-export function classifyImportUpload(fileName: string): 'csv' | 'excel' | 'unsupported' {
+/** `.xlsx` is accepted. Macro-enabled `.xlsm` and legacy `.xls` stay refused. */
+export function classifyImportUpload(fileName: string): 'csv' | 'xlsx' | 'excel' | 'unsupported' {
   const lower = fileName.trim().toLowerCase();
-  if (lower.endsWith('.xlsx') || lower.endsWith('.xlsm') || lower.endsWith('.xls')) return 'excel';
+  if (lower.endsWith('.xlsm') || lower.endsWith('.xls')) return 'excel';
+  if (lower.endsWith('.xlsx')) return 'xlsx';
   if (lower.endsWith('.csv')) return 'csv';
   return 'unsupported';
 }
@@ -43,22 +45,25 @@ export async function createImportBatch(
   if (!parsed.success) throw new ValidationError({ import: ['invalid'] });
   if (file.byteLength > IMPORT_MAX_BYTES) throw new ValidationError({ file: ['too_large'] });
   const uploadKind = classifyImportUpload(parsed.data.fileName);
-  if (uploadKind === 'excel' || parsed.data.fileType === 'xlsx')
-    throw new ValidationError({ file: ['xlsx_not_available'] });
-  if (uploadKind !== 'csv') throw new ValidationError({ file: ['unsupported_type'] });
-  if (file.length === 0 || file.includes(0)) throw new ValidationError({ file: ['invalid_csv'] });
-  try {
-    new TextDecoder('utf-8', { fatal: true }).decode(file);
-  } catch {
-    throw new ValidationError({ file: ['invalid_csv_encoding'] });
+  if (uploadKind === 'excel') throw new ValidationError({ file: ['unsupported_type'] });
+  if (uploadKind === 'unsupported' || uploadKind !== parsed.data.fileType)
+    throw new ValidationError({ file: ['unsupported_type'] });
+  if (parsed.data.fileType === 'csv') {
+    if (file.length === 0 || file.includes(0)) throw new ValidationError({ file: ['invalid_csv'] });
+    try {
+      new TextDecoder('utf-8', { fatal: true }).decode(file);
+    } catch {
+      throw new ValidationError({ file: ['invalid_csv_encoding'] });
+    }
   }
   try {
-    parseImportCsv(file);
-  } catch {
-    throw new ValidationError({ file: ['invalid_csv_or_row_limit'] });
+    await loadImportTable(parsed.data.fileType, file);
+  } catch (error) {
+    if (parsed.data.fileType === 'csv')
+      throw new ValidationError({ file: ['invalid_csv_or_row_limit'] });
+    const reason = isXlsxReject(error) ? error.reason : 'invalid_xlsx';
+    throw new ValidationError({ file: [reason] });
   }
-  const lower = parsed.data.fileName.toLowerCase();
-  if (!lower.endsWith('.csv')) throw new ValidationError({ file: ['unsupported_type'] });
   return withTenant(
     ctx,
     async (tx) => {

@@ -6,6 +6,7 @@ import type { Db } from '../db/client';
 import { AppError } from '../errors';
 import { parseInput } from '../validation';
 import { inAgency } from './index';
+import { productionSimulationRefused } from './production-guard';
 import { termsSchema, stubStripeEvent, billingTransition } from './billing-policy';
 type Options = { db?: Db; now?: Date };
 export type DealTerms = {
@@ -105,6 +106,10 @@ export async function applyAgencyBillingWebhook(
   raw: unknown,
   opts: Options = {}
 ) {
+  if (productionSimulationRefused())
+    throw new AppError('FORBIDDEN', {
+      message: 'Simulated Stripe events are not available in production.'
+    });
   if (
     raw &&
     typeof raw === 'object' &&

@@ -19,7 +19,7 @@ import {
 import { AppError, ValidationError } from '../errors';
 import { normalizePhone } from '../contacts/phone';
 import { withTenant, type TenantContextInput } from '../tenancy';
-import { parseImportCsv } from './csv';
+import { loadImportTable } from './table';
 import { requireModule } from '../modules';
 import { positionBetween } from '../deals/position';
 
@@ -110,7 +110,7 @@ export async function dryRunEntityBatch(
       if (!batch) throw new AppError('NOT_FOUND');
       if (
         !batch.fileKey ||
-        batch.fileType !== 'csv' ||
+        (batch.fileType !== 'csv' && batch.fileType !== 'xlsx') ||
         batch.entity === 'contact' ||
         !['uploaded', 'mapped', 'dry_run_ok', 'dry_run_failed'].includes(batch.status)
       )
@@ -123,8 +123,11 @@ export async function dryRunEntityBatch(
       )
         throw new AppError('CONFLICT');
       let parsed: { rowNumber: number; value: Record<string, string> }[];
+      let blocked: ReadonlyMap<number, string> = new Map();
       try {
-        parsed = mapRows(parseImportCsv(stored.body), batch.entity as Entity, mapping.data);
+        const table = await loadImportTable(batch.fileType, stored.body);
+        blocked = table.blocked;
+        parsed = mapRows(table.rows, batch.entity as Entity, mapping.data);
       } catch {
         throw new ValidationError({ mapping: ['invalid_column_or_file'] });
       }
@@ -134,6 +137,12 @@ export async function dryRunEntityBatch(
         failed = 0,
         duplicates = 0;
       for (const item of parsed) {
+        const formula = blocked.get(item.rowNumber);
+        if (formula) {
+          failed++;
+          if (issues.length < 200) issues.push({ row: item.rowNumber, reason: formula });
+          continue;
+        }
         const problem = await entityRowIssue(tx, ctx.tenantId, batch.entity as Entity, item.value);
         if (problem) {
           failed++;
@@ -202,7 +211,7 @@ export async function commitEntityBatch(
       if (!batch) throw new AppError('NOT_FOUND');
       if (
         !batch.fileKey ||
-        batch.fileType !== 'csv' ||
+        (batch.fileType !== 'csv' && batch.fileType !== 'xlsx') ||
         batch.entity === 'contact' ||
         !['dry_run_ok', 'dry_run_failed'].includes(batch.status)
       )
@@ -216,7 +225,8 @@ export async function commitEntityBatch(
         createHash('sha256').update(stored.body).digest('hex') !== batch.fileSha256
       )
         throw new AppError('CONFLICT');
-      const rows = mapRows(parseImportCsv(stored.body), batch.entity as Entity, mapping.data);
+      const table = await loadImportTable(batch.fileType, stored.body);
+      const rows = mapRows(table.rows, batch.entity as Entity, mapping.data);
       if (rows.length !== batch.rowsTotal) throw new AppError('CONFLICT');
       let imported = 0,
         failed = 0,
@@ -231,7 +241,11 @@ export async function commitEntityBatch(
       }[] = [];
       const entity = batch.entity as Entity;
       let interrupted = false;
-      for (const { value } of rows) {
+      for (const { value, rowNumber } of rows) {
+        if (table.blocked.has(rowNumber)) {
+          failed++;
+          continue;
+        }
         if (await entityRowIssue(tx, ctx.tenantId, entity, value)) {
           failed++;
           continue;

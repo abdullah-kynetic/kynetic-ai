@@ -154,7 +154,7 @@ describe('F-90 to F-96 contact import workflow', () => {
       )
     ).rejects.toMatchObject({
       code: 'VALIDATION_FAILED',
-      fieldErrors: { file: ['xlsx_not_available'] }
+      fieldErrors: { file: ['not_zip'] }
     });
     await expect(
       createImportBatch(
@@ -166,7 +166,7 @@ describe('F-90 to F-96 contact import workflow', () => {
       )
     ).rejects.toMatchObject({
       code: 'VALIDATION_FAILED',
-      fieldErrors: { file: ['xlsx_not_available'] }
+      fieldErrors: { file: ['unsupported_type'] }
     });
     expect(await storage.list(`${IDS.tenantA}/imports/`)).toHaveLength(storedBefore);
     await expect(

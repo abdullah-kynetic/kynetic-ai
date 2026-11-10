@@ -14,6 +14,8 @@ const links = [
   ['Human dialer', '/admin/agency/dialer'],
   ['Campaigns', '/admin/agency/campaigns'],
   ['Proposals', '/admin/agency/proposals'],
+  ['Contracts', '/admin/agency/contracts'],
+  ['Finance', '/admin/agency/finance'],
   ['Operations', '/admin/agency/ops'],
   ['Billing', '/admin/agency/billing']
 ] as const;

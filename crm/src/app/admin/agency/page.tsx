@@ -1,7 +1,9 @@
 import { agencyChannel } from '@/components/agency/format';
+import { getAgencyFinanceSummary } from '@/server/agency/finance';
 import { getAgencyRates } from '@/server/agency/inbox';
 import { percent } from '@/server/agency/rates';
 import { US_STATE_CODES } from '@/server/agency/dialer-policy';
+import Link from 'next/link';
 import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
 import PageContainer from '@/components/agency/page';
@@ -58,11 +60,13 @@ export default async function AgencyPage({
       : {}),
     ...(channels.includes(query.channel ?? '') ? { channel: query.channel } : {})
   };
-  const [{ stages }, data, alerts, rates] = await Promise.all([
+  const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  const [{ stages }, data, alerts, rates, finance] = await Promise.all([
     getAgencyPipeline(caller),
     listAgencyLeads(caller, filter),
     listAgencyAlerts(caller),
-    getAgencyRates(caller)
+    getAgencyRates(caller),
+    getAgencyFinanceSummary(caller)
   ]);
   return (
     <PageContainer
@@ -75,6 +79,26 @@ export default async function AgencyPage({
           @example.test email, and provide a reason when moving to Lost.
         </p>
       )}
+      <section aria-label='This month finance' className='agency-metrics'>
+        <h2>This month</h2>
+        <dl>
+          <div>
+            <dt>Revenue</dt>
+            <dd>{money.format(finance.revenueCents / 100)}</dd>
+          </div>
+          <div>
+            <dt>Expenses</dt>
+            <dd>{money.format(finance.expenseCents / 100)}</dd>
+          </div>
+          <div>
+            <dt>Net</dt>
+            <dd>{money.format(finance.netCents / 100)}</dd>
+          </div>
+        </dl>
+        <p>
+          <Link href='/admin/agency/finance'>Open finance</Link>
+        </p>
+      </section>
       <section aria-label='Seven-day agency rates' className='agency-metrics'>
         <h2>Last seven days</h2>
         <dl>
@@ -171,6 +195,9 @@ export default async function AgencyPage({
                   {lead.email} · {lead.source?.replace('agency_', '').replaceAll('_', ' ')}
                 </p>
               </div>
+              {lead.deal && (
+                <Link href={`/admin/agency/contracts?deal=${lead.deal.dealId}`}>Contract</Link>
+              )}
               {lead.deal && (
                 <form
                   action={moveAgencyDealAction.bind(null, lead.deal.dealId)}

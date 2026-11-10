@@ -2,10 +2,18 @@ import { agencyDateTime, agencyChannel } from '@/components/agency/format';
 import { AgencyStatus } from '@/components/agency/page';
 import { AgencySubmitButton as Button } from '@/components/agency/motion';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { agencyCampaignStats, listAgencyCampaignTasks } from '@/server/agency/campaign-engine';
 import type { CampaignStep } from '@/server/agency/campaign-policy';
 import type { StaffCaller } from '@/server/admin/users';
-import { saveSequence, enrollSequence, completeSequence } from './sequence-actions';
+import {
+  saveSequence,
+  enrollSequence,
+  completeSequence,
+  skipSequence,
+  rescheduleSequence
+} from './sequence-actions';
+import { productionSimulationRefused } from '@/server/agency/production-guard';
 export async function CampaignSequence({
   caller,
   id,
@@ -96,25 +104,41 @@ export async function CampaignSequence({
               </p>
             )}
             {t.state === 'active' && (
-              <div className='flex gap-3'>
-                <form
-                  action={completeSequence.bind(null, id, t.contact_id, t.step_index, 'simulate')}
-                >
+              <div className='flex flex-wrap items-end gap-3'>
+                {!productionSimulationRefused() && (
+                  <form
+                    action={completeSequence.bind(null, id, t.contact_id, t.step_index, 'simulate')}
+                  >
+                    <Button type='submit' variant='outline'>
+                      Simulate step
+                    </Button>
+                  </form>
+                )}
+                <form action={completeSequence.bind(null, id, t.contact_id, t.step_index, 'done')}>
                   <Button type='submit' variant='outline'>
-                    Simulate step
+                    Mark done
                   </Button>
                 </form>
                 <form
-                  action={completeSequence.bind(
-                    null,
-                    id,
-                    t.contact_id,
-                    t.step_index,
-                    'manual_complete'
-                  )}
+                  action={skipSequence.bind(null, id, t.contact_id, t.step_index)}
+                  className='flex flex-wrap items-end gap-2'
                 >
+                  <Label htmlFor={`skip-${t.contact_id}`}>Skip reason</Label>
+                  <Input id={`skip-${t.contact_id}`} name='reason' required maxLength={500} />
                   <Button type='submit' variant='outline'>
-                    Mark manually completed
+                    Skip
+                  </Button>
+                </form>
+                <form
+                  action={rescheduleSequence.bind(null, id, t.contact_id, t.step_index)}
+                  className='flex flex-wrap items-end gap-2'
+                >
+                  <Label htmlFor={`date-${t.contact_id}`}>New date</Label>
+                  <Input id={`date-${t.contact_id}`} name='callbackDate' type='date' required />
+                  <Label htmlFor={`time-${t.contact_id}`}>New time</Label>
+                  <Input id={`time-${t.contact_id}`} name='callbackTime' type='time' required />
+                  <Button type='submit' variant='outline'>
+                    Reschedule
                   </Button>
                 </form>
               </div>

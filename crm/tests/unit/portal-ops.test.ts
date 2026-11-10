@@ -21,10 +21,10 @@ describe('report calendar', () => {
 });
 
 describe('import file kinds', () => {
-  it('accepts csv and refuses excel extensions', () => {
+  it('accepts csv and xlsx and refuses macro or legacy excel extensions', () => {
     expect(classifyImportUpload('clients.csv')).toBe('csv');
     expect(classifyImportUpload('Clients.CSV')).toBe('csv');
-    expect(classifyImportUpload('book.xlsx')).toBe('excel');
+    expect(classifyImportUpload('book.xlsx')).toBe('xlsx');
     expect(classifyImportUpload('macro.xlsm')).toBe('excel');
     expect(classifyImportUpload('old.xls')).toBe('excel');
     expect(classifyImportUpload('notes.txt')).toBe('unsupported');

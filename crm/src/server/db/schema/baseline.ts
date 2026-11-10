@@ -246,7 +246,9 @@ export const tenantDocuments = pgTable(
     uploadedBy: uuid('uploaded_by'),
     createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
       .defaultNow()
-      .notNull()
+      .notNull(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'string' }),
+    supersededBy: uuid('superseded_by')
   },
   (table) => [
     index('tenant_documents_idx').using(
