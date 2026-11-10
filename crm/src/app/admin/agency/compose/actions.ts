@@ -2,6 +2,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { saveAgencyMessage, previewAgencyMessage } from '@/server/agency/messaging';
+import { AppError } from '@/server/errors';
 import { agencyCaller } from '../caller';
 export async function saveMessageAction(form: FormData) {
   const row = await saveAgencyMessage(await agencyCaller(), {
@@ -14,6 +15,12 @@ export async function saveMessageAction(form: FormData) {
   redirect(`/admin/agency/compose?saved=${row.id}`);
 }
 export async function previewMessageAction(id: string) {
-  await previewAgencyMessage(await agencyCaller(), id);
+  try {
+    await previewAgencyMessage(await agencyCaller(), id);
+  } catch (error) {
+    if (error instanceof AppError)
+      redirect(`/admin/agency/compose?error=${error.code === 'FORBIDDEN' ? 'blocked' : 'check'}`);
+    throw error;
+  }
   revalidatePath('/admin/agency/compose');
 }

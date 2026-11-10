@@ -121,8 +121,8 @@ async function main(): Promise<void> {
     DATABASE_URL_WORKER: db.urls.worker,
     BETTER_AUTH_SECRET: secret,
     APP_ENCRYPTION_KEY: 'e2e-only-key-not-for-real-use-00000',
-    // Synthetic browser server only. Agency previews refuse anything except stub mode,
-    // and outbound stays off so the compose gate records "outbound disabled".
+    // Synthetic browser server only. Outbound stays off so the compose gate records
+    // "outbound disabled". Stub mode keeps provider adapters off. Local drafts also save in live mode.
     PROVIDER_MODE: 'stub',
     OUTBOUND_ENABLED: 'false',
     ELEVENLABS_LIVE_ENABLED: 'false',

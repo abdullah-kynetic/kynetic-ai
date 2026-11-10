@@ -8,6 +8,14 @@ Abdullah stopped the second portal line. The portal implementation that lived on
 
 `docs/codex/CURRENT_STATUS.md` restates this portal fact. `docs/codex/COMPLETION-PLAN.md` stays historical evidence. Merging the portal code does not make that file the plan. The five steps below remain the operating order.
 
+## Portal engineering note (2026-11-10)
+
+This note records a code change. It does not deploy, migrate production, or change the five-step order.
+
+The task for this change said production at portal.kyneticai.com is `main` `d7f4c07`. The 2026-11-09 note above still records live production as release `350bf673`. This pass did not probe the live portal, so both statements stay. Do not treat either as a new deploy.
+
+The change on this branch schedules the daily metrics rollup and the monthly report for onboarding and active tenants, adds admin service-token and encrypted n8n push settings, lets agency billing drafts save when `PROVIDER_MODE` is live, stops contact merge from copying consent grants, keeps Excel import refused, and adds the retention purge for the windows in PRD decision 9. Audit rows stay: the archive destination after 24 months is still open (KI-019). Excel `.xlsx` import stays refused because no safe parser is installed (KI-018). PRD decision 17 still calls for it.
+
 ## Current direction
 
 Abdullah's five steps are the operating order. There is one roadmap: Twenty note `7bfdcb7e`. Frozen checks and weights stay in note `603fe300` (baseline v1). Current scores stay in note `5c44b12e`. The Twenty twin of this file is note `2489986e`. Those ids were already on main. This pass did not re-read the notes.

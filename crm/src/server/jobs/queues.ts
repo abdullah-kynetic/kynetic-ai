@@ -35,7 +35,13 @@ export const QUEUES = {
   'report.monthly': { ...retrying, policy: 'short' },
   'backup.run': { ...retrying, policy: 'short' },
   'agency.digest': { ...retrying, policy: 'short' },
-  'agency.maintenance': { ...retrying, policy: 'short' }
+  'agency.maintenance': { ...retrying, policy: 'short' },
+  /** Lists due tenants and enqueues one metrics.daily job per tenant and day. */
+  'metrics.fanout': { ...retrying, policy: 'short' },
+  /** Lists tenants whose local day matches the report schedule and enqueues report.monthly. */
+  'report.fanout': { ...retrying, policy: 'short' },
+  /** Clears data that has passed the PRD decision 9 retention windows. */
+  'retention.purge': { ...retrying, policy: 'short' }
 } as const satisfies Record<string, QueueDef>;
 
 export type QueueName = keyof typeof QUEUES;

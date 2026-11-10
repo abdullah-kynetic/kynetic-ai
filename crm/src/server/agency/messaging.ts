@@ -3,7 +3,6 @@ import { z } from 'zod';
 import type { StaffCaller } from '../admin/users';
 import type { Db } from '../db/client';
 import { AppError } from '../errors';
-import { getEnv } from '../env';
 import { parseInput } from '../validation';
 import { checkOutbound } from '../outbound/gate';
 import { checkWindow, DEFAULT_WINDOW, isValidTimeZone } from '../consent/quiet-hours';
@@ -69,8 +68,6 @@ export async function previewAgencyMessage(
       );
       if (!m) throw new AppError('NOT_FOUND');
       if (m.status === 'simulated') return { status: 'simulated' as const, duplicate: true };
-      if (getEnv().PROVIDER_MODE !== 'stub')
-        throw new AppError('FORBIDDEN', { message: 'Agency preview requires stub providers.' });
       const now = opts.now ?? new Date();
       const ctx = { tenantId, userId: caller.id, role: 'admin' as const };
       let decision = await checkOutbound(

@@ -39,6 +39,7 @@ describe('M12-05 F-76/F-87 admin lead webhook settings', () => {
       tenantId: IDS.tenantA,
       leadPath: `/api/hooks/leads/${IDS.tenantA}`,
       n8nUrl: 'https://n8n.example.test/webhook/synthetic',
+      n8nSecret: { isSet: false, rotatedAt: null },
       secret: { isSet: false, rotatedAt: null }
     });
     expect(JSON.stringify(settings)).not.toContain('synthetic-must-not-return');

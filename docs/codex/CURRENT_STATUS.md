@@ -1,6 +1,12 @@
 # Current portal status
 
-Updated **2026-11-09 PST**. Canonical status is [../STATUS.md](../STATUS.md). This file restates the same portal facts.
+Updated **2026-11-10**. Canonical status is [../STATUS.md](../STATUS.md). This file restates the same portal facts.
+
+## Portal code note (2026-11-10)
+
+Not a deploy. The 2026-11-09 portal line below still stands. `docs/STATUS.md` records live production as `350bf673` and the task for this change said `main` `d7f4c07` is what portal.kyneticai.com runs. This pass did not probe production.
+
+On this branch, client metrics and monthly reports are enqueued per operating tenant, service tokens and the n8n push secret have an admin screen, agency drafts save without stub mode, contact-merge grants stay put, Excel upload stays refused (KI-018), and retention purge follows PRD decision 9 except audit archival (KI-019). `PROVIDER_MODE` and `OUTBOUND_ENABLED` are unchanged. No live send or charge was made.
 
 - One portal line. The portal implementation that was on `dev/codex-setup` is the code for `main`.
 - `main` is the only build that may be deployed to production at portal.kyneticai.com, and only after an explicit yes.

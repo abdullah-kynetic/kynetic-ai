@@ -5,7 +5,6 @@ import type { StaffCaller } from '../admin/users';
 import type { Db } from '../db/client';
 import { AppError } from '../errors';
 import { parseInput } from '../validation';
-import { getEnv } from '../env';
 import { inAgency } from './index';
 import { termsSchema, stubStripeEvent, billingTransition } from './billing-policy';
 type Options = { db?: Db; now?: Date };
@@ -28,15 +27,16 @@ export type InvoiceDraft = {
   last_event_created: number;
 };
 const hash = (v: unknown) => createHash('sha256').update(JSON.stringify(v)).digest('hex');
-function stubOnly() {
-  if (getEnv().PROVIDER_MODE !== 'stub')
-    throw new AppError('FORBIDDEN', {
-      message: 'Agency billing supports stub mode only. No live Stripe operations.'
-    });
+
+/** Local drafts are stored in every provider mode. A live Stripe charge is not implemented. */
+export function liveChargeBlocked(): AppError {
+  return new AppError('FORBIDDEN', {
+    message:
+      'Live charges are blocked. Terms, invoice drafts and reminders stay in the portal and nothing was sent or charged.'
+  });
 }
 export async function saveAgencyTerms(caller: StaffCaller, raw: unknown, opts: Options = {}) {
   const i = parseInput(termsSchema, raw);
-  stubOnly();
   return inAgency(
     caller,
     async (tx, tenantId) => {
@@ -65,7 +65,6 @@ export async function createAgencyInvoice(caller: StaffCaller, raw: unknown, opt
     }),
     raw
   );
-  stubOnly();
   return inAgency(
     caller,
     async (tx, tenantId) => {
@@ -106,8 +105,14 @@ export async function applyAgencyBillingWebhook(
   raw: unknown,
   opts: Options = {}
 ) {
+  if (
+    raw &&
+    typeof raw === 'object' &&
+    'livemode' in raw &&
+    (raw as { livemode?: unknown }).livemode === true
+  )
+    throw liveChargeBlocked();
   const e = parseInput(stubStripeEvent, raw);
-  stubOnly();
   return inAgency(
     caller,
     async (tx, tenantId) => {
@@ -141,7 +146,6 @@ export async function applyAgencyBillingWebhook(
   );
 }
 export async function draftAgencyDunning(caller: StaffCaller, opts: Options = {}) {
-  stubOnly();
   const day = (opts.now ?? new Date()).toISOString().slice(0, 10);
   return inAgency(
     caller,

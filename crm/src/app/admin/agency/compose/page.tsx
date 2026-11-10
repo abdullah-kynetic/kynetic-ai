@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 export default async function Compose({
   searchParams
 }: {
-  searchParams: Promise<{ contactId?: string; channel?: string; saved?: string }>;
+  searchParams: Promise<{ contactId?: string; channel?: string; saved?: string; error?: string }>;
 }) {
   const caller = await agencyCaller();
   if (!(await getAgencyWorkspace(caller)))
@@ -27,7 +27,17 @@ export default async function Compose({
       pageDescription='Save SMS/email drafts and check delivery gates. Real delivery is disabled.'
     >
       <Link href='/admin/agency/inbox'>Agency inbox</Link>
+      <p>
+        Check gates records a local result. It does not text or email anyone, in stub mode or live
+        mode. Real delivery stays off.
+      </p>
       {q.saved && <p role='status'>Draft saved.</p>}
+      {q.error === 'blocked' && (
+        <p role='alert'>Real delivery is blocked. The draft was kept and nothing was sent.</p>
+      )}
+      {q.error === 'check' && (
+        <p role='alert'>The gate check could not be saved. Nothing was sent.</p>
+      )}
       <div className='agency-columns'>
         <form action={saveMessageAction} className='agency-form'>
           <h2>New draft</h2>

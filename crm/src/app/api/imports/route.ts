@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { withApi } from '@/server/security/with-api';
-import { createImportBatch, IMPORT_MAX_BYTES } from '@/server/imports';
+import { classifyImportUpload, createImportBatch, IMPORT_MAX_BYTES } from '@/server/imports';
 import { AppError } from '@/server/errors';
 import { decideAdminAccess } from '@/server/admin';
 import { resolveActor } from '@/server/auth';
@@ -27,12 +27,19 @@ export const POST = withApi(async (request) => {
   if (!['contact', 'company', 'deal', 'note'].includes(rawEntity))
     throw new AppError('VALIDATION_FAILED', { message: 'Unsupported import record type.' });
   await enforceExportImportRateLimit(getDb(), tenantId);
+  const uploadKind = classifyImportUpload(file.name);
+  if (uploadKind === 'excel')
+    throw new AppError('VALIDATION_FAILED', {
+      message: 'Upload a CSV file. Excel workbooks are not accepted.'
+    });
+  if (uploadKind !== 'csv')
+    throw new AppError('VALIDATION_FAILED', { message: 'Upload a CSV file.' });
   const batch = await createImportBatch(
     ctx,
     actor,
     {
       fileName: file.name,
-      fileType: file.name.toLowerCase().endsWith('.xlsx') ? 'xlsx' : 'csv',
+      fileType: 'csv',
       entity: rawEntity as 'contact' | 'company' | 'deal' | 'note',
       importedSource: String(form.get('importedSource') ?? ''),
       sourceLabel: String(form.get('sourceLabel') ?? '') || undefined,
