@@ -119,7 +119,7 @@ A key starting cal_live_f64 was committed Aug 23, carried in from the Inflate AI
 
 ### KI-018: Excel import is still refused (medium)
 Found 2026-11-10. PRD decision 17 and F-90 call for `.csv` and `.xlsx`. No safe spreadsheet parser was a dependency, so the import screen refused `.xlsx`.
-Resolved 2026-11-10: `.xlsx` is accepted with `read-excel-file` 9.3.14, which returns stored cell values and does not calculate formulas. A formula with no cached value fails that row in the dry run. Zip entry count and uncompressed size are capped before inflate. `.xlsm` and `.xls` stay refused, including a macro file renamed to `.xlsx`. `bun audit` reported no vulnerabilities for the dependency set.
+Resolved 2026-11-10 in PR #150: `.xlsx` is accepted with `read-excel-file` 9.3.14, which returns stored cell values and does not calculate formulas. A formula with no cached value fails that row in the dry run. Zip entry count and uncompressed size are capped before inflate. `.xlsm` and `.xls` stay refused, including a macro file renamed to `.xlsx`. `bun audit` reported no vulnerabilities for the dependency set.
 
 ### KI-019: Audit-log archive destination is not defined (low)
 Found 2026-11-10. PRD decision 9 keeps the audit log 24 months online, then archived. `audit_log` is append-only, and no archive store is named. The retention purge does not delete audit rows. Recordings, messages, revoked consents, import files, and webhook payloads follow the decided windows.
