@@ -89,6 +89,18 @@ Then: confirm the post-call webhook URL is set on the agent, web-call test Alex,
 Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3.6); Twenty filter syntax in the duplicate check and sweeper is unverified until a test run.
 
 ## Log
+### 2026-11-10 — portal schedules, tokens, billing drafts, merge consent, retention
+
+Code only. No deploy, no production migration, no live send or charge. `docs/STATUS.md` still records production as `350bf673`; the task said portal.kyneticai.com runs `d7f4c07`. This pass did not probe the live site.
+
+- Daily metrics and the monthly report are enqueued for onboarding and active tenants. Suspended and offboarded tenants are skipped. The report day is 1–28 in the tenant timezone, default 1, edited from the admin client reports page and shown on the client reports page.
+- Admins can issue, list, and revoke per-tenant service tokens. The token is shown once. The hash is what is stored. Each action is audited.
+- The n8n push URL is an admin form. The signing secret is encrypted with `APP_ENCRYPTION_KEY` and is not rendered back. Plaintext in module config is stripped and is not used to sign.
+- Agency deal terms, invoice drafts, reminder drafts, and gate checks save when `PROVIDER_MODE` is live. A live-mode Stripe event is refused with an explicit message. Nothing on those screens charges or sends.
+- Contact merge no longer copies consent grants. Opt-outs, DNC rows, and the earlier do-not-call mark carry. The audit row records both contacts' consent state.
+- Excel import stays refused (KI-018). CSV remains the upload path.
+- A daily retention purge clears call recordings and transcripts after `purge_after`, messages after 24 months, revoked consents after 5 years, raw import files 30 days after commit, and webhook payloads after 30 days. Audit rows are not deleted (KI-019).
+
 ### 2026-11-09 — portal sign-in: email codes, QR authenticator, separate sign-up
 
 Abdullah asked for four auth changes on `crm/`. Built on `cursor/portal-auth-otp-qr-2f76`. After PR #143, `main` (`5efc6c0f`) holds the portal line and this branch was merged onto that `main`. Not deployed.
