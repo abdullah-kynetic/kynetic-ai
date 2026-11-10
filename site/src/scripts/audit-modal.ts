@@ -197,6 +197,8 @@ export function initAuditModal() {
     if (v.name) u.searchParams.set('name', v.name);
     if (v.email) u.searchParams.set('email', v.email);
     if (v.company) u.searchParams.set('notes', v.company);
+    const digits = (v.phone ?? '').replace(/\D/g, '');
+    if (digits.length >= 10) u.searchParams.set('attendeePhoneNumber', digits.length === 10 ? `+1${digits}` : `+${digits}`);
     root.querySelector<HTMLAnchorElement>('#am-cal')!.href = u.toString();
     const e = new URL(u); e.searchParams.set('embed', 'true'); e.searchParams.set('layout', 'month_view');
     const frame = root.querySelector<HTMLIFrameElement>('#am-cal-frame')!;
