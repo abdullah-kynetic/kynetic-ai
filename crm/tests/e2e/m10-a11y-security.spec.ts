@@ -78,7 +78,8 @@ test('M10-04 WCAG 2.2 A/AA automated scan on owner routes across themes and view
     '/dashboard/settings/business',
     '/dashboard/settings/team',
     '/dashboard/settings/branding',
-    '/dashboard/documents'
+    '/dashboard/documents',
+    '/dashboard/systems'
   ];
   for (const route of routes) violations.push(...(await scanMatrix(authenticatedPage, route)));
   await authenticatedPage.setViewportSize({ width: 1440, height: 1000 });
@@ -109,6 +110,10 @@ test('M10-04 WCAG 2.2 A/AA automated scan on admin routes across themes and view
   const violations: string[] = [];
   const routes = [
     '/admin',
+    '/admin/clients/11111111-1111-4111-8111-111111111111',
+    '/admin/clients/11111111-1111-4111-8111-111111111111/systems',
+    '/admin/templates',
+    '/admin/system-requests',
     '/admin/clients/11111111-1111-4111-8111-111111111111/alex',
     '/admin/clients/11111111-1111-4111-8111-111111111111/documents',
     '/admin/users',

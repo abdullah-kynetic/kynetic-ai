@@ -63,6 +63,7 @@ Fix: hand-dial a sample, counsel answer, and keep the audit step in every run.
 ## Open (docs reconciliation leftovers, 2026-11-08 PST)
 ### KI-017: Production is still the pre-consolidation release (high)
 Found 2026-11-09. portal.kyneticai.com is release `350bf673` (1 admin user, about 13 tenants). The portal line moving onto `main` is not deployed. Migrations `1007` through `1013` have not been applied to that database. The separate DEV environment is retired until after go-live, so there is no second portal to rehearse on. Do not deploy, migrate, or recreate DEV without an explicit yes.
+Update 2026-11-10 evening PST: production at portal.kyneticai.com is `main` `ac0192af` (PR #146 deployed), with migration `1015_schedules_retention_settings`. `PROVIDER_MODE=stub` and `OUTBOUND_ENABLED=false` unchanged. Migrations through `1015` are applied; `1016` is the systems/templates/guarantee migration on this branch.
 
 ## Gotchas
 - Cloud sessions deny hosts not in the environment's allowed domains. Firecrawl returned 403 until `api.firecrawl.dev` was allowed (2026-10-19). A scrape of Facebook, BBB, the Texas Comptroller and similar sites needs those domains allowed too.

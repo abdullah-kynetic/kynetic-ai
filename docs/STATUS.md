@@ -4,17 +4,18 @@ A pointer, not a second scoreboard. Twenty is the business source of truth. GitH
 
 ## Portal line (2026-11-09 PST)
 
-Abdullah stopped the second portal line. The portal implementation that lived on `dev/codex-setup` is the code for `main`. `main` is the only build that may be deployed to production at portal.kyneticai.com, and only after an explicit yes. A separate DEV environment is retired until after go-live: do not deploy `dev.kyneticai.com`, and do not keep working on `dev/codex-setup`. New work branches off `main`. This note does not deploy. Live production remains release `350bf673` until that yes.
+Abdullah stopped the second portal line. The portal implementation that lived on `dev/codex-setup` is the code for `main`. `main` is the only build that may be deployed to production at portal.kyneticai.com, and only after an explicit yes. A separate DEV environment is retired until after go-live: do not deploy `dev.kyneticai.com`, and do not keep working on `dev/codex-setup`. New work branches off `main`. This note does not deploy. Live production is `main` `ac0192af` (PR #146) as of 2026-11-09 evening PST; further deploys still need an explicit yes unless Abdullah has already authorized the operator to ship ready batches.
 
 `docs/codex/CURRENT_STATUS.md` restates this portal fact. `docs/codex/COMPLETION-PLAN.md` stays historical evidence. Merging the portal code does not make that file the plan. The five steps below remain the operating order.
 
 ## Portal engineering note (2026-11-10)
 
-This note records a code change. It does not deploy, migrate production, or change the five-step order.
+Production at portal.kyneticai.com is `main` `ac0192af` (PR #146), with migration `1015_schedules_retention_settings`. `PROVIDER_MODE=stub` and `OUTBOUND_ENABLED=false` are unchanged. The 2026-11-09 note above that still said release `350bf673` is stale for that revision; this file is the current pointer.
 
-The task for this change said production at portal.kyneticai.com is `main` `d7f4c07`. The 2026-11-09 note above still records live production as release `350bf673`. This pass did not probe the live portal, so both statements stay. Do not treat either as a new deploy.
+PR #146 is live: daily metrics and monthly report fanout, admin service tokens, encrypted n8n push settings, agency billing drafts outside stub mode, contact-merge consent fixes, CSV-only import, and the retention purge.
 
-The change on this branch schedules the daily metrics rollup and the monthly report for onboarding and active tenants, adds admin service-token and encrypted n8n push settings, lets agency billing drafts save when `PROVIDER_MODE` is live, stops contact merge from copying consent grants, keeps Excel import refused, and adds the retention purge for the windows in PRD decision 9. Audit rows stay: the archive destination after 24 months is still open (KI-019). Excel `.xlsx` import stays refused because no safe parser is installed (KI-018). PRD decision 17 still calls for it.
+This branch then adds the per-client systems library, template apply, remodeling industry, client My systems requests, and the 30-day 20% booking guarantee tracker (admin baseline override). Migration `1016_systems_templates_guarantee`. Not yet deployed from this note alone.
+
 
 ## Current direction
 

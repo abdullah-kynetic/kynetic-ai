@@ -10,6 +10,7 @@ import { MODULE_KEYS, type ModuleKey } from '../modules';
 import { withPlatform, type PlatformContext } from '../tenancy';
 import { FIELD_LIMITS, parseInput } from '../validation';
 import { INDUSTRY_TEMPLATES, INDUSTRY_TEMPLATE_KEYS } from './industry-templates';
+import { applyStageDefaults } from './templates';
 import { buildChecklist } from './onboarding-steps';
 
 /** Invite lifetime (SECURITY 2.1: 7 days). */
@@ -233,6 +234,11 @@ export async function onboardTenant(
           }))
         );
 
+        const stages = await applyStageDefaults(
+          { tenantId, userId: ctx.userId, role: 'admin' },
+          tx,
+          template.stages
+        );
         await audit(tx, {
           action: 'tenant.onboard',
           entity: 'tenant',
@@ -243,7 +249,8 @@ export async function onboardTenant(
             tier: input.tier ?? null,
             industry: input.industry,
             modules: enabled,
-            crmLevel: input.crmLevel ?? null
+            crmLevel: input.crmLevel ?? null,
+            stages
           }
         });
         return { tenantId, slug, ownerEmail };

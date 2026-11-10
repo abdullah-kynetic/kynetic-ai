@@ -3,21 +3,21 @@ import { guaranteeProgress } from '../../src/server/metrics';
 import fixture from '../fixtures/metrics-dashboard.json';
 
 describe('M6 dashboard metric fixture', () => {
-  test('computes the fixed-clock guarantee progress', () => {
+  test('computes the 30-day 20 percent guarantee', () => {
     expect(
       guaranteeProgress({
-        target: 20,
+        baseline: 10,
         startDate: '2026-01-01',
-        booked: 5,
-        today: new Date('2026-01-31T00:00:00Z')
+        booked: 6,
+        today: new Date('2026-01-16T00:00:00Z')
       })
-    ).toEqual({ target: 20, booked: 5, percent: 25, daysLeft: 30 });
+    ).toEqual({ baseline: 10, target: 12, booked: 6, percent: 50, daysLeft: 15, windowDays: 30 });
   });
 
   test('caps completed guarantees and hides incomplete configuration', () => {
     expect(
       guaranteeProgress({
-        target: 20,
+        baseline: 10,
         startDate: '2026-01-01',
         booked: 30,
         today: new Date('2026-04-01T00:00:00Z')
@@ -25,7 +25,7 @@ describe('M6 dashboard metric fixture', () => {
     ).toMatchObject({ percent: 100, daysLeft: 0 });
     expect(
       guaranteeProgress({
-        target: null,
+        baseline: null,
         startDate: null,
         booked: 2,
         today: new Date('2026-01-01T00:00:00Z')

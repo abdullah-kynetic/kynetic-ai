@@ -1,7 +1,21 @@
-import { and, asc, eq, gte, lte, sql } from 'drizzle-orm';
+import { and, asc, eq, gte, lt, lte, sql } from 'drizzle-orm';
 import type { Db, Tx } from '../db/client';
-import { activities, contacts, metricsDaily, tenants, users } from '../db/schema';
+import { activities, appointments, contacts, metricsDaily, tenants, users } from '../db/schema';
 import { withTenant, type TenantContextInput } from '../tenancy';
+
+/** The offer in force: 20% more booked appointments than last month, measured over 30 days. */
+export const GUARANTEE_WINDOW_DAYS = 30;
+export const GUARANTEE_LIFT = 0.2;
+
+export function guaranteeTargetFromBaseline(baseline: number): number {
+  return Math.ceil(baseline * (1 + GUARANTEE_LIFT));
+}
+
+function shiftUtcDate(isoDate: string, days: number): string {
+  const date = new Date(`${isoDate}T00:00:00.000Z`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString();
+}
 
 export type DashboardMetrics = {
   totals: {
@@ -17,21 +31,30 @@ export type DashboardMetrics = {
 };
 
 export function guaranteeProgress(input: {
-  target: number | null;
+  baseline: number | null;
   startDate: string | null;
   booked: number;
   today?: Date;
 }) {
-  if (!input.target || !input.startDate) return null;
+  if (input.baseline === null || input.baseline < 0 || !input.startDate) return null;
   const start = new Date(`${input.startDate}T00:00:00Z`);
   const today = input.today ?? new Date();
   const end = new Date(start);
-  end.setUTCDate(end.getUTCDate() + 60);
+  end.setUTCDate(end.getUTCDate() + GUARANTEE_WINDOW_DAYS);
+  const target = guaranteeTargetFromBaseline(input.baseline);
+  const percent =
+    target === 0
+      ? input.booked > 0
+        ? 100
+        : 0
+      : Math.min(100, Math.round((input.booked / target) * 100));
   return {
-    target: input.target,
+    baseline: input.baseline,
+    target,
     booked: input.booked,
-    percent: Math.min(100, Math.round((input.booked / input.target) * 100)),
-    daysLeft: Math.max(0, Math.ceil((end.getTime() - today.getTime()) / 86400000))
+    percent,
+    daysLeft: Math.max(0, Math.ceil((end.getTime() - today.getTime()) / 86400000)),
+    windowDays: GUARANTEE_WINDOW_DAYS
   };
 }
 
@@ -87,16 +110,67 @@ export async function getDashboardMetrics(
   return opts.tx ? run(opts.tx) : withTenant(ctx, run, { db: opts.db });
 }
 
+export type GuaranteeSettings = {
+  /** Admin override of last month's booked appointments. Null uses the measured count. */
+  baselineOverride: number | null;
+  /** Booked appointments in the 30 days before the start date. Null until a start date is set. */
+  measuredBaseline: number | null;
+  startDate: string | null;
+  /** Booked appointments from the start date through the next 30 days. */
+  bookedInWindow: number | null;
+};
+
+async function countBooked(tx: Tx, fromIso: string, toIso: string): Promise<number> {
+  const [row] = await tx
+    .select({ n: sql<number>`count(*)::int` })
+    .from(appointments)
+    .where(
+      and(
+        sql`${appointments.status} <> 'cancelled'`,
+        gte(appointments.createdAt, fromIso),
+        lt(appointments.createdAt, toIso)
+      )
+    );
+  return Number(row?.n ?? 0);
+}
+
 export async function getGuaranteeSettings(
   ctx: TenantContextInput,
   opts: { db?: Db; tx?: Tx } = {}
-) {
-  const run = async (tx: Tx) => {
+): Promise<GuaranteeSettings> {
+  const run = async (tx: Tx): Promise<GuaranteeSettings> => {
     const [row] = await tx
-      .select({ target: tenants.guaranteeTargetBookings, startDate: tenants.guaranteeStartDate })
+      .select({
+        baselineOverride: tenants.guaranteeBaselineBookings,
+        startDate: tenants.guaranteeStartDate
+      })
       .from(tenants)
       .where(eq(tenants.id, sql`app_tenant_id()`));
-    return row ?? { target: null, startDate: null };
+    if (!row?.startDate) {
+      return {
+        baselineOverride: row?.baselineOverride ?? null,
+        measuredBaseline: null,
+        startDate: null,
+        bookedInWindow: null
+      };
+    }
+    const startIso = `${row.startDate}T00:00:00.000Z`;
+    const measuredBaseline = await countBooked(
+      tx,
+      shiftUtcDate(row.startDate, -GUARANTEE_WINDOW_DAYS),
+      startIso
+    );
+    const bookedInWindow = await countBooked(
+      tx,
+      startIso,
+      shiftUtcDate(row.startDate, GUARANTEE_WINDOW_DAYS)
+    );
+    return {
+      baselineOverride: row.baselineOverride,
+      measuredBaseline,
+      startDate: row.startDate,
+      bookedInWindow
+    };
   };
   return opts.tx ? run(opts.tx) : withTenant(ctx, run, { db: opts.db });
 }

@@ -18,6 +18,13 @@ export const navGroups: NavGroup[] = [
         items: []
       },
       {
+        title: 'My systems',
+        url: '/dashboard/systems',
+        icon: 'settings',
+        isActive: false,
+        items: []
+      },
+      {
         title: 'Pipeline',
         url: '/dashboard/pipeline',
         icon: 'kanban',
@@ -249,6 +256,20 @@ export const adminNavGroups: NavGroup[] = [
         icon: 'add',
         isActive: false,
         shortcut: ['a', 'n'],
+        items: []
+      },
+      {
+        title: 'Template library',
+        url: '/admin/templates',
+        icon: 'post',
+        isActive: false,
+        items: []
+      },
+      {
+        title: 'System requests',
+        url: '/admin/system-requests',
+        icon: 'help',
+        isActive: false,
         items: []
       },
       {

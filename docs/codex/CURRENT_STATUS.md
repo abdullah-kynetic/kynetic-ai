@@ -4,7 +4,7 @@ Updated **2026-11-10**. Canonical status is [../STATUS.md](../STATUS.md). This f
 
 ## Portal code note (2026-11-10)
 
-Not a deploy. The 2026-11-09 portal line below still stands. `docs/STATUS.md` records live production as `350bf673` and the task for this change said `main` `d7f4c07` is what portal.kyneticai.com runs. This pass did not probe production.
+PR #146 is live at portal.kyneticai.com as `main` `ac0192af` (migration `1015`). This systems/templates branch adds migration `1016` and is not yet the live tip until merged and deployed. See `docs/STATUS.md`.
 
 On this branch, client metrics and monthly reports are enqueued per operating tenant, service tokens and the n8n push secret have an admin screen, agency drafts save without stub mode, contact-merge grants stay put, Excel upload stays refused (KI-018), and retention purge follows PRD decision 9 except audit archival (KI-019). `PROVIDER_MODE` and `OUTBOUND_ENABLED` are unchanged. No live send or charge was made.
 
@@ -14,6 +14,8 @@ On this branch, client metrics and monthly reports are enqueued per operating te
 - [COMPLETION-PLAN.md](COMPLETION-PLAN.md) is historical evidence, not the operating plan. The operating order is the five steps in `docs/STATUS.md`.
 - This note does not deploy. Live production remains release `350bf673` until that yes.
 - [PROGRESS.md](PROGRESS.md) is a technical log, not a second roadmap.
+- The client portal now has a per-tenant admin overview, per-client system settings, a template library (industry templates plus the module catalog; Plan 2 names are coming soon), a client My systems page, a remodeling onboarding template, and a 30-day booking guarantee. Applying a template is idempotent and audited. A "Request this" button files an audited request and takes no payment. This note does not deploy.
+- GitHub `main` after PR #146 is `ac0192af`, which is live on portal.kyneticai.com. This branch rebases on that tip and renumbers its migration to `1016`.
 
 ## Historical snapshot (2026-11-06)
 

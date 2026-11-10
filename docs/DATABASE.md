@@ -101,8 +101,9 @@ CREATE TABLE tenants (
   recording_disclosure text,                                            -- spec s8: disclosure text per tenant
   email_sender_name text,                                               -- F-39 sender display name (DC-051)
   baseline jsonb NOT NULL DEFAULT '{}',                                 -- F-01: captured at signup
-  guarantee_target_bookings integer CHECK (guarantee_target_bookings >= 0),  -- F-03; location chosen here (PRD decision 10)
-  guarantee_start_date date,                                            -- F-03
+  guarantee_target_bookings integer CHECK (guarantee_target_bookings >= 0),  -- historical 60-day count; not the tracker target
+  guarantee_baseline_bookings integer CHECK (guarantee_baseline_bookings >= 0), -- F-03 admin override of last month's booked appointments; NULL measures the prior 30 days
+  guarantee_start_date date,                                            -- F-03 30-day window start
   go_live_at timestamptz,                                               -- F-53
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
@@ -1351,7 +1352,7 @@ Decided:
 7. Follow-up bundle is a flag only.
 8. Client-editable Alex settings: pause and call hours. Owner write allow-list is server-side.
 9. Retention: PRD decision 9. `calls.purge_after` and the Entities column carry it.
-10. Health score and guarantee: `tenants.guarantee_target_bookings`, `guarantee_start_date`.
+10. Health score and guarantee: `tenants.guarantee_baseline_bookings` (admin override; NULL measures the prior 30 days), `guarantee_start_date` (30-day window). `guarantee_target_bookings` remains and is not the tracker target.
 11. Domain: one portal.kyneticai.com; `tenants.slug` is not used for routing in v1.
 12. Pricing: locked $6,500 setup + 3 months then $1,500/mo; `module_prices` keeps only these figures.
 13. Targets: PRD decision 13.
@@ -1426,3 +1427,5 @@ Migration 1005 adds `agency_proposals`: one working draft per synthetic agency d
 ## M20-06 client support requests (2026-11-02)
 
 Migration `1006_support_requests` adds `support_requests` (tenant_id, subject 1-200, body 1-5000, status `open`/`in_progress`/`resolved`, submitted_by, created_at, updated_at, resolved_at). Standard FORCE RLS applies. The app and worker roles can SELECT and INSERT their own tenant's rows; UPDATE and DELETE are revoked. Kynetic staff (admin and VA) read every client's requests with `admin_list_support_requests()` and change status with `admin_set_support_request_status(id, status)`, both SECURITY DEFINER functions owned by `kynetic_rollup` that check the role, refuse view-as and read-only sessions, and write an audit row for each status change. Nothing is sent, queued or emitted.
+
+Migration `1016_systems_templates_guarantee` adds `tenants.guarantee_baseline_bookings` and `system_requests` (tenant_id, module_key, status `open`, requested_by, created_at). One row per tenant and module. The app role can SELECT and INSERT its own tenant's rows; UPDATE and DELETE are revoked. A client insert is audited as `system.request`. Staff read every client's rows with `admin_list_system_requests()`. The baseline column is written only by `admin_update_tenant_commercial`, which audits `tenant.commercial_update`. Nothing is charged or sent.
