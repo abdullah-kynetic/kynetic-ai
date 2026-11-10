@@ -9,9 +9,12 @@
 // "Not a fit" opens its own page (/not-a-fit/). Without JS the buttons still go to Cal.
 import { animate } from 'motion';
 import { reducedMotion } from './appear';
+import { mountPicker } from './cal-picker';
 
 const ENDPOINT: string = import.meta.env.PUBLIC_CONTACT_WEBHOOK ?? 'https://n8n.kyneticai.com/webhook/website-contact';
-const CAL = 'https://cal.com/abdullah-kyneticai/kynetic-ai-discovery-call';
+const CAL_USER = 'abdullah-kyneticai';
+const CAL_SLUG = 'kynetic-ai-discovery-call';
+const CAL = `https://cal.com/${CAL_USER}/${CAL_SLUG}`;
 const LETTERS = 'ABCDEFGH';
 const OTHER = 'Something else';
 const DISQUALIFY_INVEST = 'Under $5,000';
@@ -94,9 +97,8 @@ export function initAuditModal() {
             <h2 class="am__q" id="am-book">Pick a time for your AI audit</h2>
             <p>We'll look at what you run today and what it costs you. We'll text you to confirm the call.</p>
           </div>
-          <iframe class="am__cal" id="am-cal-frame" title="Book your AI audit call" loading="lazy"></iframe>
-          <a class="am__link" id="am-cal" href="${CAL}" target="_blank" rel="noopener">Calendar not loading? Open it in a new tab</a>
-          <div class="am__bookback">${BACK}</div>
+          <div class="am__picker" id="am-picker"></div>
+                    <div class="am__bookback">${BACK}</div>
         </div>
       </div>
     </div>`;
@@ -113,7 +115,7 @@ export function initAuditModal() {
   let timer: number | undefined;
 
   // ---- saved progress (this browser only) ----
-  type Saved = { step: string; v: Record<string, string>; stage?: 'applied'; qualified?: boolean; sent?: string; ts: number };
+  type Saved = { booked?: string; step: string; v: Record<string, string>; stage?: 'applied'; qualified?: boolean; sent?: string; ts: number };
   const KEY = 'kn-apply-v1';
   const load = (): Saved | null => {
     try {
@@ -169,6 +171,7 @@ export function initAuditModal() {
     const s = load();
     if (!s) { show(1); return; }
     hydrate(s.v);
+    if (s.booked && s.stage === 'applied' && s.qualified) { location.assign(`/confirmation/?t=${encodeURIComponent(s.booked)}`); return; }
     if (s.stage === 'applied' && s.qualified) { showBook(); return; }
     if (s.stage === 'applied') { show(COUNT); return; }
     show(STEPS.some((x) => String(x.n) === s.step) || s.step === '1' ? s.step : 1);
@@ -191,19 +194,28 @@ export function initAuditModal() {
   // Move on after a valid OK: remember the answers and the next step.
   const advance = (to: number) => { persist({ v: fields(), step: String(to) }); show(to); };
 
-  function showBook() {
+  const calUrl = () => {
     const v = load()?.v ?? fields();
     const u = new URL(CAL);
     if (v.name) u.searchParams.set('name', v.name);
     if (v.email) u.searchParams.set('email', v.email);
-    if (v.company) u.searchParams.set('notes', v.company);
-    const digits = (v.phone ?? '').replace(/\D/g, '');
-    if (digits.length >= 10) u.searchParams.set('attendeePhoneNumber', digits.length === 10 ? `+1${digits}` : `+${digits}`);
-    root.querySelector<HTMLAnchorElement>('#am-cal')!.href = u.toString();
-    const e = new URL(u); e.searchParams.set('embed', 'true'); e.searchParams.set('layout', 'month_view');
-    const frame = root.querySelector<HTMLIFrameElement>('#am-cal-frame')!;
-    if (frame.src !== e.toString()) frame.src = e.toString();
+    return u.toString();
+  };
+  const e164 = (p = '') => { const d = p.replace(/\D/g, ''); return d.length === 10 ? `+1${d}` : d.length > 10 ? `+${d}` : ''; };
+  let mounted = false;
+  function showBook() {
     show('book');
+    if (mounted) return;
+    mounted = true;
+    mountPicker(root.querySelector<HTMLElement>('#am-picker')!, {
+      username: CAL_USER, slug: CAL_SLUG, fallbackUrl: calUrl,
+      attendee: () => {
+        const v = load()?.v ?? fields();
+        const notes = [v.company && `Company: ${v.company}${v.site ? ` (${v.site})` : ''}`, v.niche && `Business type: ${v.niche === OTHER ? `Other: ${v.other ?? ''}` : v.niche}`, v.revenue && `Revenue: ${v.revenue}`, v.teamTime && `Takes team's time: ${v.teamTime}`, v.fixFirst && `Fix first: ${v.fixFirst}`, v.invest && `Could invest: ${v.invest}`].filter(Boolean).join('\n');
+        return { name: v.name ?? '', email: v.email ?? '', phone: e164(v.phone), notes };
+      },
+      onBooked: (start) => { persist({ booked: start }); location.assign(`/confirmation/?t=${encodeURIComponent(start)}`); },
+    });
   }
 
   root.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('[data-close]')) close(); });
@@ -222,7 +234,7 @@ export function initAuditModal() {
       }
       return;
     }
-    const f = [...card.querySelectorAll<HTMLElement>('button, a[href], input:not(.am__trap), textarea, iframe')].filter((el) => !el.closest('[hidden]'));
+    const f = [...card.querySelectorAll<HTMLElement>('button, a[href], input:not(.am__trap), textarea, select')].filter((el) => !el.closest('[hidden]'));
     if (!f.length) return;
     const first = f[0], last = f[f.length - 1];
     if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }

@@ -95,6 +95,16 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
   // audit application: 7 questions, two endings (later routes win in Playwright, so this overrides the abort)
   const posts = [];
   await page.route(/n8n\.kyneticai\.com\/webhook/, (r) => { posts.push(JSON.parse(r.request().postData())); r.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' }); });
+  const bookings = [];
+  await page.route(/api\.cal\.com\/v2\/slots/, (r) => {
+    const q = new URL(r.request().url()).searchParams; const out = {};
+    for (let d = new Date(q.get('start') + 'T12:00:00Z'); d <= new Date(q.get('end') + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + 1)) { const k = d.toISOString().slice(0, 10); if (![0, 6].includes(d.getUTCDay())) out[k] = [{ start: k + 'T09:00:00.000-08:00' }, { start: k + 'T09:30:00.000-08:00' }]; }
+    r.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify({ status: 'success', data: out }) });
+  });
+  await page.route(/api\.cal\.com\/v2\/bookings/, (r) => {
+    if (r.request().method() === 'OPTIONS') return r.fulfill({ status: 204, headers: { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': '*' } });
+    bookings.push(JSON.parse(r.request().postData())); r.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: '{"status":"success","data":{}}' });
+  });
   const openAudit = async () => { await page.locator('#hero a[href*="cal.com"]').first().click(); await page.waitForTimeout(500); };
   const runFlow = async (investIdx) => {
     await page.evaluate(() => localStorage.clear()); await page.goto(base + '/', { waitUntil: 'load' });
@@ -124,10 +134,10 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
   await page.goto(base + '/', { waitUntil: 'load' }); await openAudit();
   ok('resume: after not-a-fit the form reopens on step 7 with the answer filled in', await page.locator('.am [data-step="7"]').isVisible() && await page.locator('.am [data-step="7"] input:checked').getAttribute('value') === 'Under $5,000');
   await page.locator('.am [data-step="7"] .am__opt').nth(2).click(); await page.waitForTimeout(900);
-  ok('application: changed answer shows the booking page and re-sends as an update', await page.locator('.am [data-step="book"]').isVisible() && (await page.locator('#am-cal-frame').getAttribute('src')).includes('cal.com/abdullah-kyneticai') && posts.length === 2 && posts[1].qualified === true && posts[1].updated === true && posts[1].message.includes('QUALIFIED'));
+  ok('application: changed answer shows the booking page and re-sends as an update', await page.locator('.am [data-step="book"]').isVisible() && (await page.locator('.am .cp__day-btn.is-open').count()) > 3 && !(await page.locator('.am iframe').count()) && posts.length === 2 && posts[1].qualified === true && posts[1].updated === true && posts[1].message.includes('QUALIFIED'));
   await page.keyboard.press('Escape'); await page.waitForTimeout(200);
   await openAudit();
-  ok('resume: after booking the form reopens on the calendar', await page.locator('.am [data-step="book"]').isVisible());
+  ok('resume: after applying the form reopens on the calendar', await page.locator('.am [data-step="book"]').isVisible());
   await page.locator('.am [data-step="book"] [data-back]').click(); await page.waitForTimeout(300);
   await page.locator('.am [data-step="7"] [data-back]').click(); await page.waitForTimeout(300);
   ok('back: walks to earlier steps with answers kept', await page.locator('.am [data-step="6"]').isVisible() && (await page.locator('.am input[name=fixFirst]').inputValue()) === 'One place to see leads');
@@ -136,7 +146,14 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
   await page.locator('.am [data-step="6"] button[type=submit]').click(); await page.waitForTimeout(400);
   await page.locator('.am [data-step="7"] button[type=submit]').click(); await page.waitForTimeout(900);
   ok('next: OK walks forward through filled answers without re-sending', await page.locator('.am [data-step="book"]').isVisible() && posts.length === 2);
-  await page.keyboard.press('Escape'); await page.waitForTimeout(200);
+  // pick a day and a time, confirm: booked from the application's answers, then the confirmation page
+  await page.locator('.am .cp__day-btn.is-open').first().click();
+  await page.locator('.am .cp__time[data-time]').first().click();
+  await page.locator('.am [data-confirm]').click(); await page.waitForURL(/\/confirmation\//, { timeout: 5000 }).catch(() => {});
+  ok('booking: picking a day and time books straight from the answers', bookings.length === 1 && bookings[0].attendee.name === 'Test Person' && bookings[0].attendee.email === 'test@example.com' && bookings[0].attendee.phoneNumber === '+12015550123' && bookings[0].eventTypeSlug === 'kynetic-ai-discovery-call' && bookings[0].bookingFieldsResponses.notes.includes('Test Co') && page.url().includes('/confirmation/'));
+  ok('booking: confirmation page shows the booked time', (await page.locator('#when').innerText()).length > 10);
+  await page.goto(base + '/', { waitUntil: 'load' }); await openAudit(); await page.waitForTimeout(300);
+  ok('resume: after booking, reopening goes to the confirmation page', page.url().includes('/confirmation/'));
   await page.evaluate(() => localStorage.clear()); await page.goto(base + '/', { waitUntil: 'load' });
   // services map popovers
   await page.evaluate(() => document.getElementById('services').scrollIntoView()); await page.waitForTimeout(1500);
