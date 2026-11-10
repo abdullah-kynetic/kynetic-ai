@@ -4,7 +4,7 @@
 
 ## Agency sales tools (2026-11-10)
 
-Batch 4, not deployed. The agency dialer can schedule a callback. Campaign steps are marked done, skipped, or rescheduled by an admin, and those steps do not send anything. Proposal PDFs download without a price. Contracts, expenses, referrals, and case studies are manual records. Admin document delete and replace are soft. `.xlsx` import reads stored cell values. Retell is parked on the Alex settings page. Migration `1017_agency_sales_tools`, after `1016_systems_templates_guarantee` on main.
+Batch 4, merged as PR #150 (`main` `df8b61a651622c5bf0b3d1c1f8a86cb095c66b52`) and deployed to portal.kyneticai.com with migration `1017_agency_sales_tools`. The agency dialer can schedule a callback. Campaign steps are marked done, skipped, or rescheduled by an admin, and those steps do not send anything. Proposal PDFs download without a price. Contracts, expenses, referrals, and case studies are manual records. Admin document delete and replace are soft. `.xlsx` import reads stored cell values. Retell is parked on the Alex settings page. `PROVIDER_MODE=stub` and `OUTBOUND_ENABLED=false` unchanged.
 
 ## Portal line (2026-11-09 PST)
 
@@ -95,7 +95,7 @@ Also open: counsel reply (1.4); post-call webhook has no header auth (KI-005 / 3
 ## Log
 ### 2026-11-10 — admin pause, usage, offboarding, and emails that stay off
 
-Batch 3 on `cursor/admin-ops-safety-123d`, rebased onto main after PR #150. Migration `1018_admin_ops_safety`. Not merged and not deployed. `PROVIDER_MODE` and `OUTBOUND_ENABLED` are unchanged. New flags `ADMIN_ALERT_EMAIL_ENABLED` and `CLIENT_EMAIL_ENABLED` default to false.
+Batch 3, merged as PR #149 (`main` `416b165617577e0468de03fabcfb383d220b584d`) and deployed to portal.kyneticai.com with migration `1018_admin_ops_safety`. `PROVIDER_MODE` and `OUTBOUND_ENABLED` are unchanged. New flags `ADMIN_ALERT_EMAIL_ENABLED` and `CLIENT_EMAIL_ENABLED` default to false and are unset in production.
 
 - Operations can pause every call and text. The pause only tightens. The env switch still wins.
 - `/admin/usage` shows per-client minutes, messages, provider cost, the stored fee, margin, and cap status, with a CSV export. A spend cap blocks new calls and notifies admins once a month. Clients see none of this (KI-022). Message cost stays unknown (KI-023).
@@ -104,6 +104,11 @@ Batch 3 on `cursor/admin-ops-safety-123d`, rebased onto main after PR #150. Migr
 - Weekly client email and the monthly report link use the same dashboard numbers and stay off unless the server flag and the per-client toggle are both on.
 - Expired rate-limit rows are purged hourly. The dev lead hook, the component gallery, and `/open` refuse in production unless the gallery flag is explicitly set. The gallery "Add a lead" control is a disabled "Demo only" button.
 - Twenty summary push was not built (KI-024).
+
+### 2026-11-10 — client workspace: dashboard range, appointments, support threads, terms gate
+
+Batch 2 on `cursor/batch-2-client-workspace-2302`, rebased onto `main` after PR #149. Not merged and not deployed. Migration renumbered to `1019_support_threads_category` because `1018` is the admin ops safety migration from PR #149. It adds support replies and a request category. The dashboard date range, speed-to-lead, and booking rate match the monthly report for the same month. The guarantee bar is unchanged. Appointments gained month, week, and day views plus a contact search. Automation history is read-only. Pipeline owner and source filters were already present. Support is a thread for the client and for Kynetic, with in-app alerts only. Alex settings can request a change. The terms gate is built and defaults off. Left blocked: calendar sync (KI-027), automation editing (KI-028), final terms text (KI-026), and support email (KI-029).
+
 
 ### 2026-11-10 — portal systems, templates, remodeling, 30-day guarantee
 

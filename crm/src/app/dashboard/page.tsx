@@ -1,14 +1,36 @@
 import PageContainer from '@/components/layout/page-container';
 import { SetupProgressCard } from '@/components/onboarding/setup-progress-card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { loadSetupProgress } from '@/server/admin';
 import { loadShellContext } from '@/server/shell';
+import { getBusinessSettings } from '@/server/settings/business';
 import { cookies, headers } from 'next/headers';
-import { getDashboardMetrics, getGuaranteeSettings, guaranteeProgress } from '@/server/metrics';
+import {
+  DASHBOARD_RANGE_NOTICE,
+  getDashboardMetrics,
+  getGuaranteeSettings,
+  guaranteeProgress,
+  presetRange,
+  resolveDashboardRange
+} from '@/server/metrics';
 
 export const dynamic = 'force-dynamic';
 
-export default async function DashboardPage() {
-  const [cookieStore, requestHeaders] = await Promise.all([cookies(), headers()]);
+function rangeHref(from: string, to: string) {
+  return `/dashboard?from=${from}&to=${to}`;
+}
+
+export default async function DashboardPage({
+  searchParams
+}: {
+  searchParams: Promise<{ from?: string; to?: string }>;
+}) {
+  const [cookieStore, requestHeaders, query] = await Promise.all([
+    cookies(),
+    headers(),
+    searchParams
+  ]);
   const shell = await loadShellContext(requestHeaders, cookieStore.get('tenant_id')?.value);
   // F-100: only the owner sees setup progress, and only until go-live.
   const progress =
@@ -22,40 +44,91 @@ export default async function DashboardPage() {
   const ctx = shell?.tenant
     ? { tenantId: shell.tenant.id, userId: shell.user.id, role: shell.role }
     : null;
+  const timeZone = ctx ? (await getBusinessSettings(ctx)).timezone : 'UTC';
   // Dashboard defaults are intentionally request-time values in this server component.
   // eslint-disable-next-line react/purity
-  const today = new Date();
-  // eslint-disable-next-line react/purity
-  const from = new Date(today);
-  from.setUTCDate(from.getUTCDate() - 29);
+  const now = new Date();
+  const range = resolveDashboardRange(query, now, timeZone);
+  const presets = {
+    7: presetRange(7, now, timeZone),
+    30: presetRange(30, now, timeZone),
+    90: presetRange(90, now, timeZone)
+  };
   const [metrics, guarantee] = ctx
-    ? await Promise.all([
-        getDashboardMetrics(ctx, from.toISOString().slice(0, 10), today.toISOString().slice(0, 10)),
-        getGuaranteeSettings(ctx)
-      ])
+    ? await Promise.all([getDashboardMetrics(ctx, range.from, range.to), getGuaranteeSettings(ctx)])
     : [null, null];
   const guaranteeCard = guarantee
     ? guaranteeProgress({
         baseline: guarantee.baselineOverride ?? guarantee.measuredBaseline,
         startDate: guarantee.startDate,
         booked: guarantee.bookedInWindow ?? 0,
-        today
+        today: now
       })
     : null;
+  const speed =
+    metrics?.totals.speedToLeadMinutes == null
+      ? 'No calls yet'
+      : `${metrics.totals.speedToLeadMinutes} min`;
+  const booking =
+    metrics?.totals.bookingRate == null ? 'No leads yet' : `${metrics.totals.bookingRate}%`;
 
   return (
-    <PageContainer pageTitle='Dashboard' pageDescription='Your last 30 days at a glance.'>
+    <PageContainer
+      pageTitle='Dashboard'
+      pageDescription={`Results from ${range.from} to ${range.to}.`}
+    >
       {progress && <SetupProgressCard progress={progress} />}
+      <form method='get' className='flex flex-wrap items-end gap-3' aria-label='Date range'>
+        {(
+          [
+            ['7 days', presets[7]],
+            ['30 days', presets[30]],
+            ['90 days', presets[90]]
+          ] as const
+        ).map(([label, preset]) => (
+          <a
+            key={label}
+            className='inline-flex min-h-11 items-center rounded border px-3 text-sm'
+            href={rangeHref(preset.from, preset.to)}
+          >
+            {label}
+          </a>
+        ))}
+        <div className='grid gap-1'>
+          <label htmlFor='dashboard-from' className='text-sm'>
+            From
+          </label>
+          <Input id='dashboard-from' name='from' type='date' defaultValue={range.from} required />
+        </div>
+        <div className='grid gap-1'>
+          <label htmlFor='dashboard-to' className='text-sm'>
+            To
+          </label>
+          <Input id='dashboard-to' name='to' type='date' defaultValue={range.to} required />
+        </div>
+        <Button type='submit' variant='outline'>
+          Apply
+        </Button>
+      </form>
+      {range.notice ? (
+        <p role='status' className='mt-3 rounded border p-3 text-sm'>
+          {range.notice === DASHBOARD_RANGE_NOTICE ? range.notice : DASHBOARD_RANGE_NOTICE}
+        </p>
+      ) : null}
       {metrics && (
-        <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-5'>
-          {[
-            ['Leads', metrics.totals.leads],
-            ['Calls', metrics.totals.calls],
-            ['Reached', metrics.totals.contactsReached],
-            ['Booked', metrics.totals.estimatesBooked],
-            ['Revenue', `$${(metrics.totals.revenueCents / 100).toLocaleString()}`]
-          ].map(([label, value]) => (
-            <div key={String(label)} className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
+        <div className='mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
+          {(
+            [
+              ['Leads', metrics.totals.leads],
+              ['Speed to lead', speed],
+              ['Calls', metrics.totals.calls],
+              ['Reached', metrics.totals.contactsReached],
+              ['Booked', metrics.totals.estimatesBooked],
+              ['Booking rate', booking],
+              ['Revenue', `$${(metrics.totals.revenueCents / 100).toLocaleString()}`]
+            ] as const
+          ).map(([label, value]) => (
+            <div key={label} className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
               <p className='text-muted-foreground text-sm'>{label}</p>
               <p className='mt-2 text-2xl font-semibold'>{value}</p>
             </div>
@@ -65,38 +138,46 @@ export default async function DashboardPage() {
       {metrics && (
         <div className='mt-4 rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
           <p className='font-medium'>Lead sources</p>
-          <div className='mt-3 space-y-2'>
-            {metrics.sources.map((source) => (
-              <div key={source.source} className='flex items-center gap-3 text-sm'>
-                <span className='w-32 truncate'>{source.source}</span>
-                <div className='bg-muted h-2 flex-1 rounded'>
-                  <div
-                    className='bg-primary h-2 rounded'
-                    style={{ width: `${Math.min(100, source.leads * 20)}%` }}
-                  />
+          {metrics.sources.length === 0 ? (
+            <p className='text-muted-foreground mt-3 text-sm'>No leads in this range.</p>
+          ) : (
+            <div className='mt-3 space-y-2'>
+              {metrics.sources.map((source) => (
+                <div key={source.source} className='flex items-center gap-3 text-sm'>
+                  <span className='w-32 truncate'>{source.source}</span>
+                  <div className='bg-muted h-2 flex-1 rounded'>
+                    <div
+                      className='bg-primary h-2 rounded'
+                      style={{ width: `${Math.min(100, source.leads * 20)}%` }}
+                    />
+                  </div>
+                  <span>{source.leads}</span>
                 </div>
-                <span>{source.leads}</span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
       {metrics && (
         <div className='mt-4 grid gap-4 lg:grid-cols-2'>
           <div className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
             <p className='font-medium'>Daily activity</p>
-            <div className='mt-4 flex h-32 items-end gap-1'>
-              {metrics.days.map((day) => (
-                <div
-                  key={day.day}
-                  className='bg-primary/70 min-w-1 flex-1 rounded-t'
-                  title={`${day.day}: ${day.leads} leads`}
-                  style={{
-                    height: `${Math.max(4, Math.min(100, day.leads * 20 + day.estimatesBooked * 30))}%`
-                  }}
-                />
-              ))}
-            </div>
+            {metrics.days.length === 0 ? (
+              <p className='text-muted-foreground mt-3 text-sm'>No activity in this range.</p>
+            ) : (
+              <div className='mt-4 flex h-32 items-end gap-1'>
+                {metrics.days.map((day) => (
+                  <div
+                    key={day.day}
+                    className='bg-primary/70 min-w-1 flex-1 rounded-t'
+                    title={`${day.day}: ${day.leads} leads`}
+                    style={{
+                      height: `${Math.max(4, Math.min(100, day.leads * 20 + day.estimatesBooked * 30))}%`
+                    }}
+                  />
+                ))}
+              </div>
+            )}
           </div>
           <div className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
             <p className='font-medium'>Recent activity</p>

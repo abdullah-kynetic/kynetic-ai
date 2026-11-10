@@ -34,6 +34,8 @@ export const envSchema = z.object({
   ADMIN_ALERT_EMAIL_ENABLED: booleanString.default(false),
   // Weekly client email and the monthly report link. Both also need the per-client toggle.
   CLIENT_EMAIL_ENABLED: booleanString.default(false),
+  // AU-28. Off until counsel approves the Terms and Privacy wording.
+  TERMS_GATE_ENABLED: booleanString.default(false),
   // `stub` is an explicit deployment/test setting; default live mode keeps production fail-closed.
   PROVIDER_MODE: z.enum(['live', 'stub']).default('live'),
   RESEND_API_KEY: z.string().min(1).optional(),

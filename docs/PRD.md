@@ -192,6 +192,8 @@ Acceptance criteria are written as Given/When/Then. "Cross-tenant" always means 
 - Revenue recovered: sum of `value_cents` of deals that moved to a Won stage in the range and whose contact had an Alex call or an Alex-booked appointment.
 - Baseline: values captured at signup in `tenants.baseline` (same metric names). Definitions may be refined by Abdullah; changing one requires updating the M6 fixtures.
 
+Implementation note (2026-11-10, batch 2). The dashboard and the monthly report share two formulas in `crm/src/server/metrics/formulas.ts`, so a chosen month shows the same numbers in both places. Speed-to-lead is the median minutes from a lead-intake contact (`source` = `form`, imports excluded) to that contact's first outbound call attempt inside the same inclusive date window. The window uses the calendar dates on `metrics_daily.day`. The card says "No calls yet" when there is no attempt. Booking rate is estimates booked divided by leads in that window, as a whole percent, using the same rolled-up counts as the report. It is empty when there are no leads. The booking guarantee keeps its own 30-day window and is not part of these formulas.
+
 ### Admin side (F-53 to F-69)
 
 | ID | User need | Behavior | Acceptance criteria | Priority | Milestone | Module |

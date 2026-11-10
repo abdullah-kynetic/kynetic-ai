@@ -12,6 +12,30 @@ Found 2026-11-10. Admin delete and replace hide a PDF from the client and set `t
 ### KI-021: Proposal PDF has no price (low)
 Found 2026-11-10. The proposal PDF and preview say "Pricing to be confirmed". The price schedule is not in this repo, and a catalog or estimator is blocked. Do not invent a number.
 
+### KI-022: Clients do not see usage or provider cost (open)
+Found 2026-11-10. `/admin/usage` is staff-only. `calls.cost.read` stays limited to Kynetic admin and VA. A client usage page is blocked until someone decides whether clients should see provider cost. Do not add that page in the meantime.
+
+### KI-023: Message provider cost is not stored (open)
+Found 2026-11-10. `messages` has no cost column. The usage rollup counts SMS and email, stores message cost as 0, and marks the day "cost unknown" when a message was sent or a call has no cost. Do not invent a price to fill the gap. The recorded monthly fee still comes from `tenant_billing_modules` as stored.
+
+### KI-024: Twenty summary push is not built (open)
+Found 2026-11-10. Blueprint AU-29 would push a summary into Twenty. This batch did not build it. Twenty stays untouched.
+
+### KI-025: Offboarded clients are not deleted (open)
+Found 2026-11-10. Offboarding sets `offboarded_at` and `deletion_due_on` (30 days later) and queues a record export. Nothing deletes the client, the rows, or the files. The date is a reminder. The manual steps are in `docs/runbooks/offboarding.md`. A deletion still needs an explicit yes.
+
+### KI-026: Terms gate stays off until counsel approves the wording (medium)
+Found 2026-11-10. The acceptance page and the dashboard redirect exist. `TERMS_GATE_ENABLED` defaults to false. The page still shows the placeholder copy and a visible "Draft wording" notice. Do not turn the flag on, and do not replace the placeholder, until counsel signs the Terms and Privacy text (KI-002).
+
+### KI-027: Appointment calendar does not sync to an outside calendar (medium)
+Found 2026-11-10. Month, week, and day views read the portal `appointments` table. Nothing creates or updates a Cal.com event or a client's own calendar. Blocked on which calendar the client uses.
+
+### KI-028: Automation cadence and copy cannot be edited in the portal (medium)
+Found 2026-11-10. The automations page can turn a template on or off and can show run history. It cannot change the wait, the message, or enroll a list of contacts. Blocked on whether sequences run in n8n or in the portal worker.
+
+### KI-029: Support alerts do not send email (low)
+Found 2026-11-10. A new client request notifies Kynetic in the portal, and a Kynetic reply notifies the requester in the portal. The email preference for `support_request` and `support_reply` defaults to off, and this batch does not queue an email even if someone turns that preference on. Blocked by the rule that this work must not add a real outbound send.
+
 ### KI-002: TCPA emergency branch opt-out gap (high)
 Emergency calls and urgent notifications may reach someone who opted out.
 Fix: counsel sign-off (task 1.4). Also feeds the agreement rewrite (task 4.7, 4.8).
@@ -139,3 +163,15 @@ Found 2026-11-10. Offboarding sets `offboarded_at` and `deletion_due_on` (30 day
 
 ### KI-019: Audit-log archive destination is not defined (low)
 Found 2026-11-10. PRD decision 9 keeps the audit log 24 months online, then archived. `audit_log` is append-only, and no archive store is named. The retention purge does not delete audit rows. Recordings, messages, revoked consents, import files, and webhook payloads follow the decided windows.
+
+### KI-026: Terms gate stays off until counsel approves the wording (medium)
+Found 2026-11-10. The acceptance page and the dashboard redirect exist. `TERMS_GATE_ENABLED` defaults to false. The page still shows the placeholder copy and a visible "Draft wording" notice. Do not turn the flag on, and do not replace the placeholder, until counsel signs the Terms and Privacy text (KI-002).
+
+### KI-027: Appointment calendar does not sync to an outside calendar (medium)
+Found 2026-11-10. Month, week, and day views read the portal `appointments` table. Nothing creates or updates a Cal.com event or a client's own calendar. Blocked on which calendar the client uses.
+
+### KI-028: Automation cadence and copy cannot be edited in the portal (medium)
+Found 2026-11-10. The automations page can turn a template on or off and can show run history. It cannot change the wait, the message, or enroll a list of contacts. Blocked on whether sequences run in n8n or in the portal worker.
+
+### KI-029: Support alerts do not send email (low)
+Found 2026-11-10. A new client request notifies Kynetic in the portal, and a Kynetic reply notifies the requester in the portal. The email preference for `support_request` and `support_reply` defaults to off, and this batch does not queue an email even if someone turns that preference on. Blocked by the rule that this work must not add a real outbound send.

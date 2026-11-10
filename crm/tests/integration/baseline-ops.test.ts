@@ -53,6 +53,7 @@ const EXTRA_TABLES = [
   'agency_case_studies',
   // M20-06 client support requests.
   'support_requests',
+  'support_request_messages',
   // Client requests for a system that is off.
   'system_requests',
   // Batch 3 admin operations. platform_settings and staff_notifications are global.

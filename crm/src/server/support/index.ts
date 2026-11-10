@@ -1,10 +1,21 @@
 export {
+  getOwnSupportThread,
+  getStaffSupportThread,
   listOwnSupportRequests,
+  listSupportAlerts,
   listSupportQueue,
+  replyAsStaff,
+  replyToOwnSupportRequest,
+  sanitizeSupportText,
   setSupportRequestStatus,
   submitSupportRequest,
+  SUPPORT_CATEGORIES,
   SUPPORT_STATUSES,
+  type SupportAlert,
+  type SupportCategory,
+  type SupportMessage,
   type SupportQueueRow,
   type SupportRequestRow,
-  type SupportStatus
+  type SupportStatus,
+  type SupportThread
 } from './service';

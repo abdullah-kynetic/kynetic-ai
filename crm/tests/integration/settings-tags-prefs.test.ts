@@ -145,10 +145,13 @@ describe('M9-11 notification preferences (F-36)', () => {
     return { sent, provider };
   };
 
-  it('defaults to email on for every type', async () => {
+  it('defaults to email on, except support alerts which stay off', async () => {
     const prefs = await listMyPreferences(ctx.staffA(), opts);
     expect(prefs.length).toBe(NOTIFICATION_TYPES.length);
-    expect(prefs.every((p) => p.emailEnabled)).toBe(true);
+    for (const pref of prefs) {
+      const off = pref.kind === 'support_reply' || pref.kind === 'support_request';
+      expect(pref.emailEnabled, pref.kind).toBe(!off);
+    }
   });
 
   it('delivery follows the preference: off skips the email, other types still send', async () => {

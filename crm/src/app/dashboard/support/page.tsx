@@ -1,5 +1,7 @@
 import { headers } from 'next/headers';
+import Link from 'next/link';
 import PageContainer from '@/components/layout/page-container';
+import { statusLabel } from '@/components/support/thread';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -8,8 +10,6 @@ import { listOwnSupportRequests } from '@/server/support';
 import { submitSupportRequestAction } from './actions';
 
 export const dynamic = 'force-dynamic';
-
-const STATUS_LABEL = { open: 'Open', in_progress: 'In progress', resolved: 'Resolved' } as const;
 
 export default async function SupportPage({
   searchParams
@@ -28,7 +28,7 @@ export default async function SupportPage({
   return (
     <PageContainer
       pageTitle='Support'
-      pageDescription='Ask the Kynetic team for help. We will reply by email.'
+      pageDescription='Ask the Kynetic team for help. Replies show up here in the portal.'
     >
       <div className='grid max-w-3xl gap-8'>
         <form action={submitSupportRequestAction} className='grid gap-4'>
@@ -71,8 +71,13 @@ export default async function SupportPage({
               {requests.map((request) => (
                 <li key={request.id} className='rounded border p-3'>
                   <div className='flex flex-wrap items-center justify-between gap-2'>
-                    <span className='font-medium'>{request.subject}</span>
-                    <span className='text-sm'>{STATUS_LABEL[request.status]}</span>
+                    <Link
+                      className='font-medium underline'
+                      href={`/dashboard/support/${request.id}`}
+                    >
+                      {request.subject}
+                    </Link>
+                    <span className='text-sm'>{statusLabel(request.status)}</span>
                   </div>
                   <p className='text-muted-foreground mt-1 whitespace-pre-wrap text-sm'>
                     {request.body}

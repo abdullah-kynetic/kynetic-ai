@@ -1,14 +1,21 @@
 import { headers } from 'next/headers';
+import Link from 'next/link';
 import { forbidden } from 'next/navigation';
 import PageContainer from '@/components/layout/page-container';
+import { statusLabel } from '@/components/support/thread';
 import { Button } from '@/components/ui/button';
 import { decideAdminAccess } from '@/server/admin';
-import { listSupportQueue, type SupportStatus } from '@/server/support';
+import {
+  listSupportAlerts,
+  listSupportQueue,
+  SUPPORT_CATEGORIES,
+  type SupportCategory,
+  type SupportStatus
+} from '@/server/support';
 import { setSupportStatusAction } from './actions';
 
 export const dynamic = 'force-dynamic';
 
-const STATUS_LABEL = { open: 'Open', in_progress: 'In progress', resolved: 'Resolved' } as const;
 const ACTIONS: Record<SupportStatus, { status: SupportStatus; label: string }[]> = {
   open: [
     { status: 'in_progress', label: 'Start' },
@@ -21,15 +28,65 @@ const ACTIONS: Record<SupportStatus, { status: SupportStatus; label: string }[]>
   resolved: [{ status: 'open', label: 'Reopen' }]
 };
 
-export default async function AdminSupportPage() {
+const CATEGORY_LABEL: Record<SupportCategory, string> = {
+  general: 'General',
+  alex_change: 'Alex change',
+  system_request: 'System request'
+};
+
+export default async function AdminSupportPage({
+  searchParams
+}: {
+  searchParams: Promise<{ category?: string }>;
+}) {
   const access = await decideAdminAccess(await headers());
   if (access.kind !== 'ok') forbidden();
-  const rows = await listSupportQueue({ userId: access.user.id, role: access.role });
+  const staff = { userId: access.user.id, role: access.role };
+  const query = await searchParams;
+  const category = SUPPORT_CATEGORIES.find((item) => item === query.category) ?? null;
+  const [rows, alerts] = await Promise.all([
+    listSupportQueue(staff, { category }),
+    listSupportAlerts(staff)
+  ]);
   return (
     <PageContainer
       pageTitle='Support requests'
-      pageDescription='Requests from clients, open ones first.'
+      pageDescription='Requests from clients, open ones first. Replies stay in the portal.'
     >
+      <div className='mb-4 flex flex-wrap gap-2'>
+        <Link
+          className='inline-flex min-h-11 items-center rounded border px-3'
+          href='/admin/support'
+        >
+          All
+        </Link>
+        {SUPPORT_CATEGORIES.map((item) => (
+          <Link
+            key={item}
+            className='inline-flex min-h-11 items-center rounded border px-3'
+            href={`/admin/support?category=${item}`}
+            aria-current={category === item ? 'page' : undefined}
+          >
+            {CATEGORY_LABEL[item]}
+          </Link>
+        ))}
+      </div>
+      {alerts.length > 0 ? (
+        <section aria-labelledby='support-alerts' className='mb-4 rounded border p-3'>
+          <h2 id='support-alerts' className='font-medium'>
+            New requests
+          </h2>
+          <ul className='mt-2 grid gap-1 text-sm'>
+            {alerts.map((alert) => (
+              <li key={alert.id}>
+                <Link href={alert.link ?? '/admin/support'} className='underline'>
+                  {alert.tenantName}: {alert.body ?? alert.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
       {rows.length === 0 ? (
         <p className='text-muted-foreground'>No support requests.</p>
       ) : (
@@ -37,11 +94,14 @@ export default async function AdminSupportPage() {
           {rows.map((row) => (
             <li key={row.id} className='rounded border p-3'>
               <div className='flex flex-wrap items-center justify-between gap-2'>
-                <span className='font-medium'>{row.subject}</span>
-                <span className='text-sm'>{STATUS_LABEL[row.status]}</span>
+                <Link className='font-medium underline' href={`/admin/support/${row.id}`}>
+                  {row.subject}
+                </Link>
+                <span className='text-sm'>{statusLabel(row.status)}</span>
               </div>
               <p className='text-muted-foreground text-sm'>
-                {row.tenantName} · {new Date(row.createdAt).toLocaleString()}
+                {row.tenantName} · {CATEGORY_LABEL[row.category]} ·{' '}
+                {new Date(row.createdAt).toLocaleString()}
               </p>
               <p className='mt-2 whitespace-pre-wrap text-sm'>{row.body}</p>
               <div className='mt-3 flex flex-wrap gap-2'>

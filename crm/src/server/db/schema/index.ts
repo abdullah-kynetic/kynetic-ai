@@ -10,6 +10,7 @@ export * from './agency-dialer';
 export * from './agency-desk';
 export * from './proposals';
 export * from './support';
+export * from './support-messages';
 export * from './system-requests';
 export * from './agency-sales';
 export * from './operations-safety';

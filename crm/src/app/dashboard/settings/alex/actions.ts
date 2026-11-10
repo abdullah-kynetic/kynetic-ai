@@ -9,7 +9,12 @@ import {
 import { requireModule } from '@/server/modules';
 import { loadShellContext } from '@/server/shell';
 import { withTenant } from '@/server/tenancy';
+import { audit } from '@/server/audit';
+import { AppError } from '@/server/errors';
+import { VIEW_AS_COOKIE } from '@/server/impersonation';
+import { submitSupportRequest } from '@/server/support';
 import { cookies, headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 
 export type AlexSettingsState = { error?: string; saved?: boolean };
@@ -50,4 +55,39 @@ export async function saveAlexSettings(
   }
   revalidatePath('/dashboard/settings/alex');
   return { saved: true };
+}
+
+/** Files a support request. The raw prompt is not part of the form and is not shown. */
+export async function requestAlexChangeAction(form: FormData) {
+  const [cookieStore, requestHeaders] = await Promise.all([cookies(), headers()]);
+  const shell = await loadShellContext(
+    requestHeaders,
+    cookieStore.get('tenant_id')?.value,
+    undefined,
+    cookieStore.get(VIEW_AS_COOKIE)?.value
+  );
+  if (!shell?.tenant) redirect('/sign-in');
+  const ctx = { tenantId: shell.tenant.id, userId: shell.user.id, role: shell.role };
+  if (shell.viewAs?.readOnly) {
+    await withTenant(ctx, (tx) =>
+      audit(tx, { action: 'viewas.write_denied', entity: 'support_request' })
+    );
+    redirect('/dashboard/settings/alex?error=read-only');
+  }
+  const user = await getSessionUser(requestHeaders);
+  if (!user) redirect('/sign-in');
+  const actor = await resolveActor(user, shell.tenant.id);
+  if (!can(actor, 'alex.settings.client', shell.tenant.id))
+    redirect('/dashboard/settings/alex?error=permission');
+  try {
+    const created = await submitSupportRequest(ctx, actor, {
+      subject: 'Change how Alex works',
+      body: String(form.get('body') ?? ''),
+      category: 'alex_change'
+    });
+    redirect(`/dashboard/support/${created.id}`);
+  } catch (error) {
+    if (error instanceof AppError) redirect('/dashboard/settings/alex?error=invalid');
+    throw error;
+  }
 }

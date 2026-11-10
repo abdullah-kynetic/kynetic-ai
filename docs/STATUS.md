@@ -2,29 +2,36 @@
 
 A pointer, not a second scoreboard. Twenty is the business source of truth. GitHub is the technical execution record (code, pull requests, CI, and deploy evidence). On a mismatch, flag both values. This GitHub docs pass did not read or write Twenty. The parallel Twenty cleanup is recorded below from the parent's verification.
 
-## Portal batch 3 (2026-11-10, not deployed)
+## Portal batch 3 (2026-11-10)
 
 The admin side can pause every call and text from Operations. That pause only adds a block. `OUTBOUND_ENABLED=false` still stops everything, and nothing in this batch can turn that switch on. Usage for each client is on `/admin/usage` for Kynetic staff: minutes, calls, texts, emails, provider cost, the fee already stored, and whether a spend cap is close or reached. Clients do not see cost. An admin can offboard a client by typing the slug. That suspends the client, stops automations, revokes service tokens, and queues a zip of their records. The 30-day date on screen is a reminder only. Nobody is deleted automatically. Failed jobs and a morning admin digest show up in the portal. Weekly client email and the monthly report link exist and stay off unless both the server flag and the per-client toggle are on. No live call, text, or email was sent.
 
 ## Portal line (2026-11-09 PST)
 
-Abdullah stopped the second portal line. The portal implementation that lived on `dev/codex-setup` is the code for `main`. `main` is the only build that may be deployed to production at portal.kyneticai.com, and only after an explicit yes. A separate DEV environment is retired until after go-live: do not deploy `dev.kyneticai.com`, and do not keep working on `dev/codex-setup`. New work branches off `main`. This note does not deploy. Live production is `main` `ac0192af` (PR #146) as of 2026-11-09 evening PST; further deploys still need an explicit yes unless Abdullah has already authorized the operator to ship ready batches.
+Abdullah stopped the second portal line. The portal implementation that lived on `dev/codex-setup` is the code for `main`. `main` is the only build that may be deployed to production at portal.kyneticai.com, and only after an explicit yes. A separate DEV environment is retired until after go-live: do not deploy `dev.kyneticai.com`, and do not keep working on `dev/codex-setup`. New work branches off `main`. This note does not deploy. Live production is `main` `416b165617577e0468de03fabcfb383d220b584d` (PR #149) as of 2026-11-09 evening PST, after PRs #146, #147, and #150; further deploys still need an explicit yes unless Abdullah has already authorized the operator to ship ready batches.
 
 `docs/codex/CURRENT_STATUS.md` restates this portal fact. `docs/codex/COMPLETION-PLAN.md` stays historical evidence. Merging the portal code does not make that file the plan. The five steps below remain the operating order.
 
 ## Portal engineering note (2026-11-10)
 
-Production at portal.kyneticai.com is `main` `ac0192af` (PR #146), with migration `1015_schedules_retention_settings`. `PROVIDER_MODE=stub` and `OUTBOUND_ENABLED=false` are unchanged. The 2026-11-09 note above that still said release `350bf673` is stale for that revision; this file is the current pointer.
+Production at portal.kyneticai.com is `main` `416b165617577e0468de03fabcfb383d220b584d` (PR #149), with migration `1018_admin_ops_safety`. Earlier live tips were `df8b61a6` (PR #150, migration `1017_agency_sales_tools`), `b27b9d2a` (PR #147, migration `1016_systems_templates_guarantee`), and `ac0192af` (PR #146, migration `1015_schedules_retention_settings`). `PROVIDER_MODE=stub` and `OUTBOUND_ENABLED=false` are unchanged. The 2026-11-09 note that still said release `350bf673` is stale for that revision; this file is the current pointer.
 
 PR #146 is live: daily metrics and monthly report fanout, admin service tokens, encrypted n8n push settings, agency billing drafts outside stub mode, contact-merge consent fixes, CSV-only import, and the retention purge.
 
-This branch then adds the per-client systems library, template apply, remodeling industry, client My systems requests, and the 30-day 20% booking guarantee tracker (admin baseline override). Migration `1016_systems_templates_guarantee`. Not yet deployed from this note alone.
+PR #147 is live: the per-client systems library, template apply, remodeling industry, client My systems requests, and the 30-day 20% booking guarantee tracker (admin baseline override).
+
+PR #149 is live: admin outbound pause, `/admin/usage`, offboarding without automatic deletion, failed-job alerts and the daily admin digest (email off by default), and weekly/monthly client emails that stay off unless both flags are on.
 
 ## Agency sales tools (2026-11-10)
 
-This note records code on the batch 4 branch. It does not deploy or migrate production. Migration `1017_agency_sales_tools` follows `1016_systems_templates_guarantee`.
+PR #150 is live at portal.kyneticai.com as `main` `df8b61a651622c5bf0b3d1c1f8a86cb095c66b52`, with migration `1017_agency_sales_tools`.
 
 The agency workspace can schedule a Pacific-time callback, mark a campaign step done, skip it, or reschedule it, and export a proposal PDF. Contracts, expenses, referrals, and case studies are tracked by hand. None of those actions place a call, send a text or email, or charge a card. "Simulate Stripe event" and "Simulate step" stay available outside production and are refused when `NODE_ENV` is production. Excel `.xlsx` import is available (KI-018). Retell cannot be saved as an Alex provider. Prices are still not in the proposal PDF (KI-021). Stored files for a deleted or replaced document are kept (KI-020).
+
+## Client workspace (batch 2, 2026-11-10)
+
+The client dashboard can show 7, 30, or 90 days, or a custom range, in the client's time zone. Speed-to-lead and booking rate use the same formulas as the monthly report. The 30-day booking guarantee is unchanged. Appointments have month, week, and day views and a contact search instead of a raw id. Automations show recent run results and stay read-only. Pipeline owner and source filters were already on `main`; this batch adds browser coverage. Support is a thread on both the client side and the Kynetic side, with an in-app alert and no email. Alex settings can file a change request. The terms acceptance page exists and stays off unless `TERMS_GATE_ENABLED=true`. Migration `1019_support_threads_category` follows `1018_admin_ops_safety`. This note does not deploy. `PROVIDER_MODE=stub` and `OUTBOUND_ENABLED=false` are unchanged. Left open: terms wording (KI-026), calendar sync (KI-027), automation editing (KI-028), and support email (KI-029).
+
 
 ## Current direction
 

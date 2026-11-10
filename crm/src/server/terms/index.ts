@@ -62,15 +62,24 @@ export function clientIp(forwardedFor: string | null): string | null {
 export async function recordAcceptance(
   userId: string,
   ip: string | null,
-  opts: { db?: Db; documents?: readonly LegalDocument[] } = {}
+  opts: { db?: Db; documents?: readonly LegalDocument[]; userAgent?: string | null } = {}
 ): Promise<void> {
   const documents = opts.documents ?? CURRENT_DOCUMENTS;
+  const userAgent = opts.userAgent?.slice(0, 500) ?? null;
   await withUser(
     userId,
     (tx) =>
       tx
         .insert(termsAcceptances)
-        .values(documents.map((d) => ({ userId, document: d.document, version: d.version, ip })))
+        .values(
+          documents.map((d) => ({
+            userId,
+            document: d.document,
+            version: d.version,
+            ip,
+            userAgent
+          }))
+        )
         .onConflictDoNothing(),
     opts.db
   );

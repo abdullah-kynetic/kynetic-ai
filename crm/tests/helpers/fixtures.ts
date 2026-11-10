@@ -132,7 +132,9 @@ async function seedTenant(
   await admin`insert into automation_runs (tenant_id, automation_id, contact_id, next_run_at) values (${t}, ${auto.id}, ${contact.id}, now())`;
   await admin`insert into notifications (tenant_id, kind, title) values (${t}, 'new_lead', 'New lead')`;
   await admin`insert into tags (tenant_id, name) values (${t}, 'VIP')`;
-  await admin`insert into support_requests (tenant_id, subject, body, submitted_by) values (${t}, 'Fixture request', 'Synthetic support request.', ${owner})`;
+  const [request] =
+    await admin`insert into support_requests (tenant_id, subject, body, submitted_by) values (${t}, 'Fixture request', 'Synthetic support request.', ${owner}) returning id`;
+  await admin`insert into support_request_messages (tenant_id, request_id, author_user_id, author_side, body) values (${t}, ${request.id}, ${owner}, 'client', 'Synthetic support message.')`;
   await admin`insert into system_requests (tenant_id, module_key, requested_by) values (${t}, 'quote_followup', ${owner})`;
   await admin`insert into usage_daily (tenant_id, day, call_count, call_seconds, call_cost_cents, sms_count, email_count, cost_unknown)
     values (${t}, current_date, 1, 60, 10, 1, 0, true)`;
