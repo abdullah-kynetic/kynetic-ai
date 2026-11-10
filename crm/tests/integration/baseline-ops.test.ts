@@ -54,7 +54,12 @@ const EXTRA_TABLES = [
   // M20-06 client support requests.
   'support_requests',
   // Client requests for a system that is off.
-  'system_requests'
+  'system_requests',
+  // Batch 3 admin operations. platform_settings and staff_notifications are global.
+  'platform_settings',
+  'usage_daily',
+  'tenant_exports',
+  'staff_notifications'
 ];
 
 function entitiesFromDoc(): string[] {

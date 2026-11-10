@@ -1441,3 +1441,13 @@ Migration `1017_agency_sales_tools` adds five agency-tenant tables. Each has `te
 - `agency_case_studies`: optional client tenant, status `idea`/`drafting`/`approved`/`published`, URL, and note.
 
 `tenant_documents` gains `deleted_at` and `superseded_by`. Delete and replace are soft. The stored object stays. A client read or download of a deleted or superseded id returns no row. `agency_campaign_history` gains `recorded_by` and `note`, and its result check adds `done`, `skipped`, and `rescheduled`. The one-row-per-step unique key is dropped so a reschedule and a later completion can both be recorded. `agency_call_attempts` keeps its event unique key and drops the one-row-per-contact unique key so a due callback can be logged again.
+
+## Admin pause, usage, and offboarding (2026-11-10)
+
+Migration `1018_admin_ops_safety` adds:
+
+- `platform_settings`: one row. `outbound_paused`, `paused_by`, `paused_at`, `reason`. RLS is on. App and worker may read it. Writes go through `admin_set_outbound_pause`, which audits `platform.outbound_pause` or `platform.outbound_resume`. This row cannot change `OUTBOUND_ENABLED`.
+- `usage_daily`: `tenant_id`, `day`, `call_count`, `call_seconds`, `call_cost_cents`, `sms_count`, `email_count`, `message_cost_cents`, `cost_unknown`. Standard tenant RLS. The app role cannot insert or update. The worker rebuilds a day from `calls` and `messages`. Unknown costs are stored as 0 and `cost_unknown` is true. Staff read a month through `admin_usage_month`, which audits `usage.read`.
+- `tenant_exports`: `tenant_id`, `storage_key`, `status` (`queued`, `ready`, `failed`), `byte_size`, `error`, `created_by`, `created_at`, `ready_at`. Standard tenant RLS. The app role cannot insert or update. The offboard function inserts the row. The worker writes the file and marks it ready.
+- `staff_notifications`: not tenant scoped. Kynetic admins read rows only when no tenant is selected. Kinds are `job_failed`, `daily_digest`, and `spend_cap`. Inserts go through `record_staff_notification` or `note_spend_cap_reached`.
+- Tenant columns: `monthly_spend_cap_cents` (null means no cap), `offboarded_at`, `deletion_due_on` (display only), `weekly_email_enabled` (default false), `report_email_enabled` (default false). Cap and email flags are admin functions with audit actions `tenant.spend_cap` and `tenant.email_flags`. Offboarding audits `tenant.offboard`.

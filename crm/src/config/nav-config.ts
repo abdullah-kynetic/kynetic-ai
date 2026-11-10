@@ -302,6 +302,14 @@ export const adminNavGroups: NavGroup[] = [
         items: []
       },
       {
+        title: 'Usage',
+        url: '/admin/usage',
+        icon: 'billing',
+        isActive: false,
+        shortcut: ['a', 'g'],
+        items: []
+      },
+      {
         title: 'Support requests',
         url: '/admin/support',
         icon: 'help',

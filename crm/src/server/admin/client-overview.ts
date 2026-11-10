@@ -31,6 +31,9 @@ export type ClientOverview = {
     zips: string[];
     hours: string;
     goLiveAt: string | null;
+    monthlySpendCapCents: number | null;
+    offboardedAt: string | null;
+    deletionDueOn: string | null;
   };
   owners: { name: string | null; email: string }[];
   pendingOwnerEmail: string | null;
@@ -99,7 +102,10 @@ export async function loadClientOverview(
           services: tenants.services,
           serviceArea: tenants.serviceArea,
           businessHours: tenants.businessHours,
-          goLiveAt: tenants.goLiveAt
+          goLiveAt: tenants.goLiveAt,
+          monthlySpendCapCents: tenants.monthlySpendCapCents,
+          offboardedAt: tenants.offboardedAt,
+          deletionDueOn: tenants.deletionDueOn
         })
         .from(tenants)
         .where(eq(tenants.id, tenantId))
@@ -187,7 +193,10 @@ export async function loadClientOverview(
       services: stringList(detail.tenant.services),
       zips: zipsOf(detail.tenant.serviceArea),
       hours: formatBusinessHours(detail.tenant.businessHours),
-      goLiveAt: detail.tenant.goLiveAt
+      goLiveAt: detail.tenant.goLiveAt,
+      monthlySpendCapCents: detail.tenant.monthlySpendCapCents,
+      offboardedAt: detail.tenant.offboardedAt,
+      deletionDueOn: detail.tenant.deletionDueOn
     },
     owners: detail.owners,
     pendingOwnerEmail: detail.owners.length ? null : detail.pendingOwnerEmail,

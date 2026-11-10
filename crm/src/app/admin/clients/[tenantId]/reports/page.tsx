@@ -5,7 +5,7 @@ import { decideAdminAccess } from '@/server/admin';
 import { getReportScheduleForAdmin } from '@/server/admin/report-schedule';
 import { AppError } from '@/server/errors';
 import { isViewingAs } from '../../../view-as-guard';
-import { saveReportDayAction } from './actions';
+import { saveClientEmailAction, saveReportDayAction } from './actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -32,7 +32,10 @@ export default async function ClientReportSchedulePage({
       pageTitle='Report schedule'
       pageDescription='The monthly ROI report runs on this day in the client timezone. Days are 1 to 28 so every month has the day.'
     >
-      {query.saved && <p role='status'>Report day saved.</p>}
+      {query.saved === '1' && <p role='status'>Report day saved.</p>}
+      {query.saved === 'email' && (
+        <p role='status'>Email settings saved. Both stay off until the server flag is on too.</p>
+      )}
       {query.error === 'invalid' && <p role='alert'>Choose a day from 1 to 28.</p>}
       {query.error === 'forbidden' && <p role='alert'>Only a Kynetic admin can change this.</p>}
       {query.error === 'failed' && <p role='alert'>The report day could not be saved.</p>}
@@ -54,6 +57,27 @@ export default async function ClientReportSchedulePage({
         </label>
         <button className='min-h-11 rounded border px-4' type='submit'>
           Save report day
+        </button>
+      </form>
+      <form
+        action={saveClientEmailAction.bind(null, tenantId)}
+        className='mt-8 grid max-w-md gap-3'
+      >
+        <h2 className='text-lg font-semibold'>Client email</h2>
+        <p>
+          Weekly results and the monthly report link stay off unless this client is checked and the
+          server flag is on. Nothing is attached.
+        </p>
+        <label className='flex min-h-11 items-center gap-2'>
+          <input name='weekly' type='checkbox' defaultChecked={schedule.weeklyEmailEnabled} />
+          Weekly email on Monday morning
+        </label>
+        <label className='flex min-h-11 items-center gap-2'>
+          <input name='report' type='checkbox' defaultChecked={schedule.reportEmailEnabled} />
+          Email a link when the monthly report is ready
+        </label>
+        <button className='min-h-11 rounded border px-4' type='submit'>
+          Save email settings
         </button>
       </form>
     </PageContainer>

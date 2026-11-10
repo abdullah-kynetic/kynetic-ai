@@ -8,12 +8,15 @@ import {
   markFlaggedCallReviewed,
   replayFailedWebhook,
   setOutboundKillSwitch,
+  setOutboundPaused,
   suspendTenant
 } from '@/server/admin';
+import { isViewingAs } from '../view-as-guard';
 
 async function adminOnly() {
   const access = await decideAdminAccess(await headers());
   if (access.kind !== 'ok' || access.role !== 'admin') forbidden();
+  if (await isViewingAs(access.user)) forbidden();
   return { userId: access.user.id, role: access.role as 'admin' };
 }
 
@@ -39,6 +42,18 @@ export async function setTenantKillSwitchAction(formData: FormData) {
 export async function replayWebhookAction(formData: FormData) {
   const actor = await adminOnly();
   await replayFailedWebhook(actor, String(formData.get('webhookId')));
+  revalidatePath('/admin/operations');
+}
+
+export async function pauseOutboundAction(formData: FormData) {
+  const actor = await adminOnly();
+  await setOutboundPaused(actor, true, String(formData.get('reason') ?? ''));
+  revalidatePath('/admin/operations');
+}
+
+export async function resumeOutboundAction() {
+  const actor = await adminOnly();
+  await setOutboundPaused(actor, false, '');
   revalidatePath('/admin/operations');
 }
 

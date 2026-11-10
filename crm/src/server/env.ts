@@ -30,6 +30,10 @@ export const envSchema = z.object({
   RETELL_API_KEY: z.string().min(1).optional(),
   RETELL_FROM_NUMBER: z.string().min(1).optional(),
   OUTBOUND_ENABLED: booleanString.default(false),
+  // Staff failure alerts and the daily admin digest. In-app notices still appear when this is off.
+  ADMIN_ALERT_EMAIL_ENABLED: booleanString.default(false),
+  // Weekly client email and the monthly report link. Both also need the per-client toggle.
+  CLIENT_EMAIL_ENABLED: booleanString.default(false),
   // `stub` is an explicit deployment/test setting; default live mode keeps production fail-closed.
   PROVIDER_MODE: z.enum(['live', 'stub']).default('live'),
   RESEND_API_KEY: z.string().min(1).optional(),

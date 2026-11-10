@@ -148,7 +148,11 @@ export function ComponentGallery() {
           icon={<IconInbox aria-hidden='true' />}
           title='No leads yet'
           description='New leads from your ads appear here as Alex calls them.'
-          action={<Button>Add a lead</Button>}
+          action={
+            <Button type='button' disabled>
+              Demo only
+            </Button>
+          }
         />
         <div className='flex flex-col gap-2'>
           <Skeleton className='h-6 w-1/2' />

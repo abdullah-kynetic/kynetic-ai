@@ -18,6 +18,16 @@ export const businessStateSchema = z
     'unsupported_business_state'
   );
 
+/** The DEV lead hook is refused in production even when the base URL is the dev host. */
+export function devLeadHookAllowed(nodeEnv: string): boolean {
+  return nodeEnv !== 'production';
+}
+
+export function assertDevLeadHook(nodeEnv: string): void {
+  if (!devLeadHookAllowed(nodeEnv))
+    throw new AppError('FORBIDDEN', { message: 'This operation is dev-only.' });
+}
+
 export function assertDevPortal(baseUrl: string): void {
   const url = new URL(baseUrl);
   if (

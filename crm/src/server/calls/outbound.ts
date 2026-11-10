@@ -286,6 +286,9 @@ export async function runOutboundCall(
     if (decision.reason === 'quiet_hours' && decision.retryAt) {
       return defer(decision.retryAt, 'quiet_hours');
     }
+    if (decision.reason === 'global_pause') {
+      return defer(new Date(now.getTime() + KILL_SWITCH_RECHECK_MS), 'global_pause');
+    }
     return stop(decision.reason);
   }
 

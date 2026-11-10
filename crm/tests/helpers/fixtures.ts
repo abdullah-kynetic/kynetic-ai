@@ -134,6 +134,10 @@ async function seedTenant(
   await admin`insert into tags (tenant_id, name) values (${t}, 'VIP')`;
   await admin`insert into support_requests (tenant_id, subject, body, submitted_by) values (${t}, 'Fixture request', 'Synthetic support request.', ${owner})`;
   await admin`insert into system_requests (tenant_id, module_key, requested_by) values (${t}, 'quote_followup', ${owner})`;
+  await admin`insert into usage_daily (tenant_id, day, call_count, call_seconds, call_cost_cents, sms_count, email_count, cost_unknown)
+    values (${t}, current_date, 1, 60, 10, 1, 0, true)`;
+  await admin`insert into tenant_exports (tenant_id, storage_key, status)
+    values (${t}, ${`${t}/exports/fixture.zip`}, 'ready')`;
   await admin`insert into notification_preferences (tenant_id, user_id, kind, email_enabled) values (${t}, ${owner}, 'booked', false)`;
   const [batch] =
     await admin`insert into import_batches (tenant_id, entity, imported_source, file_name, file_type) values (${t}, 'contact', 'csv_other', 'x.csv', 'csv') returning id`;

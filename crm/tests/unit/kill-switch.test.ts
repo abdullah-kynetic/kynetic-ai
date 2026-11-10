@@ -56,6 +56,7 @@ describe('F-78 outbound kill switches', () => {
   it('checks the tenant switch when the global switch allows outbound', async () => {
     config.OUTBOUND_ENABLED = true;
     const { tx, limit } = transaction([
+      [{ outboundPaused: false }],
       [{ status: 'active' }],
       [{ config: { outbound_kill_switch: true } }]
     ]);
@@ -64,13 +65,14 @@ describe('F-78 outbound kill switches', () => {
         tx
       })
     ).toEqual({ allowed: false, reason: 'outbound_disabled' });
-    expect(limit).toHaveBeenCalledTimes(2);
+    expect(limit).toHaveBeenCalledTimes(3);
     expect(canContact).not.toHaveBeenCalled();
   });
 
   it('does not turn off module protection when the tenant kill switch is clear', async () => {
     const { tx } = transaction([
-      [{ status: 'active' }],
+      [{ outboundPaused: false }],
+      [{ status: 'active', monthlySpendCapCents: null }],
       [{ config: { outbound_kill_switch: false } }],
       [{ enabled: false }]
     ]);

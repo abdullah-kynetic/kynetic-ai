@@ -9,7 +9,9 @@ import {
   listFailedWebhooks,
   listFlaggedCalls,
   listIntegrationHealth,
-  listRecentJobs
+  listRecentJobs,
+  listStaffNotifications,
+  readOutboundPause
 } from '@/server/admin';
 import {
   replayWebhookAction,
@@ -17,6 +19,7 @@ import {
   setTenantKillSwitchAction,
   suspendTenantAction
 } from './actions';
+import { PauseControls } from './pause-controls';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,20 +27,50 @@ export default async function OperationsPage() {
   const access = await decideAdminAccess(await headers());
   if (access.kind !== 'ok') forbidden();
   const platform = { userId: access.user.id, role: access.role };
-  const [integrations, flagged, failedWebhooks, recentJobs, tenants] = await Promise.all([
-    listIntegrationHealth(platform),
-    listFlaggedCalls(platform),
-    access.role === 'admin' ? listFailedWebhooks(platform) : Promise.resolve([]),
-    access.role === 'admin'
-      ? listRecentJobs({ userId: access.user.id, role: 'admin' })
-      : Promise.resolve([]),
-    access.role === 'admin' ? listAdminTenantOverview(platform) : Promise.resolve([])
-  ]);
+  const [integrations, flagged, failedWebhooks, recentJobs, tenants, pause, notices] =
+    await Promise.all([
+      listIntegrationHealth(platform),
+      listFlaggedCalls(platform),
+      access.role === 'admin' ? listFailedWebhooks(platform) : Promise.resolve([]),
+      access.role === 'admin'
+        ? listRecentJobs({ userId: access.user.id, role: 'admin' })
+        : Promise.resolve([]),
+      access.role === 'admin' ? listAdminTenantOverview(platform) : Promise.resolve([]),
+      access.role === 'admin' ? readOutboundPause(platform) : Promise.resolve(null),
+      access.role === 'admin' ? listStaffNotifications(platform) : Promise.resolve([])
+    ]);
   return (
     <PageContainer
       pageTitle='Operations'
       pageDescription='Integration health and staff review controls.'
     >
+      {pause && (
+        <PauseControls
+          envEnabled={pause.envEnabled}
+          paused={pause.paused}
+          reason={pause.reason}
+          pausedAt={pause.pausedAt}
+        />
+      )}
+      {access.role === 'admin' && (
+        <section className='mb-8 space-y-3' aria-labelledby='alerts-heading'>
+          <h2 id='alerts-heading' className='text-lg font-semibold'>
+            Admin alerts
+          </h2>
+          {notices.length ? (
+            <ul className='divide-y rounded-lg border'>
+              {notices.map((notice) => (
+                <li key={notice.id} className='p-3'>
+                  <p className='font-medium'>{notice.title}</p>
+                  {notice.body && <p className='text-sm whitespace-pre-wrap'>{notice.body}</p>}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No admin alerts yet.</p>
+          )}
+        </section>
+      )}
       <section className='mb-8 space-y-3' aria-labelledby='integrations-heading'>
         <h2 id='integrations-heading' className='text-lg font-semibold'>
           Integration health

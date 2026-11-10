@@ -9,6 +9,7 @@ import { headers } from 'next/headers';
 import Link from 'next/link';
 import { forbidden, notFound } from 'next/navigation';
 import { GuaranteeForm } from './guarantee-form';
+import { saveSpendCapAction } from './spend-cap-action';
 
 export const metadata: Metadata = { title: 'Client' };
 export const dynamic = 'force-dynamic';
@@ -45,8 +46,11 @@ export default async function ClientOverviewPage({
     ['Documents', `/admin/clients/${tenant.id}/documents`],
     ['Import', `/admin/clients/${tenant.id}/imports`],
     ['Webhooks', `/admin/clients/${tenant.id}/webhooks`],
-    ['Online presence', `/admin/clients/${tenant.id}/presence`]
-  ] as const;
+    ['Online presence', `/admin/clients/${tenant.id}/presence`],
+    ...(access.role === 'admin'
+      ? ([['Offboard', `/admin/clients/${tenant.id}/offboard`]] as const)
+      : [])
+  ];
 
   return (
     <PageContainer
@@ -157,6 +161,37 @@ export default async function ClientOverviewPage({
             </ul>
           )}
         </section>
+
+        {access.role === 'admin' && (
+          <section className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
+            <h2 className='font-medium'>Spend cap</h2>
+            <p className='text-muted-foreground mt-1 text-sm'>
+              Month-to-date provider cost. Blank means no cap. This does not change the monthly fee.
+            </p>
+            <form action={saveSpendCapAction} className='mt-3 flex flex-wrap items-end gap-2'>
+              <input type='hidden' name='tenantId' value={tenant.id} />
+              <label className='grid gap-1 text-sm'>
+                Cap in cents
+                <input
+                  className='min-h-11 rounded border px-3'
+                  name='cents'
+                  inputMode='numeric'
+                  defaultValue={tenant.monthlySpendCapCents ?? ''}
+                  aria-label='Monthly spend cap in cents'
+                />
+              </label>
+              <button className='min-h-11 rounded border px-3' type='submit'>
+                Save cap
+              </button>
+            </form>
+            {tenant.offboardedAt && (
+              <p className='mt-3 text-sm'>
+                Offboarded {tenant.offboardedAt}. Deletion due {tenant.deletionDueOn} is a date on
+                the calendar only. Nothing is deleted automatically.
+              </p>
+            )}
+          </section>
+        )}
 
         <section className='rounded-xl bg-card p-4 ring-1 ring-foreground/10 lg:col-span-2'>
           <h2 className='font-medium'>Recent activity</h2>

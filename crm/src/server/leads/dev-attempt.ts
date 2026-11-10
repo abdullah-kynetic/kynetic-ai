@@ -38,8 +38,8 @@ export async function runDevAttempt(
   if (!decision.allowed) {
     if (decision.reason === 'quiet_hours' && decision.retryAt)
       return defer(decision.retryAt, 'quiet_hours');
-    if (decision.reason === 'outbound_disabled')
-      return defer(new Date(now.getTime() + 60_000), 'outbound_disabled');
+    if (decision.reason === 'outbound_disabled' || decision.reason === 'global_pause')
+      return defer(new Date(now.getTime() + 60_000), decision.reason);
     return { status: 'blocked' as const, reason: decision.reason };
   }
   if (!opts.send) return { status: 'dispatch_disabled' as const };

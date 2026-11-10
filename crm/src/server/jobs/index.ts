@@ -6,7 +6,7 @@ import { JOBS_SCHEMA, QUEUES, type QueueName } from './queues';
 
 export { QUEUES, type QueueName };
 
-export type JobContext = { jobId: string; retryCount: number };
+export type JobContext = { jobId: string; retryCount: number; retryLimit: number };
 export type JobHandler<T> = (data: T, job: JobContext) => Promise<void>;
 
 type Role = 'app' | 'worker';
@@ -113,9 +113,30 @@ export async function registerWorker<T extends object>(
     { batchSize: 1, pollingIntervalSeconds: opts.pollingIntervalSeconds ?? 2 },
     async ([job]) => {
       if (!job) return;
+      const configured = queue in QUEUES ? QUEUES[queue as QueueName].retryLimit : undefined;
+      const limit = typeof configured === 'number' ? configured : 6;
       try {
-        await handler(job.data, { jobId: job.id, retryCount: job.retryCount });
+        await handler(job.data, {
+          jobId: job.id,
+          retryCount: job.retryCount,
+          retryLimit: limit
+        });
       } catch (error) {
+        if (job.retryCount + 1 >= limit) {
+          try {
+            const { noteExhaustedJob } = await import('../admin/alerts');
+            await noteExhaustedJob({ queue, error, payload: job.data });
+          } catch (alertError) {
+            console.error(
+              JSON.stringify({
+                level: 'error',
+                msg: 'failed-job alert was not recorded',
+                queue,
+                error: alertError instanceof Error ? alertError.name : 'unknown'
+              })
+            );
+          }
+        }
         console.error(
           JSON.stringify({
             level: 'error',

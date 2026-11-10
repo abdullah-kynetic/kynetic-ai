@@ -27,15 +27,22 @@ import {
   registerAfterHoursSubscriber,
   registerMissedCallTextbackSubscriber
 } from './automations';
-import { registerReportWorker } from './reports';
+import { registerReportReadyEmail, registerReportWorker } from './reports';
 import { registerRetentionWorker, scheduleRetentionPurge } from './retention/purge';
 import { registerScheduleWorkers, scheduleTenantJobs } from './schedules';
+import { registerUsageWorker } from './usage';
+import { registerWeeklyEmailWorker } from './reports/weekly-email';
+import { publishAdminDigest } from './admin/alerts';
+import { registerTenantExportWorker } from './admin/tenant-export';
+import { purgeExpiredRateLimits, RATE_LIMIT_PURGE_CRON } from './security/rate-limit';
+import { getWorkerDb } from './db/client';
 import { registerN8nEventSubscribers } from './integrations/n8n';
 import { registerWorker, scheduleRecurring } from './jobs';
 import { handleBackupJob, type BackupJob } from './admin/backups';
 
 // Worker entry (kynetic_worker). Feature milestones register their subscribers and webhook
 // processors before this point; the fan-out workers below deliver to them.
+registerReportReadyEmail();
 wireEmail(getEnv());
 registerVoiceProcessor({ provider: getVoiceProvider('elevenlabs')! });
 registerLeadProcessor();
@@ -77,8 +84,32 @@ await registerAutomationWorker();
 await registerReportWorker();
 await registerScheduleWorkers();
 await registerRetentionWorker();
+await registerUsageWorker();
+await registerWeeklyEmailWorker();
+await registerTenantExportWorker();
+await registerWorker('admin.digest', async () => {
+  await publishAdminDigest();
+});
+await registerWorker('security.rate_limit_purge', async () => {
+  await purgeExpiredRateLimits(getWorkerDb());
+});
 await scheduleTenantJobs();
 await scheduleRetentionPurge();
+await scheduleRecurring(
+  'worker',
+  'admin.digest',
+  '0 8 * * *',
+  {},
+  'admin-daily-digest',
+  'America/Los_Angeles'
+);
+await scheduleRecurring(
+  'worker',
+  'security.rate_limit_purge',
+  RATE_LIMIT_PURGE_CRON,
+  {},
+  'rate-limit-purge-hourly'
+);
 console.log(JSON.stringify({ level: 'info', msg: 'worker started' }));
 
 for (const signal of ['SIGTERM', 'SIGINT'] as const) {
