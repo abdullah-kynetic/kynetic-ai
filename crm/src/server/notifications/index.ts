@@ -60,7 +60,11 @@ export async function notify(
 
 // RLS scopes rows to the tenant only, so "own notifications only" is enforced here: reads and
 // updates filter on the session user, which comes from the verified context and not a parameter.
-const mine = or(eq(notifications.userId, sql`app_user_id()`), isNull(notifications.userId));
+const mine = and(
+  or(eq(notifications.userId, sql`app_user_id()`), isNull(notifications.userId)),
+  // Staff alerts for a new client request are listed on the admin support page, not the client bell.
+  sql`${notifications.kind} <> 'support_request'`
+);
 
 export function listMyNotifications(
   tx: Tx,

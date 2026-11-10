@@ -2,25 +2,30 @@
 
 Updated **2026-11-10**. Canonical status is [../STATUS.md](../STATUS.md). This file restates the same portal facts.
 
-## Portal code note (2026-11-10, batch 3)
+## Admin ops and safety (2026-11-10)
 
-Batch 3 adds an admin outbound pause that cannot turn sending on, a staff-only usage page with spend caps, offboarding with a manual 30-day deletion date, in-app failed-job alerts and a morning admin digest, and weekly plus monthly client emails that stay off by default. Migration `1018_admin_ops_safety` on this branch, after PR #150 took `1017`. `PROVIDER_MODE` and `OUTBOUND_ENABLED` are unchanged. `ADMIN_ALERT_EMAIL_ENABLED` and `CLIENT_EMAIL_ENABLED` default to false. Not merged and not deployed.
+Batch 3 (PR #149) is live: an admin outbound pause that cannot turn sending on, a staff-only usage page with spend caps, offboarding with a manual 30-day deletion date, in-app failed-job alerts and a morning admin digest, and weekly plus monthly client emails that stay off by default. Migration `1018_admin_ops_safety`. `PROVIDER_MODE` and `OUTBOUND_ENABLED` are unchanged. `ADMIN_ALERT_EMAIL_ENABLED` and `CLIENT_EMAIL_ENABLED` default to false and are unset in production.
+
+## Client workspace (2026-11-10)
+
+Batch 2 adds the client dashboard date range, speed-to-lead and booking rate, appointment calendar views, read-only automation history, support threads, an Alex change request, and a terms gate that defaults off. Migration `1019_support_threads_category`, after PR #149 took `1018`. Pipeline owner and source filters were already on `main`. Not deployed. `PROVIDER_MODE=stub` and `OUTBOUND_ENABLED=false` are unchanged.
+
 
 ## Portal code note (2026-11-10)
 
-PR #146 is live at portal.kyneticai.com as `main` `ac0192af` (migration `1015`). This systems/templates branch adds migration `1016` and is not yet the live tip until merged and deployed. See `docs/STATUS.md`.
+Production at portal.kyneticai.com is `main` `416b165617577e0468de03fabcfb383d220b584d` (PR #149, migration `1018_admin_ops_safety`). PRs #146 (migration `1015`), #147 (migration `1016`), and #150 (migration `1017`) are also live. See `docs/STATUS.md`.
 
-On this branch, client metrics and monthly reports are enqueued per operating tenant, service tokens and the n8n push secret have an admin screen, agency drafts save without stub mode, contact-merge grants stay put, Excel upload stays refused (KI-018), and retention purge follows PRD decision 9 except audit archival (KI-019). `PROVIDER_MODE` and `OUTBOUND_ENABLED` are unchanged. No live send or charge was made.
+Client metrics and monthly reports are enqueued per operating tenant, service tokens and the n8n push secret have an admin screen, agency drafts save without stub mode, contact-merge grants stay put, Excel `.xlsx` import is available (KI-018), and retention purge follows PRD decision 9 except audit archival (KI-019). `PROVIDER_MODE` and `OUTBOUND_ENABLED` are unchanged. No live send or charge was made.
 
 - One portal line. The portal implementation that was on `dev/codex-setup` is the code for `main`.
 - `main` is the only build that may be deployed to production at portal.kyneticai.com, and only after an explicit yes.
 - The separate DEV environment (`dev.kyneticai.com`, `scripts/deploy-dev.sh`, `crm/deploy/dev/`) is retired until after go-live. Do not deploy it. Do not continue `dev/codex-setup`.
 - [COMPLETION-PLAN.md](COMPLETION-PLAN.md) is historical evidence, not the operating plan. The operating order is the five steps in `docs/STATUS.md`.
-- This note does not deploy. Live production remains release `350bf673` until that yes.
-- 2026-11-10: batch 4 adds agency callbacks, manual campaign completion, proposal PDF export, contract and finance tracking, soft document delete and replace, safe `.xlsx` import, and a parked Retell provider. No outbound send and no deploy.
+- This note does not deploy. Live production is `main` `416b165617577e0468de03fabcfb383d220b584d` (PR #149).
+- 2026-11-10: batch 4 (PR #150) is live: agency callbacks, manual campaign completion, proposal PDF export, contract and finance tracking, soft document delete and replace, safe `.xlsx` import, and a parked Retell provider. No outbound send.
 - [PROGRESS.md](PROGRESS.md) is a technical log, not a second roadmap.
 - The client portal now has a per-tenant admin overview, per-client system settings, a template library (industry templates plus the module catalog; Plan 2 names are coming soon), a client My systems page, a remodeling onboarding template, and a 30-day booking guarantee. Applying a template is idempotent and audited. A "Request this" button files an audited request and takes no payment. This note does not deploy.
-- GitHub `main` after PR #146 is `ac0192af`, which is live on portal.kyneticai.com. This branch rebases on that tip and renumbers its migration to `1016`.
+- GitHub `main` after PR #149 is `416b165617577e0468de03fabcfb383d220b584d`, which is live on portal.kyneticai.com. This branch rebases on that tip and renumbers its migration to `1019`.
 
 ## Historical snapshot (2026-11-06)
 

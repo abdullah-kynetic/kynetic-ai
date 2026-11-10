@@ -3,7 +3,10 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { can, getSessionUser, resolveActor } from '@/server/auth';
 import { getAlexSettingsView } from '@/server/alex';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { AlexControls } from './alex-controls';
+import { requestAlexChangeAction } from './actions';
 import { requireModule } from '@/server/modules';
 import { loadShellContext } from '@/server/shell';
 import { withTenant } from '@/server/tenancy';
@@ -39,8 +42,16 @@ function Rows({ data }: { data: Record<string, unknown> }) {
   );
 }
 
-export default async function AlexSettingsPage() {
-  const [cookieStore, requestHeaders] = await Promise.all([cookies(), headers()]);
+export default async function AlexSettingsPage({
+  searchParams
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  const [cookieStore, requestHeaders, query] = await Promise.all([
+    cookies(),
+    headers(),
+    searchParams
+  ]);
   const shell = await loadShellContext(requestHeaders, cookieStore.get('tenant_id')?.value);
   if (!shell) redirect('/sign-in');
   if (!shell.tenant) notFound();
@@ -122,6 +133,39 @@ export default async function AlexSettingsPage() {
               <CardTitle>Transfer number</CardTitle>
             </CardHeader>
             <CardContent className='text-sm'>{settings.transferNumber ?? 'Not set.'}</CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Request a change to Alex</CardTitle>
+              <CardDescription>
+                Tell us what Alex should do differently. The script itself stays with Kynetic.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <details>
+                <summary className='min-h-11 cursor-pointer font-medium'>
+                  Request a change to Alex
+                </summary>
+                <form action={requestAlexChangeAction} className='mt-3 grid gap-3'>
+                  {query.error ? (
+                    <p role='alert' className='text-destructive text-sm'>
+                      {query.error === 'permission'
+                        ? 'You do not have permission to change Alex settings.'
+                        : query.error === 'read-only'
+                          ? 'This view is read-only.'
+                          : 'Describe the change, then try again.'}
+                    </p>
+                  ) : null}
+                  <label htmlFor='alex-change' className='text-sm font-medium'>
+                    What should Alex do differently?
+                  </label>
+                  <Textarea id='alex-change' name='body' required maxLength={5000} rows={4} />
+                  <div>
+                    <Button type='submit'>Send request</Button>
+                  </div>
+                </form>
+              </details>
+            </CardContent>
           </Card>
         </div>
       )}

@@ -8,6 +8,11 @@ import { parseInput } from '../validation';
 import { z } from 'zod';
 import { isModuleEnabled } from '../modules';
 import { presenceReport } from '../presence';
+import {
+  bookingRatePercent,
+  measureSpeedToLeadMinutes,
+  addCalendarDays
+} from '../metrics/formulas';
 
 export const reportPeriodSchema = z.string().regex(/^\d{4}-\d{2}-01$/, 'period_start');
 export type MonthlyReport = typeof reports.$inferSelect;
@@ -59,6 +64,24 @@ export async function generateMonthlyReport(
         { title: section.title, data: section.render(days) }
       ])
     );
+    const performance = sections.performance?.data as
+      | { leads?: number; booked?: number }
+      | undefined;
+    if (performance) {
+      const endDate = end.toISOString().slice(0, 10);
+      performance.booked = performance.booked ?? 0;
+      Object.assign(performance, {
+        bookingRate: bookingRatePercent(
+          Number(performance.booked ?? 0),
+          Number(performance.leads ?? 0)
+        ),
+        speedToLeadMinutes: await measureSpeedToLeadMinutes(
+          tx,
+          period,
+          addCalendarDays(endDate, -1)
+        )
+      });
+    }
     if (await isModuleEnabled(ctx, 'opm', { tx })) {
       const presence = await presenceReport(ctx, period, { tx });
       sections.online_presence = {

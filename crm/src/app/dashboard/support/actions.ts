@@ -5,21 +5,45 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { contactsActorScope } from '@/server/contacts';
 import { AppError } from '@/server/errors';
-import { submitSupportRequest } from '@/server/support';
+import { replyToOwnSupportRequest, submitSupportRequest } from '@/server/support';
 
 export async function submitSupportRequestAction(form: FormData) {
-  const scope = await contactsActorScope(await headers());
+  const scope = await contactsActorScope(await headers(), 'tenant_data.write');
   if (!scope) redirect('/sign-in');
   let failed = false;
+  let id = '';
   try {
-    await submitSupportRequest(scope.ctx, scope.actor, {
+    const created = await submitSupportRequest(scope.ctx, scope.actor, {
       subject: String(form.get('subject') ?? ''),
-      body: String(form.get('body') ?? '')
+      body: String(form.get('body') ?? ''),
+      category: 'general'
     });
+    id = created.id;
   } catch (error) {
     if (!(error instanceof AppError)) throw error;
     failed = true;
   }
   revalidatePath('/dashboard/support');
-  redirect(failed ? '/dashboard/support?error=invalid' : '/dashboard/support?sent=1');
+  redirect(failed || !id ? '/dashboard/support?error=invalid' : `/dashboard/support/${id}`);
+}
+
+export async function replyToSupportAction(requestId: string, form: FormData) {
+  const scope = await contactsActorScope(await headers(), 'tenant_data.write');
+  if (!scope) redirect('/sign-in');
+  let failed = false;
+  try {
+    await replyToOwnSupportRequest(
+      scope.ctx,
+      scope.actor,
+      requestId,
+      String(form.get('body') ?? '')
+    );
+  } catch (error) {
+    if (!(error instanceof AppError)) throw error;
+    failed = true;
+  }
+  revalidatePath(`/dashboard/support/${requestId}`);
+  redirect(
+    failed ? `/dashboard/support/${requestId}?error=invalid` : `/dashboard/support/${requestId}`
+  );
 }

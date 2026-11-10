@@ -4,6 +4,13 @@ export {
   type AutomationTemplateKey
 } from './service';
 export {
+  automationHistory,
+  stopBucket,
+  stepView,
+  type AutomationHistory,
+  type AutomationSummary
+} from './history';
+export {
   registerAutomationSubscribers,
   registerAutomationWorker,
   stopContactRuns,

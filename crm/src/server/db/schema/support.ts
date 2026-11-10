@@ -12,6 +12,7 @@ export const supportRequests = pgTable(
       .references(() => tenants.id, { onDelete: 'restrict' }),
     subject: text().notNull(),
     body: text().notNull(),
+    category: text().default('general').notNull(),
     status: text().default('open').notNull(),
     submittedBy: uuid('submitted_by')
       .notNull()
@@ -31,6 +32,10 @@ export const supportRequests = pgTable(
     check(
       'support_requests_status_check',
       sql`${table.status} IN ('open', 'in_progress', 'resolved')`
+    ),
+    check(
+      'support_requests_category_check',
+      sql`${table.category} IN ('general', 'alex_change', 'system_request')`
     )
   ]
 );

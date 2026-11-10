@@ -8,12 +8,43 @@ import { ViewAsProvider } from '@/components/view-as/view-as-context';
 import { ViewAsBanner, VIEW_AS_BANNER_HEIGHT } from '@/components/view-as/view-as-banner';
 import { VIEW_AS_COOKIE } from '@/server/impersonation';
 import { loadShellContext, roleLabel } from '@/server/shell';
+import { getEnv } from '@/server/env';
+import { pendingDocuments } from '@/server/terms';
+import { termsRedirectTarget } from '@/server/terms/gate';
 import { brandingCss } from '@/lib/branding/color';
 import { NoClientSelected } from './no-client-selected';
 import type { Metadata } from 'next';
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import type { CSSProperties } from 'react';
+
+async function termsGateTarget(userId: string, role: string, requestHeaders: Headers) {
+  const enabled = getEnv().TERMS_GATE_ENABLED;
+  const staff = role === 'admin' || role === 'va';
+  if (!enabled || staff) return null;
+  const pending = (await pendingDocuments(userId)).length > 0;
+  return termsRedirectTarget({
+    enabled,
+    staff,
+    pending,
+    path: requestPath(requestHeaders)
+  });
+}
+
+function requestPath(requestHeaders: Headers): string {
+  for (const name of ['x-pathname', 'next-url', 'x-invoke-path', 'x-matched-path']) {
+    const value = requestHeaders.get(name);
+    if (value && value.startsWith('/') && !value.startsWith('//')) return value;
+  }
+  const referer = requestHeaders.get('referer');
+  if (!referer) return '/dashboard';
+  try {
+    const url = new URL(referer);
+    return `${url.pathname}${url.search}`;
+  } catch {
+    return '/dashboard';
+  }
+}
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -32,6 +63,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
     cookieStore.get(VIEW_AS_COOKIE)?.value
   );
   if (!shell) redirect('/sign-in');
+
+  const termsTarget = await termsGateTarget(shell.user.id, shell.role, requestHeaders);
+  if (termsTarget) redirect(termsTarget);
 
   // Only Kynetic staff are shown the way into the admin side; the admin routes check the role again.
   // Inside a view-as session the page is the client's, so there is no way into the admin side.

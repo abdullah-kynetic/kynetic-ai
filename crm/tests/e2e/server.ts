@@ -48,7 +48,15 @@ async function main(): Promise<void> {
   await db.admin`insert into calls (id, tenant_id, contact_id, provider, provider_call_id, direction, started_at, summary)
     values ('cccccccc-0000-4000-8000-000000000063', '11111111-1111-4111-8111-111111111111', ${seeded.a.contactId}, 'fake', 'synthetic-a11y-detail', 'outbound', now(), 'Synthetic accessibility review call')`;
   await db.admin`insert into tenants (id, slug, name, plan, timezone) values ('33333333-3333-4333-8333-333333333333', 'tenant-c', 'Tenant C', 'founding', 'UTC')`;
-  await db.admin`update tenants set name = 'Synthetic Brand Co', primary_color = '#2563eb' where id = ${IDS.tenantA}`;
+  await db.admin`update tenants set name = 'Synthetic Brand Co', primary_color = '#2563eb', business_hours = ${db.admin.json(
+    {
+      mon: [{ open: '08:00', close: '17:00' }],
+      tue: [{ open: '08:00', close: '17:00' }],
+      wed: [{ open: '08:00', close: '17:00' }],
+      thu: [{ open: '08:00', close: '17:00' }],
+      fri: [{ open: '08:00', close: '17:00' }]
+    }
+  )} where id = ${IDS.tenantA}`;
   await db.admin`update alex_configs set provider = 'elevenlabs', agent_ref = 'synthetic-e2e-agent', greeting = 'Synthetic greeting', paused = false where tenant_id = ${IDS.tenantA}`;
   await db.admin`insert into integrations (tenant_id, kind, status, last_error, last_error_at, error_count) values (${IDS.tenantA}, 'sms', 'degraded', 'Synthetic integration failure', now(), 2)`;
   await db.admin`insert into calls (tenant_id, contact_id, provider, provider_call_id, direction, started_at, flagged, flagged_at, flag_note) values (${IDS.tenantA}, ${seeded.a.contactId}, 'fake', 'synthetic-admin-review', 'inbound', now(), true, now(), 'Synthetic flagged reason')`;

@@ -2,6 +2,7 @@ import { and, asc, eq, gte, lt, lte, sql } from 'drizzle-orm';
 import type { Db, Tx } from '../db/client';
 import { activities, appointments, contacts, metricsDaily, tenants, users } from '../db/schema';
 import { withTenant, type TenantContextInput } from '../tenancy';
+import { bookingRatePercent, measureSpeedToLeadMinutes } from './formulas';
 
 /** The offer in force: 20% more booked appointments than last month, measured over 30 days. */
 export const GUARANTEE_WINDOW_DAYS = 30;
@@ -24,6 +25,10 @@ export type DashboardMetrics = {
     contactsReached: number;
     estimatesBooked: number;
     revenueCents: number;
+    /** Whole percent. Null when the range has no leads. */
+    bookingRate: number | null;
+    /** Median minutes. Null when no lead-intake contact was called in the range. */
+    speedToLeadMinutes: number | null;
   };
   days: (typeof metricsDaily.$inferSelect)[];
   activity: { id: string; summary: string; type: string; occurredAt: string }[];
@@ -105,7 +110,23 @@ export async function getDashboardMetrics(
       )
       .groupBy(sql`coalesce(${contacts.source}, 'unknown')`)
       .orderBy(sql`count(*) desc`);
-    return { totals, days, activity, sources };
+    const leads = Number(totals?.leads ?? 0);
+    const estimatesBooked = Number(totals?.estimatesBooked ?? 0);
+    const speedToLeadMinutes = await measureSpeedToLeadMinutes(tx, from, to);
+    return {
+      totals: {
+        leads,
+        calls: Number(totals?.calls ?? 0),
+        contactsReached: Number(totals?.contactsReached ?? 0),
+        estimatesBooked,
+        revenueCents: Number(totals?.revenueCents ?? 0),
+        bookingRate: bookingRatePercent(estimatesBooked, leads),
+        speedToLeadMinutes
+      },
+      days,
+      activity,
+      sources
+    };
   };
   return opts.tx ? run(opts.tx) : withTenant(ctx, run, { db: opts.db });
 }

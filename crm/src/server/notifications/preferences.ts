@@ -5,7 +5,7 @@ import { notificationPreferences } from '../db/schema';
 import { AppError } from '../errors';
 import { withTenant, type TenantContextInput } from '../tenancy';
 import { parseInput } from '../validation';
-import { NOTIFICATION_TYPES, type NotificationType } from './types';
+import { EMAIL_OFF_BY_DEFAULT, NOTIFICATION_TYPES, type NotificationType } from './types';
 
 // Per-user notification preferences (M9-11; PRD F-36, DC-115). The bell always shows every
 // notification; a preference only controls the email. A missing row means email on. A user reads and
@@ -39,7 +39,10 @@ const listIn = async (tx: Tx, userId: string): Promise<NotificationPreference[]>
     .from(notificationPreferences)
     .where(eq(notificationPreferences.userId, userId));
   const saved = new Map(rows.map((r) => [r.kind, r.emailEnabled]));
-  return NOTIFICATION_TYPES.map((kind) => ({ kind, emailEnabled: saved.get(kind) ?? true }));
+  return NOTIFICATION_TYPES.map((kind) => ({
+    kind,
+    emailEnabled: saved.get(kind) ?? !EMAIL_OFF_BY_DEFAULT.has(kind)
+  }));
 };
 
 /** Every notification type with the caller's choice; types never set are on. */
@@ -88,6 +91,20 @@ export async function usersWithEmailOff(
   kind: string
 ): Promise<Set<string>> {
   if (userIds.length === 0) return new Set();
+  if (EMAIL_OFF_BY_DEFAULT.has(kind as NotificationType)) {
+    const on = await tx
+      .select({ userId: notificationPreferences.userId })
+      .from(notificationPreferences)
+      .where(
+        and(
+          inArray(notificationPreferences.userId, [...userIds]),
+          eq(notificationPreferences.kind, kind),
+          eq(notificationPreferences.emailEnabled, true)
+        )
+      );
+    const enabled = new Set(on.map((row) => row.userId));
+    return new Set(userIds.filter((id) => !enabled.has(id)));
+  }
   const rows = await tx
     .select({ userId: notificationPreferences.userId })
     .from(notificationPreferences)

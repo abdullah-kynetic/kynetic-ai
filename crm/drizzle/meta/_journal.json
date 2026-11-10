@@ -365,6 +365,13 @@
       "when": 1793595000000,
       "tag": "1018_admin_ops_safety",
       "breakpoints": true
+    },
+    {
+      "idx": 52,
+      "version": "7",
+      "when": 1793598000000,
+      "tag": "1019_support_threads_category",
+      "breakpoints": true
     }
   ]
 }

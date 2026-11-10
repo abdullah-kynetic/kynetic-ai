@@ -283,8 +283,14 @@ export async function listAppointments(
   if (!(from < to)) throw new ValidationError({ range: ['invalid'] });
   return run(ctx, opts, (tx) =>
     tx
-      .select({ appointment: appointments, contactName: sql<string | null>`null` })
+      .select({
+        appointment: appointments,
+        contactName: sql<
+          string | null
+        >`nullif(btrim(concat_ws(' ', ${contacts.firstName}, ${contacts.lastName})), '')`
+      })
       .from(appointments)
+      .leftJoin(contacts, eq(contacts.id, appointments.contactId))
       .where(
         and(
           lt(appointments.startsAt, to.toISOString()),
