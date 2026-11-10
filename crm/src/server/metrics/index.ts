@@ -3,5 +3,9 @@ export {
   getDashboardMetrics,
   getGuaranteeSettings,
   guaranteeProgress,
-  type DashboardMetrics
+  guaranteeTargetFromBaseline,
+  GUARANTEE_LIFT,
+  GUARANTEE_WINDOW_DAYS,
+  type DashboardMetrics,
+  type GuaranteeSettings
 } from './dashboard';

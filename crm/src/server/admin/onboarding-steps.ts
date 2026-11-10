@@ -27,7 +27,7 @@ const PLATFORM: ChecklistStep[] = [
   step('owner_invited', 'Owner invited'),
   step('modules_set', 'Modules set', { done: true }),
   step('business_profile', 'Business profile, hours and service area', { done: true }),
-  step('guarantee_target', 'Guarantee target set', { visible: false }),
+  step('guarantee_target', 'Guarantee baseline set', { visible: false }),
   step('go_live', 'Go-live')
 ];
 

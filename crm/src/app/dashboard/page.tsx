@@ -34,10 +34,14 @@ export default async function DashboardPage() {
         getGuaranteeSettings(ctx)
       ])
     : [null, null];
-  const guaranteeCard =
-    guarantee && metrics
-      ? guaranteeProgress({ ...guarantee, booked: metrics.totals.estimatesBooked, today })
-      : null;
+  const guaranteeCard = guarantee
+    ? guaranteeProgress({
+        baseline: guarantee.baselineOverride ?? guarantee.measuredBaseline,
+        startDate: guarantee.startDate,
+        booked: guarantee.bookedInWindow ?? 0,
+        today
+      })
+    : null;
 
   return (
     <PageContainer pageTitle='Dashboard' pageDescription='Your last 30 days at a glance.'>
@@ -113,21 +117,30 @@ export default async function DashboardPage() {
           </div>
         </div>
       )}
-      {guaranteeCard && (
-        <div className='mt-4 rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
-          <p className='font-medium'>Booking guarantee</p>
-          <p className='text-muted-foreground mt-1'>
-            {guaranteeCard.booked} of {guaranteeCard.target} bookings · {guaranteeCard.daysLeft}{' '}
-            days left
+      <div className='mt-4 rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
+        <p className='font-medium'>Booking guarantee</p>
+        <p className='text-muted-foreground mt-1 text-sm'>
+          20% more booked appointments than last month, measured over 30 days.
+        </p>
+        {guaranteeCard ? (
+          <>
+            <p className='mt-2 text-sm'>
+              Last month: {guaranteeCard.baseline}. Target: {guaranteeCard.target}. Booked in this
+              window: {guaranteeCard.booked}. {guaranteeCard.daysLeft} days left.
+            </p>
+            <div className='bg-muted mt-3 h-2 rounded'>
+              <div
+                className='bg-primary h-2 rounded'
+                style={{ width: `${guaranteeCard.percent}%` }}
+              />
+            </div>
+          </>
+        ) : (
+          <p className='text-muted-foreground mt-2 text-sm'>
+            Not set yet. Kynetic enters last month&apos;s booked appointments before this starts.
           </p>
-          <div className='bg-muted mt-3 h-2 rounded'>
-            <div
-              className='bg-primary h-2 rounded'
-              style={{ width: `${guaranteeCard.percent}%` }}
-            />
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </PageContainer>
   );
 }

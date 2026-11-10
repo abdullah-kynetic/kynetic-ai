@@ -55,7 +55,14 @@ export default async function AdminHomePage() {
           ) : (
             rows.map((row) => (
               <TableRow key={row.tenantId}>
-                <TableCell className='font-medium'>{row.name}</TableCell>
+                <TableCell className='font-medium'>
+                  <Link
+                    className='inline-flex min-h-11 items-center underline'
+                    href={`/admin/clients/${row.tenantId}`}
+                  >
+                    {row.name}
+                  </Link>
+                </TableCell>
                 <TableCell>
                   {row.plan} {row.pricingTier ?? ''}
                 </TableCell>

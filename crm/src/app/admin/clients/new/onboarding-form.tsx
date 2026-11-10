@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 import * as React from 'react';
+import { INDUSTRY_TEMPLATES } from '@/server/admin/industry-templates';
 import { approveInvite, onboardClient, type OnboardState, type SendState } from './actions';
 
 const DAY_LABELS = [
@@ -29,13 +30,10 @@ const MODULES = [
   ['opm', 'Online presence']
 ] as const;
 
-const INDUSTRIES = [
-  ['roofing', 'Roofing'],
-  ['restoration', 'Restoration'],
-  ['hvac', 'HVAC'],
-  ['plumbing', 'Plumbing'],
-  ['general', 'Other home service']
-] as const;
+const INDUSTRIES = Object.entries(INDUSTRY_TEMPLATES) as [
+  keyof typeof INDUSTRY_TEMPLATES,
+  (typeof INDUSTRY_TEMPLATES)[keyof typeof INDUSTRY_TEMPLATES]
+][];
 
 const ZONES = [
   ['America/New_York', 'Eastern'],
@@ -113,9 +111,9 @@ export function OnboardingForm() {
         </FieldRow>
         <FieldRow id='industry' label='Industry template' error={fe?.industry}>
           <NativeSelect id='industry' name='industry' defaultValue='roofing'>
-            {INDUSTRIES.map(([v, l]) => (
-              <NativeSelectOption key={v} value={v}>
-                {l}
+            {INDUSTRIES.map(([value, template]) => (
+              <NativeSelectOption key={value} value={value}>
+                {template.label}
               </NativeSelectOption>
             ))}
           </NativeSelect>

@@ -47,7 +47,9 @@ const EXTRA_TABLES = [
   'agency_billing_events',
   'agency_dunning_drafts',
   // M20-06 client support requests.
-  'support_requests'
+  'support_requests',
+  // Client requests for a system that is off.
+  'system_requests'
 ];
 
 function entitiesFromDoc(): string[] {

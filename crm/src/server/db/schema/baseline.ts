@@ -292,6 +292,7 @@ export const tenants = pgTable(
     emailSenderName: text('email_sender_name'),
     baseline: jsonb().default({}).notNull(),
     guaranteeTargetBookings: integer('guarantee_target_bookings'),
+    guaranteeBaselineBookings: integer('guarantee_baseline_bookings'),
     guaranteeStartDate: date('guarantee_start_date'),
     goLiveAt: timestamp('go_live_at', { withTimezone: true, mode: 'string' }),
     twentyCompanyId: text('twenty_company_id'),
@@ -322,7 +323,8 @@ export const tenants = pgTable(
       'tenants_transfer_number_e164_check',
       sql`transfer_number_e164 ~ '^\+[1-9][0-9]{7,14}$'::text`
     ),
-    check('tenants_guarantee_target_bookings_check', sql`guarantee_target_bookings >= 0`)
+    check('tenants_guarantee_target_bookings_check', sql`guarantee_target_bookings >= 0`),
+    check('tenants_guarantee_baseline_bookings_check', sql`guarantee_baseline_bookings >= 0`)
   ]
 );
 
