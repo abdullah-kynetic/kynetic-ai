@@ -49,7 +49,12 @@ export default async function DialerPage({
         Synthetic test numbers only. This page places no calls. DNC, protected businesses and
         excluded states are filtered and rechecked before saving.
       </p>
-      {query.error && (
+      {query.error === 'callback' && (
+        <p role='alert' className='mb-4'>
+          Enter a callback date and time. Times are Pacific (America/Los_Angeles).
+        </p>
+      )}
+      {query.error && query.error !== 'callback' && (
         <p role='alert' className='mb-4'>
           That lead is no longer available or was already logged. The queue has been refreshed.
         </p>
@@ -82,6 +87,7 @@ export default async function DialerPage({
         <section className='max-w-3xl space-y-4' aria-labelledby='dialer-next'>
           <h2 id='dialer-next' className='text-xl font-semibold'>
             {next.name}
+            {next.callbackDue ? <span className='ml-2 text-base'>Callback due</span> : null}
           </h2>
           <p className='text-lg'>{next.phone}</p>
           <p>DNC check: clear</p>
@@ -91,6 +97,26 @@ export default async function DialerPage({
           </div>
           <form action={logAgencyCallAction.bind(null, next.id)} className='space-y-3'>
             <input type='hidden' name='eventId' value={crypto.randomUUID()} />
+            <div className='flex flex-wrap gap-3'>
+              <div>
+                <Label htmlFor='callbackDate'>Callback date (Pacific)</Label>
+                <input
+                  id='callbackDate'
+                  name='callbackDate'
+                  type='date'
+                  className='border-input bg-background mt-2 block min-h-11 rounded border px-3'
+                />
+              </div>
+              <div>
+                <Label htmlFor='callbackTime'>Callback time (Pacific)</Label>
+                <input
+                  id='callbackTime'
+                  name='callbackTime'
+                  type='time'
+                  className='border-input bg-background mt-2 block min-h-11 rounded border px-3'
+                />
+              </div>
+            </div>
             <div>
               <Label htmlFor='notes'>Notes (optional)</Label>
               <textarea
@@ -124,8 +150,8 @@ export default async function DialerPage({
         <p className='mb-6 rounded border p-4'>No eligible leads remain in this queue.</p>
       )}
       <p className='text-muted-foreground mt-6 text-sm'>
-        This is a first-pass queue. Logged leads leave it; callback is a recorded outcome and
-        schedules no reminder.
+        Logged leads leave the queue. Schedule callback to put a due task back at the top. A
+        do-not-call lead cannot be scheduled.
       </p>
       <section className='mt-8 space-y-3' aria-labelledby='recent-calls'>
         <h2 id='recent-calls' className='text-lg font-semibold'>

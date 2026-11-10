@@ -15,9 +15,11 @@ import {
   dealContacts,
   deals,
   dncEntries,
-  pipelineStages
+  pipelineStages,
+  tasks
 } from '../db/schema';
-import { AppError } from '../errors';
+import { pacificDateTimeToUtc } from './pacific-time';
+import { AppError, ValidationError } from '../errors';
 import type { StaffCaller } from '../admin/users';
 import { parseInput } from '../validation';
 import { inAgency } from './index';
@@ -32,12 +34,26 @@ export const HUMAN_CALL_OUTCOMES = [
   'callback',
   'dnc'
 ] as const;
-const outcomeSchema = z.strictObject({
-  eventId: z.uuid(),
-  contactId: z.uuid(),
-  outcome: z.enum(HUMAN_CALL_OUTCOMES),
-  notes: z.string().trim().max(1000).default('')
-});
+const CALLBACK_TASK = 'Scheduled callback';
+const outcomeSchema = z
+  .strictObject({
+    eventId: z.uuid(),
+    contactId: z.uuid(),
+    outcome: z.enum(HUMAN_CALL_OUTCOMES),
+    notes: z.string().trim().max(1000).default(''),
+    callbackDate: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/)
+      .optional(),
+    callbackTime: z
+      .string()
+      .regex(/^\d{2}:\d{2}$/)
+      .optional()
+  })
+  .superRefine((value, ctx) => {
+    if (value.outcome === 'callback' && (!value.callbackDate || !value.callbackTime))
+      ctx.addIssue({ code: 'custom', path: ['callbackDate'], message: 'callback_required' });
+  });
 type Options = { db?: Db; now?: Date };
 async function candidates(tx: Tx, contactId?: string) {
   return tx
@@ -147,6 +163,34 @@ export async function getAgencyDialer(
           !guard.closed.has(r.id) &&
           !dialerBlockReason(r, guard.numbers, guard.optedOut.has(r.id))
       );
+      const now = opts.now ?? new Date();
+      const dueTasks = await tx
+        .select({ contactId: tasks.contactId, dueAt: tasks.dueAt })
+        .from(tasks)
+        .where(
+          and(
+            eq(tasks.title, CALLBACK_TASK),
+            isNull(tasks.completedAt),
+            isNull(tasks.deletedAt),
+            sql`${tasks.dueAt} <= ${now.toISOString()}`
+          )
+        )
+        .orderBy(tasks.dueAt, tasks.id);
+      const byId = new Map(rows.map((row) => [row.id, row]));
+      const callbacks = dueTasks.flatMap((task) => {
+        if (!task.contactId) return [];
+        const contact = byId.get(task.contactId);
+        if (!contact || guard.closed.has(contact.id)) return [];
+        if (dialerBlockReason(contact, guard.numbers, guard.optedOut.has(contact.id))) return [];
+        return [contact];
+      });
+      const seen = new Set<string>();
+      const queue = [...callbacks, ...available].filter((contact) => {
+        if (seen.has(contact.id)) return false;
+        seen.add(contact.id);
+        return true;
+      });
+      const callbackIds = new Set(callbacks.map((contact) => contact.id));
       const history = await tx
         .select({
           id: agencyCallAttempts.id,
@@ -159,14 +203,15 @@ export async function getAgencyDialer(
         .orderBy(desc(agencyCallAttempts.loggedAt), agencyCallAttempts.id)
         .limit(10);
       return {
-        next: available[0]
+        next: queue[0]
           ? {
-              id: available[0].id,
-              name: available[0].firstName,
-              phone: available[0].primaryPhoneE164
+              id: queue[0].id,
+              name: queue[0].firstName,
+              phone: queue[0].primaryPhoneE164,
+              callbackDue: callbackIds.has(queue[0].id)
             }
           : null,
-        remaining: available.length,
+        remaining: queue.length,
         unavailable: rows.length - available.length,
         script,
         history
@@ -210,12 +255,48 @@ export async function logAgencyCall(caller: StaffCaller, raw: unknown, opts: Opt
         throw new AppError('CONFLICT', {
           message: 'This lead is no longer available in the dialer.'
         });
+      const now = opts.now ?? new Date();
       const [already] = await tx
         .select({ id: agencyCallAttempts.id })
         .from(agencyCallAttempts)
         .where(eq(agencyCallAttempts.contactId, contact.id))
         .limit(1);
-      if (already) throw new AppError('CONFLICT');
+      const [dueCallback] = already
+        ? await tx
+            .select({ id: tasks.id })
+            .from(tasks)
+            .where(
+              and(
+                eq(tasks.contactId, contact.id),
+                eq(tasks.title, CALLBACK_TASK),
+                isNull(tasks.completedAt),
+                isNull(tasks.deletedAt),
+                sql`${tasks.dueAt} <= ${now.toISOString()}`
+              )
+            )
+            .limit(1)
+        : [];
+      if (already && !dueCallback) throw new AppError('CONFLICT');
+      let callbackDue: string | null = null;
+      if (input.outcome === 'callback') {
+        try {
+          callbackDue = pacificDateTimeToUtc(input.callbackDate!, input.callbackTime!);
+        } catch {
+          throw new ValidationError({ callbackDate: ['invalid'] });
+        }
+      }
+      if (dueCallback)
+        await tx
+          .update(tasks)
+          .set({ completedAt: now.toISOString(), completedBy: caller.id })
+          .where(
+            and(
+              eq(tasks.contactId, contact.id),
+              eq(tasks.title, CALLBACK_TASK),
+              isNull(tasks.completedAt),
+              isNull(tasks.deletedAt)
+            )
+          );
       const [saved] = await tx
         .insert(agencyCallAttempts)
         .values({
@@ -226,9 +307,29 @@ export async function logAgencyCall(caller: StaffCaller, raw: unknown, opts: Opt
           outcome: input.outcome,
           notes: input.notes,
           loggedBy: caller.id,
-          loggedAt: (opts.now ?? new Date()).toISOString()
+          loggedAt: now.toISOString()
         })
         .returning({ id: agencyCallAttempts.id });
+      if (callbackDue) {
+        const [task] = await tx
+          .insert(tasks)
+          .values({
+            tenantId,
+            title: CALLBACK_TASK,
+            dueAt: callbackDue,
+            contactId: contact.id,
+            assigneeId: null,
+            priority: 'high',
+            createdBy: caller.id
+          })
+          .returning({ id: tasks.id });
+        await audit(tx, {
+          action: 'agency.callback.schedule',
+          entity: 'task',
+          entityId: task!.id,
+          after: { contactId: contact.id, dueAt: callbackDue }
+        });
+      }
       if (input.outcome === 'dnc')
         await addDncEntry(
           { tenantId, userId: caller.id, role: 'admin' },

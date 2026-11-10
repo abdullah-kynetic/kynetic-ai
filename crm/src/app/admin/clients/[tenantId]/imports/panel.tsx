@@ -115,13 +115,17 @@ export function ImportPanel({
       const result = (await response.json()) as {
         ok?: boolean;
         batch?: { id: string; fileName: string };
+        headers?: string[];
         error?: { message?: string };
       };
       if (!response.ok || !result.batch) throw new Error(result.error?.message ?? 'Upload failed.');
       setBatchId(result.batch.id);
-      const text = await file.text();
-      const firstLine = text.replace(/^\uFEFF/, '').split(/\r?\n/, 1)[0] ?? '';
-      setHeaders(firstLine.split(',').map((v) => v.replace(/^"|"$/g, '').replaceAll('""', '"')));
+      if (result.headers?.length) setHeaders(result.headers);
+      else {
+        const text = await file.text();
+        const firstLine = text.replace(/^\uFEFF/, '').split(/\r?\n/, 1)[0] ?? '';
+        setHeaders(firstLine.split(',').map((v) => v.replace(/^"|"$/g, '').replaceAll('""', '"')));
+      }
       setBatches((old) => [
         {
           id: result.batch!.id,
@@ -199,9 +203,10 @@ export function ImportPanel({
   return (
     <div className='grid max-w-3xl gap-6'>
       <section className='grid gap-3 rounded border p-4'>
-        <h2 className='text-lg font-semibold'>Upload CSV</h2>
-        <p className='text-sm text-muted-foreground'>
-          CSV files only, up to 10 MB. Excel workbooks (.xlsx, .xls) are not accepted.
+        <h2 className='text-lg font-semibold'>Upload CSV or Excel</h2>
+        <p className='text-muted-foreground text-sm'>
+          CSV or .xlsx, up to 10 MB. The first sheet is read. Formula cells use the saved value.
+          Macro-enabled .xlsm files and legacy .xls files are not accepted.
         </p>
         <label>
           Record type
@@ -236,11 +241,11 @@ export function ImportPanel({
           />
         </label>
         <label>
-          CSV file
+          CSV or Excel file
           <input
             className='mt-1 block min-h-11'
             type='file'
-            accept='.csv,text/csv'
+            accept='.csv,text/csv,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             onChange={(event) => setFile(event.target.files?.[0] ?? null)}
           />
         </label>

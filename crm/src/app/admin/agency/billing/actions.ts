@@ -10,6 +10,7 @@ import {
   applyAgencyBillingWebhook
 } from '@/server/agency/billing';
 import { dollarsToCents } from '@/server/agency/billing-policy';
+import { productionSimulationRefused } from '@/server/agency/production-guard';
 import { AppError } from '@/server/errors';
 
 function billingError(error: unknown, fallback: 'terms' | 'invoice' | 'reminder'): string {
@@ -76,6 +77,10 @@ export async function simulateInvoiceAction(
   amount: number,
   type: 'invoice.finalized' | 'invoice.paid' | 'invoice.payment_failed'
 ) {
+  if (productionSimulationRefused())
+    throw new AppError('FORBIDDEN', {
+      message: 'Simulated Stripe events are not available in production.'
+    });
   await applyAgencyBillingWebhook(await agencyCaller(), {
     id: `evt_dev_${randomUUID()}`,
     livemode: false,

@@ -2,6 +2,10 @@
 
 > **Canonical plan (2026-11-08, precedence restated 2026-11-08 PST; portal line 2026-11-09 PST):** the business roadmap, progress baseline and scorecard live in Twenty: roadmap note `7bfdcb7e`, baseline v1 note `603fe300`, scorecard note `5c44b12e`. GitHub owns technical tracking only (code, PRs, CI, deploy evidence: `docs/audit/2026-11-08-code-evidence.md`). The operating summary, offer, pricing precedence, and the docs-reconciliation journal are in `docs/STATUS.md`. `docs/codex/COMPLETION-PLAN.md` is historical evidence, not a competing roadmap. Do not keep a second editable acceptance list in this repo.
 
+## Agency sales tools (2026-11-10)
+
+Batch 4, not deployed. The agency dialer can schedule a callback. Campaign steps are marked done, skipped, or rescheduled by an admin, and those steps do not send anything. Proposal PDFs download without a price. Contracts, expenses, referrals, and case studies are manual records. Admin document delete and replace are soft. `.xlsx` import reads stored cell values. Retell is parked on the Alex settings page. Migration `1017_agency_sales_tools`, after `1016_systems_templates_guarantee` on main.
+
 ## Portal line (2026-11-09 PST)
 
 One portal line on `main`. The separate DEV environment is retired until after go-live. Production at portal.kyneticai.com is still release `350bf673`; this change does not deploy. Details: `docs/STATUS.md` and the 2026-11-09 decision note in `docs/decisions.md`.

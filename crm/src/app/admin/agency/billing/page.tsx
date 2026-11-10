@@ -7,6 +7,7 @@ import { agencyCaller } from '../caller';
 import { getAgencyWorkspace, listAgencyLeads } from '@/server/agency';
 import { getAgencyBilling } from '@/server/agency/billing';
 import { AgencyWorkspaceMissing } from '../workspace-missing';
+import { productionSimulationRefused } from '@/server/agency/production-guard';
 import {
   saveTermsAction,
   createInvoiceAction,
@@ -157,20 +158,22 @@ export default async function AgencyBilling({
               <AgencyStatus value={i.status} /> · Due{' '}
               <time dateTime={String(i.due_on)}>{agencyDate(String(i.due_on))}</time>
             </p>
-            <div className='flex flex-wrap gap-3'>
-              {(['invoice.finalized', 'invoice.paid', 'invoice.payment_failed'] as const).map(
-                (type) => (
-                  <form
-                    key={type}
-                    action={simulateInvoiceAction.bind(null, i.id, i.amount_cents, type)}
-                  >
-                    <Button type='submit' variant='outline'>
-                      Simulate {type.replace('invoice.', '').replaceAll('_', ' ')}
-                    </Button>
-                  </form>
-                )
-              )}
-            </div>
+            {!productionSimulationRefused() && (
+              <div className='flex flex-wrap gap-3'>
+                {(['invoice.finalized', 'invoice.paid', 'invoice.payment_failed'] as const).map(
+                  (type) => (
+                    <form
+                      key={type}
+                      action={simulateInvoiceAction.bind(null, i.id, i.amount_cents, type)}
+                    >
+                      <Button type='submit' variant='outline'>
+                        Simulate {type.replace('invoice.', '').replaceAll('_', ' ')}
+                      </Button>
+                    </form>
+                  )
+                )}
+              </div>
+            )}
           </article>
         ))}
       </section>

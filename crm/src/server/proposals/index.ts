@@ -1,6 +1,7 @@
 import { and, desc, eq, isNull } from 'drizzle-orm';
 import { z } from 'zod';
 import { inAgency } from '../agency';
+import { renderProposalPdf } from './pdf';
 import type { StaffCaller } from '../admin/users';
 import { audit } from '../audit';
 import type { Db, Tx } from '../db/client';
@@ -169,4 +170,28 @@ export async function saveAgencyProposal(
     },
     opts
   );
+}
+
+export async function exportAgencyProposal(caller: StaffCaller, id: string, opts: Options = {}) {
+  const data = await getAgencyProposal(caller, id, opts);
+  const bytes = await renderProposalPdf({
+    title: data.proposal.title,
+    dealTitle: data.dealTitle,
+    problem: data.proposal.problem,
+    solution: data.proposal.solution,
+    roadmap: data.proposal.roadmap,
+    roi: data.proposal.roi
+  });
+  await inAgency(
+    caller,
+    (tx) =>
+      audit(tx, {
+        action: 'agency.proposal.export',
+        entity: 'proposal',
+        entityId: id,
+        after: { bytes: bytes.byteLength }
+      }),
+    opts
+  );
+  return bytes;
 }

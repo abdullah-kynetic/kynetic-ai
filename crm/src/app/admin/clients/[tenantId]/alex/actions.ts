@@ -4,15 +4,18 @@ import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
 import { decideAdminAccess, placeAdminTestCall, updateAdminAlexConfig } from '@/server/admin';
+import { ValidationError } from '@/server/errors';
 
 export async function updateAlexConfigAction(tenantId: string, formData: FormData) {
   const access = await decideAdminAccess(await headers());
   if (access.kind !== 'ok' || access.role !== 'admin') forbidden();
   const prompt = String(formData.get('prompt') ?? '').trim();
+  const provider = String(formData.get('provider') ?? '');
+  if (provider === 'retell') throw new ValidationError({ provider: ['retell_parked'] });
   await updateAdminAlexConfig(
     { tenantId, userId: access.user.id },
     {
-      provider: String(formData.get('provider')) as 'elevenlabs' | 'retell',
+      ...(provider === 'elevenlabs' ? { provider: 'elevenlabs' as const } : {}),
       agentRef: String(formData.get('agentRef') ?? '').trim() || null,
       voice: String(formData.get('voice') ?? '').trim() || null,
       greeting: String(formData.get('greeting') ?? '').trim() || null,

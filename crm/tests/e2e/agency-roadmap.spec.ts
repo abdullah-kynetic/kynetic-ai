@@ -61,8 +61,8 @@ test('agency roadmap: alerts, inbox, blocked compose, manual sequence, ops and b
   await campaign.getByRole('button', { name: 'Save sequence' }).click();
   await campaign.getByRole('button', { name: 'Enroll assigned leads' }).click();
   await expect(campaign.getByRole('article')).toContainText('active');
-  await campaign.getByRole('button', { name: 'Simulate step' }).click();
-  await expect(campaign).toContainText('simulated: 1');
+  await campaign.getByRole('button', { name: 'Mark done' }).click();
+  await expect(campaign).toContainText('done: 1');
   await adminPage.goto('/admin/agency/ops');
   await expect(
     adminPage.getByRole('heading', { name: 'Client health', exact: true })
@@ -92,10 +92,9 @@ test('agency roadmap: alerts, inbox, blocked compose, manual sequence, ops and b
   await invoiceForm.getByLabel('Due date', { exact: true }).fill('2026-11-01');
   await invoiceForm.getByRole('button', { name: 'Create draft', exact: true }).click();
   await expect(adminPage.getByRole('article')).toContainText('$50.00');
-  await adminPage.getByRole('button', { name: 'Simulate payment failed', exact: true }).click();
-  await expect(adminPage.getByRole('article').locator('[data-state="past_due"]')).toBeVisible();
+  await expect(adminPage.getByRole('button', { name: 'Simulate payment failed' })).toHaveCount(0);
   await adminPage.getByRole('button', { name: 'Draft overdue reminders' }).click();
-  await expect(adminPage.getByText(/^Draft reminder:/)).toBeVisible();
+  await expect(adminPage.getByText('Nothing is sent or charged.')).toBeVisible();
   await adminPage.setViewportSize({ width: 1440, height: 1000 });
   await adminPage.goto('/admin/agency');
   await adminPage.screenshot({ path: '/tmp/kynetic-agency-after-desktop.png', fullPage: true });

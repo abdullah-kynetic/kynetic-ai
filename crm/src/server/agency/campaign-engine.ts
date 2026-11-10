@@ -1,10 +1,13 @@
 import { sql } from 'drizzle-orm';
 import { z } from 'zod';
 import type { StaffCaller } from '../admin/users';
+import { audit } from '../audit';
 import type { Db, Tx } from '../db/client';
 import { AppError } from '../errors';
 import { parseInput } from '../validation';
 import { inAgency } from './index';
+import { pacificDateTimeToUtc } from './pacific-time';
+import { productionSimulationRefused } from './production-guard';
 import { campaignPlan, campaignStop, type CampaignStep } from './campaign-policy';
 type Options = { db?: Db; now?: Date };
 type Progress = {
@@ -92,17 +95,37 @@ export async function listAgencyCampaignTasks(caller: StaffCaller, id: string, o
     opts
   );
 }
-/** Manual completion / stub simulation only. There is no send job or provider API here. */
+/** Human completion only. No step sends a call, text, or email. */
 export async function advanceAgencyCampaign(caller: StaffCaller, raw: unknown, opts: Options = {}) {
   const i = parseInput(
-    z.strictObject({
-      campaignId: z.uuid(),
-      contactId: z.uuid(),
-      stepIndex: z.number().int().min(0),
-      mode: z.enum(['simulate', 'manual_complete'])
-    }),
+    z
+      .strictObject({
+        campaignId: z.uuid(),
+        contactId: z.uuid(),
+        stepIndex: z.number().int().min(0),
+        mode: z.enum(['simulate', 'manual_complete', 'done', 'skip', 'reschedule']),
+        reason: z.string().trim().min(1).max(500).optional(),
+        callbackDate: z
+          .string()
+          .regex(/^\d{4}-\d{2}-\d{2}$/)
+          .optional(),
+        callbackTime: z
+          .string()
+          .regex(/^\d{2}:\d{2}$/)
+          .optional()
+      })
+      .superRefine((value, ctx) => {
+        if (value.mode === 'skip' && !value.reason)
+          ctx.addIssue({ code: 'custom', path: ['reason'], message: 'reason_required' });
+        if (value.mode === 'reschedule' && (!value.callbackDate || !value.callbackTime))
+          ctx.addIssue({ code: 'custom', path: ['callbackDate'], message: 'reschedule_required' });
+      }),
     raw
   );
+  if (i.mode === 'simulate' && productionSimulationRefused())
+    throw new AppError('FORBIDDEN', {
+      message: 'Simulated campaign steps are not available in production.'
+    });
   return inAgency(
     caller,
     async (tx, tenantId) => {
@@ -120,22 +143,59 @@ export async function advanceAgencyCampaign(caller: StaffCaller, raw: unknown, o
         return { status: 'stopped', reason, providerRequests: 0 };
       }
       const now = opts.now ?? new Date();
-      if (Date.parse(p.due_at) > now.getTime()) return { status: 'not_due', providerRequests: 0 };
+      if (Date.parse(p.due_at) > now.getTime() && i.mode !== 'reschedule')
+        return { status: 'not_due', providerRequests: 0 };
       const [c] = await tx.execute<{ steps: CampaignStep[] }>(
         sql`select steps from agency_campaigns where id=${i.campaignId}`
       );
       const steps = parseInput(campaignPlan, c.steps),
         step = steps[p.step_index];
       if (!step) throw new AppError('CONFLICT');
+      const result =
+        i.mode === 'simulate'
+          ? 'simulated'
+          : i.mode === 'manual_complete'
+            ? 'manual_complete'
+            : i.mode === 'skip'
+              ? 'skipped'
+              : i.mode === 'reschedule'
+                ? 'rescheduled'
+                : 'done';
+      let due = new Date(now.getTime() + (steps[p.step_index + 1]?.delayDays ?? 0) * 86400000);
+      if (i.mode === 'reschedule') {
+        try {
+          due = new Date(pacificDateTimeToUtc(i.callbackDate!, i.callbackTime!));
+        } catch {
+          throw new AppError('VALIDATION_FAILED', { fieldErrors: { callbackDate: ['invalid'] } });
+        }
+      }
+      const note =
+        i.mode === 'skip'
+          ? i.reason!
+          : i.mode === 'reschedule'
+            ? `${i.callbackDate} ${i.callbackTime} America/Los_Angeles`
+            : null;
       await tx.execute(
-        sql`insert into agency_campaign_history(tenant_id,campaign_id,contact_id,step_index,channel,result,recorded_at) values(${tenantId},${i.campaignId},${i.contactId},${p.step_index},${step.channel},${i.mode === 'simulate' ? 'simulated' : 'manual_complete'},${now.toISOString()})`
+        sql`insert into agency_campaign_history(tenant_id,campaign_id,contact_id,step_index,channel,result,recorded_by,note,recorded_at) values(${tenantId},${i.campaignId},${i.contactId},${p.step_index},${step.channel},${result},${caller.id},${note},${now.toISOString()})`
       );
-      const next = p.step_index + 1,
-        state = next >= steps.length ? 'complete' : 'active',
-        due = new Date(now.getTime() + (steps[next]?.delayDays ?? 0) * 86400000).toISOString();
+      const next = i.mode === 'reschedule' ? p.step_index : p.step_index + 1;
+      const state =
+        i.mode === 'reschedule' ? 'active' : next >= steps.length ? 'complete' : 'active';
+      const dueIso = due.toISOString();
       await tx.execute(
-        sql`update agency_campaign_progress set step_index=${next},state=${state},due_at=${due} where campaign_id=${i.campaignId} and contact_id=${i.contactId}`
+        sql`update agency_campaign_progress set step_index=${next},state=${state},due_at=${dueIso} where campaign_id=${i.campaignId} and contact_id=${i.contactId}`
       );
+      await audit(tx, {
+        action: 'agency.campaign.step',
+        entity: 'contact',
+        entityId: i.contactId,
+        after: {
+          campaignId: i.campaignId,
+          stepIndex: p.step_index,
+          outcome: result,
+          actor: caller.id
+        }
+      });
       return { status: state, providerRequests: 0 };
     },
     opts

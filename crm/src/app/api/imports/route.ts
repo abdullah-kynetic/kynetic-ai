@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { withApi } from '@/server/security/with-api';
 import { classifyImportUpload, createImportBatch, IMPORT_MAX_BYTES } from '@/server/imports';
+import { loadImportTable } from '@/server/imports/table';
 import { AppError } from '@/server/errors';
 import { decideAdminAccess } from '@/server/admin';
 import { resolveActor } from '@/server/auth';
@@ -30,23 +31,25 @@ export const POST = withApi(async (request) => {
   const uploadKind = classifyImportUpload(file.name);
   if (uploadKind === 'excel')
     throw new AppError('VALIDATION_FAILED', {
-      message: 'Upload a CSV file. Excel workbooks are not accepted.'
+      message: 'Upload a CSV or .xlsx file. Macro-enabled and legacy Excel files are not accepted.'
     });
-  if (uploadKind !== 'csv')
-    throw new AppError('VALIDATION_FAILED', { message: 'Upload a CSV file.' });
+  if (uploadKind !== 'csv' && uploadKind !== 'xlsx')
+    throw new AppError('VALIDATION_FAILED', { message: 'Upload a CSV or .xlsx file.' });
+  const bytes = new Uint8Array(await file.arrayBuffer());
   const batch = await createImportBatch(
     ctx,
     actor,
     {
       fileName: file.name,
-      fileType: 'csv',
+      fileType: uploadKind,
       entity: rawEntity as 'contact' | 'company' | 'deal' | 'note',
       importedSource: String(form.get('importedSource') ?? ''),
       sourceLabel: String(form.get('sourceLabel') ?? '') || undefined,
       mapping: {},
       duplicateRule: form.get('duplicateRule') === 'fill_empty' ? 'fill_empty' : 'skip'
     },
-    new Uint8Array(await file.arrayBuffer())
+    bytes
   );
-  return NextResponse.json({ ok: true, batch }, { status: 201 });
+  const headers = (await loadImportTable(uploadKind, bytes)).rows[0] ?? [];
+  return NextResponse.json({ ok: true, batch, headers }, { status: 201 });
 });

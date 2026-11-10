@@ -1,1 +1,8 @@
-export { getTenantDocumentUrl, listTenantDocuments, uploadTenantDocument } from './service';
+export {
+  deleteTenantDocument,
+  getTenantDocumentUrl,
+  listAdminTenantDocuments,
+  listTenantDocuments,
+  replaceTenantDocument,
+  uploadTenantDocument
+} from './service';

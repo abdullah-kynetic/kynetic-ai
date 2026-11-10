@@ -24,7 +24,12 @@ const SINGLE_WORKSPACE_TABLES = new Set([
   'agency_deal_terms',
   'agency_invoice_drafts',
   'agency_billing_events',
-  'agency_dunning_drafts'
+  'agency_dunning_drafts',
+  'agency_contracts',
+  'agency_expenses',
+  'agency_revenue_entries',
+  'agency_referrals',
+  'agency_case_studies'
 ]);
 function seededTables() {
   return tables.filter((t) => !SINGLE_WORKSPACE_TABLES.has(t));

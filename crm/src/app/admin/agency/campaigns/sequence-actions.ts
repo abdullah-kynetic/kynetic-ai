@@ -25,8 +25,39 @@ export async function completeSequence(
   campaignId: string,
   contactId: string,
   stepIndex: number,
-  mode: 'simulate' | 'manual_complete'
+  mode: 'simulate' | 'manual_complete' | 'done'
 ) {
   await advanceAgencyCampaign(await agencyCaller(), { campaignId, contactId, stepIndex, mode });
+  revalidatePath('/admin/agency/campaigns');
+}
+export async function skipSequence(
+  campaignId: string,
+  contactId: string,
+  stepIndex: number,
+  form: FormData
+) {
+  await advanceAgencyCampaign(await agencyCaller(), {
+    campaignId,
+    contactId,
+    stepIndex,
+    mode: 'skip',
+    reason: String(form.get('reason') ?? '')
+  });
+  revalidatePath('/admin/agency/campaigns');
+}
+export async function rescheduleSequence(
+  campaignId: string,
+  contactId: string,
+  stepIndex: number,
+  form: FormData
+) {
+  await advanceAgencyCampaign(await agencyCaller(), {
+    campaignId,
+    contactId,
+    stepIndex,
+    mode: 'reschedule',
+    callbackDate: String(form.get('callbackDate') ?? ''),
+    callbackTime: String(form.get('callbackTime') ?? '')
+  });
   revalidatePath('/admin/agency/campaigns');
 }

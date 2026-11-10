@@ -46,6 +46,11 @@ const EXTRA_TABLES = [
   'agency_invoice_drafts',
   'agency_billing_events',
   'agency_dunning_drafts',
+  'agency_contracts',
+  'agency_expenses',
+  'agency_revenue_entries',
+  'agency_referrals',
+  'agency_case_studies',
   // M20-06 client support requests.
   'support_requests',
   // Client requests for a system that is off.

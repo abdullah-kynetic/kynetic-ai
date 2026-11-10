@@ -10,7 +10,7 @@ import type { Db } from '../db/client';
 import { contacts, importBatches } from '../db/schema';
 import { AppError, ValidationError } from '../errors';
 import { withTenant, type TenantContextInput } from '../tenancy';
-import { parseImportCsv } from './csv';
+import { loadImportTable, type ImportTable } from './table';
 import { requireModule } from '../modules';
 
 export type ContactMapping = {
@@ -67,7 +67,7 @@ export async function dryRunContactBatch(
       if (!batch) throw new AppError('NOT_FOUND');
       if (
         !batch.fileKey ||
-        batch.fileType !== 'csv' ||
+        (batch.fileType !== 'csv' && batch.fileType !== 'xlsx') ||
         !['uploaded', 'mapped', 'dry_run_ok', 'dry_run_failed'].includes(batch.status)
       )
         throw new AppError('CONFLICT');
@@ -80,10 +80,16 @@ export async function dryRunContactBatch(
         .where(and(isNull(contacts.deletedAt), isNull(contacts.mergedIntoId)));
       let report: ContactDryRun;
       try {
-        report = previewContacts(parseImportCsv(file.body), mapping.data, {
-          phones: existing.flatMap((c) => c.phones),
-          emails: existing.flatMap((c) => c.emails)
-        });
+        const table = await loadImportTable(batch.fileType, file.body);
+        report = previewContacts(
+          table.rows,
+          mapping.data,
+          {
+            phones: existing.flatMap((c) => c.phones),
+            emails: existing.flatMap((c) => c.emails)
+          },
+          table.blocked
+        );
       } catch {
         throw new ValidationError({ mapping: ['invalid_column_or_file'] });
       }
@@ -120,7 +126,8 @@ export async function dryRunContactBatch(
 export function previewContacts(
   rows: string[][],
   mapping: ContactMapping,
-  existing: { phones: readonly string[]; emails: readonly string[] } = { phones: [], emails: [] }
+  existing: { phones: readonly string[]; emails: readonly string[] } = { phones: [], emails: [] },
+  blocked: ImportTable['blocked'] = new Map()
 ): ContactDryRun {
   const [headers = [], ...data] = rows;
   const index = (name?: string) => (name === undefined ? -1 : headers.indexOf(name));
@@ -141,6 +148,12 @@ export function previewContacts(
     failed = 0,
     duplicates = 0;
   data.forEach((row, i) => {
+    const formula = blocked.get(i + 2);
+    if (formula) {
+      failed++;
+      if (issues.length < 200) issues.push({ row: i + 2, reason: formula });
+      return;
+    }
     const field = (n: number) => (n < 0 ? '' : (row[n] ?? '').trim());
     const phone = field(columns.phone);
     const email = field(columns.email).toLowerCase();
