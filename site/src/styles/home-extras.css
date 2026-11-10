@@ -253,5 +253,6 @@ body:has(.nf) { background: var(--color-page); }
 .cp__pair .cp__time.is-chosen { background: var(--color-text); border-color: var(--color-text); color: var(--color-page); cursor: default; }
 .cp__confirm { font: inherit; font-weight: 700; padding: 14px 18px; border-radius: 14px; border: 0; background: var(--color-accent); color: var(--color-on-accent); cursor: pointer; }
 .cp__confirm:disabled { opacity: .7; }
-.cp__msg { margin: 0; text-align: center; color: var(--color-error); font-weight: 600; }
+.cp__msg { margin: 0; text-align: center; color: var(--color-muted); font-weight: 600; }
+.cp__msg:has(a) { color: var(--color-error); }
 .cp__msg a { color: var(--color-accent-text); text-decoration: underline; text-underline-offset: 2px; }

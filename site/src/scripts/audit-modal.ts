@@ -180,6 +180,7 @@ export function initAuditModal() {
     opener = from ?? (document.activeElement as HTMLElement | null);
     root.hidden = false;
     document.documentElement.classList.add('am-lock');
+    ensurePicker();
     resume();
     if (!reducedMotion()) {
       animate(root.querySelector('.am__scrim')!, { opacity: [0, 1] }, { duration: 0.2 });
@@ -203,8 +204,9 @@ export function initAuditModal() {
   };
   const e164 = (p = '') => { const d = p.replace(/\D/g, ''); return d.length === 10 ? `+1${d}` : d.length > 10 ? `+${d}` : ''; };
   let mounted = false;
-  function showBook() {
-    show('book');
+  function showBook() { ensurePicker(); show('book'); }
+  // Mounted (and its open times fetched) as soon as the overlay opens, so the calendar is ready by the last step.
+  function ensurePicker() {
     if (mounted) return;
     mounted = true;
     mountPicker(root.querySelector<HTMLElement>('#am-picker')!, {

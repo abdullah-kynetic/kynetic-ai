@@ -58,17 +58,21 @@ export function mountPicker(host: HTMLElement, o: Opts) {
     const key = `${ymd(view)}|${tz}`;
     say(); grid.setAttribute('aria-busy', 'true');
     if (!cache.has(key)) {
+      slots = {}; render(); say('Loading open times…');
       const first = new Date(Math.max(view.getTime(), Date.now() - 864e5));
       const last = new Date(view.getFullYear(), view.getMonth() + 1, 0);
-      try {
-        const q = new URLSearchParams({ eventTypeSlug: o.slug, username: o.username, start: ymd(first), end: ymd(last), timeZone: tz });
-        const res = await fetch(`${API}/slots?${q}`, { headers: { 'cal-api-version': '2024-09-04' } });
-        const j = await res.json();
-        if (!res.ok || j.status !== 'success') throw new Error('slots');
-        cache.set(key, j.data as Record<string, { start: string }[]>);
-      } catch {
-        slots = {}; render(); say("We couldn't load the calendar.", true); grid.removeAttribute('aria-busy'); return;
+      const q = new URLSearchParams({ eventTypeSlug: o.slug, username: o.username, start: ymd(first), end: ymd(last), timeZone: tz });
+      let ok = false;
+      // Cal can be slow on a cold start: give it two tries of up to 15 seconds each.
+      for (let attempt = 0; attempt < 2 && !ok; attempt++) {
+        const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 15000);
+        try {
+          const res = await fetch(`${API}/slots?${q}`, { headers: { 'cal-api-version': '2024-09-04' }, signal: ctl.signal });
+          const j = await res.json();
+          if (res.ok && j.status === 'success') { cache.set(key, j.data as Record<string, { start: string }[]>); ok = true; }
+        } catch { /* try again */ } finally { clearTimeout(t); }
       }
+      if (!ok) { slots = {}; render(); say("We couldn't load the calendar.", true); grid.removeAttribute('aria-busy'); return; }
     }
     slots = cache.get(key)!;
     grid.removeAttribute('aria-busy');
@@ -142,5 +146,6 @@ export function mountPicker(host: HTMLElement, o: Opts) {
   });
   host.querySelector('select')!.addEventListener('change', (e) => { tz = (e.target as HTMLSelectElement).value; day = ''; chosen = ''; void load(); });
 
+  render();
   void load();
 }
