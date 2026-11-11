@@ -112,3 +112,10 @@ Unslop: Damir Sokolovsky / [@heydamir](https://x.com/heydamir), [heydamir/unslop
 - Branch: `lane-b/demo-seed-13-clients`
 - Migration: 1040 (`demo_seed_records` and `is_demo_seeded`)
 - Parked: P-1 pricing, P-2 disclosure wording, P-3 Lane A optional tables.
+
+### Lane B update — 2026-11-11
+
+- B1 merged in PR #156 at `59a25237e077b67193d93db319368d0a08d41779`; migration 1040 is used.
+- B2 SPEC 02 gap audit is complete. First five-row fix batch is on `lane-b/admin-gap-audit`: all-client blocked MRR label, pipeline funnel/value, guarantee progress, checklist regeneration/formula, and support status filter.
+- Current validation: typecheck and 571 unit tests pass; focused Lane B integration tests pass 4/4. No migration is required for this batch.
+- Parked items remain P-1 pricing, P-2 disclosure wording, and P-3 Lane A optional tables.

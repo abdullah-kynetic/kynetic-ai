@@ -15,3 +15,4 @@
 - **D-LB-2 — 2026-11-11:** Enable `opm` on all 13 demo tenants even when the profile omits it, because presence and review demo surfaces require it. This follows the B1 queue instruction and remains demo-only.
 - **D-LB-3 — 2026-11-11:** Placeholder service-area ZIPs and neutral branding are synthetic defaults. Existing non-empty profile values are never overwritten and are restored by the ledger on removal.
 - **D-LB-4 — 2026-11-11:** If the seed creates `demo-kynetic-agency`, removal deletes every ledgered synthetic business row but leaves the empty workspace and its creation audit. Deleting it would violate the append-only audit contract.
+- **D-LB-5 — 2026-11-11:** Checklist regeneration is additive and idempotent: it derives missing steps from currently enabled systems, preserves every existing status/note/assignment, and records an audit row even when zero steps are added. This avoids a migration and prevents template refreshes from erasing onboarding work.

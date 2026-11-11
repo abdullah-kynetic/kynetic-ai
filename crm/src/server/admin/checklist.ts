@@ -1,6 +1,8 @@
-import { sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { z } from 'zod';
+import { audit } from '../audit';
 import { getDb, type Db } from '../db/client';
+import { onboardingSteps, tenantModules } from '../db/schema';
 import { AppError } from '../errors';
 import { MODULE_KEYS } from '../modules';
 import {
@@ -193,6 +195,54 @@ export async function markGoLive(
   } catch (err) {
     throw mapDbError(err);
   }
+}
+
+/** Adds template steps for the currently enabled systems without changing existing checklist work. */
+export async function regenerateChecklist(
+  ctx: PlatformContext,
+  tenantId: string,
+  opts: { db?: Db } = {}
+): Promise<number> {
+  parseInput(uuidSchema, tenantId);
+  if (ctx.role !== 'admin') throw new AppError('FORBIDDEN');
+  return withTenant(
+    { tenantId, userId: ctx.userId, role: 'admin' },
+    async (tx) => {
+      const rows = await tx
+        .select({ moduleKey: tenantModules.moduleKey })
+        .from(tenantModules)
+        .where(eq(tenantModules.enabled, true));
+      const enabled = rows
+        .map((row) => row.moduleKey)
+        .filter((key): key is (typeof MODULE_KEYS)[number] =>
+          MODULE_KEYS.includes(key as (typeof MODULE_KEYS)[number])
+        );
+      const template = buildChecklist(['platform', ...enabled]);
+      const inserted = await tx
+        .insert(onboardingSteps)
+        .values(
+          template.map((step) => ({
+            tenantId,
+            stepKey: step.stepKey,
+            title: step.title,
+            moduleKey: step.moduleKey,
+            clientVisible: step.clientVisible,
+            status: step.doneAtCreation ? 'done' : 'todo',
+            doneAt: step.doneAtCreation ? new Date().toISOString() : null
+          }))
+        )
+        .onConflictDoNothing({ target: [onboardingSteps.tenantId, onboardingSteps.stepKey] })
+        .returning({ id: onboardingSteps.id });
+      await audit(tx, {
+        action: 'checklist.regenerate',
+        entity: 'tenant',
+        entityId: tenantId,
+        after: { inserted: inserted.length, modules: enabled }
+      });
+      return inserted.length;
+    },
+    { db: opts.db ?? getDb() }
+  );
 }
 
 export type SetupState = 'done' | 'doing' | 'waiting';

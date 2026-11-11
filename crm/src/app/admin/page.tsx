@@ -68,7 +68,10 @@ export default async function AdminHomePage() {
                 </TableCell>
                 <TableCell>{row.leads30d}</TableCell>
                 <TableCell>{row.appointments30d}</TableCell>
-                <TableCell>{row.modules.length} modules</TableCell>
+                <TableCell>
+                  {row.modules.length} systems
+                  {user.kyneticRole === 'admin' ? ' · $ to be confirmed' : ''}
+                </TableCell>
                 <TableCell>
                   <StatusBadge tone={tones[row.healthTone]}>
                     {row.healthScore} · {row.healthTone}

@@ -71,6 +71,7 @@ export { listTenantExports, offboardTenant } from './offboarding';
 export {
   getAdminChecklist,
   updateChecklistStep,
+  regenerateChecklist,
   markGoLive,
   loadSetupProgress,
   STEP_STATUSES,

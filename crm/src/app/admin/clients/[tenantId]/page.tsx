@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { forbidden, notFound } from 'next/navigation';
 import { GuaranteeForm } from './guarantee-form';
 import { saveSpendCapAction } from './spend-cap-action';
+import { PipelineFunnel } from './pipeline-funnel';
 
 export const metadata: Metadata = { title: 'Client' };
 export const dynamic = 'force-dynamic';
@@ -107,10 +108,22 @@ export default async function ClientOverviewPage({
             20% more booked appointments than last month, measured over 30 days.
           </p>
           {progress ? (
-            <p className='mt-3 text-sm'>
-              Baseline {progress.baseline}. Target {progress.target}. Booked in this window{' '}
-              {progress.booked}. {progress.daysLeft} days left.
-            </p>
+            <div className='mt-3 text-sm'>
+              <p>
+                Baseline {progress.baseline}. Target {progress.target}. Booked in this window{' '}
+                {progress.booked}. {progress.daysLeft} days left.
+              </p>
+              <progress
+                className='mt-3 h-3 w-full accent-primary'
+                max={Math.max(progress.target, 1)}
+                value={Math.min(progress.booked, progress.target)}
+                aria-label='Booking guarantee progress'
+              />
+              <p className='text-muted-foreground mt-1 text-xs'>
+                {Math.min(100, Math.round((progress.booked / Math.max(progress.target, 1)) * 100))}%
+                of target
+              </p>
+            </div>
           ) : (
             <p className='text-muted-foreground mt-3 text-sm'>
               Set a measurement start date. Leave the baseline blank to use last month&apos;s count.
@@ -149,16 +162,7 @@ export default async function ClientOverviewPage({
           {overview.stages.length === 0 ? (
             <p className='text-muted-foreground mt-3 text-sm'>No pipeline yet.</p>
           ) : (
-            <ul className='mt-3 space-y-2 text-sm'>
-              {overview.stages.map((stage) => (
-                <li key={stage.id} className='flex justify-between gap-3'>
-                  <span>{stage.name}</span>
-                  <span className='text-muted-foreground'>
-                    {stage.deals} {stage.deals === 1 ? 'deal' : 'deals'}
-                  </span>
-                </li>
-              ))}
-            </ul>
+            <PipelineFunnel stages={overview.stages} />
           )}
         </section>
 

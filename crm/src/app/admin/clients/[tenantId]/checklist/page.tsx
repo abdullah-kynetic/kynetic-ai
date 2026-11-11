@@ -6,7 +6,7 @@ import { AppError } from '@/server/errors';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
-import { GoLiveButton, StepRow } from './checklist-rows';
+import { GoLiveButton, RegenerateButton, StepRow } from './checklist-rows';
 
 export const metadata: Metadata = { title: 'Setup checklist' };
 export const dynamic = 'force-dynamic';
@@ -27,7 +27,9 @@ export default async function ChecklistPage({ params }: { params: Promise<{ tena
       notFound();
     throw err;
   }
-  const done = checklist.steps.filter((s) => s.status === 'done' || s.status === 'n/a').length;
+  const applicable = checklist.steps.filter((s) => s.status !== 'n/a');
+  const done = applicable.filter((s) => s.status === 'done').length;
+  const percent = applicable.length === 0 ? 100 : Math.round((done / applicable.length) * 100);
 
   return (
     <PageContainer
@@ -40,7 +42,7 @@ export default async function ChecklistPage({ params }: { params: Promise<{ tena
             <Badge variant='success'>Live since {checklist.goLiveAt.slice(0, 10)}</Badge>
           ) : (
             <>
-              {done} of {checklist.steps.length} steps done
+              {percent}% done · {done} of {applicable.length} applicable steps
             </>
           )}
         </p>
@@ -49,6 +51,7 @@ export default async function ChecklistPage({ params }: { params: Promise<{ tena
             <StepRow key={s.stepKey} tenantId={tenantId} step={s} currentUserId={user.id} />
           ))}
         </ul>
+        {role === 'admin' && <RegenerateButton tenantId={tenantId} />}
         {!checklist.goLiveAt && (
           <GoLiveButton
             tenantId={tenantId}

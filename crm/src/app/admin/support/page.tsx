@@ -9,6 +9,7 @@ import {
   listSupportAlerts,
   listSupportQueue,
   SUPPORT_CATEGORIES,
+  SUPPORT_STATUSES,
   type SupportCategory,
   type SupportStatus
 } from '@/server/support';
@@ -37,15 +38,25 @@ const CATEGORY_LABEL: Record<SupportCategory, string> = {
 export default async function AdminSupportPage({
   searchParams
 }: {
-  searchParams: Promise<{ category?: string }>;
+  searchParams: Promise<{ category?: string; status?: string }>;
 }) {
   const access = await decideAdminAccess(await headers());
   if (access.kind !== 'ok') forbidden();
   const staff = { userId: access.user.id, role: access.role };
   const query = await searchParams;
   const category = SUPPORT_CATEGORIES.find((item) => item === query.category) ?? null;
+  const status = SUPPORT_STATUSES.find((item) => item === query.status) ?? null;
+  const hrefFor = (next: { category?: SupportCategory | null; status?: SupportStatus | null }) => {
+    const params = new URLSearchParams();
+    const nextCategory = next.category === undefined ? category : next.category;
+    const nextStatus = next.status === undefined ? status : next.status;
+    if (nextCategory) params.set('category', nextCategory);
+    if (nextStatus) params.set('status', nextStatus);
+    const search = params.toString();
+    return `/admin/support${search ? `?${search}` : ''}`;
+  };
   const [rows, alerts] = await Promise.all([
-    listSupportQueue(staff, { category }),
+    listSupportQueue(staff, { category, status }),
     listSupportAlerts(staff)
   ]);
   return (
@@ -56,7 +67,8 @@ export default async function AdminSupportPage({
       <div className='mb-4 flex flex-wrap gap-2'>
         <Link
           className='inline-flex min-h-11 items-center rounded border px-3'
-          href='/admin/support'
+          href={hrefFor({ category: null })}
+          aria-current={!category ? 'page' : undefined}
         >
           All
         </Link>
@@ -64,10 +76,29 @@ export default async function AdminSupportPage({
           <Link
             key={item}
             className='inline-flex min-h-11 items-center rounded border px-3'
-            href={`/admin/support?category=${item}`}
+            href={hrefFor({ category: item })}
             aria-current={category === item ? 'page' : undefined}
           >
             {CATEGORY_LABEL[item]}
+          </Link>
+        ))}
+      </div>
+      <div className='mb-4 flex flex-wrap gap-2' aria-label='Filter by status'>
+        <Link
+          className='inline-flex min-h-11 items-center rounded border px-3'
+          href={hrefFor({ status: null })}
+          aria-current={!status ? 'page' : undefined}
+        >
+          Any status
+        </Link>
+        {SUPPORT_STATUSES.map((item) => (
+          <Link
+            key={item}
+            className='inline-flex min-h-11 items-center rounded border px-3'
+            href={hrefFor({ status: item })}
+            aria-current={status === item ? 'page' : undefined}
+          >
+            {statusLabel(item)}
           </Link>
         ))}
       </div>

@@ -38,7 +38,14 @@ export type ClientOverview = {
   owners: { name: string | null; email: string }[];
   pendingOwnerEmail: string | null;
   modules: { moduleKey: ModuleKey; enabled: boolean; level: string | null }[];
-  stages: { id: string; name: string; deals: number; isWon: boolean; isLost: boolean }[];
+  stages: {
+    id: string;
+    name: string;
+    deals: number;
+    valueCents: number;
+    isWon: boolean;
+    isLost: boolean;
+  }[];
   activity: { id: string; summary: string; type: string; occurredAt: string }[];
   guarantee: GuaranteeSettings;
 };
@@ -140,11 +147,20 @@ export async function loadClientOverview(
         .where(eq(pipelines.isDefault, true))
         .orderBy(asc(pipelineStages.position));
       const dealCounts = await tx
-        .select({ stageId: deals.stageId, n: sql<number>`count(*)::int` })
+        .select({
+          stageId: deals.stageId,
+          n: sql<number>`count(*)::int`,
+          valueCents: sql<number>`coalesce(sum(${deals.valueCents}), 0)::int`
+        })
         .from(deals)
         .where(isNull(deals.deletedAt))
         .groupBy(deals.stageId);
-      const counts = new Map(dealCounts.map((row) => [row.stageId, Number(row.n)]));
+      const counts = new Map(
+        dealCounts.map((row) => [
+          row.stageId,
+          { deals: Number(row.n), valueCents: Number(row.valueCents) }
+        ])
+      );
       const activity = await tx
         .select({
           id: activities.id,
@@ -211,7 +227,8 @@ export async function loadClientOverview(
     stages: detail.stageRows.map((stage) => ({
       id: stage.id,
       name: stage.name,
-      deals: detail.counts.get(stage.id) ?? 0,
+      deals: detail.counts.get(stage.id)?.deals ?? 0,
+      valueCents: detail.counts.get(stage.id)?.valueCents ?? 0,
       isWon: stage.isWon,
       isLost: stage.isLost
     })),
