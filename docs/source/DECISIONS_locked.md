@@ -1,4 +1,8 @@
 # Locked decisions (Oct 25, 2026). These override the spec where they conflict.
+
+> Historical source snapshot. Current implementation and auth/deploy facts are
+> in `docs/STATUS.md`, `docs/decisions.md`, and `crm/README.md`. D-026
+> supersedes the older Google/password/recovery-code auth wording below.
 - Product: custom-coded client CRM + portal sold to Kynetic clients (leads, pipeline kanban, appointments, Alex call logs, reports). Runs on Abdullah's own server (Docker, Cloudflare in front). Client data in Postgres with row-level security per tenant. No Twenty for client data. Twenty stays Kynetic-internal only.
 - Base: Kiranism next-shadcn-dashboard-starter (MIT; Next.js 16, React 19, Tailwind 4, TanStack, Zod, Recharts, dnd-kit, kbar). Drop Clerk; use Better-Auth or Auth.js with Google sign-in. Atomic CRM (MIT) = data model/screen reference. AGPL CRMs (Twenty, EspoCRM, SuiteCRM, Frappe, NocoBase) reference only, never forked.
 - Proposals to confirm: Drizzle ORM, pg-boss jobs, Resend for app email.

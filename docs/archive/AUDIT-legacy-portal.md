@@ -1,6 +1,6 @@
 # Repo audit (2026-10-22)
 
-> **Superseded as a status source (2026-11-09).** Current plan and status: Twenty ROADMAP note `7bfdcb7e` and `docs/STATUS.md`. Kept as technical/historical detail; do not treat any checklist below as current.
+> **Historical audit (2026-10-22).** This audit describes the retired `portal/` app, `/opt/portal`, and `portal-deploy`. The current app is `crm/`; current production uses `/opt/portal-new` and `portal-new-deploy`. Do not execute this audit as an operational runbook.
 
 Read from source at `cbb5046`; nothing run against a live system, `tools/*.py` not executed. Ordered by consequence. "Verified" = I read the cited lines.
 

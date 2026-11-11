@@ -1,19 +1,17 @@
-# Portal build-out: the client dashboard (portal.kyneticai.com)
+# Portal build-out: the CRM/portal (portal.kyneticai.com)
 
-> **Superseded as a status source (2026-11-09).** Current plan and status: Twenty ROADMAP note `7bfdcb7e` and `docs/STATUS.md`. Kept as technical/historical detail; do not treat any checklist below as current.
+> **Technical plan, not status (updated 2026-11-11).** The implementation is `crm/`, live at `portal.kyneticai.com`; production uses `/opt/portal-new` and `portal-new-deploy`. Current status is in `docs/STATUS.md`. The sync and safety work below remains valid future work.
 
-Plan only. Nothing here is built or deployed. Source read at `5888b13`; the live server was not touched. Facts about Twenty and the live portal that I did not read are marked **[unverified]**.
+This document describes follow-on automation for the current `crm/` app. It does not authorize a deploy, database change, migration, or workflow activation.
 
-## 1. What exists today (verified from `portal/`)
+## 1. What exists today (verified from `crm/`)
 
-- **Stack:** Next.js 16.4.2, React 19, Tailwind v4, Drizzle + Postgres with forced row-level security, Auth.js v5, zod, recharts, lucide icons. Dark brand theme (`#0a0a0a` background, magenta `#b70dc6` / violet `#7c3aed`) in `src/app/globals.css`; 15 small UI components in `src/components/ui/`.
-- **Client side (6 pages):** home, profile, contacts, Plan 1 scope (with a progress bar), timeline, results (charts), documents (download + upload).
-- **Admin side:** client list, "New client" form, and per-client tabs: profile, contacts, scope, timeline, results, documents, users, ingest keys. Fifteen admin actions in `src/lib/actions/admin.ts` (create/update client, save profile/contact/scope/milestone, invite and manage users, ingest keys).
-- **Data (13 tables):** `clients` (name, slug, status onboarding/active/paused, plan name, included minutes, **`twenty_company_id` already present**), `business_profiles`, `contacts`, `scope_items`, `milestones`, `users`, `documents`, `daily_results`, `ingest_keys`, plus auth tables and `audit_log` (`src/lib/db/schema.ts`).
-- **Creating a client today:** an admin fills "New client" by hand; the action creates the client, an empty profile and four default milestones (kickoff, build, testing, go-live) (`actions/admin.ts:40-56`). Scope items, contacts, profile text, invites and ingest keys are all separate manual steps.
-- **Integrations in code:** one. `POST /api/ingest/results` takes daily numbers per client. No code in `portal/src` calls Twenty, Retell, Stripe, Cal.com or n8n, and nothing found in the repo or the n8n backup calls the ingest endpoint. `twenty_company_id` is stored and never used.
+- **Stack:** Next.js, React, Tailwind, Drizzle + Postgres with tenant isolation, staff TOTP, emailed client codes, operations controls, appointments, support threads, documents, reports, and agency workspaces. See `crm/README.md` and `docs/STATUS.md`.
+- **Client side:** dashboard ranges, appointments, contacts, documents, reports, support, automation history, systems, and Alex change requests.
+- **Admin side:** client onboarding and management, systems/templates, operations pause, usage, offboarding, support, reports, documents, proposals, contracts, finance, and imports.
+- **Current database line:** migration `1019_support_threads_category`; next free migration `1020`. Do not add a migration as part of this docs task.
 
-So today the portal is a well-built **viewer with a manual admin form**. Every automation you described is missing.
+The current app is substantially beyond the original viewer prototype. Twenty-to-portal onboarding sync and several automated reporting/billing handoffs remain future work.
 
 ## 2. Decision: which side creates the client
 
@@ -66,7 +64,7 @@ Your examples (outbound alone about 2 weeks; outbound + inbound + CRM lead follo
 - **Ingest key provisioning:** today a key is shown once and copied by hand (`createIngestKey`). For automation, n8n should create the key through the sync API and write it straight into an n8n credential, never into a message or log. Simplest safe start: one key per client created at onboarding by an admin-scope service call.
 - **Per-call data:** the dashboard you want (calls, transcripts, bookings feed) needs more than the daily totals the ingest accepts. Add a `call_events` table (time, outcome, booked slot, summary, speed-to-lead) fed by the post-call workflow; transcripts only if counsel is fine with showing recordings or text to clients **[unverified]**.
 - **Prerequisites before real client data:** close KI-006 (DB passwords in the container environment, off-server backups with a restore test, the A/B isolation test) and KI-008 (dev password reuse check).
-- **Deploy path** stays `portal-deploy` of a merged `main` commit (D-022); every schema change needs a migration and a deploy.
+- **Deploy path** is `portal-new-deploy` for an approved `main` commit, targeting `/opt/portal-new`; every schema change needs a migration and an approved deploy.
 
 ## 7. UI direction ("easy, accessible, beautiful, AI-first")
 

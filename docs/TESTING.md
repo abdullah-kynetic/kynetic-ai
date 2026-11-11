@@ -1,5 +1,10 @@
 # Testing
 
+> Current auth override (2026-11-11): test the `crm/` implementation with
+> emailed one-time client codes and QR-enrolled staff authenticator setup.
+> Recovery codes, passwords, and Google sign-in are not current test flows;
+> older references below are historical requirements.
+
 > **Technical test plan for the portal codebase (scope banner, 2026-11-08 PST).** Not the business roadmap. Rows that treat CRM Lite/Full as paid upsells, and the founding-price line, are the historical 2026-10-25 menu. Current precedence: `docs/STATUS.md`. `lite` / `full` remain internal capability gates to test. Do not quote the dollar amounts as the current price. This banner does not change tests or schema.
 
 Kynetic Client CRM & Portal. Target path in the build repo: `docs/TESTING.md`.

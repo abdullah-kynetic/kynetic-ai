@@ -1,24 +1,23 @@
 ---
 type: process
 status: verified
-consumes: [portal-deploy]
-produces: [portal-deploy]
-verified_on: 2026-10-22
-verified_at: 5888b13
+consumes: [portal-new-deploy]
+produces: [portal-new-deploy]
+verified_on: 2026-11-11
+verified_at: main
 ---
 
 # deploy-portal
 
-Ship a merged `main` commit of `portal/` to the VPS.
+Ship an approved `main` commit of `crm/` to `/opt/portal-new`.
 
 ## Input -> Movement -> Output
-Input: a 40-character sha plus optional allowed env keys on stdin. Movement: the server script checks the sha is on `main`, rsyncs `portal/` to `/opt/portal/src`, builds, restarts `portal-app`, health-checks, rolls back on failure. Output: new image live, previous image tagged.
+Input: an approved `main` commit. Movement: `portal-new-deploy` updates the current stack, runs its reviewed release steps, health-checks, and rolls back on failure. Output: the approved CRM revision is live.
 
-## Steps (`portal/deploy/portal-deploy.sh`)
-1. Fetch `main`; refuse a sha that is not an ancestor (`:59`).
-2. Tag the current image as `previous`; back up `.env` (`:62-70`).
-3. `rsync --delete` the folder, copy `docker-compose.yml` (`:74-75`); update only allowed env keys (`:18`).
-4. Build, restart, wait for `/api/health`; roll back if unhealthy.
+## Steps (`crm/deploy/portal-new/portal-new-deploy`)
+1. Select an approved `main` commit.
+2. Run the server-side backup, build, migration, and app/worker switch steps.
+3. Wait for `/api/health`; roll back if unhealthy.
 
 ## If you change this
-- **Hits:** [[portal-deploy]], D-022, KI-010. The deploy scripts on the server are separate copies; the trigger (bot or Action) is outside the repo.
+- **Hits:** [[portal-deploy]] and `crm/deploy/portal-new/README.md`. Deployment still requires explicit approval.

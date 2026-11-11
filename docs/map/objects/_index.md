@@ -44,11 +44,11 @@ Format: `slug | cluster | universe | status | owning path`.
 
 ## portal
 - portal-buildout | portal | live | plan | docs/plans/PORTAL-BUILDOUT.md (the build-out plan for the client dashboard; the portal Abdullah wants to work on in depth)
-- portal-tenancy-rls | portal | live | verified | portal/src/lib/db/, portal/drizzle/0001_rls.sql
-- portal-auth | portal | live | verified | portal/src/lib/auth/, portal/src/app/(auth)/
-- portal-ingest-api | portal | live | verified | portal/src/app/api/ingest/, portal/N8N.md
-- portal-files-storage | portal | live | verified | portal/src/lib/storage/, portal/src/app/api/files/
-- portal-deploy | portal | live | verified | portal/deploy/ (server copies are separate; trigger lives outside repo)
+- portal-tenancy-rls | crm | live | verified | crm/src/server/db/, crm/drizzle/
+- portal-auth | crm | live | verified | crm/src/server/auth/, crm/src/app/api/auth/
+- portal-ingest-api | crm | live | verified | crm/src/app/api/service/, crm/src/server/
+- portal-files-storage | crm | live | verified | crm/src/server/adapters/storage/, crm/src/app/api/documents/
+- portal-deploy | crm | live | verified | crm/deploy/portal-new/ (server-side production switch)
 
 ## docs
 - context-docs-mirror | docs | live | verified | docs/progress.md, decisions.md, known-issues.md, KYNETIC_CONTEXT.md (mirror of Twenty)

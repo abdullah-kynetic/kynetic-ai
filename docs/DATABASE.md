@@ -1,5 +1,9 @@
 # DATABASE: Kynetic Client CRM & Portal
 
+> Current implementation note (2026-11-11): the active database line belongs
+> to `crm/`; retired `portal/` schema references below are historical
+> comparison material only. Latest current migration is `1019`; `1020` is next.
+
 > **Technical schema document (scope banner, 2026-11-08 PST).** Not the business roadmap. `module_prices` figures and Lite/Full level notes below are the historical 2026-10-25 commercial menu plus the internal capability flag the schema still stores. Current precedence: `docs/STATUS.md`. Do not quote those amounts as the current price. This banner does not change the schema.
 
 Status: Draft for review. Not approved.

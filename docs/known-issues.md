@@ -52,22 +52,14 @@ Fix: replace with Twenty nodes, needs approval (task 3.2).
 The outbound post-call webhook has no header auth (Retell signs the request; the path is unguessable). The same gap covers the parked Vapi calendar webhook and Nora's 5 webhooks.
 Fix: add a header-auth secret on the outbound workflow (task 3.6). Do not modify Nora's webhooks. Keep this repo private until the outbound webhook is authenticated.
 
-### KI-006: Portal go-live gaps (high)
-The client portal (portal.kyneticai.com) must not hold real client data until these are closed:
-- ~~`RESEND_API_KEY` is unset~~ Closed 2026-10-17: the key is set on the VPS and a real reset email was delivered.
-- The DB superuser and owner passwords sit in the app container environment.
-- No off-server backups and no restore test (nightly 02:30 backup stays on the VPS).
-- ~~The portal DNS A record is not set~~ Closed 2026-10-17: portal.kyneticai.com resolves to 40.160.150.91 and `/api/health` answers ok.
-- The manual client A/B isolation test has not been run.
+### KI-006: Retired legacy-portal go-live checklist (historical)
+This checklist described the retired `portal/` app and `/opt/portal` stack. It does not apply to the current `crm/` app or `/opt/portal-new`. Current production safety evidence belongs in `docs/STATUS.md`, `crm/deploy/portal-new/README.md`, and the current audit documents.
 
-### KI-007: Portal low-severity items (low)
-- 12h admin session cap.
-- `trusted_proxies` not set.
-- TOTP window.
-- Log rotation.
+### KI-007: Retired legacy-portal low-severity items (historical)
+The listed session, proxy, TOTP-window, and log-rotation items belonged to the retired `portal/` implementation and are not current CRM issues.
 
-### KI-008: Check the portal does not reuse the dev Postgres password (medium)
-Confirm `/opt/portal/.env` does not reuse the dev Postgres password hard-coded in `portal/scripts/pg-embedded.mts`. Not yet checked; the VPS is out of scope for repo work.
+### KI-008: Retired legacy-portal password check (historical)
+The check concerned `/opt/portal` and `portal/scripts/pg-embedded.mts`, both retired. Do not use it as a current production check; current deployment and database safety are documented under `crm/deploy/portal-new/`.
 
 ### KI-011: Lead-engine records disagree or are missing (medium)
 Found 2026-10-19 (read-only review of Twenty).
@@ -77,10 +69,8 @@ Found 2026-10-19 (read-only review of Twenty).
 - The "no people-search or data-broker sites" rule appears in Lane A notes with no recorded reason. Kept as is; a counsel question for 1.4 if it should be loosened.
 Fix: Abdullah to say where the research files are, confirm the Treg rotation, and approve or reject the D-002 reword.
 
-### KI-013: Portal has no sign-in (open mode) (high)
-Update 2026-11-08 PST: the 2026-11-08 ledger labels HTTP 200 on `/admin` as inference (a sign-in page can also return 200) and the deployed revision as partly memory-based. The docs pass on this date did not probe the portal and does not confirm production exposure or a deploy. The release risk stays open until a dated anonymous probe of the deployed revision shows a denial. The 2026-11-08 note follows.
-Update 2026-11-08: main `49019b93` (merged 2026-11-05) restores invitation-only sign-in, staff TOTP and verified sessions, and persona switching only works outside production with DEV_PERSONA_SWITCHING (checked in code; typecheck and 468 unit tests pass). It is NOT deployed: live portal.kyneticai.com still runs `350bf67` and `/admin` returns HTTP 200 with no sign-in (checked 2026-11-08). Still open until main is deployed and the first invites are created. Original note follows.
-Found 2026-11-02 (DC-TBD-15). Anyone who can reach an open-mode build acts as the Kynetic admin or any client. Fine for local use and synthetic data. Do NOT deploy it to a public address with real client data until network access control or sign-in is back. The live portal.kyneticai.com still runs the Oct 29 build with sign-in; deploying main replaces that with the open build. Fix: restore auth (git history before the open-mode commit has it) or add Cloudflare Access first.
+### KI-013: Current portal access protection needs dated production evidence (high)
+The current `crm/` app uses invite-only access: clients authenticate with emailed one-time codes and staff enroll an authenticator app through a QR code. This docs cleanup does not probe production. Keep the issue open until a dated anonymous probe of the deployed `main` revision confirms denial at protected routes.
 
 ### KI-012: Lead enrichment: phone certainty, rate limits, wrong-business matches (medium)
 Found 2026-10-20.
@@ -91,9 +81,8 @@ Found 2026-10-20.
 Fix: hand-dial a sample, counsel answer, and keep the audit step in every run.
 
 ## Open (docs reconciliation leftovers, 2026-11-08 PST)
-### KI-017: Production is still the pre-consolidation release (high)
-Found 2026-11-09. portal.kyneticai.com is release `350bf673` (1 admin user, about 13 tenants). The portal line moving onto `main` is not deployed. Migrations `1007` through `1013` have not been applied to that database. The separate DEV environment is retired until after go-live, so there is no second portal to rehearse on. Do not deploy, migrate, or recreate DEV without an explicit yes.
-Update 2026-11-10 evening PST: production at portal.kyneticai.com is `main` `ac0192af` (PR #146 deployed), with migration `1015_schedules_retention_settings`. `PROVIDER_MODE=stub` and `OUTBOUND_ENABLED=false` unchanged. Migrations through `1015` are applied; `1016` is the systems/templates/guarantee migration on this branch.
+### KI-017: Production release evidence needs a fresh dated probe (high)
+The current production line is `main` at portal.kyneticai.com, deployed from `/opt/portal-new` with `portal-new-deploy`; migration `1019_support_threads_category` is live and `1020` is next. A fresh dated anonymous-access probe and release evidence are still useful. Do not deploy or migrate without explicit approval.
 
 ## Gotchas
 - Cloud sessions deny hosts not in the environment's allowed domains. Firecrawl returned 403 until `api.firecrawl.dev` was allowed (2026-10-19). A scrape of Facebook, BBB, the Texas Comptroller and similar sites needs those domains allowed too.
@@ -127,10 +116,6 @@ Resolved 2026-10-29: added `wireEmail()` for app instrumentation and worker star
 ### KI-009: Outbound workflow found active with Alex ID set; go-live approved 2026-10-18 (was medium)
 Workflow `m2YJwZ1l8DTzyEkw` was found active on Oct 17 (read-only check, 38 nodes) with the Alex agent ID set and the Retell credential attached. Go-live not yet approved; Abdullah to confirm. Docs previously said inactive and never run. The public form and the post-call webhook are live while it is active. Do not change n8n without a yes on that specific change.
 Resolved 2026-10-18: Abdullah approved the workflow staying live. No n8n change was made. The post-call webhook still has no header auth (KI-005).
-
-### KI-010: Who and what can change the portal server (was medium)
-Found read-only on 2026-10-17. Two keys have full administrator access to the VPS (which also holds Twenty and its backups): Abdullah's Mac, and one labelled `bob-box-ovh-vps` (believed to be Abdullah's Grok bot). A restricted `deploy` key (forced command, deploys only commits on `main`, rolls back on failure) was added the same evening. There are now two ways to deploy: the bot path (`portal-deploy`) and `portal/deploy/deploy.sh`; each overwrites `/opt/portal/src`, so use one. Decide whether the bot should keep full root, and which deploy path is the one.
-Resolved 2026-10-18 (D-022): the `bob-box-ovh-vps` key keeps full root by Abdullah's choice, and `portal-deploy` is the single deploy path.
 
 ### Portal server deploys from Claude sessions (2026-11-03)
 The "Kynetic VPS" session's auto-mode classifier blocks `portal-new-deploy deploy` as a production deploy unless an allow rule exists (`Bash(sudo /usr/local/sbin/portal-new-deploy *)` via `/permissions`) or Abdullah approves it in that session. Its repo clone lives in a /tmp scratchpad that may vanish; move it to a permanent path. Cloud sessions cannot SSH to the server (port 22 blocked).

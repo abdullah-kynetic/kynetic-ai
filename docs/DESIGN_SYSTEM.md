@@ -1,5 +1,10 @@
 # Design System
 
+> Current implementation override (2026-11-11): screens belong to `crm/`.
+> Client auth is an emailed one-time code; staff auth is a QR-enrolled
+> authenticator app. Recovery codes and Google sign-in references below are
+> historical product/spec requirements, not current UI behavior.
+
 > **Technical UI rules (scope banner, 2026-11-08 PST).** Not the business roadmap. A Lite/Full module list in this file is the historical 2026-10-25 capability split. Current precedence: `docs/STATUS.md`.
 
 Kynetic Client CRM & Portal. Written 2026-10-25. Feature IDs match the PRD.
@@ -332,7 +337,7 @@ Every screen below defines all four states. A "journey" is a PRD user journey; t
 | Admin: onboarding (F-55) | PRD | n/a | Progress steps while provisioning | Failure shows which step failed and what was already created (idempotent retry) | Success page with links: owner invite, tenant, Alex config draft |
 | Admin: Alex config (F-58) | PRD | Draft with required fields flagged | Skeleton | Test call failure shows provider error | Form + test call result |
 | Admin: audit log (F-60), user mgmt (F-61), integration health (F-62), backups (F-63) | PRD | Audit: "No events match" with filters; health: "No integrations configured for this client" | Table skeletons | Retry; the health page itself must degrade gracefully when a provider API is down (shows last known status + time) | Filterable tables; backup status shows last success time, last restore test date |
-| Sign-in | PRD | n/a | Button loading state | Wrong/unknown account: generic message that does not reveal whether an account exists | Google sign-in and email magic link (spec) |
+| Sign-in | PRD | n/a | Button loading state | Wrong/unknown account: generic message that does not reveal whether an account exists | Emailed one-time client code; QR-enrolled staff authenticator |
 | 404 / 403 / 500 | n/a | n/a | n/a | Display-font title, one sentence, "Back to home". 403 only where the user knows the page exists (admin-side pages for staff); a gated module's route returns 403 `MODULE_DISABLED` (PRD F-70); another tenant's record returns 404. | n/a |
 
 ---

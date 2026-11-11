@@ -1,6 +1,6 @@
 # System map proposal (icm-architect, System map mode, audit only)
 
-> Historical proposal. Quoted commit-trailer lines later in this file are not the current rule. Current direction: `docs/STATUS.md`. Commits have no AI trailer.
+> Historical proposal. This file inventories the retired `portal/` app and old deployment path. The current app is `crm/`, live from `main` at `/opt/portal-new` via `portal-new-deploy`. Quoted commit-trailer lines later in this file are not current rules.
 
 Status: APPLIED on 2026-10-22 at Abdullah's request (sections 4 and 5, plus the safe fixes from section 6: README, KYNETIC_CONTEXT KI-009 line, progress DNS line, skills-breakdown row, `.env.example` n8n names). Not applied: the `.claude/settings.json` allowlist change, the n8n ID fixes (Abdullah: leave for later), any file move. Original text below describes the proposal as made. No existing file was moved, renamed, deleted or rewritten. The only changes on this branch are `.claude/skills/icm-architect/` and this file.
 Date: 2026-10-21. Branch: `chore/icm-system-map`, cut from `origin/main` at `67763e6`.

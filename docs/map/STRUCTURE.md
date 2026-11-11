@@ -78,7 +78,7 @@ kynetic-ai/
 │     ├─ objects/retell/      retell-client, retell-agent-tools, retell-allowlist
 │     ├─ objects/bakeoff/     bakeoff-summary
 │     ├─ objects/leadsourcing/ lead-engine
-│     ├─ objects/portal/      portal-ingest-api, portal-tenancy-rls, portal-auth, portal-files-storage, portal-deploy
+│     ├─ objects/portal/      current CRM/portal cards: auth, tenancy, storage, service results, deploy
 │     ├─ objects/docs/        context-docs-mirror
 │     ├─ objects/tooling/     repo-skills, mcp-config
 │     ├─ processes/           lead-to-call, change-alex, backup-n8n, deploy-portal, end-of-session-docs
@@ -97,7 +97,7 @@ kynetic-ai/
 │  ├─ CONTEXT.md                      NEW
 │  ├─ retell.py, n8n_backup.py        unchanged
 │  └─ map_check.py                    NEW  read-only drift checker
-└─ portal/
+└─ crm/
    ├─ CONTEXT.md                      NEW
    └─ everything else unchanged (src/, tests/, drizzle/, deploy/, ADMIN.md, N8N.md, ...)
 ```

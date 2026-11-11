@@ -1,4 +1,6 @@
-> **HISTORICAL - preserved Codex steps 0–12 and dated evidence.** The active checklist is [COMPLETION-PLAN.md](COMPLETION-PLAN.md); current evidence index: [PROGRESS.md](PROGRESS.md). Old ticks and instructions below retain their original scope and dates. Do not execute this history as a current plan.
+> **HISTORICAL - preserved Codex steps 0–12 and dated evidence.** References
+> below to the retired portal/DEV line, old auth, or old deploy path are not
+> current instructions. The active operating status is [docs/STATUS.md](../STATUS.md).
 
 # Codex progress (steps 0–12)
 

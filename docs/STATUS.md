@@ -12,7 +12,16 @@ Abdullah stopped the second portal line. The portal implementation that lived on
 
 `docs/codex/CURRENT_STATUS.md` restates this portal fact. `docs/codex/COMPLETION-PLAN.md` stays historical evidence. Merging the portal code does not make that file the plan. The five steps below remain the operating order.
 
-## Portal engineering note (2026-11-10)
+## Portal engineering note (2026-11-11)
+
+The current `crm/` app is live at portal.kyneticai.com from `main`, using the
+`/opt/portal-new` stack and `portal-new-deploy`. Main's latest migration is
+`1019_support_threads_category`; the next free migration number is `1020`.
+Clients use emailed one-time sign-in codes. Staff use an authenticator app
+enrolled from a QR code. Recovery codes and Google sign-in are not used.
+
+The older deployment paragraph below is retained as dated evidence only; this
+fact takes precedence.
 
 Production at portal.kyneticai.com is `main` `416b165617577e0468de03fabcfb383d220b584d` (PR #149), with migration `1018_admin_ops_safety`. Earlier live tips were `df8b61a6` (PR #150, migration `1017_agency_sales_tools`), `b27b9d2a` (PR #147, migration `1016_systems_templates_guarantee`), and `ac0192af` (PR #146, migration `1015_schedules_retention_settings`). `PROVIDER_MODE=stub` and `OUTBOUND_ENABLED=false` are unchanged. The 2026-11-09 note that still said release `350bf673` is stale for that revision; this file is the current pointer.
 
@@ -30,7 +39,7 @@ The agency workspace can schedule a Pacific-time callback, mark a campaign step 
 
 ## Client workspace (batch 2, 2026-11-10)
 
-The client dashboard can show 7, 30, or 90 days, or a custom range, in the client's time zone. Speed-to-lead and booking rate use the same formulas as the monthly report. The 30-day booking guarantee is unchanged. Appointments have month, week, and day views and a contact search instead of a raw id. Automations show recent run results and stay read-only. Pipeline owner and source filters were already on `main`; this batch adds browser coverage. Support is a thread on both the client side and the Kynetic side, with an in-app alert and no email. Alex settings can file a change request. The terms acceptance page exists and stays off unless `TERMS_GATE_ENABLED=true`. Migration `1019_support_threads_category` follows `1018_admin_ops_safety`. This note does not deploy. `PROVIDER_MODE=stub` and `OUTBOUND_ENABLED=false` are unchanged. Left open: terms wording (KI-026), calendar sync (KI-027), automation editing (KI-028), and support email (KI-029).
+The client dashboard can show 7, 30, or 90 days, or a custom range, in the client's time zone. Speed-to-lead and booking rate use the same formulas as the monthly report. The 30-day booking guarantee is unchanged. Appointments have month, week, and day views and a contact search instead of a raw id. Automations show recent run results and stay read-only. Pipeline owner and source filters were already on `main`; this batch adds browser coverage. Support is a thread on both the client side and the Kynetic side, with an in-app alert and no email. Alex settings can file a change request. The terms acceptance page exists and stays off unless `TERMS_GATE_ENABLED=true`. Migration `1019_support_threads_category` is live and follows `1018_admin_ops_safety`. `PROVIDER_MODE=stub` and `OUTBOUND_ENABLED=false` are unchanged. Left open: terms wording (KI-026), calendar sync (KI-027), automation editing (KI-028), and support email (KI-029).
 
 
 ## Current direction

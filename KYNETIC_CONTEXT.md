@@ -111,12 +111,10 @@ ElevenLabs won. Retell does not stay the Alex platform. The notes below are the 
 
 ## Portal
 
-- Client portal: https://portal.kyneticai.com (Next.js app in `crm/`; the old `portal/` app was deleted 2026-11-02, recoverable from commit `7eea4129` (run `git show 7eea4129:portal/`)). The DNS A record is set (resolves to 40.160.150.91, `/api/health` ok as of 2026-10-17) and Resend email works. Remaining go-live gaps are in KI-006.
-- Runs on the OVH VPS in `/opt/portal`; the app listens on `127.0.0.1:3020` behind Caddy. Nightly backup at 02:30.
-- Sign-in record as of 2026-10-18: invite-only. Clients use password, an emailed link, or Google (invited clients only). Admins use password + authenticator code, with an optional "Remember this device for 30 days" (skips only the code). New invites sign the user straight in; password resets end at the sign-in page. Deploys go through server-side `portal-deploy` (D-022). Later sessions removed sign-in and then restored it on main. Production access protection is an unresolved release risk (KI-013 and `docs/audit/2026-11-08-code-evidence.md`). An HTTP 200 is not proof the admin UI is exposed, and this pass did not probe the live portal.
-- VPS (OVH, 72 GB disk, about 14% used as of 2026-10-18, 4 cores, 7.6 GB memory) runs the portal, its database and Twenty. Bookstack and Docmost trials were removed 2026-10-18. n8n on this VPS (`https://n8n.kyneticai.com`) is the instance later work uses. The 2026-10-18 "self-hosting not started" line is historical. Do not activate workflows from this paragraph.
-- Old portal ops docs (`ADMIN.md`, `N8N.md`, build report) are only in commit `7eea4129`. The new portal's docs are `crm/README.md`, `crm/deploy/prod/README.md` and `docs/`.
-- No real client data until the must-fixes are done (KI-006, KI-008).
+- Client portal: https://portal.kyneticai.com (Next.js app in `crm/`). The current production line is `main`, deployed from `/opt/portal-new` by `portal-new-deploy`.
+- Latest main migration is `1019_support_threads_category`; the next free migration number is `1020`.
+- Authentication is invite-only. Clients use emailed one-time sign-in codes. Staff use password sign-in plus an authenticator app enrolled from a QR code. Recovery codes and Google sign-in are not used.
+- Current operational and release notes are in `docs/STATUS.md`, `docs/codex/CURRENT_STATUS.md`, `crm/README.md`, and `crm/deploy/portal-new/README.md`.
 
 ## Access
 

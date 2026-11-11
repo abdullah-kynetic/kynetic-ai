@@ -1,6 +1,8 @@
 # kynetic-ai
 
-Working repo for Kynetic AI. Twenty CRM is canonical; this repo mirrors it: agent rules, the Plan 1 outbound build, the portal, and the decision log. On a mismatch, flag it rather than silently picking one.
+Working repo for Kynetic AI. Twenty CRM is canonical; this repo contains the
+CRM/portal application, the Plan 1 outbound build, and the decision log. On a
+mismatch, flag it rather than silently picking one.
 
 ## The four context files
 
@@ -25,7 +27,7 @@ Every agent session reads these first (see `CLAUDE.md`):
 | `retell/builds/kynetic-restoration/` | Kynetic Restoration (Demo). Leave it alone |
 | `retell/builds/_inflate-original/` | Reference export of the original build. Leave it alone |
 | `tools/retell.py` | Retell API client. Dry-run unless `--apply` |
-| `crm/` | Client portal and CRM (Next.js, portal.kyneticai.com). The old `portal/` app was deleted in M18-05; see git history before 2026-11-02 |
+| `crm/` | Current client CRM and portal (Next.js, portal.kyneticai.com) |
 | `.claude/skills/` | `brand-profile`, `demo-profile-generator`, `retell-builder`, `build-log`, `n8n-code-javascript`, `icm-architect` (System map mode only), plus `skills-breakdown.md` |
 | `.mcp.json`, `.env.example` | MCP servers and the names of the environment variables |
 

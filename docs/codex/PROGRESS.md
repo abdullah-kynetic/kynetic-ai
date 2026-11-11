@@ -1,5 +1,10 @@
 # Codex progress (steps 0–6)
 
+> **Historical technical log.** The current app is `crm/`, deployed from
+> `main` to `/opt/portal-new` with `portal-new-deploy`. Older references below
+> to `portal/`, `/opt/portal`, `portal-deploy`, Google sign-in, passwords, or
+> recovery codes are not current instructions.
+
 > Technical log only. Not the business roadmap and not an active checklist. Current direction is `docs/STATUS.md`. As of 2026-11-09 PST the portal code line is `main` and the separate DEV environment is retired until after go-live. `docs/codex/COMPLETION-PLAN.md` is historical evidence, not the plan. Do not tick the boxes below as the next business step.
 
 Tick a step only when a task has explicitly resumed that historical check and `scripts/checks/run.sh <n>` has no FAIL. Note SKIPs.

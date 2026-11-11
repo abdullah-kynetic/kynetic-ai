@@ -1,5 +1,12 @@
 # Current portal status
 
+> **Current operating fact (2026-11-11):** The active app is `crm/`, live at
+> `portal.kyneticai.com` from `main`, deployed from `/opt/portal-new` with
+> `portal-new-deploy`. Main is at migration `1019_support_threads_category`;
+> `1020` is next. Clients use emailed one-time codes; staff use a QR-enrolled
+> authenticator app. Recovery codes and Google sign-in are not used. Older
+> DEV/legacy-portal sections below are historical evidence only.
+
 Updated **2026-11-10**. Canonical status is [../STATUS.md](../STATUS.md). This file restates the same portal facts.
 
 ## Admin ops and safety (2026-11-10)

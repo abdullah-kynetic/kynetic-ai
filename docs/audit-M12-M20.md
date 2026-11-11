@@ -1,5 +1,8 @@
 # M12–M20 audit and wave 30 delivery
 
+> Historical audit. The current app is `crm/`; the retired `portal/` app and
+> its deployment path are not operational references.
+
 > **Superseded as a status source (2026-11-09).** Current plan and status: Twenty ROADMAP note `7bfdcb7e` and `docs/STATUS.md`. Kept as technical/historical detail; do not treat any checklist below as current.
 
 **Order recorded 2026-11-01 (historical; the banner above wins):** n8n automations remain deferred. M16-01 through M16-06 are implemented locally, including the synthetic human dialer, never-dial guards and campaigns. Latest increment passed build/typecheck, 425 unit, 63 integration and two mobile/browser accessibility scenarios. Next portal task: proposal drafts. No real agency migration or live provider operation is implied; login/auth work stays last.

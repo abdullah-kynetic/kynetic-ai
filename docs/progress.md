@@ -8,7 +8,7 @@ Batch 4, merged as PR #150 (`main` `df8b61a651622c5bf0b3d1c1f8a86cb095c66b52`) a
 
 ## Portal line (2026-11-09 PST)
 
-One portal line on `main`. The separate DEV environment is retired until after go-live. Production at portal.kyneticai.com is still release `350bf673`; this change does not deploy. Details: `docs/STATUS.md` and the 2026-11-09 decision note in `docs/decisions.md`.
+One portal line on `main`. The separate DEV environment is retired. Production at portal.kyneticai.com is the current `main` CRM build, deployed from `/opt/portal-new` with `portal-new-deploy`; migration `1019_support_threads_category` is live. Details: `docs/STATUS.md`.
 
 This file is the dated log. On a mismatch with Twenty, flag both values. The GitHub docs pass did not read Twenty and did not change the frozen scorecard weights. The parallel Twenty cleanup is the parent-reported verification in `docs/STATUS.md`.
 
@@ -24,7 +24,7 @@ N8n automations were deferred by Abdullah on this date. The instruction then was
 
 Evidence ledger: `docs/audit/2026-11-08-code-evidence.md` (levels: documented, branch, merged, tested, deployed, verified). Twenty remains the business source of truth; this repo holds technical evidence only. Corrections to the lines below:
 - "Codex steps 3-6 not done" is true of main only. Branch `dev/codex-setup` (99 commits ahead, unmerged, no PR, no CI run) records steps 3-5 and agency steps 7-12 as done on DEV, plus its own `docs/codex/COMPLETION-PLAN.md` (a technical evidence index, not the business plan). Those are self-reported and not verified here.
-- Live portal still returns 200 on `/admin` (checked 2026-11-08); main's sign-in work is merged and CI-green but not deployed.
+- The 2026-11-08 access observation is superseded by the current `main` deployment and auth context; a fresh dated anonymous probe remains useful evidence.
 - Closed as duplicate or superseded (branches kept): #36 (duplicate of #134), #34, #37, #38 (contained in #136), #39 (palette decision). Kept open: #136 (only PR path for the Astro site; live www was built from `feat/positioning-remodelers`, not main), #113 (see KI entry), #134.
 - Flag, as written on 2026-11-08: pricing in D-017 conflicts with the live site's pricing (the site branch refers to a D-023 that does not exist in `docs/decisions.md`); the unified-CRM decision of 2026-11-08 is not implemented (module gate and plan fields still model Lite/Full). 2026-11-08 PST reading: do not choose again between D-017 and D-023. Twenty D-023 (2026-10-24) is the pricing authority. The Nov 5 guarantee is separate. Lite/Full stays an internal code flag. See `docs/STATUS.md`.
 
@@ -107,6 +107,11 @@ Batch 3, merged as PR #149 (`main` `416b165617577e0468de03fabcfb383d220b584d`) a
 
 ### 2026-11-10 — client workspace: dashboard range, appointments, support threads, terms gate
 
+Current status correction (2026-11-11): this batch is live on `main` at
+portal.kyneticai.com, with migration `1019_support_threads_category` after
+`1018_admin_ops_safety`. The original branch/deployment wording in the dated
+paragraph below is historical.
+
 Batch 2 on `cursor/batch-2-client-workspace-2302`, rebased onto `main` after PR #149. Not merged and not deployed. Migration renumbered to `1019_support_threads_category` because `1018` is the admin ops safety migration from PR #149. It adds support replies and a request category. The dashboard date range, speed-to-lead, and booking rate match the monthly report for the same month. The guarantee bar is unchanged. Appointments gained month, week, and day views plus a contact search. Automation history is read-only. Pipeline owner and source filters were already present. Support is a thread for the client and for Kynetic, with in-app alerts only. Alex settings can request a change. The terms gate is built and defaults off. Left blocked: calendar sync (KI-027), automation editing (KI-028), final terms text (KI-026), and support email (KI-029).
 
 
@@ -129,7 +134,7 @@ Merged as PR #146 (`main` `ac0192af`) and deployed to portal.kyneticai.com with 
 
 ### 2026-11-09 — portal sign-in: email codes, QR authenticator, separate sign-up
 
-Abdullah asked for four auth changes on `crm/`. Built on `cursor/portal-auth-otp-qr-2f76`. After PR #143, `main` (`5efc6c0f`) holds the portal line and this branch was merged onto that `main`. Not deployed.
+Abdullah asked for four auth changes on `crm/`. Built on `cursor/portal-auth-otp-qr-2f76` and now live on the current `main` production line.
 
 1. Staff TOTP enrolment shows a QR code. Backup codes are not returned, stored as an empty list, or accepted. "Can't scan the code?" reveals the key.
 2. Clients type a one-time email code. It is sent only for an active membership or a live invitation, and not for staff. Other addresses get the same message and no email. Codes expire in 10 minutes, lock after five misses, and are rate limited. Audit rows store an address hash, not the code. Outbound email stays off unless Resend is configured; tests capture the sender.

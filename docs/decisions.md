@@ -151,18 +151,18 @@ Why: Abdullah chose the behavior the n8n workflow "Outbound Speed to Lead" (`m2Y
 Replaced: D-012 item 2 (retries at 5 minutes, 1 hour and next day, maximum 4 attempts) and the 9:00 to 20:00 Pacific window in BUILD_PLAN.md. The rest of D-012 stands.
 Note: the first attempt was tested end to end on Oct 15. The retry path has not run yet.
 
-## D-021: Portal access is invite-only; Google sign-in is for clients only
-Status: partially superseded by D-026 (2026-11-09). Invite-only access still stands. Passwords, client-only Google, and backup codes do not.
+## D-021: Portal access is invite-only; Google sign-in is for clients only (superseded)
+Status: superseded by D-026 (2026-11-09). Invite-only access still stands. Passwords, client-only Google, and recovery codes do not.
 Date: 2026-10-17
 Why: Abdullah wants only people he invites to be able to sign in, with no public sign-up. Industry practice (OWASP authentication and forgot-password cheat sheets, NIST SP 800-63B) is closed registration with single-use expiring invite tokens, generic responses that don't reveal who has an account, length-based password rules with a breached-password screen and no composition or rotation rules, and MFA with a recovery path for privileged users.
 Decided: Accounts are created only by an admin invite; the invitee sets their own password. Google sign-in is allowed only for a client user that already exists and has a verified matching Google email; it never creates accounts. Admins stay on password + TOTP (+ recovery codes) because an OAuth round trip cannot ask for TOTP.
 
 
-## D-022: The single portal deploy path is server-side `portal-deploy`; the `bob-box-ovh-vps` key keeps full root
-Status: decided
+## D-022: The single portal deploy path is server-side `portal-deploy` (superseded)
+Status: superseded by the current `crm/deploy/portal-new/` deployment path.
 Date: 2026-10-18
 Why: Abdullah said he is fine with the `bob-box-ovh-vps` key keeping full root on the VPS (KI-010) and left the choice of deploy path to Claude. `portal-deploy` is the one with a health check and automatic rollback, only deploys commits on `main`, and is already what the restricted `deploy` key and the GitHub Action run.
-Decided: Portal deploys go through `/usr/local/sbin/portal-deploy` (via the restricted `deploy` key). `portal/deploy/deploy.sh` is not used for routine deploys, because both overwrite `/opt/portal/src`. The `bob-box-ovh-vps` key keeps full administrator access.
+Decided at the time: the retired portal deployed through `/usr/local/sbin/portal-deploy`. The current app deploys through `portal-new-deploy` to `/opt/portal-new`; see `crm/deploy/portal-new/README.md`.
 
 ## D-025: ElevenLabs is the voice platform for Alex (v1 strict); text promise removed until Twilio A2P approves
 Status: decided for the platform choice. Item 4 is limited by the 2026-11-08 PST precedence note: it is not approval to edit live agent `agent_8201m5afn2rbeb7v29xfkhh1pjef` and it is not approval for cold SMS.
@@ -178,14 +178,14 @@ Replaced: D-018 item 2 and 3 as far as they make Retell the platform for Alex. S
 Note: Twenty and this repo number decisions differently after Oct 24. Twenty has D-023 as the offer and pricing decision; the repo branches `feat/brand-revamp` and `fix/a2p-privacy-terms` carry D-023 (site rebuild) and D-024 (offer). D-025 was the first number free in both. Flag for Abdullah: reconcile D-023/D-024 when those branches merge.
 
 
-## D-026: Portal clients use email codes; staff use Google plus a QR authenticator
+## D-026: Portal clients use email codes; staff use a QR authenticator
 Status: decided
 Date: 2026-11-09
 Why: Abdullah asked for the portal sign-in to match how people actually use it. Clients should type a one-time email code. Staff should enroll TOTP from a QR code. Backup codes are easy to lose and were removed. The portal stays invite-only, with no passwords.
 Decided:
 1. Client log-in and first-time sign-up both use a 6-digit email code. A code is sent only for an active membership or a valid pending invitation, and never for staff. Every other address gets the same message and no email. Codes expire in 10 minutes, allow five tries, and are rate limited with the existing sign-in rules. Sends and failures are audited as a hash of the address, never the code.
 2. Sign-up is invite activation (code, then a name). Log-in is for people who already have access. Uninvited sign-up creates no account.
-3. Staff sign in with Google, then scan a QR code. The setup key stays hidden until "Can't scan the code?". Backup codes are not shown and cannot be used.
+3. Staff sign in with their staff account and scan a QR code in the authenticator-app setup flow. Google sign-in is not part of the portal. Recovery codes are not shown and cannot be used.
 4. Another admin resets a staff authenticator from Users. That is audited, signs the person out, and emails them when a mailer is configured. The only admin uses `crm/scripts/emergency-reset-staff-totp.ts` with the database owner URL. Magic links stay on the server for links already issued. The log-in page does not offer them.
 Replaced: the password, client-only Google, and backup-code parts of D-021. Invite-only access from D-021 still stands.
 

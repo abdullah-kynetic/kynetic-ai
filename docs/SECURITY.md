@@ -1,6 +1,6 @@
 # Security
 
-> **Technical security rules for the portal codebase (scope banner, 2026-11-08 PST).** Not the business roadmap. Current direction: `docs/STATUS.md`. DNC scrub, stored consent, and quiet hours are required operating controls. Twilio A2P approval is not permission for cold SMS. Counsel items in this file stay open. This banner does not change the controls.
+> **Technical security rules for the CRM/portal codebase (scope banner, 2026-11-11).** Not the business roadmap. Current direction: `docs/STATUS.md`. The live implementation is `crm/`, with clients using emailed one-time codes and staff using a QR-enrolled authenticator app. Recovery codes and Google sign-in are not used; older auth requirements below are historical spec text superseded by D-026. DNC scrub, stored consent, and quiet hours remain required operating controls.
 
 Kynetic Client CRM & Portal. Owner: Abdullah. Status: draft for review, Oct 25, 2026.
 
@@ -64,7 +64,7 @@ Client data never goes to Twenty (locked decision). Twenty receives at most an o
 | T5 | Forged or replayed webhook creating leads, fake outcomes or fake STOP events | Signature check, timestamp window, idempotency (3.6, F-77) |
 | T6 | Secret leak through logs, repo, browser bundle, error pages, Sentry, backups | Section 4, redaction (6.2), secret scanning in CI |
 | T7 | Impersonation abuse or insider misuse | Read-only default view-as, banner, audit with `impersonator_id` (2.6, F-57) |
-| T8 | Account takeover (phished Google account, stolen session, invite hijack) | Google sign-in, server-side sessions with live checks, single-use invites, instant revocation (2.1, F-71) |
+| T8 | Account takeover (stolen session, invite hijack, intercepted code) | Emailed one-time client codes, QR-enrolled staff authenticator, server-side sessions with live checks, single-use invites, instant revocation (2.1, F-71) |
 | T9 | Injection: SQL, stored XSS, CSV formula injection, prompt injection through lead text or transcripts | Parameterized queries, sanitization, escaping, CSP, LLM output as data (5) |
 | T10 | Abuse: login brute force, webhook floods, runaway Alex calling loop, cost blow-up | Rate limits (5.4, F-87), per-contact and per-tenant caps, kill switch (3.9) |
 | T11 | Data loss or ransomware | Encrypted offsite backups, 30 daily + 12 monthly, monthly restore test (6.4, F-63) |
@@ -77,22 +77,21 @@ Client data never goes to Twenty (locked decision). Twenty receives at most an o
 
 ## 2. Authentication and authorization
 
-> **Open mode (DC-TBD-15, 2026-11-02): sign-in is removed until the end of the build.** There is no login, session, magic link, Google sign-in, second factor or terms gate in the code. A cookie (`kynetic_open_as`) picks one of the existing users, and `/open/<admin|va|owner|staff>` switches it. Authorization (the permissions matrix), tenant RLS and the audit log still apply to the chosen user. Everything below that describes sign-in, sessions, TOTP and the terms gate describes the design to restore, not the current code. Do not expose an open-mode build to the public internet; put network access control in front of it (for example Cloudflare Access) or restore sign-in first.
+> **Historical open-mode note.** The anonymous open-mode experiment is retired. The current `crm/` build is invite-only and uses emailed client codes plus QR-enrolled staff authenticator sign-in. Do not expose an open-mode revision.
 
 ### 2.1 Identity and sessions (F-71)
-- **Decided:** drop Clerk. Better-Auth with Google sign-in and email magic links (PRD decision 2).
+- **Current:** invite-only access; emailed one-time codes for clients and QR-enrolled authenticator app for staff (D-026).
 - **Library.** Decided 2026-10-25: Better-Auth, behind the `src/server/auth` facade (ARCHITECTURE).
-- **Email magic link.** Decided 2026-10-25: ships for client users alongside Google sign-in. Single-use, short-lived, rate limited (5.4), sent through Resend. Staff accounts use Google plus TOTP. The platform auth message is transactional, not contact outreach; it is wired at Node app/worker startup and is not routed through marketing-contact consent dispatch. Its URL is HTML-escaped, receives a URL-hash idempotency key, and must never be logged.
+- **Email code.** A one-time code is sent only to an active client membership or valid pending invitation. Codes expire, are rate limited, stored as hashes, and are never logged. Staff do not use client email codes.
 - **Email code (2026-11-09).** The portal UI asks client users for a one-time code instead of a link. A code is sent only when the address has an active membership or a valid pending invitation, and is not staff. Every other address gets the same message and no email. Codes expire in 10 minutes, are stored as a keyed hash, and are rate limited with the sign-in rules (5.4). Sends and failures are audited without the code or the raw address. Magic links remain available for links already issued. There is no password.
 - **Authenticator recovery (2026-11-09).** Backup codes are not shown and cannot be redeemed. Another admin resets a staff authenticator from Users, which is audited. The sole admin uses `crm/scripts/emergency-reset-staff-totp.ts` with the database owner URL. That path writes `user.2fa_emergency_reset` and does not create a password.
-- **Staff sign-in.** Kynetic admin and VA accounts sign in with Google accounts on an explicit allowlist, plus app-level TOTP (F-98, below).
-- **Account linking.** Link a Google identity only when Google reports the email as verified. Never link by unverified email.
+- **Staff sign-in.** Kynetic admin and VA accounts use their staff account plus an authenticator app enrolled from a QR code.
 - **Sessions.** Server-side sessions in Postgres, not self-contained tokens, so revocation is immediate. Cookie: `HttpOnly`, `Secure`, `SameSite=Lax`, `__Host-` prefix.
 - **Auth connection (DC-055).** Better-Auth connects as `kynetic_auth`, a separate role with grants on the global auth tables and a column-limited slice of `users`, `memberships` and `invitations`. Sign-in needs staff status, a membership, or a pending invitation; staff get no email link.
 - **Lifetimes.** Decided 2026-10-25 (recommended option approved: Kynetic staff 12 h idle and 7 days absolute; client users 30 days sliding and 90 days absolute; re-auth before exports, role changes and view-as write mode).
 - **Live checks.** Role, tenant membership and module state are read from the database on each request (or cached at most 60 s with invalidation). Nothing is trusted from a cookie claim.
 - **CSRF.** `SameSite=Lax`, Origin check on every state-changing route and server action, no permissive CORS on `/api`. Implemented in `src/proxy.ts` (M0-21): a missing or foreign Origin on a state-changing request returns 403 `FORBIDDEN`; `/api/hooks/*` and `/api/service/*` are exempt (signature and bearer auth).
-- **2FA (F-98).** In v1 for Kynetic admin and VA (Decided 2026-10-25): TOTP via the Better-Auth two-factor plugin, enforced at sign-in on top of Google, with single-use recovery codes and a logged reset by another admin. A staff account without TOTP enrolled can reach only the enrolment page. Owner and staff TOTP stays Later. Built in M0-12 (DC-066): the plugin's own sign-in challenge does not cover Google sign-in, so a staff session is fully signed in only once `sessions.two_factor_verified_at` is set by a passing code, and `requireUser` refuses a staff session that is not (states `enrol` and `challenge`). Five wrong codes lock the account's verification for 15 minutes. A TOTP code works once. Recovery codes (10) are stored as keyed hashes and each works once. Staff cannot disable their own 2FA; only another admin can reset it (`admin_reset_staff_two_factor`), which removes the secret and codes, signs the person out everywhere and audits before and after. Enrol, failed and locked attempts, recovery-code use and resets all write `audit_log`.
+- **2FA (F-98).** Staff enroll TOTP through the QR setup flow. Recovery codes are not shown or accepted. Another admin can reset a staff authenticator; the reset signs the person out and is audited.
 
 ### 2.2 Roles and permissions matrix (F-73)
 Roles from spec section 2: Kynetic admin and Kynetic VA (`users.kynetic_role`), client owner and client staff (`memberships.role`). **Deny by default**: a cell that is not "Yes" is a denial. Enforcement is server-side on every action. The UI hides what the server would refuse.

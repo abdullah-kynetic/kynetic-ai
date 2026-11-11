@@ -3,19 +3,19 @@ type: object
 cluster: portal
 universe: live
 status: verified
-entity: portal/src/lib/auth/
-verified_on: 2026-10-22
-verified_at: 5888b13 (source unchanged since 67763e6)
+entity: crm/src/server/auth/
+verified_on: 2026-11-11
+verified_at: main migration 1019
 ---
 
 # Portal sign-in
 
-Invite-only. Google sign-in only admits an existing account with a verified matching email (`google.ts` decision function; reasons: unverified, not_invited, disabled, admin_requires_mfa). `requireClient()` and `requireAdmin()` in `session.ts:47,54` gate pages; static tests check they are called.
+Invite-only. Clients use emailed one-time sign-in codes. Staff use an authenticator app enrolled through a QR code. Google sign-in, passwords, and recovery codes are not part of the current flow.
 
 ## Shape
-- Modules: password (Argon2id), pwned screen, totp, recovery codes, tokens, device trust, session.
-- Admins need password + authenticator (D-021); Google is clients only.
+- Modules: email OTP, TOTP enrollment, sessions, invite activation, and audit logging.
+- Staff use an authenticator app; clients use emailed codes.
 
 ## If you change this
-- **Hits:** `portal/tests/*` (auth, google-gate, recovery, trusted-device), D-021, `portal/ADMIN.md`, email templates, [[portal-tenancy-rls]].
-- Not verified here: live Google OAuth settings and Resend.
+- **Hits:** `crm/tests/*`, `crm/src/server/auth/`, D-026, email templates, [[portal-tenancy-rls]].
+- Production verification is a separate release check; this map entry does not probe live auth.

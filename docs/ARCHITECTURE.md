@@ -1,10 +1,10 @@
 # Architecture
 
-> **Technical architecture for the portal codebase (scope banner, 2026-11-08 PST).** Not the business roadmap. Current direction: `docs/STATUS.md`. Lite/Full language below is the 2026-10-25 internal capability split the code still implements. It is not a current commercial tier. The "login/auth stays last" and "n8n deferred" notes later in this file are historical sequencing from 2026-11-01. `docs/codex/COMPLETION-PLAN.md` is historical evidence, not authority. Do not continue `dev/codex-setup`. This banner does not change schema or code.
+> **Technical architecture for the CRM/portal codebase (scope banner, 2026-11-11).** Not the business roadmap. Current direction: `docs/STATUS.md`. The implementation is `crm/`, live from `main` at `/opt/portal-new` via `portal-new-deploy`. Current auth is emailed client codes and QR-enrolled staff authenticator; recovery codes and Google sign-in are not used. Older spec language below is retained as historical scope and does not override D-026. This banner does not change schema or code.
 
 Kynetic Client CRM & Portal.
 
-Sources, in order: `DECISIONS_locked.md` (Oct 25, 2026; wins on any conflict), `SPEC_client_crm_portal.md`, `docs/PRD.md` (feature IDs F-01 to F-106, module catalog, acceptance criteria; authoritative for IDs, module keys and milestone tags), and the existing `portal/` in `abdullah-kynetic/kynetic-ai` (Next.js 16, Postgres RLS, Auth.js v5 beta, live on the OVH VPS at portal.kyneticai.com). Project memory (2026-10-22): Abdullah chose ElevenLabs as the voice platform, reversing Retell (D-018, not yet re-decided in the repo).
+Sources, in order: `DECISIONS_locked.md` (historical locked scope), `SPEC_client_crm_portal.md`, `docs/PRD.md` (feature IDs and acceptance criteria), and the current `crm/` implementation. Current production facts come from `docs/STATUS.md` and `crm/deploy/portal-new/README.md`.
 
 Labels: **Confirmed** = in the decisions or spec. **Decided** = approved by Abdullah on 2026-10-25 (explicitly, or as the recommended option when he told us to take it). **UNRESOLVED** = needs outside information. "Not configured" = a command or setting not verified for the new app.
 
@@ -17,7 +17,7 @@ Constraints taken from the sources:
 - Client data lives in Postgres with row-level security per tenant. Twenty holds no client data; it stays Kynetic-internal (Confirmed).
 - Base is the Kiranism next-shadcn-dashboard-starter (MIT). Drop Clerk. Atomic CRM is a reference for the data model and screens only. No AGPL code is forked (Confirmed).
 - Every Kynetic system and upsell has a backend and is toggled on or off per tenant. With a module off, its routes return 403, its jobs no-op, and its data is kept (Confirmed; PRD F-70).
-- Self-hosted in Docker on Abdullah's server, Cloudflare in front. Deploys are preview-only until Abdullah approves (Confirmed).
+- Self-hosted in Docker on Abdullah's server, Cloudflare in front. The production switch is `/opt/portal-new` via `portal-new-deploy`, and each production deploy still requires explicit approval.
 - Backups: nightly encrypted offsite, 30 daily and 12 monthly kept, monthly restore test (Confirmed).
 - Commits authored `abdullah-kynetic <abdullah@kyneticai.com>`; merges `--no-ff`; secrets never printed or committed (Confirmed).
 - Not building in v1: PRD "Not building" list and spec Section 11.
@@ -29,15 +29,15 @@ Constraints taken from the sources:
 | Frontend | Kiranism next-shadcn-dashboard-starter: Next.js 16, React 19, Tailwind 4, shadcn/ui, TanStack Table/Query/Form, Zod, Recharts, dnd-kit, kbar (Confirmed) | Dashboard shell, tables, kanban and Cmd+K already exist | Strip Clerk and demo routes (F-52). Client branding swaps logo and primary color only (spec Section 9). Visual tokens come from DESIGN_SYSTEM.md. |
 | Backend/API | One Next.js app: server actions for UI mutations, route handlers for webhooks and service calls; a worker process from the same image for jobs (Confirmed by spec diagram) | One codebase, one image | Server enforces every permission and module flag. The UI only hides. |
 | Jobs | pg-boss on the app's Postgres (Confirmed 2026-10-25) | No extra service; retries and delayed jobs | Confirm before M0 merges. Queue lives in its own schema, not tenant-scoped. |
-| ORM and migrations | Drizzle ORM (Confirmed 2026-10-25). The existing `portal/` already uses Drizzle 0.45. | Typed schema; migrations reviewable in CI | RLS policies are hand-written SQL migrations, not generated. See PRD OD-4. |
+| ORM and migrations | Drizzle ORM in `crm/`. The retired portal also used Drizzle, but is not a current source. | Typed schema; migrations reviewable in CI | RLS policies are hand-written SQL migrations, not generated. See PRD OD-4. |
 | Database | Postgres 16 (Confirmed). RLS forced on every tenant table. Roles: owner (migrations only), app, worker (SECURITY 2.3.4). | Required by decisions | App and worker connect as non-owner roles with no `BYPASSRLS`. The owner role never runs in the app's environment.
-| Authentication | Better-Auth with Google sign-in and email magic links, behind the `src/server/auth` facade (Decided 2026-10-25, PRD decision 2). Admin 2FA (TOTP, Better-Auth two-factor plugin) is in v1 (F-98). | Matches the spec; keeps the choice inside M0 | Clerk is dropped (Confirmed). |
+| Authentication | Current `crm/` flow: emailed one-time codes for clients and QR-enrolled authenticator app for staff. | Invite-only access with audited sessions | Recovery codes, passwords, and Google sign-in are not used; see D-026. |
 | App email | Resend (Confirmed 2026-10-25). Existing portal already has a Resend path. | Branded sender; bounce and complaint webhooks | Behind the `EmailProvider` interface. |
 | Voice | ElevenLabs is the primary provider; the Retell adapter stays as a fallback (Decided 2026-10-25, PRD decision 3). Abdullah assigns the D-number in the repo decision log. | Platform choice is configuration, not code | `alex_configs.provider` and `calls.provider` carry the provider name. |
 | SMS | Twilio (Confirmed, spec Section 6) | Existing sender number | A2P campaign is not approved (sends fail 30034 per memory, 2026-10-22). No SMS-dependent module can go live until it is. UNRESOLVED (needs Twilio): A2P approval and per-tenant sending numbers. |
 | Workflows | n8n, the self-hosted VPS instance (memory 2026-10-21). Runs cross-system workflows; calls our API with a service token. | Existing Kynetic workflows | New n8n workflows are built inactive; activation needs Abdullah's yes. |
 | Files | S3-compatible storage (R2) behind the `{put, get, remove}` storage interface. Recordings are copied to R2 under the tenant prefix and served by signed URL (F-27). | Matches existing portal storage | Decided 2026-10-25 (recommended option approved). |
-| Hosting | Docker Compose on the OVH VPS as a separate compose project with its own Docker network and its own Postgres (`app`, `worker`, `postgres`, Caddy). Cloudflare for DNS, TLS, WAF. No ports exposed except through Cloudflare. | Confirmed by spec and decisions | Decided 2026-10-25 (recommended option approved): `portal/` keeps running until M10 and Twenty's database is untouched. A separate VM is a Later hardening step. Caddy, as the existing portal uses. |
+| Hosting | Docker Compose on the OVH VPS as a separate compose project with its own network and Postgres (`app`, `worker`, `postgres`). Cloudflare/Caddy remain in front. | Current production stack is `/opt/portal-new`; deploy with `portal-new-deploy` after approval. | The retired `portal/` stack is not a current dependency. |
 
 ## System boundaries
 
@@ -205,7 +205,7 @@ Conventions (Decided): JSON; Zod validation. Error bodies are `{ ok: false, erro
 | Resend events | Delivered, bounced, complained. Path: `POST /api/hooks/resend`. | Resend signature | M4 |
 | Service API for n8n | Path: `/api/service/*`, bearer token from `service_tokens`, scoped to one tenant (F-89) | service token | M0 (auth), owners add routes |
 
-The current `portal/` endpoint `/api/ingest/results` is not in the spec. Memory says nothing feeds it. Its fate is decided in M10; there is no data migration (F-88, decided 2026-10-25).
+The retired `portal/` endpoint `/api/ingest/results` is not in the current app. It is not a current integration contract and has no data migration path.
 
 ### 6. Event contract
 
@@ -359,7 +359,7 @@ Approved by Abdullah 2026-10-25 (GP-06 to GP-11, DECISIONS DC-047). Items that n
 - **Network.** Caddy terminates TLS; only ports 80 and 443 are open, and 443 only to Cloudflare ranges (Confirmed: nothing exposed except through Cloudflare). SSH by key only, no root login, fail2ban, unattended security updates, host firewall on. Decided 2026-10-25 (approved: as written).
 - **Secrets on the server.** An `.env` file owned by the deploy user with mode 600, outside the repo; never printed or committed. Per-environment values (F-87).
 - **Image build and registry.** CI builds one image per commit and pushes it to GitHub Container Registry; the server pulls by tag. Decided 2026-10-25 (approved: GHCR, private).
-- **Deploy.** A restricted `portal-deploy`-style script on the server (same pattern as D-022 for `portal/`): pull tag, run migrations as the owner role, start the new containers, call `/api/health`, roll back to the previous tag on failure. Production deploys happen only after Abdullah's yes.
+- **Deploy.** `portal-new-deploy` is the restricted server-side production switch: run the reviewed migration/release steps, start the current containers, call `/api/health`, and roll back on failure. Production deploys happen only after Abdullah's yes.
 - **Preview environments.** Per branch, own database, synthetic seed only (no real client data). Decided 2026-10-25 (approved: ephemeral Compose projects on the same VPS behind `*.preview.kyneticai.com`, protected by Cloudflare Access, at most two alive at once, torn down when the branch merges). Needs the Cloudflare DNS move below. Built in M0-27 (`crm/deploy/preview/`, workflow `crm-preview.yml`, off until repository variable `PREVIEW_ENABLED=true`): own Postgres per preview, the `prepare` step runs roles, migrations, seed and `bun run preview:check`, which exits 1 if any tenant is not a seed tenant, and the app and worker start only after it passes. Third live preview is refused. Not yet run on a server.
 - **Production files (M10-05, DC-084).** `crm/deploy/prod/`: `compose.yml`, `Caddyfile`, `deploy.sh` (deploy, rollback, status), `deploy-entry.sh` (SSH forced command), `host/` (hardening, Cloudflare-only 443), `monitor/alerts.sh`, `tests/rehearse.sh`, and a runbook in its README. Images are built by `.github/workflows/crm-image.yml` (off until `IMAGE_PUSH_ENABLED=true`). Scripts are rehearsed against stubs in CI; **not yet run on the server** (needs Abdullah's yes per step). Known limit: Docker publishes ports around ufw, so the Cloudflare-only rule for 443 also needs a `DOCKER-USER` rule (README).
 - **Recording and file storage.** R2 bucket, private, tenant-prefixed keys, versioning on, lifecycle rule that matches retention (PRD decision 9). The backup job also records the bucket's object counts so a restore drill can verify them.
