@@ -71,6 +71,7 @@ Retention and classification are per table. Retention values are the PRD decisio
 | notification_preferences | Per-user email on or off per notification type; no row means on | Tenant (the user) | Until the membership is removed | Internal | M9 | platform (F-36) |
 | tags | Tag registry: tags created in settings before any contact has them; `contacts.tags` stays the source of what is applied | Tenant | Until deleted | Internal | M9 | crm (Lite, F-43) |
 | import_batches, import_batch_records | Onboarding data imports: one row per upload, with mapping, dry-run report, counts, status and undo; records created per batch | Tenant (Kynetic admin runs it) | Batch row kept for the life of the tenant. Raw file deleted 30 days after commit (SECURITY 6.1; decided) | Personal | M9 | platform (F-90 to F-94) |
+| demo_seed_records | Owner-readable ledger of synthetic demo rows and before-images used for exact seed removal | Seed tooling | Until the matching demo seed is removed | Internal | Demo seed | platform |
 
 Module-specific tables not yet defined (PRD F-83 opm, F-82 reactivation, F-84 followup_bundle): see Schema section "Not yet in the schema".
 
