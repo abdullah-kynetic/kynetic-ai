@@ -53,4 +53,25 @@ Audited 2026-11-11 against Twenty note `d7daa4c4-f466-4ca1-b56f-728b61c14590` an
 
 1. All-clients MRR blocked label; client pipeline value/funnel; guarantee progress; checklist formula/regeneration; support status filter.
 2. Usage cost-vs-fee chart and cap visualization; agency 30-day rate line; agency source/stage lead filters and fields; finance monthly bar chart.
-3. Re-audit every row after batches 1–2 and leave only explicitly parked business decisions.
+3. Re-audit every row after batches 1–2 and leave only explicitly parked business decisions. Done 2026-11-11 against `main` at `c67663d` (see below).
+
+## Batch 3 re-audit (2026-11-11, main `c67663d`)
+
+All 44 Spec 02 rows are `done`: no row is `partial`, and every source file named in the evidence column exists on main. Batches 1–2 landed in #157 and #158 with CI green (check and e2e).
+
+Not built, by decision, because each depends on a business decision Spec 02 lists as open. These are not code gaps:
+
+| Parked item | Parked because |
+| --- | --- |
+| MRR dollar value, billing totals, recorded fee and margin amounts | Prices decision; the UI shows “to be confirmed”. |
+| Tier meaning (T1–T3) | Prices decision. |
+| Real vs synthetic agency workspace and mock data on production | Real vs synthetic demo leads decision. |
+| Automation cadence/copy overrides, review requests, agency ops re-point to production n8n | n8n vs portal worker decision. |
+| Template create/versioning and checklist regeneration from the final module list | Six-systems-as-modules decision. |
+| External calendar sync on appointments | Cal.com vs client calendar decision. |
+| Client-facing usage cost | Clients-see-cost decision. |
+| Guarantee policy beyond admin override plus 30-day default | Guarantee baseline policy decision. |
+| Recording visibility and disclosure wording | Counsel wording decision. |
+| E-sign, Stripe charging, support email, GBP/review connector | Provider and consent decisions (e-sign provider, Stripe test mode, support emails, connector choice). |
+
+Spec 02 “Display notes” also recommend a daily leads/booked line chart on the admin overview and a rating trend line on reviews. Neither is a Spec 02 table row. The admin overview has no daily-series data feed today, and reviews belong to Lane A (A1). Both are left for a later request.
