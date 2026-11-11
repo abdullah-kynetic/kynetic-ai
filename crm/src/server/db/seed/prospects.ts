@@ -1,4 +1,5 @@
 import type postgres from 'postgres';
+import { DEMO_CLIENT_PROFILES } from './demo-client-profiles';
 
 type Sql = postgres.Sql;
 
@@ -215,9 +216,11 @@ export async function seedProspectTenants(
 }
 
 async function seedOne(sql: Sql, p: Prospect, now: Date): Promise<void> {
+  const tenantId = DEMO_CLIENT_PROFILES.find((client) => client.slug === p.slug)?.tenantId;
+  if (!tenantId) throw new Error(`Missing fixed tenant id for prospect ${p.slug}`);
   const [tenant] =
-    await sql`insert into tenants (slug, name, status, plan, timezone, services, service_area, transfer_number_e164)
-    values (${p.slug}, ${p.name}, 'onboarding', 'founding', 'America/Chicago',
+    await sql`insert into tenants (id, slug, name, status, plan, timezone, services, service_area, transfer_number_e164)
+    values (${tenantId}, ${p.slug}, ${p.name}, 'onboarding', 'founding', 'America/Chicago',
       ${sql.json(SERVICES[p.niche])}, ${sql.json({ city: p.city, state: p.state })}, ${p.phone ?? null})
     returning id`;
   const t = tenant!.id as string;

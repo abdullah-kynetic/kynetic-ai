@@ -29,7 +29,7 @@ export const AGENCY_STAGES = [
 export async function getAgencyWorkspace(
   caller: StaffCaller,
   create = false,
-  opts: { db?: Db } = {}
+  opts: { db?: Db; scheduleJobs?: boolean } = {}
 ): Promise<AgencyWorkspace | null> {
   if (caller.kyneticRole !== 'admin') throw new AppError('FORBIDDEN');
   try {
@@ -42,7 +42,7 @@ export async function getAgencyWorkspace(
       opts
     );
     const row = rows[0];
-    if (row && create) {
+    if (row && create && opts.scheduleJobs !== false) {
       await scheduleAgencyMaintenance(row.tenant_id);
       await scheduleAgencyDigest(row.tenant_id, caller.id);
     }

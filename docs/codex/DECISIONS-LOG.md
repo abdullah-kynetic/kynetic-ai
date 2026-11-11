@@ -1,4 +1,3 @@
-
 ## Lane A, 2026-11-11 — A0 (F-01, F-49, F-63)
 
 - Current user instructions authorize squash merges after both CI jobs pass, superseding the historical no-squash/ask-before-merge repository text. Deploy remains a separate Bob handoff only when Abdullah says deploy.
@@ -9,3 +8,10 @@
 - Platform is always enabled by the existing module contract, so an A0 platform-off 403 test is not applicable. Addon module-off checks begin in A1.
 
 - A0 CI exposed Next 16 retaining hidden streamed content briefly. Assertions now scope to named chart regions and visible report content, rather than global text matches; no assertion is removed or weakened. GitHub connector job logs supplied the exact failure when gh's redirected log download was denied.
+
+## Lane B
+
+- **D-LB-1 — 2026-11-11:** B1's explicit 13-tenant allow-list supersedes Spec 00's older recommendation to keep real prospects empty. Synthetic activity is visibly labelled and fully ledgered/removable; public business facts and real review snapshots are preserved.
+- **D-LB-2 — 2026-11-11:** Enable `opm` on all 13 demo tenants even when the profile omits it, because presence and review demo surfaces require it. This follows the B1 queue instruction and remains demo-only.
+- **D-LB-3 — 2026-11-11:** Placeholder service-area ZIPs and neutral branding are synthetic defaults. Existing non-empty profile values are never overwritten and are restored by the ledger on removal.
+- **D-LB-4 — 2026-11-11:** If the seed creates `demo-kynetic-agency`, removal deletes every ledgered synthetic business row but leaves the empty workspace and its creation audit. Deleting it would violate the append-only audit contract.

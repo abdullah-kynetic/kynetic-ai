@@ -10,6 +10,8 @@ let tables: string[] = [];
 // The agency tables hang off agency_workspaces, which allows exactly one tenant (the synthetic Kynetic one),
 // so the shared two-tenant fixture cannot seed them. They still get the RLS enabled/forced/policy check.
 const SINGLE_WORKSPACE_TABLES = new Set([
+  // Synthetic seed ledger rows intentionally exist only for the 13 allow-listed demo workspaces.
+  'demo_seed_records',
   'agency_workspaces',
   'agency_campaigns',
   'agency_campaign_leads',

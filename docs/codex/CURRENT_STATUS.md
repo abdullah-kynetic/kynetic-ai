@@ -105,3 +105,10 @@ Unslop: Damir Sokolovsky / [@heydamir](https://x.com/heydamir), [heydamir/unslop
 - Full Playwright: 57 passed, 1 pre-existing optional R2 test skipped. Desktop and 390px evidence is in `docs/screenshots/lane-a-a0/`; no horizontal overflow.
 - Full integration run: 96 suites passed; five files needed retry (the old report initialization cycle, CPU-contention timeouts and load assertions). All failed files passed after the schema/reader split and a lower-load retry. A timed-out backup left a local scratch database; removing that disposable scratch restored its test (5/5 passed). No existing tests were deleted or skipped by this change.
 - A0 is ready for PR/CI. A1 is being prepared in a separate stacked worktree; no A1 migration is included in A0.
+
+## Lane B — demo seed and admin/agency (2026-11-11)
+
+- Queue: B1 demo seed in progress; B2 audit pending.
+- Branch: `lane-b/demo-seed-13-clients`
+- Migration: 1040 (`demo_seed_records` and `is_demo_seeded`)
+- Parked: P-1 pricing, P-2 disclosure wording, P-3 Lane A optional tables.
