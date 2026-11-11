@@ -1,3 +1,5 @@
+import { requireModule } from '@/server/modules';
+import { CountChart, DailyTrend } from './metrics-charts';
 import PageContainer from '@/components/layout/page-container';
 import { SetupProgressCard } from '@/components/onboarding/setup-progress-card';
 import { Button } from '@/components/ui/button';
@@ -44,6 +46,7 @@ export default async function DashboardPage({
   const ctx = shell?.tenant
     ? { tenantId: shell.tenant.id, userId: shell.user.id, role: shell.role }
     : null;
+  if (ctx) await requireModule(ctx, 'platform');
   const timeZone = ctx ? (await getBusinessSettings(ctx)).timezone : 'UTC';
   // Dashboard defaults are intentionally request-time values in this server component.
   // eslint-disable-next-line react/purity
@@ -136,49 +139,23 @@ export default async function DashboardPage({
         </div>
       )}
       {metrics && (
-        <div className='mt-4 rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
-          <p className='font-medium'>Lead sources</p>
-          {metrics.sources.length === 0 ? (
-            <p className='text-muted-foreground mt-3 text-sm'>No leads in this range.</p>
-          ) : (
-            <div className='mt-3 space-y-2'>
-              {metrics.sources.map((source) => (
-                <div key={source.source} className='flex items-center gap-3 text-sm'>
-                  <span className='w-32 truncate'>{source.source}</span>
-                  <div className='bg-muted h-2 flex-1 rounded'>
-                    <div
-                      className='bg-primary h-2 rounded'
-                      style={{ width: `${Math.min(100, source.leads * 20)}%` }}
-                    />
-                  </div>
-                  <span>{source.leads}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-      {metrics && (
-        <div className='mt-4 grid gap-4 lg:grid-cols-2'>
-          <div className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
-            <p className='font-medium'>Daily activity</p>
-            {metrics.days.length === 0 ? (
-              <p className='text-muted-foreground mt-3 text-sm'>No activity in this range.</p>
-            ) : (
-              <div className='mt-4 flex h-32 items-end gap-1'>
-                {metrics.days.map((day) => (
-                  <div
-                    key={day.day}
-                    className='bg-primary/70 min-w-1 flex-1 rounded-t'
-                    title={`${day.day}: ${day.leads} leads`}
-                    style={{
-                      height: `${Math.max(4, Math.min(100, day.leads * 20 + day.estimatesBooked * 30))}%`
-                    }}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
+        <div className='mt-4 grid min-w-0 gap-4 lg:grid-cols-2'>
+          <DailyTrend days={metrics.days} />
+          <CountChart
+            name='Conversion funnel'
+            empty='No funnel activity in this range.'
+            rows={[
+              { label: 'Leads', value: metrics.totals.leads },
+              { label: 'Reached', value: metrics.totals.contactsReached },
+              { label: 'Booked', value: metrics.totals.estimatesBooked },
+              { label: 'Won', value: metrics.totals.wonDeals }
+            ]}
+          />
+          <CountChart
+            name='Lead sources'
+            empty='No leads in this range.'
+            rows={metrics.sources.map((source) => ({ label: source.source, value: source.leads }))}
+          />
           <div className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
             <p className='font-medium'>Recent activity</p>
             <div className='mt-3 space-y-3'>

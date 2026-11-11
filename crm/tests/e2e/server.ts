@@ -45,6 +45,35 @@ async function sessionState(persona: 'owner' | 'admin' | 'va'): Promise<string> 
 async function main(): Promise<void> {
   db = await createTestDatabase({ jobs: true });
   const seeded = await seedTwoTenants(db.admin);
+  // --- lane-a fixtures ---
+  await db.admin`insert into metrics_daily (tenant_id, day, leads, calls, contacts_reached, estimates_booked, won_revenue_cents)
+    values (${IDS.tenantA}, '2026-09-10', 10, 15, 7, 4, 120000), (${IDS.tenantA}, '2026-09-11', 5, 6, 3, 2, 30000)`;
+  await db.admin`update reports set id = 'aaaaaaaa-1000-4000-8000-000000000001' where tenant_id = ${IDS.tenantA} and period_start = '2026-09-01'`;
+  await db.admin`update reports set id = 'bbbbbbbb-1000-4000-8000-000000000001' where tenant_id = ${IDS.tenantB} and period_start = '2026-09-01'`;
+  const laneAOwnerBToken = randomBytes(32).toString('hex');
+  await db.admin`insert into sessions (user_id, token, expires_at) values (${IDS.ownerB}, ${laneAOwnerBToken}, now() + interval '1 hour')`;
+  const laneAOwnerBSignature = createHmac('sha256', secret)
+    .update(laneAOwnerBToken)
+    .digest('base64');
+  await writeFile(
+    '/tmp/kynetic-crm-e2e-lane-a-owner-b.json',
+    JSON.stringify({
+      cookies: [
+        {
+          name: 'better-auth.session_token',
+          value: encodeURIComponent(`${laneAOwnerBToken}.${laneAOwnerBSignature}`),
+          domain: 'localhost',
+          path: '/',
+          httpOnly: true,
+          secure: false,
+          sameSite: 'Lax'
+        }
+      ],
+      origins: []
+    })
+  );
+  // --- end lane-a fixtures ---
+
   await db.admin`insert into calls (id, tenant_id, contact_id, provider, provider_call_id, direction, started_at, summary)
     values ('cccccccc-0000-4000-8000-000000000063', '11111111-1111-4111-8111-111111111111', ${seeded.a.contactId}, 'fake', 'synthetic-a11y-detail', 'outbound', now(), 'Synthetic accessibility review call')`;
   await db.admin`insert into tenants (id, slug, name, plan, timezone) values ('33333333-3333-4333-8333-333333333333', 'tenant-c', 'Tenant C', 'founding', 'UTC')`;

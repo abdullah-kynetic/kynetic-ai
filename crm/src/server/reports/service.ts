@@ -1,3 +1,5 @@
+import { computeReportContent } from './content';
+import { requireModule, isModuleEnabled } from '../modules';
 import { and, asc, eq, gte, lt } from 'drizzle-orm';
 import type { Db, Tx } from '../db/client';
 import { metricsDaily, reports } from '../db/schema';
@@ -5,16 +7,10 @@ import { audit } from '../audit';
 import { emitEvent } from '../events';
 import { withTenant, type TenantContextInput } from '../tenancy';
 import { parseInput } from '../validation';
-import { z } from 'zod';
-import { isModuleEnabled } from '../modules';
 import { presenceReport } from '../presence';
-import {
-  bookingRatePercent,
-  measureSpeedToLeadMinutes,
-  addCalendarDays
-} from '../metrics/formulas';
 
-export const reportPeriodSchema = z.string().regex(/^\d{4}-\d{2}-01$/, 'period_start');
+import { reportPeriodSchema } from './schema';
+export { reportPeriodSchema } from './schema';
 export type MonthlyReport = typeof reports.$inferSelect;
 export type ReportSection = {
   key: string;
@@ -46,6 +42,7 @@ export async function generateMonthlyReport(
   periodStart: string,
   opts: { db?: Db; tx?: Tx } = {}
 ) {
+  await requireModule(ctx, 'platform', opts);
   const period = parseInput(reportPeriodSchema, periodStart);
   const start = new Date(`${period}T00:00:00Z`);
   const end = new Date(start);
@@ -64,24 +61,8 @@ export async function generateMonthlyReport(
         { title: section.title, data: section.render(days) }
       ])
     );
-    const performance = sections.performance?.data as
-      | { leads?: number; booked?: number }
-      | undefined;
-    if (performance) {
-      const endDate = end.toISOString().slice(0, 10);
-      performance.booked = performance.booked ?? 0;
-      Object.assign(performance, {
-        bookingRate: bookingRatePercent(
-          Number(performance.booked ?? 0),
-          Number(performance.leads ?? 0)
-        ),
-        speedToLeadMinutes: await measureSpeedToLeadMinutes(
-          tx,
-          period,
-          addCalendarDays(endDate, -1)
-        )
-      });
-    }
+    const content = await computeReportContent(ctx, period, tx);
+    Object.assign(sections, content.sections);
     if (await isModuleEnabled(ctx, 'opm', { tx })) {
       const presence = await presenceReport(ctx, period, { tx });
       sections.online_presence = {

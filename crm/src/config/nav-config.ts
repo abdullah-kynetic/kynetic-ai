@@ -285,6 +285,7 @@ export const adminNavGroups: NavGroup[] = [
   {
     label: 'Platform',
     items: [
+      { title: 'Backups', url: '/admin/backups', icon: 'post', isActive: false, items: [] },
       {
         title: 'Audit log',
         url: '/admin/audit',

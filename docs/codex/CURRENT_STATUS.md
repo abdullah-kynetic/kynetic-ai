@@ -90,3 +90,11 @@ No live test or production release approval is inferred from completed local che
 - Local checks: `bash scripts/checks/agency-local.sh` with Bun, psql and disposable loopback PostgreSQL configured; no remote database accepted. Browser opt-in is documented in the guide.
 
 Unslop: Damir Sokolovsky / [@heydamir](https://x.com/heydamir), [heydamir/unslop](https://github.com/heydamir/unslop), CC BY 4.0. Impeccable guidance and installed Motion/Tabler/Base UI were also used. Prompt Motion could not be inspected: proxy CONNECT returned 403 and the running session reported an enforced restricted policy without that host, despite intended all-domain access.
+
+## Lane A — client pages (2026-11-11)
+
+- Queue: A0 implemented, local checks in progress; A1–A6 pending.
+- Branch: `lane-a/a0-charts-reports`, isolated worktree `/workspace/kynetic-lane-a` from `37638f91`.
+- A0: accessible Recharts daily leads/booked, conversion funnel, source bars; artifact-backed report totals and trend with labelled fallback; Backups in staff Platform navigation.
+- Migrations used: none. Reserved: 1020 (A1), 1021 (A2), 1022 (A3), 1023 (A4), 1024 (A5).
+- Protected systems, outbound defaults and Lane B files unchanged. See PARKED and DECISIONS-LOG for defaults and open business decisions.
