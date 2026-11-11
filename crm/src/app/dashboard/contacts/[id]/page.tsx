@@ -21,8 +21,10 @@ import { loadShellContext } from '@/server/shell';
 import { getTenantTimezone, listAssignees, listEntityTasks } from '@/server/tasks';
 import { presentTasks } from '@/components/tasks/present';
 import { TaskList } from '@/components/tasks/task-list';
+import { formatCents, listDealsForContact } from '@/server/deals';
 import type { Metadata } from 'next';
 import { cookies, headers } from 'next/headers';
+import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { addNote, editNote, pinNote, removeNote } from './note-actions';
 import { MergeContactForm } from '@/features/contacts/merge-contact-form';
@@ -113,11 +115,14 @@ export default async function ContactPage({
     if (err instanceof ValidationError) return listActivities(ctx, { contactId: id, types });
     throw err;
   });
+  const enabledModules = await loadEnabledModules(ctx);
   // Notes are a CRM Lite surface: a base-portal tenant sees no Notes card (F-85).
-  const showNotes = moduleSatisfied(await loadEnabledModules(ctx), { module: 'crm' });
+  const showNotes = moduleSatisfied(enabledModules, { module: 'crm' });
+  const dealsOn = moduleSatisfied(enabledModules, { module: 'crm', level: 'full' });
   const [notes, teammates] = showNotes
     ? await Promise.all([listNotes(ctx, { contactId: id }), listTeammates(ctx)])
     : [[], []];
+  const linkedDeals = dealsOn ? await listDealsForContact(ctx, id) : [];
   // Tasks are CRM Lite (F-20): without the module the section is not rendered at all.
   const tasksOn = moduleSatisfied(
     { keys: new Set(shell.modules.keys), crmLevel: shell.modules.crmLevel },
@@ -246,18 +251,39 @@ export default async function ContactPage({
 
           {tasksSection}
 
-          {([['Deals', 'No deals', 'Deals linked to this contact will show here.']] as const).map(
-            ([title, empty, hint]) => (
-              <Card key={title} aria-labelledby={`section-${title}`}>
-                <CardHeader>
-                  <CardTitle id={`section-${title}`}>{title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <EmptyState title={empty} description={hint} />
-                </CardContent>
-              </Card>
-            )
-          )}
+          <Card aria-labelledby='section-Deals'>
+            <CardHeader>
+              <CardTitle id='section-Deals'>Deals</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {linkedDeals.length ? (
+                <ul className='flex flex-col gap-3 text-sm'>
+                  {linkedDeals.map((deal) => (
+                    <li key={deal.dealId} className='flex flex-col gap-0.5'>
+                      <Link
+                        href={`/dashboard/deals/${deal.dealId}`}
+                        className='text-primary-text font-medium underline-offset-4 hover:underline'
+                      >
+                        {deal.title}
+                      </Link>
+                      <span className='text-muted-foreground'>
+                        {deal.stageName} · {formatCents(deal.valueCents)} · {deal.role}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <EmptyState
+                  title='No deals'
+                  description={
+                    dealsOn
+                      ? 'Deals linked to this contact will show here.'
+                      : 'Deal details are available when CRM Full is enabled.'
+                  }
+                />
+              )}
+            </CardContent>
+          </Card>
         </div>
 
         <Card className='h-fit'>

@@ -1,6 +1,6 @@
 import { and, asc, eq, isNull, sql } from 'drizzle-orm';
 import { audit } from '../audit';
-import { contacts, dealContacts, deals } from '../db/schema';
+import { contacts, dealContacts, deals, pipelineStages } from '../db/schema';
 import { ValidationError } from '../errors';
 import { requireModule } from '../modules';
 import type { TenantContextInput } from '../tenancy';
@@ -80,11 +80,15 @@ export async function listDealsForContact(
         dealId: deals.id,
         title: deals.title,
         stageId: deals.stageId,
+        stageName: pipelineStages.name,
+        stageIsWon: pipelineStages.isWon,
+        stageIsLost: pipelineStages.isLost,
         valueCents: deals.valueCents,
         role: dealContacts.role
       })
       .from(dealContacts)
       .innerJoin(deals, eq(deals.id, dealContacts.dealId))
+      .innerJoin(pipelineStages, eq(pipelineStages.id, deals.stageId))
       .where(and(eq(dealContacts.contactId, contactId), isNull(deals.deletedAt)))
       .orderBy(asc(deals.title), asc(deals.id))
   );
