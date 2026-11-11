@@ -5,7 +5,7 @@ import type { Db } from '../db/client';
 import { parseInput } from '../validation';
 import { AppError } from '../errors';
 import { inAgency } from './index';
-import { agencyRates } from './rates';
+import { agencyRates, dailyRateSeries } from './rates';
 export const inboxFilter = z.strictObject({
   channel: z.enum(['sms', 'email', 'dm']).optional(),
   status: z
@@ -70,9 +70,13 @@ export async function logAgencyDm(caller: StaffCaller, raw: unknown, opts: { db?
     opts
   );
 }
-export async function getAgencyRates(caller: StaffCaller, opts: { db?: Db; now?: Date } = {}) {
+export async function getAgencyRates(
+  caller: StaffCaller,
+  opts: { db?: Db; now?: Date; days?: number } = {}
+) {
   const now = opts.now ?? new Date(),
-    since = new Date(now.getTime() - 7 * 86400000).toISOString(),
+    days = opts.days ?? 7,
+    since = new Date(now.getTime() - days * 86400000).toISOString(),
     until = now.toISOString();
   return inAgency(
     caller,
@@ -87,6 +91,39 @@ export async function getAgencyRates(caller: StaffCaller, opts: { db?: Db; now?:
         ...agencyRates(
           Array.from(attempts, (a) => a.outcome),
           Array.from(rows)
+        ),
+        since,
+        until
+      };
+    },
+    opts
+  );
+}
+
+/** Daily pick and reply rates across the last `days` days for the 30-day trend line. */
+export async function getAgencyRateSeries(
+  caller: StaffCaller,
+  opts: { db?: Db; now?: Date; days?: number } = {}
+) {
+  const now = opts.now ?? new Date(),
+    days = opts.days ?? 30,
+    since = new Date(now.getTime() - days * 86400000).toISOString(),
+    until = now.toISOString();
+  return inAgency(
+    caller,
+    async (tx) => {
+      const attempts = await tx.execute<{ outcome: string; at: string }>(sql`
+   select outcome,logged_at as at from agency_call_attempts where logged_at>=${since} and logged_at<=${until}
+   union all select outcome,started_at as at from calls where direction='outbound' and provider not in ('fake','stub') and started_at>=${since} and started_at<=${until}`);
+      const rows = await tx.execute<{ contactId: string; direction: string; at: string }>(sql`
+   select m.contact_id as "contactId",m.direction,m.at from (${combined}) m join contacts c on c.id=m.contact_id and c.tenant_id=m.tenant_id
+   where c.deleted_at is null and c.merged_into_id is null and m.at>=${since} and m.at<=${until} and m.status in ('sent','delivered','received','logged')`);
+      return {
+        points: dailyRateSeries(
+          Array.from(attempts, (a) => ({ outcome: a.outcome, at: a.at })),
+          Array.from(rows),
+          days,
+          now
         ),
         since,
         until

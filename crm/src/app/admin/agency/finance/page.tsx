@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { getAgencyWorkspace, listAgencyLeads } from '@/server/agency';
 import { getAgencyFinance } from '@/server/agency/finance';
+import { FinanceMonthsChart } from './chart';
 import { listAdminTenantOverview } from '@/server/admin/overview';
 import { agencyCaller } from '../caller';
 import { AgencyWorkspaceMissing } from '../workspace-missing';
@@ -52,6 +53,10 @@ export default async function FinancePage({
         This month (Pacific): revenue {usd(data.summary.revenueCents)}, expenses{' '}
         {usd(data.summary.expenseCents)}, net {usd(data.summary.netCents)}.
       </p>
+      <section aria-label='Monthly revenue versus expenses' className='mb-6'>
+        <h2 className='mb-2 font-semibold'>Revenue vs expenses by month</h2>
+        <FinanceMonthsChart months={data.months} />
+      </section>
       {query.error && <p role='alert'>Check the amount, date and link, then try again.</p>}
       <nav aria-label='Finance tabs' className='my-4 flex flex-wrap gap-3'>
         {tabs.map(([id, label]) => (

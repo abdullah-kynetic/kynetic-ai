@@ -119,3 +119,11 @@ Unslop: Damir Sokolovsky / [@heydamir](https://x.com/heydamir), [heydamir/unslop
 - B2 SPEC 02 gap audit is complete. First five-row fix batch is on `lane-b/admin-gap-audit`: all-client blocked MRR label, pipeline funnel/value, guarantee progress, checklist regeneration/formula, and support status filter.
 - Current validation: typecheck and 571 unit tests pass; focused Lane B integration tests pass 4/4. No migration is required for this batch.
 - Parked items remain P-1 pricing, P-2 disclosure wording, and P-3 Lane A optional tables.
+
+### Lane B update — 2026-11-11 (batch 2, work in progress)
+
+- First five-row batch merged in PR #157 at `c8be0912149844884bb4b537d55fca1e02a7826e`.
+- Batch 2 (usage cost-vs-fee chart and 80% cap visual, agency 30-day pick/reply line, agency source/stage lead filters and state/lost reason, finance monthly revenue-vs-expense chart) is in progress on `lane-b/admin-gap-charts`, branched from current `origin/main`.
+- No migration is required for batch 2; it is additive UI plus server reads only.
+- Known gap: the new integration test inserts `agency_call_attempts` directly and still needs `event_id` and a 64-hex `request_hash`.
+- Parked items remain P-1 pricing, P-2 disclosure wording, and P-3 Lane A optional tables.
