@@ -33,7 +33,7 @@ test('admin client overview, systems, templates, and requests render', async ({ 
   await expect(
     adminPage.getByRole('heading', { name: 'Remodeling (bath and kitchen)' })
   ).toBeVisible();
-  await expect(adminPage.getByText('Stage names are editable defaults.')).toBeVisible();
+  await expect(adminPage.getByText('Stage names are editable defaults.').first()).toBeVisible();
   await expect(adminPage.getByText('Coming soon').first()).toBeVisible();
   await expect(adminPage.getByRole('heading', { name: 'Reputation Engine' })).toBeVisible();
   await shot(adminPage, 'admin-template-library');

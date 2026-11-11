@@ -29,8 +29,37 @@ export const REMODELING_STAGES = [
   { name: 'Lost', probability: 0, isWon: false, isLost: true }
 ] as const satisfies readonly TemplateStage[];
 
+export const POOL_BUILDER_STAGES = [
+  { name: 'New lead', probability: 5, isWon: false, isLost: false },
+  { name: 'Consultation booked', probability: 20, isWon: false, isLost: false },
+  { name: 'Site evaluation', probability: 40, isWon: false, isLost: false },
+  { name: 'Proposal sent', probability: 60, isWon: false, isLost: false },
+  { name: 'Contract signed', probability: 80, isWon: false, isLost: false },
+  { name: 'Build scheduled', probability: 90, isWon: false, isLost: false },
+  { name: 'Won', probability: 100, isWon: true, isLost: false },
+  { name: 'Lost', probability: 0, isWon: false, isLost: true }
+] as const satisfies readonly TemplateStage[];
+
+export const WINDOWS_DOORS_STAGES = [
+  { name: 'New lead', probability: 5, isWon: false, isLost: false },
+  { name: 'Consultation booked', probability: 20, isWon: false, isLost: false },
+  { name: 'In-home estimate', probability: 40, isWon: false, isLost: false },
+  { name: 'Proposal sent', probability: 60, isWon: false, isLost: false },
+  { name: 'Contract signed', probability: 80, isWon: false, isLost: false },
+  { name: 'Installation scheduled', probability: 90, isWon: false, isLost: false },
+  { name: 'Won', probability: 100, isWon: true, isLost: false },
+  { name: 'Lost', probability: 0, isWon: false, isLost: true }
+] as const satisfies readonly TemplateStage[];
+
 export const INDUSTRY_TEMPLATES: Record<
-  'roofing' | 'restoration' | 'hvac' | 'plumbing' | 'remodeling' | 'general',
+  | 'roofing'
+  | 'restoration'
+  | 'hvac'
+  | 'plumbing'
+  | 'remodeling'
+  | 'pools'
+  | 'windows_doors'
+  | 'general',
   IndustryTemplate
 > = {
   roofing: {
@@ -53,6 +82,18 @@ export const INDUSTRY_TEMPLATES: Record<
     label: 'Remodeling (bath and kitchen)',
     services: ['Bathroom remodel', 'Kitchen remodel', 'Design consultation'],
     stages: REMODELING_STAGES,
+    stagesAreEditableDefaults: true
+  },
+  pools: {
+    label: 'Pool builder',
+    services: ['Custom pool build', 'Pool remodel', 'Outdoor living'],
+    stages: POOL_BUILDER_STAGES,
+    stagesAreEditableDefaults: true
+  },
+  windows_doors: {
+    label: 'Windows and doors',
+    services: ['Window replacement', 'Door replacement'],
+    stages: WINDOWS_DOORS_STAGES,
     stagesAreEditableDefaults: true
   },
   general: { label: 'Other home service', services: [] }

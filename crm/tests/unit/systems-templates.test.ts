@@ -7,7 +7,12 @@ import {
   CATALOG_MODULE_KEYS
 } from '../../src/server/modules/catalog';
 import { MODULE_KEYS } from '../../src/server/modules/keys';
-import { REMODELING_STAGES, INDUSTRY_TEMPLATES } from '../../src/server/admin/industry-templates';
+import {
+  INDUSTRY_TEMPLATES,
+  POOL_BUILDER_STAGES,
+  REMODELING_STAGES,
+  WINDOWS_DOORS_STAGES
+} from '../../src/server/admin/industry-templates';
 import {
   defaultStageSpecs,
   planServicesApply,
@@ -90,6 +95,26 @@ describe('template library content', () => {
         plan: 'founding'
       }).success
     ).toBe(true);
+  });
+
+  test('pool and windows/doors templates provide editable default pipelines', () => {
+    expect(INDUSTRY_TEMPLATES.pools).toMatchObject({
+      label: 'Pool builder',
+      services: ['Custom pool build', 'Pool remodel', 'Outdoor living'],
+      stages: POOL_BUILDER_STAGES,
+      stagesAreEditableDefaults: true
+    });
+    expect(INDUSTRY_TEMPLATES.windows_doors).toMatchObject({
+      label: 'Windows and doors',
+      services: ['Window replacement', 'Door replacement'],
+      stages: WINDOWS_DOORS_STAGES,
+      stagesAreEditableDefaults: true
+    });
+    for (const stages of [POOL_BUILDER_STAGES, WINDOWS_DOORS_STAGES]) {
+      expect(stages).toHaveLength(REMODELING_STAGES.length);
+      expect(stages.at(-2)).toMatchObject({ name: 'Won', isWon: true, isLost: false });
+      expect(stages.at(-1)).toMatchObject({ name: 'Lost', isWon: false, isLost: true });
+    }
   });
 
   test('stage apply renames only the untouched default pipeline and is idempotent', () => {
