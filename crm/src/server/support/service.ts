@@ -292,20 +292,24 @@ function mapQueue(row: Record<string, unknown>): SupportQueueRow {
   };
 }
 
-/** Kynetic staff: requests across every client. Pass a category to filter. */
+/** Kynetic staff: requests across every client. Pass a category or status to filter. */
 export async function listSupportQueue(
   ctx: StaffContext,
-  opts: Options & { category?: SupportCategory | null } = {}
+  opts: Options & { category?: SupportCategory | null; status?: SupportStatus | null } = {}
 ): Promise<SupportQueueRow[]> {
   const category = opts.category ?? null;
+  const status = opts.status ?? null;
   if (category && !categorySchema.safeParse(category).success)
     throw new ValidationError({ category: ['invalid'] });
+  if (status && !statusSchema.safeParse(status).success)
+    throw new ValidationError({ status: ['invalid'] });
   const rows = await withPlatform(
     ctx,
     (tx) => tx.execute(sql`select * from admin_list_support_requests(${category})`),
     opts
   );
-  return (rows as unknown as Record<string, unknown>[]).map(mapQueue);
+  const queue = (rows as unknown as Record<string, unknown>[]).map(mapQueue);
+  return status ? queue.filter((row) => row.status === status) : queue;
 }
 
 export type SupportAlert = {

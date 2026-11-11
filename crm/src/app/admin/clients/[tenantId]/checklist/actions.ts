@@ -1,6 +1,12 @@
 'use server';
 
-import { markGoLive, STEP_STATUSES, updateChecklistStep, type StepStatus } from '@/server/admin';
+import {
+  markGoLive,
+  regenerateChecklist,
+  STEP_STATUSES,
+  updateChecklistStep,
+  type StepStatus
+} from '@/server/admin';
 import { authorize, ForbiddenError, requireUser, resolveActor } from '@/server/auth';
 import { AppError } from '@/server/errors';
 import { refuseDuringViewAs } from '../../../view-as-guard';
@@ -60,6 +66,18 @@ export async function goLive(_prev: ChecklistState, form: FormData): Promise<Che
     const ctx = await staffCtx('admin.onboard');
     const tenantId = text(form, 'tenantId');
     await markGoLive(ctx, tenantId);
+    revalidatePath(`/admin/clients/${tenantId}/checklist`);
+    return { status: 'saved' };
+  } catch (err) {
+    return failure(err);
+  }
+}
+
+export async function regenerate(_prev: ChecklistState, form: FormData): Promise<ChecklistState> {
+  try {
+    const ctx = await staffCtx('admin.onboard');
+    const tenantId = text(form, 'tenantId');
+    await regenerateChecklist(ctx, tenantId);
     revalidatePath(`/admin/clients/${tenantId}/checklist`);
     return { status: 'saved' };
   } catch (err) {

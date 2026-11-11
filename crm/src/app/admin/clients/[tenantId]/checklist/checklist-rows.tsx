@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
 import type { AdminChecklistStep } from '@/server/admin/checklist';
 import * as React from 'react';
-import { goLive, saveStep, type ChecklistState } from './actions';
+import { goLive, regenerate, saveStep, type ChecklistState } from './actions';
 
 const LABEL: Record<AdminChecklistStep['status'], string> = {
   todo: 'To do',
@@ -122,6 +122,27 @@ export function GoLiveButton({
             ? `${openCount} step${openCount === 1 ? '' : 's'} still open. Done or not needed steps unlock this.`
             : 'Every step is done. The owner’s setup card disappears.'}
       </span>
+      {state.status === 'error' && (
+        <p role='alert' className='text-destructive w-full text-sm'>
+          {state.message}
+        </p>
+      )}
+    </form>
+  );
+}
+
+export function RegenerateButton({ tenantId }: { tenantId: string }) {
+  const [state, action, pending] = React.useActionState(regenerate, idle);
+  return (
+    <form action={action} className='flex flex-wrap items-center gap-3'>
+      <input type='hidden' name='tenantId' value={tenantId} />
+      <Button type='submit' variant='outline' disabled={pending}>
+        {pending ? 'Regenerating…' : 'Regenerate from systems'}
+      </Button>
+      <span className='text-muted-foreground text-xs'>
+        Adds missing steps for enabled systems and keeps existing progress.
+      </span>
+      {state.status === 'saved' && <Badge variant='success'>Checklist regenerated</Badge>}
       {state.status === 'error' && (
         <p role='alert' className='text-destructive w-full text-sm'>
           {state.message}
