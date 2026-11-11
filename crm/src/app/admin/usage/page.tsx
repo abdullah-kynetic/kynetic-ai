@@ -3,6 +3,7 @@ import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
 import PageContainer from '@/components/layout/page-container';
 import { decideAdminAccess, listUsageMonth } from '@/server/admin';
+import { CostVsFeeChart, type UsageChartRow } from './usage-charts';
 import {
   capStatus,
   capStatusLabel,
@@ -13,6 +14,47 @@ import {
 } from '@/server/usage';
 
 export const dynamic = 'force-dynamic';
+
+const statusColor: Record<string, string> = {
+  no_cap: 'bg-primary',
+  under: 'bg-primary',
+  watch: 'bg-[var(--chart-2)]',
+  reached: 'bg-[var(--destructive)]'
+};
+
+function CapUsageBar({
+  costCents,
+  capCents,
+  status
+}: {
+  costCents: number;
+  capCents: number;
+  status: ReturnType<typeof capStatus>;
+}) {
+  const pct = capCents === 0 ? 100 : Math.min(100, Math.round((costCents / capCents) * 100));
+  return (
+    <div className='min-w-32 max-w-52'>
+      <div
+        role='img'
+        aria-label={`${capStatusLabel(status)}: ${pct}% of the monthly spend cap`}
+        className='relative h-3 w-full overflow-hidden rounded bg-muted'
+      >
+        <div
+          className={`h-full ${statusColor[status] ?? 'bg-primary'}`}
+          style={{ width: `${pct}%` }}
+        />
+        <div
+          aria-hidden
+          className='absolute inset-y-0 left-[80%] w-0.5 bg-foreground/70'
+          title='80% watch threshold'
+        />
+      </div>
+      <p className='text-muted-foreground text-xs'>
+        {capStatusLabel(status)} · {pct}% of cap
+      </p>
+    </div>
+  );
+}
 
 export default async function UsagePage({
   searchParams
@@ -55,6 +97,21 @@ export default async function UsagePage({
         </a>
       </form>
       {empty ? <p>No usage recorded for {month}.</p> : null}
+      {!empty && (
+        <section aria-label='Cost versus recorded fee' className='mb-6'>
+          <h2 className='mb-2 font-semibold'>Cost vs fee by client</h2>
+          <CostVsFeeChart
+            rows={rows.map(
+              (row): UsageChartRow => ({
+                tenantName: row.tenantName,
+                providerCostCents: providerCostCents(row),
+                marginCents: marginCents(row),
+                feeRecorded: row.monthlyFeeCents != null
+              })
+            )}
+          />
+        </section>
+      )}
       <div
         className='overflow-x-auto rounded-lg border'
         role='region'
@@ -95,7 +152,17 @@ export default async function UsagePage({
                       : formatCents(row.monthlyFeeCents)}
                   </td>
                   <td className='p-3'>{margin == null ? 'Not recorded' : formatCents(margin)}</td>
-                  <td className='p-3'>{capStatusLabel(capStatus(row))}</td>
+                  <td className='p-3'>
+                    {row.capCents == null ? (
+                      'No cap'
+                    ) : (
+                      <CapUsageBar
+                        costCents={providerCostCents(row)}
+                        capCents={row.capCents}
+                        status={capStatus(row)}
+                      />
+                    )}
+                  </td>
                 </tr>
               );
             })}

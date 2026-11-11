@@ -1,6 +1,7 @@
 import { agencyChannel } from '@/components/agency/format';
+import { z } from 'zod';
 import { getAgencyFinanceSummary } from '@/server/agency/finance';
-import { getAgencyRates } from '@/server/agency/inbox';
+import { getAgencyRateSeries, getAgencyRates } from '@/server/agency/inbox';
 import { percent } from '@/server/agency/rates';
 import { US_STATE_CODES } from '@/server/agency/dialer-policy';
 import Link from 'next/link';
@@ -18,6 +19,7 @@ import {
   listAgencyAlerts
 } from '@/server/agency';
 import { isViewingAs } from '../view-as-guard';
+import { AgencyRatesLine, AgencySourceBars } from './charts';
 import {
   createAgencyWorkspaceAction,
   createAgencyLeadAction,
@@ -31,7 +33,7 @@ const selectClass = 'border-input bg-background min-h-11 rounded-md border px-3'
 export default async function AgencyPage({
   searchParams
 }: {
-  searchParams: Promise<{ direction?: string; channel?: string; error?: string }>;
+  searchParams: Promise<{ direction?: string; channel?: string; stageId?: string; error?: string }>;
 }) {
   const access = await decideAdminAccess(await headers());
   if (access.kind !== 'ok' || access.role !== 'admin') forbidden();
@@ -58,14 +60,17 @@ export default async function AgencyPage({
     ...(['inbound', 'outbound'].includes(query.direction ?? '')
       ? { direction: query.direction }
       : {}),
-    ...(channels.includes(query.channel ?? '') ? { channel: query.channel } : {})
+    ...(channels.includes(query.channel ?? '') ? { channel: query.channel } : {}),
+    ...(z.uuid().safeParse(query.stageId ?? '').success ? { stageId: query.stageId } : {})
   };
   const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
-  const [{ stages }, data, alerts, rates, finance] = await Promise.all([
+  const [{ stages }, data, alerts, rates, monthRates, rateSeries, finance] = await Promise.all([
     getAgencyPipeline(caller),
     listAgencyLeads(caller, filter),
     listAgencyAlerts(caller),
     getAgencyRates(caller),
+    getAgencyRates(caller, { days: 30 }),
+    getAgencyRateSeries(caller),
     getAgencyFinanceSummary(caller)
   ]);
   return (
@@ -127,6 +132,31 @@ export default async function AgencyPage({
         </p>
       </section>
 
+      <section aria-label='Thirty-day agency rates' className='agency-metrics'>
+        <h2>Last thirty days</h2>
+        <dl>
+          <div>
+            <dt>Pick rate</dt>
+            <dd>
+              {percent(monthRates.pickRate)}
+              <span>
+                {monthRates.picked} answered / {monthRates.attempted} attempted calls
+              </span>
+            </dd>
+          </div>
+          <div>
+            <dt>Reply rate</dt>
+            <dd>
+              {percent(monthRates.replyRate)}
+              <span>
+                {monthRates.replied} replies / {monthRates.contacted} messaged prospects
+              </span>
+            </dd>
+          </div>
+        </dl>
+        <AgencyRatesLine points={rateSeries.points} />
+      </section>
+
       <p className='agency-notice'>
         Synthetic workspace · Use fictional names and @example.test emails. No outreach starts from
         this page.
@@ -146,6 +176,7 @@ export default async function AgencyPage({
             </div>
           ))}
         </dl>
+        <AgencySourceBars counts={data.counts} />
         <form className='flex flex-wrap items-end gap-3'>
           <div>
             <Label htmlFor='filterDirection'>Direction</Label>
@@ -176,12 +207,29 @@ export default async function AgencyPage({
               ))}
             </select>
           </div>
+          <div>
+            <Label htmlFor='filterStage'>Stage</Label>
+            <select
+              id='filterStage'
+              name='stageId'
+              defaultValue={query.stageId ?? ''}
+              className={`${selectClass} block`}
+            >
+              <option value=''>All</option>
+              {stages.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+          </div>
           <Button type='submit' variant='outline'>
             Filter
           </Button>
         </form>
         <p className='text-muted-foreground text-sm'>
-          Latest 50 matching leads. Counts include all active agency prospects.
+          Latest 50 matching leads. Counts include all active agency prospects. Stage filters to
+          leads whose deal sits in that stage.
         </p>
         <ul className='space-y-3'>
           {data.leads.map((lead) => (
@@ -193,6 +241,11 @@ export default async function AgencyPage({
                 <p className='font-medium'>{lead.firstName}</p>
                 <p className='text-muted-foreground text-sm'>
                   {lead.email} · {lead.source?.replace('agency_', '').replaceAll('_', ' ')}
+                </p>
+                <p className='text-muted-foreground text-sm'>
+                  {lead.state ? `State: ${lead.state}` : 'State: unknown'}
+                  {lead.deal ? ` · Stage: ${lead.deal.stageName}` : ''}
+                  {lead.deal?.lostReason ? ` · Lost: ${lead.deal.lostReason}` : ''}
                 </p>
               </div>
               {lead.deal && (
