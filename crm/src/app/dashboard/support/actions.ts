@@ -16,7 +16,7 @@ export async function submitSupportRequestAction(form: FormData) {
     const created = await submitSupportRequest(scope.ctx, scope.actor, {
       subject: String(form.get('subject') ?? ''),
       body: String(form.get('body') ?? ''),
-      category: 'general'
+      category: String(form.get('category') ?? 'general')
     });
     id = created.id;
   } catch (error) {

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { contactsActorScope } from '@/server/contacts';
-import { listOwnSupportRequests } from '@/server/support';
+import { listOwnSupportRequests, SUPPORT_CATEGORIES } from '@/server/support';
 import { submitSupportRequestAction } from './actions';
 
 export const dynamic = 'force-dynamic';
@@ -47,6 +47,27 @@ export default async function SupportPage({
               Subject
             </label>
             <Input id='support-subject' name='subject' required maxLength={200} />
+          </div>
+          <div className='grid gap-2'>
+            <label htmlFor='support-category' className='font-medium'>
+              Category
+            </label>
+            <select
+              id='support-category'
+              name='category'
+              defaultValue='general'
+              className='border-input bg-background min-h-11 rounded-md border px-3 text-sm'
+            >
+              {SUPPORT_CATEGORIES.map((category) => (
+                <option key={category} value={category}>
+                  {category === 'alex_change'
+                    ? 'Alex change'
+                    : category === 'system_request'
+                      ? 'System request'
+                      : 'General'}
+                </option>
+              ))}
+            </select>
           </div>
           <div className='grid gap-2'>
             <label htmlFor='support-body' className='font-medium'>

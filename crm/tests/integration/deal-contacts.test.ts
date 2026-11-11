@@ -48,7 +48,15 @@ describe('M2-04 multi-contact deals (F-15, CRM Full)', () => {
     const onDeal = await listDealContacts(ctx.ownerA(), a.dealId, opts);
     expect(onDeal.find((c) => c.contactId === spouseId)?.role).toBe('spouse');
     const forContact = await listDealsForContact(ctx.ownerA(), spouseId, opts);
-    expect(forContact).toEqual([expect.objectContaining({ dealId: a.dealId, role: 'spouse' })]);
+    expect(forContact).toEqual([
+      expect.objectContaining({
+        dealId: a.dealId,
+        role: 'spouse',
+        stageName: expect.any(String),
+        stageIsWon: expect.any(Boolean),
+        stageIsLost: expect.any(Boolean)
+      })
+    ]);
   });
 
   it('refuses a second link of the same contact', async () => {

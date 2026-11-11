@@ -1,10 +1,15 @@
 import { EditDealButton } from '@/components/deals/deal-panel';
 import PageContainer from '@/components/layout/page-container';
+import { currentTime } from '@/components/timeline/format';
+import { parseTimelineParams } from '@/components/timeline/params';
+import { Timeline } from '@/components/timeline/timeline';
 import { StatusBadge, type StatusTone } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/states';
+import { listActivities, type TimelinePage } from '@/server/activity';
 import { formatCents, getDealDetail, type DealDetail } from '@/server/deals';
 import { AppError } from '@/server/errors';
+import { ValidationError } from '@/server/errors';
 import { loadShellContext } from '@/server/shell';
 import type { Metadata } from 'next';
 import { cookies, headers } from 'next/headers';
@@ -38,8 +43,19 @@ const when = (iso: string) =>
     timeZone: 'UTC'
   });
 
-export default async function DealPage({ params }: { params: Promise<{ id: string }> }) {
-  const [{ id }, cookieStore, requestHeaders] = await Promise.all([params, cookies(), headers()]);
+export default async function DealPage({
+  params,
+  searchParams
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ type?: string | string[]; cursor?: string | string[] }>;
+}) {
+  const [{ id }, sp, cookieStore, requestHeaders] = await Promise.all([
+    params,
+    searchParams,
+    cookies(),
+    headers()
+  ]);
   const shell = await loadShellContext(requestHeaders, cookieStore.get('tenant_id')?.value);
   if (!shell) redirect('/sign-in');
   // A Kynetic user outside any tenant has no deals to show.
@@ -58,6 +74,17 @@ export default async function DealPage({ params }: { params: Promise<{ id: strin
     }
     throw err;
   }
+
+  const ctx = { tenantId: shell.tenant.id, userId: shell.user.id, role: shell.role };
+  const { types, cursor } = parseTimelineParams(sp);
+  const timeline: TimelinePage = await listActivities(ctx, {
+    dealId: id,
+    types,
+    cursor
+  }).catch((err) => {
+    if (err instanceof ValidationError) return listActivities(ctx, { dealId: id, types });
+    throw err;
+  });
 
   const { deal, stage, stages, owner, members, contacts } = detail;
   const label = (m: { name: string | null; email: string }) => m.name ?? m.email;
@@ -120,9 +147,11 @@ export default async function DealPage({ params }: { params: Promise<{ id: strin
               <CardTitle id='section-timeline'>Timeline</CardTitle>
             </CardHeader>
             <CardContent>
-              <EmptyState
-                title='No activity yet'
-                description='Stage changes, calls, texts and notes on this deal will show here.'
+              <Timeline
+                page={timeline}
+                basePath={`/dashboard/deals/${id}`}
+                activeTypes={types}
+                now={currentTime()}
               />
             </CardContent>
           </Card>
