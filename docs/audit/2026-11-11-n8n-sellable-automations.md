@@ -96,3 +96,22 @@ Each step that touches a live system (credentials, activation, a real send, a re
 ## Not checked
 
 The other 74 section workflows beyond the ones named; Nora's Retell agent and Emily's Retell tools (Retell not read this pass); whether the Twenty "Kynetic Restoration (Demo)" records still match the Notion rows; execution history for Nora and Emily (none on record in the 123 recorded executions).
+
+## Addendum: Twenty is the back-end CRM (Abdullah, 2026-11-11 5:30 PM CT)
+
+Abdullah's correction: the back-end CRM is Twenty, not Notion and not a portal-owned store. I read Twenty (read-only) to check what that means for the automations above.
+
+- **Twenty has no workflows and no workflow runs.** All automation is n8n acting on Twenty. There is nothing to audit inside Twenty itself.
+- **Twenty already has the data model for the receptionist and the policy checks.** The custom object `endCustomer` ("a client's own customer or caller handled by the voice receptionist") carries: `callOptOut`, `smsOptOut`, `emailOptOut` (each with opt-out dates for call and SMS), `doNotCall`, `smsConsent`, `callConsent`, `emailConsent`, `consentSource`, `consentText`, `consentAt`, `ownerState`, `timezone`, `leadSource`, `leadStatus`, `attemptCount`, `nextAttemptAt`, `lastOutcome`, `firstRingAt`, `secondsToFirstRing`, `lastCallId`, plus relations to `clientAccount`, `clientJobs` and `customerInteractions`. The `person` object has `smsConsent`, `smsOptOut`, `emailOptOut`, `timezone` and `contactRole` (added 2026-11-10 02:43 to 02:45Z). Other objects exist for call logs, customer interactions, client accounts, support tickets and referral submissions.
+
+What changes in the findings above:
+
+1. **Nora's Notion data layer has a ready replacement.** The Notion Contacts, Jobs and Calls databases map to Twenty `endCustomer`, `clientJobs` and `call_logs`/`customerInteractions`, with `clientAccount` replacing the Notion Clients row. The schema work is done; the Nora and Emily workflows still point at Notion. The swap is a workflow rebuild, not a schema project. (It would need a yes, and Nora and Emily stay frozen, so the swap belongs in the template, not in Nora.)
+2. **Open decision D-S04 is partly answered.** The templates say `endCustomers` has no email opt-out field. It now has `emailOptOut` (and `emailConsent`). The Record Opt-Outs and Safety Check templates can write and read it. Whether `person` or `endCustomer` is the record the policy reads still needs a call.
+3. **The template contact shape maps almost field for field.** `dnc` = `doNotCall`; `smsOptOut`, `callOptOut`, `emailOptOut` = same names; `owner_state` = `ownerState`; `timezone` = `timezone`; `consent_channels` can be built from `smsConsent`, `callConsent`, `emailConsent`. **Not in Twenty yet:** `human_owned`, `suppressed_global`, `suppressed_tenant`. Without them the Safety Check fails closed or has to default them.
+4. **The portal-vs-n8n "who decides" question narrows.** Whichever system runs the gate, the lists it reads (consent, opt-out, DNC) should live in Twenty. The portal then displays and logs. This matches "portal = display, n8n = automation, Twenty = records".
+5. **The "CRM Sync Records to Twenty" stub matters more.** If Twenty is the source of truth, the real read and write adapter to Twenty is the first thing to build, ahead of the send adapter. The `Twenty self-hosted` credential already exists on the VPS and is the right one.
+
+Revised order for the back-end automations: (1) Twenty read and write adapter plus the three missing policy fields, (2) opt-out writes into Twenty, (3) signed Front Door, (4) real send through the Safety Check, (5) Error Alert wired with a recipient, (6) health telemetry.
+
+Rule reminders that still apply: Twenty GET and approved writes only, never REST DELETE, no more than 100 requests per 60 seconds, env names `TWENTY_BASE_URL` and `TWENTY_SELFHOST_API_KEY`.
