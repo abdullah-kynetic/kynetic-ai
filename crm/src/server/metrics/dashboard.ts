@@ -1,8 +1,16 @@
 import { and, asc, eq, gte, lt, lte, sql } from 'drizzle-orm';
 import type { Db, Tx } from '../db/client';
-import { activities, appointments, contacts, metricsDaily, tenants, users } from '../db/schema';
+import {
+  activities,
+  appointments,
+  contacts,
+  deals,
+  metricsDaily,
+  tenants,
+  users
+} from '../db/schema';
 import { withTenant, type TenantContextInput } from '../tenancy';
-import { bookingRatePercent, measureSpeedToLeadMinutes } from './formulas';
+import { addCalendarDays, bookingRatePercent, measureSpeedToLeadMinutes } from './formulas';
 
 /** The offer in force: 20% more booked appointments than last month, measured over 30 days. */
 export const GUARANTEE_WINDOW_DAYS = 30;
@@ -25,6 +33,7 @@ export type DashboardMetrics = {
     contactsReached: number;
     estimatesBooked: number;
     revenueCents: number;
+    wonDeals: number;
     /** Whole percent. Null when the range has no leads. */
     bookingRate: number | null;
     /** Median minutes. Null when no lead-intake contact was called in the range. */
@@ -110,12 +119,24 @@ export async function getDashboardMetrics(
       )
       .groupBy(sql`coalesce(${contacts.source}, 'unknown')`)
       .orderBy(sql`count(*) desc`);
+    const [won] = await tx
+      .select({ count: sql<number>`count(*)::int` })
+      .from(deals)
+      .where(
+        and(
+          gte(deals.wonAt, `${from}T00:00:00Z`),
+          lt(deals.wonAt, `${addCalendarDays(to, 1)}T00:00:00Z`),
+          sql`(exists (select 1 from calls c where c.deal_id = ${deals.id} and c.direction = 'outbound')
+        or exists (select 1 from appointments a where a.deal_id = ${deals.id} and a.booked_by = 'alex'))`
+        )
+      );
     const leads = Number(totals?.leads ?? 0);
     const estimatesBooked = Number(totals?.estimatesBooked ?? 0);
     const speedToLeadMinutes = await measureSpeedToLeadMinutes(tx, from, to);
     return {
       totals: {
         leads,
+        wonDeals: Number(won?.count ?? 0),
         calls: Number(totals?.calls ?? 0),
         contactsReached: Number(totals?.contactsReached ?? 0),
         estimatesBooked,
@@ -157,7 +178,7 @@ async function countBooked(tx: Tx, fromIso: string, toIso: string): Promise<numb
 
 export async function getGuaranteeSettings(
   ctx: TenantContextInput,
-  opts: { db?: Db; tx?: Tx } = {}
+  opts: { db?: Db; tx?: Tx; asOf?: string } = {}
 ): Promise<GuaranteeSettings> {
   const run = async (tx: Tx): Promise<GuaranteeSettings> => {
     const [row] = await tx
@@ -184,7 +205,9 @@ export async function getGuaranteeSettings(
     const bookedInWindow = await countBooked(
       tx,
       startIso,
-      shiftUtcDate(row.startDate, GUARANTEE_WINDOW_DAYS)
+      opts.asOf && opts.asOf < shiftUtcDate(row.startDate, GUARANTEE_WINDOW_DAYS)
+        ? opts.asOf
+        : shiftUtcDate(row.startDate, GUARANTEE_WINDOW_DAYS)
     );
     return {
       baselineOverride: row.baselineOverride,
