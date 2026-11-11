@@ -29,7 +29,7 @@ Audited 2026-11-11 against Twenty note `d7daa4c4-f466-4ca1-b56f-728b61c14590` an
 | Offboarding | done | Export state and manual deletion date are in `crm/src/app/admin/clients/[tenantId]/offboard/page.tsx:1`. |
 | System requests | done | Admin/VA table is in `crm/src/app/admin/system-requests/page.tsx:1`. |
 | Template library | done | Industry and system template cards/apply controls are in `crm/src/app/admin/templates/page.tsx:26`; pool/windows defaults are in `crm/src/server/admin/industry-templates.ts:32`. |
-| Usage and margin | partial | Month picker, table and CSV exist at `crm/src/app/admin/usage/page.tsx:18` and `:52`; cost-vs-fee stacked chart and explicit 80% visual are absent. |
+| Usage and margin | done | Month picker, table and CSV remain in `crm/src/app/admin/usage/page.tsx`; batch 2 added the cost-vs-fee chart and the 80% cap bar on the same page. |
 | Operations | done | Pause, alerts, integrations, jobs, webhooks and flagged-call sections are in `crm/src/app/admin/operations/page.tsx:44`; access is staff-gated. |
 | Users | done | Search/client filters are wired at `crm/src/app/admin/users/page.tsx:38` and the required columns/actions start at `:86`. |
 | Audit | done | Client/actor/action/date filters start at `crm/src/app/admin/audit/page.tsx:128`; expandable before/after detail is at `:66`. |
@@ -37,8 +37,8 @@ Audited 2026-11-11 against Twenty note `d7daa4c4-f466-4ca1-b56f-728b61c14590` an
 | View as | done | Client/reason/window form is in `crm/src/app/admin/view-as/start-form.tsx:1`; guard logic is in `view-as-guard.ts:1`. |
 | Support | done | Queue remains open-first and now preserves independent category and status filters at `crm/src/app/admin/support/page.tsx:38`; service validation is in `crm/src/server/support/service.ts:301`. |
 | Agency home — monthly finance | done | Pacific-month revenue, expense and net cards are at `crm/src/app/admin/agency/page.tsx:82`. |
-| Agency home — pick/reply rates | partial | Seven-day formulas/cards are at `crm/src/app/admin/agency/page.tsx:102`; the proposed 30-day line display is absent. |
-| Agency home — sources and lead table | partial | Source counts and direction/channel filters are at `crm/src/app/admin/agency/page.tsx:135`; the required source/stage filters and visible state/lost reason are incomplete. |
+| Agency home — pick/reply rates | done | Seven-day cards remain; batch 2 added the 30-day rate series (`crm/src/server/agency/rates.ts`, `inbox.ts`) and line chart (`crm/src/app/admin/agency/charts.tsx`). |
+| Agency home — sources and lead table | done | Batch 2 added the stage filter and the visible stage, state and lost reason fields on the lead table in `crm/src/app/admin/agency/page.tsx`, alongside the source and direction/channel filters. |
 | Agency home — alerts | done | Alert list and empty state are at `crm/src/app/admin/agency/page.tsx:237`. |
 | Human dialer | done | Campaign filter, script, outcome controls and callbacks are in `crm/src/app/admin/agency/dialer/page.tsx:17`; policy enforcement is in `crm/src/server/agency/dialer-policy.ts:1`. |
 | Campaigns | done | Campaign setup, enrollment, due work and results are in `crm/src/app/admin/agency/campaigns/page.tsx:18` and `sequence.tsx:1`. |
@@ -46,11 +46,32 @@ Audited 2026-11-11 against Twenty note `d7daa4c4-f466-4ca1-b56f-728b61c14590` an
 | Proposals | done | Deal selection, editor, revision and PDF preview are in `crm/src/app/admin/agency/proposals/page.tsx:17` and `[proposalId]/editor.tsx:1`; prices are copy-only “to be confirmed.” |
 | Contracts | done | Status/stage filters, manual lifecycle and file tracking are in `crm/src/app/admin/agency/contracts/page.tsx:20`. |
 | Agency billing | done | Deal terms, invoice ledger and stub-only dunning UI are in `crm/src/app/admin/agency/billing/page.tsx:21`; no charge path exists. |
-| Finance | partial | Monthly table, CSV and asset forms are at `crm/src/app/admin/agency/finance/page.tsx:67`; the specified revenue-vs-expense bar chart is absent. |
+| Finance | done | Monthly table, CSV and asset forms remain; batch 2 added the monthly revenue-vs-expense bar chart on `crm/src/app/admin/agency/finance/page.tsx`. |
 | Agency ops | done | Daily preview, health list and DEV workflow/secret cards are in `crm/src/app/admin/agency/ops/page.tsx:15`. |
 
 ## Fix batches
 
 1. All-clients MRR blocked label; client pipeline value/funnel; guarantee progress; checklist formula/regeneration; support status filter.
 2. Usage cost-vs-fee chart and cap visualization; agency 30-day rate line; agency source/stage lead filters and fields; finance monthly bar chart.
-3. Re-audit every row after batches 1–2 and leave only explicitly parked business decisions.
+3. Re-audit every row after batches 1–2 and leave only explicitly parked business decisions. Done 2026-11-11 against `main` at `c67663d` (see below).
+
+## Batch 3 re-audit (2026-11-11, main `c67663d`)
+
+All 44 Spec 02 rows are `done`: no row is `partial`, and every source file named in the evidence column exists on main. Batches 1–2 landed in #157 and #158 with CI green (check and e2e).
+
+Not built, by decision, because each depends on a business decision Spec 02 lists as open. These are not code gaps:
+
+| Parked item | Parked because |
+| --- | --- |
+| MRR dollar value, billing totals, recorded fee and margin amounts | Prices decision; the UI shows “to be confirmed”. |
+| Tier meaning (T1–T3) | Prices decision. |
+| Real vs synthetic agency workspace and mock data on production | Real vs synthetic demo leads decision. |
+| Automation cadence/copy overrides, review requests, agency ops re-point to production n8n | n8n vs portal worker decision. |
+| Template create/versioning and checklist regeneration from the final module list | Six-systems-as-modules decision. |
+| External calendar sync on appointments | Cal.com vs client calendar decision. |
+| Client-facing usage cost | Clients-see-cost decision. |
+| Guarantee policy beyond admin override plus 30-day default | Guarantee baseline policy decision. |
+| Recording visibility and disclosure wording | Counsel wording decision. |
+| E-sign, Stripe charging, support email, GBP/review connector | Provider and consent decisions (e-sign provider, Stripe test mode, support emails, connector choice). |
+
+Spec 02 “Display notes” also recommend a daily leads/booked line chart on the admin overview and a rating trend line on reviews. Neither is a Spec 02 table row. The admin overview has no daily-series data feed today, and reviews belong to Lane A (A1). Both are left for a later request.

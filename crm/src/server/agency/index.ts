@@ -179,7 +179,8 @@ const filtersSchema = z.strictObject({
   direction: z.enum(['inbound', 'outbound']).optional(),
   channel: z
     .enum(['form', 'booking', 'referral', 'other', 'cold_call', 'sms', 'email', 'dm'])
-    .optional()
+    .optional(),
+  stageId: z.uuid().optional()
 });
 export async function listAgencyLeads(
   caller: StaffCaller,
@@ -200,7 +201,8 @@ export async function listAgencyLeads(
               id: contacts.id,
               firstName: contacts.firstName,
               email: contacts.primaryEmail,
-              source: contacts.source
+              source: contacts.source,
+              state: sql<string | null>`nullif(${contacts.address} ->> 'state', '')`
             })
             .from(contacts)
             .where(
@@ -220,22 +222,33 @@ export async function listAgencyLeads(
         .groupBy(contacts.source);
       const linked = rows.length
         ? await tx
-            .select({ contactId: dealContacts.contactId, dealId: deals.id, stageId: deals.stageId })
+            .select({
+              contactId: dealContacts.contactId,
+              dealId: deals.id,
+              stageId: deals.stageId,
+              stageName: pipelineStages.name,
+              lostReason: deals.lostReason
+            })
             .from(dealContacts)
             .innerJoin(deals, eq(deals.id, dealContacts.dealId))
+            .innerJoin(pipelineStages, eq(pipelineStages.id, deals.stageId))
             .where(
               and(
                 inArray(
                   dealContacts.contactId,
                   rows.map((r) => r.id)
                 ),
-                isNull(deals.deletedAt)
+                isNull(deals.deletedAt),
+                filter.stageId ? eq(deals.stageId, filter.stageId) : undefined
               )
             )
             .orderBy(deals.createdAt, deals.id)
         : [];
+      const leadRows = rows
+        .map((r) => ({ ...r, deal: linked.find((d) => d.contactId === r.id) ?? null }))
+        .filter((r) => !filter.stageId || r.deal);
       return {
-        leads: rows.map((r) => ({ ...r, deal: linked.find((d) => d.contactId === r.id) ?? null })),
+        leads: leadRows,
         counts: AGENCY_SOURCES.map(([direction, channel]) => ({
           direction,
           channel,

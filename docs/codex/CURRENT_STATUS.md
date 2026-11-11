@@ -126,3 +126,11 @@ Unslop: Damir Sokolovsky / [@heydamir](https://x.com/heydamir), [heydamir/unslop
 - Pages `/dashboard/reviews` (OPM), `/dashboard/referrals` (CRM Full) and `/dashboard/usage` (owner). Nav entries added; role filtering now wired through the sidebar, Cmd+K and the dashboard layout.
 - Tests: `tests/integration/lane-a-a1.test.ts`, `tests/e2e/lane-a-a1.spec.ts`, role filtering cases in `tests/unit/modules.test.ts`.
 - Checked against SPEC 01 in Twenty (read through the Twenty connector): the spec only lists these pages as blocked, with the usage page's cost question open. See KI-030 to KI-032.
+
+### Lane B update — 2026-11-11 (batch 2, work in progress)
+
+- First five-row batch merged in PR #157 at `c8be0912149844884bb4b537d55fca1e02a7826e`.
+- Batch 2 (usage cost-vs-fee chart and 80% cap visual, agency 30-day pick/reply line, agency source/stage lead filters and state/lost reason, finance monthly revenue-vs-expense chart) is in progress on `lane-b/admin-gap-charts`, branched from current `origin/main`.
+- No migration is required for batch 2; it is additive UI plus server reads only.
+- Known gap: the new integration test inserts `agency_call_attempts` directly and still needs `event_id` and a 64-hex `request_hash`.
+- Parked items remain P-1 pricing, P-2 disclosure wording, and P-3 Lane A optional tables.
