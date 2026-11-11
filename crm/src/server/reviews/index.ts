@@ -181,9 +181,7 @@ export async function reviewSummary(
       .innerJoin(contacts, eq(contacts.id, reviewRequests.contactId))
       .orderBy(desc(reviewRequests.requestedAt))
       .limit(20);
-    const [requestCount] = await tx
-      .select({ n: sql<number>`count(*)::int` })
-      .from(reviewRequests);
+    const [requestCount] = await tx.select({ n: sql<number>`count(*)::int` }).from(reviewRequests);
     const contactRows = await tx
       .select({
         id: contacts.id,

@@ -119,3 +119,10 @@ Unslop: Damir Sokolovsky / [@heydamir](https://x.com/heydamir), [heydamir/unslop
 - B2 SPEC 02 gap audit is complete. First five-row fix batch is on `lane-b/admin-gap-audit`: all-client blocked MRR label, pipeline funnel/value, guarantee progress, checklist regeneration/formula, and support status filter.
 - Current validation: typecheck and 571 unit tests pass; focused Lane B integration tests pass 4/4. No migration is required for this batch.
 - Parked items remain P-1 pricing, P-2 disclosure wording, and P-3 Lane A optional tables.
+
+### Lane A A1 — reviews, referrals, usage (2026-11-11)
+
+- Branch `lane-a/a1-reviews-referrals-usage`. Migration 1020 used (`review_requests`, `client_referrals`); 1021–1024 remain reserved.
+- Pages `/dashboard/reviews` (OPM), `/dashboard/referrals` (CRM Full) and `/dashboard/usage` (owner). Nav entries added; role filtering now wired through the sidebar, Cmd+K and the dashboard layout.
+- Tests: `tests/integration/lane-a-a1.test.ts`, `tests/e2e/lane-a-a1.spec.ts`, role filtering cases in `tests/unit/modules.test.ts`.
+- Checked against SPEC 01 in Twenty (read through the Twenty connector): the spec only lists these pages as blocked, with the usage page's cost question open. See KI-030 to KI-032.

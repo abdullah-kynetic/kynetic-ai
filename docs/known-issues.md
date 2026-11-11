@@ -175,3 +175,12 @@ Found 2026-11-10. The automations page can turn a template on or off and can sho
 
 ### KI-029: Support alerts do not send email (low)
 Found 2026-11-10. A new client request notifies Kynetic in the portal, and a Kynetic reply notifies the requester in the portal. The email preference for `support_request` and `support_reply` defaults to off, and this batch does not queue an email even if someone turns that preference on. Blocked by the rule that this work must not add a real outbound send.
+
+### KI-030: Review requests are queued only, and review snapshots are entered by hand (medium)
+Found 2026-11-11. "Request a review" on `/dashboard/reviews` writes a `queued` row after `canContact` allows it. Nothing sends it and nothing moves it to `sent` or `completed`, because sending waits on the n8n versus worker decision and A2P (P-A3). Rating snapshots come from `review_snapshots` rows added by staff, not from a live Google feed.
+
+### KI-031: Referral rewards are tracked, not paid out (low)
+Found 2026-11-11. `/dashboard/referrals` records a reward amount and a pending or paid status that only the owner can change. Nothing pays or invoices a reward. The reward policy itself is not decided.
+
+### KI-032: Client usage page hides dollar cost (low)
+Found 2026-11-11. SPEC 01 in Twenty lists the usage page as "minutes, cost, cap" and marks it blocked on "do clients see cost?". The page shows minutes, calls, texts, emails and a cap status chip only. Add cost only after Abdullah decides.

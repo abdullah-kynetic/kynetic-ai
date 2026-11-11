@@ -29,14 +29,17 @@ const ACTIVE_MARKER =
 
 export default function AppSidebar({
   tenant,
-  groups = clientNavGroups
+  groups = clientNavGroups,
+  role
 }: {
   tenant: SidebarTenant;
+  /** The signed-in role, so owner-only entries hide for everyone else. */
+  role?: string;
   /** Defaults to the client portal registry; the admin shell passes its own (M8a-01). */
   groups?: NavGroup[];
 }) {
   const pathname = usePathname();
-  const filteredGroups = useFilteredNavGroups(groups);
+  const filteredGroups = useFilteredNavGroups(groups, role);
 
   return (
     <Sidebar collapsible='icon'>

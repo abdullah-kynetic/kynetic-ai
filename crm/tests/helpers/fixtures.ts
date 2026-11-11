@@ -125,6 +125,8 @@ async function seedTenant(
   await admin`insert into reports (tenant_id, kind, period_start, status) values (${t}, 'monthly_roi', date '2026-09-01', 'ready')`;
   await admin`insert into reactivation_batches (tenant_id, audience_filter, status) values (${t}, '{}', 'completed')`;
   await admin`insert into presence_items (tenant_id, kind, title, status) values (${t}, 'profile', ${`Profile ${key}`}, 'planned')`;
+  await admin`insert into review_requests (tenant_id, contact_id, channel) values (${t}, ${contact.id}, 'sms')`;
+  await admin`insert into client_referrals (tenant_id, referrer_contact_id, referee_name) values (${t}, ${contact.id}, 'Fixture referee')`;
   await admin`insert into review_snapshots (tenant_id, source, captured_on, review_count, average_rating) values (${t}, 'Google', date '2020-01-01', 1, 4.00)`;
   const [auto] =
     await admin`insert into automations (tenant_id, kind, template_key, name) values (${t}, 'template', 'speed_to_lead', 'Speed to lead') returning id`;

@@ -94,3 +94,27 @@ describe('F-30 messages nav entry', () => {
     expect(visibleNavGroups(messages, on(['alex_core']))[0]?.items).toHaveLength(1);
   });
 });
+
+describe('nav role filtering', () => {
+  const roleGroups: NavGroup[] = [
+    {
+      label: 'Settings',
+      items: [
+        { title: 'Business', url: '/b', items: [] },
+        { title: 'Usage', url: '/usage', access: { role: 'owner' }, items: [] }
+      ]
+    }
+  ];
+  const titles = (role?: string) =>
+    visibleNavGroups(roleGroups, on([]), role)[0].items.map((i) => i.title);
+
+  it('hides owner-only entries from staff, keeps them for owner and admin', () => {
+    expect(titles('staff')).toEqual(['Business']);
+    expect(titles('owner')).toEqual(['Business', 'Usage']);
+    expect(titles('admin')).toEqual(['Business', 'Usage']);
+  });
+
+  it('does not filter by role when none is passed', () => {
+    expect(titles()).toEqual(['Business', 'Usage']);
+  });
+});

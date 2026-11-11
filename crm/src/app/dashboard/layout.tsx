@@ -96,7 +96,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               canWrite={shell.role === 'admin'}
             />
           )}
-          <KBar groups={groups}>
+          <KBar groups={groups} role={shell.role}>
             <SidebarProvider defaultOpen={defaultOpen}>
               <a
                 href='#main-content'
@@ -104,7 +104,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               >
                 Skip to content
               </a>
-              <AppSidebar tenant={shell.tenant} groups={groups} />
+              <AppSidebar tenant={shell.tenant} groups={groups} role={shell.role} />
               <SidebarInset id='main-content' tabIndex={-1} className='scroll-mt-16'>
                 <Header user={{ ...shell.user, roleLabel: roleLabel(shell.role) }} />
                 {shell.tenant ? children : <NoClientSelected />}

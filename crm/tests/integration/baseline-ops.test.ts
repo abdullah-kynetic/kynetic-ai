@@ -60,7 +60,9 @@ const EXTRA_TABLES = [
   'platform_settings',
   'usage_daily',
   'tenant_exports',
-  'staff_notifications'
+  'staff_notifications',
+  'review_requests',
+  'client_referrals'
 ];
 
 function entitiesFromDoc(): string[] {

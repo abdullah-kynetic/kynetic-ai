@@ -37,7 +37,9 @@ export function UsageChart({ days }: { days: ClientUsageDay[] }) {
             </BarChart>
           </ChartContainer>
           <details className='mt-2 text-sm'>
-            <summary className='flex min-h-11 cursor-pointer items-center'>View daily usage</summary>
+            <summary className='flex min-h-11 cursor-pointer items-center'>
+              View daily usage
+            </summary>
             <table className='w-full text-left'>
               <caption className='sr-only'>{name} data</caption>
               <thead>

@@ -89,9 +89,7 @@ export async function listReferrals(
     const rows = await tx
       .select()
       .from(clientReferrals)
-      .where(
-        filter.status ? eq(clientReferrals.status, filter.status) : undefined
-      )
+      .where(filter.status ? eq(clientReferrals.status, filter.status) : undefined)
       .orderBy(desc(clientReferrals.createdAt))
       .limit(100);
     const names = await referrerNames(tx, [...new Set(rows.map((r) => r.referrerContactId))]);
@@ -128,10 +126,7 @@ export async function listReferrals(
       })),
       kpis: {
         thisMonth: Number(monthRow?.n ?? 0),
-        conversion90: conversionPercent(
-          Number(windowRow?.won ?? 0),
-          Number(windowRow?.total ?? 0)
-        ),
+        conversion90: conversionPercent(Number(windowRow?.won ?? 0), Number(windowRow?.total ?? 0)),
         rewardsPendingCents: Number(rewardRow?.cents ?? 0)
       }
     };
@@ -195,11 +190,7 @@ export async function createReferral(
       .limit(1);
     if (!referrer) throw new AppError('NOT_FOUND');
 
-    const matches = await findDuplicates(
-      ctx,
-      { phones: [value.refereePhone] },
-      { tx }
-    );
+    const matches = await findDuplicates(ctx, { phones: [value.refereePhone] }, { tx });
     const refereeContactId =
       matches[0]?.id ??
       (

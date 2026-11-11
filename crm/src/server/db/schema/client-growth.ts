@@ -45,10 +45,7 @@ export const reviewRequests = pgTable(
       columns: [table.tenantId, table.contactId],
       foreignColumns: [contacts.tenantId, contacts.id]
     }).onDelete('restrict'),
-    check(
-      'review_requests_channel_check',
-      sql`${table.channel} IN ('sms', 'email')`
-    ),
+    check('review_requests_channel_check', sql`${table.channel} IN ('sms', 'email')`),
     check(
       'review_requests_status_check',
       sql`${table.status} IN ('queued', 'sent', 'completed', 'cancelled')`

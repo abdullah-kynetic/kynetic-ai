@@ -97,6 +97,23 @@ export const navGroups: NavGroup[] = [
         items: []
       },
       {
+        title: 'Reviews',
+        url: '/dashboard/reviews',
+        icon: 'exclusive',
+        isActive: false,
+        module: 'opm',
+        items: []
+      },
+      {
+        title: 'Referrals',
+        url: '/dashboard/referrals',
+        icon: 'teams',
+        isActive: false,
+        module: 'crm',
+        level: 'full',
+        items: []
+      },
+      {
         title: 'Alex settings',
         url: '/dashboard/settings/alex',
         icon: 'settings',
@@ -129,6 +146,14 @@ export const navGroups: NavGroup[] = [
         url: '/dashboard/settings/branding',
         icon: 'settings',
         isActive: false,
+        items: []
+      },
+      {
+        title: 'Usage',
+        url: '/dashboard/usage',
+        icon: 'billing',
+        isActive: false,
+        access: { role: 'owner' },
         items: []
       }
     ]

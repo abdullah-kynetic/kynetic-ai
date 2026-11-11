@@ -40,7 +40,7 @@ CREATE TABLE client_referrals (
   updated_at timestamptz NOT NULL DEFAULT now(),
   UNIQUE (tenant_id, id),
   FOREIGN KEY (tenant_id, referrer_contact_id) REFERENCES contacts (tenant_id, id) ON DELETE RESTRICT,
-  FOREIGN KEY (tenant_id, referee_contact_id) REFERENCES contacts (tenant_id, id) ON DELETE SET NULL
+  FOREIGN KEY (tenant_id, referee_contact_id) REFERENCES contacts (tenant_id, id) ON DELETE SET NULL (referee_contact_id)
 );
 --> statement-breakpoint
 CREATE INDEX client_referrals_tenant_created_idx

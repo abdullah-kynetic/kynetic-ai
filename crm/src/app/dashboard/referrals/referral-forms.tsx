@@ -179,7 +179,13 @@ export function EditReferral({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button variant='outline' size='sm'>Edit</Button>} />
+      <DialogTrigger
+        render={
+          <Button variant='outline' size='sm'>
+            Edit
+          </Button>
+        }
+      />
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit referral</DialogTitle>
@@ -191,9 +197,7 @@ export function EditReferral({
             <NativeSelect
               id={`referral-status-${row.id}`}
               value={status}
-              onChange={(e) =>
-                setStatus(e.target.value as (typeof REFERRAL_STATUSES)[number])
-              }
+              onChange={(e) => setStatus(e.target.value as (typeof REFERRAL_STATUSES)[number])}
             >
               {REFERRAL_STATUSES.map((s) => (
                 <option key={s} value={s}>
@@ -204,10 +208,7 @@ export function EditReferral({
           </label>
           {canEditRewards && (
             <div className='flex flex-wrap gap-3'>
-              <label
-                htmlFor={`referral-reward-${row.id}`}
-                className='flex flex-col gap-1 text-sm'
-              >
+              <label htmlFor={`referral-reward-${row.id}`} className='flex flex-col gap-1 text-sm'>
                 <span>Reward ($)</span>
                 <Input
                   id={`referral-reward-${row.id}`}
@@ -226,9 +227,7 @@ export function EditReferral({
                 <NativeSelect
                   id={`referral-reward-status-${row.id}`}
                   value={rewardStatus}
-                  onChange={(e) =>
-                    setRewardStatus(e.target.value as ReferralRow['rewardStatus'])
-                  }
+                  onChange={(e) => setRewardStatus(e.target.value as ReferralRow['rewardStatus'])}
                 >
                   <option value='none'>None</option>
                   <option value='pending'>Pending</option>

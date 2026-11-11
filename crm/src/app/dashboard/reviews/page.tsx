@@ -47,7 +47,11 @@ const timeLabel = (iso: string) =>
 
 type SearchParams = { range?: string };
 
-export default async function ReviewsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
+export default async function ReviewsPage({
+  searchParams
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
   const [query, cookieStore, requestHeaders] = await Promise.all([
     searchParams,
     cookies(),
@@ -180,9 +184,7 @@ export default async function ReviewsPage({ searchParams }: { searchParams: Prom
                     <span className='flex items-center gap-2'>
                       {snapshot.demo && <Badge variant='neutral'>Demo</Badge>}
                       <span className='tabular-nums'>
-                        {snapshot.averageRating == null
-                          ? '–'
-                          : snapshot.averageRating.toFixed(1)}
+                        {snapshot.averageRating == null ? '–' : snapshot.averageRating.toFixed(1)}
                       </span>
                     </span>
                   </div>
