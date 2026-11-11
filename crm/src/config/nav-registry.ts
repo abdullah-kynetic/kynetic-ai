@@ -6,8 +6,13 @@ import { anyModuleSatisfied, moduleSatisfied, type EnabledModules } from '@/serv
  * `module` and, for crm, `level`. Entries with no `module` belong to the base portal and always show
  * (PRD F-70, decision 1). Hiding is cosmetic; every route still calls requireModule.
  */
-export function visibleNavGroups(groups: NavGroup[], enabled: EnabledModules): NavGroup[] {
+export function visibleNavGroups(
+  groups: NavGroup[],
+  enabled: EnabledModules,
+  role?: string
+): NavGroup[] {
   const keep = (item: NavItem): NavItem | null => {
+    if (role && item.access?.role && item.access.role !== role) return null;
     if (item.module && !moduleSatisfied(enabled, { module: item.module, level: item.level })) {
       return null;
     }
