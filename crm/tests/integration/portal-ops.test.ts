@@ -128,7 +128,7 @@ describe('retention purge', () => {
     const recordingKey = `${IDS.tenantA}/calls/recording.bin`;
     await storage.put(recordingKey, new TextEncoder().encode('audio'));
     await test.admin`
-      update calls set purge_after = now() - interval '1 day', transcript = 'spoken words',
+      update calls set purge_after = '2026-11-09T12:00:00Z', transcript = 'spoken words',
         recording_key = ${recordingKey}
       where tenant_id = ${IDS.tenantA}`;
     await test.admin`
