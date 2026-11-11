@@ -15,12 +15,23 @@ beforeAll(async () => {
   a = await setupAgency();
   form = await createAgencyLead(
     caller,
-    { firstName: 'Batch Two Form', email: 'batchtwo-form@example.test', direction: 'inbound', channel: 'form', state: 'TX' },
+    {
+      firstName: 'Batch Two Form',
+      email: 'batchtwo-form@example.test',
+      direction: 'inbound',
+      channel: 'form',
+      state: 'TX'
+    },
     { db: a.db }
   );
   await createAgencyLead(
     caller,
-    { firstName: 'Batch Two Cold', email: 'batchtwo-cold@example.test', direction: 'outbound', channel: 'cold_call' },
+    {
+      firstName: 'Batch Two Cold',
+      email: 'batchtwo-cold@example.test',
+      direction: 'outbound',
+      channel: 'cold_call'
+    },
     { db: a.db }
   );
 });
@@ -73,8 +84,8 @@ describe('Lane B admin gap batch 2', () => {
         values (${a.tenantId}, 'Rates Prospect', ${['rates@example.test']}, ${['+12125550181']})
         returning id`;
       await a.test.admin`
-        insert into agency_call_attempts (tenant_id, contact_id, outcome, logged_at, logged_by)
-        values (${a.tenantId}, ${contact!.id}, ${attempt.outcome}, ${attempt.at.toISOString()}, ${IDS.admin})`;
+        insert into agency_call_attempts (tenant_id, contact_id, event_id, request_hash, outcome, logged_at, logged_by)
+        values (${a.tenantId}, ${contact!.id}, gen_random_uuid(), ${'a'.repeat(64)}, ${attempt.outcome}, ${attempt.at.toISOString()}, ${IDS.admin})`;
     }
     const week = await getAgencyRates(caller, { db: a.db, now: new Date('2026-11-10T12:00:00Z') });
     expect(week).toMatchObject({ attempted: 2, picked: 1, pickRate: 0.5 });
@@ -94,6 +105,10 @@ describe('Lane B admin gap batch 2', () => {
     expect(nov9).toMatchObject({ pickRate: 0.5 });
     const oct25 = series.points.find((p) => p.day === '2026-10-25')!;
     expect(oct25).toMatchObject({ pickRate: 1 });
-    expect(series.points.every((p) => ['2026-11-09', '2026-10-25'].includes(p.day) || p.pickRate === null)).toBe(true);
+    expect(
+      series.points.every(
+        (p) => ['2026-11-09', '2026-10-25'].includes(p.day) || p.pickRate === null
+      )
+    ).toBe(true);
   });
 });

@@ -101,14 +101,12 @@ export default async function UsagePage({
         <section aria-label='Cost versus recorded fee' className='mb-6'>
           <h2 className='mb-2 font-semibold'>Cost vs fee by client</h2>
           <CostVsFeeChart
-            rows={rows.map(
-              (row): UsageChartRow => ({
-                tenantName: row.tenantName,
-                providerCostCents: providerCostCents(row),
-                marginCents: marginCents(row),
-                feeRecorded: row.monthlyFeeCents != null
-              })
-            )}
+            rows={rows.map((row): UsageChartRow => ({
+              tenantName: row.tenantName,
+              providerCostCents: providerCostCents(row),
+              marginCents: marginCents(row),
+              feeRecorded: row.monthlyFeeCents != null
+            }))}
           />
         </section>
       )}
