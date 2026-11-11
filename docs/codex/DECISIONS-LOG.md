@@ -7,3 +7,5 @@
 - Canonical report artifact key is derived from the authenticated tenant and report period, never trusted from a stored arbitrary key. Missing object or unconfigured storage uses the labelled read-only metrics fallback. Invalid objects and provider failures surface the retry state.
 - Existing artifacts retain their stored performance/revenue totals; absent new sections are computed and labelled. Future artifacts include reached, won, daily trend and guarantee result. Guarantee evaluation excludes bookings created after the report month.
 - Platform is always enabled by the existing module contract, so an A0 platform-off 403 test is not applicable. Addon module-off checks begin in A1.
+
+- A0 CI exposed Next 16 retaining hidden streamed content briefly. Assertions now scope to named chart regions and visible report content, rather than global text matches; no assertion is removed or weakened. GitHub connector job logs supplied the exact failure when gh's redirected log download was denied.
