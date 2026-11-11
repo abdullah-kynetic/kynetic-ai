@@ -98,3 +98,10 @@ Unslop: Damir Sokolovsky / [@heydamir](https://x.com/heydamir), [heydamir/unslop
 - A0: accessible Recharts daily leads/booked, conversion funnel, source bars; artifact-backed report totals and trend with labelled fallback; Backups in staff Platform navigation.
 - Migrations used: none. Reserved: 1020 (A1), 1021 (A2), 1022 (A3), 1023 (A4), 1024 (A5).
 - Protected systems, outbound defaults and Lane B files unchanged. See PARKED and DECISIONS-LOG for defaults and open business decisions.
+
+### Lane A A0 validation — 2026-11-11
+
+- Production build passed; typecheck/lint/format and 571 unit tests passed.
+- Full Playwright: 57 passed, 1 pre-existing optional R2 test skipped. Desktop and 390px evidence is in `docs/screenshots/lane-a-a0/`; no horizontal overflow.
+- Full integration run: 96 suites passed; five files needed retry (the old report initialization cycle, CPU-contention timeouts and load assertions). All failed files passed after the schema/reader split and a lower-load retry. A timed-out backup left a local scratch database; removing that disposable scratch restored its test (5/5 passed). No existing tests were deleted or skipped by this change.
+- A0 is ready for PR/CI. A1 is being prepared in a separate stacked worktree; no A1 migration is included in A0.
