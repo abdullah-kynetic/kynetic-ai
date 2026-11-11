@@ -34,7 +34,7 @@ const STEPS: Step[] = [
   { n: 5, key: 'teamTime', label: 'Team time', kind: 'text', q: "What takes up most of your team's time?", hint: 'A sentence is plenty', placeholder: 'Scheduling, follow-ups, paperwork...' },
   { n: 6, key: 'fixFirst', label: 'Fix first', kind: 'text', q: 'If we could fix one thing first, what would it be?', hint: 'Rough ideas are fine', placeholder: 'One place to see every lead' },
   { n: 7, key: 'invest', label: 'Investment', kind: 'choice', q: 'If we find the right build, what could you invest in it?',
-    options: [DISQUALIFY_INVEST, '$5,000 to $10,000', '$10,000 to $25,000', '$25,000 to $50,000', '$50,000+'] },
+    options: [LOW_INVEST, '$5,000 to $10,000', '$10,000 to $25,000', '$25,000 to $50,000', '$50,000+'] },
 ];
 const COUNT = 7;
 

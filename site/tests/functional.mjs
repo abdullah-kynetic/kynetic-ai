@@ -140,7 +140,7 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
   ok('resume: leaving and returning lands on the step they were on', await page.locator('.am [data-step="6"]').isVisible() && (await page.locator('.am input[name=fixFirst]').inputValue()) === 'One place to see leads');
   await page.locator('.am [data-step="6"] button[type=submit]').click(); await page.waitForTimeout(400);
   await page.locator('.am [data-step="7"] button[type=submit]').click(); await page.waitForTimeout(900);
-  ok('next: OK walks forward through filled answers without re-sending', await page.locator('.am [data-step="book"]').isVisible() && posts.length === 2);
+  ok('next: OK walks forward through filled answers without re-sending', await page.locator('.am [data-step="book"]').isVisible() && posts.length === 1);
   // pick a day and a time, confirm: booked from the application's answers, then the confirmation page
   await page.locator('.am .cp__day-btn.is-open').first().click();
   await page.locator('.am .cp__time[data-time]').first().click();
