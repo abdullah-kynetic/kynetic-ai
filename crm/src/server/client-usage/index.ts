@@ -136,3 +136,8 @@ export function currentUsageMonth(now: Date, timeZone: string): string {
 }
 
 export const usageMonthSchema = z.string().regex(USAGE_MONTH_PATTERN);
+
+/** The current month in the tenant's time zone. Reads the clock here so pages stay pure. */
+export function usageMonthNow(timeZone: string): string {
+  return currentUsageMonth(new Date(), timeZone);
+}

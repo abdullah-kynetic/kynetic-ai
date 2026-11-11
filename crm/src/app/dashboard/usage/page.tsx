@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { EmptyState } from '@/components/ui/states';
 import {
   canViewClientUsage,
-  currentUsageMonth,
+  usageMonthNow,
   getClientUsage,
   resolveUsageMonth
 } from '@/server/client-usage';
@@ -51,7 +51,7 @@ export default async function UsagePage({ searchParams }: { searchParams: Promis
   // A bad month in a hand-edited URL falls back to the current month.
   let month: string;
   try {
-    month = resolveUsageMonth(query.month, currentUsageMonth(new Date(), settings.timezone));
+    month = resolveUsageMonth(query.month, usageMonthNow(settings.timezone));
   } catch (err) {
     if (err instanceof ValidationError) redirect('/dashboard/usage');
     throw err;
