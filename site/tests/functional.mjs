@@ -128,13 +128,8 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
     await page.waitForTimeout(900);
   };
   await runFlow(0);
-  ok('application: lowest investment opens the /not-a-fit/ page', page.url().endsWith('/not-a-fit/') && (await page.locator('h1').innerText()).includes("not the right fit"));
-  ok('application: not-a-fit answers are still sent, flagged unqualified', posts.length === 1 && posts[0].qualified === false && posts[0].answers.invest === 'Under $5,000' && posts[0].phone === '2015550123' && posts[0].answers.niche === 'Other: Pest control' && posts[0].website === 'testco.com' && posts[0].company === 'Test Co');
-  // coming back resumes on the last step with the answer filled in, and changing it moves on to booking
-  await page.goto(base + '/', { waitUntil: 'load' }); await openAudit();
-  ok('resume: after not-a-fit the form reopens on step 7 with the answer filled in', await page.locator('.am [data-step="7"]').isVisible() && await page.locator('.am [data-step="7"] input:checked').getAttribute('value') === 'Under $5,000');
-  await page.locator('.am [data-step="7"] .am__opt').nth(2).click(); await page.waitForTimeout(900);
-  ok('application: changed answer shows the booking page and re-sends as an update', await page.locator('.am [data-step="book"]').isVisible() && (await page.locator('.am .cp__day-btn.is-open').count()) > 3 && !(await page.locator('.am iframe').count()) && posts.length === 2 && posts[1].qualified === true && posts[1].updated === true && posts[1].message.includes('QUALIFIED'));
+  ok('application: even the lowest investment band reaches the booking calendar', await page.locator('.am [data-step="book"]').isVisible() && (await page.locator('.am .cp__day-btn.is-open').count()) > 3 && !page.url().includes('not-a-fit'));
+  ok('application: low budget is flagged but the answers are sent', posts.length === 1 && posts[0].lowBudget === true && posts[0].message.includes('LOW BUDGET') && posts[0].answers.invest === 'Under $5,000' && posts[0].phone === '2015550123' && posts[0].answers.niche === 'Other: Pest control' && posts[0].website === 'testco.com' && posts[0].company === 'Test Co');
   await page.keyboard.press('Escape'); await page.waitForTimeout(200);
   await openAudit();
   ok('resume: after applying the form reopens on the calendar', await page.locator('.am [data-step="book"]').isVisible());

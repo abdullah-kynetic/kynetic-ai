@@ -1,12 +1,12 @@
 // "Apply for your free AI audit" overlay: a one-question-at-a-time application laid out like the
 // J&T Solutions one. Every audit button on the page (they link to the Cal booking page) opens it.
-// Seven steps, then one of two endings: a booking page (qualified) or "We're not the right fit yet"
-// (lowest investment answer). Every application is sent to the n8n contact webhook, qualified or not.
+// Seven steps, then the booking calendar for every answer. The lowest investment band is not turned away;
+// it is only flagged (`lowBudget`) in what is sent to the n8n contact webhook.
 // The answers travel as a readable `message` (works with today's workflow) and as structured fields
-// (`phone`, `company`, `website`, `answers`, `qualified`) for the upgraded workflow.
+// (`phone`, `company`, `website`, `answers`, `lowBudget`) for the upgraded workflow.
 // Progress is saved in this browser after every OK: closing or leaving and coming back reopens the
 // step they were on, with earlier answers filled in, and Back / OK walk through them (like J&T's).
-// "Not a fit" opens its own page (/not-a-fit/). Without JS the buttons still go to Cal.
+// Without JS the buttons still go to Cal.
 import { animate } from 'motion';
 import { reducedMotion } from './appear';
 import { mountPicker } from './cal-picker';
@@ -17,7 +17,7 @@ const CAL_SLUG = 'kynetic-ai-discovery-call';
 const CAL = `https://cal.com/${CAL_USER}/${CAL_SLUG}`;
 const LETTERS = 'ABCDEFGH';
 const OTHER = 'Something else';
-const DISQUALIFY_INVEST = 'Under $5,000';
+const LOW_INVEST = 'Under $5,000';
 
 type Step =
   | { n: number; key: string; label: string; kind: 'company'; q: string }
@@ -115,7 +115,7 @@ export function initAuditModal() {
   let timer: number | undefined;
 
   // ---- saved progress (this browser only) ----
-  type Saved = { booked?: string; step: string; v: Record<string, string>; stage?: 'applied'; qualified?: boolean; sent?: string; ts: number };
+  type Saved = { booked?: string; step: string; v: Record<string, string>; stage?: 'applied'; sent?: string; ts: number };
   const KEY = 'kn-apply-v1';
   const load = (): Saved | null => {
     try {
@@ -165,15 +165,13 @@ export function initAuditModal() {
     card.scrollTop = 0;
     if (!reducedMotion()) animate(next, { opacity: [0, 1], y: [14, 0] }, { type: 'spring', stiffness: 260, damping: 28 });
   };
-  // Where to resume: the saved step, the calendar after a qualified application, or the investment step
-  // (with its answer filled in) after a not-a-fit one.
+  // Where to resume: the saved step, or the calendar once the application was sent.
   const resume = () => {
     const s = load();
     if (!s) { show(1); return; }
     hydrate(s.v);
-    if (s.booked && s.stage === 'applied' && s.qualified) { location.assign(`/confirmation/?t=${encodeURIComponent(s.booked)}`); return; }
-    if (s.stage === 'applied' && s.qualified) { showBook(); return; }
-    if (s.stage === 'applied') { show(COUNT); return; }
+    if (s.booked && s.stage === 'applied') { location.assign(`/confirmation/?t=${encodeURIComponent(s.booked)}`); return; }
+    if (s.stage === 'applied') { showBook(); return; }
     show(STEPS.some((x) => String(x.n) === s.step) || s.step === '1' ? s.step : 1);
   };
   const open = (from?: HTMLElement | null) => {
@@ -325,9 +323,9 @@ export function initAuditModal() {
     const name = val(f1, 'name'), phone = val(f1, 'phone'), email = val(f1, 'email');
     const company = text('company'), site = val(form(2), 'site');
     const answers = Object.fromEntries(STEPS.filter((s) => s.kind !== 'company').map((s) => [s.key, text(s.key)]));
-    const qualified = answers.invest !== DISQUALIFY_INVEST;
+    const lowBudget = answers.invest === LOW_INVEST;
     const message = [
-      `AI audit application (${qualified ? 'QUALIFIED' : 'NOT A FIT YET: lowest investment band'})`,
+      `AI audit application${lowBudget ? ' (LOW BUDGET: under $5,000)' : ''}`,
       `Phone: ${phone} (agreed to calls and texts about the audit)`,
       `Business: ${company}${site ? ` (${site})` : ''}`,
       ...STEPS.filter((s) => s.kind !== 'company').map((s) => `${s.label}: ${answers[s.key]}`),
@@ -336,8 +334,8 @@ export function initAuditModal() {
     const prior = load();
     const fingerprint = JSON.stringify([name, phone, email, company, site, answers]);
     const finish = () => {
-      persist({ v: fields(), stage: 'applied', qualified, sent: fingerprint, step: String(COUNT) });
-      if (qualified) showBook(); else location.assign('/not-a-fit/');
+      persist({ v: fields(), stage: 'applied', sent: fingerprint, step: String(COUNT) });
+      showBook();
     };
     // Same answers already sent from this browser (they went Back and forward again): don't send twice.
     if (prior?.sent === fingerprint) { finish(); return; }
@@ -346,7 +344,7 @@ export function initAuditModal() {
     try {
       const res = await fetch(ENDPOINT, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, message, page: location.href, source: 'audit-application', phone, company, website: site, answers, qualified, updated: !!prior?.sent }),
+        body: JSON.stringify({ name, email, message, page: location.href, source: 'audit-application', phone, company, website: site, answers, lowBudget, updated: !!prior?.sent }),
       });
       if (!res.ok) throw new Error(String(res.status));
       finish();
