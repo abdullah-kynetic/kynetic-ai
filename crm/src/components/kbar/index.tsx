@@ -12,14 +12,16 @@ import { useFilteredNavGroups } from '@/hooks/use-nav';
 
 export default function KBar({
   children,
-  groups = clientNavGroups
+  groups = clientNavGroups,
+  role
 }: {
   children: React.ReactNode;
   groups?: NavGroup[];
+  role?: string;
 }) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
-  const filteredGroups = useFilteredNavGroups(groups);
+  const filteredGroups = useFilteredNavGroups(groups, role);
 
   // These action are for the navigation
   const actions = useMemo(() => {

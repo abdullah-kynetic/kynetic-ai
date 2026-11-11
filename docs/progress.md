@@ -2,6 +2,10 @@
 
 > **Canonical plan (2026-11-08, precedence restated 2026-11-08 PST; portal line 2026-11-09 PST):** the business roadmap, progress baseline and scorecard live in Twenty: roadmap note `7bfdcb7e`, baseline v1 note `603fe300`, scorecard note `5c44b12e`. GitHub owns technical tracking only (code, PRs, CI, deploy evidence: `docs/audit/2026-11-08-code-evidence.md`). The operating summary, offer, pricing precedence, and the docs-reconciliation journal are in `docs/STATUS.md`. `docs/codex/COMPLETION-PLAN.md` is historical evidence, not a competing roadmap. Do not keep a second editable acceptance list in this repo.
 
+## Client growth pages (2026-11-11)
+
+Lane A A1 on branch `lane-a/a1-reviews-referrals-usage`: Reviews, Referrals and Usage pages with migration `1020_client_growth_reviews_referrals`. Review requests queue only and referral rewards are tracked only; the usage page hides dollar cost. Not deployed. See KI-030 to KI-032.
+
 ## Agency sales tools (2026-11-10)
 
 Batch 4, merged as PR #150 (`main` `df8b61a651622c5bf0b3d1c1f8a86cb095c66b52`) and deployed to portal.kyneticai.com with migration `1017_agency_sales_tools`. The agency dialer can schedule a callback. Campaign steps are marked done, skipped, or rescheduled by an admin, and those steps do not send anything. Proposal PDFs download without a price. Contracts, expenses, referrals, and case studies are manual records. Admin document delete and replace are soft. `.xlsx` import reads stored cell values. Retell is parked on the Alex settings page. `PROVIDER_MODE=stub` and `OUTBOUND_ENABLED=false` unchanged.

@@ -1458,3 +1458,11 @@ Migration `1019_support_threads_category` adds `support_requests.category` (`gen
 ### Lane A A0 report projection (2026-11-11)
 
 No schema migration. Monthly JSON report artifacts add daily leads/booked, reached and attributed won counts, and the booking-guarantee result. Report detail first looks up the report under tenant RLS, then reads only `<authenticated tenant>/reports/<period_start>.json`. Missing artifacts compute from tenant daily metrics and the existing speed/guarantee formulas; old artifacts keep their stored totals with labelled computed supplements. No provider cost/billing projection reaches client charts.
+
+### Lane A A1 reviews, referrals and usage (2026-11-11)
+
+Migration `1020_client_growth_reviews_referrals.sql` adds two tenant-scoped tables with forced RLS and composite `(tenant_id, contact_id)` foreign keys.
+- `review_requests`: contact, channel (`sms`/`email`), status (`queued`/`sent`/`completed`/`cancelled`), requested and completed times, creator. `kynetic_app` and `kynetic_worker` have no UPDATE or DELETE. A request is only queued after `canContact` allows it; no adapter is called and nothing is sent while outbound messaging is off (P-A3).
+- `client_referrals`: referrer contact, optional referee contact (`ON DELETE SET NULL (referee_contact_id)` so the tenant column stays set), referee name and phone, status (`new`/`contacted`/`booked`/`won`/`lost`), `reward_cents`, `reward_status` (`none`/`pending`/`paid`), notes. A new referee becomes a contact with `source = 'referral'`; an existing live contact with the same phone is reused. Only the tenant owner edits reward fields.
+- `/dashboard/usage` adds no table. It reads `usage_daily` for minutes, calls, texts and emails and returns only the spend cap status, never a dollar amount. Owner (and Kynetic admin viewing as the client) only.
+- Navigation: Reviews (module `opm`), Referrals (module `crm`, level `full`), Usage (owner only). `visibleNavGroups` now also hides entries by `access.role`; admins keep owner entries.

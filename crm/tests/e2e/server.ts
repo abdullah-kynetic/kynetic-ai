@@ -100,6 +100,12 @@ async function main(): Promise<void> {
     on conflict (tenant_id, module_key) do update set enabled = true`;
   await db.admin`insert into presence_items (tenant_id, kind, title, status)
     values (${IDS.tenantA}, 'profile', 'Google Business Profile', 'in_progress')`;
+  // --- lane-a A1 fixtures ---
+  await db.admin`insert into review_requests (tenant_id, contact_id, channel, status)
+    values (${IDS.tenantA}, ${seeded.a.contactId}, 'sms', 'queued')`;
+  await db.admin`insert into client_referrals (tenant_id, referrer_contact_id, referee_name, status, reward_cents, reward_status)
+    values (${IDS.tenantA}, ${seeded.a.contactId}, 'Synthetic Referee', 'won', 7500, 'pending')`;
+  // --- end lane-a A1 fixtures ---
   await db.admin`insert into review_snapshots (tenant_id, source, captured_on, review_count, average_rating)
     values (${IDS.tenantA}, 'Google', date '2026-09-14', 23, 4.70)`;
   const [importBatch] =
