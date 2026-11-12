@@ -37,6 +37,11 @@ export const emails = {
   recoveryRegenerated: () => ({ subject: "Your recovery codes were replaced", ...notice("Recovery codes replaced", "A new set of recovery codes was generated for your admin account. Older codes no longer work.") }),
   emailChanged: (newEmail: string) => ({ subject: "The email on your Kynetic Portal account was changed", ...notice("Account email changed", `The sign-in email for your Kynetic Portal account was changed to ${newEmail}.`) }),
   magic: (url: string) => ({ subject: "Your Kynetic Portal sign-in link", ...wrap("Sign in to Kynetic Portal", "This link expires in 15 minutes and works once.", "Sign in", url) }),
+  verificationCode: (code: string) => ({
+    subject: "Your Kynetic Portal verification code",
+    text: `Your Kynetic Portal verification code is ${code}.\n\nIt expires in 10 minutes and works once. If you did not try to sign in, you can ignore this email.\n— Kynetic AI`,
+    html: `<div style="font-family:system-ui,sans-serif;max-width:480px;margin:auto;padding:24px;color:#111"><h2 style="margin:0 0 12px">Verify your sign-in</h2><p>Enter this code in Kynetic Portal:</p><p style="font-size:28px;font-weight:700;letter-spacing:6px">${code}</p><p style="color:#666;font-size:12px">This code expires in 10 minutes and works once. If you did not try to sign in, you can ignore this email.<br>— Kynetic AI</p></div>`,
+  }),
   reset: (url: string) => ({ subject: "Reset your Kynetic Portal password", ...wrap("Reset your password", "This link expires in 30 minutes and works once.", "Choose a new password", url) }),
   invite: (url: string, clientName: string) => ({ subject: `You're invited to the ${clientName} portal`, ...wrap("Welcome to Kynetic Portal", `You've been invited to view ${clientName}'s project with Kynetic AI. The link expires in 7 days.`, "Set up your account", url) }),
 };

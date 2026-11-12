@@ -24,8 +24,8 @@ export function LoginForm({ next }: { next?: string }) {
           <input type="hidden" name="email" value={email} />
           <input type="hidden" name="password" value={password} />
           <p className="text-sm text-muted">Signing in as <span className="text-foreground">{email}</span></p>
-          <Field label="Authenticator or recovery code" htmlFor="totp" hint="The 6-digit code from your app, or one of your one-time recovery codes.">
-            <Input id="totp" name="totp" autoComplete="one-time-code" inputMode="text" maxLength={16} required autoFocus />
+          <Field label="Email verification code" htmlFor="totp" hint="Enter the 6-digit code we sent to your email.">
+            <Input id="totp" name="totp" autoComplete="one-time-code" inputMode="numeric" maxLength={6} pattern="[0-9]{6}" required autoFocus />
           </Field>
           <label className="flex items-center gap-2 text-sm text-muted">
             <input type="checkbox" name="remember" className="h-4 w-4" />

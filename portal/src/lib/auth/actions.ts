@@ -17,7 +17,7 @@ import { consumeToken, issueToken } from "./tokens";
 import { findByEmail } from "./authenticate";
 import { hashPassword, newPasswordProblem, verifyPassword } from "./password";
 import { newTotpSecret, totpUri, checkTotp } from "./totp";
-import { generateRecoveryCodes, looksLikeRecoveryCode } from "./recovery";
+import { generateRecoveryCodes } from "./recovery";
 import { DEVICE_COOKIE, DEVICE_MAX_AGE_SEC, issueDeviceToken } from "./device";
 import { googleEnabled } from "./google";
 import { getSession, requireUser } from "./session";
@@ -28,8 +28,8 @@ const MESSAGES: Record<string, string> = {
   invalid: "Incorrect email or password.",
   locked: "Too many failed attempts. Try again in 15 minutes.",
   rate_limited: "Too many attempts. Please wait a few minutes.",
-  mfa_required: "Enter the 6-digit code from your authenticator app.",
-  invalid_totp: "That code didn't work. Try the next one.",
+  mfa_required: "We sent a 6-digit verification code to your email.",
+  invalid_totp: "That verification code didn't work. Request a new one and try again.",
   invalid_link: "This link is invalid, expired, or already used.",
 };
 
@@ -45,12 +45,12 @@ function authFailure(e: unknown): FormState {
 /** Only allow same-site relative redirects. */
 const safeNext = (v: unknown) => (typeof v === "string" && v.startsWith("/") && !v.startsWith("//") && !v.startsWith("/\\") ? v : "/");
 
-/** After a successful admin sign-in with a real authenticator code and "remember this device" ticked, set the trusted-device cookie. */
+/** After a successful password + email-code sign-in, set the 30-day trusted-device cookie. */
 async function rememberDevice(fd: FormData) {
-  const totp = String(fd.get("totp") ?? "").trim();
-  if (fd.get("remember") !== "on" || !totp || looksLikeRecoveryCode(totp)) return;
+  const code = String(fd.get("totp") ?? "").trim();
+  if (fd.get("remember") !== "on" || !/^\d{6}$/.test(code)) return;
   const u = await findByEmail(String(fd.get("email") ?? "").trim().toLowerCase());
-  if (!u || u.role !== "admin" || !u.totpEnabled || !u.totpSecretEnc) return;
+  if (!u) return;
   (await cookies()).set(DEVICE_COOKIE, issueDeviceToken(u), {
     httpOnly: true, sameSite: "lax", secure: env.isProd, path: "/", maxAge: DEVICE_MAX_AGE_SEC,
   });

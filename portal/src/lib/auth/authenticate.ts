@@ -4,10 +4,7 @@ import { users } from "../db/schema";
 import { withScope } from "../db/scoped";
 import { hit, ipFrom } from "../rate-limit";
 import { verifyPassword } from "./password";
-import { checkTotp } from "./totp";
-import { decrypt } from "../crypto";
-import { consumeToken, peekToken } from "./tokens";
-import { consumeRecoveryCode, looksLikeRecoveryCode, remainingRecoveryCodes } from "./recovery";
+import { consumeToken, consumeUserToken, issueEmailCode, peekToken } from "./tokens";
 import { emails, sendEmail } from "../email";
 import { audit } from "../audit";
 import { isTrustedDevice } from "./device";
@@ -32,29 +29,13 @@ async function recordFailure(u: User) {
   }).where(eq(users.id, u.id)));
 }
 
-async function recordSuccess(u: User, totpStep: number | null) {
+async function recordSuccess(u: User) {
   await withScope({ role: "system" }, (tx) => tx.update(users).set({
-    failedLogins: 0, lockedUntil: null, lastLoginAt: new Date(), ...(totpStep !== null ? { totpLastStep: totpStep } : {}),
+    failedLogins: 0, lockedUntil: null, lastLoginAt: new Date(),
   }).where(eq(users.id, u.id)));
 }
 
 const isLocked = (u: User) => !!u.lockedUntil && u.lockedUntil > new Date();
-const needsTotp = (u: User) => u.role === "admin" && u.totpEnabled && !!u.totpSecretEnc;
-
-/** Returns the matched TOTP step, "recovery" (a one-time recovery code was burned), "missing" or "invalid". */
-async function verifySecondFactor(u: User, code: string): Promise<number | "recovery" | "missing" | "invalid"> {
-  if (!code.trim()) return "missing";
-  if (looksLikeRecoveryCode(code)) return (await consumeRecoveryCode(u.id, code)) ? "recovery" : "invalid";
-  const step = await checkTotp(decrypt(u.totpSecretEnc!), code, u.totpLastStep ?? null);
-  return step === null ? "invalid" : step;
-}
-
-/** A recovery code was used to sign in: leave an audit trail and tell the user. */
-async function afterRecoveryUse(u: User) {
-  const left = await remainingRecoveryCodes(u.id);
-  await withScope({ role: "system" }, (tx) => audit(tx, { actorUserId: u.id, action: "admin.recovery_code_used", meta: { remaining: left } }));
-  await sendEmail({ to: u.email, ...emails.recoveryUsed(left) }).catch(() => {});
-}
 
 export async function authenticatePassword(input: { email: string; password: string; totp: string }, headers: Headers): Promise<AuthResult> {
   const ip = ipFrom(headers);
@@ -66,14 +47,20 @@ export async function authenticatePassword(input: { email: string; password: str
   if (!u || u.disabledAt) return { ok: false, code: "invalid" };
   if (isLocked(u)) return { ok: false, code: "locked" };
   if (!pwOk) { await recordFailure(u); return { ok: false, code: "invalid" }; }
-  let step: number | null = null;
-  if (needsTotp(u) && !(input.totp.trim() === "" && isTrustedDevice(u, headers))) {
-    const r = await verifySecondFactor(u, input.totp);
-    if (r === "missing") return { ok: false, code: "mfa_required" };
-    if (r === "invalid") { await recordFailure(u); return { ok: false, code: "invalid_totp" }; }
-    if (r === "recovery") await afterRecoveryUse(u); else step = r;
+  if (input.totp.trim() === "" && isTrustedDevice(u, headers)) {
+    await recordSuccess(u);
+    return { ok: true, userId: u.id, sessionVersion: u.sessionVersion };
   }
-  await recordSuccess(u, step);
+  if (!input.totp.trim()) {
+    const code = await issueEmailCode(u.id);
+    await sendEmail({ to: u.email, ...emails.verificationCode(code) });
+    return { ok: false, code: "mfa_required" };
+  }
+  if (!(await consumeUserToken(input.totp.trim(), "email_code", u.id))) {
+    await recordFailure(u);
+    return { ok: false, code: "invalid_totp" };
+  }
+  await recordSuccess(u);
   return { ok: true, userId: u.id, sessionVersion: u.sessionVersion };
 }
 
@@ -84,16 +71,9 @@ export async function authenticateMagic(input: { token: string; totp: string }, 
   const u = peek.user;
   if (u.disabledAt) return { ok: false, code: "invalid_link" };
   if (isLocked(u)) return { ok: false, code: "locked" };
-  let step: number | null = null;
-  if (needsTotp(u) && !(input.totp.trim() === "" && isTrustedDevice(u, headers))) {
-    const r = await verifySecondFactor(u, input.totp);
-    if (r === "missing") return { ok: false, code: "mfa_required" };
-    if (r === "invalid") { await recordFailure(u); return { ok: false, code: "invalid_totp" }; }
-    if (r === "recovery") await afterRecoveryUse(u); else step = r;
-  }
   const consumedBy = await consumeToken(input.token, "magic");
   if (consumedBy !== u.id) return { ok: false, code: "invalid_link" };
-  await recordSuccess(u, step);
+  await recordSuccess(u);
   return { ok: true, userId: u.id, sessionVersion: u.sessionVersion };
 }
 

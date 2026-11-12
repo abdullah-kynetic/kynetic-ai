@@ -8,7 +8,7 @@ export const clientStatusEnum = pgEnum("client_status", ["onboarding", "active",
 export const phaseEnum = pgEnum("milestone_phase", ["kickoff", "build", "testing", "go_live"]);
 export const milestoneStatusEnum = pgEnum("milestone_status", ["upcoming", "in_progress", "done"]);
 export const scopeStatusEnum = pgEnum("scope_status", ["planned", "in_progress", "done"]);
-export const tokenTypeEnum = pgEnum("auth_token_type", ["magic", "reset", "invite"]);
+export const tokenTypeEnum = pgEnum("auth_token_type", ["magic", "reset", "invite", "email_code"]);
 
 const id = () => uuid("id").primaryKey().default(sql`gen_random_uuid()`);
 const createdAt = () => timestamp("created_at", { withTimezone: true }).notNull().defaultNow();

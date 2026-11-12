@@ -1,20 +1,17 @@
 import "server-only";
-import { createHash, createHmac } from "node:crypto";
+import { createHmac } from "node:crypto";
 import { env } from "../env";
 import { safeEqual } from "../crypto";
 
-/** "Remember this device" for admins: a signed cookie that skips the authenticator code (never the password). */
+/** "Remember this device": a signed cookie that skips the email code (never the password). */
 export const DEVICE_COOKIE = "kp_td";
 export const DEVICE_MAX_AGE_SEC = 60 * 60 * 24 * 30;
 
-type Subject = { id: string; sessionVersion: number; totpSecretEnc: string | null };
+type Subject = { id: string; sessionVersion: number };
 
-// Bound to the session version (a password change/reset revokes every trusted device) and to the
-// TOTP secret (re-enrolling the authenticator revokes them too).
-const sign = (u: Subject, exp: number) => {
-  const fp = createHash("sha256").update(u.totpSecretEnc ?? "").digest("hex").slice(0, 16);
-  return createHmac("sha256", env.encryptionKey).update(`trusted-device.v1.${u.id}.${exp}.${u.sessionVersion}.${fp}`).digest("base64url");
-};
+// Bound to the session version so a password change/reset revokes every trusted device.
+const sign = (u: Subject, exp: number) => createHmac("sha256", env.encryptionKey)
+  .update(`trusted-device.v2.${u.id}.${exp}.${u.sessionVersion}`).digest("base64url");
 
 export function issueDeviceToken(u: Subject, now = Date.now()): string {
   const exp = Math.floor(now / 1000) + DEVICE_MAX_AGE_SEC;

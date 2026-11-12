@@ -6,11 +6,11 @@ import { peekToken } from "./tokens";
 
 // Read-only helpers for the magic-link and invite pages (server components). Not server actions.
 
-/** Does this magic token belong to an admin with MFA (so the page should show a code field)? */
+/** Magic links already verify the user's email; no additional authenticator field is shown. */
 export async function magicNeedsTotp(token: string): Promise<boolean | null> {
   const p = await peekToken(token, "magic");
   if (!p) return null;
-  return p.user.role === "admin" && p.user.totpEnabled;
+  return false;
 }
 
 /** Invite page: show who the invite is for without consuming it. Returns only what that invitee may see. */
