@@ -370,3 +370,10 @@ Entry instructions now start at that file. Historical operating orders (Retell a
 
 Follow-up the same evening, still docs only: the parent verified a parallel Twenty cleanup (11 notes and 23 tasks updated, readback of all 34, all 63 tasks mapped, missing Step 2 tag fixed, baseline `603fe300` unchanged, 88 notes and 63 tasks at 52 TODO / 4 IN_PROGRESS / 7 DONE). Direction, provider, one CRM, and the guarantee were reconciled there, with history kept. Stale due dates, schema, customer records, live systems, and Claude-only files were left untouched. This repo pass did not read Twenty. The counts are the parent's verification.
 
+
+
+### 2026-11-12 — phase protocol and verify command
+
+Repo only, on `claude/project-thread-sjodi0`. Nothing deployed, changed on a server, or sent. Added `docs/phases/` (README, protocol, report template, `phase-0.md` to `phase-6.md`) from the Nov 12 audit and build plan, reordered by Abdullah so automations, n8n and the AI layer come last. Added `crm/scripts/verify.sh` with `bun run verify`, `verify:quick` and `verify:e2e`: it runs what CI runs, prints a pass/fail table, and counts a step that could not run (no Postgres) as not passed. Added `.github/workflows/tools-ci.yml` so the Python tool tests run in CI.
+
+Audit facts recorded in the phase files: nightly backups fail (Postgres 15 client against Postgres 16, KI-034 in PR #162); `/api/health` hardcodes the queue check and reports no commit; core CRM gaps are custom field values on records (F-12, unused detail component, gated to the retired CRM Full level), no client-side import, no compose or two-way inbox, no outside calendar sync. Local run on a fresh clone: `bun run verify` passed every step (typecheck, lint, format, 577 unit tests, integration tests, deploy-script rehearsal, build). Without `LOAD_P95_MS=5000` the p95 search benchmark fails on a shared machine, as noted on 2026-11-02; CI and `verify.sh` set it.
