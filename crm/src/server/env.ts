@@ -34,6 +34,9 @@ export const envSchema = z.object({
   ADMIN_ALERT_EMAIL_ENABLED: booleanString.default(false),
   // Weekly client email and the monthly report link. Both also need the per-client toggle.
   CLIENT_EMAIL_ENABLED: booleanString.default(false),
+  // Lets Kynetic staff sign in with an emailed code, with no authenticator, for a 30 day session.
+  // Off by default: staff then use Google plus an authenticator app and 7 day sessions.
+  STAFF_EMAIL_LOGIN: booleanString.default(false),
   // AU-28. Off until counsel approves the Terms and Privacy wording.
   TERMS_GATE_ENABLED: booleanString.default(false),
   // `stub` is an explicit deployment/test setting; default live mode keeps production fail-closed.

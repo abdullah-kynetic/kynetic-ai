@@ -24,7 +24,7 @@ export default async function SignInPage({
   return (
     <AuthFrame
       title='Log in'
-      lede='For people who already have access. Clients enter a one-time email code. Kynetic staff use Google.'
+      lede='For people who already have access. Enter a one-time email code. Kynetic staff use Google, or an email code when the portal allows it.'
     >
       {error && ERRORS[error] && (
         <p role='alert' className='text-destructive mb-4 text-sm'>

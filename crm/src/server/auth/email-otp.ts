@@ -22,6 +22,8 @@ export type EmailOtpDeps = {
   baseUrl: string;
   auth: Auth;
   sendCode: (msg: SignInCodeMessage) => Promise<void>;
+  /** STAFF_EMAIL_LOGIN: staff may use an emailed code instead of Google and an authenticator. */
+  staffEmailLogin?: boolean;
 };
 
 export type EmailOtpVerifyResult =
@@ -80,7 +82,7 @@ export async function requestEmailOtp(
 ): Promise<{ ok: true; message: string }> {
   const normalized = email.trim().toLowerCase();
   const gate = await evaluateGate(deps.db, normalized);
-  if (!gate.allowed || gate.staff) {
+  if (!gate.allowed || (gate.staff && !deps.staffEmailLogin)) {
     await auditOtp(deps.db, normalized, 'auth.otp_suppressed', {
       reason: gate.allowed ? 'staff' : gate.reason
     });
@@ -153,7 +155,7 @@ async function consumeCode(deps: EmailOtpDeps, email: string, code: string): Pro
 
 /**
  * Checks a code, opens a session for an allowed client address, and accepts pending invitations.
- * Failures share one message. Staff never get a session from a code.
+ * Failures share one message. Staff only get a session from a code when STAFF_EMAIL_LOGIN is on.
  */
 export async function verifyEmailOtp(
   deps: EmailOtpDeps,
@@ -168,7 +170,7 @@ export async function verifyEmailOtp(
   }
 
   const gate = await evaluateGate(deps.db, normalized);
-  if (!gate.allowed || gate.staff) {
+  if (!gate.allowed || (gate.staff && !deps.staffEmailLogin)) {
     await auditOtp(deps.db, normalized, 'auth.otp_failed', {
       reason: gate.allowed ? 'staff' : gate.reason
     });

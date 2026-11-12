@@ -104,6 +104,61 @@ describe('client email code sign-in', () => {
     expect(audit.after.reason).toBe('staff');
   });
 
+  it('with STAFF_EMAIL_LOGIN on, an admin signs in by code with no authenticator for 30 days', async () => {
+    sent = [];
+    await requestEmailOtp({ ...deps(), staffEmailLogin: true }, 'admin@example.test');
+    const code = sent[0]?.code;
+    expect(code).toMatch(/^\d{6}$/);
+    // Off: the same code is refused for staff.
+    expect(await verifyEmailOtp(deps(), 'admin@example.test', code!)).toEqual({
+      ok: false,
+      message: EMAIL_CODE_FAILED_MESSAGE
+    });
+    sent = [];
+    await requestEmailOtp({ ...deps(), staffEmailLogin: true }, 'admin@example.test');
+    const verified = await verifyEmailOtp(
+      { ...deps(), staffEmailLogin: true },
+      'admin@example.test',
+      sent[0]!.code
+    );
+    expect(verified.ok).toBe(true);
+    if (!verified.ok) return;
+    const headers = cookieHeader(verified.setCookie);
+    const user = await getSessionUser(headers, {
+      db: createDb(db.auth),
+      auth,
+      staffEmailLogin: true
+    });
+    expect(user?.kyneticRole).toBe('admin');
+    expect(user?.twoFactor).toBe('verified');
+    // Without the setting the same session still needs the authenticator.
+    const strict = await getSessionUser(headers, {
+      db: createDb(db.auth),
+      auth,
+      staffEmailLogin: false
+    });
+    expect(['enrol', 'challenge']).toContain(strict?.twoFactor);
+    // 29 days old is still valid, 31 days is not.
+    const day = 24 * 60 * 60 * 1000;
+    const inDays = (n: number) => new Date(Date.now() + n * day);
+    expect(
+      await getSessionUser(headers, {
+        db: createDb(db.auth),
+        auth,
+        staffEmailLogin: true,
+        now: inDays(29)
+      })
+    ).not.toBeNull();
+    expect(
+      await getSessionUser(headers, {
+        db: createDb(db.auth),
+        auth,
+        staffEmailLogin: true,
+        now: inDays(31)
+      })
+    ).toBeNull();
+  });
+
   it('accepts a pending invitation and asks for a profile when the name is empty', async () => {
     const code = await request('invitee-a@example.test');
     expect(code).toBeTruthy();

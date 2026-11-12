@@ -184,3 +184,6 @@ Found 2026-11-11. `/dashboard/referrals` records a reward amount and a pending o
 
 ### KI-032: Client usage page hides dollar cost (low)
 Found 2026-11-11. SPEC 01 in Twenty lists the usage page as "minutes, cost, cap" and marks it blocked on "do clients see cost?". The page shows minutes, calls, texts, emails and a cap status chip only. Add cost only after Abdullah decides.
+
+### KI-033: Staff email-code login removes the authenticator step (medium)
+Found 2026-11-12. At Abdullah's request, `STAFF_EMAIL_LOGIN=true` lets a Kynetic admin or VA sign in with a 6-digit emailed code, with no authenticator app and a 30 day session. Anyone who controls that mailbox then has admin access, so the mailbox needs its own strong sign-in. It is off by default. Codes are sent through Resend, so `RESEND_API_KEY` must be set on the server or no code arrives. Google staff sign-in still works; with the setting on it also skips the authenticator. Turning the setting off restores Google plus authenticator and 7 day sessions.
