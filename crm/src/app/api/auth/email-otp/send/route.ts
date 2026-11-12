@@ -22,6 +22,7 @@ export async function POST(request: Request) {
         secret: env.BETTER_AUTH_SECRET,
         baseUrl: env.APP_BASE_URL,
         auth: getAuth(),
+        staffEmailLogin: env.STAFF_EMAIL_LOGIN,
         sendCode: sendSignInCode
       },
       email

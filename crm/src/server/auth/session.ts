@@ -3,6 +3,7 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { and, eq, gt, isNull } from 'drizzle-orm';
 import { getAuthDb, type Db } from '../db/client';
 import * as schema from '../db/schema';
+import { getEnv } from '../env';
 import { getAuth } from './index';
 import { authUsers } from './auth-schema';
 import {
@@ -64,7 +65,17 @@ export type SessionDeps = {
   db?: Db;
   auth?: Pick<SessionAuth, 'api'> | Pick<Auth, 'api'>;
   now?: Date;
+  /** Defaults to the STAFF_EMAIL_LOGIN setting. */
+  staffEmailLogin?: boolean;
 };
+
+function staffEmailLoginEnabled(): boolean {
+  try {
+    return getEnv().STAFF_EMAIL_LOGIN;
+  } catch {
+    return false;
+  }
+}
 
 /** A signed cookie must resolve to a live, unexpired DB session and a current enabled user. */
 export async function getVerifiedSessionUser(
@@ -112,7 +123,8 @@ export async function getVerifiedSessionUser(
       .limit(1);
     if (!row || row.disabledAt || row.expiresAt <= now) return null;
     const staff = row.kyneticRole === 'admin' || row.kyneticRole === 'va';
-    if (sessionExpired(row, staff, now)) return null;
+    const staffEmailLogin = deps.staffEmailLogin ?? staffEmailLoginEnabled();
+    if (sessionExpired(row, staff, now, staffEmailLogin)) return null;
     const verified =
       row.twoFactorVerifiedAt &&
       row.twoFactorVerifiedAt >= row.createdAt &&
@@ -124,11 +136,13 @@ export async function getVerifiedSessionUser(
       kyneticRole: staff ? (row.kyneticRole as 'admin' | 'va') : null,
       twoFactor: !staff
         ? 'not_required'
-        : !row.twoFactorEnabled
-          ? 'enrol'
-          : verified
-            ? 'verified'
-            : 'challenge'
+        : staffEmailLogin
+          ? 'verified'
+          : !row.twoFactorEnabled
+            ? 'enrol'
+            : verified
+              ? 'verified'
+              : 'challenge'
     };
   } catch {
     // Never pass a provider/DB error containing session material into Next's logs.
