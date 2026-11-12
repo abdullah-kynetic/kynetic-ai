@@ -2,6 +2,10 @@
 
 Mirror of the Twenty decision notes. Twenty is the business source of truth. On a mismatch, flag both values. Do not reopen these without asking. This GitHub pass did not read Twenty. The parallel cleanup is the parent-reported verification in `docs/STATUS.md`.
 
+## Source of truth moved to the portal (2026-11-12)
+
+Supersedes every line below that calls Twenty the business source of truth. The portal in `crm/` is where lead, client and call data is written; Twenty is a read-only safety copy and its planning records are in `docs/roadmap/`. See `docs/STATUS.md`.
+
 ## Precedence note (2026-11-08 PST)
 
 No new D-number. Twenty and this file already number decisions differently after Oct 24 (see the note on D-025). Assigning the next integer here would pretend to be the next Twenty decision.

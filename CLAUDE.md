@@ -1,6 +1,6 @@
 # Agent Instructions
 
-Kynetic AI repo. Twenty CRM (crm.kyneticai.com) is the business source of truth. GitHub is the technical execution record. On a mismatch, flag it with both values. Current operating order: `docs/STATUS.md`. `AGENTS.md` carries the same hard rules for every agent.
+Kynetic AI repo. The client portal (`crm/`, portal.kyneticai.com) is the source of truth for lead, client and call data (2026-11-12). Twenty CRM (crm.kyneticai.com) is frozen as a read-only safety copy; its planning notes and tasks are archived in `docs/roadmap/`. GitHub is the technical execution record. On a mismatch, flag it with both values. Current operating order: `docs/STATUS.md`. `AGENTS.md` carries the same hard rules for every agent.
 
 Portal line (2026-11-09 PST): `main` is the single portal build for production at portal.kyneticai.com. A deploy still needs an explicit yes. The separate DEV environment is retired until after go-live. Do not continue `dev/codex-setup`. `docs/codex/COMPLETION-PLAN.md` is historical evidence, not the plan.
 
