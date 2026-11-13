@@ -1,0 +1,1239 @@
+{
+  "active": false,
+  "connections": {
+    "Auth Check — DB1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Contact Found?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Clean Agent Output": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Send Reply — Staff",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Expense Logged?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Contact Found?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Reject — Not Registered",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Correct Bot?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Correct Bot?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Set Context",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Reject — Wrong Bot",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Dev Alert — Error",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Health Log — Failure",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Expense Logged?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Notify Admin — Expense",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Send Reply — Staff",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Log Inbound — DB7": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Staff Bot Agent",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Log Outbound — DB7": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Health Log — Success",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Notify Admin — Expense": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Send Reply — Staff",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "Staff Bot Agent",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Send Reply — Staff": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Log Outbound — DB7",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Set Context": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Log Inbound — DB7",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "index": 0,
+            "node": "Staff Bot Agent",
+            "type": "ai_memory"
+          }
+        ]
+      ]
+    },
+    "Staff Bot Agent": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Clean Agent Output",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Telegram — Staff Bot": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Auth Check — DB1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "check_attendance_history": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "Staff Bot Agent",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "check_expense_history": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "Staff Bot Agent",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "kb_lookup": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "Staff Bot Agent",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "log_attendance": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "Staff Bot Agent",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "log_expense": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "Staff Bot Agent",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "B5BGVXmJvAdTsQAt",
+  "name": "WF — Seekers Youth Staff Bot",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "qd3uLLQZsMm4E9Wm",
+          "name": "seekers staff demo"
+        }
+      },
+      "id": "2d1e17d9-8748-423d-9b15-05a4b4d96a3f",
+      "name": "Telegram — Staff Bot",
+      "parameters": {
+        "additionalFields": {},
+        "updates": [
+          "message"
+        ]
+      },
+      "position": [
+        0,
+        -32
+      ],
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "webhookId": "6f825127-e3de-45a6-907f-085c5e841a42"
+    },
+    {
+      "credentials": {
+        "notionApi": {
+          "id": "CIFjfffTWCRCna5M",
+          "name": "Notion account 2"
+        }
+      },
+      "id": "b68f8b75-e9b3-4cff-9cd8-c0ac21fa18b3",
+      "maxTries": 3,
+      "name": "Auth Check — DB1",
+      "parameters": {
+        "databaseId": {
+          "__rl": true,
+          "cachedResultName": "Contacts",
+          "cachedResultUrl": "https://app.notion.com/p/REDACTED_NOTION_DATABASE_ID",
+          "mode": "list",
+          "value": "REDACTED_NOTION_DATABASE_ID"
+        },
+        "filterType": "manual",
+        "filters": {
+          "conditions": [
+            {
+              "condition": "equals",
+              "key": "Channel ID|rich_text",
+              "richTextValue": "={{ $json.message.from.id.toString() }}"
+            }
+          ]
+        },
+        "limit": 1,
+        "operation": "getAll",
+        "options": {},
+        "resource": "databasePage",
+        "simple": false
+      },
+      "position": [
+        224,
+        -32
+      ],
+      "retryOnFail": true,
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "waitBetweenTries": 1000
+    },
+    {
+      "id": "b4e26152-d5ce-4454-bb3d-d5edf01f7fbc",
+      "name": "Contact Found?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "contact-found-check",
+              "leftValue": "={{ $json.id }}",
+              "operator": {
+                "operation": "isNotEmpty",
+                "type": "string"
+              },
+              "rightValue": ""
+            },
+            {
+              "id": "ad1987ad-8e5c-4249-87bc-99d2155328c3",
+              "leftValue": "={{ $json.object }}",
+              "operator": {
+                "operation": "equals",
+                "type": "string"
+              },
+              "rightValue": "page"
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          }
+        },
+        "options": {
+          "ignoreCase": false
+        }
+      },
+      "position": [
+        448,
+        -32
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3
+    },
+    {
+      "id": "30915e77-0a5a-4b0e-93fc-a5bd1539596d",
+      "name": "Correct Bot?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "6e0a9ede-ff72-42e8-bf12-96846f3c1f7a",
+              "leftValue": "={{ $json.properties.Bot.select.name }}",
+              "operator": {
+                "operation": "equals",
+                "type": "string"
+              },
+              "rightValue": "Staff Bot"
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        672,
+        64
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3
+    },
+    {
+      "id": "d410256a-fcdd-414f-abd2-011a647270bc",
+      "name": "Set Context",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ctx-senderName",
+              "name": "senderName",
+              "type": "string",
+              "value": "={{ $json.properties.Name.title[0].plain_text }}"
+            },
+            {
+              "id": "ctx-senderRole",
+              "name": "senderRole",
+              "type": "string",
+              "value": "={{ $json.properties.Role.select.name }}"
+            },
+            {
+              "id": "ctx-senderSatellite",
+              "name": "senderSatellite",
+              "type": "string",
+              "value": "={{ $json.properties['Satellite Name']?.rollup?.array?.[0]?.title?.[0]?.plain_text ?? 'their satellite' }}"
+            },
+            {
+              "id": "ctx-senderSatelliteIds",
+              "name": "senderSatelliteIds",
+              "type": "array",
+              "value": "={{ ($json.properties.Satellite.relation || []).map(r => r.id) }}"
+            },
+            {
+              "id": "ctx-senderContactId",
+              "name": "senderContactId",
+              "type": "string",
+              "value": "={{ $json.id }}"
+            },
+            {
+              "id": "ctx-senderChatId",
+              "name": "senderChatId",
+              "type": "string",
+              "value": "={{ $('Telegram — Staff Bot').item.json.message.from.id }}"
+            },
+            {
+              "id": "ctx-sessionId",
+              "name": "sessionId",
+              "type": "string",
+              "value": "={{ $('Telegram — Staff Bot').item.json.message.from.id }}"
+            },
+            {
+              "id": "ctx-messageText",
+              "name": "messageText",
+              "type": "string",
+              "value": "={{ $('Telegram — Staff Bot').item.json.message.text }}"
+            },
+            {
+              "id": "ctx-messageId",
+              "name": "messageId",
+              "type": "string",
+              "value": "={{ $('Telegram — Staff Bot').item.json.message.message_id }}"
+            },
+            {
+              "id": "ctx-timestamp",
+              "name": "timestamp",
+              "type": "string",
+              "value": "={{ new Date($('Telegram — Staff Bot').item.json.message.date * 1000).toISOString() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        896,
+        -32
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "c80e63bb-ca75-4d31-bb37-7022f398bfbb",
+      "name": "Staff Bot Agent",
+      "parameters": {
+        "options": {
+          "maxIterations": 10,
+          "systemMessage": "=You are the Seekers Youth Staff Assistant — a warm, professional AI assistant for program directors and volunteers.\n\nThe person messaging you is {{ $(\"Set Context\").item.json.senderName }}, a {{ $(\"Set Context\").item.json.senderRole }} at {{ $(\"Set Context\").item.json.senderSatellite }}.\n\nYOUR CAPABILITIES:\n1. Log session attendance\n2. Answer program questions using the knowledge base\n3. Submit expense reimbursement requests\n4. Check recent submission history to prevent duplicates\n\nRULES:\n- Always greet warmly. Use \"JazakAllah khair\" where appropriate.\n- For attendance: extract program name, date (default today if not mentioned), attendance count, satellite (use sender satellite unless stated otherwise), incidents, notes. Before logging, call check_attendance_history — if a matching entry exists in the last 24 hours, tell the director and do not log again unless they explicitly confirm it is a new session. Confirm back everything you logged.\n- For questions about policy, rules, Islamic practice, or logistics: ALWAYS call kb_lookup first. Never answer from your own knowledge on these topics. If kb_lookup returns nothing say: I do not have an approved answer for that - please check with your program administrator.\n- For expenses: get description and amount clearly before logging. Infer category from description (Supplies/Transport/Food/Other). Before logging, call check_expense_history — if a matching entry exists in the last 24 hours, tell the director and do not log again unless they explicitly confirm it is a new expense.\n- Keep replies under 3 sentences unless reading back a logged record.\n- Never discuss topics outside of program operations.\n- Never invent information.\n- If you log an expense successfully, the log_expense tool result includes the created page's \"Expense Code\" property (shape: {\"unique_id\":{\"prefix\":\"EXP\",\"number\":N}}). Read that number and end your reply with exactly: EXPENSE_LOGGED:EXP-N (using the real number). Never omit it and never invent one."
+        },
+        "promptType": "define",
+        "text": "={{ $('Set Context').item.json.messageText }}"
+      },
+      "position": [
+        1376,
+        -32
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "bdd92c1f-22e8-4481-8dcc-0f7d49584bf8",
+      "maxTries": 3,
+      "name": "log_attendance",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REDACTED_NOTION_DATABASE_ID"
+        },
+        "options": {},
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Attendance|number",
+              "numberValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('attendance_count', 'Number of youth who attended') }}",
+              "type": "number"
+            },
+            {
+              "key": "Satellite|relation",
+              "relationValue": "={{ $('Set Context').item.json.senderSatelliteIds }}",
+              "type": "relation"
+            },
+            {
+              "key": "Director|relation",
+              "relationValue": "={{ [$('Set Context').item.json.senderContactId] }}",
+              "type": "relation"
+            },
+            {
+              "key": "Source|select",
+              "selectValue": "Telegram Intake",
+              "type": "select"
+            },
+            {
+              "key": "Incidents|rich_text",
+              "textContent": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('incidents', 'Any incidents during the session, or empty string if none') }}",
+              "type": "rich_text"
+            },
+            {
+              "key": "Notes|rich_text",
+              "textContent": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('notes', 'Any additional notes, or empty string if none') }}",
+              "type": "rich_text"
+            }
+          ]
+        },
+        "resource": "databasePage",
+        "title": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('program_name', 'The name of the program or session') }}"
+      },
+      "position": [
+        1376,
+        192
+      ],
+      "retryOnFail": true,
+      "type": "n8n-nodes-base.notionTool",
+      "typeVersion": 2.2,
+      "waitBetweenTries": 1000
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "a7a6f8f4-5b39-486c-8031-acfde0b8d2a6",
+      "maxTries": 3,
+      "name": "kb_lookup",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REDACTED_NOTION_DATABASE_ID"
+        },
+        "filterType": "manual",
+        "filters": {
+          "conditions": [
+            {
+              "condition": "contains",
+              "key": "Topic|title",
+              "richTextValue": "={{ $fromAI(\"keyword\", \"A keyword extracted from the question\") }}"
+            },
+            {
+              "checkboxValue": true,
+              "condition": "equals",
+              "key": "Scholar Approved|checkbox"
+            }
+          ]
+        },
+        "limit": 3,
+        "operation": "getAll",
+        "options": {},
+        "resource": "databasePage"
+      },
+      "position": [
+        1504,
+        192
+      ],
+      "retryOnFail": true,
+      "type": "n8n-nodes-base.notionTool",
+      "typeVersion": 2.2,
+      "waitBetweenTries": 1000
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "9d49c29b-021e-49a9-b253-f6ef7237cd04",
+      "maxTries": 3,
+      "name": "log_expense",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REDACTED_NOTION_DATABASE_ID"
+        },
+        "options": {},
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Amount|number",
+              "numberValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('amount', 'The numeric dollar amount of the expense') }}",
+              "type": "number"
+            },
+            {
+              "key": "Director|relation",
+              "relationValue": "={{ [$('Set Context').item.json.senderContactId] }}",
+              "type": "relation"
+            },
+            {
+              "key": "Satellite|relation",
+              "relationValue": "={{ $('Set Context').item.json.senderSatelliteIds }}",
+              "type": "relation"
+            },
+            {
+              "key": "Category|select",
+              "selectValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('category', 'One of: Supplies, Transport, Food, Other') }}",
+              "type": "select"
+            },
+            {
+              "key": "Status|select",
+              "selectValue": "Pending",
+              "type": "select"
+            }
+          ]
+        },
+        "resource": "databasePage",
+        "title": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('description', 'Description of the expense') }}"
+      },
+      "position": [
+        1632,
+        192
+      ],
+      "retryOnFail": true,
+      "type": "n8n-nodes-base.notionTool",
+      "typeVersion": 2.2,
+      "waitBetweenTries": 1000
+    },
+    {
+      "id": "d73b268d-c672-4314-b999-8b27154a9e67",
+      "name": "Expense Logged?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.output }}",
+              "operator": {
+                "operation": "contains",
+                "type": "string"
+              },
+              "rightValue": "EXPENSE_LOGGED:"
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        1968,
+        -32
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "qd3uLLQZsMm4E9Wm",
+          "name": "seekers staff demo"
+        }
+      },
+      "id": "1bbf902c-e7fb-4a7e-ad9b-b7b8a65f123a",
+      "name": "Notify Admin — Expense",
+      "parameters": {
+        "additionalFields": {
+          "appendAttribution": false
+        },
+        "chatId": "REDACTED_TELEGRAM_CHAT_ID",
+        "text": "=New expense submitted by {{ $(\"Set Context\").item.json.senderName }} ({{ $(\"Set Context\").item.json.senderSatellite }}):\n{{ $(\"Clean Agent Output\").item.json.cleanedOutput }}\n\nReply: APPROVE-{{ $(\"Clean Agent Output\").item.json.expenseCode }} or REJECT-{{ $(\"Clean Agent Output\").item.json.expenseCode }}"
+      },
+      "position": [
+        2192,
+        -96
+      ],
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "webhookId": "ca8f404c-e709-4620-b04b-09219f5733d7"
+    },
+    {
+      "id": "bd77382e-e304-4b5a-b248-83b44ef81040",
+      "name": "Clean Agent Output",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "clean-output",
+              "name": "cleanedOutput",
+              "type": "string",
+              "value": "={{ $(\"Staff Bot Agent\").item.json.output.replace(/EXPENSE_LOGGED:\\S+/, '').trim() }}"
+            },
+            {
+              "id": "clean-expensecode",
+              "name": "expenseCode",
+              "type": "string",
+              "value": "={{ ($(\"Staff Bot Agent\").item.json.output.match(/EXPENSE_LOGGED:(\\S+)/) || [])[1] || '' }}"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "position": [
+        2416,
+        -32
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "qd3uLLQZsMm4E9Wm",
+          "name": "seekers staff demo"
+        }
+      },
+      "id": "80b7112c-8e21-42da-bfde-a49b5445e59c",
+      "name": "Send Reply — Staff",
+      "parameters": {
+        "additionalFields": {
+          "appendAttribution": false
+        },
+        "chatId": "={{ $('Set Context').item.json.senderChatId }}",
+        "text": "={{ $json.cleanedOutput }}"
+      },
+      "position": [
+        2640,
+        -32
+      ],
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "webhookId": "df2de05b-0529-4fe0-b983-d1146e286b0e"
+    },
+    {
+      "credentials": {
+        "notionApi": {
+          "id": "CIFjfffTWCRCna5M",
+          "name": "Notion account 2"
+        }
+      },
+      "id": "fde0ca8a-ea92-48cb-a891-cb7881de2d1c",
+      "maxTries": 3,
+      "name": "Log Inbound — DB7",
+      "parameters": {
+        "databaseId": {
+          "__rl": true,
+          "cachedResultName": "Conversation Log",
+          "cachedResultUrl": "https://app.notion.com/p/REDACTED_NOTION_DATABASE_ID",
+          "mode": "list",
+          "value": "REDACTED_NOTION_DATABASE_ID"
+        },
+        "options": {},
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Message Text|rich_text",
+              "textContent": "={{ $('Set Context').item.json.messageText }}",
+              "type": "rich_text"
+            },
+            {
+              "key": "Direction|select",
+              "selectValue": "Inbound",
+              "type": "select"
+            },
+            {
+              "key": "Sender Name|rich_text",
+              "textContent": "={{ $('Set Context').item.json.senderName }}",
+              "type": "rich_text"
+            },
+            {
+              "key": "Sender Phone|rich_text",
+              "textContent": "={{ $('Set Context').item.json.sessionId.toString() }}",
+              "type": "rich_text"
+            },
+            {
+              "key": "Session ID|rich_text",
+              "textContent": "={{ $('Set Context').item.json.sessionId.toString() }}",
+              "type": "rich_text"
+            },
+            {
+              "key": "Audience|select",
+              "selectValue": "={{ $('Set Context').item.json.senderRole }}",
+              "type": "select"
+            },
+            {
+              "key": "Agent Action|select",
+              "selectValue": "unknown",
+              "type": "select"
+            },
+            {
+              "date": "={{ $('Set Context').item.json.timestamp }}",
+              "key": "Timestamp|date",
+              "type": "date"
+            }
+          ]
+        },
+        "resource": "databasePage",
+        "title": "={{ $('Set Context').item.json.messageId.toString() }}"
+      },
+      "position": [
+        2864,
+        -32
+      ],
+      "retryOnFail": true,
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "waitBetweenTries": 1000
+    },
+    {
+      "credentials": {
+        "notionApi": {
+          "id": "CIFjfffTWCRCna5M",
+          "name": "Notion account 2"
+        }
+      },
+      "id": "9c7ab053-63ce-4db4-9cb8-ba89762e44b0",
+      "maxTries": 3,
+      "name": "Log Outbound — DB7",
+      "parameters": {
+        "databaseId": {
+          "__rl": true,
+          "cachedResultName": "Conversation Log",
+          "cachedResultUrl": "https://app.notion.com/p/REDACTED_NOTION_DATABASE_ID",
+          "mode": "list",
+          "value": "REDACTED_NOTION_DATABASE_ID"
+        },
+        "options": {},
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Message Text|rich_text",
+              "textContent": "={{ $('Clean Agent Output').item.json.cleanedOutput }}",
+              "type": "rich_text"
+            },
+            {
+              "key": "Direction|select",
+              "selectValue": "Outbound",
+              "type": "select"
+            },
+            {
+              "key": "Sender Name|rich_text",
+              "textContent": "Seekers Youth Staff Bot",
+              "type": "rich_text"
+            },
+            {
+              "key": "Sender Phone|rich_text",
+              "textContent": "={{ $('Set Context').item.json.sessionId.toString() }}",
+              "type": "rich_text"
+            },
+            {
+              "key": "Session ID|rich_text",
+              "textContent": "={{ $('Set Context').item.json.sessionId.toString() }}",
+              "type": "rich_text"
+            },
+            {
+              "key": "Audience|select",
+              "selectValue": "={{ $('Set Context').item.json.senderRole }}",
+              "type": "select"
+            },
+            {
+              "key": "Agent Action|select",
+              "selectValue": "send_reply",
+              "type": "select"
+            },
+            {
+              "date": "={{ $('Set Context').item.json.timestamp }}",
+              "key": "Timestamp|date",
+              "type": "date"
+            }
+          ]
+        },
+        "resource": "databasePage",
+        "title": "={{ $('Set Context').item.json.messageId.toString() + '_reply' }}"
+      },
+      "position": [
+        3088,
+        -32
+      ],
+      "retryOnFail": true,
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "waitBetweenTries": 1000
+    },
+    {
+      "credentials": {
+        "notionApi": {
+          "id": "CIFjfffTWCRCna5M",
+          "name": "Notion account 2"
+        }
+      },
+      "id": "6acf4457-f67a-425f-979c-301113c22dff",
+      "maxTries": 3,
+      "name": "Health Log — Success",
+      "parameters": {
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REDACTED_NOTION_DATABASE_ID"
+        },
+        "options": {},
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Status|select",
+              "selectValue": "Success",
+              "type": "select"
+            },
+            {
+              "key": "Notes|rich_text",
+              "richText": false,
+              "textContent": "={{ 'WF — Seekers Youth Staff Bot | Sender: ' + $('Set Context').item.json.senderName }}",
+              "type": "rich_text"
+            }
+          ]
+        },
+        "resource": "databasePage",
+        "title": "={{ $now.toISO() }} — Staff Bot OK"
+      },
+      "position": [
+        3312,
+        -32
+      ],
+      "retryOnFail": true,
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "waitBetweenTries": 1000
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "qd3uLLQZsMm4E9Wm",
+          "name": "seekers staff demo"
+        }
+      },
+      "id": "e874ea06-4d5f-444c-abbd-9b6315b372f8",
+      "name": "Reject — Wrong Bot",
+      "parameters": {
+        "additionalFields": {
+          "appendAttribution": false
+        },
+        "chatId": "={{ $('Telegram — Staff Bot').item.json.message.from.id }}",
+        "text": "Your account is set up for the admin portal. Please use the admin bot instead."
+      },
+      "position": [
+        896,
+        160
+      ],
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "webhookId": "bb9dc8ea-fbbf-4982-9fbc-70864457be92"
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "qd3uLLQZsMm4E9Wm",
+          "name": "seekers staff demo"
+        }
+      },
+      "id": "04663b7f-c8be-46f4-81a9-9fe1db684f4c",
+      "name": "Reject — Not Registered",
+      "parameters": {
+        "additionalFields": {
+          "appendAttribution": false
+        },
+        "chatId": "={{ $('Telegram — Staff Bot').item.json.message.from.id }}",
+        "text": "You are not registered to use this service. Please contact your program administrator."
+      },
+      "position": [
+        672,
+        -128
+      ],
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "webhookId": "2b287d64-b9eb-4623-ba4d-8b085ab6a226"
+    },
+    {
+      "id": "10312134-943d-4e6b-9dfe-d3c829824c19",
+      "name": "Error Trigger",
+      "parameters": {},
+      "position": [
+        0,
+        384
+      ],
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "qd3uLLQZsMm4E9Wm",
+          "name": "seekers staff demo"
+        }
+      },
+      "id": "fbf87251-857f-4670-a76a-53928dcaab29",
+      "name": "Dev Alert — Error",
+      "parameters": {
+        "additionalFields": {
+          "appendAttribution": false
+        },
+        "chatId": "REDACTED_TELEGRAM_CHAT_ID",
+        "text": "=Staff Bot Error\nNode: {{ $json.execution.lastNodeExecuted }}\nError: {{ $json.execution.error.message }}\nExecution: {{ $json.execution.id }}"
+      },
+      "position": [
+        224,
+        384
+      ],
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "webhookId": "264827db-a6a6-40ab-b48d-0f5343b0db85"
+    },
+    {
+      "credentials": {
+        "openRouterApi": {
+          "id": "j1QuXeG7ZrLyJEDj",
+          "name": "OpenRouter account"
+        }
+      },
+      "id": "212d39ce-2b18-4b78-bd31-c23d0ddad56c",
+      "maxTries": 3,
+      "name": "OpenRouter Chat Model",
+      "parameters": {
+        "model": "deepseek/deepseek-v4-flash",
+        "options": {
+          "maxRetries": 4,
+          "timeout": 45000
+        }
+      },
+      "position": [
+        1120,
+        192
+      ],
+      "retryOnFail": true,
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "waitBetweenTries": 2000
+    },
+    {
+      "id": "25e9c75e-49c4-4731-80cf-a0ff0ca554f7",
+      "name": "Simple Memory",
+      "parameters": {
+        "contextWindowLength": 30
+      },
+      "position": [
+        1248,
+        192
+      ],
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "09c3e59e-489b-4008-8edd-df67a7134a28",
+      "maxTries": 3,
+      "name": "check_attendance_history",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REDACTED_NOTION_DATABASE_ID"
+        },
+        "filterType": "manual",
+        "filters": {
+          "conditions": [
+            {
+              "condition": "contains",
+              "key": "Director|relation",
+              "relationValue": "={{ $('Set Context').item.json.senderContactId }}"
+            },
+            {
+              "condition": "after",
+              "createdTimeValue": "={{ new Date(Date.now() - 86400000).toISOString() }}",
+              "key": "Logged|created_time"
+            }
+          ]
+        },
+        "limit": 5,
+        "matchType": "allFilters",
+        "operation": "getAll",
+        "options": {},
+        "resource": "databasePage"
+      },
+      "position": [
+        1888,
+        192
+      ],
+      "retryOnFail": true,
+      "type": "n8n-nodes-base.notionTool",
+      "typeVersion": 2.2,
+      "waitBetweenTries": 1000
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "b509126a-195d-45aa-b4b4-493ab8cabd1e",
+      "maxTries": 3,
+      "name": "check_expense_history",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REDACTED_NOTION_DATABASE_ID"
+        },
+        "filterType": "manual",
+        "filters": {
+          "conditions": [
+            {
+              "condition": "contains",
+              "key": "Director|relation",
+              "relationValue": "={{ $('Set Context').item.json.senderContactId }}"
+            },
+            {
+              "condition": "after",
+              "createdTimeValue": "={{ new Date(Date.now() - 86400000).toISOString() }}",
+              "key": "Submitted|created_time"
+            }
+          ]
+        },
+        "limit": 5,
+        "matchType": "allFilters",
+        "operation": "getAll",
+        "options": {},
+        "resource": "databasePage"
+      },
+      "position": [
+        2016,
+        192
+      ],
+      "retryOnFail": true,
+      "type": "n8n-nodes-base.notionTool",
+      "typeVersion": 2.2,
+      "waitBetweenTries": 1000
+    },
+    {
+      "credentials": {
+        "notionApi": {
+          "id": "CIFjfffTWCRCna5M",
+          "name": "Notion account 2"
+        }
+      },
+      "id": "28f859ef-5182-4796-badb-ed98b9f39985",
+      "maxTries": 3,
+      "name": "Health Log — Failure",
+      "parameters": {
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REDACTED_NOTION_DATABASE_ID"
+        },
+        "options": {},
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Status|select",
+              "selectValue": "Failure",
+              "type": "select"
+            },
+            {
+              "key": "Notes|rich_text",
+              "richText": false,
+              "textContent": "={{ 'WF — Seekers Youth Staff Bot | Node: ' + $json.execution.lastNodeExecuted + ' | Error: ' + $json.execution.error.message }}",
+              "type": "rich_text"
+            }
+          ]
+        },
+        "resource": "databasePage",
+        "title": "={{ $now.toISO() }} — Staff Bot FAILURE"
+      },
+      "position": [
+        224,
+        520
+      ],
+      "retryOnFail": true,
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "waitBetweenTries": 1000
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "versionCounter": 1
+}

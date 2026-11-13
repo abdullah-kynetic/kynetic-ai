@@ -1,0 +1,425 @@
+{
+  "active": false,
+  "connections": {
+    "Expense Found?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Update Expense Status",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "No Match Reply",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Director Contact": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Notify Director",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Pending Expenses": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Match Expense Code",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Match Expense Code": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Expense Found?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Notify Director": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Confirm Admin",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Parse Approval": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Valid Admin Approval?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Telegram — Admin Reply": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Parse Approval",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Update Expense Status": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Director Contact",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Valid Admin Approval?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Pending Expenses",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "S0bJvdSH5ajJQ7P0",
+  "name": "WF — Seekers Approval Handler",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "qd3uLLQZsMm4E9Wm",
+          "name": "seekers staff demo"
+        }
+      },
+      "id": "81db4335-9057-4259-ae3e-9b1838a2895e",
+      "name": "Telegram — Admin Reply",
+      "parameters": {
+        "additionalFields": {},
+        "updates": [
+          "message"
+        ]
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "webhookId": "26e25d2e-0cd7-4c24-8705-22dfc5c8d111"
+    },
+    {
+      "id": "f6bec915-e247-4808-bf7e-70a0c1698912",
+      "name": "Parse Approval",
+      "parameters": {
+        "jsCode": "const text = $json.message?.text || '';\nconst chatId = $json.message?.from?.id;\nconst m = text.match(/^(APPROVE|REJECT)-EXP-(\\d+)/i);\nreturn [{ json: {\n  isAdmin: chatId == REDACTED_TELEGRAM_CHAT_ID,\n  action: m ? m[1].toUpperCase() : null,\n  expenseNumber: m ? parseInt(m[2], 10) : null,\n  adminChatId: chatId\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        240,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "7976376d-89e7-4216-b155-ac18c7cbf51e",
+      "name": "Valid Admin Approval?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.isAdmin }}",
+              "operator": {
+                "operation": "equals",
+                "type": "boolean"
+              },
+              "rightValue": true
+            },
+            {
+              "leftValue": "={{ $json.action }}",
+              "operator": {
+                "operation": "isNotEmpty",
+                "type": "string"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          }
+        }
+      },
+      "position": [
+        460,
+        0
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "70734779-f76b-48bc-8471-2544b185c2d0",
+      "name": "Get Pending Expenses",
+      "parameters": {
+        "authentication": "oAuth2",
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REDACTED_NOTION_DATABASE_ID"
+        },
+        "filterType": "manual",
+        "filters": {
+          "conditions": [
+            {
+              "condition": "equals",
+              "key": "Status|select",
+              "selectValue": "Pending"
+            }
+          ]
+        },
+        "operation": "getAll",
+        "options": {},
+        "resource": "databasePage",
+        "returnAll": true,
+        "simple": false
+      },
+      "position": [
+        680,
+        0
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "48e1c9ac-0a7c-42fb-b664-f3f525da3640",
+      "name": "Match Expense Code",
+      "parameters": {
+        "jsCode": "const targetNumber = $('Parse Approval').first().json.expenseNumber;\nconst match = $input.all().find(item => item.json.properties?.['Expense Code']?.unique_id?.number === targetNumber);\nif (!match) {\n  return [{ json: { found: false } }];\n}\nconst directorRelation = match.json.properties.Director?.relation;\nconst descriptionTitle = match.json.properties.Description?.title;\nreturn [{ json: {\n  found: true,\n  pageId: match.json.id,\n  directorId: (directorRelation && directorRelation[0]) ? directorRelation[0].id : null,\n  amount: match.json.properties.Amount?.number,\n  description: (descriptionTitle && descriptionTitle[0]) ? descriptionTitle[0].plain_text : ''\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        900,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "d068cc41-1cea-4ddd-8d01-16c1a558e405",
+      "name": "Expense Found?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.found }}",
+              "operator": {
+                "operation": "equals",
+                "type": "boolean"
+              },
+              "rightValue": true
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          }
+        }
+      },
+      "position": [
+        1120,
+        0
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "ab4e4065-8587-42fd-8bd4-5b4a0fc409d2",
+      "name": "Update Expense Status",
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "options": {},
+        "pageId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.pageId }}"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Status|select",
+              "selectValue": "={{ $('Parse Approval').first().json.action === 'APPROVE' ? 'Approved' : 'Rejected' }}",
+              "type": "select"
+            },
+            {
+              "key": "Approved By|rich_text",
+              "textContent": "Admin (Telegram)",
+              "type": "rich_text"
+            },
+            {
+              "date": "={{ $now.toISO() }}",
+              "key": "Approved Date|date",
+              "type": "date"
+            }
+          ]
+        },
+        "resource": "databasePage"
+      },
+      "position": [
+        1340,
+        -80
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "000e5442-d4d0-4e95-8e7b-52fcbbcb4c83",
+      "name": "Get Director Contact",
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "get",
+        "pageId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Match Expense Code').first().json.directorId }}"
+        },
+        "resource": "databasePage"
+      },
+      "position": [
+        1560,
+        -80
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "qd3uLLQZsMm4E9Wm",
+          "name": "seekers staff demo"
+        }
+      },
+      "id": "837e8cab-6fe1-4ab9-9db9-911973ea5d04",
+      "name": "Notify Director",
+      "parameters": {
+        "additionalFields": {
+          "appendAttribution": false
+        },
+        "chatId": "={{ $json.properties['Channel ID'].rich_text[0]?.plain_text }}",
+        "text": "={{ 'Your expense (' + $('Match Expense Code').first().json.description + ', $' + $('Match Expense Code').first().json.amount + ') was ' + ($('Parse Approval').first().json.action === 'APPROVE' ? 'approved' : 'rejected') + '.' }}"
+      },
+      "position": [
+        1780,
+        -80
+      ],
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "webhookId": "a2280e45-cadb-4c2e-b430-b6f535af9051"
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "qd3uLLQZsMm4E9Wm",
+          "name": "seekers staff demo"
+        }
+      },
+      "id": "ae177cff-6967-4f9f-9f19-8ece2ba7b239",
+      "name": "Confirm Admin",
+      "parameters": {
+        "additionalFields": {
+          "appendAttribution": false
+        },
+        "chatId": "={{ $('Parse Approval').first().json.adminChatId }}",
+        "text": "={{ 'Done — ' + $('Match Expense Code').first().json.pageId + ' marked ' + ($('Parse Approval').first().json.action === 'APPROVE' ? 'Approved' : 'Rejected') + '.' }}"
+      },
+      "position": [
+        2000,
+        -80
+      ],
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "webhookId": "076df4f7-10ed-4200-b3d4-7b44c0758de8"
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "qd3uLLQZsMm4E9Wm",
+          "name": "seekers staff demo"
+        }
+      },
+      "id": "2dfdbd3b-5f70-48e6-9480-5ed1c45c7452",
+      "name": "No Match Reply",
+      "parameters": {
+        "additionalFields": {
+          "appendAttribution": false
+        },
+        "chatId": "={{ $('Parse Approval').first().json.adminChatId }}",
+        "text": "No pending expense found with that code — it may already be processed."
+      },
+      "position": [
+        1340,
+        120
+      ],
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "webhookId": "02003663-5e9a-4431-a50a-eb42426565ae"
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "versionCounter": 1
+}

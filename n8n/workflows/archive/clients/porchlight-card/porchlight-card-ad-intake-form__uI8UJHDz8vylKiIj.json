@@ -1,0 +1,538 @@
+{
+  "active": false,
+  "connections": {
+    "Ad Intake Form": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Normalize Submission",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Attach Logo File": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Email Abdullah the Logo",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Claude via OpenRouter": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "Write Ad Copy",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Load Call List": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Match Business and Build Update",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Logo Uploaded?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Attach Logo File",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Match Business and Build Update": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Row Found?",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Email Abdullah the Ad",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Logo Uploaded?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Normalize Submission": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Write Ad Copy",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Row Found?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Update Call List Row",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Create Call List Row",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Write Ad Copy": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Load Call List",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "uI8UJHDz8vylKiIj",
+  "name": "Porchlight Card: Ad Intake Form",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "9419abcf-2a24-4d51-a025-10de1548831a",
+      "name": "Ad Intake Form",
+      "parameters": {
+        "formDescription": "Thanks for reserving your spot on the Porchlight Card, Irving 75063 Edition. Fill this out so we can design your ad. We will send you a proof before anything prints. Questions? Call or text REDACTED_PHONE.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Business name (as it should appear on the card)",
+              "fieldType": "text",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Your email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Phone number to print on the ad",
+              "fieldType": "text",
+              "placeholder": "REDACTED_PHONE",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Your offer or deal",
+              "fieldType": "textarea",
+              "placeholder": "Example: $49 AC tune up, or first cleaning 20% off",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Website (optional)",
+              "fieldType": "text",
+              "requiredField": false
+            },
+            {
+              "acceptFileTypes": ".png,.jpg,.jpeg,.svg,.pdf,.ai,.eps",
+              "fieldLabel": "Logo",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "requiredField": false
+            },
+            {
+              "fieldLabel": "Anything else we should know?",
+              "fieldType": "textarea",
+              "requiredField": false
+            }
+          ]
+        },
+        "formTitle": "Porchlight Card: your ad details",
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "Send my ad details",
+          "path": "porchlight-ad",
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "Got it, thank you! We will email you a proof of your ad before the card goes to print.",
+              "respondWith": "text"
+            }
+          }
+        },
+        "responseMode": "onReceived"
+      },
+      "position": [
+        0,
+        300
+      ],
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "webhookId": "e297d30f-1e3f-4457-82c1-9f4ceac696b4"
+    },
+    {
+      "id": "f4bfc11a-ed1f-48ee-b72f-0fdabd14e72b",
+      "name": "Normalize Submission",
+      "parameters": {
+        "jsCode": "const j = $input.first().json;\nconst pick = function (frag) { const k = Object.keys(j).find(function (x) { return x.toLowerCase().indexOf(frag) === 0; }); return k ? String(j[k] || '').trim() : ''; };\nconst businessName = pick('business name');\nconst email = pick('your email').toLowerCase();\nconst phoneRaw = pick('phone number');\nconst d = phoneRaw.replace(/\\D/g, '').slice(-10);\nconst phone = d.length === 10 ? '(' + d.slice(0, 3) + ') ' + d.slice(3, 6) + '-' + d.slice(6) : phoneRaw;\nreturn [{ json: {\n  source: 'ad_intake',\n  businessName: businessName,\n  nameKey: businessName.toLowerCase().replace(/[^a-z0-9]/g, ''),\n  email: email,\n  phone: phone,\n  phoneDigits: d,\n  offer: pick('your offer'),\n  website: pick('website'),\n  notes: pick('anything else'),\n  hasLogo: Object.keys($input.first().binary || {}).length > 0\n}, binary: $input.first().binary }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        220,
+        300
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "c812d6aa-7ff4-4f84-b258-ca390e6a45af",
+      "name": "Write Ad Copy",
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You write ad boxes for a shared postcard mailed to homes. Each ad box is small: business name, one short offer line, phone. Return JSON only with keys: display_name (the business name, max 30 characters, keep the real name, only shorten legal suffixes like LLC), offer_line (the owner offer rewritten as a punchy line, max 38 characters, keep every number and condition the owner gave, never invent a discount or claim), alt_offer_lines (array of 2 other options, same rules), concerns (array of short strings: anything that needs the owner to confirm, such as vague offer, missing price, medical or legal claims, or an offer that could mislead; empty array if none).",
+              "type": "SystemMessagePromptTemplate"
+            }
+          ]
+        },
+        "promptType": "define",
+        "text": "=Business name: {{ $json.businessName }}\nOffer as the owner wrote it: {{ $json.offer }}\nPhone: {{ $json.phone }}\nNotes: {{ $json.notes }}"
+      },
+      "position": [
+        440,
+        300
+      ],
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9
+    },
+    {
+      "credentials": {
+        "openRouterApi": {
+          "id": "Ako6xpEJL9nEZJ2j",
+          "name": "n8n openrouter"
+        }
+      },
+      "id": "b6008f94-22e8-4aa2-8905-07ea0031a09b",
+      "name": "Claude via OpenRouter",
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.6",
+        "options": {
+          "responseFormat": "json_object",
+          "temperature": 0.3
+        }
+      },
+      "position": [
+        460,
+        520
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "notionApi": {
+          "id": "CIFjfffTWCRCna5M",
+          "name": "Notion account 2"
+        },
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "executeOnce": true,
+      "id": "a48af517-5363-47a8-8089-4338aedf2d7f",
+      "name": "Load Call List",
+      "parameters": {
+        "authentication": "oAuth2",
+        "dataSourceId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REDACTED_NOTION_DATA_SOURCE_ID"
+        },
+        "filterType": "none",
+        "operation": "getAll",
+        "resource": "databasePage",
+        "returnAll": true,
+        "simple": true
+      },
+      "position": [
+        660,
+        300
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 3
+    },
+    {
+      "id": "a7bf9ec5-7feb-4d6f-8caf-84928917ecaa",
+      "name": "Match Business and Build Update",
+      "parameters": {
+        "jsCode": "const inp = $('Normalize Submission').first().json;\nlet ai = {};\nconst raw = $('Write Ad Copy').first().json || {};\nif (raw.offer_line) { ai = raw; } else if (raw.output && raw.output.offer_line) { ai = raw.output; } else { try { ai = JSON.parse(String(raw.text || '{}').replace(/^[^{]*/, '').replace(/[^}]*$/, '')); } catch (e) { ai = {}; } }\nconst rows = $input.all().map(function (i) { return i.json; });\nconst norm = function (s) { return String(s || '').toLowerCase().replace(/[^a-z0-9]/g, ''); };\nconst digits = function (s) { return String(s || '').replace(/\\D/g, '').slice(-10); };\nconst val = function (r, key) { return r[key] !== undefined ? r[key] : ''; };\nlet match = null;\nfor (const r of rows) {\n  const e = String(val(r, 'property_customer_email') || '').toLowerCase();\n  if (inp.email && e && e === inp.email) { match = r; break; }\n}\nif (!match) for (const r of rows) {\n  const p = digits(val(r, 'property_phone'));\n  if (inp.phoneDigits && p && p === inp.phoneDigits) { match = r; break; }\n}\nif (!match) for (const r of rows) {\n  const n = norm(r.name || val(r, 'property_business_name'));\n  if (n && inp.nameKey && n.length >= 5 && inp.nameKey.length >= 5 && (n === inp.nameKey || n.indexOf(inp.nameKey) >= 0 || inp.nameKey.indexOf(n) >= 0)) { match = r; break; }\n}\nconst offerText = (ai.offer_line ? 'Card line: ' + ai.offer_line + ' | ' : '') + 'Owner wrote: ' + inp.offer + (inp.website ? ' | Website: ' + inp.website : '') + (inp.notes ? ' | Notes: ' + inp.notes : '');\nconst props = {\n  'Sale Stage': { select: { name: 'Ad received' } },\n  'Customer Email': { email: inp.email || null },\n  'Ad Offer': { rich_text: [{ text: { content: offerText.slice(0, 1900) } }] },\n  'Ad Phone': { phone_number: inp.phone || null }\n};\nconst createProps = Object.assign({}, props, {\n  'Business Name': { title: [{ text: { content: inp.businessName || 'Unknown business' } }] },\n  'Call Notes': { rich_text: [{ text: { content: 'Created by the ad intake form. Not matched to an existing Call List row, check for a duplicate.' } }] }\n});\nreturn [{ json: {\n  found: !!match,\n  pageId: match ? match.id : '',\n  pageUrl: match ? match.url : '',\n  updateBody: { properties: props },\n  createBody: { parent: { database_id: 'REDACTED_NOTION_DATABASE_ID' }, properties: createProps },\n  ai: ai,\n  inp: inp\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        880,
+        300
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "4e4fb74d-cf99-43a1-a051-d7fd78aa5387",
+      "name": "Row Found?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.found }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        }
+      },
+      "position": [
+        1100,
+        300
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "27219ead-abce-48e1-b933-6a118b371b92",
+      "name": "Update Call List Row",
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "authentication": "predefinedCredentialType",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            }
+          ]
+        },
+        "jsonBody": "={{ JSON.stringify($json.updateBody) }}",
+        "method": "PATCH",
+        "nodeCredentialType": "notionOAuth2Api",
+        "sendBody": true,
+        "sendHeaders": true,
+        "specifyBody": "json",
+        "url": "=https://api.notion.com/v1/pages/{{ $json.pageId }}"
+      },
+      "position": [
+        1320,
+        200
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "pPuCuC18ekEbAfp0",
+          "name": "Notion account"
+        }
+      },
+      "id": "f6aaba65-e8f8-4215-ac92-fe94cd800384",
+      "name": "Create Call List Row",
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "authentication": "predefinedCredentialType",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            }
+          ]
+        },
+        "jsonBody": "={{ JSON.stringify($json.createBody) }}",
+        "method": "POST",
+        "nodeCredentialType": "notionOAuth2Api",
+        "sendBody": true,
+        "sendHeaders": true,
+        "specifyBody": "json",
+        "url": "https://api.notion.com/v1/pages"
+      },
+      "position": [
+        1320,
+        400
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dil4wMogas9aOWKP",
+          "name": "Abdullah Kynetic account"
+        }
+      },
+      "id": "1e37effc-2371-4536-890d-2623bca3adff",
+      "name": "Email Abdullah the Ad",
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "emailType": "html",
+        "message": "=<p><b>{{ $json.inp.businessName }}</b> sent their ad details.</p><p><b>Suggested card line:</b> {{ $json.ai.offer_line || \"(AI step failed, write it by hand)\" }}<br><b>Other options:</b> {{ ($json.ai.alt_offer_lines || []).join(\" / \") }}<br><b>Needs a check:</b> {{ ($json.ai.concerns || []).length ? $json.ai.concerns.join(\"; \") : \"Nothing flagged\" }}</p><p><b>Owner wrote:</b> {{ $json.inp.offer }}<br><b>Phone to print:</b> {{ $json.inp.phone }}<br><b>Email:</b> {{ $json.inp.email }}<br><b>Website:</b> {{ $json.inp.website || \"none\" }}<br><b>Notes:</b> {{ $json.inp.notes || \"none\" }}<br><b>Logo attached:</b> {{ $json.inp.hasLogo ? \"yes\" : \"NO, ask them for it\" }}</p><p>{{ $json.found ? \"Updated their row in the 75063 Call List: \" + $json.pageUrl : \"No matching row found, a new row was created in the 75063 Call List. Check for a duplicate.\" }}</p>",
+        "operation": "send",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Porchlight Card Bot"
+        },
+        "resource": "message",
+        "sendTo": "abdullah@kyneticai.com",
+        "subject": "=Porchlight ad received: {{ $json.inp.businessName }}"
+      },
+      "position": [
+        1100,
+        520
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "webhookId": "49c5724f-100b-409e-b905-30f89f352ed8"
+    },
+    {
+      "id": "100f87fd-7928-48a4-84a7-90b1654f4aa9",
+      "name": "Logo Uploaded?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $(\"Normalize Submission\").first().json.hasLogo }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        }
+      },
+      "position": [
+        1100,
+        720
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "f4d6d3aa-ecb6-4faf-95fe-bf9b9284de99",
+      "name": "Attach Logo File",
+      "parameters": {
+        "jsCode": "const b = $('Normalize Submission').first().binary || {};\nconst out = {};\nconst keys = Object.keys(b);\nif (keys.length) out.logo = b[keys[0]];\nreturn [{ json: $input.first().json, binary: out }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1320,
+        620
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dil4wMogas9aOWKP",
+          "name": "Abdullah Kynetic account"
+        }
+      },
+      "id": "8e13d95b-26c0-4179-9308-0827f3b83c83",
+      "name": "Email Abdullah the Logo",
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "emailType": "text",
+        "message": "Logo from the Porchlight Card ad intake form is attached.",
+        "operation": "send",
+        "options": {
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "logo"
+              }
+            ]
+          },
+          "senderName": "Porchlight Card Bot"
+        },
+        "resource": "message",
+        "sendTo": "abdullah@kyneticai.com",
+        "subject": "=Logo file: {{ $(\"Normalize Submission\").first().json.businessName }}"
+      },
+      "position": [
+        1540,
+        620
+      ],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "webhookId": "d60932f7-7d6b-4440-a4e0-76dd9c0e7857"
+    },
+    {
+      "id": "c0845d0c-816c-45f9-922a-b6f1a6df3f73",
+      "name": "Sticky Note 8a91be78",
+      "parameters": {
+        "color": 5,
+        "content": "## Porchlight Card: Ad Intake\nCustomers get this form link in their payment confirmation email. It writes the ad copy with Claude, updates their row in the 75063 Call List (Sale Stage = Ad received), and emails Abdullah the details plus the logo file.",
+        "height": 180,
+        "width": 520
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "versionCounter": 1
+}
