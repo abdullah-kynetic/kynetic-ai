@@ -395,3 +395,7 @@ Repo only, on `claude/project-thread-jojc56`. Nothing deployed, changed on a ser
 
 Effect on deploys: `portal-new-deploy` health-checks `/api/health`, so a deploy now also needs the new worker to beat within its 90 s retry window, and it rolls back if not. The app container's Docker healthcheck also reads `/api/health`, so it shows unhealthy while the worker is down. Not verified here: the Docker image build (no Docker daemon; CI builds it), anything on the VPS.
 
+
+
+## KI-036 consent guard (2026-11-13)
+Repo only. Per Abdullah's yes, import commit (client and staff) no longer saves consent for opted-out or DNC people; see KI-036. Test: `tests/integration/import-consent-optout.test.ts` (fails without the fix). Nothing deployed.
