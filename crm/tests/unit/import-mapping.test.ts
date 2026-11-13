@@ -3,6 +3,7 @@ import {
   canDryRun,
   guessMapping,
   importErrorMessage,
+  issueText,
   mappingPayload
 } from '@/features/imports/mapping';
 
@@ -33,6 +34,8 @@ describe('P1-5 client import column matching', () => {
     expect(importErrorMessage({ error: { fieldErrors: { file: ['macros'] } } })).toMatch(
       /could not be read/
     );
+    expect(issueText('phones: invalid_phone')).toBe('The phone number is not valid.');
+    expect(issueText('firstName: too_big')).toBe('firstName: too_big');
     expect(importErrorMessage({ error: { message: 'Too many requests.' } })).toBe(
       'Too many requests.'
     );

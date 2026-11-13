@@ -78,5 +78,21 @@ export function importErrorMessage(body: {
   return body.error?.message || 'The import request failed.';
 }
 
-/** Dry-run issue reasons come from the contact schema as `path: message`; show them as written. */
-export const issueText = (reason: string) => reason.replace(/^(\w+): /, '$1 — ');
+const ISSUE_TEXT: Record<string, string> = {
+  invalid_phone: 'The phone number is not valid.',
+  phone_or_email_required: 'This row needs a phone or an email.'
+};
+
+/**
+ * Dry-run issues come from the contact schema as `path: reason; path: reason`. Known reasons get a
+ * sentence; anything else is shown as written so nothing is hidden.
+ */
+export function issueText(reason: string): string {
+  return reason
+    .split('; ')
+    .map((part) => {
+      const code = part.slice(part.indexOf(': ') + 2);
+      return ISSUE_TEXT[code] ?? part;
+    })
+    .join(' ');
+}

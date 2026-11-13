@@ -70,7 +70,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Integration test: cross-tenant refused, audit row written
   - Commit: "Block cross-tenant import and audit it"
   - Covers: P1-6
-- [ ] **P1-S7.** Accessibility scan and 390 px check for the new pages.
+- [x] **P1-S7.** Accessibility scan and 390 px check for the new pages.
   - Test: Browser test; `bun run verify:e2e`
   - Commit: "Add accessibility tests for new CRM pages"
   - Covers: P1-7
