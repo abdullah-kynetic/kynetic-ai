@@ -32,6 +32,7 @@ export type ClientOverview = {
     hours: string;
     goLiveAt: string | null;
     monthlySpendCapCents: number | null;
+    llmMonthlyCapCents: number | null;
     offboardedAt: string | null;
     deletionDueOn: string | null;
   };
@@ -111,6 +112,7 @@ export async function loadClientOverview(
           businessHours: tenants.businessHours,
           goLiveAt: tenants.goLiveAt,
           monthlySpendCapCents: tenants.monthlySpendCapCents,
+          llmMonthlyCapCents: tenants.llmMonthlyCapCents,
           offboardedAt: tenants.offboardedAt,
           deletionDueOn: tenants.deletionDueOn
         })
@@ -211,6 +213,7 @@ export async function loadClientOverview(
       hours: formatBusinessHours(detail.tenant.businessHours),
       goLiveAt: detail.tenant.goLiveAt,
       monthlySpendCapCents: detail.tenant.monthlySpendCapCents,
+      llmMonthlyCapCents: detail.tenant.llmMonthlyCapCents,
       offboardedAt: detail.tenant.offboardedAt,
       deletionDueOn: detail.tenant.deletionDueOn
     },

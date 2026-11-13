@@ -12,6 +12,9 @@ export type UsageRow = {
   costUnknown: boolean;
   monthlyFeeCents: number | null;
   capCents: number | null;
+  /** Model spend this month, in millionths of a dollar. */
+  llmCostMicros: number;
+  llmCapCents: number | null;
 };
 
 export type CapStatus = 'no_cap' | 'under' | 'watch' | 'reached';
@@ -22,9 +25,14 @@ export function providerCostCents(
   return row.callCostCents + row.messageCostCents;
 }
 
+/** Model spend in whole cents, rounded up so a nonzero spend never shows as $0.00. */
+export function llmCostCents(row: Pick<UsageRow, 'llmCostMicros'>): number {
+  return Math.ceil(row.llmCostMicros / 10_000);
+}
+
 export function marginCents(row: UsageRow): number | null {
   if (row.monthlyFeeCents == null) return null;
-  return row.monthlyFeeCents - providerCostCents(row);
+  return row.monthlyFeeCents - providerCostCents(row) - llmCostCents(row);
 }
 
 /** 80% of the cap, or the cap itself when it is zero. */
@@ -66,7 +74,9 @@ const CSV_HEADERS = [
   'monthly_fee_cents',
   'margin_cents',
   'cap_cents',
-  'cap_status'
+  'cap_status',
+  'ai_cost_cents',
+  'ai_cap_cents'
 ] as const;
 
 export function usageCsv(rows: UsageRow[]): string {
@@ -85,7 +95,9 @@ export function usageCsv(rows: UsageRow[]): string {
         row.monthlyFeeCents ?? '',
         margin ?? '',
         row.capCents ?? '',
-        capStatusLabel(capStatus(row))
+        capStatusLabel(capStatus(row)),
+        llmCostCents(row),
+        row.llmCapCents ?? ''
       ]
         .map((cell) => neutralizeCsvCell(cell))
         .join(',')

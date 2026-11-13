@@ -299,6 +299,7 @@ export const tenants = pgTable(
     goLiveAt: timestamp('go_live_at', { withTimezone: true, mode: 'string' }),
     twentyCompanyId: text('twenty_company_id'),
     monthlySpendCapCents: integer('monthly_spend_cap_cents'),
+    llmMonthlyCapCents: integer('llm_monthly_cap_cents'),
     offboardedAt: timestamp('offboarded_at', { withTimezone: true, mode: 'string' }),
     deletionDueOn: date('deletion_due_on'),
     weeklyEmailEnabled: boolean('weekly_email_enabled').default(false).notNull(),
@@ -332,7 +333,8 @@ export const tenants = pgTable(
     ),
     check('tenants_guarantee_target_bookings_check', sql`guarantee_target_bookings >= 0`),
     check('tenants_guarantee_baseline_bookings_check', sql`guarantee_baseline_bookings >= 0`),
-    check('tenants_monthly_spend_cap_cents_check', sql`monthly_spend_cap_cents >= 0`)
+    check('tenants_monthly_spend_cap_cents_check', sql`monthly_spend_cap_cents >= 0`),
+    check('tenants_llm_monthly_cap_cents_check', sql`llm_monthly_cap_cents >= 0`)
   ]
 );
 

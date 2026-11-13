@@ -12,6 +12,9 @@ import { CallPlayer } from './call-player';
 import { callerForRequest } from './session';
 import { FlagCall } from './flag-call';
 import { Transcript } from './transcript';
+import { AiSummary } from './ai-summary';
+import { llmEnabled } from '@/server/adapters/llm';
+import { getCallAiSummary } from '@/server/llm/features/call-summary';
 
 export const metadata: Metadata = { title: 'Call', robots: { index: false } };
 export const dynamic = 'force-dynamic';
@@ -55,10 +58,12 @@ export default async function CallDetailPage({ params }: { params: Promise<{ id:
   if (!z.uuid().safeParse(id).success) notFound();
 
   let call;
+  let aiSummary: Awaited<ReturnType<typeof getCallAiSummary>> = null;
   try {
     const caller = await callerForRequest();
     if (!caller) redirect('/dashboard');
     call = await getCallDetail(caller.actor, caller.ctx, id);
+    aiSummary = await getCallAiSummary(caller.ctx, id);
   } catch (e) {
     if (e instanceof UnauthenticatedError) redirect('/sign-in');
     if (e instanceof AppError && e.code === 'NOT_FOUND') notFound();
@@ -112,6 +117,15 @@ export default async function CallDetailPage({ params }: { params: Promise<{ id:
             <p className='text-sm'>{call.summary ?? 'No summary yet.'}</p>
           </CardContent>
         </Card>
+
+        {(llmEnabled() || aiSummary) && (
+          <AiSummary
+            callId={call.id}
+            enabled={llmEnabled()}
+            hasTranscript={call.transcript !== null}
+            summary={aiSummary}
+          />
+        )}
 
         <Card>
           <CardHeader>

@@ -21,6 +21,7 @@
     "e2e:server": "bun tests/e2e/server.ts",
     "demo": "bun tests/demo/serve.ts",
     "check": "bun run typecheck && bun run lint && bun run format:check && bun run test",
+    "llm:eval": "bun scripts/llm-eval.ts",
     "verify": "bash scripts/verify.sh full",
     "verify:quick": "bash scripts/verify.sh quick",
     "verify:e2e": "bash scripts/verify.sh e2e",

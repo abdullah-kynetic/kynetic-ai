@@ -32,6 +32,10 @@ import { CustomFieldsSection } from '@/features/custom-fields/custom-fields-sect
 import { listFieldDefs } from '@/server/custom-fields';
 import { MergeContactForm } from '@/features/contacts/merge-contact-form';
 import { MessageBox } from '@/features/contacts/message-box';
+import { AiAssist } from '@/features/contacts/ai-assist';
+import { llmEnabled } from '@/server/adapters/llm';
+import { getLatestLeadBrief } from '@/server/llm/features/lead-brief';
+import { listContactDrafts } from '@/server/llm/features/message-draft';
 import { getComposeState, listContactThread } from '@/server/messaging';
 
 export const metadata: Metadata = {
@@ -132,6 +136,11 @@ export default async function ContactPage({
     listContactThread(ctx, id),
     getComposeState(ctx, id),
     contactsScope(requestHeaders, 'tenant_data.write')
+  ]);
+  const aiOn = llmEnabled();
+  const [aiDrafts, aiBrief] = await Promise.all([
+    listContactDrafts(ctx, id),
+    getLatestLeadBrief(ctx, id)
   ]);
   const linkedDeals = dealsOn ? await listDealsForContact(ctx, id) : [];
   // Tasks are CRM Lite (F-20): without the module the section is not rendered at all.
@@ -257,6 +266,27 @@ export default async function ContactPage({
               />
             </CardContent>
           </Card>
+
+          {(aiOn || aiDrafts.length > 0 || aiBrief) && (
+            <Card id='ai' aria-labelledby='section-AI'>
+              <CardHeader>
+                <CardTitle id='section-AI'>AI help</CardTitle>
+                <CardDescription>
+                  Drafts and research written by AI. Nothing is sent until you approve it, and every
+                  send still checks consent, do-not-contact and quiet hours.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <AiAssist
+                  contactId={id}
+                  enabled={aiOn}
+                  canWrite={writeScope !== null}
+                  drafts={aiDrafts}
+                  brief={aiBrief}
+                />
+              </CardContent>
+            </Card>
+          )}
 
           <Card id='timeline' aria-labelledby='section-Timeline'>
             <CardHeader>

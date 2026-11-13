@@ -1,6 +1,7 @@
 import { registerOutboundCallSubscriber, registerOutboundCallWorker } from './calls';
 import { getEnv } from './env';
 import { wireEmail } from './email/wire';
+import { wireLlm } from './llm/wire';
 import { registerEventWorkers } from './events';
 import { stopJobs } from './jobs';
 import { registerAgencyDigestWorker } from './agency/ops';
@@ -41,6 +42,7 @@ import { registerProviderProcessors } from './worker-boot';
 // processors before this point; the fan-out workers below deliver to them.
 registerReportReadyEmail();
 wireEmail(getEnv());
+wireLlm(getEnv());
 registerLeadProcessor();
 registerOutboundCallSubscriber();
 registerDevLeadSubscriber();

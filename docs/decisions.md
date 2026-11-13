@@ -212,3 +212,8 @@ Client Usage page keeps dollar cost hidden (KI-032 default, recommendation uncha
 ## 2026-11-13 — phase 4 part 2 defaults (one decision still open for Abdullah)
 
 Visitor IP is the LAST `X-Forwarded-For` entry (the one Caddy adds), not the first, for rate limits and audit addresses. Service tokens stop working while a client is suspended or offboarded. Still open: whether staff keep the email-code login once real client data is in the system (KI-033; recommendation in `docs/security-review-phase-4.md` S-05: turn it off, or keep it only with a hardware-key or passkey mailbox).
+
+## 2026-11-13 — phase 5 AI layer defaults (decision still open for Abdullah)
+
+All model calls go through `server/llm`, which checks the switch, the chosen model, the per-client monthly cap, then logs the prompt, answer and approver. Nothing under `server/llm` or the adapter may import or name consent, DNC, quiet-hours or call-dispatch code (a test enforces it), so a model can only produce text. Customer-facing output (message drafts) is a draft until a signed-in person approves it; sending then goes through the unchanged outbound gate. The research brief writes only facts whose quote is found word for word in the record; the rest are suggestions a person accepts. No model id is guessed: each task stays unrunnable until a model is chosen from its eval run. Still open: the default monthly AI cap per client (built as 500 cents, low, raised by hand per client on the client page).
+

@@ -27,6 +27,8 @@ const row = (over: Partial<UsageRow> = {}): UsageRow => ({
   costUnknown: false,
   monthlyFeeCents: 100,
   capCents: 80,
+  llmCostMicros: 0,
+  llmCapCents: null,
   ...over
 });
 

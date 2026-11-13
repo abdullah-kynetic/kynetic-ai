@@ -123,7 +123,9 @@ export async function getClientUsage(
       messageCostCents: Number(costs?.messageCostCents ?? 0),
       costUnknown: false,
       monthlyFeeCents: null,
-      capCents: tenant?.capCents ?? null
+      capCents: tenant?.capCents ?? null,
+      llmCostMicros: 0,
+      llmCapCents: null
     });
     return { month, totals, daily, cap: { status, label: CLIENT_CAP_LABELS[status] } };
   };

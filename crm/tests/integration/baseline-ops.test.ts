@@ -24,6 +24,12 @@ const EXTRA_TABLES = [
   'rate_limits',
   // Worker heartbeat (P0-S4); global, no tenant_id, read by /api/health.
   'worker_heartbeats',
+  'llm_usage',
+  'llm_audit',
+  'call_ai_summaries',
+  'ai_message_drafts',
+  'lead_briefs',
+  'lead_brief_facts',
   // M11 OPM tables are additive feature-owned tables.
   'presence_items',
   'review_snapshots',
