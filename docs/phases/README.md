@@ -31,3 +31,23 @@ Day counts are estimates for one builder and will move.
 - Hard rules in `CLAUDE.md` and `AGENTS.md` win over anything here.
 - `bun run verify` (in `crm/`) is the one local command for automated checks. See `PROTOCOL.md` for what "ready" means.
 - Nothing here approves a deploy, server change, n8n activation, provider key, DNS change, real call, text or email.
+
+## Running the phases: two threads at a time
+
+Never more than two phase threads run at once in this project. The coordinator opens them, watches them, and opens the next one when a thread finishes, so Abdullah does not have to start each one.
+
+| Step | Thread A | Thread B |
+|---|---|---|
+| 1 | Phase 0 | Phase 2 |
+| 2 | Phase 1 | none |
+| 3 | Phase 3 | Phase 4 part 1 (runbooks, monitoring, onboarding) |
+| 4 | Phase 4 part 2 (accessibility, security review, load test) | none |
+| 5 | Phase 5 | none |
+| 6 | Phase 6 | none |
+
+- Order that must hold: phase 1 before 3; phases 0 to 3 before phase 4 part 2; phase 4 before 5; phase 5 before 6.
+- A step starts only when the threads it follows have merged. Each thread follows `PROTOCOL.md`, including auto-merge when CI is green and there are no conflicts.
+- Merging is not deploying. Every deploy, server change, flag, credential and anything that dials or texts waits for Abdullah's yes. When a thread reaches a STOP step it reports the exact change; the coordinator brings it to Abdullah and starts the next thread without waiting for the deploy unless the next thread depends on it.
+- If both threads add database migrations, the one that merges second renumbers its migration.
+- Phase 4 parts: the step lists in `phase-4.md` split as part 1 = P4-S4 to P4-S6 (runbooks, monitoring, onboarding), part 2 = P4-S1 to P4-S3 and the rest.
+
