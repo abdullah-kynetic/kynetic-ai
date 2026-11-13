@@ -43,7 +43,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Unit test: disabled means no call; CI uses only the fake
   - Commit: "Add the LLM adapter interface and fake"
   - Covers: P5-1, P5-4
-- [ ] **P5-S2.** Real OpenRouter adapter and the per-task model map in config.
+- [x] **P5-S2.** Real OpenRouter adapter and the per-task model map in config.
   - Test: Unit tests with a mocked transport (no network)
   - Commit: "Add the OpenRouter adapter"
   - Covers: P5-1
