@@ -54,6 +54,7 @@ type Commit = {
   skipped: number;
   failed: number;
   consents: number;
+  consentsRefused?: number;
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -196,6 +197,9 @@ export function ImportLeads({ history }: { history: ImportHistoryRow[] }) {
               {committed.filled ? `, ${committed.filled} existing leads filled in` : ''}
               {committed.consents
                 ? `, ${committed.consents} consent ${committed.consents === 1 ? 'record' : 'records'} saved`
+                : ''}
+              {committed.consentsRefused
+                ? `, ${committed.consentsRefused} consent ${committed.consentsRefused === 1 ? 'date' : 'dates'} not saved because the person opted out or is on the do-not-call list`
                 : ''}
               .
             </span>
