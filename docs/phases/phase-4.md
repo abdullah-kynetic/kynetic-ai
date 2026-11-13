@@ -46,19 +46,19 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: `load-m10` without the CI override
   - Commit: "Record the load test result"
   - Covers: P4-3
-- [ ] **P4-S4.** Runbooks: deploy, rollback, restore from backup, incident, offboarding.
+- [x] **P4-S4.** Runbooks: deploy, rollback, restore from backup, incident, offboarding.
   - Test: Read-through; rehearsal script still passes
   - Commit: "Add operations runbooks"
   - Covers: -
-- [ ] **P4-S5.** Monitoring and alerts: worker heartbeat, failed jobs, backup failure, disk, health.
+- [x] **P4-S5.** Monitoring and alerts: worker heartbeat, failed jobs, backup failure, disk, health.
   - Test: Unit and integration tests for each alert rule
   - Commit: "Add monitoring alert rules"
   - Covers: P4-5
-- [ ] **P4-S6.** One-step client onboarding: create client, owner invite, defaults.
+- [x] **P4-S6.** One-step client onboarding: create client, owner invite, defaults.
   - Test: End-to-end test
   - Commit: "Add one-step client onboarding"
   - Covers: P4-6
-- [ ] **P4-S7.** Open PR; record in the build log.
+- [x] **P4-S7.** Open PR; record in the build log.
   - Test: CI green
   - Commit: "Record phase 4 in the build log"
   - Covers: -

@@ -393,6 +393,13 @@
       "when": 1793607000000,
       "tag": "1050_worker_heartbeat",
       "breakpoints": true
+    },
+    {
+      "idx": 56,
+      "version": "7",
+      "when": 1793610000000,
+      "tag": "1060_ops_alert_kind",
+      "breakpoints": true
     }
   ]
 }

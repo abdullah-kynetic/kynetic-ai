@@ -89,7 +89,7 @@ export const staffNotifications = pgTable(
     unique('staff_notifications_dedupe_key_key').on(table.dedupeKey),
     check(
       'staff_notifications_kind_check',
-      sql`${table.kind} IN ('job_failed', 'daily_digest', 'spend_cap')`
+      sql`${table.kind} IN ('job_failed', 'daily_digest', 'spend_cap', 'ops_alert')`
     )
   ]
 );

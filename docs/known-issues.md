@@ -6,6 +6,9 @@
 Mirror of open problems tracked in Twenty. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Open
+### KI-038: Alert rules exist but nothing is switched on yet (medium)
+Found 2026-11-13. The six alert rules (phase 4) are in the code and tested, but they only start once a commit with migration `1060_ops_alert_kind` is deployed; the host check `portal-monitor` is not installed; alert email is off. `backup_stale` will fire at once on the live system because no backup has ever succeeded (KI-034); that is correct. Steps: `docs/runbooks/monitoring.md`.
+
 ### KI-037: Only the leads list filters by custom fields (low)
 Found 2026-11-13. Custom field values are now entered and shown on contacts, companies and deals, and the leads list can filter and export them. The companies list and the deals board have no custom field filter or column. Phase 1 acceptance P1-3 was met for filtering on contacts only.
 

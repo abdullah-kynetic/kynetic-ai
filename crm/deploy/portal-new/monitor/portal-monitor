@@ -1,0 +1,32 @@
+#!/bin/bash
+# Host-side alert check for the portal-new stack. Runs the same rules as the worker's `monitor.check` job
+# (crm/src/server/monitoring/rules.ts) from OUTSIDE the worker, so a dead worker still raises an alert.
+# Not installed yet: installing it and the cron line is a server change that needs Abdullah's yes.
+#
+#   portal-monitor            run the rules once; exit 0 all ok, 1 something is firing, 2 the check could not run
+#
+# Install (as root, after the yes):
+#   install -m 0755 portal-monitor /usr/local/sbin/portal-monitor
+#   echo '*/5 * * * * root /usr/local/sbin/portal-monitor >>/var/log/portal-monitor.log 2>&1' >/etc/cron.d/portal-monitor
+#
+# Alerts land as in-app notices on /admin/operations and, when ADMIN_ALERT_EMAIL_ENABLED=true in runtime.env,
+# as email to the staff admins. One notice per rule per six hours, shared with the worker, so running both
+# never double-sends. No message bodies or personal data are in an alert.
+set -euo pipefail
+
+BASE=/opt/portal-new
+PROJECT=portal-new
+ENVF="$BASE/runtime.env"
+NET=portal-new_default
+COMPOSE="$BASE/compose.yml"
+
+tag="$(sed -nE 's#^[[:space:]]*image:[[:space:]]*kynetic-portal-app:([0-9a-f]+)[[:space:]]*$#\1#p' "$COMPOSE" | head -1)"
+[ -n "$tag" ] || { echo "monitor: cannot read the current image tag" >&2; exit 2; }
+docker image inspect "kynetic-portal-tools:$tag" >/dev/null 2>&1 || { echo "monitor: tools image kynetic-portal-tools:$tag missing" >&2; exit 2; }
+
+set +e
+docker run --rm --network "$NET" --env-file "$ENVF" --entrypoint sh "kynetic-portal-tools:$tag" -c 'cd /app && bun run monitor:check'
+code=$?
+set -e
+echo "$(date -u +%FT%TZ) monitor exit=$code project=$PROJECT" >&2
+exit "$code"

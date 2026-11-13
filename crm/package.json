@@ -31,6 +31,7 @@
     "db:seed:demo-clients": "bun src/server/db/seed/demo-clients-cli.ts",
     "db:remove:demo-clients": "bun src/server/db/seed/demo-clients-remove-cli.ts",
     "db:remove:tenants": "bun src/server/db/seed/prospects-remove-cli.ts",
+    "monitor:check": "bun src/server/monitoring/cli.ts",
     "preview:check": "bun src/server/preview/check.ts"
   },
   "dependencies": {
