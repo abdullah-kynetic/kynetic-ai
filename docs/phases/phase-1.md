@@ -62,7 +62,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Test for a client without the old level
   - Commit: "Show custom fields for all clients"
   - Covers: P1-4
-- [ ] **P1-S5.** Client CSV/Excel import: upload, dry run, commit, reusing `src/server/imports/` rules and audit.
+- [x] **P1-S5.** Client CSV/Excel import: upload, dry run, commit, reusing `src/server/imports/` rules and audit.
   - Test: Integration test plus browser test
   - Commit: "Add client self-serve lead import"
   - Covers: P1-5

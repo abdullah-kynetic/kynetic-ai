@@ -4,7 +4,8 @@ import { createHash } from 'node:crypto';
 import { and, eq, isNull } from 'drizzle-orm';
 import { z } from 'zod';
 import { audit } from '../audit';
-import { can, type Actor } from '../auth/permissions';
+import type { Actor } from '../auth/permissions';
+import { canImportContacts } from './access';
 import { getStorage } from '../adapters/storage';
 import type { Db } from '../db/client';
 import { contacts, importBatches } from '../db/schema';
@@ -50,7 +51,7 @@ export async function dryRunContactBatch(
   rawMapping: unknown,
   opts: { db?: Db } = {}
 ): Promise<ContactDryRun> {
-  if (!can(actor, 'import.onboarding', ctx.tenantId)) throw new AppError('FORBIDDEN');
+  if (!canImportContacts(actor, ctx.tenantId)) throw new AppError('FORBIDDEN');
   await requireModule(ctx, 'platform', opts);
   const mapping = mappingSchema.safeParse(rawMapping);
   if (!mapping.success || !z.uuid().safeParse(batchId).success)

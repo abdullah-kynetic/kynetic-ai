@@ -41,6 +41,14 @@ export const navGroups: NavGroup[] = [
         items: []
       },
       {
+        title: 'Import leads',
+        url: '/dashboard/import',
+        icon: 'upload',
+        isActive: false,
+        access: { role: 'owner' },
+        items: []
+      },
+      {
         title: 'My Tasks',
         url: '/dashboard/tasks',
         icon: 'circleCheck',
