@@ -2,6 +2,10 @@
 
 Mirror of the Twenty decision notes. Twenty is the business source of truth. On a mismatch, flag both values. Do not reopen these without asking. This GitHub pass did not read Twenty. The parallel cleanup is the parent-reported verification in `docs/STATUS.md`.
 
+## Client self-serve import and custom fields for everyone (2026-11-13)
+
+No new D-number (see the 2026-11-08 PST precedence note). Phase 1 of the portal build, as written in `docs/phases/phase-1.md`: custom fields are open to every client, not only the retired CRM Full level; a client's owner (not client staff, not Kynetic staff through this route) can import their own contact list with the staff import's dry run, consent rules and audit. Companies, deals and notes stay with Kynetic staff. Open question for Abdullah: KI-036 (should an import be refused consent for someone who opted out).
+
 ## Source of truth moved to the portal (2026-11-12)
 
 Supersedes every line below that calls Twenty the business source of truth. The portal in `crm/` is where lead, client and call data is written; Twenty is a read-only safety copy and its planning records are in `docs/roadmap/`. See `docs/STATUS.md`.

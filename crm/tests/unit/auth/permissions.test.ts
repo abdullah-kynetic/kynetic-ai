@@ -33,6 +33,7 @@ const EXPECTED: Record<Action, Expect> = {
   'bulk.delete': { admin: true, va: false, owner: true, staff: false },
   'export.csv': { admin: true, va: false, owner: true, staff: false },
   'import.onboarding': { admin: true, va: false, owner: false, staff: false },
+  'import.self': { admin: false, va: false, owner: true, staff: false },
   'team.manage': { admin: true, va: false, owner: true, staff: false },
   'settings.business': { admin: true, va: false, owner: true, staff: false },
   'alex.settings.client': { admin: true, va: false, owner: true, staff: false },

@@ -54,6 +54,8 @@ export const MATRIX = {
   },
   'export.csv': { admin: Y, va: N, owner: Y, staff: 'toggle', toggle: 'canExport' },
   'import.onboarding': { admin: Y, va: N, owner: N, staff: N, write: true },
+  // P1-5: a client's owner imports their own contact list (CSV or Excel). Contacts only.
+  'import.self': { admin: N, va: N, owner: Y, staff: N, write: true },
   'team.manage': { admin: Y, va: N, owner: Y, staff: N, write: true },
   'settings.business': { admin: Y, va: N, owner: Y, staff: N, write: true },
   'alex.settings.client': { admin: Y, va: N, owner: Y, staff: N, write: true },

@@ -13,7 +13,7 @@ import { createContactSchema } from '@/server/contacts/schemas';
 import { errorBody, toErrorResult, type ErrorBody } from '@/server/errors';
 import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
-import type { PanelValues } from '@/features/contacts/panel/values';
+import type { LoadedPanelValues, PanelValues } from '@/features/contacts/panel/values';
 import { toContactInput, valuesFromContact } from '@/features/contacts/panel/values';
 
 // Server actions behind the create and edit panel (M1-04). The tenant comes from the membership
@@ -29,20 +29,22 @@ const FORBIDDEN: PanelSaveResult = {
 export async function saveContactAction(input: {
   id?: string;
   values: PanelValues;
+  /** Typed custom field values (F-12); the service checks them against the tenant's definitions. */
+  custom?: Record<string, unknown>;
   acknowledgeDuplicates?: boolean;
 }): Promise<PanelSaveResult> {
   const ctx = await contactsScope(await headers(), 'tenant_data.write');
   if (!ctx) return FORBIDDEN;
   const result = await saveContactFromPanel(ctx, {
     id: input.id,
-    values: toContactInput(input.values),
+    values: toContactInput(input.values, input.custom),
     acknowledgeDuplicates: input.acknowledgeDuplicates === true
   });
   if (result.ok) revalidatePath('/dashboard/contacts');
   return result;
 }
 
-export async function loadContactAction(id: string): Promise<PanelValues | null> {
+export async function loadContactAction(id: string): Promise<LoadedPanelValues | null> {
   const ctx = await contactsScope(await headers());
   if (!ctx) return null;
   const c = await loadContactForPanel(ctx, id);

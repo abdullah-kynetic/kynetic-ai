@@ -4,9 +4,22 @@ import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
-function Table({ className, ...props }: React.ComponentProps<'table'>) {
+/**
+ * `scrollLabel` makes the scrolling container a labelled, keyboard-focusable region, so a table that
+ * is wider than a phone can be scrolled without a mouse (WCAG 2.1.1). Without it the container is
+ * a plain wrapper, as before.
+ */
+function Table({
+  className,
+  scrollLabel,
+  ...props
+}: React.ComponentProps<'table'> & { scrollLabel?: string }) {
   return (
-    <div data-slot='table-container' className='relative w-full overflow-x-auto'>
+    <div
+      data-slot='table-container'
+      className='relative w-full overflow-x-auto'
+      {...(scrollLabel ? { role: 'region', 'aria-label': scrollLabel, tabIndex: 0 } : {})}
+    >
       <table
         data-slot='table'
         className={cn('w-full caption-bottom text-sm', className)}

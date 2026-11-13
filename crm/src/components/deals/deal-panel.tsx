@@ -13,6 +13,13 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { CustomFieldInputs } from '@/features/custom-fields/custom-field-inputs';
+import {
+  customErrorsByKey,
+  customFromDrafts,
+  draftsFromValues,
+  type CustomDrafts
+} from '@/features/custom-fields/inputs';
 import { Input } from '@/components/ui/input';
 import { LoadingButton } from '@/components/ui/loading-button';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
@@ -25,6 +32,7 @@ import {
   SheetTitle
 } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
+import type { CustomFieldDef } from '@/server/custom-fields/types';
 import { centsToInput, type DealFormInput } from '@/server/deals/form';
 import { IconPencil } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -41,6 +49,8 @@ export type DealPanelDeal = {
   ownerId: string | null;
   stageId: string;
   lostReason: string | null;
+  /** Stored custom field values (F-12). */
+  custom?: Record<string, unknown>;
 };
 
 export type DealPanelStage = { id: string; name: string; isLost: boolean };
@@ -82,19 +92,27 @@ export function DealPanel({
   deal,
   stages,
   members,
+  customDefs = [],
   open,
   onOpenChange
 }: {
   deal: DealPanelDeal;
   stages: DealPanelStage[];
   members: DealPanelMember[];
+  /** The tenant's deal custom field definitions (F-12). */
+  customDefs?: readonly CustomFieldDef[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
   const router = useRouter();
   const formId = React.useId();
   const initial = React.useMemo(() => toForm(deal), [deal]);
+  const initialCustom = React.useMemo(
+    () => draftsFromValues(customDefs, deal.custom ?? {}),
+    [customDefs, deal.custom]
+  );
   const [form, setForm] = React.useState<DealFormInput>(initial);
+  const [custom, setCustom] = React.useState<CustomDrafts>(initialCustom);
   const [errors, setErrors] = React.useState<Record<string, string[]>>({});
   const [pending, startTransition] = React.useTransition();
   const [confirmDiscard, setConfirmDiscard] = React.useState(false);
@@ -106,13 +124,15 @@ export function DealPanel({
     setWasOpen(open);
     if (open) {
       setForm(initial);
+      setCustom(initialCustom);
       setErrors({});
     }
   }
 
-  const dirty = (Object.keys(initial) as (keyof DealFormInput)[]).some(
-    (k) => form[k] !== initial[k]
-  );
+  const dirty =
+    (Object.keys(initial) as (keyof DealFormInput)[]).some((k) => form[k] !== initial[k]) ||
+    JSON.stringify(customFromDrafts(customDefs, custom)) !==
+      JSON.stringify(customFromDrafts(customDefs, initialCustom));
   const toLost = stages.find((s) => s.id === form.stageId)?.isLost ?? false;
   const set = (key: keyof DealFormInput) => (value: string) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -125,7 +145,11 @@ export function DealPanel({
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     startTransition(async () => {
-      const result = await saveDeal(deal.id, form);
+      const result = await saveDeal(
+        deal.id,
+        form,
+        customDefs.length ? customFromDrafts(customDefs, custom) : undefined
+      );
       if (result.ok) {
         toast.success('Deal saved');
         onOpenChange(false);
@@ -227,6 +251,12 @@ export function DealPanel({
                   <FieldError>{fieldError(errors, 'ownerId')}</FieldError>
                 )}
               </Field>
+              <CustomFieldInputs
+                defs={customDefs}
+                drafts={custom}
+                errors={customErrorsByKey(errors)}
+                onChange={(key, draft) => setCustom((c) => ({ ...c, [key]: draft }))}
+              />
             </FieldGroup>
           </form>
           <SheetFooter className='flex-row justify-end gap-2'>

@@ -2,7 +2,8 @@ import { createHash } from 'node:crypto';
 import { and, eq, isNull } from 'drizzle-orm';
 import { z } from 'zod';
 import { audit } from '../audit';
-import { can, type Actor } from '../auth/permissions';
+import type { Actor } from '../auth/permissions';
+import { canImportAnyEntity, canImportContacts } from './access';
 import type { Db } from '../db/client';
 import { getStorage } from '../adapters/storage';
 import {
@@ -64,7 +65,7 @@ export async function commitContactBatch(
   batchId: string,
   opts: Options = {}
 ): Promise<{ imported: number; filled: number; skipped: number; failed: number }> {
-  if (!can(actor, 'import.onboarding', ctx.tenantId)) throw new AppError('FORBIDDEN');
+  if (!canImportContacts(actor, ctx.tenantId)) throw new AppError('FORBIDDEN');
   parseInput(z.uuid(), batchId);
   return withTenant(
     ctx,
@@ -304,7 +305,7 @@ export async function undoImportBatch(
   batchId: string,
   opts: Options = {}
 ) {
-  if (!can(actor, 'import.onboarding', ctx.tenantId)) throw new AppError('FORBIDDEN');
+  if (!canImportContacts(actor, ctx.tenantId)) throw new AppError('FORBIDDEN');
   parseInput(z.uuid(), batchId);
   return withTenant(
     ctx,
@@ -316,6 +317,8 @@ export async function undoImportBatch(
         .where(eq(importBatches.id, batchId))
         .limit(1);
       if (!batch) throw new AppError('NOT_FOUND');
+      if (batch.entity !== 'contact' && !canImportAnyEntity(actor, ctx.tenantId))
+        throw new AppError('FORBIDDEN');
       if (!['done', 'failed'].includes(batch.status) || !batch.committedAt)
         throw new AppError('CONFLICT');
       const records = await tx
@@ -439,11 +442,18 @@ export async function undoImportBatch(
 }
 
 export async function listImportBatches(ctx: TenantContextInput, actor: Actor, opts: Options = {}) {
-  if (!can(actor, 'import.onboarding', ctx.tenantId)) throw new AppError('FORBIDDEN');
+  if (!canImportContacts(actor, ctx.tenantId)) throw new AppError('FORBIDDEN');
   await requireModule(ctx, 'platform', opts);
+  // A client sees its own contact imports; the other record types are Kynetic's onboarding work.
+  const onlyContacts = !canImportAnyEntity(actor, ctx.tenantId);
   return withTenant(
     ctx,
-    (tx) => tx.select().from(importBatches).orderBy(importBatches.createdAt),
+    (tx) =>
+      tx
+        .select()
+        .from(importBatches)
+        .where(onlyContacts ? eq(importBatches.entity, 'contact') : undefined)
+        .orderBy(importBatches.createdAt),
     opts
   );
 }

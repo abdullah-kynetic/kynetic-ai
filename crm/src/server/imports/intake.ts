@@ -6,7 +6,8 @@ import { importBatches } from '../db/schema';
 import { AppError, ValidationError } from '../errors';
 import { getStorage, tenantKey } from '../adapters/storage';
 import { withTenant, type TenantContextInput } from '../tenancy';
-import { can, type Actor } from '../auth/permissions';
+import type { Actor } from '../auth/permissions';
+import { canImportAnyEntity, canImportContacts } from './access';
 import { IMPORT_MAX_ROWS } from './csv';
 import { requireModule } from '../modules';
 import { isXlsxReject, loadImportTable } from './table';
@@ -40,9 +41,11 @@ export async function createImportBatch(
   file: Uint8Array,
   opts: { db?: Db } = {}
 ) {
-  if (!can(actor, 'import.onboarding', ctx.tenantId)) throw new AppError('FORBIDDEN');
+  if (!canImportContacts(actor, ctx.tenantId)) throw new AppError('FORBIDDEN');
   const parsed = inputSchema.safeParse(input);
   if (!parsed.success) throw new ValidationError({ import: ['invalid'] });
+  if (parsed.data.entity !== 'contact' && !canImportAnyEntity(actor, ctx.tenantId))
+    throw new AppError('FORBIDDEN');
   if (file.byteLength > IMPORT_MAX_BYTES) throw new ValidationError({ file: ['too_large'] });
   const uploadKind = classifyImportUpload(parsed.data.fileName);
   if (uploadKind === 'excel') throw new ValidationError({ file: ['unsupported_type'] });

@@ -27,6 +27,8 @@ import { cookies, headers } from 'next/headers';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { addNote, editNote, pinNote, removeNote } from './note-actions';
+import { CustomFieldsSection } from '@/features/custom-fields/custom-fields-section';
+import { listFieldDefs } from '@/server/custom-fields';
 import { MergeContactForm } from '@/features/contacts/merge-contact-form';
 
 export const metadata: Metadata = {
@@ -122,6 +124,7 @@ export default async function ContactPage({
   const [notes, teammates] = showNotes
     ? await Promise.all([listNotes(ctx, { contactId: id }), listTeammates(ctx)])
     : [[], []];
+  const customDefs = await listFieldDefs(ctx, 'contact');
   const linkedDeals = dealsOn ? await listDealsForContact(ctx, id) : [];
   // Tasks are CRM Lite (F-20): without the module the section is not rendered at all.
   const tasksOn = moduleSatisfied(
@@ -186,6 +189,14 @@ export default async function ContactPage({
                   </dd>
                 </div>
               </dl>
+              {customDefs.length > 0 && (
+                <div className='mt-6'>
+                  <CustomFieldsSection
+                    defs={customDefs}
+                    values={contact.custom as Record<string, unknown>}
+                  />
+                </div>
+              )}
             </CardContent>
           </Card>
 

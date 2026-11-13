@@ -33,6 +33,13 @@ const ownerActor: Actor = {
   membership: { tenantId: IDS.tenantA, role: 'owner', canExport: false, canBulkDelete: false },
   viewAs: null
 };
+// A client's staff user: only the owner may import (`import.self`), so staff are refused (P1-5).
+const staffActor: Actor = {
+  userId: IDS.staffA,
+  kyneticRole: null,
+  membership: { tenantId: IDS.tenantA, role: 'staff', canExport: false, canBulkDelete: false },
+  viewAs: null
+};
 const vaActor: Actor = { userId: IDS.va, kyneticRole: 'va', membership: null, viewAs: null };
 
 beforeAll(async () => {
@@ -97,7 +104,7 @@ describe('F-90 to F-96 contact import workflow', () => {
       await tdb.admin`select count(*)::int as n from contacts where tenant_id = ${IDS.tenantA}`;
     expect(afterDryRun[0]!.n).toBe(before[0]!.n);
     expect(
-      await dryRunContactBatch(ctx.ownerA(), ownerActor, batch.id, {}, { db: appDb }).catch(
+      await dryRunContactBatch(ctx.ownerA(), staffActor, batch.id, {}, { db: appDb }).catch(
         (e) => e.code
       )
     ).toBe('FORBIDDEN');
@@ -172,13 +179,28 @@ describe('F-90 to F-96 contact import workflow', () => {
     await expect(
       createImportBatch(
         ctx.ownerA(),
-        ownerActor,
+        staffActor,
         {
           fileName: 'contacts.csv',
           fileType: 'csv',
           importedSource: 'csv_other'
         },
         new TextEncoder().encode('phone\n4155550199'),
+        { db: appDb }
+      )
+    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+    // An owner imports contacts only (P1-5); companies, deals and notes stay with Kynetic staff.
+    await expect(
+      createImportBatch(
+        ctx.ownerA(),
+        ownerActor,
+        {
+          fileName: 'companies.csv',
+          fileType: 'csv',
+          entity: 'company',
+          importedSource: 'csv_other'
+        },
+        new TextEncoder().encode('name\nAcme'),
         { db: appDb }
       )
     ).rejects.toMatchObject({ code: 'FORBIDDEN' });

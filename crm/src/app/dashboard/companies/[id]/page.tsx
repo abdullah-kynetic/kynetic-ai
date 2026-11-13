@@ -10,6 +10,7 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { getCompanyDetail } from '@/server/companies';
+import { listFieldDefs } from '@/server/custom-fields';
 import { NotFoundError } from '@/server/contacts';
 import { uuidSchema } from '@/server/validation';
 import type { Metadata } from 'next';
@@ -42,6 +43,8 @@ export default async function CompanyPage({ params }: { params: Promise<{ id: st
     throw e;
   });
   const { company, rollup, contacts, deals } = detail;
+  const customDefs = await listFieldDefs(ctx, 'company');
+  const customValues = (company.custom ?? {}) as Record<string, unknown>;
   const address = company.address as Record<string, unknown>;
   const initial: CompanyFormValues = {
     name: company.name,
@@ -95,7 +98,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ id: st
           {contacts.length === 0 ? (
             <p className='text-muted-foreground text-sm'>No contacts are linked to this company.</p>
           ) : (
-            <Table>
+            <Table scrollLabel='Contacts at this company'>
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
@@ -129,7 +132,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ id: st
               None of this company&apos;s contacts are on a deal yet.
             </p>
           ) : (
-            <Table>
+            <Table scrollLabel='Deals at this company'>
               <TableHeader>
                 <TableRow>
                   <TableHead>Deal</TableHead>
@@ -157,6 +160,8 @@ export default async function CompanyPage({ params }: { params: Promise<{ id: st
           <CompanyForm
             action={updateCompanyAction.bind(null, company.id)}
             initial={initial}
+            customDefs={customDefs}
+            customValues={customValues}
             submitLabel='Save changes'
           />
           <div className='mt-8 border-t pt-4'>

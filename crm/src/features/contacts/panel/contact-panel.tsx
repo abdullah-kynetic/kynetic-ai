@@ -16,7 +16,14 @@ import {
   SheetTitle
 } from '@/components/ui/sheet';
 import { Spinner } from '@/components/ui/spinner';
+import { CustomFieldInputs } from '@/features/custom-fields/custom-field-inputs';
+import {
+  customErrorsByKey,
+  customFromDrafts,
+  draftsFromValues
+} from '@/features/custom-fields/inputs';
 import { useAppForm } from '@/lib/form';
+import type { CustomFieldDef } from '@/server/custom-fields/types';
 import { notify } from '@/lib/notify';
 import { CONTACT_STATUSES, type DuplicateMatchView } from './types';
 import { fullName, STATUS_LABELS } from '../list/format';
@@ -28,6 +35,8 @@ type Props = {
   target: PanelTarget;
   onClose: () => void;
   owners: { id: string; name: string }[];
+  /** The tenant's contact custom field definitions (F-12). */
+  customDefs?: readonly CustomFieldDef[];
 };
 
 // The server validates everything else; the form only checks the rule that needs no round trip.
@@ -50,14 +59,14 @@ function fieldMessage(reasons: string[]): string {
 }
 
 /** Slide-out create and edit panel with a duplicate warning (PRD F-07). */
-export function ContactPanel({ target, onClose, owners }: Props) {
+export function ContactPanel({ target, onClose, owners, customDefs = [] }: Props) {
   return (
     <Sheet open={target !== null} onOpenChange={(open) => !open && onClose()}>
       {target ? (
         <SheetContent className='w-full overflow-y-auto sm:max-w-md'>
           <PanelBody
             key={target.mode === 'edit' ? target.id : 'new'}
-            {...{ target, onClose, owners }}
+            {...{ target, onClose, owners, customDefs }}
           />
         </SheetContent>
       ) : null}
@@ -68,11 +77,13 @@ export function ContactPanel({ target, onClose, owners }: Props) {
 function PanelBody({
   target,
   onClose,
-  owners
+  owners,
+  customDefs
 }: {
   target: NonNullable<PanelTarget>;
   onClose: () => void;
   owners: Props['owners'];
+  customDefs: readonly CustomFieldDef[];
 }) {
   const router = useRouter();
   const editId = target.mode === 'edit' ? target.id : undefined;
@@ -87,15 +98,17 @@ function PanelBody({
     loadContactAction(editId).then(
       (v) => {
         if (!live) return;
-        if (v) setInitial(v);
-        else setLoadFailed(true);
+        if (v) {
+          const { customRaw, ...values } = v;
+          setInitial({ ...values, custom: draftsFromValues(customDefs, customRaw) });
+        } else setLoadFailed(true);
       },
       () => live && setLoadFailed(true)
     );
     return () => {
       live = false;
     };
-  }, [editId]);
+  }, [editId, customDefs]);
 
   const title = editId ? 'Edit contact' : 'Add contact';
   return (
@@ -120,6 +133,7 @@ function PanelBody({
           initial={initial}
           editId={editId}
           owners={owners}
+          customDefs={customDefs}
           onDone={() => {
             onClose();
             router.refresh();
@@ -139,23 +153,28 @@ function PanelForm({
   initial,
   editId,
   owners,
+  customDefs,
   onDone,
   onClose
 }: {
   initial: PanelValues;
   editId?: string;
   owners: Props['owners'];
+  customDefs: readonly CustomFieldDef[];
   onDone: () => void;
   onClose: () => void;
 }) {
   const [duplicates, setDuplicates] = React.useState<DuplicateMatchView[] | null>(null);
   const [formError, setFormError] = React.useState<string | null>(null);
+  const [customErrors, setCustomErrors] = React.useState<Record<string, string[]>>({});
 
   async function save(values: PanelValues, acknowledgeDuplicates: boolean) {
     setFormError(null);
+    setCustomErrors({});
     const res = await saveContactAction({
       id: editId,
       values,
+      custom: customDefs.length ? customFromDrafts(customDefs, values.custom) : undefined,
       acknowledgeDuplicates
     });
     if (res.ok) {
@@ -168,7 +187,9 @@ function PanelForm({
       return;
     }
     if (res.kind === 'invalid') {
+      setCustomErrors(customErrorsByKey(res.fieldErrors));
       for (const [path, reasons] of Object.entries(res.fieldErrors)) {
+        if (path.startsWith('custom')) continue;
         const name = path.split('.')[0] as keyof PanelValues;
         form.setFieldMeta(name, (m) => ({
           ...m,
@@ -291,6 +312,16 @@ function PanelForm({
         <form.AppField name='tags' mode='array'>
           {(f) => <f.TagsField label='Tags' />}
         </form.AppField>
+        <form.Subscribe selector={(s) => s.values.custom}>
+          {(custom) => (
+            <CustomFieldInputs
+              defs={customDefs}
+              drafts={custom}
+              errors={customErrors}
+              onChange={(key, draft) => form.setFieldValue('custom', { ...custom, [key]: draft })}
+            />
+          )}
+        </form.Subscribe>
       </div>
       <SheetFooter className='flex-row justify-end'>
         <Button type='button' variant='outline' onClick={onClose}>
