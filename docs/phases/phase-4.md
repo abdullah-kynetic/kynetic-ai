@@ -42,7 +42,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Review notes in `docs/`
   - Commit: "Record the phase 4 security review and fixes"
   - Covers: P4-2
-- [ ] **P4-S3.** Load test contact search and list paths on a quiet machine (500 ms p95 target).
+- [x] **P4-S3.** Load test contact search and list paths on a quiet machine (500 ms p95 target).
   - Test: `load-m10` without the CI override
   - Commit: "Record the load test result"
   - Covers: P4-3

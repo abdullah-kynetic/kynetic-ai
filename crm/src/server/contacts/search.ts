@@ -161,12 +161,20 @@ async function searchIn(
     customParts = checkCustomFilters(defs, v.custom).map(customFilterSql(contacts.custom));
   }
   const where = whereFor(v, customParts);
-  const [{ total }] = await tx
-    .select({ total: sql<number>`count(*)::int` })
-    .from(contacts)
-    .where(where);
-  const pageCount = Math.max(1, Math.ceil(total / v.perPage));
-  const rows = await tx
+  // With a filter the count needs the same full scan as the page, so the total rides on each page row
+  // (count(*) over ()) and the table is scanned once instead of twice. The unfiltered list keeps its own
+  // count: that count is cheap, and the page itself can stop early on the (tenant, updated_at) index.
+  const filtered = Boolean(
+    v.q ||
+    v.statuses?.length ||
+    v.sources?.length ||
+    v.tags?.length ||
+    v.owners?.length ||
+    v.createdFrom ||
+    v.createdTo ||
+    customParts.length
+  );
+  const found = await tx
     .select({
       id: contacts.id,
       firstName: contacts.firstName,
@@ -180,7 +188,8 @@ async function searchIn(
       ownerName: sql<string | null>`coalesce(${users.name}, ${users.email})`,
       createdAt: contacts.createdAt,
       updatedAt: contacts.updatedAt,
-      custom: contacts.custom
+      custom: contacts.custom,
+      matchTotal: filtered ? sql<number>`(count(*) over ())::int` : sql<number>`0`
     })
     .from(contacts)
     .leftJoin(users, eq(users.id, contacts.ownerId))
@@ -188,6 +197,16 @@ async function searchIn(
     .orderBy(...orderFor(v.sort))
     .limit(v.perPage)
     .offset((v.page - 1) * v.perPage);
+  let total = found[0]?.matchTotal ?? 0;
+  // Unfiltered, or a page past the end (no row to carry the total): count separately.
+  if (!filtered || (found.length === 0 && v.page > 1)) {
+    [{ total }] = await tx
+      .select({ total: sql<number>`count(*)::int` })
+      .from(contacts)
+      .where(where);
+  }
+  const pageCount = Math.max(1, Math.ceil(total / v.perPage));
+  const rows = found.map(({ matchTotal: _matchTotal, ...row }) => row);
   return { rows: rows as ContactListRow[], total, page: v.page, perPage: v.perPage, pageCount };
 }
 
