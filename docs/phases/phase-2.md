@@ -40,7 +40,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Integration test: run twice, same row counts
   - Commit: "Add repeatable archive import"
   - Covers: P2-1
-- [ ] **P2-S3.** Server queries and search by title and text, with date, tag and status filters.
+- [x] **P2-S3.** Server queries and search by title and text, with date, tag and status filters.
   - Test: Integration test finds a known note by a phrase from its body
   - Commit: "Add archive search queries"
   - Covers: P2-3

@@ -12,7 +12,8 @@ CREATE TABLE archive_notes (
   created_on date NOT NULL,
   updated_on date,
   search tsvector GENERATED ALWAYS AS (
-    to_tsvector('english', coalesce(title, '') || ' ' || coalesce(body, ''))
+    setweight(to_tsvector('english', coalesce(title, '')), 'A') ||
+    setweight(to_tsvector('english', coalesce(body, '')), 'B')
   ) STORED
 );
 --> statement-breakpoint
@@ -31,7 +32,8 @@ CREATE TABLE archive_tasks (
   due_on date,
   created_on date NOT NULL,
   search tsvector GENERATED ALWAYS AS (
-    to_tsvector('english', coalesce(title, '') || ' ' || coalesce(body, ''))
+    setweight(to_tsvector('english', coalesce(title, '')), 'A') ||
+    setweight(to_tsvector('english', coalesce(body, '')), 'B')
   ) STORED
 );
 --> statement-breakpoint
