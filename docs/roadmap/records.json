@@ -1,0 +1,12 @@
+{
+  "exportedAt": "2026-11-13",
+  "source": "Twenty crm.kyneticai.com, read-only find_many",
+  "excluded": "Kynetic Restoration (Demo) company f3bbdb6d: no-touch record, left out on purpose.",
+  "records": [
+    {"object": "companies", "twentyId": "11279a64-6fc3-4c07-933f-217d7827a080", "label": "Kynetic Roofing (Demo)", "createdAt": "2026-10-08T19:21:21.080Z", "data": {"name": "Kynetic Roofing (Demo)", "niche": "ROOFING", "leadStatus": "NEW", "city": "Bend", "state": "OR", "phone": "+15413883621", "googleRating": 4.6, "reviewCount": 88}},
+    {"object": "companies", "twentyId": "417b4930-c138-48ad-88a8-2fb7f43e7037", "label": "Kynetic AI (Internal)", "createdAt": "2026-10-14T02:34:29.454Z", "data": {"name": "Kynetic AI (Internal)", "leadStatus": "NEW"}},
+    {"object": "companies", "twentyId": "6205348e-6a88-4c1b-853e-b397747dd635", "label": "AM-1 Roofing Inc", "createdAt": "2026-10-08T19:38:41.909Z", "data": {"name": "AM-1 Roofing Inc", "domain": "am1roofing.com", "niche": "ROOFING", "leadStatus": "DO_NOT_CALL", "leadSource": "SCRAPE", "city": "Bend", "state": "OR", "phone": "+15413883621", "googleRating": 4.6, "reviewCount": 88}},
+    {"object": "people", "twentyId": "33f515a3-84fa-4562-8259-6b7faef914eb", "label": "Quentin", "createdAt": "2026-10-13T09:12:07.394Z", "data": {"firstName": "Quentin", "jobTitle": "Sales lead (partner)"}},
+    {"object": "people", "twentyId": "e16d9c56-7db7-4703-b557-16125a6d4713", "label": "Abdullah", "createdAt": "2026-10-09T18:30:20.251Z", "data": {"firstName": "Abdullah", "email": "abdullah@kyneticai.com"}}
+  ]
+}

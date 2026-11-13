@@ -245,3 +245,53 @@ describe('SEC-T-02 SQL-level isolation for every tenant table', () => {
     }
   });
 });
+
+describe('P2-5 staff-only archive tables', () => {
+  const ARCHIVE = ['archive_notes', 'archive_tasks', 'archive_attachments', 'archive_records'];
+
+  it('each has no tenant_id, forced row-level security and a policy', async () => {
+    const rows = await db.admin`
+      select c.relname, c.relrowsecurity, c.relforcerowsecurity,
+        (select count(*)::int from pg_policy p where p.polrelid = c.oid) as policies,
+        exists (select 1 from pg_attribute a where a.attrelid = c.oid and a.attname = 'tenant_id' and not a.attisdropped) as has_tenant
+      from pg_class c where c.relname = any(${ARCHIVE}) and c.relkind = 'r'`;
+    expect(rows).toHaveLength(ARCHIVE.length);
+    for (const r of rows) {
+      expect(r.relrowsecurity, r.relname).toBe(true);
+      expect(r.relforcerowsecurity, r.relname).toBe(true);
+      expect(r.policies, r.relname).toBeGreaterThan(0);
+      expect(r.has_tenant, r.relname).toBe(false);
+    }
+  });
+
+  it('web and worker roles cannot write and the worker cannot read', async () => {
+    for (const t of ARCHIVE) {
+      for (const priv of ['INSERT', 'UPDATE', 'DELETE']) {
+        for (const role of ['kynetic_app', 'kynetic_worker']) {
+          const [r] = await db.admin`select has_table_privilege(${role}, ${t}, ${priv}) as ok`;
+          expect(r.ok, `${role} ${priv} ${t}`).toBe(false);
+        }
+      }
+      const [w] =
+        await db.admin`select has_table_privilege('kynetic_worker', ${t}, 'SELECT') as ok`;
+      expect(w.ok, `worker select ${t}`).toBe(false);
+    }
+  });
+
+  it('only admin or VA with no tenant context can read rows', async () => {
+    await db.admin`insert into archive_notes (twenty_id, title, body, created_on) values ('iso-test', 'Isolation', 'body', '2026-01-01')`;
+    const read = async (role: string | null, tenant: string | null) =>
+      db.app.begin(async (tx) => {
+        await tx`select set_config('app.tenant_id', ${tenant ?? ''}, true), set_config('app.role', ${role ?? ''}, true)`;
+        const rows = await tx`select id from archive_notes`;
+        return rows.length;
+      });
+    expect(await read('admin', null)).toBe(1);
+    expect(await read('va', null)).toBe(1);
+    expect(await read(null, null)).toBe(0);
+    expect(await read('owner', IDS.tenantA)).toBe(0);
+    expect(await read('staff', IDS.tenantA)).toBe(0);
+    expect(await read('admin', IDS.tenantA)).toBe(0);
+    await db.admin`delete from archive_notes where twenty_id = 'iso-test'`;
+  });
+});
