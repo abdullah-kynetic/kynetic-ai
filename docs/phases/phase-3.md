@@ -64,7 +64,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Integration test
   - Commit: "Hide cost on the client Usage page by default"
   - Covers: -
-- [ ] **P3-S8.** Polish dashboard, pipeline, contacts and documents (spacing, empty states, mobile); review screenshots at 390 px and desktop.
+- [x] **P3-S8.** Polish dashboard, pipeline, contacts and documents (spacing, empty states, mobile); review screenshots at 390 px and desktop.
   - Test: `bun run verify:e2e`; screenshots reviewed
   - Commit: "Polish client screens"
   - Covers: P3-7

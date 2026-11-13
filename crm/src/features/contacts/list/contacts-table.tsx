@@ -311,7 +311,7 @@ function ContactSearch() {
       <Input
         type='search'
         aria-label='Search contacts by name, phone or email'
-        placeholder='Search name, phone, email'
+        placeholder='Search contacts'
         className='ps-8'
         value={value}
         onChange={(e) => {

@@ -190,7 +190,7 @@ export default async function ReviewsPage({
                   </div>
                   <p className='text-muted-foreground mt-1'>
                     {dateLabel(snapshot.capturedOn)} · {snapshot.reviewCount.toLocaleString()}{' '}
-                    reviews
+                    {snapshot.reviewCount === 1 ? 'review' : 'reviews'}
                   </p>
                 </li>
               ))}

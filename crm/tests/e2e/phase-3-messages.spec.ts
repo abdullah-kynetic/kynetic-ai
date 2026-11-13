@@ -60,3 +60,37 @@ for (const [label, size] of sizes) {
       });
   });
 }
+
+// P3-7: the client screens phase 3 polishes pass the scan on desktop and at 390 px.
+const screens = [
+  ['dashboard', '/dashboard'],
+  ['pipeline', '/dashboard/pipeline'],
+  ['contacts', '/dashboard/contacts'],
+  ['documents', '/dashboard/documents'],
+  ['usage', '/dashboard/usage'],
+  ['reviews', '/dashboard/reviews']
+] as const;
+
+for (const [label, size] of sizes) {
+  for (const [name, path] of screens) {
+    test(`${name} passes the accessibility scan (${label})`, async ({
+      authenticatedPage: page
+    }) => {
+      await page.setViewportSize(size);
+      await page.goto(path);
+      await expect(page.getByRole('heading').first()).toBeVisible();
+      await page.waitForLoadState('load');
+      await scan(page, `${name} ${label}`);
+      if (name === 'usage') {
+        // Cost stays hidden by default.
+        await expect(page.locator('main')).not.toContainText(/\$\d|cost/i);
+      }
+      if (shotDir) {
+        await page.screenshot({
+          path: `${shotDir}/${name}-${label.replace(' ', '')}.png`,
+          fullPage: true
+        });
+      }
+    });
+  }
+}
