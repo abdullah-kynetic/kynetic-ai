@@ -57,7 +57,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Integration test: fresh heartbeat 200, stale 503, missing 503
   - Commit: "Report worker heartbeat in /api/health"
   - Covers: P0-3
-- [ ] **P0-S5.** Worker boot survives one missing provider key for backup, report and digest jobs, and call jobs still refuse to run.
+- [x] **P0-S5.** Worker boot survives one missing provider key for backup, report and digest jobs, and call jobs still refuse to run.
   - Test: Test around `src/server/worker.ts` boot with a key missing
   - Commit: "Keep worker jobs running when one provider is missing"
   - Covers: P0-4
