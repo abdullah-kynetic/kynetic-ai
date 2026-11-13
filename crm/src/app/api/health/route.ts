@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { buildCommit } from '@/server/build-info';
 import { pingDatabase } from '@/server/db/ping';
 import { getEnv } from '@/server/env';
 
@@ -10,6 +11,7 @@ export async function GET() {
   return NextResponse.json(
     {
       status: db ? 'ok' : 'degraded',
+      commit: buildCommit(),
       checks: { database: db ? 'ok' : 'fail', queue: 'not_configured' }
     },
     { status: db ? 200 : 503, headers: { 'Cache-Control': 'no-store' } }

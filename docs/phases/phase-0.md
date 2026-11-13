@@ -49,7 +49,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: `bun install --frozen-lockfile`, then `bun run verify:quick`
   - Commit: "Add better-call as a direct dependency"
   - Covers: P0-1
-- [ ] **P0-S3.** Health route reports the build commit SHA (read from a build-time env var, `unknown` when unset).
+- [x] **P0-S3.** Health route reports the build commit SHA (read from a build-time env var, `unknown` when unset).
   - Test: Unit test for the route
   - Commit: "Report the build commit in /api/health"
   - Covers: P0-2
