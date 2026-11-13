@@ -59,7 +59,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Test that tries it and fails
   - Commit: "Test the model cannot change compliance state"
   - Covers: P5-5
-- [ ] **P5-S6.** Feature 1: call summaries and outcome tags.
+- [x] **P5-S6.** Feature 1: call summaries and outcome tags.
   - Test: Eval set of real cases against the chosen model
   - Commit: "Add call summaries"
   - Covers: P5-6
