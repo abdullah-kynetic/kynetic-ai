@@ -71,7 +71,12 @@ const EXTRA_TABLES = [
   'tenant_exports',
   'staff_notifications',
   'review_requests',
-  'client_referrals'
+  'client_referrals',
+  // Phase 2 staff-only archive of the Twenty planning records.
+  'archive_notes',
+  'archive_tasks',
+  'archive_attachments',
+  'archive_records'
 ];
 
 function entitiesFromDoc(): string[] {

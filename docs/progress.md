@@ -2,6 +2,10 @@
 
 > **Canonical plan (2026-11-08, precedence restated 2026-11-08 PST; portal line 2026-11-09 PST):** the business roadmap, progress baseline and scorecard live in Twenty: roadmap note `7bfdcb7e`, baseline v1 note `603fe300`, scorecard note `5c44b12e`. GitHub owns technical tracking only (code, PRs, CI, deploy evidence: `docs/audit/2026-11-08-code-evidence.md`). The operating summary, offer, pricing precedence, and the docs-reconciliation journal are in `docs/STATUS.md`. `docs/codex/COMPLETION-PLAN.md` is historical evidence, not a competing roadmap. Do not keep a second editable acceptance list in this repo.
 
+## Phase 2: staff-only archive viewer (2026-11-13)
+
+Branch `claude/project-thread-hhtbv6`, migration `1090_staff_archive`. Four read-only tables (`archive_notes`, `archive_tasks`, `archive_attachments`, `archive_records`) with no tenant id and forced row-level security: only an admin or VA session with no client context can read. A repeatable import (`bun run db:import:archive <docs/roadmap>`, uses `DATABASE_URL_SEED`) loaded the 120 notes, 63 tasks, 5 attachment rows and 5 exported Twenty records in tests, and a second run left the same counts. Admin pages `/admin/archive/notes`, `tasks`, `attachments`, `records` have search and filters. Attachment downloads redirect to a 5 minute signed link. Tests: integration (import, search, download expiry, client and anonymous access), browser (pages, a11y scan, 390 px). Not deployed: the migration and the import still need Abdullah's yes on the server.
+
 ## Phase 4 part 2: accessibility, security, load (2026-11-13)
 
 Branch `claude/project-thread-2yekry`, steps P4-S1 to P4-S3 in `docs/phases/phase-4.md`. Nothing deployed and nothing live was touched. No migration.

@@ -32,31 +32,31 @@ None.
 
 Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finishes the step. A new thread resumes at the first unticked step. For every step: finish it, test it, commit, push, then move on (see `PROTOCOL.md`). A STOP step waits for Abdullah's yes; do the steps after it that do not depend on it.
 
-- [ ] **P2-S1.** Migration: agency-level archive tables (notes, tasks, attachments, records), no client id, staff-only, forced row-level security.
+- [x] **P2-S1.** Migration: agency-level archive tables (notes, tasks, attachments, records), no client id, staff-only, forced row-level security.
   - Test: Extended isolation test
   - Commit: "Add staff-only archive tables"
   - Covers: P2-5
-- [ ] **P2-S2.** Import script for `docs/roadmap/`, attachments and exported records; repeatable.
+- [x] **P2-S2.** Import script for `docs/roadmap/`, attachments and exported records; repeatable.
   - Test: Integration test: run twice, same row counts
   - Commit: "Add repeatable archive import"
   - Covers: P2-1
-- [ ] **P2-S3.** Server queries and search by title and text, with date, tag and status filters.
+- [x] **P2-S3.** Server queries and search by title and text, with date, tag and status filters.
   - Test: Integration test finds a known note by a phrase from its body
   - Commit: "Add archive search queries"
   - Covers: P2-3
-- [ ] **P2-S4.** Admin pages: Notes, Tasks, Attachments, Records (read-only).
+- [x] **P2-S4.** Admin pages: Notes, Tasks, Attachments, Records (read-only).
   - Test: Browser test loads each page
   - Commit: "Add archive pages to admin"
   - Covers: -
-- [ ] **P2-S5.** Attachment download through the signed link that expires.
+- [x] **P2-S5.** Attachment download through the signed link that expires.
   - Test: Integration test: link works, then expires
   - Commit: "Add expiring attachment downloads"
   - Covers: P2-4
-- [ ] **P2-S6.** Block clients and anonymous requests from every archive row and file.
+- [x] **P2-S6.** Block clients and anonymous requests from every archive row and file.
   - Test: Integration and browser tests
   - Commit: "Test archive access is staff-only"
   - Covers: P2-2
-- [ ] **P2-S7.** Accessibility scan and 390 px check; open PR; record in the build log.
+- [x] **P2-S7.** Accessibility scan and 390 px check; open PR; record in the build log.
   - Test: `bun run verify:e2e`; CI green
   - Commit: "Record phase 2 in the build log"
   - Covers: P2-6

@@ -10,6 +10,10 @@ No new D-number (see the 2026-11-08 PST precedence note). Phase 1 of the portal 
 
 Supersedes every line below that calls Twenty the business source of truth. The portal in `crm/` is where lead, client and call data is written; Twenty is a read-only safety copy and its planning records are in `docs/roadmap/`. See `docs/STATUS.md`.
 
+## Archive tables are staff-only and agency-level (2026-11-13)
+
+The Twenty archive lives in `archive_*` tables with no tenant id. Policy: SELECT for the web role only when `app_role()` is admin or va and no tenant is set, so view-as and client sessions read nothing. No role can write through the app; the import runs on the seed connection. The no-touch company "Kynetic Restoration (Demo)" was left out of `docs/roadmap/records.json` on purpose.
+
 ## Precedence note (2026-11-08 PST)
 
 No new D-number. Twenty and this file already number decisions differently after Oct 24 (see the note on D-025). Assigning the next integer here would pretend to be the next Twenty decision.

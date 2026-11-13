@@ -442,6 +442,13 @@
       "when": 1793713000000,
       "tag": "1083_automation_versions",
       "breakpoints": true
+    },
+    {
+      "idx": 63,
+      "version": "7",
+      "when": 1793720000000,
+      "tag": "1090_staff_archive",
+      "breakpoints": true
     }
   ]
 }
