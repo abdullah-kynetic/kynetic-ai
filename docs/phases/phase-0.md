@@ -41,7 +41,7 @@ Anything about Alex, n8n, Cal.com or AI.
 
 Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finishes the step. A new thread resumes at the first unticked step. For every step: finish it, test it, commit, push, then move on (see `PROTOCOL.md`). A STOP step waits for Abdullah's yes; do the steps after it that do not depend on it.
 
-- [ ] **P0-S1.** Review PR #162's diff, then merge it (merge commit) once CI is green and there are no conflicts. Needs Abdullah's say on the merge.
+- [x] **P0-S1.** PR #162 was reviewed and merged by Abdullah on 2026-11-13 (merge commit b16e7259).
   - Test: CI green on the PR; `git log` shows the merge
   - Commit: "Merge PR #162"
   - Covers: (covers P0-5 image build via CI)
