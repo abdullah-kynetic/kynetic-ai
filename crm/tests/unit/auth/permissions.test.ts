@@ -40,6 +40,8 @@ const EXPECTED: Record<Action, Expect> = {
   'alex.pause_and_hours': { admin: true, va: false, owner: true, staff: true },
   'alex.prompt.manage': { admin: true, va: false, owner: false, staff: false },
   'automations.toggle': { admin: true, va: false, owner: true, staff: false },
+  'automations.edit': { admin: true, va: false, owner: true, staff: false },
+  'automations.approve': { admin: true, va: false, owner: false, staff: false },
   'modules.manage': { admin: true, va: false, owner: false, staff: false },
   'notifications.own': { admin: true, va: true, owner: true, staff: true },
   'admin.clients.read': { admin: true, va: true, owner: false, staff: false },

@@ -217,3 +217,7 @@ Visitor IP is the LAST `X-Forwarded-For` entry (the one Caddy adds), not the fir
 
 All model calls go through `server/llm`, which checks the switch, the chosen model, the per-client monthly cap, then logs the prompt, answer and approver. Nothing under `server/llm` or the adapter may import or name consent, DNC, quiet-hours or call-dispatch code (a test enforces it), so a model can only produce text. Customer-facing output (message drafts) is a draft until a signed-in person approves it; sending then goes through the unchanged outbound gate. The research brief writes only facts whose quote is found word for word in the record; the rest are suggestions a person accepts. No model id is guessed: each task stays unrunnable until a model is chosen from its eval run. Still open: the default monthly AI cap per client (built as 500 cents, low, raised by hand per client on the client page).
 
+
+## 2026-11-13 — phase 6 defaults (no new decision needed from Abdullah)
+
+The portal owns consent, quiet hours and DNC; every follow-up passes the outbound gate at send time. Sequences run in the portal worker; n8n only brings Alex's results in. Kynetic admin approves client edits to automations. Cal.com sync is off by default and off in stub mode. n8n workflow changes live in the repo as drafts until Abdullah says yes.

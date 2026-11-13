@@ -1,0 +1,84 @@
+{
+  "name": "Alex error alert (DRAFT)",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "error-trigger",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// M15-04 draft Code node, Run Once for All Items. No I/O, credentials or raw error data.\n// Only execution failures with durable workflow/execution IDs are supported in this draft.\nconst input = $input.first()?.json;\nconst identifier = (value) => {\n  if (typeof value === 'number' && Number.isSafeInteger(value) && value > 0) return String(value);\n  return typeof value === 'string' && /^[A-Za-z0-9_-]{1,80}$/.test(value) ? value : null;\n};\nconst workflowId = identifier(input?.workflow?.id);\nconst executionId = identifier(input?.execution?.id);\nif (!workflowId || !executionId) throw new Error('Workflow failure needs stable workflow and execution IDs.');\n// The alert workflow must never configure itself as its own error handler.\nif (workflowId === identifier($workflow.id)) return [];\nconst idempotencyKey = `n8n-error:${workflowId}:${executionId}`;\nreturn [{ json: {\n  idempotencyKey,\n  workflowId,\n  executionId,\n  subject: 'Kynetic workflow execution failed',\n  text: `Workflow ${workflowId}, execution ${executionId} failed. Review the execution in n8n. Raw error details are deliberately omitted.`\n} }];\n"
+      },
+      "id": "safe-formatter",
+      "name": "Safe formatter",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "REPLACE_WITH_APPROVED_SENDER",
+        "toEmail": "REPLACE_WITH_APPROVED_RECIPIENT",
+        "subject": "={{ $json.subject }}",
+        "text": "={{ $json.text }}",
+        "options": {}
+      },
+      "id": "email-alert",
+      "name": "Email alert",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        520,
+        0
+      ],
+      "credentials": {
+        "smtp": {
+          "name": "Alert email (SMTP)"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Safe formatter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Safe formatter": {
+      "main": [
+        [
+          {
+            "node": "Email alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "note": "Recipient and sender are placeholders until Abdullah approves them."
+  }
+}

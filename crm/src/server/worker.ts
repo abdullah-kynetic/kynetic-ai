@@ -8,11 +8,15 @@ import { registerAgencyDigestWorker } from './agency/ops';
 import { registerAgencyMaintenanceWorker } from './agency/scheduling';
 import { registerNotificationEmailWorker } from './notifications';
 import { registerLeadProcessor } from './leads';
-import { registerDevLeadSubscriber, registerDevLeadWorker } from './leads/dev-chain';
 import { registerResendProcessor } from './email';
 import { registerWebhookWorker } from './webhooks';
 import { registerTaskDueWorker } from './tasks';
-import { registerAppointmentSubscriber } from './appointments';
+import {
+  registerAppointmentSubscriber,
+  registerCalendarReconcileWorker,
+  registerCalendarSyncSubscribers,
+  scheduleCalendarReconcile
+} from './appointments';
 import { registerMetricsWorker } from './metrics';
 import {
   registerAutomationSubscribers,
@@ -45,17 +49,17 @@ wireEmail(getEnv());
 wireLlm(getEnv());
 registerLeadProcessor();
 registerOutboundCallSubscriber();
-registerDevLeadSubscriber();
 // A missing provider key skips that provider's webhook processor instead of stopping the worker.
 registerProviderProcessors();
 await registerEventWorkers();
 registerResendProcessor();
 await registerWebhookWorker();
 await registerOutboundCallWorker();
-await registerDevLeadWorker();
 await registerNotificationEmailWorker();
 await registerTaskDueWorker();
 registerAppointmentSubscriber();
+registerCalendarSyncSubscribers();
+await registerCalendarReconcileWorker();
 await registerMetricsWorker();
 await registerAgencyMaintenanceWorker();
 await registerAgencyDigestWorker();
@@ -79,6 +83,7 @@ await scheduleRecurring(
   { kind: 'restore_test' },
   'encrypted-backup-monthly-restore'
 );
+if (getEnv().CALCOM_SYNC_ENABLED) await scheduleCalendarReconcile();
 await registerAutomationWorker();
 await registerReportWorker();
 await registerScheduleWorkers();

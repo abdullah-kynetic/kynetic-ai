@@ -24,6 +24,7 @@ const EXTRA_TABLES = [
   'rate_limits',
   // Worker heartbeat (P0-S4); global, no tenant_id, read by /api/health.
   'worker_heartbeats',
+  'automation_versions',
   'llm_usage',
   'llm_audit',
   'call_ai_summaries',

@@ -75,14 +75,14 @@ test.describe('offboarding', () => {
   });
 });
 
-test('production refuses the dev lead hook, open personas, and a live gallery button', async ({
+test('production has no dev lead hook, refuses open personas, and a live gallery button', async ({
   request,
   adminPage
 }) => {
   const hook = await request.post('/api/hooks/leads/dev/tenant-a', {
     data: { synthetic: true }
   });
-  expect(hook.status()).toBe(403);
+  expect(hook.status()).toBe(404);
   const open = await request.get('/open/owner');
   expect(open.status()).toBe(404);
   await adminPage.goto('/dev/components');

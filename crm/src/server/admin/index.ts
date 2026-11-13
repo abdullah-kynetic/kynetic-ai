@@ -82,3 +82,7 @@ export {
   type StepPatch,
   type StepStatus
 } from './checklist';
+export {
+  provisionClientAutomations,
+  type OnboardingAutomationResult
+} from './onboarding-automation';

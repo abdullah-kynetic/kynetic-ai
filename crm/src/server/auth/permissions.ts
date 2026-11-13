@@ -62,6 +62,9 @@ export const MATRIX = {
   'alex.pause_and_hours': { admin: Y, va: N, owner: Y, staff: Y, write: true },
   'alex.prompt.manage': { admin: Y, va: N, owner: N, staff: N, write: true },
   'automations.toggle': { admin: Y, va: N, owner: Y, staff: N, write: true },
+  // P6-S6: a client owner proposes new cadence and copy; only a Kynetic admin approves it.
+  'automations.edit': { admin: Y, va: N, owner: Y, staff: N, write: true },
+  'automations.approve': { admin: Y, va: N, owner: N, staff: N, write: true },
   'modules.manage': { admin: Y, va: N, owner: N, staff: N, write: true },
   'notifications.own': { admin: Y, va: Y, owner: Y, staff: Y },
   'admin.clients.read': { admin: Y, va: Y, owner: N, staff: N },

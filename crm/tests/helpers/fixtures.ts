@@ -160,6 +160,9 @@ async function seedTenant(
     await admin`insert into lead_briefs (tenant_id, contact_id, headline, audit_id) values (${t}, ${contact.id}, 'Fixture brief', ${llmAud.id}) returning id`;
   await admin`insert into lead_brief_facts (tenant_id, brief_id, claim, strength, status) values (${t}, ${brief.id}, 'Fixture fact', 'weak', 'suggested')`;
 
+  await admin`insert into automation_versions (tenant_id, automation_id, version, steps, status, decided_at)
+    values (${t}, ${auto.id}, 1, '[{"kind":"sms"}]'::jsonb, 'approved', now())`;
+
   return {
     tenantId: t,
     contactId: contact.id,

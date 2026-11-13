@@ -52,9 +52,11 @@ Found 2026-11-10. The acceptance page and the dashboard redirect exist. `TERMS_G
 
 ### KI-027: Appointment calendar does not sync to an outside calendar (medium)
 Found 2026-11-10. Month, week, and day views read the portal `appointments` table. Nothing creates or updates a Cal.com event or a client's own calendar. Blocked on which calendar the client uses.
+Update 2026-11-13: phase 6 added a one-way Cal.com sync (`calendar-sync`), off by default and off in stub mode (`CALCOM_SYNC_ENABLED`, `CAL_API_KEY`, `CAL_EVENT_TYPE_ID`). The real adapter is not verified against the live Cal.com API. Booking length comes from the event type.
 
 ### KI-028: Automation cadence and copy cannot be edited in the portal (medium)
 Found 2026-11-10. The automations page can turn a template on or off and can show run history. It cannot change the wait, the message, or enroll a list of contacts. Blocked on whether sequences run in n8n or in the portal worker.
+Update 2026-11-13: phase 6 added editing (wait, message, enroll) with Kynetic admin approval of client edits; sequences run in the portal worker. The approval queue shows only on each client's settings page (no cross-tenant queue, no staff alert).
 
 ### KI-029: Support alerts do not send email (low)
 Found 2026-11-10. A new client request notifies Kynetic in the portal, and a Kynetic reply notifies the requester in the portal. The email preference for `support_request` and `support_reply` defaults to off, and this batch does not queue an email even if someone turns that preference on. Blocked by the rule that this work must not add a real outbound send.
@@ -196,9 +198,11 @@ Found 2026-11-10. The acceptance page and the dashboard redirect exist. `TERMS_G
 
 ### KI-027: Appointment calendar does not sync to an outside calendar (medium)
 Found 2026-11-10. Month, week, and day views read the portal `appointments` table. Nothing creates or updates a Cal.com event or a client's own calendar. Blocked on which calendar the client uses.
+Update 2026-11-13: phase 6 added a one-way Cal.com sync (`calendar-sync`), off by default and off in stub mode (`CALCOM_SYNC_ENABLED`, `CAL_API_KEY`, `CAL_EVENT_TYPE_ID`). The real adapter is not verified against the live Cal.com API. Booking length comes from the event type.
 
 ### KI-028: Automation cadence and copy cannot be edited in the portal (medium)
 Found 2026-11-10. The automations page can turn a template on or off and can show run history. It cannot change the wait, the message, or enroll a list of contacts. Blocked on whether sequences run in n8n or in the portal worker.
+Update 2026-11-13: phase 6 added editing (wait, message, enroll) with Kynetic admin approval of client edits; sequences run in the portal worker. The approval queue shows only on each client's settings page (no cross-tenant queue, no staff alert).
 
 ### KI-029: Support alerts do not send email (low)
 Found 2026-11-10. A new client request notifies Kynetic in the portal, and a Kynetic reply notifies the requester in the portal. The email preference for `support_request` and `support_reply` defaults to off, and this batch does not queue an email even if someone turns that preference on. Blocked by the rule that this work must not add a real outbound send.
@@ -216,3 +220,6 @@ Update 2026-11-13: still hidden. Phase 3 added tests that fix the page to counts
 
 ### KI-033: Staff email-code login removes the authenticator step (medium)
 Found 2026-11-12. At Abdullah's request, `STAFF_EMAIL_LOGIN=true` lets a Kynetic admin or VA sign in with a 6-digit emailed code, with no authenticator app and a 30 day session. Anyone who controls that mailbox then has admin access, so the mailbox needs its own strong sign-in. It is off by default. Codes are sent through Resend, so `RESEND_API_KEY` must be set on the server or no code arrives. Google staff sign-in still works; with the setting on it also skips the authenticator. Turning the setting off restores Google plus authenticator and 7 day sessions.
+
+### KI-037: Phase 6 gaps (low)
+Found 2026-11-13. n8n drafts in `n8n/drafts/alex-lead-to-booking/` were never imported or opened in n8n (connector unreachable), so the check that n8n shows nothing active was not run. No admin button yet for `provisionClientAutomations`. Docker build, VPS and any real provider not verified.

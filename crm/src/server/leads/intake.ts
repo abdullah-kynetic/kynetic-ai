@@ -278,7 +278,6 @@ export async function processLead(
         meta: {
           source: lead.source,
           externalId: lead.externalId,
-          ...(lead.synthetic ? { synthetic: true, businessState: lead.businessState } : {}),
           ...(lead.projectType ? { projectType: lead.projectType } : {}),
           ...(lead.budget ? { budget: lead.budget } : {}),
           ...(lead.message ? { message: lead.message } : {}),
@@ -294,13 +293,7 @@ export async function processLead(
           contactId,
           dealId,
           source: lead.source,
-          webhookEventId,
-          ...(lead.synthetic
-            ? {
-                synthetic: true,
-                businessState: lead.businessState
-              }
-            : {})
+          webhookEventId
         }
       });
       return { contactId, dealId, contactReused: !!existing };
