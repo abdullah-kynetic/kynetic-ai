@@ -25,6 +25,7 @@ const EXTRA_TABLES = [
   // Worker heartbeat (P0-S4); global, no tenant_id, read by /api/health.
   'worker_heartbeats',
   'llm_usage',
+  'llm_audit',
   // M11 OPM tables are additive feature-owned tables.
   'presence_items',
   'review_snapshots',

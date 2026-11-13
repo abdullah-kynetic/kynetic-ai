@@ -51,7 +51,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Integration tests: metered and shown; over cap stops calls and tells the admin
   - Commit: "Meter and cap model usage"
   - Covers: P5-2, P5-3
-- [ ] **P5-S4.** Audit log of every prompt and output that touches a client record, with who approved it.
+- [x] **P5-S4.** Audit log of every prompt and output that touches a client record, with who approved it.
   - Test: Integration test
   - Commit: "Audit model prompts and outputs"
   - Covers: P5-7

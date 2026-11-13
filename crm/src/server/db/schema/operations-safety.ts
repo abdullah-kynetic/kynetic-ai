@@ -6,6 +6,7 @@ import {
   date,
   index,
   integer,
+  jsonb,
   pgTable,
   text,
   timestamp,
@@ -124,5 +125,43 @@ export const llmUsage = pgTable(
       sql`${table.task} IN ('call_summary', 'message_draft', 'lead_brief')`
     ),
     check('llm_usage_status_check', sql`${table.status} IN ('ok', 'failed')`)
+  ]
+);
+
+/** Every prompt and answer that touches a client record, and who approved customer-facing output. */
+export const llmAudit = pgTable(
+  'llm_audit',
+  {
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id, { onDelete: 'restrict' }),
+    usageId: uuid('usage_id').notNull(),
+    task: text().notNull(),
+    subjectType: text('subject_type').notNull(),
+    subjectId: text('subject_id').notNull(),
+    requestedBy: uuid('requested_by').references(() => users.id),
+    dataHandling: text('data_handling').notNull(),
+    prompt: jsonb().notNull(),
+    output: text(),
+    approvalStatus: text('approval_status').default('not_required').notNull(),
+    approvedBy: uuid('approved_by').references(() => users.id),
+    approvedAt: timestamp('approved_at', { withTimezone: true, mode: 'string' }),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .defaultNow()
+      .notNull()
+  },
+  (table) => [
+    unique('llm_audit_tenant_id_id_key').on(table.tenantId, table.id),
+    index('llm_audit_tenant_subject_idx').on(
+      table.tenantId,
+      table.subjectType,
+      table.subjectId,
+      table.createdAt.desc()
+    ),
+    check(
+      'llm_audit_approval_check',
+      sql`${table.approvalStatus} IN ('not_required', 'pending', 'approved', 'rejected')`
+    )
   ]
 );

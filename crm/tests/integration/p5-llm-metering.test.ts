@@ -18,7 +18,8 @@ const platform = { userId: IDS.admin, role: 'admin' as const };
 const input = (tenantId: string) => ({
   tenantId,
   task: 'call_summary' as const,
-  messages: [{ role: 'user' as const, content: 'summarize' }]
+  messages: [{ role: 'user' as const, content: 'summarize' }],
+  subject: { type: 'call', id: 'c1' }
 });
 
 beforeAll(async () => {
@@ -47,6 +48,7 @@ beforeEach(async () => {
   fake = new FakeLlmProvider();
   fake.costMicros = 6_000;
   setLlmProvider(fake);
+  await tdb.admin`delete from llm_audit`;
   await tdb.admin`delete from llm_usage`;
   await tdb.admin`delete from staff_notifications where kind = 'spend_cap'`;
   await tdb.admin`update tenants set llm_monthly_cap_cents = null`;

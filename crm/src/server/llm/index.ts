@@ -1,4 +1,5 @@
-import { sql } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
+import { audit } from '@/server/audit';
 import { resolveTaskConfig } from '@/config/llm-models';
 import {
   completeWithProvider,
@@ -9,18 +10,25 @@ import {
 } from '@/server/adapters/llm';
 import { ProviderError } from '@/server/adapters/errors';
 import type { Db } from '@/server/db/client';
-import { llmUsage } from '@/server/db/schema';
+import { llmAudit, llmUsage } from '@/server/db/schema';
 import { getEnv } from '@/server/env';
 import { withTenant } from '@/server/tenancy';
+import type { TenantContextInput } from '@/server/tenancy/context';
 
 export type LlmRunInput = {
   tenantId: string;
   task: LlmTask;
   messages: LlmMessage[];
   json?: boolean;
+  /** The client record this prompt is about. Required: a prompt with no subject is not logged. */
+  subject: { type: string; id: string };
+  /** Who asked. Null for a scheduled job. */
+  requestedBy?: string | null;
+  /** `pending` for anything a customer will read: it stays a draft until a person approves it. */
+  approval?: 'not_required' | 'pending';
 };
 
-export type LlmRunResult = LlmResponse & { usageId: string };
+export type LlmRunResult = LlmResponse & { usageId: string; auditId: string };
 
 /** Thrown when the client has used its monthly AI allowance. The admin has been told. */
 export class LlmCapReachedError extends Error {
@@ -66,6 +74,22 @@ export async function runLlmTask(input: LlmRunInput, opts: Opts = {}): Promise<L
   } catch (e) {
     throw new ProviderError('config', 'no_model', e instanceof Error ? e.message : 'No model');
   }
+  const ctx = {
+    tenantId: input.tenantId,
+    role: 'system' as const,
+    ...(input.requestedBy ? { userId: input.requestedBy } : {})
+  };
+  const auditBase = (usageId: string) => ({
+    tenantId: input.tenantId,
+    usageId,
+    task: input.task,
+    subjectType: input.subject.type,
+    subjectId: input.subject.id,
+    requestedBy: input.requestedBy ?? null,
+    dataHandling: env.LLM_DATA_HANDLING,
+    prompt: input.messages,
+    approvalStatus: input.approval ?? 'not_required'
+  });
   const state = await capState(input.tenantId, opts);
   if (state.spentMicros >= state.capCents * 10_000) {
     await withTenant(
@@ -89,21 +113,26 @@ export async function runLlmTask(input: LlmRunInput, opts: Opts = {}): Promise<L
     });
   } catch (error) {
     await withTenant(
-      { tenantId: input.tenantId, role: 'system' },
-      (tx) =>
-        tx.insert(llmUsage).values({
-          tenantId: input.tenantId,
-          task: input.task,
-          model: cfg.model,
-          status: 'failed',
-          costKnown: false
-        }),
+      ctx,
+      async (tx) => {
+        const [u] = await tx
+          .insert(llmUsage)
+          .values({
+            tenantId: input.tenantId,
+            task: input.task,
+            model: cfg.model,
+            status: 'failed',
+            costKnown: false
+          })
+          .returning({ id: llmUsage.id });
+        await tx.insert(llmAudit).values({ ...auditBase(u!.id), output: null });
+      },
       opts
     );
     throw error;
   }
-  const usageId = await withTenant(
-    { tenantId: input.tenantId, role: 'system' },
+  const { usageId, auditId } = await withTenant(
+    ctx,
     async (tx) => {
       const [row] = await tx
         .insert(llmUsage)
@@ -117,9 +146,47 @@ export async function runLlmTask(input: LlmRunInput, opts: Opts = {}): Promise<L
           costKnown: response.costMicros != null
         })
         .returning({ id: llmUsage.id });
-      return row!.id;
+      const [a] = await tx
+        .insert(llmAudit)
+        .values({ ...auditBase(row!.id), output: response.text })
+        .returning({ id: llmAudit.id });
+      return { usageId: row!.id, auditId: a!.id };
     },
     opts
   );
-  return { ...response, usageId };
+  return { ...response, usageId, auditId };
+}
+
+export type ApprovalDecision = 'approved' | 'rejected';
+
+/**
+ * A person approves or rejects a pending model output. Returns false when it was not pending (already
+ * decided, or not found for this client). The decision is stamped with the signed-in person and also
+ * written to the audit log.
+ */
+export async function decideLlmOutput(
+  ctx: TenantContextInput & { userId: string },
+  auditId: string,
+  decision: ApprovalDecision,
+  opts: Opts = {}
+): Promise<boolean> {
+  return withTenant(
+    ctx,
+    async (tx) => {
+      const rows = await tx
+        .update(llmAudit)
+        .set({ approvalStatus: decision, approvedBy: ctx.userId, approvedAt: sql`now()` as never })
+        .where(and(eq(llmAudit.id, auditId), eq(llmAudit.approvalStatus, 'pending')))
+        .returning({ id: llmAudit.id, task: llmAudit.task });
+      if (rows.length === 0) return false;
+      await audit(tx, {
+        action: `llm.${decision}`,
+        entity: 'llm_audit',
+        entityId: auditId,
+        after: { task: rows[0]!.task }
+      });
+      return true;
+    },
+    opts
+  );
 }
