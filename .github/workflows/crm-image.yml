@@ -35,4 +35,5 @@ jobs:
           file: crm/deploy/Dockerfile
           target: ${{ matrix.target }}
           push: true
+          build-args: BUILD_COMMIT_SHA=${{ github.sha }}
           tags: ghcr.io/${{ github.repository_owner }}/kynetic-crm/${{ matrix.target }}:${{ github.sha }}

@@ -566,3 +566,19 @@ describe('M4-07 compliance on the call path (F-74, F-75)', () => {
     expect((await h2.run(job(tx.id, { leadAt: evening.toISOString() }))).status).toBe('started');
   });
 });
+
+describe('P0-4 calls stay fail-closed when the voice provider is unavailable', () => {
+  it('throws and places no call when the provider getter throws (missing production key)', async () => {
+    const lead = await newLead();
+    const h = harness({
+      provider: () => {
+        throw new Error(
+          'ELEVENLABS_API_KEY and ELEVENLABS_WEBHOOK_SECRET are required in production'
+        );
+      }
+    });
+    await expect(h.run(job(lead.id))).rejects.toThrow(/required in production/);
+    expect(h.provider.calls).toHaveLength(0);
+    expect(await callRows(lead.id)).toHaveLength(0);
+  });
+});

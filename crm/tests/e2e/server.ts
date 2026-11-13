@@ -126,6 +126,9 @@ async function main(): Promise<void> {
   await db.admin`insert into backup_runs (kind, status, size_bytes, offsite_key, restore_test_passed)
     values ('restore_test', 'ok', 4096, 'backups/synthetic/test.dump.enc', true)`;
 
+  // No worker runs under e2e; /api/health needs a fresh heartbeat to report ok (the readiness wait below).
+  await db.admin`insert into worker_heartbeats (name, commit_sha) values ('worker', 'e2e')`;
+
   await mkdir('/tmp', { recursive: true });
   await db.admin`insert into users (id, email, name, kynetic_role) values
     (${ENROL_USER}, 'enrol-va@example.test', 'Enrol VA', 'va'),
