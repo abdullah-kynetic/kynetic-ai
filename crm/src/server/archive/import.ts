@@ -2,7 +2,7 @@ import { readdir, readFile, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import type postgres from 'postgres';
 import { getStorage, type StorageAdapter } from '../adapters/storage';
-import { parseNote, parseTasks } from './parse';
+import { parseNote, parseTasks, type ParsedNote } from './parse';
 
 /** The five Twenty attachments the notes export could not copy (docs/roadmap/README.md). */
 export const KNOWN_ATTACHMENTS = [
@@ -55,7 +55,7 @@ export async function importArchive(
 ): Promise<ImportResult> {
   const noteDir = join(roadmapDir, 'notes');
   const noteFiles = (await readdir(noteDir)).filter((f) => f.endsWith('.md')).sort();
-  const notes = [];
+  const notes: ParsedNote[] = [];
   for (const f of noteFiles) notes.push(parseNote(await readFile(join(noteDir, f), 'utf8')));
   const tasks = parseTasks(await readFile(join(roadmapDir, 'tasks.md'), 'utf8'));
   const recordsPath = join(roadmapDir, 'records.json');
