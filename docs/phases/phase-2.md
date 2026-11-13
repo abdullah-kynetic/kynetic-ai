@@ -44,7 +44,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Integration test finds a known note by a phrase from its body
   - Commit: "Add archive search queries"
   - Covers: P2-3
-- [ ] **P2-S4.** Admin pages: Notes, Tasks, Attachments, Records (read-only).
+- [x] **P2-S4.** Admin pages: Notes, Tasks, Attachments, Records (read-only).
   - Test: Browser test loads each page
   - Commit: "Add archive pages to admin"
   - Covers: -
