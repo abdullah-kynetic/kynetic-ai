@@ -23,6 +23,7 @@ export async function rollupUsageDaily(job: UsageDailyJob, opts: { db?: Db } = {
         sms_count: number;
         email_count: number;
         cost_unknown: boolean;
+        llm_cost_micros: number;
       }>(sql`
         select
           (select count(*)::int from calls c
@@ -44,7 +45,9 @@ export async function rollupUsageDaily(job: UsageDailyJob, opts: { db?: Db } = {
               where m.channel in ('sms', 'email')
                 and coalesce(m.sent_at, m.created_at) >= ${start}
                 and coalesce(m.sent_at, m.created_at) < ${end})
-          ) as cost_unknown
+          ) as cost_unknown,
+          (select coalesce(sum(l.cost_micros), 0)::bigint from llm_usage l
+            where l.created_at >= ${start} and l.created_at < ${end}) as llm_cost_micros
       `);
       const values = row ?? {
         call_count: 0,
@@ -52,7 +55,8 @@ export async function rollupUsageDaily(job: UsageDailyJob, opts: { db?: Db } = {
         call_cost_cents: 0,
         sms_count: 0,
         email_count: 0,
-        cost_unknown: false
+        cost_unknown: false,
+        llm_cost_micros: 0
       };
       await tx
         .insert(usageDaily)
@@ -65,7 +69,8 @@ export async function rollupUsageDaily(job: UsageDailyJob, opts: { db?: Db } = {
           smsCount: values.sms_count,
           emailCount: values.email_count,
           messageCostCents: 0,
-          costUnknown: values.cost_unknown
+          costUnknown: values.cost_unknown,
+          llmCostMicros: Number(values.llm_cost_micros)
         })
         .onConflictDoUpdate({
           target: [usageDaily.tenantId, usageDaily.day],
@@ -76,7 +81,8 @@ export async function rollupUsageDaily(job: UsageDailyJob, opts: { db?: Db } = {
             smsCount: values.sms_count,
             emailCount: values.email_count,
             messageCostCents: 0,
-            costUnknown: values.cost_unknown
+            costUnknown: values.cost_unknown,
+            llmCostMicros: Number(values.llm_cost_micros)
           }
         });
     },

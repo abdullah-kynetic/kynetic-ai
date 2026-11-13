@@ -1,8 +1,10 @@
 import { sql } from 'drizzle-orm';
 import {
+  bigint,
   boolean,
   check,
   date,
+  index,
   integer,
   pgTable,
   text,
@@ -36,7 +38,8 @@ export const usageDaily = pgTable(
     smsCount: integer('sms_count').default(0).notNull(),
     emailCount: integer('email_count').default(0).notNull(),
     messageCostCents: integer('message_cost_cents').default(0).notNull(),
-    costUnknown: boolean('cost_unknown').default(false).notNull()
+    costUnknown: boolean('cost_unknown').default(false).notNull(),
+    llmCostMicros: bigint('llm_cost_micros', { mode: 'number' }).default(0).notNull()
   },
   (table) => [
     unique('usage_daily_pkey').on(table.tenantId, table.day),
@@ -91,5 +94,35 @@ export const staffNotifications = pgTable(
       'staff_notifications_kind_check',
       sql`${table.kind} IN ('job_failed', 'daily_digest', 'spend_cap', 'ops_alert')`
     )
+  ]
+);
+
+/** One row per model call, append-only. Cost is in millionths of a dollar. */
+export const llmUsage = pgTable(
+  'llm_usage',
+  {
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id, { onDelete: 'restrict' }),
+    task: text().notNull(),
+    model: text().notNull(),
+    status: text().default('ok').notNull(),
+    promptTokens: integer('prompt_tokens').default(0).notNull(),
+    completionTokens: integer('completion_tokens').default(0).notNull(),
+    costMicros: bigint('cost_micros', { mode: 'number' }).default(0).notNull(),
+    costKnown: boolean('cost_known').default(true).notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .defaultNow()
+      .notNull()
+  },
+  (table) => [
+    unique('llm_usage_tenant_id_id_key').on(table.tenantId, table.id),
+    index('llm_usage_tenant_created_idx').on(table.tenantId, table.createdAt.desc()),
+    check(
+      'llm_usage_task_check',
+      sql`${table.task} IN ('call_summary', 'message_draft', 'lead_brief')`
+    ),
+    check('llm_usage_status_check', sql`${table.status} IN ('ok', 'failed')`)
   ]
 );

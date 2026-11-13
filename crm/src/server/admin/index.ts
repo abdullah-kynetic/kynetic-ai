@@ -65,6 +65,7 @@ export {
   readOutboundPause,
   setClientEmailFlags,
   setMonthlySpendCap,
+  setLlmMonthlyCap,
   setOutboundPaused
 } from './platform-controls';
 export { listTenantExports, offboardTenant } from './offboarding';

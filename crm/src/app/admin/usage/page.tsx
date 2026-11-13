@@ -8,6 +8,7 @@ import {
   capStatus,
   capStatusLabel,
   formatCents,
+  llmCostCents,
   marginCents,
   minutesLabel,
   providerCostCents
@@ -69,7 +70,8 @@ export default async function UsagePage({
     query.month
   );
   const empty = rows.every(
-    (row) => row.callCount === 0 && row.smsCount === 0 && row.emailCount === 0
+    (row) =>
+      row.callCount === 0 && row.smsCount === 0 && row.emailCount === 0 && row.llmCostMicros === 0
   );
   return (
     <PageContainer
@@ -125,6 +127,8 @@ export default async function UsagePage({
               <th className='p-3 text-start'>SMS</th>
               <th className='p-3 text-start'>Emails</th>
               <th className='p-3 text-start'>Provider cost</th>
+              <th className='p-3 text-start'>AI cost</th>
+              <th className='p-3 text-start'>AI cap</th>
               <th className='p-3 text-start'>Recorded fee</th>
               <th className='p-3 text-start'>Margin</th>
               <th className='p-3 text-start'>Cap</th>
@@ -143,6 +147,10 @@ export default async function UsagePage({
                   <td className='p-3'>
                     {formatCents(providerCostCents(row))}
                     {row.costUnknown ? ' · cost unknown' : ''}
+                  </td>
+                  <td className='p-3'>{formatCents(llmCostCents(row))}</td>
+                  <td className='p-3'>
+                    {row.llmCapCents == null ? 'Default' : formatCents(row.llmCapCents)}
                   </td>
                   <td className='p-3'>
                     {row.monthlyFeeCents == null

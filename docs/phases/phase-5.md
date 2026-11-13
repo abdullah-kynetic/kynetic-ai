@@ -47,7 +47,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Unit tests with a mocked transport (no network)
   - Commit: "Add the OpenRouter adapter"
   - Covers: P5-1
-- [ ] **P5-S3.** Cost metering into the usage ledger, shown on `/admin/usage`, with the per-client monthly cap.
+- [x] **P5-S3.** Cost metering into the usage ledger, shown on `/admin/usage`, with the per-client monthly cap.
   - Test: Integration tests: metered and shown; over cap stops calls and tells the admin
   - Commit: "Meter and cap model usage"
   - Covers: P5-2, P5-3

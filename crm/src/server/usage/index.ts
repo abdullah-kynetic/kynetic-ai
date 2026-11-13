@@ -2,6 +2,7 @@ export {
   capStatus,
   capStatusLabel,
   formatCents,
+  llmCostCents,
   marginCents,
   minutesLabel,
   monthStartParam,
