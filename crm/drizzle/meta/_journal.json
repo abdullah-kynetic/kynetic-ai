@@ -400,6 +400,20 @@
       "when": 1793610000000,
       "tag": "1060_ops_alert_kind",
       "breakpoints": true
+    },
+    {
+      "idx": 57,
+      "version": "7",
+      "when": 1793700000000,
+      "tag": "1070_review_request_status_update",
+      "breakpoints": true
+    },
+    {
+      "idx": 58,
+      "version": "7",
+      "when": 1793703000000,
+      "tag": "1071_notification_pref_kinds",
+      "breakpoints": true
     }
   ]
 }

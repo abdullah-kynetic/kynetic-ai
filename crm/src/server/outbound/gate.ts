@@ -44,13 +44,14 @@ export async function checkOutbound(
   const body = async (tx: Tx): Promise<GateDecision> => {
     const early = await configDecision(tx, ctx, req, now, outboundEnabled, opts);
     if (early) {
-      await logBlocked(tx, ctx, req, now, early);
+      if (opts.audit !== false) await logBlocked(tx, ctx, req, now, early);
       return early;
     }
     if (opts.replyToInbound && req.channel === 'sms') return { allowed: true };
     return canContact(ctx, req.contactId, req.channel, now, {
       tx,
       purpose: req.purpose,
+      audit: opts.audit,
       stateWindows: opts.stateWindows ?? STATE_RULES.quietWindows
     });
   };

@@ -164,7 +164,13 @@ export default async function DashboardPage({
                   <div key={item.id}>
                     <p className='text-sm'>{item.summary}</p>
                     <p className='text-muted-foreground text-xs'>
-                      {item.type} · {item.occurredAt}
+                      {item.type} ·{' '}
+                      {new Date(item.occurredAt).toLocaleString('en-US', {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                        timeZone: 'UTC'
+                      })}{' '}
+                      UTC
                     </p>
                   </div>
                 ))

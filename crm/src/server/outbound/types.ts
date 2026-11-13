@@ -9,6 +9,7 @@ export type OutboundModule =
   | 'missed_call_textback'
   | 'reactivation'
   | 'opm'
+  | 'crm'
   | 'followup_bundle';
 
 export type OutboundRequest = {
@@ -35,6 +36,11 @@ export type OutboundGateOpts = Pick<CanContactOpts, 'tx' | 'db' | 'stateWindows'
    * which a STOP has just made unsatisfiable. Never set for a send the business starts.
    */
   replyToInbound?: boolean;
+  /**
+   * False for a read-only preview (the compose box asking "could I send?"). Skips the blocked
+   * activity rows. Defaults to true, so every real send is still logged.
+   */
+  audit?: boolean;
 };
 
 /** Same shape as `canContact`: allow, or one deny reason (and `retryAt` for quiet hours). */

@@ -5,7 +5,7 @@ import { audit } from '../audit';
 import type { Db } from '../db/client';
 import { supportRequestMessages, supportRequests } from '../db/schema';
 import { AppError, ValidationError } from '../errors';
-import { notify, type EnqueueEmail } from '../notifications';
+import { enqueueSupportReplyEmail, notify, type EnqueueEmail } from '../notifications';
 import { withPlatform, withTenant, type TenantContextInput } from '../tenancy';
 
 export const SUPPORT_STATUSES = ['open', 'in_progress', 'resolved'] as const;
@@ -405,7 +405,7 @@ export async function replyAsStaff(
           body: text.slice(0, 240),
           link: `/dashboard/support/${requestId}`
         },
-        { enqueueEmail: inAppOnly }
+        { enqueueEmail: enqueueSupportReplyEmail }
       ),
     opts
   );
