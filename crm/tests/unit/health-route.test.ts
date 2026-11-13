@@ -1,7 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/server/db/ping', () => ({ pingDatabase: vi.fn(async () => true) }));
-vi.mock('@/server/env', () => ({ getEnv: () => ({ DATABASE_URL: 'postgres://unused' }) }));
+vi.mock('@/server/db/ping', () => ({
+  readHealth: vi.fn(async () => ({ database: true, workerAgeSeconds: 1 }))
+}));
+vi.mock('@/server/env', () => ({
+  getEnv: () => ({
+    DATABASE_URL: 'postgres://unused',
+    BUILD_COMMIT_SHA: process.env.BUILD_COMMIT_SHA
+  })
+}));
 
 import { buildCommit } from '@/server/build-info';
 import { GET } from '@/app/api/health/route';
@@ -28,6 +35,6 @@ describe('/api/health build commit', () => {
   });
 
   it('ignores a value with unsafe characters', () => {
-    expect(buildCommit({ BUILD_COMMIT_SHA: 'abc def\n<script>' } as never)).toBe('unknown');
+    expect(buildCommit('abc def\n<script>')).toBe('unknown');
   });
 });

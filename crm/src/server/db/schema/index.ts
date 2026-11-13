@@ -16,3 +16,4 @@ export * from './agency-sales';
 export * from './operations-safety';
 export * from './demo-seed';
 export * from './client-growth';
+export * from './worker-heartbeat';

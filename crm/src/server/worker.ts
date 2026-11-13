@@ -39,6 +39,7 @@ import { getWorkerDb } from './db/client';
 import { registerN8nEventSubscribers } from './integrations/n8n';
 import { registerWorker, scheduleRecurring } from './jobs';
 import { handleBackupJob, type BackupJob } from './admin/backups';
+import { startWorkerHeartbeat } from './worker-heartbeat';
 
 // Worker entry (kynetic_worker). Feature milestones register their subscribers and webhook
 // processors before this point; the fan-out workers below deliver to them.
@@ -110,10 +111,13 @@ await scheduleRecurring(
   {},
   'rate-limit-purge-hourly'
 );
+// /api/health reads this beat; it goes 503 if the worker stops beating (P0-3).
+const stopHeartbeat = startWorkerHeartbeat(getWorkerDb());
 console.log(JSON.stringify({ level: 'info', msg: 'worker started' }));
 
 for (const signal of ['SIGTERM', 'SIGINT'] as const) {
   process.on(signal, () => {
+    stopHeartbeat();
     void stopJobs().finally(() => process.exit(0));
   });
 }

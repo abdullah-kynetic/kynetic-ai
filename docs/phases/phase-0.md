@@ -53,7 +53,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Unit test for the route
   - Commit: "Report the build commit in /api/health"
   - Covers: P0-2
-- [ ] **P0-S4.** Health route reads the worker heartbeat and returns 503 when it is older than the limit.
+- [x] **P0-S4.** Health route reads the worker heartbeat and returns 503 when it is older than the limit.
   - Test: Integration test: fresh heartbeat 200, stale 503, missing 503
   - Commit: "Report worker heartbeat in /api/health"
   - Covers: P0-3
