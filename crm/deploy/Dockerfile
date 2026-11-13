@@ -31,7 +31,17 @@ CMD ["node", "server.js"]
 FROM node:${NODE_VERSION} AS worker
 WORKDIR /app
 ENV NODE_ENV=production
-RUN apt-get update -qq && apt-get install -y -qq postgresql-client >/dev/null && rm -rf /var/lib/apt/lists/*
+# pg_dump must be the same major version as the server (Postgres 16). The Debian default client is
+# older and every backup run failed with "server version mismatch" (2026-11-10 to 2026-11-12), so the
+# 16 client comes from the PostgreSQL apt repository and the build fails if it is not 16.
+RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends ca-certificates curl gnupg >/dev/null \
+  && install -d /usr/share/postgresql-common/pgdg \
+  && curl -fsSL -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+  && . /etc/os-release \
+  && echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt ${VERSION_CODENAME}-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
+  && apt-get update -qq && apt-get install -y -qq --no-install-recommends postgresql-client-16 >/dev/null \
+  && pg_dump --version | grep -q ' 16\.' \
+  && rm -rf /var/lib/apt/lists/*
 RUN npm install --prefix /app --no-save --include=optional sharp@0.35.5
 RUN useradd --system --uid 1001 app
 COPY --from=build --chown=app /app/dist/worker.js ./worker.js

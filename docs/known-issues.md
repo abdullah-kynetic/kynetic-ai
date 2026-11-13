@@ -6,6 +6,9 @@
 Mirror of open problems tracked in Twenty. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Open
+### KI-034: Portal database backups fail and do not reach R2 (high)
+Found 2026-11-12. Every `backup_runs` row (21 of 21, 2026-11-10 to 2026-11-12) failed: the worker image's `pg_dump` was version 15 against Postgres 16 ("server version mismatch"). Nothing reached R2, and the worker's `STORAGE_BUCKET` is `kynetic-portal-test` while the production bucket is `kynetic-portal-files`. The backup alert is off. The Dockerfile now installs the version 16 client and fails the build otherwise. Still needed on the server: deploy the new worker image, set the bucket, turn on `BACKUP_ALERT_ENABLED`, then one manual backup and one restore test. The root cron job `/etc/cron.d/portal-backup` is unread.
+
 ### KI-020: Soft-deleted document files are not purged (low)
 Found 2026-11-10. Admin delete and replace hide a PDF from the client and set `tenant_documents.deleted_at` or `superseded_by`. The storage object is kept. There is no job that removes those objects after a retention window.
 
@@ -18,8 +21,8 @@ Found 2026-11-10. `/admin/usage` is staff-only. `calls.cost.read` stays limited 
 ### KI-023: Message provider cost is not stored (open)
 Found 2026-11-10. `messages` has no cost column. The usage rollup counts SMS and email, stores message cost as 0, and marks the day "cost unknown" when a message was sent or a call has no cost. Do not invent a price to fill the gap. The recorded monthly fee still comes from `tenant_billing_modules` as stored.
 
-### KI-024: Twenty summary push is not built (open)
-Found 2026-11-10. Blueprint AU-29 would push a summary into Twenty. This batch did not build it. Twenty stays untouched.
+### KI-024: Twenty summary push is not built (closed, won't build 2026-11-12)
+Found 2026-11-10. Closed 2026-11-12: the portal became the source of truth and Twenty is a read-only safety copy, so there is nothing to push.
 
 ### KI-025: Offboarded clients are not deleted (open)
 Found 2026-11-10. Offboarding sets `offboarded_at` and `deletion_due_on` (30 days later) and queues a record export. Nothing deletes the client, the rows, or the files. The date is a reminder. The manual steps are in `docs/runbooks/offboarding.md`. A deletion still needs an explicit yes.
@@ -78,6 +81,7 @@ Found 2026-10-19 (read-only review of Twenty).
 Fix: Abdullah to say where the research files are, confirm the Treg rotation, and approve or reject the D-002 reword.
 
 ### KI-013: Portal has no sign-in (open mode) (high)
+Update 2026-11-12: anonymous probe of portal.kyneticai.com showed `/admin` returns HTTP 401 and `/dashboard` redirects to `/sign-in`, so sign-in is enforced on the live revision. Treat this as closed once the first invites are confirmed.
 Update 2026-11-08 PST: the 2026-11-08 ledger labels HTTP 200 on `/admin` as inference (a sign-in page can also return 200) and the deployed revision as partly memory-based. The docs pass on this date did not probe the portal and does not confirm production exposure or a deploy. The release risk stays open until a dated anonymous probe of the deployed revision shows a denial. The 2026-11-08 note follows.
 Update 2026-11-08: main `49019b93` (merged 2026-11-05) restores invitation-only sign-in, staff TOTP and verified sessions, and persona switching only works outside production with DEV_PERSONA_SWITCHING (checked in code; typecheck and 468 unit tests pass). It is NOT deployed: live portal.kyneticai.com still runs `350bf67` and `/admin` returns HTTP 200 with no sign-in (checked 2026-11-08). Still open until main is deployed and the first invites are created. Original note follows.
 Found 2026-11-02 (DC-TBD-15). Anyone who can reach an open-mode build acts as the Kynetic admin or any client. Fine for local use and synthetic data. Do NOT deploy it to a public address with real client data until network access control or sign-in is back. The live portal.kyneticai.com still runs the Oct 29 build with sign-in; deploying main replaces that with the open build. Fix: restore auth (git history before the open-mode commit has it) or add Cloudflare Access first.
