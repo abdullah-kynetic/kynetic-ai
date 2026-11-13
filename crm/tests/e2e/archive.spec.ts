@@ -29,4 +29,45 @@ test.describe('P2 archive pages (staff only)', () => {
     await expect(vaPage.getByRole('heading', { name: 'Archive' })).toBeVisible();
     await expect(vaPage.getByRole('button', { name: /delete|edit|save/i })).toHaveCount(0);
   });
+
+  const PAGES = [
+    '/admin/archive/notes',
+    '/admin/archive/tasks',
+    '/admin/archive/attachments',
+    '/admin/archive/records'
+  ];
+  const ID = '99999999-9999-4999-8999-999999999999';
+
+  test('P2-2 a client user is refused on every archive page and file link', async ({
+    authenticatedPage
+  }) => {
+    for (const path of PAGES) {
+      const res = await authenticatedPage.goto(path);
+      expect(res?.status(), path).toBe(403);
+      await expect(authenticatedPage.getByText('Agency Overview')).toHaveCount(0);
+    }
+    const note = await authenticatedPage.goto(`/admin/archive/notes/${ID}`);
+    expect(note?.status()).toBe(403);
+    const dl = await authenticatedPage.request.get(
+      `/api/admin/archive/attachments/${ID}/download`,
+      { maxRedirects: 0 }
+    );
+    expect(dl.status()).toBe(403);
+  });
+
+  test('P2-2 an anonymous request gets no archive page or file', async ({ browser }) => {
+    const context = await browser.newContext();
+    const page = await context.newPage();
+    for (const path of PAGES) {
+      const res = await page.goto(path);
+      // Anonymous visitors are sent to sign-in (or get a 401); either way no archive content.
+      expect(page.url().includes('/sign-in') || res?.status() === 401, path).toBe(true);
+      await expect(page.getByText('Agency Overview')).toHaveCount(0);
+    }
+    const dl = await context.request.get(`/api/admin/archive/attachments/${ID}/download`, {
+      maxRedirects: 0
+    });
+    expect(dl.status()).toBe(401);
+    await context.close();
+  });
 });

@@ -52,7 +52,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Integration test: link works, then expires
   - Commit: "Add expiring attachment downloads"
   - Covers: P2-4
-- [ ] **P2-S6.** Block clients and anonymous requests from every archive row and file.
+- [x] **P2-S6.** Block clients and anonymous requests from every archive row and file.
   - Test: Integration and browser tests
   - Commit: "Test archive access is staff-only"
   - Covers: P2-2
