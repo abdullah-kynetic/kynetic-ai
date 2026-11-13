@@ -50,7 +50,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Curl output pasted in the report
   - Commit: "Correct STATUS and KI-013/KI-017 from the live probe"
   - Covers: P1-1
-- [ ] **P1-S2.** Remove the unused files and dependencies that `knip` reports (keep `scripts/emergency-reset-staff-totp.ts` and `src/server/worker.ts`).
+- [x] **P1-S2.** Remove the unused files and dependencies that `knip` reports (keep `scripts/emergency-reset-staff-totp.ts` and `src/server/worker.ts`).
   - Test: `bunx knip` clean; `bun run verify`
   - Commit: "Remove unused files and dependencies"
   - Covers: P1-2
