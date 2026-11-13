@@ -425,3 +425,7 @@ Repo only, on `claude/project-thread-ajhhbz`. Nothing deployed, turned on, or se
 
 Needs Abdullah's yes: deploy, the OpenRouter key, `LLM_ENABLED` on, any real client data to a model, choosing models from a live eval run, and the default monthly cap. Not verified: anything against a real model, the Docker build (CI), anything on the server.
 
+
+### 2026-11-13 — phase 6: Alex lead-to-booking chain and automations (code)
+
+Repo only, on `claude/project-thread-06h1cw`. Nothing deployed, turned on, or sent; no real call or message; live Alex, n8n, Nora, Emily untouched. Demo-client end-to-end and webhook-signature tests; follow-up gating test (consent, DNC, quiet hours hold at send time). Removed synthetic lead handling. One-way Cal.com sync (`adapters/calendar`, `appointments/calendar-sync.ts`, fake in tests), off by default. Editable automations with version history and admin approval (migration `1083`). Onboarding provisioning (`admin/onboarding-automation.ts`: default sequences plus booking service token). n8n workflow drafts exported as JSON in `n8n/drafts/alex-lead-to-booking/` for a later yes, not imported or activated. Not verified: real Cal.com, n8n import, Docker build, VPS, any real provider. See KI-027, KI-028, KI-037.

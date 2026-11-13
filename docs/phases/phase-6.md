@@ -73,7 +73,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: n8n listing shows nothing active
   - Commit: "Record the n8n workflow export"
   - Covers: P6-6
-- [ ] **P6-S9.** Open PR; record in the build log. STOP for yes: live test to Abdullah's phone only, then outbound off.
+- [x] **P6-S9.** Open PR; record in the build log. STOP for yes: live test to Abdullah's phone only, then outbound off.
   - Test: Evidence
   - Commit: "Record phase 6 in the build log"
   - Covers: P6-7
