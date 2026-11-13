@@ -66,7 +66,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Integration test plus browser test
   - Commit: "Add client self-serve lead import"
   - Covers: P1-5
-- [ ] **P1-S6.** Tenant guard and audit for client import.
+- [x] **P1-S6.** Tenant guard and audit for client import.
   - Test: Integration test: cross-tenant refused, audit row written
   - Commit: "Block cross-tenant import and audit it"
   - Covers: P1-6
