@@ -65,7 +65,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Integration tests: valid edit versioned and audited, invalid edit refused
   - Commit: "Add editable automations"
   - Covers: P6-5
-- [ ] **P6-S7.** Onboarding automation for a new client.
+- [x] **P6-S7.** Onboarding automation for a new client.
   - Test: Test
   - Commit: "Add onboarding automation"
   - Covers: -
