@@ -45,7 +45,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: CI green on the PR; `git log` shows the merge
   - Commit: "Merge PR #162"
   - Covers: (covers P0-5 image build via CI)
-- [ ] **P0-S2.** Add `better-call` as a direct dependency and refresh the lockfile.
+- [x] **P0-S2.** Add `better-call` as a direct dependency and refresh the lockfile.
   - Test: `bun install --frozen-lockfile`, then `bun run verify:quick`
   - Commit: "Add better-call as a direct dependency"
   - Covers: P0-1
