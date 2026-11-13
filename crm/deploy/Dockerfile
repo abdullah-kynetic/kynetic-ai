@@ -14,7 +14,13 @@ RUN npm install -g bun
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1 BUILD_STANDALONE=true
-RUN bun run build \
+# The commit shown by /api/health. CI passes BUILD_COMMIT_SHA; portal-new-deploy writes .commit into the
+# build context. Either way it lands in build-commit, and src/server/build-info.ts reads it at runtime.
+ARG BUILD_COMMIT_SHA=
+RUN { printf '%s' "${BUILD_COMMIT_SHA}" | grep -E '^[0-9a-f]{7,40}$' \
+      || { [ -f .commit ] && grep -E '^[0-9a-f]{7,40}$' .commit; } \
+      || echo unknown; } | head -1 > build-commit \
+ && bun run build \
  && bun build src/server/worker.ts --target=node --outfile=dist/worker.js
 
 FROM node:${NODE_VERSION} AS app
@@ -24,6 +30,7 @@ RUN useradd --system --uid 1001 app
 COPY --from=build --chown=app /app/.next/standalone ./
 COPY --from=build --chown=app /app/.next/static ./.next/static
 COPY --from=build --chown=app /app/public ./public
+COPY --from=build --chown=app /app/build-commit ./build-commit
 USER app
 EXPOSE 3000
 CMD ["node", "server.js"]
@@ -45,6 +52,7 @@ RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends ca-cert
 RUN npm install --prefix /app --no-save --include=optional sharp@0.35.5
 RUN useradd --system --uid 1001 app
 COPY --from=build --chown=app /app/dist/worker.js ./worker.js
+COPY --from=build --chown=app /app/build-commit ./build-commit
 USER app
 CMD ["node", "worker.js"]
 

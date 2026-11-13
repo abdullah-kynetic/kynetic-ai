@@ -10,6 +10,8 @@ export const envSchema = z.object({
   // Dev-only validation happens at the dev boundary; unrelated production paths do not use it.
   TEST_PHONE: z.string().optional(),
   APP_BASE_URL: z.url(),
+  // The commit this build came from; shown by /api/health. Set by CI or the Docker build.
+  BUILD_COMMIT_SHA: z.string().optional(),
   DATABASE_URL: z.string().startsWith('postgres'),
   DATABASE_URL_AUTH: z.string().startsWith('postgres'),
   DATABASE_URL_WORKER: z.string().startsWith('postgres').optional(),

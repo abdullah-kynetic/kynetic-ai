@@ -22,6 +22,8 @@ const EXTRA_TABLES = [
   'two_factors',
   // Rate limiter counters (M0-21); global, no tenant_id.
   'rate_limits',
+  // Worker heartbeat (P0-S4); global, no tenant_id, read by /api/health.
+  'worker_heartbeats',
   // M11 OPM tables are additive feature-owned tables.
   'presence_items',
   'review_snapshots',

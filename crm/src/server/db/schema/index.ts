@@ -17,3 +17,4 @@ export * from './operations-safety';
 export * from './demo-seed';
 export * from './client-growth';
 export * from './archive';
+export * from './worker-heartbeat';

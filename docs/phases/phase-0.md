@@ -41,23 +41,23 @@ Anything about Alex, n8n, Cal.com or AI.
 
 Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finishes the step. A new thread resumes at the first unticked step. For every step: finish it, test it, commit, push, then move on (see `PROTOCOL.md`). A STOP step waits for Abdullah's yes; do the steps after it that do not depend on it.
 
-- [ ] **P0-S1.** Review PR #162's diff, then merge it (merge commit) once CI is green and there are no conflicts. Needs Abdullah's say on the merge.
+- [x] **P0-S1.** PR #162 was reviewed and merged by Abdullah on 2026-11-13 (merge commit b16e7259).
   - Test: CI green on the PR; `git log` shows the merge
   - Commit: "Merge PR #162"
   - Covers: (covers P0-5 image build via CI)
-- [ ] **P0-S2.** Add `better-call` as a direct dependency and refresh the lockfile.
+- [x] **P0-S2.** Add `better-call` as a direct dependency and refresh the lockfile.
   - Test: `bun install --frozen-lockfile`, then `bun run verify:quick`
   - Commit: "Add better-call as a direct dependency"
   - Covers: P0-1
-- [ ] **P0-S3.** Health route reports the build commit SHA (read from a build-time env var, `unknown` when unset).
+- [x] **P0-S3.** Health route reports the build commit SHA (read from a build-time env var, `unknown` when unset).
   - Test: Unit test for the route
   - Commit: "Report the build commit in /api/health"
   - Covers: P0-2
-- [ ] **P0-S4.** Health route reads the worker heartbeat and returns 503 when it is older than the limit.
+- [x] **P0-S4.** Health route reads the worker heartbeat and returns 503 when it is older than the limit.
   - Test: Integration test: fresh heartbeat 200, stale 503, missing 503
   - Commit: "Report worker heartbeat in /api/health"
   - Covers: P0-3
-- [ ] **P0-S5.** Worker boot survives one missing provider key for backup, report and digest jobs, and call jobs still refuse to run.
+- [x] **P0-S5.** Worker boot survives one missing provider key for backup, report and digest jobs, and call jobs still refuse to run.
   - Test: Test around `src/server/worker.ts` boot with a key missing
   - Commit: "Keep worker jobs running when one provider is missing"
   - Covers: P0-4
