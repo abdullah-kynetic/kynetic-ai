@@ -27,6 +27,7 @@
     "db:generate-custom": "drizzle-kit generate --custom",
     "db:migrate": "bun src/server/db/migrate.ts",
     "db:seed": "bun src/server/db/seed/index.ts",
+    "db:import:archive": "bun src/server/archive/import-cli.ts",
     "db:seed:prospects": "bun src/server/db/seed/prospects-cli.ts",
     "db:seed:demo-clients": "bun src/server/db/seed/demo-clients-cli.ts",
     "db:remove:demo-clients": "bun src/server/db/seed/demo-clients-remove-cli.ts",

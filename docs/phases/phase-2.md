@@ -36,7 +36,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Extended isolation test
   - Commit: "Add staff-only archive tables"
   - Covers: P2-5
-- [ ] **P2-S2.** Import script for `docs/roadmap/`, attachments and exported records; repeatable.
+- [x] **P2-S2.** Import script for `docs/roadmap/`, attachments and exported records; repeatable.
   - Test: Integration test: run twice, same row counts
   - Commit: "Add repeatable archive import"
   - Covers: P2-1
