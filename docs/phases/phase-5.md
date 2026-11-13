@@ -67,7 +67,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Eval set and integration test
   - Commit: "Add message drafts"
   - Covers: P5-6, P5-7
-- [ ] **P5-S8.** Feature 3: lead research brief (strong evidence writes, weak becomes a suggestion).
+- [x] **P5-S8.** Feature 3: lead research brief (strong evidence writes, weak becomes a suggestion).
   - Test: Eval set
   - Commit: "Add lead research brief"
   - Covers: P5-6

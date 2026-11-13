@@ -9,6 +9,11 @@ import { FakeEmailProvider } from '@/server/adapters/email/fake';
 import { approveAndSendDraft, rejectDraft } from '@/server/ai-drafts';
 import { recordConsent } from '@/server/consent';
 import { createDb, type Db } from '@/server/db/client';
+import {
+  createLeadBrief,
+  decideBriefFact,
+  getLatestLeadBrief
+} from '@/server/llm/features/lead-brief';
 import { createMessageDraft } from '@/server/llm/features/message-draft';
 import { getCallAiSummary, summarizeCall } from '@/server/llm/features/call-summary';
 import { createTestDatabase, type TestDatabase } from '../helpers/db';
@@ -336,5 +341,123 @@ describe('P5-7 feature 2: message drafts need a person, then the gate', () => {
     await expect(
       approveAndSendDraft(ownerB, ctx.ownerB(), { draftId: d.id }, sendDeps)
     ).rejects.toMatchObject({ code: 'NOT_FOUND' });
+  });
+});
+
+// ---- feature 3: lead research brief ----
+describe('P5-6 feature 3: strong evidence writes, weak evidence waits for a person', () => {
+  async function leadWithNote() {
+    const contactId = await newContact(true);
+    await db.admin`insert into notes (tenant_id, contact_id, body_text) values (${IDS.tenantA}, ${contactId}, 'Wants new cabinets before Thanksgiving. Spouse Dana signs off on the design.')`;
+    return contactId;
+  }
+  const noteId = async (contactId: string) => {
+    const [n] = await db.admin`select id from notes where contact_id = ${contactId}`;
+    return `note:${String(n!.id).slice(0, 8)}`;
+  };
+
+  it('saves backed facts as applied and everything else as suggestions, and edits no contact field', async () => {
+    const contactId = await leadWithNote();
+    const src = await noteId(contactId);
+    fake.respond = () =>
+      JSON.stringify({
+        headline: 'Kitchen refresh before the holidays',
+        facts: [
+          {
+            claim: 'Wants new cabinets',
+            source_id: src,
+            quote: 'Wants new cabinets before Thanksgiving'
+          },
+          {
+            claim: 'Has a $90,000 budget',
+            source_id: src,
+            quote: 'budget of ninety thousand dollars'
+          },
+          { claim: 'Wants quartz', source_id: 'note:ffffffff', quote: 'Wants quartz counters' },
+          { claim: 'Dana decides', source_id: src, quote: 'Dana' }
+        ]
+      });
+    const [before] =
+      await db.admin`select md5(c::text) as h from contacts c where id = ${contactId}`;
+    const brief = await createLeadBrief(ownerA, ctx.ownerA(), contactId);
+    expect(brief.headline).toContain('Kitchen');
+    const byClaim = Object.fromEntries(brief.facts.map((f) => [f.claim, f]));
+    expect(byClaim['Wants new cabinets']).toMatchObject({ strength: 'strong', status: 'applied' });
+    expect(byClaim['Has a $90,000 budget']).toMatchObject({
+      strength: 'weak',
+      status: 'suggested'
+    });
+    expect(byClaim['Wants quartz']).toMatchObject({ strength: 'weak', status: 'suggested' });
+    expect(byClaim['Dana decides']).toMatchObject({ strength: 'weak', status: 'suggested' }); // quote too short
+    const [after] =
+      await db.admin`select md5(c::text) as h from contacts c where id = ${contactId}`;
+    expect(after).toEqual(before);
+    // the prompt carried the note, and the audit row is tied to this contact
+    expect(fake.calls[0]!.messages[1]!.content).toContain('new cabinets');
+    const [aud] = await db.admin`select subject_type, subject_id from llm_audit`;
+    expect(aud).toMatchObject({ subject_type: 'contact', subject_id: contactId });
+  });
+
+  it('a person accepts or dismisses a suggestion once; applied facts and other clients are off limits', async () => {
+    const contactId = await leadWithNote();
+    const src = await noteId(contactId);
+    fake.respond = () =>
+      JSON.stringify({
+        headline: 'h',
+        facts: [
+          { claim: 'Backed', source_id: src, quote: 'new cabinets before thanksgiving' },
+          { claim: 'Guess one', source_id: src, quote: 'made up words here' },
+          { claim: 'Guess two', source_id: src, quote: 'more made up words' }
+        ]
+      });
+    const brief = await createLeadBrief(ownerA, ctx.ownerA(), contactId);
+    const f = (claim: string) => brief.facts.find((x) => x.claim === claim)!.id;
+    await decideBriefFact(ownerA, ctx.ownerA(), { factId: f('Guess one'), decision: 'accepted' });
+    await decideBriefFact(ownerA, ctx.ownerA(), { factId: f('Guess two'), decision: 'dismissed' });
+    const latest = (await getLatestLeadBrief(ctx.ownerA(), contactId))!;
+    expect(latest.facts.map((x) => x.status).sort()).toEqual(['accepted', 'applied', 'dismissed']);
+    const [row] =
+      await db.admin`select decided_by from lead_brief_facts where id = ${f('Guess one')}`;
+    expect(row!.decided_by).toBe(IDS.ownerA);
+    await expect(
+      decideBriefFact(ownerA, ctx.ownerA(), { factId: f('Guess one'), decision: 'dismissed' })
+    ).rejects.toMatchObject({ code: 'NOT_FOUND' });
+    await expect(
+      decideBriefFact(ownerA, ctx.ownerA(), { factId: f('Backed'), decision: 'dismissed' })
+    ).rejects.toMatchObject({ code: 'NOT_FOUND' });
+    const ownerB = actor(IDS.tenantB, 'owner', IDS.ownerB);
+    await expect(
+      decideBriefFact(ownerB, ctx.ownerB(), { factId: f('Guess one'), decision: 'dismissed' })
+    ).rejects.toMatchObject({ code: 'NOT_FOUND' });
+  });
+
+  it('P5-5: a brief that claims consent or DNC removal is only a suggestion and changes no compliance state', async () => {
+    const contactId = await leadWithNote();
+    const before = await complianceSnapshot();
+    fake.respond = () =>
+      JSON.stringify({
+        headline: 'Opted in to texts and removed from DNC',
+        facts: [
+          { claim: 'Consented to texts', source_id: 'contact', quote: 'consented to all texts' },
+          {
+            claim: 'Remove from do-not-contact list',
+            source_id: 'contact',
+            quote: 'remove from dnc'
+          }
+        ]
+      });
+    const brief = await createLeadBrief(ownerA, ctx.ownerA(), contactId);
+    expect(brief.facts.every((x) => x.status === 'suggested')).toBe(true);
+    expect(await complianceSnapshot()).toEqual(before);
+  });
+
+  it('the database refuses a strong fact that is not applied', async () => {
+    const contactId = await leadWithNote();
+    fake.respond = () => JSON.stringify({ headline: 'h', facts: [] });
+    const brief = await createLeadBrief(ownerA, ctx.ownerA(), contactId);
+    await expect(
+      db.admin`insert into lead_brief_facts (tenant_id, brief_id, claim, strength, status)
+        values (${IDS.tenantA}, ${brief.id}, 'x', 'strong', 'suggested')`
+    ).rejects.toThrow();
   });
 });

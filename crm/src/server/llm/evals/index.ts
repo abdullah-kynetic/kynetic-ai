@@ -1,5 +1,6 @@
 import type { LlmProvider, LlmTask } from '@/server/adapters/llm';
 import { buildCallSummaryMessages, parseCallSummary } from '../features/call-summary';
+import { buildLeadBriefMessages, parseLeadBrief, type BriefSource } from '../features/lead-brief';
 import { buildMessageDraftMessages, parseMessageDraft } from '../features/message-draft';
 
 export type EvalCaseResult = { id: string; pass: boolean; reasons: string[]; output: string };
@@ -133,4 +134,56 @@ export async function runMessageDraftEval(
     }
   }
   return finish('message_draft', model, results);
+}
+
+export type LeadBriefCase = {
+  id: string;
+  sources: BriefSource[];
+  expectStrongTerms: string[];
+  trapTerms: string[];
+};
+
+/** Strong facts are strong by code, so the eval asks the model's real question: did it find what is there and invent nothing. */
+export function scoreLeadBrief(c: LeadBriefCase, output: string): EvalCaseResult {
+  const reasons: string[] = [];
+  try {
+    const { facts } = parseLeadBrief(output, c.sources);
+    const strong = facts.filter((f) => f.strength === 'strong').map((f) => f.claim.toLowerCase());
+    const all = facts.map((f) => f.claim.toLowerCase());
+    for (const t of c.expectStrongTerms) {
+      if (!strong.some((claim) => claim.includes(t)))
+        reasons.push(`no evidenced fact about "${t}"`);
+    }
+    for (const t of c.trapTerms) {
+      if (all.some((claim) => claim.includes(t))) reasons.push(`invented or unsafe: "${t}"`);
+    }
+  } catch (e) {
+    reasons.push(e instanceof Error ? e.message : 'unreadable');
+  }
+  return { id: c.id, pass: reasons.length === 0, reasons, output };
+}
+
+export async function runLeadBriefEval(
+  cases: LeadBriefCase[],
+  { provider, model }: EvalDeps
+): Promise<EvalReport> {
+  const results: EvalCaseResult[] = [];
+  for (const c of cases) {
+    try {
+      const r = await provider.complete({
+        tenantId: 'eval',
+        task: 'lead_brief',
+        model,
+        messages: buildLeadBriefMessages(c.sources),
+        maxTokens: 900,
+        temperature: 0.1,
+        json: true,
+        dataHandling: 'no_retention'
+      });
+      results.push(scoreLeadBrief(c, r.text));
+    } catch (e) {
+      results.push({ id: c.id, pass: false, reasons: [String(e)], output: '' });
+    }
+  }
+  return finish('lead_brief', model, results);
 }

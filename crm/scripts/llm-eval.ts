@@ -11,7 +11,9 @@ import { resolveTaskConfig } from '../src/config/llm-models';
 import {
   EVAL_PASS_RATE,
   runCallSummaryEval,
+  runLeadBriefEval,
   runMessageDraftEval,
+  type LeadBriefCase,
   type MessageDraftCase,
   type CallSummaryCase,
   type EvalReport
@@ -62,6 +64,24 @@ for (const task of only ? [only] : LLM_TASKS) {
       };
     }
     reports.push(await runMessageDraftEval(cases, { provider: p, model }));
+  }
+  if (task === 'lead_brief') {
+    const cases = load<LeadBriefCase>('lead-brief.json');
+    const p = provider();
+    if (p instanceof FakeLlmProvider) {
+      p.respond = (req) => {
+        const c = cases.find((x) => req.messages[1]!.content.includes(x.sources.at(-1)!.text))!;
+        const last = c.sources.at(-1)!;
+        return JSON.stringify({
+          headline: 'Lead brief',
+          facts: c.expectStrongTerms.map((t) => {
+            const m = new RegExp(`[^.\\n]*${t}[^.\\n]*`, 'i').exec(last.text)!;
+            return { claim: m[0].trim(), source_id: last.id, quote: m[0].trim() };
+          })
+        });
+      };
+    }
+    reports.push(await runLeadBriefEval(cases, { provider: p, model }));
   }
 }
 
