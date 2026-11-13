@@ -49,7 +49,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Integration tests
   - Commit: "Test webhook signature rejection"
   - Covers: P6-2
-- [ ] **P6-S3.** Follow-up blocked by consent, quiet hours or DNC.
+- [x] **P6-S3.** Follow-up blocked by consent, quiet hours or DNC.
   - Test: Integration test
   - Commit: "Test follow-up gating"
   - Covers: P6-4
