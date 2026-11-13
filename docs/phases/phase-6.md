@@ -45,7 +45,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Passes from a clean database in CI
   - Commit: "Add the demo client end-to-end test"
   - Covers: P6-1, P6-3
-- [ ] **P6-S2.** Webhook signature rejection tests (bad or missing signature).
+- [x] **P6-S2.** Webhook signature rejection tests (bad or missing signature).
   - Test: Integration tests
   - Commit: "Test webhook signature rejection"
   - Covers: P6-2
