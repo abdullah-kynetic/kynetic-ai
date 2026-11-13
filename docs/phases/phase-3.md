@@ -48,7 +48,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Extended existing tests
   - Commit: "Extend STOP reply tests"
   - Covers: P3-3
-- [ ] **P3-S4.** Review requests queued, gated, logged, and only when the flag is on.
+- [x] **P3-S4.** Review requests queued, gated, logged, and only when the flag is on.
   - Test: Integration test
   - Commit: "Send review requests through the consent gate"
   - Covers: P3-4

@@ -24,6 +24,7 @@ import { registerReportReadyEmail, registerReportWorker } from './reports';
 import { registerRetentionWorker, scheduleRetentionPurge } from './retention/purge';
 import { registerScheduleWorkers, scheduleTenantJobs } from './schedules';
 import { registerUsageWorker } from './usage';
+import { registerReviewSendWorker } from './reviews';
 import { registerWeeklyEmailWorker } from './reports/weekly-email';
 import { publishAdminDigest } from './admin/alerts';
 import { registerTenantExportWorker } from './admin/tenant-export';
@@ -81,6 +82,7 @@ await registerScheduleWorkers();
 await registerRetentionWorker();
 await registerUsageWorker();
 await registerWeeklyEmailWorker();
+await registerReviewSendWorker();
 await registerTenantExportWorker();
 await registerWorker('admin.digest', async () => {
   await publishAdminDigest();

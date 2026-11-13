@@ -16,6 +16,8 @@ describe('F-87 env validation', () => {
     expect(env.OUTBOUND_ENABLED).toBe(false);
     expect(env.ADMIN_ALERT_EMAIL_ENABLED).toBe(false);
     expect(env.CLIENT_EMAIL_ENABLED).toBe(false);
+    expect(env.REVIEW_REQUESTS_ENABLED).toBe(false);
+    expect(env.SUPPORT_ALERT_EMAIL_ENABLED).toBe(false);
     expect(env.DEV_PERSONA_SWITCHING).toBe(false);
   });
 
