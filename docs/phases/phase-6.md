@@ -41,7 +41,7 @@ Each n8n credential and change; activating any workflow; `PROVIDER_MODE=live`, `
 
 Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finishes the step. A new thread resumes at the first unticked step. For every step: finish it, test it, commit, push, then move on (see `PROTOCOL.md`). A STOP step waits for Abdullah's yes; do the steps after it that do not depend on it.
 
-- [ ] **P6-S1.** Demo-client end-to-end test in stub mode (lead, call, booking, follow-up text, dashboard and admin views), reusing `dev-runtime-smoke` and `tests/e2e`.
+- [x] **P6-S1.** Demo-client end-to-end test in stub mode (lead, call, booking, follow-up text, dashboard and admin views), reusing `dev-runtime-smoke` and `tests/e2e`.
   - Test: Passes from a clean database in CI
   - Commit: "Add the demo client end-to-end test"
   - Covers: P6-1, P6-3
