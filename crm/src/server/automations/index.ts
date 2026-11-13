@@ -25,3 +25,14 @@ export {
   type ReactivationResult
 } from './reactivation';
 export { registerN8nEventSubscribers, signN8nEvent, verifyN8nEvent } from '../integrations/n8n';
+export {
+  approveAutomationEdit,
+  checkSequence,
+  EDITABLE_TEMPLATES,
+  getAutomationEditState,
+  proposeAutomationEdit,
+  rejectAutomationEdit,
+  stepsSchema,
+  type AutomationEditState,
+  type AutomationVersion
+} from './editing';

@@ -61,7 +61,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Integration test
   - Commit: "Add Cal.com calendar sync"
   - Covers: -
-- [ ] **P6-S6.** Editable automations: versioned, validated by schema and the compliance gate, approved by a person, audited.
+- [x] **P6-S6.** Editable automations: versioned, validated by schema and the compliance gate, approved by a person, audited.
   - Test: Integration tests: valid edit versioned and audited, invalid edit refused
   - Commit: "Add editable automations"
   - Covers: P6-5
