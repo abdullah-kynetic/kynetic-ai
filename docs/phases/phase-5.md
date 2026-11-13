@@ -55,7 +55,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Integration test
   - Commit: "Audit model prompts and outputs"
   - Covers: P5-7
-- [ ] **P5-S5.** Test that model output can never change consent, DNC or quiet hours.
+- [x] **P5-S5.** Test that model output can never change consent, DNC or quiet hours.
   - Test: Test that tries it and fails
   - Commit: "Test the model cannot change compliance state"
   - Covers: P5-5
