@@ -2,7 +2,7 @@ import { getVoiceProvider, isVoiceProviderId } from '@/server/calls/provider';
 import { handleVoiceWebhook } from '@/server/calls/hooks';
 import { AppError } from '@/server/errors';
 import { RATE_LIMITS } from '@/server/security/rate-limit';
-import { withApi } from '@/server/security/with-api';
+import { clientIp, withApi } from '@/server/security/with-api';
 
 type Ctx = { params: Promise<{ provider: string }> };
 
@@ -15,6 +15,6 @@ export const POST = withApi(
   },
   {
     rateLimit: RATE_LIMITS.providerWebhookSource,
-    rateLimitSubject: async (_request) => 'voice'
+    rateLimitSubject: (request) => `voice:${clientIp(request)}`
   }
 );

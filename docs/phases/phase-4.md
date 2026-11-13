@@ -38,7 +38,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Browser scan across all routes, no serious or critical
   - Commit: "Fix accessibility violations"
   - Covers: P4-1
-- [ ] **P4-S2.** Security review of auth, sessions, service tokens, webhook signatures, file access and the staff email-code login; fix or record each finding.
+- [x] **P4-S2.** Security review of auth, sessions, service tokens, webhook signatures, file access and the staff email-code login; fix or record each finding.
   - Test: Review notes in `docs/`
   - Commit: "Record the phase 4 security review and fixes"
   - Covers: P4-2

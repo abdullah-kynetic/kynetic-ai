@@ -212,6 +212,28 @@ describe('F-76 lead intake', () => {
     expect(await count('webhook_events')).toBe(eventsBefore);
   });
 
+  it('stops reading an oversized body even without a Content-Length, before any signature work', async () => {
+    const before = await count('webhook_events');
+    const chunk = new TextEncoder().encode('x'.repeat(8_000));
+    let sent = 0;
+    const stream = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        // Would send 10 MB; the server must give up after about 16 KB.
+        if (sent++ >= 1_250) return controller.close();
+        controller.enqueue(chunk);
+      }
+    });
+    const req = new Request('http://localhost:3000/api/hooks/leads/x', {
+      method: 'POST',
+      headers: { 'x-forwarded-for': '203.0.113.250' },
+      body: stream,
+      duplex: 'half'
+    } as RequestInit);
+    expect(await status(call(req, IDS.tenantA))).toBe(400);
+    expect(sent).toBeLessThan(10);
+    expect(await count('webhook_events')).toBe(before);
+  });
+
   it('rejects unknown fields and bad values with 400', async () => {
     for (const bad of [
       lead({ extra: 'x' }),
