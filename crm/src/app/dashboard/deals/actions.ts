@@ -17,7 +17,11 @@ export type SaveDealResult =
  * transaction. Entering a Lost stage needs a reason (F-14); the service refuses without one, so a
  * failed save leaves the deal untouched.
  */
-export async function saveDeal(id: string, raw: DealFormInput): Promise<SaveDealResult> {
+export async function saveDeal(
+  id: string,
+  raw: DealFormInput,
+  custom?: Record<string, unknown>
+): Promise<SaveDealResult> {
   try {
     const [requestHeaders, cookieStore] = await Promise.all([headers(), cookies()]);
     const user = await requireUser(requestHeaders);
@@ -33,7 +37,7 @@ export async function saveDeal(id: string, raw: DealFormInput): Promise<SaveDeal
     const { patch, stageId, lostReason } = parsed.value;
     const ctx = { tenantId, userId: user.id, role: shell.role };
     await withTenant(ctx, async (tx) => {
-      const deal = await updateDeal(ctx, id, patch, { tx });
+      const deal = await updateDeal(ctx, id, { ...patch, ...(custom ? { custom } : {}) }, { tx });
       if (stageId !== deal.stageId) await moveDeal(ctx, id, { stageId, lostReason }, { tx });
     });
     revalidatePath(`/dashboard/deals/${id}`);

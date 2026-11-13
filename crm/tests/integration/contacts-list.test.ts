@@ -139,6 +139,8 @@ describe('M1-02 leads list query (F-05)', () => {
     const p1 = await search({ sort: { field: 'createdAt', desc: false }, perPage: 10, page: 1 });
     expect(p1.pageCount).toBe(1);
     expect(p1.rows[0].id).toBe(made.ana);
+    expect(p1.total).toBe(4);
+    expect(Object.keys(p1.rows[0])).not.toContain('matchTotal');
     const p2 = await search({ perPage: 10, page: 2 });
     expect(p2.rows).toEqual([]);
     expect(p2.total).toBe(4);

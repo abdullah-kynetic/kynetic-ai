@@ -1,5 +1,6 @@
 import { and, asc, desc, eq, ilike, isNull, sql } from 'drizzle-orm';
 import { audit } from '../audit';
+import { validateCustomValues } from '../custom-fields';
 import type { Db, Tx } from '../db/client';
 import { companies, contacts, dealContacts, deals, pipelineStages } from '../db/schema';
 import { NotFoundError } from '../contacts';
@@ -58,6 +59,7 @@ export async function createCompany(
   return withTenant(
     ctx,
     async (tx) => {
+      const custom = await validateCustomValues(ctx, tx, 'company', v.custom);
       const [row] = await tx
         .insert(companies)
         .values({
@@ -66,7 +68,7 @@ export async function createCompany(
           phoneE164: v.phone ?? null,
           website: v.website ?? null,
           address: v.address,
-          custom: v.custom
+          custom
         })
         .returning();
       await audit(tx, {
@@ -152,6 +154,9 @@ export async function updateCompany(
     async (tx) => {
       const before = await loadLive(tx, id, true);
       const { phone, ...rest } = v;
+      if (rest.custom !== undefined) {
+        rest.custom = await validateCustomValues(ctx, tx, 'company', rest.custom);
+      }
       const set: Partial<typeof companies.$inferInsert> = {
         ...rest,
         updatedAt: sql`now()` as unknown as string

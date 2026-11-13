@@ -2,6 +2,10 @@
 
 Mirror of the Twenty decision notes. Twenty is the business source of truth. On a mismatch, flag both values. Do not reopen these without asking. This GitHub pass did not read Twenty. The parallel cleanup is the parent-reported verification in `docs/STATUS.md`.
 
+## Client self-serve import and custom fields for everyone (2026-11-13)
+
+No new D-number (see the 2026-11-08 PST precedence note). Phase 1 of the portal build, as written in `docs/phases/phase-1.md`: custom fields are open to every client, not only the retired CRM Full level; a client's owner (not client staff, not Kynetic staff through this route) can import their own contact list with the staff import's dry run, consent rules and audit. Companies, deals and notes stay with Kynetic staff. Open question for Abdullah: KI-036 (should an import be refused consent for someone who opted out).
+
 ## Source of truth moved to the portal (2026-11-12)
 
 Supersedes every line below that calls Twenty the business source of truth. The portal in `crm/` is where lead, client and call data is written; Twenty is a read-only safety copy and its planning records are in `docs/roadmap/`. See `docs/STATUS.md`.
@@ -204,3 +208,20 @@ Abdullah explicitly requested removing the anonymous admin default, requiring ve
 ## 2026-11-04 — tested main merges authorized; restore the missing sign-in flow
 
 Abdullah explicitly authorized merging completed/tested work into main so the existing authored commits can contribute to the GitHub profile. Preserve individual commits with a merge commit; do not squash or rewrite shared history. This overrides the earlier main prohibition for the approved merge. Restore and verify the missing invitation-only sign-in/session-issuance and staff 2FA paths before merging the session-enforcement work. Source merge does not authorize or trigger a manual VPS deployment, workflow activation or live-provider changes.
+
+## 2026-11-13 — phase 3 build defaults (no new decision needed from Abdullah)
+
+Client Usage page keeps dollar cost hidden (KI-032 default, recommendation unchanged). All Phase 3 sending is behind flags that stay off: `OUTBOUND_ENABLED`, `REVIEW_REQUESTS_ENABLED`, `SUPPORT_ALERT_EMAIL_ENABLED`. The Terms gate stays off pending counsel (KI-026).
+
+## 2026-11-13 — phase 4 part 2 defaults (one decision still open for Abdullah)
+
+Visitor IP is the LAST `X-Forwarded-For` entry (the one Caddy adds), not the first, for rate limits and audit addresses. Service tokens stop working while a client is suspended or offboarded. Still open: whether staff keep the email-code login once real client data is in the system (KI-033; recommendation in `docs/security-review-phase-4.md` S-05: turn it off, or keep it only with a hardware-key or passkey mailbox).
+
+## 2026-11-13 — phase 5 AI layer defaults (decision still open for Abdullah)
+
+All model calls go through `server/llm`, which checks the switch, the chosen model, the per-client monthly cap, then logs the prompt, answer and approver. Nothing under `server/llm` or the adapter may import or name consent, DNC, quiet-hours or call-dispatch code (a test enforces it), so a model can only produce text. Customer-facing output (message drafts) is a draft until a signed-in person approves it; sending then goes through the unchanged outbound gate. The research brief writes only facts whose quote is found word for word in the record; the rest are suggestions a person accepts. No model id is guessed: each task stays unrunnable until a model is chosen from its eval run. Still open: the default monthly AI cap per client (built as 500 cents, low, raised by hand per client on the client page).
+
+
+## 2026-11-13 — phase 6 defaults (no new decision needed from Abdullah)
+
+The portal owns consent, quiet hours and DNC; every follow-up passes the outbound gate at send time. Sequences run in the portal worker; n8n only brings Alex's results in. Kynetic admin approves client edits to automations. Cal.com sync is off by default and off in stub mode. n8n workflow changes live in the repo as drafts until Abdullah says yes.

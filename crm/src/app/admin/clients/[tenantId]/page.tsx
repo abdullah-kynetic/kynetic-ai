@@ -9,7 +9,7 @@ import { headers } from 'next/headers';
 import Link from 'next/link';
 import { forbidden, notFound } from 'next/navigation';
 import { GuaranteeForm } from './guarantee-form';
-import { saveSpendCapAction } from './spend-cap-action';
+import { saveLlmCapAction, saveSpendCapAction } from './spend-cap-action';
 import { PipelineFunnel } from './pipeline-funnel';
 
 export const metadata: Metadata = { title: 'Client' };
@@ -186,6 +186,27 @@ export default async function ClientOverviewPage({
               </label>
               <button className='min-h-11 rounded border px-3' type='submit'>
                 Save cap
+              </button>
+            </form>
+            <h2 className='mt-6 font-medium'>AI spend cap</h2>
+            <p className='text-muted-foreground mt-1 text-sm'>
+              Month-to-date model cost. Blank means the platform default applies. At the cap, no
+              further model calls run for this client.
+            </p>
+            <form action={saveLlmCapAction} className='mt-3 flex flex-wrap items-end gap-2'>
+              <input type='hidden' name='tenantId' value={tenant.id} />
+              <label className='grid gap-1 text-sm'>
+                AI cap in cents
+                <input
+                  className='min-h-11 rounded border px-3'
+                  name='cents'
+                  inputMode='numeric'
+                  defaultValue={tenant.llmMonthlyCapCents ?? ''}
+                  aria-label='Monthly AI spend cap in cents'
+                />
+              </label>
+              <button className='min-h-11 rounded border px-3' type='submit'>
+                Save AI cap
               </button>
             </form>
             {tenant.offboardedAt && (

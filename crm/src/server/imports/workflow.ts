@@ -1,9 +1,10 @@
 import { eq } from 'drizzle-orm';
-import { can, type Actor } from '../auth/permissions';
+import type { Actor } from '../auth/permissions';
 import type { Db } from '../db/client';
 import { importBatches } from '../db/schema';
 import { AppError } from '../errors';
 import { withTenant, type TenantContextInput } from '../tenancy';
+import { canImportContacts } from './access';
 import { commitContactBatch } from './commit';
 import { commitEntityBatch, dryRunEntityBatch } from './entities';
 import { dryRunContactBatch } from './dry-run';
@@ -11,7 +12,7 @@ import { dryRunContactBatch } from './dry-run';
 type Options = { db?: Db };
 
 async function entityFor(ctx: TenantContextInput, actor: Actor, batchId: string, opts: Options) {
-  if (!can(actor, 'import.onboarding', ctx.tenantId)) throw new AppError('FORBIDDEN');
+  if (!canImportContacts(actor, ctx.tenantId)) throw new AppError('FORBIDDEN');
   return withTenant(
     ctx,
     async (tx) => {

@@ -16,3 +16,15 @@ export {
   type MessageLogRow,
   type MessageStatus
 } from './log';
+export { describeBlock, type ComposeBlockReason } from './block-reasons';
+export {
+  composeSchema,
+  getComposeState,
+  listContactThread,
+  sendContactMessage,
+  type ChannelState,
+  type ComposeInput,
+  type ComposeResult,
+  type ThreadMessage
+} from './contact-message';
+export { sendEmailToContact, resolveEmailProvider, type SendEmailResult } from './email';

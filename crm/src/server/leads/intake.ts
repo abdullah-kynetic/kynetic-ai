@@ -58,6 +58,28 @@ export type LeadIntakeOpts = {
   validate?: (input: unknown) => LeadPayload;
 };
 
+/**
+ * Reads the body but stops at the cap, so a chunked upload with no Content-Length cannot make the
+ * server buffer a huge body before the signature check.
+ */
+async function readCappedBody(request: Request, maxBytes: number): Promise<string> {
+  if (!request.body) return '';
+  const reader = request.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > maxBytes) {
+      await reader.cancel();
+      throw new AppError('VALIDATION_FAILED');
+    }
+    chunks.push(value);
+  }
+  return Buffer.concat(chunks).toString('utf8');
+}
+
 /** The route body. Throws AppError for 401, 400 and 429; returns the Response otherwise. */
 export async function handleLeadIntake(
   request: Request,
@@ -75,8 +97,7 @@ export async function handleLeadIntake(
   // 2. Raw body first, size-capped. Signature before anything is parsed or stored.
   const declared = Number(request.headers.get('content-length') ?? 0);
   if (declared > LEAD_BODY_MAX_BYTES) throw new AppError('VALIDATION_FAILED');
-  const rawBody = await request.text();
-  if (rawBody.length > LEAD_BODY_MAX_BYTES) throw new AppError('VALIDATION_FAILED');
+  const rawBody = await readCappedBody(request, LEAD_BODY_MAX_BYTES);
 
   const tenantId = UUID.test(tenantKey) ? tenantKey.toLowerCase() : null;
   const secret = tenantId ? await readTenantSecret(workerDb, { tenantId, ...LEAD_SECRET }) : null;
@@ -257,7 +278,6 @@ export async function processLead(
         meta: {
           source: lead.source,
           externalId: lead.externalId,
-          ...(lead.synthetic ? { synthetic: true, businessState: lead.businessState } : {}),
           ...(lead.projectType ? { projectType: lead.projectType } : {}),
           ...(lead.budget ? { budget: lead.budget } : {}),
           ...(lead.message ? { message: lead.message } : {}),
@@ -273,13 +293,7 @@ export async function processLead(
           contactId,
           dealId,
           source: lead.source,
-          webhookEventId,
-          ...(lead.synthetic
-            ? {
-                synthetic: true,
-                businessState: lead.businessState
-              }
-            : {})
+          webhookEventId
         }
       });
       return { contactId, dealId, contactReused: !!existing };

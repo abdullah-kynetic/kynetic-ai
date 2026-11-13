@@ -6,6 +6,26 @@
 Mirror of open problems tracked in Twenty. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Open
+### KI-041: The AI layer is built but off, and no model has been chosen (medium)
+Found 2026-11-13 (phase 5). Call summaries, message drafts and the lead research brief are in the code and tested against the stand-in model only. `LLM_ENABLED` is false, there is no OpenRouter key, and every task in `config/llm-models.ts` has `model: null`, so a task refuses to run until a model id is set (`LLM_MODELS` JSON or the config file). The eval sets in `crm/llm-evals/` are synthetic, and `bun run llm:eval` has only been run as a dry run (answer-key stand-in); P5-6 against a real model is not done and needs the key. Before real client data goes to OpenRouter: confirm its current data-retention terms (the adapter asks for `data_collection: deny` and `zdr: true` when `LLM_DATA_HANDLING=no_retention`; routing then fails closed if no such endpoint serves the model). `llm_audit` keeps full prompts and outputs (client data) with no retention purge yet. The monthly cap is checked before a call, so parallel calls can overshoot it by a few calls; the default cap is 500 cents per client and is a recommendation awaiting Abdullah.
+
+### KI-040: Default contact list is just over 500 ms at 100 concurrent reads (low)
+Found 2026-11-13 (phase 4 load test, `docs/load-test-phase-4.md`). 10,000 contacts, 100 simultaneous list reads: p95 501 to 552 ms on a 4-vCPU shared container, target 500 ms (DC-033). Contact search meets the target after the one-scan change. Most of the list cost is the row count under row-level security (about 7 ms per read). Real traffic is far below this shape; recheck on the server and add a cached or approximate count only if it matters.
+
+### KI-039: Manual messages and review requests cannot send for real yet (medium)
+Found 2026-11-13. The contact page now has a Messages card (text and email, with a reply view) and queued review requests can send, both through the outbound gate. Nothing leaves while `OUTBOUND_ENABLED=false`, and a text also needs an approved sending number (KI-003) and counsel's consent wording (KI-002). Email from a contact uses `EMAIL_FROM_ADDRESS` and Resend has no reply-to in our adapter, so a customer's email reply does not come back into the portal. Inbound texts do show in the reply view. Review requests need a `review_url` (https) in the client's `opm` module config, set by staff; with none, the request stays queued. Review sending needs `REVIEW_REQUESTS_ENABLED=true`; after turning it on, `sweepQueuedReviewRequests(tenantId)` queues requests that were waiting. Nothing has been turned on.
+### KI-038: Alert rules exist but nothing is switched on yet (medium)
+Found 2026-11-13. The six alert rules (phase 4) are in the code and tested, but they only start once a commit with migration `1060_ops_alert_kind` is deployed; the host check `portal-monitor` is not installed; alert email is off. `backup_stale` will fire at once on the live system because no backup has ever succeeded (KI-034); that is correct. Steps: `docs/runbooks/monitoring.md`.
+
+### KI-037: Only the leads list filters by custom fields (low)
+Found 2026-11-13. Custom field values are now entered and shown on contacts, companies and deals, and the leads list can filter and export them. The companies list and the deals board have no custom field filter or column. Phase 1 acceptance P1-3 was met for filtering on contacts only.
+
+### KI-036: A client import can record consent dated after an opt-out (fixed 2026-11-13)
+Found 2026-11-13. Abdullah decided the same day: an import refuses to save consent for anyone who has opted out or is on the DNC list. Fixed in `server/imports/consent-guard.ts`, used by the shared commit path, so client and staff imports both obey it. Refused: an opt-out or DNC consent row on any channel, `do_not_call_at`, or a phone on the tenant's active DNC list (including a new person whose number is listed). The person is still added; only the consent is skipped, counted as `consentsRefused` in the result, the report and the audit entry. Staff can still record fresh consent by hand.
+
+### KI-035: Primary button hover falls below 4.5:1 for the brand blue #2563eb (low)
+Found 2026-11-13 by the phase 1 accessibility scan: white text on the hover colour (primary mixed 8% with white) measures 4.41:1 on the synthetic tenant colour. The resting state passes. The scan moves the pointer away first. Not fixed. Also note the import and CSV export share a budget of 5 uploads an hour per tenant.
+
 ### KI-034: Portal database backups fail and do not reach R2 (high)
 Found 2026-11-12. Every `backup_runs` row (21 of 21, 2026-11-10 to 2026-11-12) failed: the worker image's `pg_dump` was version 15 against Postgres 16 ("server version mismatch"). Nothing reached R2, and the worker's `STORAGE_BUCKET` is `kynetic-portal-test` while the production bucket is `kynetic-portal-files`. The backup alert is off. The Dockerfile now installs the version 16 client and fails the build otherwise. Phase 0 (2026-11-13) added the worker heartbeat to `/api/health`, so the next dead worker shows as 503 instead of silent. Still needed on the server: deploy the new worker image, set the bucket, turn on `BACKUP_ALERT_ENABLED`, then one manual backup and one restore test. The root cron job `/etc/cron.d/portal-backup` is unread.
 
@@ -35,12 +55,15 @@ Found 2026-11-10. The acceptance page and the dashboard redirect exist. `TERMS_G
 
 ### KI-027: Appointment calendar does not sync to an outside calendar (medium)
 Found 2026-11-10. Month, week, and day views read the portal `appointments` table. Nothing creates or updates a Cal.com event or a client's own calendar. Blocked on which calendar the client uses.
+Update 2026-11-13: phase 6 added a one-way Cal.com sync (`calendar-sync`), off by default and off in stub mode (`CALCOM_SYNC_ENABLED`, `CAL_API_KEY`, `CAL_EVENT_TYPE_ID`). The real adapter is not verified against the live Cal.com API. Booking length comes from the event type.
 
 ### KI-028: Automation cadence and copy cannot be edited in the portal (medium)
 Found 2026-11-10. The automations page can turn a template on or off and can show run history. It cannot change the wait, the message, or enroll a list of contacts. Blocked on whether sequences run in n8n or in the portal worker.
+Update 2026-11-13: phase 6 added editing (wait, message, enroll) with Kynetic admin approval of client edits; sequences run in the portal worker. The approval queue shows only on each client's settings page (no cross-tenant queue, no staff alert).
 
 ### KI-029: Support alerts do not send email (low)
 Found 2026-11-10. A new client request notifies Kynetic in the portal, and a Kynetic reply notifies the requester in the portal. The email preference for `support_request` and `support_reply` defaults to off, and this batch does not queue an email even if someone turns that preference on. Blocked by the rule that this work must not add a real outbound send.
+Update 2026-11-13: a reply from Kynetic now emails the client when `SUPPORT_ALERT_EMAIL_ENABLED=true` and the person turned on email for that notice (off by default). The staff alert for a new request is never emailed to client users. Migration `1071` lets the per-person setting be saved for mention and support notices. Flag is off, nothing sent.
 
 ### KI-002: TCPA emergency branch opt-out gap (high)
 Emergency calls and urgent notifications may reach someone who opted out.
@@ -84,6 +107,7 @@ Found 2026-10-19 (read-only review of Twenty).
 Fix: Abdullah to say where the research files are, confirm the Treg rotation, and approve or reject the D-002 reword.
 
 ### KI-013: Portal has no sign-in (open mode) (high)
+Update 2026-11-13 01:15 UTC (2026-11-12 PST): anonymous probe of portal.kyneticai.com: `/api/health` HTTP 200 (`{"status":"ok","checks":{"database":"ok","queue":"not_configured"}}`), `/admin` HTTP 401, `/dashboard` HTTP 307 to `/sign-in`. Sign-in is enforced on the live revision. The probe cannot show which commit is live: the live health response has no build commit field, which `main` adds (PR #166).
 Update 2026-11-12: anonymous probe of portal.kyneticai.com showed `/admin` returns HTTP 401 and `/dashboard` redirects to `/sign-in`, so sign-in is enforced on the live revision. Treat this as closed once the first invites are confirmed.
 Update 2026-11-08 PST: the 2026-11-08 ledger labels HTTP 200 on `/admin` as inference (a sign-in page can also return 200) and the deployed revision as partly memory-based. The docs pass on this date did not probe the portal and does not confirm production exposure or a deploy. The release risk stays open until a dated anonymous probe of the deployed revision shows a denial. The 2026-11-08 note follows.
 Update 2026-11-08: main `49019b93` (merged 2026-11-05) restores invitation-only sign-in, staff TOTP and verified sessions, and persona switching only works outside production with DEV_PERSONA_SWITCHING (checked in code; typecheck and 468 unit tests pass). It is NOT deployed: live portal.kyneticai.com still runs `350bf67` and `/admin` returns HTTP 200 with no sign-in (checked 2026-11-08). Still open until main is deployed and the first invites are created. Original note follows.
@@ -100,6 +124,7 @@ Fix: hand-dial a sample, counsel answer, and keep the audit step in every run.
 ## Open (docs reconciliation leftovers, 2026-11-08 PST)
 ### KI-017: Production is still the pre-consolidation release (high)
 Found 2026-11-09. portal.kyneticai.com is release `350bf673` (1 admin user, about 13 tenants). The portal line moving onto `main` is not deployed. Migrations `1007` through `1013` have not been applied to that database. The separate DEV environment is retired until after go-live, so there is no second portal to rehearse on. Do not deploy, migrate, or recreate DEV without an explicit yes.
+Update 2026-11-13 01:15 UTC (2026-11-12 PST): the same anonymous probe (see KI-013) shows the live revision enforces sign-in. Live is `main` `58405247` (deployed 2026-11-12 per the operator); `main` is ahead of it (PR #162, #164, #166 merged, not deployed).
 Update 2026-11-10 evening PST: production at portal.kyneticai.com is `main` `ac0192af` (PR #146 deployed), with migration `1015_schedules_retention_settings`. `PROVIDER_MODE=stub` and `OUTBOUND_ENABLED=false` unchanged. Migrations through `1015` are applied; `1016` is the systems/templates/guarantee migration on this branch.
 
 ## Gotchas
@@ -176,21 +201,28 @@ Found 2026-11-10. The acceptance page and the dashboard redirect exist. `TERMS_G
 
 ### KI-027: Appointment calendar does not sync to an outside calendar (medium)
 Found 2026-11-10. Month, week, and day views read the portal `appointments` table. Nothing creates or updates a Cal.com event or a client's own calendar. Blocked on which calendar the client uses.
+Update 2026-11-13: phase 6 added a one-way Cal.com sync (`calendar-sync`), off by default and off in stub mode (`CALCOM_SYNC_ENABLED`, `CAL_API_KEY`, `CAL_EVENT_TYPE_ID`). The real adapter is not verified against the live Cal.com API. Booking length comes from the event type.
 
 ### KI-028: Automation cadence and copy cannot be edited in the portal (medium)
 Found 2026-11-10. The automations page can turn a template on or off and can show run history. It cannot change the wait, the message, or enroll a list of contacts. Blocked on whether sequences run in n8n or in the portal worker.
+Update 2026-11-13: phase 6 added editing (wait, message, enroll) with Kynetic admin approval of client edits; sequences run in the portal worker. The approval queue shows only on each client's settings page (no cross-tenant queue, no staff alert).
 
 ### KI-029: Support alerts do not send email (low)
 Found 2026-11-10. A new client request notifies Kynetic in the portal, and a Kynetic reply notifies the requester in the portal. The email preference for `support_request` and `support_reply` defaults to off, and this batch does not queue an email even if someone turns that preference on. Blocked by the rule that this work must not add a real outbound send.
 
 ### KI-030: Review requests are queued only, and review snapshots are entered by hand (medium)
 Found 2026-11-11. "Request a review" on `/dashboard/reviews` writes a `queued` row after `canContact` allows it. Nothing sends it and nothing moves it to `sent` or `completed`, because sending waits on the n8n versus worker decision and A2P (P-A3). Rating snapshots come from `review_snapshots` rows added by staff, not from a live Google feed.
+Update 2026-11-13: sending is built behind `REVIEW_REQUESTS_ENABLED` (off) and the gate; see KI-039. Snapshots are still entered by hand.
 
 ### KI-031: Referral rewards are tracked, not paid out (low)
 Found 2026-11-11. `/dashboard/referrals` records a reward amount and a pending or paid status that only the owner can change. Nothing pays or invoices a reward. The reward policy itself is not decided.
 
 ### KI-032: Client usage page hides dollar cost (low)
 Found 2026-11-11. SPEC 01 in Twenty lists the usage page as "minutes, cost, cap" and marks it blocked on "do clients see cost?". The page shows minutes, calls, texts, emails and a cap status chip only. Add cost only after Abdullah decides.
+Update 2026-11-13: still hidden. Phase 3 added tests that fix the page to counts and cap status. The decision is still Abdullah's (recommendation: keep it hidden).
 
 ### KI-033: Staff email-code login removes the authenticator step (medium)
 Found 2026-11-12. At Abdullah's request, `STAFF_EMAIL_LOGIN=true` lets a Kynetic admin or VA sign in with a 6-digit emailed code, with no authenticator app and a 30 day session. Anyone who controls that mailbox then has admin access, so the mailbox needs its own strong sign-in. It is off by default. Codes are sent through Resend, so `RESEND_API_KEY` must be set on the server or no code arrives. Google staff sign-in still works; with the setting on it also skips the authenticator. Turning the setting off restores Google plus authenticator and 7 day sessions.
+
+### KI-037: Phase 6 gaps (low)
+Found 2026-11-13. n8n drafts in `n8n/drafts/alex-lead-to-booking/` were never imported or opened in n8n (connector unreachable), so the check that n8n shows nothing active was not run. No admin button yet for `provisionClientAutomations`. Docker build, VPS and any real provider not verified.

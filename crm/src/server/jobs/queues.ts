@@ -26,8 +26,8 @@ export const QUEUES = {
   'webhook.process': { ...retrying, policy: 'short' },
   /** One job per outbound call attempt (F-78). A queued attempt is unique per tenant, contact, trigger and attempt. */
   'call.outbound': { ...retrying, policy: 'short' },
-  /** Synthetic DEV attempts; explicit delayed scheduling only, never automatic provider retries. */
-  'dev.lead-attempt': { retryLimit: 0, policy: 'short' },
+  /** Pulls Cal.com bookings into the portal calendar (KI-027). The handler no-ops unless sync is enabled. */
+  'calendar.reconcile': { ...retrying, policy: 'short' },
   /** One delayed job per task/due-date version; the handler rechecks the live task before notifying. */
   'task.due': { ...retrying, policy: 'short' } /** One rebuildable tenant/day metrics rollup. */,
   'metrics.daily': { ...retrying, policy: 'short' },
@@ -51,6 +51,10 @@ export const QUEUES = {
   'client.weekly_fanout': { ...retrying, policy: 'short' },
   /** In-app daily digest for Kynetic admins. Email stays off unless ADMIN_ALERT_EMAIL_ENABLED. */
   'admin.digest': { ...retrying, policy: 'short' },
+  /** One client review request to send. Only enqueued, and only acted on, when REVIEW_REQUESTS_ENABLED is on. */
+  'review.send': { ...retrying, policy: 'short' },
+  /** Evaluates the alert rules (dead worker, backups, disk, queue). One notice per rule per six hours. */
+  'monitor.check': { ...retrying, policy: 'short' },
   /** Deletes expired rate-limit counters. */
   'security.rate_limit_purge': { ...retrying, policy: 'short' },
   /** One zip export for an offboarded client. */

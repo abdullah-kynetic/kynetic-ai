@@ -39,39 +39,39 @@ Default monthly AI spend cap per client (recommendation: low default, raised by 
 
 Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finishes the step. A new thread resumes at the first unticked step. For every step: finish it, test it, commit, push, then move on (see `PROTOCOL.md`). A STOP step waits for Abdullah's yes; do the steps after it that do not depend on it.
 
-- [ ] **P5-S1.** `adapters/llm/` interface with a fake adapter, `LLM_ENABLED=false` default, and a data-handling setting on every request.
+- [x] **P5-S1.** `adapters/llm/` interface with a fake adapter, `LLM_ENABLED=false` default, and a data-handling setting on every request.
   - Test: Unit test: disabled means no call; CI uses only the fake
   - Commit: "Add the LLM adapter interface and fake"
   - Covers: P5-1, P5-4
-- [ ] **P5-S2.** Real OpenRouter adapter and the per-task model map in config.
+- [x] **P5-S2.** Real OpenRouter adapter and the per-task model map in config.
   - Test: Unit tests with a mocked transport (no network)
   - Commit: "Add the OpenRouter adapter"
   - Covers: P5-1
-- [ ] **P5-S3.** Cost metering into the usage ledger, shown on `/admin/usage`, with the per-client monthly cap.
+- [x] **P5-S3.** Cost metering into the usage ledger, shown on `/admin/usage`, with the per-client monthly cap.
   - Test: Integration tests: metered and shown; over cap stops calls and tells the admin
   - Commit: "Meter and cap model usage"
   - Covers: P5-2, P5-3
-- [ ] **P5-S4.** Audit log of every prompt and output that touches a client record, with who approved it.
+- [x] **P5-S4.** Audit log of every prompt and output that touches a client record, with who approved it.
   - Test: Integration test
   - Commit: "Audit model prompts and outputs"
   - Covers: P5-7
-- [ ] **P5-S5.** Test that model output can never change consent, DNC or quiet hours.
+- [x] **P5-S5.** Test that model output can never change consent, DNC or quiet hours.
   - Test: Test that tries it and fails
   - Commit: "Test the model cannot change compliance state"
   - Covers: P5-5
-- [ ] **P5-S6.** Feature 1: call summaries and outcome tags.
+- [x] **P5-S6.** Feature 1: call summaries and outcome tags.
   - Test: Eval set of real cases against the chosen model
   - Commit: "Add call summaries"
   - Covers: P5-6
-- [ ] **P5-S7.** Feature 2: message drafts (draft only, through the consent gate).
+- [x] **P5-S7.** Feature 2: message drafts (draft only, through the consent gate).
   - Test: Eval set and integration test
   - Commit: "Add message drafts"
   - Covers: P5-6, P5-7
-- [ ] **P5-S8.** Feature 3: lead research brief (strong evidence writes, weak becomes a suggestion).
+- [x] **P5-S8.** Feature 3: lead research brief (strong evidence writes, weak becomes a suggestion).
   - Test: Eval set
   - Commit: "Add lead research brief"
   - Covers: P5-6
-- [ ] **P5-S9.** Open PR; record in the build log. STOP for yes: add the OpenRouter key, turn `LLM_ENABLED` on, send real client data; also a decision on the default monthly cap.
+- [x] **P5-S9.** Open PR; record in the build log. STOP for yes: add the OpenRouter key, turn `LLM_ENABLED` on, send real client data; also a decision on the default monthly cap.
   - Test: CI green
   - Commit: "Record phase 5 in the build log"
   - Covers: -

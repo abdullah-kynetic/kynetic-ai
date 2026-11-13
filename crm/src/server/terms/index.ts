@@ -49,10 +49,13 @@ export async function pendingDocuments(
   return documents.filter((d) => !accepted.has(`${d.document}@${d.version}`));
 }
 
-/** The first hop of x-forwarded-for if it is a real address, else null. Stored as `inet`. */
+/**
+ * The last hop of x-forwarded-for (the one our own proxy added; earlier entries come from the
+ * visitor) if it is a real address, else null. Stored as `inet`.
+ */
 export function clientIp(forwardedFor: string | null): string | null {
-  const first = forwardedFor?.split(',')[0]?.trim();
-  return first && isIP(first) ? first : null;
+  const last = forwardedFor?.split(',').at(-1)?.trim();
+  return last && isIP(last) ? last : null;
 }
 
 /**

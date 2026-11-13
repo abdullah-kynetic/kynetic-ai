@@ -6,4 +6,6 @@ export async function register() {
   validateBoot();
   const { wireEmail } = await import('@/server/email/wire');
   wireEmail();
+  const { wireLlm } = await import('@/server/llm/wire');
+  wireLlm();
 }

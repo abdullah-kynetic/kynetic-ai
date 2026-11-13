@@ -5,7 +5,7 @@ test('F-103 owner sees a shared document and a tenant download route', async ({
 }) => {
   await authenticatedPage.goto('/dashboard/documents');
   await expect(authenticatedPage.getByRole('heading', { name: 'Documents' })).toBeVisible();
-  await expect(authenticatedPage.getByText('Agreement', { exact: true })).toBeVisible();
+  await expect(authenticatedPage.getByText('Agreement', { exact: true }).first()).toBeVisible();
   await expect(authenticatedPage.getByRole('link', { name: 'Download' })).toHaveAttribute(
     'href',
     /^\/api\/documents\/[0-9a-f-]+\/download$/

@@ -10,6 +10,15 @@ import { requireModule } from '../modules';
 import { calendarDateInTimeZone } from '../metrics';
 import { addCalendarDays } from '../metrics/formulas';
 import { withTenant, type TenantContextInput } from '../tenancy';
+import { enqueueReviewSend } from './send';
+
+export {
+  registerReviewSendWorker,
+  reviewMessage,
+  sendReviewRequest,
+  sweepQueuedReviewRequests,
+  type ReviewSendOutcome
+} from './send';
 import { parseInput, uuidSchema } from '../validation';
 
 /**
@@ -323,6 +332,7 @@ export async function requestReview(
       actor: { type: 'user', id: ctx.userId ?? null },
       occurredAt: now
     });
+    await enqueueReviewSend(tx, { tenantId: ctx.tenantId, requestId: row.id });
     return { id: row.id, status: 'queued' as const };
   };
   return run(ctx, opts, write);

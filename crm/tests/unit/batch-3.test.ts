@@ -7,7 +7,6 @@ import {
   scrubErrorSummary,
   tenantIdFromPayload
 } from '@/server/admin/alerts';
-import { devLeadHookAllowed } from '@/server/leads/dev-policy';
 import { personaSwitchingEnabled } from '@/server/auth/open-mode';
 import { componentGalleryOpen } from '@/app/dev/components/access';
 import { previousWeekRange, zonedClock } from '@/server/schedules/calendar';
@@ -27,6 +26,8 @@ const row = (over: Partial<UsageRow> = {}): UsageRow => ({
   costUnknown: false,
   monthlyFeeCents: 100,
   capCents: 80,
+  llmCostMicros: 0,
+  llmCapCents: null,
   ...over
 });
 
@@ -121,9 +122,7 @@ describe('batch 3 pure checks', () => {
     expect(RATE_LIMIT_PURGE_CRON).toBe('15 * * * *');
   });
 
-  it('refuses the dev hook, the gallery, and persona switching in production', () => {
-    expect(devLeadHookAllowed('production')).toBe(false);
-    expect(devLeadHookAllowed('test')).toBe(true);
+  it('refuses the gallery and persona switching in production', () => {
     expect(componentGalleryOpen('production', undefined)).toBe(false);
     expect(componentGalleryOpen('production', '1')).toBe(true);
     expect(componentGalleryOpen('test', undefined)).toBe(false);

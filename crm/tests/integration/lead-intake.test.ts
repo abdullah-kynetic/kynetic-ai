@@ -1,5 +1,4 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { parseDevLead } from '@/server/leads/dev-intake';
 import { createDb } from '@/server/db/client';
 import { clearSubscribers, registerEventWorkers, subscribe } from '@/server/events';
 import { stopJobs } from '@/server/jobs';
@@ -90,33 +89,20 @@ const count = async (table: string) =>
   Number((await db.admin.unsafe(`select count(*)::int as n from ${table}`))[0]!.n);
 
 describe('F-76 lead intake', () => {
-  it('authenticates before dev validation and never persists rejected synthetic leads', async () => {
+  it('authenticates before validation and never persists a lead from an unsupported state', async () => {
     const before = await count('webhook_events');
-    let validations = 0;
-    const testPhone = '+' + ['1', '555', '555', '0101'].join('');
     const input = lead({
-      externalId: 'DEV-intake-integration',
-      source: 'dev_codex',
-      synthetic: true,
-      phone: testPhone,
+      externalId: 'state-refused-integration',
+      phone: '+15555550101',
       businessState: 'FL'
     });
     const invoke = (signed: boolean) =>
       handleLeadIntake(signedRequest(input, signed ? { secret: secretA } : {}), IDS.tenantA, {
         db: appDb,
-        workerDb,
-        validate: (value) => {
-          validations++;
-          return parseDevLead(value, {
-            APP_BASE_URL: 'https://dev.kyneticai.com',
-            TEST_PHONE: testPhone
-          });
-        }
+        workerDb
       });
     expect(await status(invoke(false))).toBe(401);
-    expect(validations).toBe(0);
     expect(await status(invoke(true))).toBe(400);
-    expect(validations).toBe(1);
     expect(await count('webhook_events')).toBe(before);
   });
   it('accepts a valid signed lead, then the worker creates the contact, deal and lead.created', async () => {
@@ -210,6 +196,28 @@ describe('F-76 lead intake', () => {
     ];
     for (const [name, req, key] of cases) expect(await status(call(req, key)), name).toBe(401);
     expect(await count('webhook_events')).toBe(eventsBefore);
+  });
+
+  it('stops reading an oversized body even without a Content-Length, before any signature work', async () => {
+    const before = await count('webhook_events');
+    const chunk = new TextEncoder().encode('x'.repeat(8_000));
+    let sent = 0;
+    const stream = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        // Would send 10 MB; the server must give up after about 16 KB.
+        if (sent++ >= 1_250) return controller.close();
+        controller.enqueue(chunk);
+      }
+    });
+    const req = new Request('http://localhost:3000/api/hooks/leads/x', {
+      method: 'POST',
+      headers: { 'x-forwarded-for': '203.0.113.250' },
+      body: stream,
+      duplex: 'half'
+    } as RequestInit);
+    expect(await status(call(req, IDS.tenantA))).toBe(400);
+    expect(sent).toBeLessThan(10);
+    expect(await count('webhook_events')).toBe(before);
   });
 
   it('rejects unknown fields and bad values with 400', async () => {

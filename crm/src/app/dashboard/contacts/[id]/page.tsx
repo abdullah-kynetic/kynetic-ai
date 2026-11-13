@@ -8,6 +8,7 @@ import { Timeline } from '@/components/timeline/timeline';
 import { parseTimelineParams } from '@/components/timeline/params';
 import { listActivities, type TimelinePage } from '@/server/activity';
 import {
+  contactsScope,
   getContactDetail,
   listContacts,
   NotFoundError,
@@ -27,7 +28,15 @@ import { cookies, headers } from 'next/headers';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { addNote, editNote, pinNote, removeNote } from './note-actions';
+import { CustomFieldsSection } from '@/features/custom-fields/custom-fields-section';
+import { listFieldDefs } from '@/server/custom-fields';
 import { MergeContactForm } from '@/features/contacts/merge-contact-form';
+import { MessageBox } from '@/features/contacts/message-box';
+import { AiAssist } from '@/features/contacts/ai-assist';
+import { llmEnabled } from '@/server/adapters/llm';
+import { getLatestLeadBrief } from '@/server/llm/features/lead-brief';
+import { listContactDrafts } from '@/server/llm/features/message-draft';
+import { getComposeState, listContactThread } from '@/server/messaging';
 
 export const metadata: Metadata = {
   title: 'Contact',
@@ -122,6 +131,17 @@ export default async function ContactPage({
   const [notes, teammates] = showNotes
     ? await Promise.all([listNotes(ctx, { contactId: id }), listTeammates(ctx)])
     : [[], []];
+  const customDefs = await listFieldDefs(ctx, 'contact');
+  const [thread, channelStates, writeScope] = await Promise.all([
+    listContactThread(ctx, id),
+    getComposeState(ctx, id),
+    contactsScope(requestHeaders, 'tenant_data.write')
+  ]);
+  const aiOn = llmEnabled();
+  const [aiDrafts, aiBrief] = await Promise.all([
+    listContactDrafts(ctx, id),
+    getLatestLeadBrief(ctx, id)
+  ]);
   const linkedDeals = dealsOn ? await listDealsForContact(ctx, id) : [];
   // Tasks are CRM Lite (F-20): without the module the section is not rendered at all.
   const tasksOn = moduleSatisfied(
@@ -186,6 +206,14 @@ export default async function ContactPage({
                   </dd>
                 </div>
               </dl>
+              {customDefs.length > 0 && (
+                <div className='mt-6'>
+                  <CustomFieldsSection
+                    defs={customDefs}
+                    values={contact.custom as Record<string, unknown>}
+                  />
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -220,6 +248,45 @@ export default async function ContactPage({
               />
             </CardContent>
           </Card>
+
+          <Card id='messages' aria-labelledby='section-Messages'>
+            <CardHeader>
+              <CardTitle id='section-Messages'>Messages</CardTitle>
+              <CardDescription>
+                Texts and emails with this person. Every send checks consent, do-not-contact and
+                quiet hours first.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <MessageBox
+                contactId={id}
+                thread={thread}
+                channels={channelStates}
+                canWrite={writeScope !== null}
+              />
+            </CardContent>
+          </Card>
+
+          {(aiOn || aiDrafts.length > 0 || aiBrief) && (
+            <Card id='ai' aria-labelledby='section-AI'>
+              <CardHeader>
+                <CardTitle id='section-AI'>AI help</CardTitle>
+                <CardDescription>
+                  Drafts and research written by AI. Nothing is sent until you approve it, and every
+                  send still checks consent, do-not-contact and quiet hours.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <AiAssist
+                  contactId={id}
+                  enabled={aiOn}
+                  canWrite={writeScope !== null}
+                  drafts={aiDrafts}
+                  brief={aiBrief}
+                />
+              </CardContent>
+            </Card>
+          )}
 
           <Card id='timeline' aria-labelledby='section-Timeline'>
             <CardHeader>

@@ -201,7 +201,7 @@ export function ImportPanel({
   }
 
   return (
-    <div className='grid max-w-3xl gap-6'>
+    <div className='grid max-w-3xl grid-cols-[minmax(0,1fr)] gap-6'>
       <section className='grid gap-3 rounded border p-4'>
         <h2 className='text-lg font-semibold'>Upload CSV or Excel</h2>
         <p className='text-muted-foreground text-sm'>

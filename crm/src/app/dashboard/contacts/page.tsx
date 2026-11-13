@@ -40,10 +40,8 @@ export default async function ContactsPage({
   const { ctx, actor } = scope;
   await enforceSearchRateLimit(getDb(), actor.userId);
   const canWrite = (await contactsScope(await headers(), 'tenant_data.write')) !== null;
-  // Custom fields are CRM Full (F-12); the base portal and Lite show the list without them.
-  const customFields = (await isModuleEnabled(ctx, 'crm', { level: 'full' }))
-    ? await listFieldDefs(ctx, 'contact')
-    : [];
+  // Custom fields show for every client (F-12, P1-4).
+  const customFields = await listFieldDefs(ctx, 'contact');
   const { hidden, ...view } = readListView(await searchParams, customFields);
   const exportEnabled =
     can(actor, 'export.csv', ctx.tenantId) &&

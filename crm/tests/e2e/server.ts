@@ -96,6 +96,10 @@ async function main(): Promise<void> {
     insert into tenant_modules (tenant_id, module_key, enabled, level)
     values (${IDS.tenantA}, 'crm', true, 'full')
     on conflict (tenant_id, module_key) do update set enabled = true, level = 'full'`;
+  // P1-3: custom fields for each kind of record, so the browser test can edit all three.
+  await db.admin`insert into custom_field_defs (tenant_id, entity, key, label, type, position) values
+    (${IDS.tenantA}, 'company', 'crew_size', 'Crew size', 'number', 0),
+    (${IDS.tenantA}, 'deal', 'permit_cost', 'Permit cost', 'money', 0)`;
   await db.admin`
     insert into tenant_modules (tenant_id, module_key, enabled)
     values (${IDS.tenantA}, 'opm', true)

@@ -15,9 +15,22 @@ export type ApiOptions = {
   rateLimitDb?: Db;
 };
 
+/**
+ * The visitor address. Caddy appends the address it saw (Cloudflare's CF-Connecting-IP) to whatever
+ * X-Forwarded-For the visitor sent, so the LAST entry is the trustworthy one; the first is chosen by
+ * the visitor and would let anyone dodge the per-IP limits and forge audit addresses.
+ */
+export function lastForwardedAddress(header: string | null | undefined): string | undefined {
+  const parts = header?.split(',').map((part) => part.trim());
+  return parts?.at(-1) || undefined;
+}
+
 export function clientIp(request: Request): string {
-  const forwarded = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
-  return forwarded || request.headers.get('x-real-ip') || 'unknown';
+  return (
+    lastForwardedAddress(request.headers.get('x-forwarded-for')) ||
+    request.headers.get('x-real-ip') ||
+    'unknown'
+  );
 }
 
 /**

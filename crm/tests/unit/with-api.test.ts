@@ -46,7 +46,7 @@ describe('withApi', () => {
       undefined
     );
     expect(res.status).toBe(200);
-    expect(calls).toEqual([[{}, rule, '1.2.3.4']]);
+    expect(calls).toEqual([[{}, rule, '5.6.7.8']]);
   });
 
   it('returns 429 with Retry-After when the limit is hit', async () => {

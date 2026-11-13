@@ -14,3 +14,4 @@ export {
 export { commitContactBatch, undoImportBatch, listImportBatches } from './commit';
 export { dryRunEntityBatch, commitEntityBatch } from './entities';
 export { dryRunImportBatch, commitImportBatch } from './workflow';
+export { importSelfScope } from './scope';

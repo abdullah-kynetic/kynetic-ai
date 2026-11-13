@@ -1,17 +1,22 @@
 import { registerOutboundCallSubscriber, registerOutboundCallWorker } from './calls';
 import { getEnv } from './env';
 import { wireEmail } from './email/wire';
+import { wireLlm } from './llm/wire';
 import { registerEventWorkers } from './events';
 import { stopJobs } from './jobs';
 import { registerAgencyDigestWorker } from './agency/ops';
 import { registerAgencyMaintenanceWorker } from './agency/scheduling';
 import { registerNotificationEmailWorker } from './notifications';
 import { registerLeadProcessor } from './leads';
-import { registerDevLeadSubscriber, registerDevLeadWorker } from './leads/dev-chain';
 import { registerResendProcessor } from './email';
 import { registerWebhookWorker } from './webhooks';
 import { registerTaskDueWorker } from './tasks';
-import { registerAppointmentSubscriber } from './appointments';
+import {
+  registerAppointmentSubscriber,
+  registerCalendarReconcileWorker,
+  registerCalendarSyncSubscribers,
+  scheduleCalendarReconcile
+} from './appointments';
 import { registerMetricsWorker } from './metrics';
 import {
   registerAutomationSubscribers,
@@ -24,8 +29,10 @@ import { registerReportReadyEmail, registerReportWorker } from './reports';
 import { registerRetentionWorker, scheduleRetentionPurge } from './retention/purge';
 import { registerScheduleWorkers, scheduleTenantJobs } from './schedules';
 import { registerUsageWorker } from './usage';
+import { registerReviewSendWorker } from './reviews';
 import { registerWeeklyEmailWorker } from './reports/weekly-email';
 import { publishAdminDigest } from './admin/alerts';
+import { runMonitoringCheck } from './monitoring/run';
 import { registerTenantExportWorker } from './admin/tenant-export';
 import { purgeExpiredRateLimits, RATE_LIMIT_PURGE_CRON } from './security/rate-limit';
 import { getWorkerDb } from './db/client';
@@ -39,19 +46,20 @@ import { registerProviderProcessors } from './worker-boot';
 // processors before this point; the fan-out workers below deliver to them.
 registerReportReadyEmail();
 wireEmail(getEnv());
+wireLlm(getEnv());
 registerLeadProcessor();
 registerOutboundCallSubscriber();
-registerDevLeadSubscriber();
 // A missing provider key skips that provider's webhook processor instead of stopping the worker.
 registerProviderProcessors();
 await registerEventWorkers();
 registerResendProcessor();
 await registerWebhookWorker();
 await registerOutboundCallWorker();
-await registerDevLeadWorker();
 await registerNotificationEmailWorker();
 await registerTaskDueWorker();
 registerAppointmentSubscriber();
+registerCalendarSyncSubscribers();
+await registerCalendarReconcileWorker();
 await registerMetricsWorker();
 await registerAgencyMaintenanceWorker();
 await registerAgencyDigestWorker();
@@ -75,15 +83,20 @@ await scheduleRecurring(
   { kind: 'restore_test' },
   'encrypted-backup-monthly-restore'
 );
+if (getEnv().CALCOM_SYNC_ENABLED) await scheduleCalendarReconcile();
 await registerAutomationWorker();
 await registerReportWorker();
 await registerScheduleWorkers();
 await registerRetentionWorker();
 await registerUsageWorker();
 await registerWeeklyEmailWorker();
+await registerReviewSendWorker();
 await registerTenantExportWorker();
 await registerWorker('admin.digest', async () => {
   await publishAdminDigest();
+});
+await registerWorker('monitor.check', async () => {
+  await runMonitoringCheck();
 });
 await registerWorker('security.rate_limit_purge', async () => {
   await purgeExpiredRateLimits(getWorkerDb());
@@ -98,6 +111,7 @@ await scheduleRecurring(
   'admin-daily-digest',
   'America/Los_Angeles'
 );
+await scheduleRecurring('worker', 'monitor.check', '*/5 * * * *', {}, 'monitor-check-5min');
 await scheduleRecurring(
   'worker',
   'security.rate_limit_purge',

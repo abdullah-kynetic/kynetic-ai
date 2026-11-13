@@ -65,6 +65,7 @@ export {
   readOutboundPause,
   setClientEmailFlags,
   setMonthlySpendCap,
+  setLlmMonthlyCap,
   setOutboundPaused
 } from './platform-controls';
 export { listTenantExports, offboardTenant } from './offboarding';
@@ -81,3 +82,7 @@ export {
   type StepPatch,
   type StepStatus
 } from './checklist';
+export {
+  provisionClientAutomations,
+  type OnboardingAutomationResult
+} from './onboarding-automation';

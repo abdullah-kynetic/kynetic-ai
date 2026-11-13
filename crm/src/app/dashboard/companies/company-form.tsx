@@ -3,6 +3,14 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { CustomFieldInputs } from '@/features/custom-fields/custom-field-inputs';
+import {
+  customErrorsByKey,
+  customFromDrafts,
+  draftsFromValues,
+  type CustomDrafts
+} from '@/features/custom-fields/inputs';
+import type { CustomFieldDef } from '@/server/custom-fields/types';
 import * as React from 'react';
 import type { CompanyFormState } from './actions';
 
@@ -42,11 +50,23 @@ type Props = {
   action: (prev: CompanyFormState, fd: FormData) => Promise<CompanyFormState>;
   initial?: CompanyFormValues;
   submitLabel: string;
+  /** The tenant's company custom field definitions and this company's stored values (F-12). */
+  customDefs?: readonly CustomFieldDef[];
+  customValues?: Record<string, unknown>;
 };
 
-export function CompanyForm({ action, initial = EMPTY_COMPANY, submitLabel }: Props) {
+export function CompanyForm({
+  action,
+  initial = EMPTY_COMPANY,
+  submitLabel,
+  customDefs = [],
+  customValues = {}
+}: Props) {
   const [state, formAction, pending] = React.useActionState<CompanyFormState, FormData>(action, {});
   const id = React.useId();
+  const [drafts, setDrafts] = React.useState<CustomDrafts>(() =>
+    draftsFromValues(customDefs, customValues)
+  );
 
   const field = (
     name: keyof CompanyFormValues,
@@ -89,6 +109,19 @@ export function CompanyForm({ action, initial = EMPTY_COMPANY, submitLabel }: Pr
         {field('state', 'State', { autoComplete: 'address-level1' })}
         {field('postalCode', 'ZIP code', { autoComplete: 'postal-code' })}
       </div>
+      {customDefs.length > 0 && (
+        <input
+          type='hidden'
+          name='custom'
+          value={JSON.stringify(customFromDrafts(customDefs, drafts))}
+        />
+      )}
+      <CustomFieldInputs
+        defs={customDefs}
+        drafts={drafts}
+        errors={customErrorsByKey(state.fieldErrors)}
+        onChange={(key, draft) => setDrafts((d) => ({ ...d, [key]: draft }))}
+      />
       {state.error && !state.fieldErrors && (
         <p role='alert' className='text-destructive text-sm'>
           {state.error}

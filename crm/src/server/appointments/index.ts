@@ -15,3 +15,12 @@ export {
   type BookAppointmentInput
 } from './service';
 export { registerAppointmentSubscriber } from './events';
+export {
+  CAL_PREFIX,
+  getCalendarProvider,
+  pushAppointment,
+  reconcileCalendar,
+  registerCalendarReconcileWorker,
+  registerCalendarSyncSubscribers,
+  scheduleCalendarReconcile
+} from './calendar-sync';

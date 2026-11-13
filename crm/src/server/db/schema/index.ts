@@ -18,3 +18,5 @@ export * from './demo-seed';
 export * from './client-growth';
 export * from './archive';
 export * from './worker-heartbeat';
+export * from './ai-features';
+export * from './automation-versions';

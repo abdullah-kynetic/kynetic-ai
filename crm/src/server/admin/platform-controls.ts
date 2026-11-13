@@ -81,6 +81,33 @@ export async function setMonthlySpendCap(
   }
 }
 
+/** AI (model) spend cap per month in cents. Blank means the platform default applies. */
+export async function setLlmMonthlyCap(
+  ctx: PlatformContext,
+  tenantId: string,
+  cents: number | null,
+  opts: Options = {}
+) {
+  requireAdmin(ctx);
+  if (!z.uuid().safeParse(tenantId).success) throw new AppError('NOT_FOUND');
+  if (cents != null && (!Number.isInteger(cents) || cents < 0))
+    throw new AppError('VALIDATION_FAILED', {
+      message: 'Enter a cap in cents, or leave it blank.'
+    });
+  try {
+    await withPlatform(
+      ctx,
+      (tx) => tx.execute(sql`select admin_set_llm_cap(${tenantId}::uuid, ${cents})`),
+      opts
+    );
+  } catch (error) {
+    if (error instanceof AppError) throw error;
+    if (String(error).includes('P0002') || String(error).includes('tenant not found'))
+      throw new AppError('NOT_FOUND');
+    throw error;
+  }
+}
+
 export async function setClientEmailFlags(
   ctx: PlatformContext,
   tenantId: string,
@@ -123,7 +150,9 @@ export async function listUsageMonth(
       messageCostCents: Number(row.message_cost_cents),
       costUnknown: row.cost_unknown === true,
       monthlyFeeCents: row.monthly_fee_cents == null ? null : Number(row.monthly_fee_cents),
-      capCents: row.cap_cents == null ? null : Number(row.cap_cents)
+      capCents: row.cap_cents == null ? null : Number(row.cap_cents),
+      llmCostMicros: Number(row.llm_cost_micros ?? 0),
+      llmCapCents: row.llm_cap_cents == null ? null : Number(row.llm_cap_cents)
     }))
   };
 }
