@@ -208,3 +208,7 @@ Abdullah explicitly authorized merging completed/tested work into main so the ex
 ## 2026-11-13 — phase 3 build defaults (no new decision needed from Abdullah)
 
 Client Usage page keeps dollar cost hidden (KI-032 default, recommendation unchanged). All Phase 3 sending is behind flags that stay off: `OUTBOUND_ENABLED`, `REVIEW_REQUESTS_ENABLED`, `SUPPORT_ALERT_EMAIL_ENABLED`. The Terms gate stays off pending counsel (KI-026).
+
+## 2026-11-13 — phase 4 part 2 defaults (one decision still open for Abdullah)
+
+Visitor IP is the LAST `X-Forwarded-For` entry (the one Caddy adds), not the first, for rate limits and audit addresses. Service tokens stop working while a client is suspended or offboarded. Still open: whether staff keep the email-code login once real client data is in the system (KI-033; recommendation in `docs/security-review-phase-4.md` S-05: turn it off, or keep it only with a hardware-key or passkey mailbox).
