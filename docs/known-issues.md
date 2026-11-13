@@ -9,8 +9,8 @@ Mirror of open problems tracked in Twenty. Twenty is canonical; this file mirror
 ### KI-037: Only the leads list filters by custom fields (low)
 Found 2026-11-13. Custom field values are now entered and shown on contacts, companies and deals, and the leads list can filter and export them. The companies list and the deals board have no custom field filter or column. Phase 1 acceptance P1-3 was met for filtering on contacts only.
 
-### KI-036: A client import can record consent dated after an opt-out (medium)
-Found 2026-11-13. The client import (P1-5) uses the staff import's consent rule: a row with a date, a channel and proof saves an express consent. The newest event wins, so a client-supplied date later than a person's opt-out or DNC would make them reachable again. Decision for Abdullah: should an import refuse to record consent for a contact who has opted out or is on the DNC list? Not changed in code; it matches the existing staff import.
+### KI-036: A client import can record consent dated after an opt-out (fixed 2026-11-13)
+Found 2026-11-13. Abdullah decided the same day: an import refuses to save consent for anyone who has opted out or is on the DNC list. Fixed in `server/imports/consent-guard.ts`, used by the shared commit path, so client and staff imports both obey it. Refused: an opt-out or DNC consent row on any channel, `do_not_call_at`, or a phone on the tenant's active DNC list (including a new person whose number is listed). The person is still added; only the consent is skipped, counted as `consentsRefused` in the result, the report and the audit entry. Staff can still record fresh consent by hand.
 
 ### KI-035: Primary button hover falls below 4.5:1 for the brand blue #2563eb (low)
 Found 2026-11-13 by the phase 1 accessibility scan: white text on the hover colour (primary mixed 8% with white) measures 4.41:1 on the synthetic tenant colour. The resting state passes. The scan moves the pointer away first. Not fixed. Also note the import and CSV export share a budget of 5 uploads an hour per tenant.

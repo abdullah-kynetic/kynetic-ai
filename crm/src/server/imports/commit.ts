@@ -23,6 +23,7 @@ import { loadImportTable } from './table';
 import type { ContactDryRun, ContactMapping } from './dry-run';
 import { mappingSchema, previewContacts } from './dry-run';
 import { recordConsent, revokeConsent } from '../consent';
+import { consentRefused } from './consent-guard';
 import { requireModule } from '../modules';
 
 type Options = { db?: Db };
@@ -64,7 +65,14 @@ export async function commitContactBatch(
   actor: Actor,
   batchId: string,
   opts: Options = {}
-): Promise<{ imported: number; filled: number; skipped: number; failed: number }> {
+): Promise<{
+  imported: number;
+  filled: number;
+  skipped: number;
+  failed: number;
+  consents: number;
+  consentsRefused: number;
+}> {
   if (!canImportContacts(actor, ctx.tenantId)) throw new AppError('FORBIDDEN');
   parseInput(z.uuid(), batchId);
   return withTenant(
@@ -106,6 +114,7 @@ export async function commitContactBatch(
           tenantId: contacts.tenantId,
           phones: contacts.phones,
           emails: contacts.emails,
+          doNotCallAt: contacts.doNotCallAt,
           firstName: contacts.firstName,
           lastName: contacts.lastName
         })
@@ -138,6 +147,7 @@ export async function commitContactBatch(
       let filled = 0;
       let skipped = 0;
       let failed = 0;
+      let consentsRefused = 0;
 
       for (const [index, row] of data.entries()) {
         if (table.blocked.has(index + 2)) {
@@ -162,7 +172,9 @@ export async function commitContactBatch(
         );
         if (match) {
           skipped++;
-          if (parsed.consent) {
+          if (parsed.consent && (await consentRefused(tx, match, parsed.value.phones))) {
+            consentsRefused++;
+          } else if (parsed.consent) {
             const consent = await recordConsent(
               ctx,
               { contactId: match.id, ...parsed.consent, source: 'import' },
@@ -238,6 +250,7 @@ export async function commitContactBatch(
           tenantId: ctx.tenantId,
           phones: parsed.value.phones,
           emails: parsed.value.emails,
+          doNotCallAt: null,
           firstName: parsed.value.firstName,
           lastName: parsed.value.lastName ?? null
         });
@@ -248,7 +261,9 @@ export async function commitContactBatch(
           recordId: contact.id,
           action: 'created'
         });
-        if (parsed.consent) {
+        if (parsed.consent && (await consentRefused(tx, null, parsed.value.phones))) {
+          consentsRefused++;
+        } else if (parsed.consent) {
           const consent = await recordConsent(
             ctx,
             { contactId: contact.id, ...parsed.consent, source: 'import' },
@@ -278,10 +293,18 @@ export async function commitContactBatch(
           skipped: number;
           failed: number;
           consents: number;
+          consentsRefused: number;
         };
       } = {
         ...(batch.report as ContactDryRun),
-        commit: { imported, filled, skipped, failed, consents: consentRecords.length }
+        commit: {
+          imported,
+          filled,
+          skipped,
+          failed,
+          consents: consentRecords.length,
+          consentsRefused
+        }
       };
       await tx
         .update(importBatches)
@@ -291,9 +314,23 @@ export async function commitContactBatch(
         action: 'import.commit',
         entity: 'import_batch',
         entityId: batch.id,
-        after: { imported, filled, skipped, failed, consents: consentRecords.length }
+        after: {
+          imported,
+          filled,
+          skipped,
+          failed,
+          consents: consentRecords.length,
+          consentsRefused
+        }
       });
-      return { imported, filled, skipped, failed, consents: consentRecords.length };
+      return {
+        imported,
+        filled,
+        skipped,
+        failed,
+        consents: consentRecords.length,
+        consentsRefused
+      };
     },
     opts
   );
