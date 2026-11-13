@@ -58,7 +58,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: End-to-end test
   - Commit: "Add one-step client onboarding"
   - Covers: P4-6
-- [ ] **P4-S7.** Open PR; record in the build log.
+- [x] **P4-S7.** Open PR; record in the build log.
   - Test: CI green
   - Commit: "Record phase 4 in the build log"
   - Covers: -
