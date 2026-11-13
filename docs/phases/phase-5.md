@@ -39,7 +39,7 @@ Default monthly AI spend cap per client (recommendation: low default, raised by 
 
 Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finishes the step. A new thread resumes at the first unticked step. For every step: finish it, test it, commit, push, then move on (see `PROTOCOL.md`). A STOP step waits for Abdullah's yes; do the steps after it that do not depend on it.
 
-- [ ] **P5-S1.** `adapters/llm/` interface with a fake adapter, `LLM_ENABLED=false` default, and a data-handling setting on every request.
+- [x] **P5-S1.** `adapters/llm/` interface with a fake adapter, `LLM_ENABLED=false` default, and a data-handling setting on every request.
   - Test: Unit test: disabled means no call; CI uses only the fake
   - Commit: "Add the LLM adapter interface and fake"
   - Covers: P5-1, P5-4

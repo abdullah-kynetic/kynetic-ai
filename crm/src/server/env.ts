@@ -52,6 +52,16 @@ export const envSchema = z.object({
   RESEND_WEBHOOK_SECRET: z.string().min(1).optional(),
   // Verified sending address for app email (ARCHITECTURE: Domain, DNS and email domain).
   EMAIL_FROM_ADDRESS: z.string().min(3).default('notifications@mail.kyneticai.com'),
+  // Phase 5. All model calls go through OpenRouter. Off until Abdullah says so; the key is added
+  // separately. Model ids per task are in LLM_MODELS (JSON) or config/llm-models.ts.
+  LLM_ENABLED: booleanString.default(false),
+  OPENROUTER_API_KEY: z.string().min(1).optional(),
+  // Applied to every request. `no_retention` asks OpenRouter to route only to endpoints that do not
+  // store or train on prompts.
+  LLM_DATA_HANDLING: z.enum(['no_retention', 'standard']).default('no_retention'),
+  LLM_MODELS: z.string().optional(),
+  // Per client per month, in cents, when the client has no cap of its own. Low on purpose.
+  LLM_DEFAULT_MONTHLY_CAP_CENTS: z.coerce.number().int().min(0).default(500),
   // Object storage (R2). All four are set together; see refinedEnvSchema.
   STORAGE_ENDPOINT: z.url().optional(),
   STORAGE_ACCESS_KEY_ID: z.string().min(1).optional(),
@@ -87,6 +97,10 @@ export const refinedEnvSchema = envSchema
   .refine((e) => e.PROVIDER_MODE !== 'stub' || !e.OUTBOUND_ENABLED, {
     message: 'PROVIDER_MODE=stub requires OUTBOUND_ENABLED=false',
     path: ['PROVIDER_MODE']
+  })
+  .refine((e) => !e.LLM_ENABLED || e.PROVIDER_MODE === 'stub' || Boolean(e.OPENROUTER_API_KEY), {
+    message: 'LLM_ENABLED=true needs OPENROUTER_API_KEY (or PROVIDER_MODE=stub)',
+    path: ['LLM_ENABLED']
   })
   .transform((value) => ({
     ...value,
