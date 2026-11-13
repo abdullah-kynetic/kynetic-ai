@@ -1,0 +1,201 @@
+---
+// Reusable niche landing page. All copy comes from a src/niches/<slug>.ts file (see _types.ts).
+// Static HTML and CSS only, no client script, so it stays fast on mobile.
+import tokens from '../styles/tokens.css?raw';
+import niche_css from '../styles/niche.css?raw';
+import type { Niche } from '../niches/_types';
+
+interface Props { niche: Niche }
+const { niche: n } = Astro.props;
+// Existing Cal booking link used across the site.
+const CAL = 'https://cal.com/abdullah-kyneticai/kynetic-ai-discovery-call';
+const url = new URL(`/${n.slug}`, Astro.site).href;
+const ogImage = new URL('/brand/og-image-light.png', Astro.site).href;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{n.metaTitle}</title>
+    <meta name="description" content={n.metaDescription} />
+    <link rel="canonical" href={url} />
+    {n.draft && <meta name="robots" content="noindex, nofollow" />}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={n.metaTitle} />
+    <meta property="og:description" content={n.metaDescription} />
+    <meta property="og:url" content={url} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#faf8f5" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style is:inline set:html={tokens} />
+    <style is:inline set:html={niche_css} />
+  </head>
+  <body class="np">
+    <header class="np-nav">
+      <div class="np-nav__pill">
+        <a class="np-nav__logo" href="/" aria-label="Kynetic AI home"><img src="/brand/wordmark-a-light.svg" alt="Kynetic AI" width="124" height="28" /></a>
+        <nav class="np-nav__links" aria-label="Page sections">
+          <a href="#services">Services</a>
+          <a href="#how">How it works</a>
+          <a href="#portal">Portal</a>
+        </nav>
+        <a class="np-btn np-btn--primary np-btn--sm" href={CAL}>Free audit</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="np-hero">
+        <div class="np-wrap np-hero__inner">
+          <p class="np-badge">{n.hero.eyebrow}</p>
+          <h1>{n.hero.headline}</h1>
+          <p class="np-lede">{n.hero.sub}</p>
+          <div class="np-cta">
+            <a class="np-btn np-btn--primary" href={CAL}>{n.hero.ctaLabel}</a>
+            {n.hero.ctaNote && <p class="np-cta__note">{n.hero.ctaNote}</p>}
+          </div>
+        </div>
+      </section>
+
+      <section class="np-section np-video" aria-label={n.video.title}>
+        <div class="np-wrap np-wrap--narrow">
+          <div class="np-video__frame">
+            {n.video.embedUrl
+              ? <iframe src={n.video.embedUrl} title={n.video.title} loading="lazy" allow="fullscreen; picture-in-picture" allowfullscreen></iframe>
+              : <div class="np-video__ph"><span class="np-play" aria-hidden="true"></span><p>{n.video.placeholder}</p></div>}
+          </div>
+          {!n.video.embedUrl && <p class="np-todo">{n.video.todo}</p>}
+        </div>
+      </section>
+
+      <section class="np-section np-alt" id="services">
+        <div class="np-wrap">
+          <header class="np-head">
+            <p class="np-badge">{n.services.eyebrow}</p>
+            <h2>{n.services.title}</h2>
+            <p class="np-lede">{n.services.lede}</p>
+          </header>
+          <article class="np-core">
+            <div class="np-core__copy">
+              <div class="np-core__top">
+                <h3>{n.services.core.name}</h3>
+                <span class="np-tag np-tag--live">{n.services.core.badge}</span>
+              </div>
+              <p>{n.services.core.desc}</p>
+              <ul>{n.services.core.points.map((p) => <li>{p}</li>)}</ul>
+            </div>
+            <div class="np-demo" role="img" aria-label={n.services.core.demo.title + ': ' + n.services.core.demo.steps.map((x) => x.label).join(', then ')}>
+              <p class="np-demo__title">{n.services.core.demo.title}</p>
+              <ol class="np-demo__steps">
+                {n.services.core.demo.steps.map((st, i) => (
+                  <li style={`--i:${i}`}>
+                    <span class="np-demo__dot"></span>
+                    <span><strong>{st.label}</strong><small>{st.detail}</small></span>
+                  </li>
+                ))}
+              </ol>
+              <p class="np-demo__note">{n.services.core.demo.note}</p>
+            </div>
+          </article>
+          <h3 class="np-subtitle">{n.services.addonsTitle}</h3>
+          <p class="np-note">{n.services.addonsNote}</p>
+          <ul class="np-addons">
+            {n.services.addons.map((a) => (
+              <li>
+                <span class="np-tag">{a.badge}</span>
+                <strong>{a.name}</strong>
+                <span>{a.desc}</span>
+              </li>
+            ))}
+          </ul>
+          <p class="np-todo">{n.services.todo}</p>
+        </div>
+      </section>
+
+      <section class="np-section" id="how">
+        <div class="np-wrap">
+          <header class="np-head">
+            <p class="np-badge">{n.how.eyebrow}</p>
+            <h2>{n.how.title}</h2>
+          </header>
+          <ol class="np-steps">
+            {n.how.steps.map((s, i) => (
+              <li>
+                <span class="np-steps__n">{i + 1}</span>
+                <h3>{s.title}</h3>
+                <p>{s.desc}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section class="np-section np-alt" id="portal">
+        <div class="np-wrap np-portal">
+          <div>
+            <p class="np-badge">{n.portal.eyebrow}</p>
+            <h2>{n.portal.title}</h2>
+            <p class="np-lede np-lede--left">{n.portal.lede}</p>
+            <ul class="np-checks">{n.portal.points.map((p) => <li>{p}</li>)}</ul>
+          </div>
+          <div class="np-mock" role="img" aria-label="Illustrative layout of the client portal">
+            <div class="np-mock__bar"><i></i><i></i><i></i></div>
+            <div class="np-mock__row"><span>{n.services.core.name}</span><b class="np-on">On</b></div>
+            {n.services.addons.map((a) => <div class="np-mock__row"><span>{a.name}</span><b class="np-off">Off</b></div>)}
+            <div class="np-mock__stats">
+              <div><small>Booked estimates</small><strong>&ndash;</strong></div>
+              <div><small>Lead response time</small><strong>&ndash;</strong></div>
+            </div>
+            <p class="np-mock__note">{n.portal.mockNote}</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="np-section" id="guarantee">
+        <div class="np-wrap np-wrap--narrow">
+          <div class="np-guarantee">
+            <p class="np-badge">{n.guarantee.eyebrow}</p>
+            <h2>{n.guarantee.title}</h2>
+            <p class="np-guarantee__draft">{n.guarantee.draftWording}</p>
+            <p class="np-guarantee__cond">{n.guarantee.condition}</p>
+            <p class="np-todo">{n.guarantee.todo}</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="np-section np-alt" id="results">
+        <div class="np-wrap">
+          <header class="np-head">
+            <p class="np-badge">{n.proof.eyebrow}</p>
+            <h2>{n.proof.title}</h2>
+          </header>
+          <ul class="np-proof">{n.proof.placeholders.map((p) => <li>{p}</li>)}</ul>
+          <p class="np-todo">{n.proof.todo}</p>
+        </div>
+      </section>
+
+      <section class="np-band">
+        <div class="np-wrap np-wrap--narrow np-band__inner">
+          <h2>{n.finalCta.title}</h2>
+          <p>{n.finalCta.sub}</p>
+          <a class="np-btn np-btn--primary" href={CAL}>{n.finalCta.ctaLabel}</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="np-footer">
+      <div class="np-wrap np-footer__inner">
+        <a href="/" aria-label="Kynetic AI home"><img src="/brand/wordmark-a-espresso.svg" alt="Kynetic AI" width="124" height="28" /></a>
+        <p>An AI growth partner that finds your leaks, then builds and runs the AI systems that fix them.</p>
+        <nav aria-label="Footer"><a href="/">Home</a><a href="/privacy">Privacy Policy</a><a href="/terms">Terms &amp; Conditions</a></nav>
+      </div>
+    </footer>
+  </body>
+</html>

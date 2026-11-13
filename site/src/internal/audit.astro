@@ -1,0 +1,128 @@
+---
+// Internal sales-call audit tool. Filled in live on calls; not linked in nav, not indexed.
+// Everything runs in the browser. Nothing is stored or sent anywhere.
+import '../styles/audit.css';
+const niches = [
+  ['remodeling', 'Remodeling (kitchen, bath, any remodel)'],
+  ['solar', 'Solar / battery'],
+  ['pools', 'Custom pools'],
+  ['windows', 'Windows / doors'],
+  ['decks', 'Decks / outdoor living'],
+  ['other', 'Other'],
+];
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow, noarchive" />
+  <title>Business Audit · Kynetic AI (internal)</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+<main class="au">
+  <header class="au-head">
+    <div>
+      <p class="au-eyebrow">Kynetic AI · internal</p>
+      <h1>Business audit</h1>
+      <p class="au-sub">Fill this in live on the call. Nothing is saved or sent anywhere; refresh to clear.</p>
+    </div>
+    <div class="au-head-actions">
+      <button type="button" class="au-btn ghost" id="au-example">Load example</button>
+      <button type="button" class="au-btn ghost" id="au-reset">Clear</button>
+    </div>
+  </header>
+  <div class="au-example-flag" id="au-example-flag" hidden>EXAMPLE DATA (made-up numbers, not a real client)</div>
+
+  <nav class="au-steps" aria-label="Steps">
+    <button type="button" data-step="1" class="on">1. Fit</button>
+    <button type="button" data-step="2">2. Leak</button>
+    <button type="button" data-step="3">3. Pain</button>
+    <button type="button" data-step="4">4. Results</button>
+  </nav>
+
+  <form id="au-form" autocomplete="off" onsubmit="return false">
+    <section class="au-panel" data-panel="1">
+      <h2>Fit check</h2>
+      <p class="au-hint">First five minutes. Any red answer and we're done.</p>
+      <div class="au-grid">
+        <label>Business name<input name="biz" type="text" placeholder="Acme Remodeling" /></label>
+        <label>Niche<select name="niche">{niches.map(([v, l]) => <option value={v}>{l}</option>)}</select></label>
+        <label>Running Meta ads right now?<select name="metaAds"><option value="">—</option><option value="yes">Yes</option><option value="no">No</option></select></label>
+        <label>Monthly Meta ad spend ($)<input name="spend" type="number" min="0" step="100" /></label>
+        <label>Leads per month from ads<input name="leads" type="number" min="0" /></label>
+        <label>Average job size ($)<input name="job" type="number" min="0" step="500" /></label>
+        <label>Capacity for more work?<select name="capacity"><option value="">—</option><option value="yes">Yes, can take more</option><option value="some">Some room</option><option value="no">Booked solid</option></select></label>
+        <label>Decision-maker on the call?<select name="dm"><option value="">—</option><option value="yes">Yes</option><option value="no">No</option></select></label>
+        <label>Real CRM / pipeline in use?<select name="crm"><option value="">—</option><option value="yes">Yes, used daily</option><option value="partial">Has one, barely used</option><option value="no">No (spreadsheet / memory)</option></select></label>
+      </div>
+      <div class="au-verdict" id="au-fit"></div>
+      <div class="au-nav"><span></span><button type="button" class="au-btn" data-go="2">Next: the leak →</button></div>
+    </section>
+
+    <section class="au-panel" data-panel="2" hidden>
+      <h2>Where the leak is</h2>
+      <p class="au-hint">Ask in their words, write down their numbers.</p>
+      <div class="au-grid">
+        <label>Speed to lead today<select name="speed"><option value="">—</option><option value="5">Under 5 min</option><option value="60">Within the hour</option><option value="240">Same day</option><option value="1440">Next day or later</option></select></label>
+        <label>After hours / weekends<select name="afterHours"><option value="">—</option><option value="covered">Someone covers it</option><option value="vm">Voicemail / next morning</option><option value="none">Nothing</option></select></label>
+        <label>Who calls leads back?<input name="who" type="text" placeholder="Owner, office manager…" /></label>
+        <label>Contact rate (% of leads reached)<input name="contact" type="number" min="0" max="100" /></label>
+        <label>Booking rate today (% of leads booked)<input name="book" type="number" min="0" max="100" /></label>
+        <label>Close rate (% of appointments)<input name="close" type="number" min="0" max="100" /></label>
+        <label>Follow-up attempts before giving up<input name="attempts" type="number" min="0" /></label>
+        <label>Gross margin per job (%)<input name="margin" type="number" min="0" max="100" /></label>
+        <label>Old leads, last 12 months<input name="oldLeads" type="number" min="0" /></label>
+        <label>Open unsigned quotes<input name="quotes" type="number" min="0" /></label>
+        <label>Missed inbound calls per month<input name="missed" type="number" min="0" /></label>
+      </div>
+      <div class="au-nav"><button type="button" class="au-btn ghost" data-go="1">← Back</button><button type="button" class="au-btn" data-go="3">Next: pain →</button></div>
+    </section>
+
+    <section class="au-panel" data-panel="3" hidden>
+      <h2>Pain, in their words</h2>
+      <label class="au-wide">If you closed 2 more jobs a month, what would that change?<textarea name="pain2jobs" rows="3"></textarea></label>
+      <label class="au-wide">What has bad lead follow-up cost you this year?<textarea name="painCost" rows="3"></textarea></label>
+      <label class="au-wide">What have you tried already (VA, call center, CRM) and why didn't it work?<textarea name="painTried" rows="3"></textarea></label>
+      <div class="au-nav"><button type="button" class="au-btn ghost" data-go="2">← Back</button><button type="button" class="au-btn" data-go="4">See results →</button></div>
+    </section>
+
+    <section class="au-panel" data-panel="4" hidden>
+      <h2>Results</h2>
+      <div class="au-kpis" id="au-kpis"></div>
+      <h3>Talk track</h3>
+      <blockquote class="au-talk" id="au-talk"></blockquote>
+      <h3>Recommended solutions</h3>
+      <div class="au-table-wrap"><table class="au-table" id="au-solutions"></table></div>
+      <div class="au-price" id="au-price"></div>
+      <p class="au-guarantee"><strong>Guarantee:</strong> live in 14 days with booked appointments, or that month's fee is waived.</p>
+
+      <details class="au-assume" id="au-assume">
+        <summary>Assumptions (editable)</summary>
+        <div class="au-grid">
+          <label>Target booking rate with Alex (%)<input name="aTarget" type="number" value="30" /></label>
+          <label>Reactivation rate on old leads (%)<input name="aReact" type="number" value="5" /></label>
+          <label>Quote follow-up recovery rate (%)<input name="aQuote" type="number" value="10" /></label>
+          <label>Booking rate on recovered missed calls (%)<input name="aMissedBook" type="number" value="40" /></label>
+          <label>Monthly fee, % of recovered profit<input name="aPct" type="number" value="15" /></label>
+          <label>Setup, × one month of recovered profit<input name="aSetupX" type="number" step="0.25" value="1" /></label>
+          <label>Setup floor ($)<input name="aFloor" type="number" step="500" value="10000" /></label>
+          <label>"Meaningful" threshold, $/mo profit<input name="aMin" type="number" step="250" value="1500" /></label>
+          <label>CRM build-out monthly ($)<input name="aCrmMo" type="number" step="100" value="500" /></label>
+          <label>CRM build-out setup ($)<input name="aCrmSetup" type="number" step="500" value="3500" /></label>
+        </div>
+      </details>
+
+      <div class="au-nav"><button type="button" class="au-btn ghost" data-go="3">← Back</button>
+        <span class="au-actions"><button type="button" class="au-btn ghost" id="au-copy">Copy summary</button><button type="button" class="au-btn" id="au-print">Print</button></span></div>
+      <p class="au-copied" id="au-copied" hidden>Summary copied.</p>
+    </section>
+  </form>
+</main>
+<script src="../scripts/audit.ts"></script>
+</body>
+</html>

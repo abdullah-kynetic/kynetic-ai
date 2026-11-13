@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ROI Calculator | Kynetic AI</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#faf8f5">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Mirrors the variables in src/styles/tokens.css (this page is standalone, so it can't import it); keep in step. */
+  :root{
+    color-scheme:light;
+    --color-page:#faf8f5; --color-card:#ffffff; --color-alt:#f2eee8; --color-border:#e8e2d8; --color-border-input:#8f877c;
+    --color-text:#14100c; --color-muted:#5c5650; --color-accent:#D9662A; --color-accent-hover:#E2723A; --color-on-accent:#0e0d0b;
+    --color-accent-text:#A8461A; --color-accent-text-hover:#8F3B15; --color-gold:#8A6A2F; --color-gold-on-alt:#7A5C26;
+    --color-error:#B3261E; --color-success:#2f7d4f;
+    --espresso-band:#281F1C; --espresso-card:#342A26; --espresso-border:#453832; --espresso-text:#f4f1ea; --espresso-muted:#b9b2a7;
+    --espresso-accent-text:#E07A3F; --espresso-gold:#C9A96E; --espresso-error:#FF8A80;
+    --font-serif:"Cormorant Garamond",Georgia,"Times New Roman",serif;
+    --font-sans:"Inter","Inter Placeholder",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --focus-ring-color:var(--color-accent-text); --focus-ring-width:2px; --focus-ring-offset:2px;
+    --focus-ring:var(--focus-ring-width) solid var(--focus-ring-color);
+  }
+  /* Page-local aliases onto the tokens (rendered colours unchanged) */
+  :root{
+    --bg:var(--color-page); --band:var(--espresso-band); --card:var(--color-card); --line:var(--color-border); --text:var(--color-text);
+    --text-soft:var(--color-text); --muted:var(--color-muted); --accent:var(--color-accent-text); --accent-hover:var(--color-accent-text-hover);
+    --accent-fill:var(--color-accent); --champ:var(--color-gold);
+    --field:var(--color-card); --edge:var(--color-border-input); --track:var(--color-border-input); --tint:var(--color-alt); --on-accent:var(--color-on-accent);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);
+    font-family:var(--font-sans);line-height:1.6;min-height:100%}
+  button,input{font-family:inherit}
+  .wrap{max-width:1180px;margin:0 auto;padding:56px 22px 80px}
+  h1{font-family:var(--font-serif);font-size:48px;line-height:1.08;margin:0 0 10px;font-weight:600;letter-spacing:-.01em}
+  .sub{color:var(--muted);margin:0 0 32px;font-size:15px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media (max-width:860px){.grid{grid-template-columns:1fr}h1{font-size:34px}}
+  .grid>*,.stats>*,.hero>*{min-width:0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:26px 24px 22px}
+  .span2{grid-column:1/-1}
+  .label{display:flex;align-items:center;gap:10px;font-weight:600;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--champ);margin:0 0 18px}
+  .label:before{content:"";width:18px;height:1px;background:var(--champ)}
+  .tag{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:none;color:var(--champ);background:transparent;border:1px solid var(--champ);padding:3px 9px;border-radius:999px}
+  .field{margin:0 0 14px}
+  .field label{display:block;font-size:14px;color:var(--text-soft);margin:0 0 7px}
+  .inbox{display:flex;align-items:center;gap:8px;background:var(--field);border:1px solid var(--edge);border-radius:8px;padding:0 14px;transition:border-color .15s}
+  .inbox:focus-within{border-color:var(--accent);outline:var(--focus-ring);outline-offset:var(--focus-ring-offset)}
+  .inbox span{color:var(--muted);font-weight:700}
+  .inbox input{flex:1;background:transparent;border:0;outline:0;color:var(--text);font-size:17px;font-weight:600;padding:13px 0;min-width:0}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:16px 18px}
+  .stat .k{font-size:13px;color:var(--muted);margin-bottom:4px}
+  .stat .v{font-size:30px;font-weight:700;letter-spacing:-.01em}
+  .stat .v.big{font-size:38px}
+  .stat .v.good{color:var(--accent-fill)}
+  .stat .v.accent{color:var(--accent-fill)}
+  .stat .v.accent.big,.stat .v.good.big{font-size:38px}
+  .slider-row{display:grid;grid-template-columns:1fr 110px;gap:14px;align-items:center;margin-bottom:6px}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:4px;background:var(--track);outline:none}
+  input[type=range]:focus-visible{outline:var(--focus-ring);outline-offset:4px}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent-fill);cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:18px;height:18px;border:0;border-radius:50%;background:var(--accent-fill);cursor:pointer}
+  .disclaimer{border:1px solid var(--line);background:var(--tint);color:var(--text-soft);border-radius:10px;padding:10px 12px;font-size:13px;margin:0 0 16px}
+  .seg{display:inline-flex;flex-wrap:wrap;gap:6px;background:var(--field);border:1px solid var(--line);border-radius:8px;padding:5px;margin-bottom:14px}
+  .seg button{background:transparent;border:0;color:var(--text-soft);font-weight:600;font-size:14px;padding:9px 14px;border-radius:8px;cursor:pointer}
+  .seg button:not(.on):hover{background:var(--color-alt)}
+  button:focus-visible{outline:var(--focus-ring);outline-offset:var(--focus-ring-offset)}
+  .seg button.on{background:var(--accent-fill);color:var(--on-accent)}
+  .seg button.on:hover{background:var(--color-accent-hover)}
+  .sublabel{font-size:13px;color:var(--muted);margin:2px 0 8px}
+  .note{font-size:12px;color:var(--muted);margin-top:14px;line-height:1.5}
+  .divider{height:1px;background:var(--line);margin:18px 0}
+  .warnline{color:var(--color-error);font-size:12px;margin-top:6px;min-height:14px}
+  footer{color:var(--muted);font-size:12px;margin-top:22px;line-height:1.6}
+  .chk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-soft);margin-top:8px;cursor:pointer}
+  .chk input{accent-color:var(--accent-fill);width:16px;height:16px}
+  .inbox.disabled{opacity:.55}
+  .assume{display:none;margin-top:6px;font-size:12px;color:var(--text-soft);border:1px solid var(--line);background:var(--tint);border-radius:8px;padding:6px 9px}
+  .assume.show{display:block}
+  .status{font-size:13px;color:var(--accent);margin:-14px 0 20px;min-height:16px}
+  .toolbar{display:flex;gap:10px;margin:0 0 22px}
+  .toolbar button{background:transparent;border:1px solid var(--line);color:var(--text);font-weight:600;font-size:13px;padding:8px 14px;border-radius:8px;cursor:pointer}
+  .toolbar button:hover{border-color:var(--accent);color:var(--text)}
+  .print-only{display:none}
+  @media print{
+    @page{margin:12mm}
+    html,body{background:#ffffff !important;color:#14100c}
+    .wrap{max-width:none;padding:0}
+    .hero .h{background:#ffffff !important;border:1px solid #8f877c;color:#14100c !important}
+    .hero .k,.hero .v{color:#14100c !important}
+    .sub,.note,.hint,.stat .k,footer,.sublabel{color:#5c5650 !important}
+    .field label,.chk,.label{color:#14100c !important}
+    .card{background:#ffffff !important;border:1px solid #8f877c;break-inside:avoid;page-break-inside:avoid}
+    .grid{grid-template-columns:1fr 1fr !important}
+    .inbox{background:#ffffff !important;border-color:#8f877c}
+    .inbox input,.inbox span{color:#14100c !important}
+    .stat .v,.stat .v.accent,.stat .v.good{color:#14100c !important}
+    .label{color:#14100c !important}
+    .label:before{background:#14100c}
+    .tag,.seg button.on{background:#f2eee8 !important;color:#14100c !important;border-color:#8f877c}
+    .seg button:not(.on){display:none}
+    .seg{border-color:#8f877c}
+    .disclaimer,.assume.show{background:#ffffff !important;color:#14100c !important;border-color:#14100c}
+    input[type=range],.toolbar,.status{display:none !important}
+    .print-only{display:block}
+  }
+  .hero{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:0 0 22px}
+  @media (max-width:1000px){.hero{grid-template-columns:repeat(2,1fr)}}
+  /* hero tiles are white cards with the border token; values read ink, accent values read orange text */
+  .hero .h{
+    background:#ffffff;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:22px 18px}
+  .hero .k{color:var(--muted);font-size:14px;margin-bottom:8px}
+  .hero .v{font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1.05}
+  .hero .v.good,.hero .v.accent,.hero .v.warn{color:var(--accent-fill)}
+  .field input[type=number]{font-size:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Kynetic Lead-to-Deal ROI Calculator</h1>
+  <p class="sub">Run the numbers live on the discovery call, using the owner's own numbers.</p>
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+  <div class="toolbar"><button type="button" id="resetBtn">Reset</button><button type="button" id="printBtn">Print / save as PDF</button></div>
+  <p class="print-only note" id="printStamp"></p>
+
+  <div class="hero" aria-live="polite">
+    <div class="h"><div class="k">Revenue left on the table / month</div><div class="v warn" id="h_lost">—</div></div>
+    <div class="h"><div class="k">Revenue recovered / month</div><div class="v good" id="h_rec">—</div></div>
+    <div class="h"><div class="k">Jobs to break even on the package</div><div class="v accent" id="h_be">—</div></div>
+    <div class="h"><div class="k">3-month ROI</div><div class="v accent" id="h_roi">—</div></div>
+    <div class="h"><div class="k">Payback time</div><div class="v" id="h_pay">—</div></div>
+  </div>
+  <p class="note" style="margin:-10px 0 20px">"Left on the table" = the extra revenue the lift assumptions below say faster follow-up would capture. Assumptions, not promises or guarantees.</p>
+
+  <div class="grid">
+    <!-- INPUTS -->
+    <section class="card">
+      <div class="label">Their numbers</div>
+      <div class="field"><label for="jobValue">Average job value</label>
+        <div class="inbox"><span>$</span><input id="jobValue" type="number" min="0" step="1" value="0" inputmode="decimal"></div></div>
+      <div class="field"><label for="leads">Meta leads per month</label>
+        <div class="inbox"><input id="leads" type="number" min="0" step="1" value="0" inputmode="decimal"></div></div>
+      <div class="field"><label for="speed">Current speed to first call</label>
+        <div class="inbox"><input id="speed" type="number" min="0" step="1" value="0" inputmode="decimal"><span>min</span></div>
+        <div class="hint">Context only. It isn't used in the math, because we have no sourced figure that converts response time into results.</div></div>
+      <div class="field"><label for="contactPct">% of leads contacted</label>
+        <div class="inbox"><input id="contactPct" type="number" min="0" max="100" step="0.1" value="0" inputmode="decimal"><span>%</span></div></div>
+      <div class="field"><label for="bookPct">Booked / contacted</label>
+        <div class="inbox"><input id="bookPct" type="number" min="0" max="100" step="0.1" value="0" inputmode="decimal"><span>%</span></div></div>
+      <div class="field"><label for="showPct">Show rate</label>
+        <div class="inbox"><input id="showPct" type="number" min="0" max="100" step="0.1" value="0" inputmode="decimal"><span>%</span></div></div>
+      <div class="field"><label for="closePct">Close rate (on appointments that show)</label>
+        <div class="inbox" id="closeBox"><input id="closePct" type="number" min="0" max="100" step="0.1" value="0" inputmode="decimal"><span>%</span></div>
+        <label class="chk"><input type="checkbox" id="closeUnknown"> Don't know: use a conservative placeholder</label>
+        <div class="assume" id="closeAssume">Using a <b>20% close rate</b>. This is an <b>assumption</b>: a conservative placeholder, not a benchmark. No sourced figure was found for this. Replace it with the owner's real number when they know it.</div></div>
+      <div class="warnline" id="warn"></div>
+    </section>
+
+    <!-- RIGHT NOW -->
+    <section class="card">
+      <div class="label">Right now</div>
+      <div class="stats">
+        <div class="stat"><div class="k">Leads contacted / month</div><div class="v" id="o_curContacted">0.0</div></div>
+        <div class="stat"><div class="k">Appointments booked / month</div><div class="v" id="o_curBooked">0.0</div></div>
+        <div class="stat"><div class="k">Appointments that show</div><div class="v" id="o_curShows">0.0</div></div>
+        <div class="stat"><div class="k">Speed to first call (reported)</div><div class="v" id="o_speed">0 min</div></div>
+        <div class="stat"><div class="k">Close rate used</div><div class="v" id="o_closeUsed">0.0%</div></div>
+        <div class="stat"><div class="k">Booked / contacted (current)</div><div class="v" id="o_curBookPct">0.0%</div></div>
+        <div class="stat"><div class="k">Current jobs / month</div><div class="v big" id="o_curJobs">0.0</div></div>
+        <div class="stat"><div class="k">Current revenue / month</div><div class="v big" id="o_curRev">$0</div></div>
+      </div>
+      <p class="note">Revenue, not profit. The owner's margins aren't included.</p>
+    </section>
+
+    <!-- WITH KYNETIC -->
+    <section class="card span2">
+      <div class="label">With Kynetic <span class="tag">assumptions, not promises or guarantees</span></div>
+      <div class="disclaimer">These lifts are <b>assumptions, not promises or guarantees</b>. They aren't based on any study or past client result. Set them together with the owner. Kynetic's only guarantee is speed (each lead called within 60 seconds during allowed calling hours), not bookings or revenue.</div>
+      <div class="grid" style="gap:24px">
+        <div>
+          <div class="sublabel">Contact-rate lift (relative, %)</div>
+          <div class="slider-row"><input type="range" tabindex="-1" id="liftContactR" min="0" max="100" step="1" value="10">
+            <div class="inbox"><input id="liftContact" type="number" min="0" max="100" step="1" value="10"><span>%</span></div></div>
+          <div class="hint">New contact rate: <b id="o_newContactPct">0.0%</b> (capped at 100%)</div>
+          <div style="height:16px"></div>
+          <div class="sublabel">Booking-rate lift (relative, %)</div>
+          <div class="slider-row"><input type="range" tabindex="-1" id="liftBookR" min="0" max="100" step="1" value="5">
+            <div class="inbox"><input id="liftBook" type="number" min="0" max="100" step="1" value="5"><span>%</span></div></div>
+          <div class="hint">New booked / contacted: <b id="o_newBookPct">0.0%</b> (capped at 100%)</div>
+          <p class="note">Conservative defaults: +10% contact rate, +5% booking rate, both relative (e.g., a 50% contact rate × 1.10 = 55%). Show rate and close rate stay at the owner's current numbers.</p>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="k">Leads contacted / month</div><div class="v" id="o_newContacted">0.0</div></div>
+          <div class="stat"><div class="k">Appointments booked / month</div><div class="v" id="o_newBooked">0.0</div></div>
+          <div class="stat"><div class="k">Jobs / month</div><div class="v" id="o_newJobs">0.0</div></div>
+          <div class="stat"><div class="k">Revenue / month</div><div class="v" id="o_newRev">$0</div></div>
+          <div class="stat"><div class="k">Extra jobs / month</div><div class="v big good" id="o_extraJobs">0.0</div></div>
+          <div class="stat"><div class="k">Extra revenue / month</div><div class="v big good" id="o_extraRev">$0</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEE -->
+    <section class="card span2">
+      <div class="label">Our fee</div>
+      <div class="grid" style="gap:24px">
+        <div>
+          <div class="sublabel">3-month package (one-time total, covers months 1–3)</div>
+          <div class="seg" id="pkgSeg">
+            <button data-v="6500">$6,500 · founding (first 3 clients)</button>
+            <button data-v="10000" class="on">$10,000 · standard</button>
+          </div>
+          <div class="sublabel">Monthly fee from month 4</div>
+          <div class="seg" id="tierSeg">
+            <button data-v="1500">Founding $1,500</button>
+            <button data-v="2000" class="on">Standard $2,000</button>
+          </div>
+          <p class="note">All software included, no per-minute charges. Founding clients lock in $1,500/mo; standard is $2,000/mo.</p>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="k">Extra revenue over 3 months</div><div class="v" id="o_extraRev3">$0</div></div>
+          <div class="stat"><div class="k">ROI multiple: package (3-month)</div><div class="v accent big" id="o_roiPkg">—</div></div>
+          <div class="stat"><div class="k">Payback: package, in jobs</div><div class="v" id="o_paybackPkg">—</div></div>
+          <div class="stat"><div class="k">ROI multiple: monthly tier</div><div class="v accent" id="o_roiTier">—</div></div>
+          <div class="stat"><div class="k">Payback: monthly tier, in jobs</div><div class="v" id="o_paybackTier">—</div></div>
+          <div class="stat"><div class="k">Extra revenue / month after tier fee</div><div class="v" id="o_netTier">$0</div></div>
+        </div>
+      </div>
+      <p class="note">ROI multiple (package) = 3 × extra revenue per month ÷ package price. ROI multiple (monthly) = extra revenue per month ÷ tier fee. Payback in jobs = fee ÷ average job value. The 3-month view assumes the agent is live for all 3 months. In practice, go-live is within 14 days of kickoff, so the real figure for months 1–3 will be lower. All figures are revenue, not profit, and depend entirely on the assumptions above.</p>
+    </section>
+  </div>
+
+  <p class="note" style="text-align:center;margin-top:18px">Next step: lock in the 3-month package and we start the build this week.</p>
+
+  <footer>Kynetic AI · Illustrative calculator for discovery calls. Not a quote, a forecast or a guarantee. No outside benchmarks or past results are built in. Every input comes from the prospect.</footer>
+</div>
+
+<script>
+// CALC-CORE-START
+// Conservative placeholder used when the owner doesn't know their close rate.
+// NOT a benchmark: Scout's research (/workspace/kynetic/research/) has no sourced close rate for shown appointments.
+var DEFAULT_CLOSE_PCT = 20;
+function clampPct(x){ x = Number(x); if(!isFinite(x) || x < 0) return 0; return x > 100 ? 100 : x; }
+function nonNeg(x){ x = Number(x); return (!isFinite(x) || x < 0) ? 0 : x; }
+function compute(inp){
+  var jobValue = nonNeg(inp.jobValue), leads = nonNeg(inp.leads);
+  var c = clampPct(inp.contactPct)/100, b = clampPct(inp.bookPct)/100,
+      s = clampPct(inp.showPct)/100;
+  var closeAssumed = !!inp.closeUnknown;
+  var k = (closeAssumed ? DEFAULT_CLOSE_PCT : clampPct(inp.closePct))/100;
+  var lc = clampPct(inp.liftContact)/100, lb = clampPct(inp.liftBook)/100;
+  var pkg = nonNeg(inp.packagePrice), tier = nonNeg(inp.tierFee);
+  var cur = { contacted: leads*c };
+  cur.booked = cur.contacted*b; cur.shows = cur.booked*s; cur.jobs = cur.shows*k; cur.revenue = cur.jobs*jobValue;
+  var nc = Math.min(1, c*(1+lc)), nb = Math.min(1, b*(1+lb));
+  var nw = { contactRate: nc, bookRate: nb, contacted: leads*nc };
+  nw.booked = nw.contacted*nb; nw.shows = nw.booked*s; nw.jobs = nw.shows*k; nw.revenue = nw.jobs*jobValue;
+  var extraJobs = nw.jobs - cur.jobs, extraRev = nw.revenue - cur.revenue, extraRev3 = 3*extraRev;
+  return {
+    closeRateUsed: k, closeRateAssumed: closeAssumed,
+    current: cur, withKynetic: nw, extraJobs: extraJobs, extraRevenue: extraRev, extraRevenue3mo: extraRev3,
+    roiPackage: pkg > 0 ? extraRev3/pkg : null,
+    roiTier: tier > 0 ? extraRev/tier : null,
+    paybackJobsPackage: jobValue > 0 ? pkg/jobValue : null,
+    paybackJobsTier: jobValue > 0 ? tier/jobValue : null,
+    netAfterTier: extraRev - tier
+  };
+}
+// CALC-CORE-END
+if (typeof module !== 'undefined') { module.exports = { compute: compute, clampPct: clampPct, DEFAULT_CLOSE_PCT: DEFAULT_CLOSE_PCT }; }
+
+(function(){
+  if (typeof document === 'undefined') return;
+  var $ = function(id){ return document.getElementById(id); };
+  var state = { packagePrice: 10000, tierFee: 2000 };
+  var usd = function(x){ return (x < 0 ? '-$' : '$') + Math.round(Math.abs(x)).toLocaleString('en-US'); };
+  var n1 = function(x){ return (Math.round(x*10)/10).toFixed(1); };
+  var pct = function(x){ return (Math.round(x*1000)/10).toFixed(1) + '%'; };
+  var mult = function(x){ return x === null ? '—' : (Math.round(x*10)/10).toFixed(1) + '×'; };
+  var jobs = function(x){ return x === null ? '—' : (Math.round(x*100)/100).toFixed(2) + ' jobs'; };
+  var ids = ['jobValue','leads','speed','contactPct','bookPct','showPct','closePct','liftContact','liftBook'];
+
+  // Allow prefilling from the URL, e.g. index.html?jobValue=9000&leads=50
+  var qs = new URLSearchParams(location.search);
+  ids.forEach(function(id){ if (qs.has(id)) $(id).value = qs.get(id); });
+  if (qs.get('closeUnknown') === '1' || qs.get('closeUnknown') === 'true') $('closeUnknown').checked = true;
+    if (qs.has('tier') && [1500,2250,3000].indexOf(Number(qs.get('tier'))) >= 0) state.tierFee = Number(qs.get('tier'));
+
+  function bindSeg(segId, key){
+    var btns = $(segId).querySelectorAll('button');
+    btns.forEach(function(b){
+      b.classList.toggle('on', Number(b.dataset.v) === state[key]);
+      b.addEventListener('click', function(){
+        state[key] = Number(b.dataset.v);
+        btns.forEach(function(x){ x.classList.toggle('on', x === b); });
+        render();
+      });
+    });
+  }
+  bindSeg('pkgSeg','packagePrice'); bindSeg('tierSeg','tierFee');
+
+  [['liftContact','liftContactR'],['liftBook','liftBookR']].forEach(function(p){
+    var num = $(p[0]), rng = $(p[1]);
+    rng.value = num.value;
+    rng.addEventListener('input', function(){ num.value = rng.value; render(); });
+    num.addEventListener('input', function(){ rng.value = Math.min(100, nonNeg(num.value)); render(); });
+  });
+  ids.forEach(function(id){
+    $(id).addEventListener('input', render);
+    // Sensible state on blur: empty, negative or non-numeric becomes 0; percentages over 100 become 100.
+    $(id).addEventListener('blur', function(){
+      var el = $(id), x = Number(el.value);
+      if (el.value === '' || !isFinite(x) || x < 0) el.value = 0;
+      else if (el.max !== '' && x > Number(el.max)) el.value = el.max;
+      if (id === 'liftContact' || id === 'liftBook') $(id + 'R').value = el.value;
+      render();
+    });
+  });
+  $('closeUnknown').addEventListener('change', render);
+  var DEFAULTS = { jobValue:0, leads:0, speed:0, contactPct:0, bookPct:0, showPct:0, closePct:0, liftContact:10, liftBook:5 };
+  $('resetBtn').addEventListener('click', function(){
+    ids.forEach(function(id){ $(id).value = DEFAULTS[id]; });
+    $('liftContactR').value = 10; $('liftBookR').value = 5; $('closeUnknown').checked = false;
+    state.packagePrice = 10000; state.tierFee = 2000;
+    ['pkgSeg','tierSeg'].forEach(function(seg){
+      var key = seg === 'pkgSeg' ? 'packagePrice' : 'tierFee';
+      $(seg).querySelectorAll('button').forEach(function(b){ b.classList.toggle('on', Number(b.dataset.v) === state[key]); });
+    });
+    history.replaceState(null, '', location.pathname);
+    render();
+  });
+  $('printBtn').addEventListener('click', function(){ window.print(); });
+
+  function render(){
+    var v = {}; ids.forEach(function(id){ v[id] = $(id).value; });
+    v.packagePrice = state.packagePrice; v.tierFee = state.tierFee;
+    var over = ['contactPct','bookPct','showPct','closePct'].filter(function(id){ return Number(v[id]) > 100; });
+    $('warn').textContent = over.length ? 'Percentages above 100% are treated as 100%.' : '';
+    v.closeUnknown = $('closeUnknown').checked;
+    $('closePct').disabled = v.closeUnknown;
+    $('closeBox').classList.toggle('disabled', v.closeUnknown);
+    $('closeAssume').classList.toggle('show', v.closeUnknown);
+    var r = compute(v);
+    var missing = [];
+    if (!(Number(v.jobValue) > 0)) missing.push('average job value');
+    if (!(Number(v.leads) > 0)) missing.push('Meta leads per month');
+    ['contactPct','bookPct','showPct'].forEach(function(id){ if (!(Number(v[id]) > 0)) missing.push($(id).closest('.field').querySelector('label').textContent.toLowerCase()); });
+    if (!v.closeUnknown && !(Number(v.closePct) > 0)) missing.push('close rate (or tick "Don\'t know")');
+    $('status').textContent = missing.length ? 'Still to enter: ' + missing.join(', ') + '.' : '';
+    $('o_closeUsed').textContent = pct(r.closeRateUsed) + (r.closeRateAssumed ? ' (assumption)' : '');
+    $('o_curBookPct').textContent = pct(clampPct(v.bookPct)/100);
+    $('printStamp').textContent = 'Printed ' + new Date().toLocaleString('en-US') + '. Package: $' + state.packagePrice.toLocaleString('en-US') + '. Monthly tier (TBD-final): $' + state.tierFee.toLocaleString('en-US') + '/mo. Lifts are assumptions, not promises or guarantees.' + (r.closeRateAssumed ? ' Close rate is a 20% conservative placeholder, not a benchmark.' : '');
+    $('o_curContacted').textContent = n1(r.current.contacted);
+    $('o_curBooked').textContent = n1(r.current.booked);
+    $('o_curShows').textContent = n1(r.current.shows);
+    $('o_curJobs').textContent = n1(r.current.jobs);
+    $('o_curRev').textContent = usd(r.current.revenue);
+    $('o_speed').textContent = nonNeg(v.speed).toLocaleString('en-US') + ' min';
+    $('o_newContactPct').textContent = pct(r.withKynetic.contactRate);
+    $('o_newBookPct').textContent = pct(r.withKynetic.bookRate);
+    $('o_newContacted').textContent = n1(r.withKynetic.contacted);
+    $('o_newBooked').textContent = n1(r.withKynetic.booked);
+    $('o_newJobs').textContent = n1(r.withKynetic.jobs);
+    $('o_newRev').textContent = usd(r.withKynetic.revenue);
+    $('o_extraJobs').textContent = (r.extraJobs > 0 ? '+' : '') + n1(r.extraJobs);
+    $('o_extraRev').textContent = (r.extraRevenue > 0 ? '+' : '') + usd(r.extraRevenue);
+    $('o_extraRev3').textContent = usd(r.extraRevenue3mo);
+    $('o_roiPkg').textContent = mult(r.roiPackage);
+    $('o_roiTier').textContent = mult(r.roiTier);
+    $('o_paybackPkg').textContent = jobs(r.paybackJobsPackage);
+    $('o_paybackTier').textContent = jobs(r.paybackJobsTier);
+    $('o_netTier').textContent = usd(r.netAfterTier);
+    var miss = missing.length > 0, er = r.extraRevenue;
+    $('h_lost').textContent = miss ? '—' : usd(Math.max(0, er));
+    $('h_rec').textContent = miss ? '—' : usd(Math.max(0, er));
+    $('h_be').textContent = (miss || r.paybackJobsPackage === null) ? '—' : (Math.round(r.paybackJobsPackage*10)/10).toFixed(1);
+    $('h_roi').textContent = miss ? '—' : mult(r.roiPackage);
+    $('h_pay').textContent = (miss || !(er > 0)) ? '—' : (Math.round(state.packagePrice/er*10)/10).toFixed(1) + ' mo';
+    if (missing.length) { ['o_roiPkg','o_roiTier','o_paybackPkg','o_paybackTier','o_netTier'].forEach(function(id){ $(id).textContent = '—'; }); }
+  }
+  render();
+  ids.forEach(function(id){ $(id).addEventListener('focus', function(){ this.select(); }); });
+  $('jobValue').focus();
+})();
+</script>
+</body>
+</html>

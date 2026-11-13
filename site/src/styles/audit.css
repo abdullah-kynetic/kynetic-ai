@@ -1,0 +1,50 @@
+:root{--bg:#faf8f5;--ink:#14100c;--or:#D9662A;--mute:#5d544b;--line:#e6dfd6;--card:#fff}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif}
+.au{max-width:1040px;margin:0 auto;padding:32px 20px 64px}
+.au-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;flex-wrap:wrap}
+.au-eyebrow{color:var(--or);font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin:0;font-size:16px}
+h1{font-family:'Cormorant Garamond',serif;font-size:48px;line-height:1.05;margin:4px 0}
+h2{font-family:'Cormorant Garamond',serif;font-size:32px;margin:0 0 4px}
+h3{font-size:18px;margin:28px 0 10px}
+.au-sub,.au-hint{color:var(--mute);margin:4px 0 16px}
+.au-head-actions{display:flex;gap:8px}
+.au-example-flag{margin-top:12px;background:#fff1e6;border:1px dashed var(--or);color:#8a3b10;font-weight:700;padding:8px 12px;border-radius:8px}
+.au-steps{display:flex;gap:6px;margin:24px 0 16px;flex-wrap:wrap}
+.au-steps button{font:600 16px Inter,sans-serif;padding:10px 16px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.au-steps button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.au-panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px}
+.au-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+label{display:flex;flex-direction:column;gap:6px;font-weight:500;font-size:16px}
+.au-wide{margin-bottom:16px}
+input,select,textarea{font:16px Inter,sans-serif;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--or);outline-offset:1px}
+.au-nav{display:flex;justify-content:space-between;align-items:center;margin-top:24px;gap:8px;flex-wrap:wrap}
+.au-actions{display:flex;gap:8px}
+.au-btn{font:600 16px Inter,sans-serif;background:var(--or);color:#fff;border:1px solid var(--or);border-radius:999px;padding:12px 20px;cursor:pointer}
+.au-btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.au-verdict{margin-top:20px;border-radius:12px;padding:14px 16px;border:1px solid var(--line)}
+.au-verdict:empty{display:none}
+.au-verdict.green{background:#ecf7ee;border-color:#3d8b4f}.au-verdict.yellow{background:#fff7e0;border-color:#c99a12}.au-verdict.red{background:#fdecea;border-color:#c0392b}
+.au-verdict ul{margin:6px 0 0;padding-left:20px}
+.au-kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.au-kpi{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px}
+.au-kpi b{display:block;font-size:26px;color:var(--or)}
+.au-talk{margin:0;border-left:4px solid var(--or);background:var(--bg);padding:14px 18px;border-radius:0 12px 12px 0;font-size:17px}
+.au-table-wrap{overflow-x:auto}
+.au-table{width:100%;border-collapse:collapse;font-size:16px}
+.au-table th,.au-table td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.au-table td.n,.au-table th.n{text-align:right;white-space:nowrap}
+.au-table tr.skip td{color:#9a9087}
+.au-table tr.total td{font-weight:700;border-top:2px solid var(--ink)}
+.tag{display:inline-block;font-size:14px;font-weight:600;border-radius:999px;padding:2px 10px;margin-left:6px}
+.tag.yes{background:#fff1e6;color:#8a3b10}.tag.no{background:#eee;color:#666}
+.au-price{margin-top:20px;background:var(--ink);color:var(--bg);border-radius:14px;padding:20px}
+.au-price b{color:#f2a06e}
+.au-guarantee{margin-top:16px}
+.au-assume{margin-top:24px;border:1px solid var(--line);border-radius:12px;padding:12px 16px;background:var(--bg)}
+.au-assume summary{cursor:pointer;font-weight:600}
+.au-assume .au-grid{margin-top:14px}
+.au-copied{color:#3d8b4f;font-weight:600}
+@media (max-width:600px){h1{font-size:38px}.au-panel{padding:18px}.au-grid{grid-template-columns:1fr}}
+@media print{.au-steps,.au-nav,.au-head-actions,.au-assume{display:none!important}.au-panel[hidden]{display:block!important}.au-panel{border:0;padding:0;page-break-inside:avoid}body{background:#fff}}

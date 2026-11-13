@@ -1,0 +1,88 @@
+/* Kynetic AI design tokens: single source of truth for palette, type and focus.
+   Light is the default (:root). The espresso variables below are kept as constants; no surface uses them now.
+   public/roi-calculator/index.html mirrors these variables in an inline :root block; keep them in step. */
+:root {
+  color-scheme: light;
+
+  /* Light palette */
+  --color-page: #faf8f5;
+  --color-card: #ffffff;
+  --color-alt: #f2eee8;
+  --color-border: #e8e2d8;
+  --color-border-input: #8f877c;      /* form field edge, 3:1 on page */
+  --color-divider: #e8e2d8;
+  --color-text: #14100c;
+  --color-muted: #5c5650;
+  --color-accent: #D9662A;            /* fills only; labels on it use --color-on-accent */
+  --color-accent-hover: #E2723A;
+  --color-on-accent: #0e0d0b;         /* near-black, never white on orange */
+  --color-accent-text: #A8461A;       /* orange text and links */
+  --color-accent-text-hover: #8F3B15;
+  --color-gold: #8A6A2F;
+  --color-gold-on-alt: #7A5C26;
+  --color-error: #B3261E;
+  --color-success: #2f7d4f;
+
+  /* Espresso palette (constants; applied through the scope below) */
+  --espresso-band: #281F1C;
+  --espresso-card: #342A26;
+  --espresso-border: #453832;
+  --espresso-divider: #f4f1ea40;
+  --espresso-text: #f4f1ea;
+  --espresso-muted: #b9b2a7;
+  --espresso-accent-text: #E07A3F;
+  --espresso-accent-text-hover: #f4f1ea;
+  --espresso-gold: #C9A96E;           /* never on light surfaces */
+  --espresso-error: #FF8A80;
+
+  /* Typography */
+  --font-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --font-sans: "Inter", "Inter Placeholder", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --text-xs: 0.75rem;     /* 12px */
+  --text-sm: 0.875rem;    /* 14px */
+  --text-base: 1rem;      /* 16px */
+  --text-lg: 1.125rem;    /* 18px */
+  --text-xl: 1.25rem;     /* 20px */
+  --text-2xl: 1.5rem;     /* 24px */
+  --text-3xl: 2rem;       /* 32px */
+  --text-4xl: 2.5rem;     /* 40px */
+  --text-5xl: 3rem;       /* 48px */
+  --text-6xl: 4rem;       /* 64px */
+  --leading-tight: 1.08;
+  --leading-snug: 1.25;
+  --leading-body: 1.6;
+  --tracking-heading: -0.01em;
+  --tracking-label: 0.16em;
+
+  /* Focus ring: orange, no glow */
+  --focus-ring-color: var(--color-accent-text);
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --focus-ring: var(--focus-ring-width) solid var(--focus-ring-color);
+}
+
+/* Short aliases the snapshot markup reads (--kn-*). */
+:root {
+  --kn-bg: var(--color-page);
+  --kn-alt: var(--color-alt);
+  --kn-band: var(--espresso-band);
+  --kn-card: var(--color-card);
+  --kn-line: var(--color-border);
+  --kn-line2: var(--color-divider);
+  --kn-track: var(--color-border);
+  --kn-fill: var(--color-accent);
+  --kn-ink: var(--color-text);
+  --kn-muted: var(--color-muted);
+  --kn-orange: var(--color-accent);
+  --kn-on-orange: var(--color-on-accent);
+  --kn-accent-text: var(--color-accent-text);
+  --kn-accent-hover: var(--color-accent-text-hover);
+  --kn-champagne: var(--color-gold);
+  --kn-error: var(--color-error);
+  --kn-serif: var(--font-serif);
+  --kn-sans: var(--font-sans);
+}
