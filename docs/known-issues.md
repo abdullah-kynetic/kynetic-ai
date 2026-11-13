@@ -6,6 +6,9 @@
 Mirror of open problems tracked in Twenty. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Open
+### KI-040: Default contact list is just over 500 ms at 100 concurrent reads (low)
+Found 2026-11-13 (phase 4 load test, `docs/load-test-phase-4.md`). 10,000 contacts, 100 simultaneous list reads: p95 501 to 552 ms on a 4-vCPU shared container, target 500 ms (DC-033). Contact search meets the target after the one-scan change. Most of the list cost is the row count under row-level security (about 7 ms per read). Real traffic is far below this shape; recheck on the server and add a cached or approximate count only if it matters.
+
 ### KI-039: Manual messages and review requests cannot send for real yet (medium)
 Found 2026-11-13. The contact page now has a Messages card (text and email, with a reply view) and queued review requests can send, both through the outbound gate. Nothing leaves while `OUTBOUND_ENABLED=false`, and a text also needs an approved sending number (KI-003) and counsel's consent wording (KI-002). Email from a contact uses `EMAIL_FROM_ADDRESS` and Resend has no reply-to in our adapter, so a customer's email reply does not come back into the portal. Inbound texts do show in the reply view. Review requests need a `review_url` (https) in the client's `opm` module config, set by staff; with none, the request stays queued. Review sending needs `REVIEW_REQUESTS_ENABLED=true`; after turning it on, `sweepQueuedReviewRequests(tenantId)` queues requests that were waiting. Nothing has been turned on.
 ### KI-038: Alert rules exist but nothing is switched on yet (medium)

@@ -57,6 +57,17 @@ describe('M0-20 service tokens', () => {
     expect(row.last_used_at).not.toBeNull();
   });
 
+  it('refuses the tokens of a suspended or offboarded client, and works again when reactivated', async () => {
+    const { token } = await issueServiceToken(ctx.ownerB(), { label: 'n8n', scopes: [] }, { db });
+    expect(await authenticateServiceToken(bearer(token), { db })).not.toBeNull();
+    for (const status of ['suspended', 'offboarded']) {
+      await tdb.admin`update tenants set status = ${status} where id = ${IDS.tenantB}`;
+      expect(await authenticateServiceToken(bearer(token), { db })).toBeNull();
+    }
+    await tdb.admin`update tenants set status = 'active' where id = ${IDS.tenantB}`;
+    expect(await authenticateServiceToken(bearer(token), { db })).not.toBeNull();
+  });
+
   it('is scoped to one tenant: a tenant A token reads tenant A rows and never tenant B', async () => {
     const { token } = await issueServiceToken(ctx.ownerA(), { label: 'n8n', scopes: [] }, { db });
     const svc = await authenticateServiceToken(bearer(token), { db });

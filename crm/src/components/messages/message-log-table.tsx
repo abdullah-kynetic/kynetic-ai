@@ -23,7 +23,7 @@ const when = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeStyle: 
 
 export function MessageLogTable({ rows }: { rows: MessageLogRow[] }) {
   return (
-    <Table>
+    <Table scrollLabel='Messages'>
       <caption className='sr-only'>Messages, newest first</caption>
       <TableHeader>
         <TableRow>

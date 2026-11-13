@@ -10,7 +10,6 @@ import {
   normalizeHex
 } from '@/lib/branding/color';
 import { useState, useTransition } from 'react';
-import { useTheme } from 'next-themes';
 import { saveBrandingAction, type BrandingResult } from './actions';
 
 type Initial = { name: string; primaryColor: string; logoUrl: string | null };
@@ -20,12 +19,10 @@ export function BrandingForm({ initial }: { initial: Initial }) {
   const [color, setColor] = useState(initial.primaryColor);
   const [result, setResult] = useState<BrandingResult | null>(null);
   const [pending, start] = useTransition();
-  const { resolvedTheme } = useTheme();
 
   const hex = normalizeHex(color);
   const check = hex ? checkPrimaryColor(hex) : null;
   const branding = deriveBranding(check?.ok && hex ? hex : KYNETIC_ORANGE);
-  const preview = resolvedTheme === 'dark' ? branding.dark : branding.light;
   const live =
     color && !check
       ? 'Enter the color as #rrggbb.'
@@ -88,11 +85,17 @@ export function BrandingForm({ initial }: { initial: Initial }) {
         <div className='flex items-center gap-3 pt-1' aria-label='Preview'>
           <span
             className='rounded-md px-3 py-1.5 text-sm font-medium'
-            style={{ background: preview.primary, color: preview.onPrimary }}
+            style={{ background: branding.light.primary, color: branding.light.onPrimary }}
           >
             Sample button
           </span>
-          <span className='text-sm font-medium' style={{ color: preview.text }}>
+          <span className='text-sm font-medium dark:hidden' style={{ color: branding.light.text }}>
+            Sample link
+          </span>
+          <span
+            className='hidden text-sm font-medium dark:inline'
+            style={{ color: branding.dark.text }}
+          >
             Sample link
           </span>
         </div>

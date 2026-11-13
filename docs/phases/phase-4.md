@@ -34,15 +34,15 @@ Whether staff may keep the email-code login once real client data is in the syst
 
 Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finishes the step. A new thread resumes at the first unticked step. For every step: finish it, test it, commit, push, then move on (see `PROTOCOL.md`). A STOP step waits for Abdullah's yes; do the steps after it that do not depend on it.
 
-- [ ] **P4-S1.** Accessibility pass to WCAG 2.2 AA on every client and admin page.
+- [x] **P4-S1.** Accessibility pass to WCAG 2.2 AA on every client and admin page.
   - Test: Browser scan across all routes, no serious or critical
   - Commit: "Fix accessibility violations"
   - Covers: P4-1
-- [ ] **P4-S2.** Security review of auth, sessions, service tokens, webhook signatures, file access and the staff email-code login; fix or record each finding.
+- [x] **P4-S2.** Security review of auth, sessions, service tokens, webhook signatures, file access and the staff email-code login; fix or record each finding.
   - Test: Review notes in `docs/`
   - Commit: "Record the phase 4 security review and fixes"
   - Covers: P4-2
-- [ ] **P4-S3.** Load test contact search and list paths on a quiet machine (500 ms p95 target).
+- [x] **P4-S3.** Load test contact search and list paths on a quiet machine (500 ms p95 target).
   - Test: `load-m10` without the CI override
   - Commit: "Record the load test result"
   - Covers: P4-3

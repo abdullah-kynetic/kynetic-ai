@@ -1,6 +1,6 @@
 import { and, eq, isNull, sql } from 'drizzle-orm';
 import { getDb, type Db } from '../db/client';
-import { serviceTokens } from '../db/schema';
+import { serviceTokens, tenants } from '../db/schema';
 import { withTenant } from '../tenancy';
 import { bearerFromHeader, generateServiceToken, hashesEqual, parseServiceToken } from './token';
 
@@ -32,6 +32,14 @@ export async function authenticateServiceToken(
   const row = rows[0];
   if (!row || !hashesEqual(row.key_hash, parsed.keyHash) || row.revoked_at) return null;
   if (opts.requiredScope && !row.scopes.includes(opts.requiredScope)) return null;
+
+  // A suspended or offboarded client's tokens stop working at once, even if nobody revoked them.
+  const [tenant] = await withTenant(
+    { tenantId: row.tenant_id, role: 'system' },
+    (tx) => tx.select({ status: tenants.status }).from(tenants).limit(1),
+    { db }
+  );
+  if (!tenant || tenant.status === 'suspended' || tenant.status === 'offboarded') return null;
 
   await db.execute(sql`select service_token_touch(${row.id}::uuid)`);
   return { tenantId: row.tenant_id, tokenId: row.id, scopes: row.scopes.filter(Boolean) };

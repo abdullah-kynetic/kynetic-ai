@@ -24,7 +24,11 @@ export function NotificationsPage() {
     <div className='flex flex-col gap-4'>
       <div className='flex flex-wrap items-center justify-between gap-2'>
         <Tabs value={tab} onValueChange={(v) => setTab(v as NotificationTab)}>
-          <TabsList variant='line' aria-label='Notification filters'>
+          <TabsList
+            variant='line'
+            className='h-auto max-w-full flex-wrap'
+            aria-label='Notification filters'
+          >
             {TAB_KEYS.map((k) => (
               <TabsTrigger key={k} value={k}>
                 {NOTIFICATION_TABS[k].label}

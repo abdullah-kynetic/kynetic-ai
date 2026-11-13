@@ -2,6 +2,14 @@
 
 > **Canonical plan (2026-11-08, precedence restated 2026-11-08 PST; portal line 2026-11-09 PST):** the business roadmap, progress baseline and scorecard live in Twenty: roadmap note `7bfdcb7e`, baseline v1 note `603fe300`, scorecard note `5c44b12e`. GitHub owns technical tracking only (code, PRs, CI, deploy evidence: `docs/audit/2026-11-08-code-evidence.md`). The operating summary, offer, pricing precedence, and the docs-reconciliation journal are in `docs/STATUS.md`. `docs/codex/COMPLETION-PLAN.md` is historical evidence, not a competing roadmap. Do not keep a second editable acceptance list in this repo.
 
+## Phase 4 part 2: accessibility, security, load (2026-11-13)
+
+Branch `claude/project-thread-2yekry`, steps P4-S1 to P4-S3 in `docs/phases/phase-4.md`. Nothing deployed and nothing live was touched. No migration.
+- P4-S1 (P4-1): new browser spec `phase-4-a11y-all-routes` scans every client, admin, sign-in and staff page in light and dark, desktop and 390 px (WCAG 2.2 A/AA plus sideways scroll). Four findings fixed: Messages table scroll area not keyboard reachable, Notifications tabs overflowing on a phone, admin Imports panel overflowing on a phone, and the branding preview link failing contrast in dark.
+- P4-S2 (P4-2): security review in `docs/security-review-phase-4.md`. Fixed: spoofable client IP (first `X-Forwarded-For` entry), one global rate bucket for Twilio and voice webhooks that unsigned traffic could exhaust, service tokens still working for suspended or offboarded clients, and an unbounded lead-webhook body read. Recorded with reasons: KI-033 staff email-code login (decision needed), Caddy settings not checked live, lead intake for suspended clients, no rate limit on service routes, dev lead hook, code-send timing.
+- P4-S3 (P4-3): `docs/load-test-phase-4.md`. Contact search p95 at 100 concurrent fell from about 740 ms to 371 to 417 ms (five runs, no CI override) by counting and fetching in one scan. The default list is 501 to 552 ms, recorded as KI-040. Run on a shared 4-vCPU container, not a quiet machine, so a rerun on the server is still open.
+- Steps P4-S4 to P4-S7 were done in part 1 (PR #170). P4-S8 (deploy, alert destinations, restore drill, test alert) waits for Abdullah's yes.
+
 ## Phase 1: clean, switch and core CRM (2026-11-13)
 
 Branch `claude/project-thread-bq8q2c`, steps P1-S1 to P1-S8 in `docs/phases/phase-1.md`. Nothing deployed and nothing live was touched. No migration.
