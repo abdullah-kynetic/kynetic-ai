@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/states';
 import { CustomFieldsSection } from '@/features/custom-fields/custom-fields-section';
 import { listFieldDefs } from '@/server/custom-fields';
-import { isModuleEnabled } from '@/server/modules';
 import { listActivities, type TimelinePage } from '@/server/activity';
 import { formatCents, getDealDetail, type DealDetail } from '@/server/deals';
 import { AppError } from '@/server/errors';
@@ -90,9 +89,7 @@ export default async function DealPage({
   });
 
   const { deal, stage, stages, owner, members, contacts } = detail;
-  const customDefs = (await isModuleEnabled(ctx, 'crm', { level: 'full' }))
-    ? await listFieldDefs(ctx, 'deal')
-    : [];
+  const customDefs = await listFieldDefs(ctx, 'deal');
   const customValues = (deal.custom ?? {}) as Record<string, unknown>;
   const label = (m: { name: string | null; email: string }) => m.name ?? m.email;
   const canEdit = shell.role === 'owner' || shell.role === 'staff';

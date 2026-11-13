@@ -10,7 +10,6 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { getCompanyDetail } from '@/server/companies';
-import { isModuleEnabled } from '@/server/modules';
 import { listFieldDefs } from '@/server/custom-fields';
 import { NotFoundError } from '@/server/contacts';
 import { uuidSchema } from '@/server/validation';
@@ -44,9 +43,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ id: st
     throw e;
   });
   const { company, rollup, contacts, deals } = detail;
-  const customDefs = (await isModuleEnabled(ctx, 'crm', { level: 'full' }))
-    ? await listFieldDefs(ctx, 'company')
-    : [];
+  const customDefs = await listFieldDefs(ctx, 'company');
   const customValues = (company.custom ?? {}) as Record<string, unknown>;
   const address = company.address as Record<string, unknown>;
   const initial: CompanyFormValues = {

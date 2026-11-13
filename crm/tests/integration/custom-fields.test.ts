@@ -11,7 +11,6 @@ import {
   type CreateFieldDefInput
 } from '@/server/custom-fields';
 import { ValidationError } from '@/server/errors';
-import { ModuleDisabledError } from '@/server/modules';
 import { stopJobs } from '@/server/jobs';
 import { ctx, IDS, seedTwoTenants } from '../helpers/fixtures';
 import { createTestDatabase, type TestDatabase } from '../helpers/db';
@@ -121,36 +120,37 @@ describe('M1-06 custom fields service (F-12)', () => {
     expect(fromA.some((d) => d.key === 'b_only')).toBe(false);
   });
 
-  it('F-85: a Lite tenant gets 403 on every call and nothing is written', async () => {
-    const before =
-      await tdb.admin`select count(*)::int as n from custom_field_defs where tenant_id = ${IDS.tenantB}`;
-    for (const call of [
-      () => listFieldDefs(ctx.ownerB(), undefined, opts),
-      () =>
-        createFieldDef(
-          ctx.ownerB(),
-          { entity: 'contact', key: 'nope', label: 'Nope', type: 'text' },
-          opts
-        ),
-      () => updateFieldDef(ctx.ownerB(), crypto.randomUUID(), { label: 'x' }, opts),
-      () => deleteFieldDef(ctx.ownerB(), crypto.randomUUID(), opts),
-      () =>
-        createContact(
-          ctx.ownerB(),
-          { firstName: 'Lite', phones: ['415-555-0188'], custom: { roof_age: 4 } },
-          opts
-        )
-    ]) {
-      const err = await call().then(
-        () => null,
-        (e: unknown) => e
+  it('P1-4: a Lite tenant and a tenant with no CRM module get custom fields too', async () => {
+    // Tenant B is on the retired CRM Lite level; tenant C has no crm module row at all.
+    const tenantC = '33333333-3333-4333-8333-333333333333';
+    await tdb.admin`insert into tenants (id, slug, name, plan, timezone)
+      values (${tenantC}, 'tenant-c', 'Tenant C', 'founding', 'America/Los_Angeles')`;
+    await tdb.admin`insert into memberships (tenant_id, user_id, role) values (${tenantC}, ${IDS.ownerB}, 'owner')`;
+    const ownerC = { tenantId: tenantC, userId: IDS.ownerB, role: 'owner' as const };
+    for (const owner of [ctx.ownerB(), ownerC]) {
+      const def = await createFieldDef(
+        owner,
+        { entity: 'contact', key: 'lite_note', label: 'Note', type: 'text', filterable: true },
+        opts
       );
-      expect(err).toBeInstanceOf(ModuleDisabledError);
-      expect((err as ModuleDisabledError).status).toBe(403);
+      expect((await listFieldDefs(owner, 'contact', opts)).map((d) => d.key)).toContain(
+        'lite_note'
+      );
+      const c = await createContact(
+        owner,
+        { firstName: 'Lite', phones: ['415-555-0188'], custom: { lite_note: 'hello' } },
+        opts
+      );
+      expect(c.custom).toEqual({ lite_note: 'hello' });
+      const found = await searchContacts(
+        owner,
+        { custom: { lite_note: { contains: 'hell' } } } as never,
+        opts
+      );
+      expect(found.rows.map((r) => r.id)).toEqual([c.id]);
+      await deleteFieldDef(owner, def.id, opts);
+      expect((await getContact(owner, c.id, opts)).custom).toEqual({});
     }
-    const after =
-      await tdb.admin`select count(*)::int as n from custom_field_defs where tenant_id = ${IDS.tenantB}`;
-    expect(after[0].n).toBe(before[0].n);
   });
 
   it('only owners and admins edit definitions; staff may not', async () => {
@@ -261,12 +261,6 @@ describe('M1-06 custom fields service (F-12)', () => {
     await expect(names({ budget: { contains: 'x' } })).rejects.toBeInstanceOf(ValidationError);
     await expect(names({ nope: { any: ['x'] } })).rejects.toBeInstanceOf(ValidationError);
     await expect(names({ budget: { eq: 1 } })).resolves.toEqual([]);
-  });
-
-  it('F-12: a Lite tenant cannot filter by custom fields', async () => {
-    await expect(
-      searchContacts(ctx.ownerB(), { custom: { roof_type: { any: ['Tile'] } } } as never, opts)
-    ).rejects.toBeInstanceOf(ModuleDisabledError);
   });
 
   it('deleting a definition strips its values from the entity rows and audits', async () => {

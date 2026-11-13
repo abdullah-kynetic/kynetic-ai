@@ -124,7 +124,7 @@ export default async function ContactPage({
   const [notes, teammates] = showNotes
     ? await Promise.all([listNotes(ctx, { contactId: id }), listTeammates(ctx)])
     : [[], []];
-  const customDefs = dealsOn ? await listFieldDefs(ctx, 'contact') : [];
+  const customDefs = await listFieldDefs(ctx, 'contact');
   const linkedDeals = dealsOn ? await listDealsForContact(ctx, id) : [];
   // Tasks are CRM Lite (F-20): without the module the section is not rendered at all.
   const tasksOn = moduleSatisfied(

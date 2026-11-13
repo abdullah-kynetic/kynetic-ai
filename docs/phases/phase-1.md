@@ -58,7 +58,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Integration test (set, show, filter, tenant isolation) and a browser test
   - Commit: "Edit custom field values on records"
   - Covers: P1-3
-- [ ] **P1-S4.** Show custom fields for every client, not only the retired CRM Full level (list gate in `app/dashboard/contacts/page.tsx`).
+- [x] **P1-S4.** Show custom fields for every client, not only the retired CRM Full level (list gate in `app/dashboard/contacts/page.tsx`).
   - Test: Test for a client without the old level
   - Commit: "Show custom fields for all clients"
   - Covers: P1-4

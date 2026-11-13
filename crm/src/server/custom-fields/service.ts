@@ -3,7 +3,6 @@ import { audit } from '../audit';
 import type { Db, Tx } from '../db/client';
 import { companies, contacts, customFieldDefs, deals } from '../db/schema';
 import { AppError, ValidationError } from '../errors';
-import { requireModule } from '../modules';
 import { withTenant, type TenantContextInput } from '../tenancy';
 import { FIELD_LIMITS, parseInput, uuidSchema } from '../validation';
 import {
@@ -21,19 +20,16 @@ import {
   type CustomValue
 } from './types';
 
-// Custom fields service (M1-06; PRD F-12, F-43; DATABASE custom_field_defs). CRM Full only: every
-// function starts with requireModule(crm, full), so a Lite tenant gets 403 MODULE_DISABLED and
-// nothing is written. Definitions are edited by owners and Kynetic admins (SECURITY 2.2 "custom
-// fields"); everyone with tenant data access reads them. RLS keeps both inside the caller's tenant.
+// Custom fields service (M1-06; PRD F-12, F-43; DATABASE custom_field_defs). Every client has custom
+// fields, whatever their old CRM level (P1-4). Definitions are edited by owners and Kynetic admins
+// (SECURITY 2.2 "custom fields"); everyone with tenant data access reads them. RLS keeps both inside
+// the caller's tenant.
 
 export type CustomFieldOpts = { db?: Db; tx?: Tx };
 
 function run<T>(ctx: TenantContextInput, opts: CustomFieldOpts, fn: (tx: Tx) => Promise<T>) {
   return opts.tx ? fn(opts.tx) : withTenant(ctx, fn, { db: opts.db });
 }
-
-const needFull = async (ctx: TenantContextInput, tx: Tx) =>
-  requireModule(ctx, 'crm', { level: 'full', tx });
 
 function needWriter(ctx: TenantContextInput) {
   if (ctx.role !== 'owner' && ctx.role !== 'admin') throw new AppError('FORBIDDEN');
@@ -71,10 +67,7 @@ export async function listFieldDefs(
   entity?: CustomFieldEntity,
   opts: CustomFieldOpts = {}
 ): Promise<CustomFieldDef[]> {
-  return run(ctx, opts, async (tx) => {
-    await needFull(ctx, tx);
-    return defsIn(tx, entity);
-  });
+  return run(ctx, opts, (tx) => defsIn(tx, entity));
 }
 
 export async function createFieldDef(
@@ -84,7 +77,6 @@ export async function createFieldDef(
 ): Promise<CustomFieldDef> {
   const v = parseInput(createFieldDefSchema, input);
   return run(ctx, opts, async (tx) => {
-    await needFull(ctx, tx);
     needWriter(ctx);
     const existing = await defsIn(tx, v.entity);
     if (existing.length >= FIELD_LIMITS.customFieldsPerEntity) {
@@ -134,7 +126,6 @@ export async function updateFieldDef(
   parseInput(uuidSchema, id);
   const v = parseInput(updateFieldDefSchema, patch);
   return run(ctx, opts, async (tx) => {
-    await needFull(ctx, tx);
     needWriter(ctx);
     const before = await loadDef(tx, id);
     if (v.options !== undefined) {
@@ -172,7 +163,6 @@ export async function reorderFieldDefs(
 ): Promise<CustomFieldDef[]> {
   const v = parseInput(reorderFieldDefsSchema, input);
   return run(ctx, opts, async (tx) => {
-    await needFull(ctx, tx);
     needWriter(ctx);
     const current = await defsIn(tx, v.entity);
     const same =
@@ -203,7 +193,6 @@ export async function deleteFieldDef(
 ): Promise<void> {
   parseInput(uuidSchema, id);
   await run(ctx, opts, async (tx) => {
-    await needFull(ctx, tx);
     needWriter(ctx);
     const row = await loadDef(tx, id);
     const strip = { contact: contacts, company: companies, deal: deals }[
@@ -226,8 +215,7 @@ export async function deleteFieldDef(
 /**
  * The write-side check for a `custom` object on a contact, company or deal. Rejects unknown keys and
  * values that do not match the declared type or options (SECURITY 5.1), and returns the cleaned
- * object with empty values dropped. An empty object passes without a module check; any key needs
- * CRM Full, so a Lite tenant is refused with 403 before anything is written.
+ * object with empty values dropped.
  */
 export async function validateCustomValues(
   ctx: TenantContextInput,
@@ -236,7 +224,6 @@ export async function validateCustomValues(
   raw: Record<string, unknown>
 ): Promise<Record<string, CustomValue>> {
   if (Object.keys(raw).length === 0) return {};
-  await needFull(ctx, tx);
   const result = checkCustomValues(await defsIn(tx, entity), raw);
   if (!result.ok) throw new ValidationError(result.errors);
   return result.values;
