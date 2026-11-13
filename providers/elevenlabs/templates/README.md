@@ -17,7 +17,7 @@ Only that new number is imported and assigned to the new DEV agent. SMS import i
 and inbound voice/SMS hooks are cleared on the new number. No calls or messages are
 placed. The new number remains provisioned on the account and has Twilio's normal
 number charges; no price is hardcoded here. Resource IDs are in
-`docs/codex/dev-resources.json`; credentials and actual phone numbers are not stored.
+`archive/dev-retired/docs-codex/dev-resources.json`; credentials and actual phone numbers are not stored.
 
 Live Alex is read-only. A canonical hash of its name, conversation/platform config,
 workflow, number assignments and branch/version is compared before and after provisioning.

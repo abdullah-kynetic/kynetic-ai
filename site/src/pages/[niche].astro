@@ -1,0 +1,12 @@
+---
+// One static page per file in src/niches/ (skipping files that start with "_").
+import NichePage from '../layouts/NichePage.astro';
+import type { Niche } from '../niches/_types';
+
+export function getStaticPaths() {
+  const mods = import.meta.glob<{ default: Niche }>('../niches/[!_]*.ts', { eager: true });
+  return Object.values(mods).map((m) => ({ params: { niche: m.default.slug }, props: { niche: m.default } }));
+}
+const { niche } = Astro.props;
+---
+<NichePage niche={niche} />

@@ -1,0 +1,386 @@
+{
+  "active": true,
+  "connections": {
+    "Create Lead in Twenty": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Email Alert to Abdullah",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Email Alert to Abdullah": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond Success",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Normalize Submission": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Valid and Not Spam?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Store Submission": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create Lead in Twenty",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Valid and Not Spam?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Store Submission",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Respond Invalid",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Website Contact Form": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Normalize Submission",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "id": "WxIh0Hw4lQodY1Xa",
+  "name": "Website | Contact Form to Twenty",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "c6653990-5312-4adf-b8fa-3e807cbb04c6",
+      "name": "Website Contact Form",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {
+          "allowedOrigins": "https://www.kyneticai.com,https://brand-revamp-preview.kyneticai-preview.pages.dev"
+        },
+        "path": "website-contact",
+        "responseMode": "responseNode"
+      },
+      "position": [
+        0,
+        96
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "webhookId": "d7c6489f-4d69-4fbc-ad63-3230e887cec0"
+    },
+    {
+      "id": "2b14482d-a7e8-4f77-b4ce-6a6925669ff2",
+      "name": "Normalize Submission",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f-name",
+              "name": "name",
+              "type": "string",
+              "value": "={{ ($json.body?.name ?? $json.name ?? \"\").toString().trim() }}"
+            },
+            {
+              "id": "f-email",
+              "name": "email",
+              "type": "string",
+              "value": "={{ ($json.body?.email ?? $json.email ?? \"\").toString().trim().toLowerCase() }}"
+            },
+            {
+              "id": "f-message",
+              "name": "message",
+              "type": "string",
+              "value": "={{ ($json.body?.message ?? $json.message ?? \"\").toString().trim() }}"
+            },
+            {
+              "id": "f-trap",
+              "name": "trap",
+              "type": "string",
+              "value": "={{ ($json.body?.website ?? $json.website ?? \"\").toString().trim() }}"
+            },
+            {
+              "id": "f-received",
+              "name": "received_at",
+              "type": "string",
+              "value": "={{ $now.toISO() }}"
+            },
+            {
+              "id": "f-source",
+              "name": "source",
+              "type": "string",
+              "value": "kyneticai.com contact form"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        224,
+        96
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "781b8a73-be5d-4186-b800-d48eb5824e66",
+      "name": "Valid and Not Spam?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.trap }}",
+              "operator": {
+                "operation": "empty",
+                "type": "string"
+              },
+              "rightValue": ""
+            },
+            {
+              "leftValue": "={{ $json.email }}",
+              "operator": {
+                "operation": "contains",
+                "type": "string"
+              },
+              "rightValue": "@"
+            },
+            {
+              "leftValue": "={{ $json.message }}",
+              "operator": {
+                "operation": "notEmpty",
+                "type": "string"
+              },
+              "rightValue": ""
+            },
+            {
+              "leftValue": "={{ $json.name }}",
+              "operator": {
+                "operation": "notEmpty",
+                "type": "string"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        448,
+        96
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "f6f62dee-a722-4731-9d6b-ff455c1a81e9",
+      "name": "Store Submission",
+      "parameters": {
+        "columns": {
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "received_at",
+              "id": "received_at",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "name",
+              "id": "name",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "email",
+              "id": "email",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "message",
+              "id": "message",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "source",
+              "id": "source",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "email": "={{ $json.email }}",
+            "message": "={{ $json.message }}",
+            "name": "={{ $json.name }}",
+            "received_at": "={{ $json.received_at }}",
+            "source": "={{ $json.source }}"
+          }
+        },
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "6mNIcmYYqhvcsm7j"
+        },
+        "options": {}
+      },
+      "position": [
+        672,
+        0
+      ],
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1
+    },
+    {
+      "credentials": {
+        "twentyApi": {
+          "id": "VkjEQ40fTrOdTqxa",
+          "name": "Twenty self-hosted (crm.kyneticai.com)"
+        }
+      },
+      "id": "1461fca1-307d-4d12-9c82-abecce5b6bdb",
+      "name": "Create Lead in Twenty",
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "emails": {
+          "primaryEmail": "={{ $(\"Normalize Submission\").item.json.email }}"
+        },
+        "jobTitle": "Website contact form",
+        "name": {
+          "firstName": "={{ $(\"Normalize Submission\").item.json.name.split(\" \")[0] }}",
+          "lastName": "={{ $(\"Normalize Submission\").item.json.name.split(\" \").slice(1).join(\" \") }}"
+        },
+        "operation": "Create One Person",
+        "requestOptions": {},
+        "resource": "People"
+      },
+      "position": [
+        896,
+        0
+      ],
+      "type": "n8n-nodes-twenty.twenty",
+      "typeVersion": 1
+    },
+    {
+      "id": "548d8b11-e9cb-4416-8220-ee94c7decd10",
+      "name": "Respond Success",
+      "parameters": {
+        "options": {
+          "responseCode": 200
+        },
+        "respondWith": "json",
+        "responseBody": "={{ { \"ok\": true } }}"
+      },
+      "position": [
+        1344,
+        0
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5
+    },
+    {
+      "id": "4ddc3dda-e9ae-4e11-9fc6-94fbb2a1d12d",
+      "name": "Respond Invalid",
+      "parameters": {
+        "options": {
+          "responseCode": 400
+        },
+        "respondWith": "json",
+        "responseBody": "={{ { \"ok\": false, \"error\": \"invalid\" } }}"
+      },
+      "position": [
+        672,
+        192
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5
+    },
+    {
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "anb2uu28QsbM0WMe",
+          "name": "Gmail account"
+        }
+      },
+      "id": "b54c4bdf-f001-4500-969e-0c37ba0c5330",
+      "name": "Email Alert to Abdullah",
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "emailType": "text",
+        "message": "={{ \"Name: \" + $(\"Normalize Submission\").item.json.name + \"\\nEmail: \" + $(\"Normalize Submission\").item.json.email + \"\\nReceived: \" + $(\"Normalize Submission\").item.json.received_at + \"\\n\\nMessage:\\n\" + $(\"Normalize Submission\").item.json.message + \"\\n\\nSaved to Twenty as a person and to the website_contact_submissions table.\" }}",
+        "options": {
+          "appendAttribution": false
+        },
+        "sendTo": "abdullah@kyneticai.com",
+        "subject": "={{ \"New website inquiry from \" + $(\"Normalize Submission\").item.json.name }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "webhookId": "774d2c44-8f35-4f3a-8186-4ca9e58bdf8f"
+    }
+  ],
+  "settings": {
+    "availableInMCP": true,
+    "binaryMode": "separate",
+    "executionOrder": "v1"
+  }
+}

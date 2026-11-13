@@ -11,7 +11,7 @@ Durable context for agent sessions. Twenty is the business source of truth. GitH
 - Twenty D-023 (approved 2026-10-24) is the pricing authority and supersedes D-017. Dollar amounts from D-023 are not copied here. A 2026-11-06 price proposal is not approved. Do not choose again between D-017 and D-023 from this file.
 - Twenty keys: `TWENTY_BASE_URL` and `TWENTY_SELFHOST_API_KEY` only. `TWENTY_API_KEY` is dead. No REST DELETE.
 - No Google Drive, Google Docs, or Google Sheets. No Florida or Oklahoma owners. No HIPAA work. AM-1 Roofing is do-not-call. DNC scrub, consent, and quiet hours are required. A2P approval is not permission for cold SMS.
-- Portal code is on `main` (2026-11-09 PST). Production at portal.kyneticai.com deploys that build only after an explicit yes. The separate DEV environment is retired until after go-live. Do not continue `dev/codex-setup`. `docs/codex/COMPLETION-PLAN.md` is historical evidence, not this roadmap.
+- Portal code is on `main` (2026-11-09 PST). Production at portal.kyneticai.com deploys that build only after an explicit yes. The separate DEV environment is retired until after go-live. Do not continue `dev/codex-setup`. `archive/dev-retired/docs-codex/COMPLETION-PLAN.md` is historical evidence, not this roadmap.
 
 ## Rules (non-negotiable)
 

@@ -1,8 +1,8 @@
 # Dedicated dev portal
 
-> **Retired 2026-11-09 PST until after go-live.** Do not run `scripts/deploy-dev.sh` or `scripts/fix-dev-runtime.sh`. They refuse. The production target is the `main` build at portal.kyneticai.com, and only after an explicit yes. The rest of this file describes the stack that used to be deployed. It is not a setup procedure.
+> **Retired 2026-11-09 PST until after go-live.** Do not run `archive/dev-retired/scripts/deploy-dev.sh` or `archive/dev-retired/scripts/fix-dev-runtime.sh`. They refuse. The production target is the `main` build at portal.kyneticai.com, and only after an explicit yes. The rest of this file describes the stack that used to be deployed. It is not a setup procedure.
 
-Historical procedure, withdrawn: from a Mac checkout on `dev/codex-setup`, run `bash scripts/deploy-dev.sh` after pulling.
+Historical procedure, withdrawn: from a Mac checkout on `dev/codex-setup`, run `bash archive/dev-retired/scripts/deploy-dev.sh` after pulling.
 The script uses optional `DEV_DEPLOY_SSH_HOST`, `DEV_DEPLOY_SSH_USER` and
 `DEV_DEPLOY_SSH_IDENTITY_FILE` selectors. Otherwise it prompts for the server (default
 40.160.150.91), an admin user (default `ubuntu`, or `-` to use the SSH config user),
@@ -61,7 +61,7 @@ is part of this script.
 
 ### Step 3 deployment and gate verification
 
-Withdrawn 2026-11-09 PST: do not pull `dev/codex-setup` and do not run `bash scripts/deploy-dev.sh`. The older step3-dev-handoff.sh is a compatibility alias and also refuses.
+Withdrawn 2026-11-09 PST: do not pull `dev/codex-setup` and do not run `bash archive/dev-retired/scripts/deploy-dev.sh`. The older step3-dev-handoff.sh is a compatibility alias and also refuses.
 The script deploys the dedicated dev stack and always opts into the manual `verify` Compose
 profile. Its one-shot tools container checks runtime isolation, requires a database
 containing only allowed synthetic tenants, and tests the deployed consent, quiet-hours
@@ -84,7 +84,7 @@ credentials or raw private logs.
 
 ### Repair the existing DEV runtime prerequisites
 
-Withdrawn 2026-11-09 PST. Do not run `bash scripts/fix-dev-runtime.sh`. The old repair, kept so the retired stack can be recognized, reused the deployed
+Withdrawn 2026-11-09 PST. Do not run `bash archive/dev-retired/scripts/fix-dev-runtime.sh`. The old repair, kept so the retired stack can be recognized, reused the deployed
 portal revision: it does not rebuild the app image, migrate/seed the database, edit
 Caddy/DNS, activate n8n or change any provider account. It recreates the DEV app with
 the privately entered TEST_PHONE and starts a restricted worker from the deployed
