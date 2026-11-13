@@ -126,9 +126,10 @@ export function MessageBox({
             </p>
           ) : null}
           {channel === 'email' ? (
-            <label className='flex flex-col gap-1 text-sm font-medium'>
+            <label htmlFor='compose-subject' className='flex flex-col gap-1 text-sm font-medium'>
               Subject
               <Input
+                id='compose-subject'
                 value={subject}
                 maxLength={200}
                 onChange={(e) => setSubject(e.target.value)}
@@ -136,9 +137,10 @@ export function MessageBox({
               />
             </label>
           ) : null}
-          <label className='flex flex-col gap-1 text-sm font-medium'>
+          <label htmlFor='compose-body' className='flex flex-col gap-1 text-sm font-medium'>
             {channel === 'email' ? 'Message' : 'Text message'}
             <Textarea
+              id='compose-body'
               value={body}
               maxLength={channel === 'email' ? 5000 : 1000}
               onChange={(e) => setBody(e.target.value)}

@@ -85,7 +85,7 @@ export async function sendReviewRequest(
     return {
       row,
       business: tenant?.name ?? 'us',
-      url: typeof url === 'string' && /^https:\/\//.test(url) ? url : null
+      url: typeof url === 'string' && url.startsWith('https://') ? url : null
     };
   });
   if (!found || found.row.status !== 'queued') return 'not_queued';

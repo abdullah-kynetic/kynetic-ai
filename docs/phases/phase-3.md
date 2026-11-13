@@ -52,7 +52,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Integration test
   - Commit: "Send review requests through the consent gate"
   - Covers: P3-4
-- [ ] **P3-S5.** Support alert email, off unless the server flag and the setting are both on.
+- [x] **P3-S5.** Support alert email, off unless the server flag and the setting are both on.
   - Test: Unit test
   - Commit: "Add support alert email behind two flags"
   - Covers: P3-5

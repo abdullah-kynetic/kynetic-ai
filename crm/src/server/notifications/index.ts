@@ -2,6 +2,7 @@ import { and, desc, eq, inArray, isNull, lt, or, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import type { Tx } from '../db/client';
 import { notifications } from '../db/schema';
+import { getEnv } from '../env';
 import { enqueue } from '../jobs';
 
 import { NOTIFICATION_TYPES, type NotificationType } from './types';
@@ -24,6 +25,10 @@ export type EnqueueEmail = (
   tx: Tx,
   n: { tenantId: string; notificationId: string }
 ) => Promise<unknown>;
+
+/** Support reply emails join the queue only while SUPPORT_ALERT_EMAIL_ENABLED is on. */
+export const enqueueSupportReplyEmail: EnqueueEmail = (tx, n) =>
+  getEnv().SUPPORT_ALERT_EMAIL_ENABLED ? enqueueNotificationEmail(tx, n) : Promise.resolve();
 
 const enqueueNotificationEmail: EnqueueEmail = (tx, n) =>
   enqueue('notification.email', n, { tx, singletonKey: n.notificationId });
@@ -118,7 +123,11 @@ export async function markNotificationRead(tx: Tx, id: string): Promise<boolean>
   return rows.length > 0;
 }
 
-export { deliverNotificationEmail, registerNotificationEmailWorker } from './email';
+export {
+  supportAlertEmailAllowed,
+  deliverNotificationEmail,
+  registerNotificationEmailWorker
+} from './email';
 export {
   listMyPreferences,
   setMyPreferences,

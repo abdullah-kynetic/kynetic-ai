@@ -7,6 +7,15 @@ import { registerWorker } from '../jobs';
 import { withTenant } from '../tenancy';
 import { usersWithEmailOff } from './preferences';
 
+/**
+ * P3-5. A support reply is emailed to the client only when the server flag is on AND the person
+ * turned that notice's email on (it is off by default). The alert to Kynetic staff about a new
+ * request is never emailed to client users, so it has no path here at all.
+ */
+export function supportAlertEmailAllowed(envEnabled: boolean, personSetting: boolean): boolean {
+  return envEnabled === true && personSetting === true;
+}
+
 export type NotificationEmailJob = { tenantId: string; notificationId: string };
 
 export type EmailDeps = {
@@ -14,6 +23,8 @@ export type EmailDeps = {
   provider?: EmailProvider;
   fromAddress?: string;
   baseUrl?: string;
+  /** Test seam for SUPPORT_ALERT_EMAIL_ENABLED. */
+  supportEnabled?: boolean;
 };
 
 const escapeHtml = (s: string) =>
@@ -90,6 +101,13 @@ export async function deliverNotificationEmail(
     deps.db ? { db: deps.db } : { db: getWorkerDb() }
   );
   if (!found) return 0;
+  if (found.n.kind === 'support_request') return 0;
+  if (
+    found.n.kind === 'support_reply' &&
+    !(deps.supportEnabled ?? getEnv().SUPPORT_ALERT_EMAIL_ENABLED)
+  ) {
+    return 0;
+  }
 
   const mail = renderNotificationEmail(found.n, absoluteLink(found.n.link, baseUrl));
   for (const r of found.recipients) {
