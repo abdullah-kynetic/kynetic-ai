@@ -400,3 +400,8 @@ Effect on deploys: `portal-new-deploy` health-checks `/api/health`, so a deploy 
 Repo only, on `claude/project-thread-hw2jk6`. Nothing deployed, changed on a server, or sent. Runbooks in `docs/runbooks/`: deploy, rollback, restore from backup, incident, client onboarding, monitoring (offboarding already existed), indexed in its README; `crm/scripts/decrypt-backup.ts` turns a downloaded `.dump.enc` into a plain dump for the restore drill. Monitoring: `crm/src/server/monitoring/` holds the six alert rules (dead worker, failed jobs, queue age, failed backup, stale backup, disk) as one tested function; the worker runs them every five minutes as `monitor.check`, and `crm/deploy/portal-new/monitor/portal-monitor` runs the same code from the host so a dead worker still alerts. Notices are in-app (`ops_alert`, migration `1060_ops_alert_kind`) with email only when `ADMIN_ALERT_EMAIL_ENABLED` is on. The existing onboarding form already creates client, invite draft and defaults in one transaction; this step added the browser test (`phase-4-onboarding.spec.ts`) and the day-one runbook. Phase 4 part 2 (accessibility, security review, load test) is not started.
 
 Still needs Abdullah's yes (P4-S8): deploy this commit, install `portal-monitor` and its cron line, choose whether alert email goes on, the restore drill, and a test alert for a dead worker. Not verified: anything on the server, the Docker image build (CI), a real onboarding to a signed-in owner.
+
+
+
+## KI-036 consent guard (2026-11-13)
+Repo only. Per Abdullah's yes, import commit (client and staff) no longer saves consent for opted-out or DNC people; see KI-036. Test: `tests/integration/import-consent-optout.test.ts` (fails without the fix). Nothing deployed.
