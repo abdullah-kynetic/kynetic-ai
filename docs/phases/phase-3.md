@@ -68,7 +68,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: `bun run verify:e2e`; screenshots reviewed
   - Commit: "Polish client screens"
   - Covers: P3-7
-- [ ] **P3-S9.** Open PR; record in the build log. Deploy needs a yes.
+- [x] **P3-S9.** Open PR; record in the build log. Deploy needs a yes.
   - Test: CI green
   - Commit: "Record phase 3 in the build log"
   - Covers: -

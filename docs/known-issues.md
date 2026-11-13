@@ -6,6 +6,9 @@
 Mirror of open problems tracked in Twenty. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Open
+### KI-039: Manual messages and review requests cannot send for real yet (medium)
+Found 2026-11-13. The contact page now has a Messages card (text and email, with a reply view) and queued review requests can send, both through the outbound gate. Nothing leaves while `OUTBOUND_ENABLED=false`, and a text also needs an approved sending number (KI-003) and counsel's consent wording (KI-002). Email from a contact uses `EMAIL_FROM_ADDRESS` and Resend has no reply-to in our adapter, so a customer's email reply does not come back into the portal. Inbound texts do show in the reply view. Review requests need a `review_url` (https) in the client's `opm` module config, set by staff; with none, the request stays queued. Review sending needs `REVIEW_REQUESTS_ENABLED=true`; after turning it on, `sweepQueuedReviewRequests(tenantId)` queues requests that were waiting. Nothing has been turned on.
+
 ### KI-037: Only the leads list filters by custom fields (low)
 Found 2026-11-13. Custom field values are now entered and shown on contacts, companies and deals, and the leads list can filter and export them. The companies list and the deals board have no custom field filter or column. Phase 1 acceptance P1-3 was met for filtering on contacts only.
 
@@ -47,6 +50,7 @@ Found 2026-11-10. The automations page can turn a template on or off and can sho
 
 ### KI-029: Support alerts do not send email (low)
 Found 2026-11-10. A new client request notifies Kynetic in the portal, and a Kynetic reply notifies the requester in the portal. The email preference for `support_request` and `support_reply` defaults to off, and this batch does not queue an email even if someone turns that preference on. Blocked by the rule that this work must not add a real outbound send.
+Update 2026-11-13: a reply from Kynetic now emails the client when `SUPPORT_ALERT_EMAIL_ENABLED=true` and the person turned on email for that notice (off by default). The staff alert for a new request is never emailed to client users. Migration `1061` lets the per-person setting be saved for mention and support notices. Flag is off, nothing sent.
 
 ### KI-002: TCPA emergency branch opt-out gap (high)
 Emergency calls and urgent notifications may reach someone who opted out.
@@ -193,12 +197,14 @@ Found 2026-11-10. A new client request notifies Kynetic in the portal, and a Kyn
 
 ### KI-030: Review requests are queued only, and review snapshots are entered by hand (medium)
 Found 2026-11-11. "Request a review" on `/dashboard/reviews` writes a `queued` row after `canContact` allows it. Nothing sends it and nothing moves it to `sent` or `completed`, because sending waits on the n8n versus worker decision and A2P (P-A3). Rating snapshots come from `review_snapshots` rows added by staff, not from a live Google feed.
+Update 2026-11-13: sending is built behind `REVIEW_REQUESTS_ENABLED` (off) and the gate; see KI-039. Snapshots are still entered by hand.
 
 ### KI-031: Referral rewards are tracked, not paid out (low)
 Found 2026-11-11. `/dashboard/referrals` records a reward amount and a pending or paid status that only the owner can change. Nothing pays or invoices a reward. The reward policy itself is not decided.
 
 ### KI-032: Client usage page hides dollar cost (low)
 Found 2026-11-11. SPEC 01 in Twenty lists the usage page as "minutes, cost, cap" and marks it blocked on "do clients see cost?". The page shows minutes, calls, texts, emails and a cap status chip only. Add cost only after Abdullah decides.
+Update 2026-11-13: still hidden. Phase 3 added tests that fix the page to counts and cap status. The decision is still Abdullah's (recommendation: keep it hidden).
 
 ### KI-033: Staff email-code login removes the authenticator step (medium)
 Found 2026-11-12. At Abdullah's request, `STAFF_EMAIL_LOGIN=true` lets a Kynetic admin or VA sign in with a 6-digit emailed code, with no authenticator app and a 30 day session. Anyone who controls that mailbox then has admin access, so the mailbox needs its own strong sign-in. It is off by default. Codes are sent through Resend, so `RESEND_API_KEY` must be set on the server or no code arrives. Google staff sign-in still works; with the setting on it also skips the authenticator. Turning the setting off restores Google plus authenticator and 7 day sessions.

@@ -204,3 +204,7 @@ Abdullah explicitly requested removing the anonymous admin default, requiring ve
 ## 2026-11-04 — tested main merges authorized; restore the missing sign-in flow
 
 Abdullah explicitly authorized merging completed/tested work into main so the existing authored commits can contribute to the GitHub profile. Preserve individual commits with a merge commit; do not squash or rewrite shared history. This overrides the earlier main prohibition for the approved merge. Restore and verify the missing invitation-only sign-in/session-issuance and staff 2FA paths before merging the session-enforcement work. Source merge does not authorize or trigger a manual VPS deployment, workflow activation or live-provider changes.
+
+## 2026-11-13 — phase 3 build defaults (no new decision needed from Abdullah)
+
+Client Usage page keeps dollar cost hidden (KI-032 default, recommendation unchanged). All Phase 3 sending is behind flags that stay off: `OUTBOUND_ENABLED`, `REVIEW_REQUESTS_ENABLED`, `SUPPORT_ALERT_EMAIL_ENABLED`. The Terms gate stays off pending counsel (KI-026).
