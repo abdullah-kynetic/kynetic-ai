@@ -53,6 +53,10 @@ beforeEach(async () => {
   fake = new FakeLlmProvider();
   fake.respond = () => 'Hi Pat, this is a draft.';
   setLlmProvider(fake);
+  await tdb.admin`delete from lead_brief_facts`;
+  await tdb.admin`delete from lead_briefs`;
+  await tdb.admin`delete from ai_message_drafts`;
+  await tdb.admin`delete from call_ai_summaries`;
   await tdb.admin`delete from llm_audit`;
   await tdb.admin`delete from llm_usage`;
 });

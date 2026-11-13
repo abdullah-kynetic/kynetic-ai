@@ -71,7 +71,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Eval set
   - Commit: "Add lead research brief"
   - Covers: P5-6
-- [ ] **P5-S9.** Open PR; record in the build log. STOP for yes: add the OpenRouter key, turn `LLM_ENABLED` on, send real client data; also a decision on the default monthly cap.
+- [x] **P5-S9.** Open PR; record in the build log. STOP for yes: add the OpenRouter key, turn `LLM_ENABLED` on, send real client data; also a decision on the default monthly cap.
   - Test: CI green
   - Commit: "Record phase 5 in the build log"
   - Covers: -

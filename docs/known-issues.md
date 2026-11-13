@@ -6,6 +6,9 @@
 Mirror of open problems tracked in Twenty. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Open
+### KI-041: The AI layer is built but off, and no model has been chosen (medium)
+Found 2026-11-13 (phase 5). Call summaries, message drafts and the lead research brief are in the code and tested against the stand-in model only. `LLM_ENABLED` is false, there is no OpenRouter key, and every task in `config/llm-models.ts` has `model: null`, so a task refuses to run until a model id is set (`LLM_MODELS` JSON or the config file). The eval sets in `crm/llm-evals/` are synthetic, and `bun run llm:eval` has only been run as a dry run (answer-key stand-in); P5-6 against a real model is not done and needs the key. Before real client data goes to OpenRouter: confirm its current data-retention terms (the adapter asks for `data_collection: deny` and `zdr: true` when `LLM_DATA_HANDLING=no_retention`; routing then fails closed if no such endpoint serves the model). `llm_audit` keeps full prompts and outputs (client data) with no retention purge yet. The monthly cap is checked before a call, so parallel calls can overshoot it by a few calls; the default cap is 500 cents per client and is a recommendation awaiting Abdullah.
+
 ### KI-040: Default contact list is just over 500 ms at 100 concurrent reads (low)
 Found 2026-11-13 (phase 4 load test, `docs/load-test-phase-4.md`). 10,000 contacts, 100 simultaneous list reads: p95 501 to 552 ms on a 4-vCPU shared container, target 500 ms (DC-033). Contact search meets the target after the one-scan change. Most of the list cost is the row count under row-level security (about 7 ms per read). Real traffic is far below this shape; recheck on the server and add a cached or approximate count only if it matters.
 

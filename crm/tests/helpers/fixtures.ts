@@ -147,6 +147,19 @@ async function seedTenant(
     await admin`insert into import_batches (tenant_id, entity, imported_source, file_name, file_type) values (${t}, 'contact', 'csv_other', 'x.csv', 'csv') returning id`;
   await admin`insert into import_batch_records (tenant_id, batch_id, entity, record_id, action) values (${t}, ${batch.id}, 'contact', ${contact.id}, 'created')`;
 
+  const [llmUse] =
+    await admin`insert into llm_usage (tenant_id, task, model) values (${t}, 'call_summary', 'fixture/model') returning id`;
+  const [llmAud] =
+    await admin`insert into llm_audit (tenant_id, usage_id, task, subject_type, subject_id, data_handling, prompt)
+    values (${t}, ${llmUse.id}, 'call_summary', 'call', ${call.id}, 'no_retention', '[]'::jsonb) returning id`;
+  await admin`insert into call_ai_summaries (tenant_id, call_id, summary, outcome_tag, audit_id)
+    values (${t}, ${call.id}, 'Fixture summary', 'other', ${llmAud.id})`;
+  await admin`insert into ai_message_drafts (tenant_id, contact_id, channel, purpose, body, audit_id)
+    values (${t}, ${contact.id}, 'sms', 'fixture', 'Fixture draft', ${llmAud.id})`;
+  const [brief] =
+    await admin`insert into lead_briefs (tenant_id, contact_id, headline, audit_id) values (${t}, ${contact.id}, 'Fixture brief', ${llmAud.id}) returning id`;
+  await admin`insert into lead_brief_facts (tenant_id, brief_id, claim, strength, status) values (${t}, ${brief.id}, 'Fixture fact', 'weak', 'suggested')`;
+
   return {
     tenantId: t,
     contactId: contact.id,
