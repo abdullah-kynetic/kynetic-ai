@@ -11,7 +11,12 @@ import { registerLeadProcessor } from './leads';
 import { registerResendProcessor } from './email';
 import { registerWebhookWorker } from './webhooks';
 import { registerTaskDueWorker } from './tasks';
-import { registerAppointmentSubscriber } from './appointments';
+import {
+  registerAppointmentSubscriber,
+  registerCalendarReconcileWorker,
+  registerCalendarSyncSubscribers,
+  scheduleCalendarReconcile
+} from './appointments';
 import { registerMetricsWorker } from './metrics';
 import {
   registerAutomationSubscribers,
@@ -53,6 +58,8 @@ await registerOutboundCallWorker();
 await registerNotificationEmailWorker();
 await registerTaskDueWorker();
 registerAppointmentSubscriber();
+registerCalendarSyncSubscribers();
+await registerCalendarReconcileWorker();
 await registerMetricsWorker();
 await registerAgencyMaintenanceWorker();
 await registerAgencyDigestWorker();
@@ -76,6 +83,7 @@ await scheduleRecurring(
   { kind: 'restore_test' },
   'encrypted-backup-monthly-restore'
 );
+if (getEnv().CALCOM_SYNC_ENABLED) await scheduleCalendarReconcile();
 await registerAutomationWorker();
 await registerReportWorker();
 await registerScheduleWorkers();

@@ -36,6 +36,11 @@ export const envSchema = z.object({
   ADMIN_ALERT_EMAIL_ENABLED: booleanString.default(false),
   // Weekly client email and the monthly report link. Both also need the per-client toggle.
   CLIENT_EMAIL_ENABLED: booleanString.default(false),
+  // Phase 6 (KI-027). Calendar sync with Cal.com. Off unless this is true and both Cal.com values are
+  // set; nothing in the portal calls Cal.com otherwise. Turning it on is a live change.
+  CALCOM_SYNC_ENABLED: booleanString.default(false),
+  CAL_API_KEY: z.string().min(1).optional(),
+  CAL_EVENT_TYPE_ID: z.coerce.number().int().positive().optional(),
   // Phase 3. Review requests a client queued are sent only when this is on (and OUTBOUND_ENABLED).
   REVIEW_REQUESTS_ENABLED: booleanString.default(false),
   // Phase 3. Emails a client when Kynetic replies to a support request. Also needs the person's own
@@ -98,6 +103,13 @@ export const refinedEnvSchema = envSchema
     message: 'PROVIDER_MODE=stub requires OUTBOUND_ENABLED=false',
     path: ['PROVIDER_MODE']
   })
+  .refine(
+    (e) => !e.CALCOM_SYNC_ENABLED || (Boolean(e.CAL_API_KEY) && Boolean(e.CAL_EVENT_TYPE_ID)),
+    {
+      message: 'CALCOM_SYNC_ENABLED=true needs CAL_API_KEY and CAL_EVENT_TYPE_ID',
+      path: ['CALCOM_SYNC_ENABLED']
+    }
+  )
   .refine((e) => !e.LLM_ENABLED || e.PROVIDER_MODE === 'stub' || Boolean(e.OPENROUTER_API_KEY), {
     message: 'LLM_ENABLED=true needs OPENROUTER_API_KEY (or PROVIDER_MODE=stub)',
     path: ['LLM_ENABLED']

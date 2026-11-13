@@ -57,7 +57,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: `bun run verify:e2e`
   - Commit: "Remove the dev-only chain"
   - Covers: -
-- [ ] **P6-S5.** Calendar sync with Cal.com (KI-027) against a fake.
+- [x] **P6-S5.** Calendar sync with Cal.com (KI-027) against a fake.
   - Test: Integration test
   - Commit: "Add Cal.com calendar sync"
   - Covers: -
