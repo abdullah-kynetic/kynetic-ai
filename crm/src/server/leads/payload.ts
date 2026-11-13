@@ -1,10 +1,26 @@
 import { z } from 'zod';
-import { businessStateSchema } from './dev-policy';
 import { CONSENT_CHANNELS } from '../consent/types';
 import { emailSchema, FIELD_LIMITS } from '../validation';
 
 // The normalized lead shape every source maps into (forms, Angi, Google LSA, Facebook, n8n). Strict:
 // unknown keys are rejected (SEC-T-27). Field contents are untrusted text.
+
+const US_STATES = new Set(
+  'AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY'.split(
+    ' '
+  )
+);
+const businessStateSchema = z
+  .string()
+  .trim()
+  .transform((value) => {
+    const state = value.toUpperCase();
+    return state === 'FLORIDA' ? 'FL' : state === 'OKLAHOMA' ? 'OK' : state;
+  })
+  .refine(
+    (value) => US_STATES.has(value) && value !== 'FL' && value !== 'OK',
+    'unsupported_business_state'
+  );
 
 export const LEAD_BODY_MAX_BYTES = 16_000;
 
@@ -48,7 +64,6 @@ export const leadPayloadSchema = z
     projectType: text(FIELD_LIMITS.name).optional(),
     budget: text(200).optional(),
     businessState: businessStateSchema.optional(),
-    synthetic: z.literal(true).optional(),
     message: text(FIELD_LIMITS.customText).optional(),
     address: z
       .strictObject({

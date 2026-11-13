@@ -53,7 +53,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Integration test
   - Commit: "Test follow-up gating"
   - Covers: P6-4
-- [ ] **P6-S4.** Remove the dev-only chain once the test replaces it.
+- [x] **P6-S4.** Remove the dev-only chain once the test replaces it.
   - Test: `bun run verify:e2e`
   - Commit: "Remove the dev-only chain"
   - Covers: -

@@ -19,7 +19,6 @@ import { getDashboardMetrics } from '@/server/metrics';
 import { deliverReportReadyEmail } from '@/server/reports/ready-email';
 import { sendWeeklyClientEmail } from '@/server/reports/weekly-email';
 import { rollupUsageDaily } from '@/server/usage';
-import { assertDevLeadHook } from '@/server/leads/dev-policy';
 import { createTestDatabase, type TestDatabase } from '../helpers/db';
 import { IDS, seedTwoTenants } from '../helpers/fixtures';
 
@@ -305,10 +304,5 @@ describe('usage, alerts, and emails that stay off', () => {
       { db, provider, envEnabled: false }
     );
     expect(off).toEqual({ sent: 0 });
-  });
-
-  it('refuses the dev lead hook in production before any intake work', () => {
-    expect(() => assertDevLeadHook('production')).toThrow(/dev-only/);
-    expect(() => assertDevLeadHook('test')).not.toThrow();
   });
 });

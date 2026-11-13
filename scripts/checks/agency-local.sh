@@ -18,7 +18,7 @@ for step in 7 8 9 10 11 12; do bash scripts/checks/run.sh "$step"; done
  bun run typecheck
  bun run lint
  bun run test
- bun run test:integration tests/integration/agency*.test.ts tests/integration/dev-runtime-smoke.test.ts
+ bun run test:integration tests/integration/agency*.test.ts tests/integration/demo-client-e2e.test.ts
  SKIP_ENV_VALIDATION=1 bun run build
  if [[ "${AGENCY_BROWSER_CHECKS:-0}" == 1 ]]; then
   bun run test:e2e tests/e2e/agency-roadmap.spec.ts --workers=1
