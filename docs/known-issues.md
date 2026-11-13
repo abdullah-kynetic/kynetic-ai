@@ -81,6 +81,7 @@ Found 2026-10-19 (read-only review of Twenty).
 Fix: Abdullah to say where the research files are, confirm the Treg rotation, and approve or reject the D-002 reword.
 
 ### KI-013: Portal has no sign-in (open mode) (high)
+Update 2026-11-13 01:15 UTC (2026-11-12 PST): anonymous probe of portal.kyneticai.com: `/api/health` HTTP 200 (`{"status":"ok","checks":{"database":"ok","queue":"not_configured"}}`), `/admin` HTTP 401, `/dashboard` HTTP 307 to `/sign-in`. Sign-in is enforced on the live revision. The probe cannot show which commit is live: the live health response has no build commit field, which `main` adds (PR #166).
 Update 2026-11-12: anonymous probe of portal.kyneticai.com showed `/admin` returns HTTP 401 and `/dashboard` redirects to `/sign-in`, so sign-in is enforced on the live revision. Treat this as closed once the first invites are confirmed.
 Update 2026-11-08 PST: the 2026-11-08 ledger labels HTTP 200 on `/admin` as inference (a sign-in page can also return 200) and the deployed revision as partly memory-based. The docs pass on this date did not probe the portal and does not confirm production exposure or a deploy. The release risk stays open until a dated anonymous probe of the deployed revision shows a denial. The 2026-11-08 note follows.
 Update 2026-11-08: main `49019b93` (merged 2026-11-05) restores invitation-only sign-in, staff TOTP and verified sessions, and persona switching only works outside production with DEV_PERSONA_SWITCHING (checked in code; typecheck and 468 unit tests pass). It is NOT deployed: live portal.kyneticai.com still runs `350bf67` and `/admin` returns HTTP 200 with no sign-in (checked 2026-11-08). Still open until main is deployed and the first invites are created. Original note follows.
@@ -97,6 +98,7 @@ Fix: hand-dial a sample, counsel answer, and keep the audit step in every run.
 ## Open (docs reconciliation leftovers, 2026-11-08 PST)
 ### KI-017: Production is still the pre-consolidation release (high)
 Found 2026-11-09. portal.kyneticai.com is release `350bf673` (1 admin user, about 13 tenants). The portal line moving onto `main` is not deployed. Migrations `1007` through `1013` have not been applied to that database. The separate DEV environment is retired until after go-live, so there is no second portal to rehearse on. Do not deploy, migrate, or recreate DEV without an explicit yes.
+Update 2026-11-13 01:15 UTC (2026-11-12 PST): the same anonymous probe (see KI-013) shows the live revision enforces sign-in. Live is `main` `58405247` (deployed 2026-11-12 per the operator); `main` is ahead of it (PR #162, #164, #166 merged, not deployed).
 Update 2026-11-10 evening PST: production at portal.kyneticai.com is `main` `ac0192af` (PR #146 deployed), with migration `1015_schedules_retention_settings`. `PROVIDER_MODE=stub` and `OUTBOUND_ENABLED=false` unchanged. Migrations through `1015` are applied; `1016` is the systems/templates/guarantee migration on this branch.
 
 ## Gotchas

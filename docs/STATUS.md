@@ -2,6 +2,10 @@
 
 A pointer, not a second scoreboard. Twenty is the business source of truth. GitHub is the technical execution record (code, pull requests, CI, and deploy evidence). On a mismatch, flag both values. This GitHub docs pass did not read or write Twenty. The parallel Twenty cleanup is recorded below from the parent's verification.
 
+## Live probe (2026-11-13 01:15 UTC, 2026-11-12 PST)
+
+Anonymous requests to portal.kyneticai.com: `/api/health` HTTP 200 (`database: ok`, `queue: not_configured`), `/admin` HTTP 401, `/dashboard` HTTP 307 to `/sign-in`. Sign-in is enforced. The older lines below that say live is `416b1656`, `df8b61a6` or `350bf673`, or that `/admin` returned 200, are historical. Live is `main` `58405247` (deployed 2026-11-12); `main` is ahead of it and not deployed. Deploys still need Abdullah's yes.
+
 ## Source-of-truth change (2026-11-12)
 
 Abdullah decided the portal is the one place lead, client and call data is written. Twenty held 4 companies, 2 people, 0 opportunities and 0 call logs, so there was no customer data to migrate (the Demo records are no-touch and stay in Twenty). Its 120 notes and 63 tasks were copied to `docs/roadmap/` as read-only history. Twenty stays up read-only as a safety copy; do not write lead data to it and do not build the portal-to-Twenty push (KI-024 closed as won't-build). The roadmap, baseline and scorecard note ids named below still identify the archived copies. Still open: the website contact form workflow writes a person into Twenty and must be pointed at the portal (needs Abdullah's yes), and five Twenty attachments (`wave2/3/4-raw.csv`, `search-queries.csv`, `kynetic-remaining-work-2026-11-06.md`) are not yet copied.

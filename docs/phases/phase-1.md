@@ -46,7 +46,7 @@ Send text or email from a contact (phase 3), calendar sync (phase 6), the archiv
 
 Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finishes the step. A new thread resumes at the first unticked step. For every step: finish it, test it, commit, push, then move on (see `PROTOCOL.md`). A STOP step waits for Abdullah's yes; do the steps after it that do not depend on it.
 
-- [ ] **P1-S1.** Probe the live site anonymously (`/api/health`, `/admin`, `/dashboard`) and correct `docs/STATUS.md`, KI-013 and KI-017 with the date.
+- [x] **P1-S1.** Probe the live site anonymously (`/api/health`, `/admin`, `/dashboard`) and correct `docs/STATUS.md`, KI-013 and KI-017 with the date.
   - Test: Curl output pasted in the report
   - Commit: "Correct STATUS and KI-013/KI-017 from the live probe"
   - Covers: P1-1
