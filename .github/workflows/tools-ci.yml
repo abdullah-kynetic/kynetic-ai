@@ -1,0 +1,28 @@
+name: tools-ci
+
+on:
+  pull_request:
+    paths: ['tools/**', '.github/workflows/tools-ci.yml']
+  push:
+    branches: [main]
+    paths: ['tools/**', '.github/workflows/tools-ci.yml']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tools-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Tool tests (no network, no secrets)
+        working-directory: tools
+        run: python -I -m unittest discover -s . -p 'test_*.py' -v

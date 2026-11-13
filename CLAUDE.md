@@ -28,6 +28,7 @@ Read `docs/STATUS.md` first. Then `docs/progress.md` (dated log; headings marked
 | Back up or compare n8n workflows | `n8n/`, `tools/n8n_backup.py` (read-only) |
 | Client portal code or deploy | `crm/` (its own `AGENTS.md`); the old `portal/` was deleted in M18-05, see git history |
 | Decisions, state, issues | `docs/` |
+| Run a build phase ("do phase N") | `docs/phases/README.md`, then `PROTOCOL.md` and `phase-N.md`; check with `bun run verify` in `crm/` |
 | What is X / what else moves if I change X | `docs/map/CLAUDE.md` (system map) |
 | Skills | `.claude/skills/skills-breakdown.md` |
 
