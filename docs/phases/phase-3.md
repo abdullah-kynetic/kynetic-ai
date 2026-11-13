@@ -44,7 +44,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Integration and browser tests
   - Commit: "Explain blocked messages in the compose box"
   - Covers: P3-2
-- [ ] **P3-S3.** Extend STOP-reply tests: consent revoked, no further messages.
+- [x] **P3-S3.** Extend STOP-reply tests: consent revoked, no further messages.
   - Test: Extended existing tests
   - Commit: "Extend STOP reply tests"
   - Covers: P3-3
