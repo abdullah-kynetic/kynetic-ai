@@ -18,7 +18,7 @@ The admin side can pause every call and text from Operations. That pause only ad
 
 Abdullah stopped the second portal line. The portal implementation that lived on `dev/codex-setup` is the code for `main`. `main` is the only build that may be deployed to production at portal.kyneticai.com, and only after an explicit yes. A separate DEV environment is retired until after go-live: do not deploy `dev.kyneticai.com`, and do not keep working on `dev/codex-setup`. New work branches off `main`. This note does not deploy. Live production is `main` `416b165617577e0468de03fabcfb383d220b584d` (PR #149) as of 2026-11-09 evening PST, after PRs #146, #147, and #150; further deploys still need an explicit yes unless Abdullah has already authorized the operator to ship ready batches.
 
-`docs/codex/CURRENT_STATUS.md` restates this portal fact. `docs/codex/COMPLETION-PLAN.md` stays historical evidence. Merging the portal code does not make that file the plan. The five steps below remain the operating order.
+`archive/dev-retired/docs-codex/CURRENT_STATUS.md` restates this portal fact. `archive/dev-retired/docs-codex/COMPLETION-PLAN.md` stays historical evidence. Merging the portal code does not make that file the plan. The five steps below remain the operating order.
 
 ## Portal engineering note (2026-11-10)
 
@@ -94,18 +94,18 @@ A parallel Twenty cleanup finished on 2026-11-08 PST. The parent verified the wo
 
 ## Branch artifact (not authority)
 
-`docs/codex/COMPLETION-PLAN.md` is historical evidence from the old portal branch (snapshot `81496f99b2dd20a88e6cbc080b33e0a73e76a2aa`, 2026-11-06). It is not the roadmap. The 2026-11-09 PST decision puts the portal code on `main` and retires the separate DEV environment until after go-live. Do not execute that file as the plan, and do not open new work on `dev/codex-setup`. `docs/codex/PROGRESS.md` is a technical log, not a checklist to execute.
+`archive/dev-retired/docs-codex/COMPLETION-PLAN.md` is historical evidence from the old portal branch (snapshot `81496f99b2dd20a88e6cbc080b33e0a73e76a2aa`, 2026-11-06). It is not the roadmap. The 2026-11-09 PST decision puts the portal code on `main` and retires the separate DEV environment until after go-live. Do not execute that file as the plan, and do not open new work on `dev/codex-setup`. `archive/dev-retired/docs-codex/PROGRESS.md` is a technical log, not a checklist to execute.
 
 ## Docs reconciliation (2026-11-08 PST)
 
 | Surface | Change on this branch | Still limited |
 |---|---|---|
-| Entry instructions (`CLAUDE.md`, `AGENTS.md`, `KYNETIC_CONTEXT.md`, `docs/CONTEXT.md`, `docs/codex/PROMPT.md`, folder `CONTEXT.md` files on the Alex path) | Point here. Retell-as-current, the five-client gate, build-everything-first, the AI commit trailer, the dead `TWENTY_API_KEY` name, and the "lowest unchecked Codex step" default are marked historical. | Check 3.4 uses `TWENTY_BASE_URL` and `TWENTY_SELFHOST_API_KEY` (brought in with main, PR #141). |
+| Entry instructions (`CLAUDE.md`, `AGENTS.md`, `KYNETIC_CONTEXT.md`, `docs/CONTEXT.md`, `archive/dev-retired/docs-codex/PROMPT.md`, folder `CONTEXT.md` files on the Alex path) | Point here. Retell-as-current, the five-client gate, build-everything-first, the AI commit trailer, the dead `TWENTY_API_KEY` name, and the "lowest unchecked Codex step" default are marked historical. | Check 3.4 uses `TWENTY_BASE_URL` and `TWENTY_SELFHOST_API_KEY` (brought in with main, PR #141). |
 | `docs/decisions.md`, `docs/progress.md` | Old gates marked superseded. Headings below the historical marker are history. | Twenty wording for direction, provider, one CRM, and the guarantee was reconciled in the parent-verified cleanup above. This GitHub pass did not read Twenty. Still untouched there: stale due dates, schema, customer records, live systems, and Claude-only files outside that readback. |
 | Portal technical docs (`docs/PRD.md`, `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/BUILD_PLAN.md`, `docs/REVIEW-SUMMARY.md`, plus `docs/TESTING.md`, `docs/DATABASE.md`, `docs/DESIGN_SYSTEM.md`) | Banner: technical scope. Lite/Full and the Oct 25 prices are historical commercial terms. Internal `lite`/`full` flags stay documented because the code still has them. | No code or schema change. Module levels still exist in the app. |
 | `docs/plans/ALEX-ELEVENLABS-N8N-SPEC.md`, `docs/lead-engine-handoff.md`, `docs/plan1-walkthrough.md` | Classified historical. Existing superseded banners on other plan files were left in place. | The bodies still contain old prices and old steps under the banner. |
 | Scorecard | Weights and 23/53/24 left as recorded. | Not a rescore. Step 1's narrow 100 is not extended to this cleanup. |
-| `docs/codex/COMPLETION-PLAN.md` | Marked historical. The 2026-11-09 decision keeps it as evidence and puts the portal code on `main`. | The old checklist body is still in the file under that banner. |
+| `archive/dev-retired/docs-codex/COMPLETION-PLAN.md` | Marked historical. The 2026-11-09 decision keeps it as evidence and puts the portal code on `main`. | The old checklist body is still in the file under that banner. |
 
 ## Update from evidence
 

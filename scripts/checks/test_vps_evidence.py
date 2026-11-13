@@ -10,7 +10,7 @@ from vps_evidence import load_dev_auth_evidence, load_dev_portal_evidence
 
 class VpsEvidenceTests(unittest.TestCase):
     def setUp(self):
-        self.fixture = json.loads(Path('docs/codex/vps-evidence.json').read_text())
+        self.fixture = json.loads(Path('archive/dev-retired/docs-codex/vps-evidence.json').read_text())
         self.fixture['checks']['0.7']['observed_on'] = datetime.datetime.now(datetime.timezone.utc).date().isoformat()
 
     def test_accepts_reported_deployed_revision(self):

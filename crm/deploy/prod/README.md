@@ -1,6 +1,6 @@
 # Production server setup (M10-05)
 
-> **Production target (2026-11-09 PST):** the single portal build is `main`, deployed to portal.kyneticai.com only after Abdullah's yes. The live switch in use is `crm/deploy/portal-new/` (postgres, app, and worker; app on `127.0.0.1:3021`; host Caddy stays outside this project). This `prod/` compose file is the documented full project and is not what release `350bf673` is running. The separate DEV stack is retired until after go-live. `scripts/deploy-dev.sh` does not deploy.
+> **Production target (2026-11-09 PST):** the single portal build is `main`, deployed to portal.kyneticai.com only after Abdullah's yes. The live switch in use is `crm/deploy/portal-new/` (postgres, app, and worker; app on `127.0.0.1:3021`; host Caddy stays outside this project). This `prod/` compose file is the documented full project and is not what release `350bf673` is running. The separate DEV stack is retired until after go-live. `archive/dev-retired/scripts/deploy-dev.sh` does not deploy.
 
 Runbook for the production Compose project on the OVH VPS. Source: `docs/ARCHITECTURE.md` "Server and deployment
 setup", "Domain, DNS and email domain" and "Monitoring and alerting"; decision DC-084. The approved portal replacement

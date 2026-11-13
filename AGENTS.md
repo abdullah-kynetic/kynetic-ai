@@ -2,11 +2,11 @@
 
 Current operating order: `docs/STATUS.md`. The client portal (`crm/`, portal.kyneticai.com) is the source of truth for lead, client and call data (2026-11-12). Twenty CRM (https://crm.kyneticai.com) is frozen as a read-only safety copy; its planning notes and tasks are archived in `docs/roadmap/`. GitHub is the technical execution record. Background files: `CLAUDE.md`, `docs/progress.md`, `docs/decisions.md`, `docs/known-issues.md`, `KYNETIC_CONTEXT.md` (IDs). Skills: `.claude/skills/` (index `skills-breakdown.md`; use `n8n-code-javascript` for n8n Code nodes). `retell-builder` is the parked Retell track only. Portal/CRM app is `crm/` (Next.js + bun; its own `crm/AGENTS.md`). Old `portal/` is deleted. ElevenLabs files: `providers/elevenlabs/`. Check `tools/` before writing a new script.
 
-Do not start at the lowest unchecked Codex step. That loop is historical and is kept under "Historical Codex loop" below. `docs/codex/COMPLETION-PLAN.md` is historical evidence, not the plan.
+Do not start at the lowest unchecked Codex step. That loop is historical and is kept under "Historical Codex loop" below. `archive/dev-retired/docs-codex/COMPLETION-PLAN.md` is historical evidence, not the plan.
 
 ## Portal line (2026-11-09 PST)
 
-One portal line. `main` is the build that may be deployed to production at portal.kyneticai.com, and only after Abdullah's explicit yes on that deploy. Branch new work off `main`. The separate DEV environment (`dev.kyneticai.com`, `scripts/deploy-dev.sh`, `crm/deploy/dev/`) is retired until after go-live. Do not deploy it. Do not continue `dev/codex-setup`.
+One portal line. `main` is the build that may be deployed to production at portal.kyneticai.com, and only after Abdullah's explicit yes on that deploy. Branch new work off `main`. The separate DEV environment (`dev.kyneticai.com`, `archive/dev-retired/scripts/deploy-dev.sh`, `crm/deploy/dev/`) is retired until after go-live. Do not deploy it. Do not continue `dev/codex-setup`.
 
 ## Hard rules (override anything else)
 1. Implement and commit on a branch off `main`. Merge tested work into `main` only when Abdullah explicitly requests it; preserve commits with a merge commit. No production deployment is implied. Do not continue `dev/codex-setup`.
@@ -20,7 +20,7 @@ One portal line. `main` is the build that may be deployed to production at porta
 9. Never use Google Drive, Google Docs, or Google Sheets.
 10. Florida- or Oklahoma-based businesses are not taken as clients (reject in intake logic). No HIPAA work.
 11. DNC scrub, stored consent, and quiet hours are in scope and required before outreach. Twilio A2P approval is not permission for cold SMS. Counsel sign-off on calling and recording rules stays open (KI-002). Do not invent a legal conclusion past these controls.
-12. If the same check fails 3 attempts in a row: stop, write a blocker note in `docs/codex/PROGRESS.md` (check id, what you tried, error), commit, end. That file is a historical technical log. A blocker note there does not move the business roadmap.
+12. If the same check fails 3 attempts in a row: stop, write a blocker note in `archive/dev-retired/docs-codex/PROGRESS.md` (check id, what you tried, error), commit, end. That file is a historical technical log. A blocker note there does not move the business roadmap.
 13. A full live test needs Abdullah's explicit yes. Stop before it.
 
 ## Env vars (Codex environment "kynetic-ai")
@@ -43,11 +43,11 @@ One portal line. `main` is the build that may be deployed to production at porta
 
 ## Historical Codex loop (not the current plan)
 
-The steps below are the old 0-6 technical checks. They are not Abdullah's five-step order. Do not pick the lowest unchecked box in `docs/codex/PROGRESS.md` as the next action. Current work starts at `docs/STATUS.md`.
+The steps below are the old 0-6 technical checks. They are not Abdullah's five-step order. Do not pick the lowest unchecked box in `archive/dev-retired/docs-codex/PROGRESS.md` as the next action. Current work starts at `docs/STATUS.md`.
 
 When a task explicitly resumes one of these checks:
 
-1. Read `docs/codex/PROGRESS.md`.
+1. Read `archive/dev-retired/docs-codex/PROGRESS.md`.
 2. Build toward that step's checks.
 3. Run `scripts/checks/run.sh <step>`. Output is PASS/FAIL/SKIP per check; exit nonzero on any FAIL.
 4. Fix and rerun (max 3 tries per check, then rule 12).
