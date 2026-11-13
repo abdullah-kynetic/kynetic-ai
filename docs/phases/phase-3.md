@@ -31,3 +31,44 @@ Deploy; setting any flag live; turning on any real provider.
 
 - Do clients see dollar cost on the Usage page? (Recommendation: no.)
 - Wording for terms and consent (counsel).
+
+## Steps
+
+Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finishes the step. A new thread resumes at the first unticked step. For every step: finish it, test it, commit, push, then move on (see `PROTOCOL.md`). A STOP step waits for Abdullah's yes; do the steps after it that do not depend on it.
+
+- [ ] **P3-S1.** Compose box and reply view on the contact page (fake providers).
+  - Test: Integration test: sent message passes consent, quiet hours and DNC, is logged, shows on the timeline
+  - Commit: "Send text or email from a contact"
+  - Covers: P3-1
+- [ ] **P3-S2.** Show why a contact cannot be messaged (opt-out, DNC).
+  - Test: Integration and browser tests
+  - Commit: "Explain blocked messages in the compose box"
+  - Covers: P3-2
+- [ ] **P3-S3.** Extend STOP-reply tests: consent revoked, no further messages.
+  - Test: Extended existing tests
+  - Commit: "Extend STOP reply tests"
+  - Covers: P3-3
+- [ ] **P3-S4.** Review requests queued, gated, logged, and only when the flag is on.
+  - Test: Integration test
+  - Commit: "Send review requests through the consent gate"
+  - Covers: P3-4
+- [ ] **P3-S5.** Support alert email, off unless the server flag and the setting are both on.
+  - Test: Unit test
+  - Commit: "Add support alert email behind two flags"
+  - Covers: P3-5
+- [ ] **P3-S6.** Extend outbound tests: no send while `OUTBOUND_ENABLED=false` or `PROVIDER_MODE=stub`.
+  - Test: Extended existing tests
+  - Commit: "Extend outbound off tests"
+  - Covers: P3-6
+- [ ] **P3-S7.** Usage page: show usage; cost only if decided (default hidden).
+  - Test: Integration test
+  - Commit: "Hide cost on the client Usage page by default"
+  - Covers: -
+- [ ] **P3-S8.** Polish dashboard, pipeline, contacts and documents (spacing, empty states, mobile); review screenshots at 390 px and desktop.
+  - Test: `bun run verify:e2e`; screenshots reviewed
+  - Commit: "Polish client screens"
+  - Covers: P3-7
+- [ ] **P3-S9.** Open PR; record in the build log. Deploy needs a yes.
+  - Test: CI green
+  - Commit: "Record phase 3 in the build log"
+  - Covers: -

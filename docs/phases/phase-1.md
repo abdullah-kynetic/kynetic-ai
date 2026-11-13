@@ -41,3 +41,48 @@ None. The consent rules for client import follow the existing staff import.
 ## Not in this phase
 
 Send text or email from a contact (phase 3), calendar sync (phase 6), the archive viewer (phase 2).
+
+## Steps
+
+Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finishes the step. A new thread resumes at the first unticked step. For every step: finish it, test it, commit, push, then move on (see `PROTOCOL.md`). A STOP step waits for Abdullah's yes; do the steps after it that do not depend on it.
+
+- [ ] **P1-S1.** Probe the live site anonymously (`/api/health`, `/admin`, `/dashboard`) and correct `docs/STATUS.md`, KI-013 and KI-017 with the date.
+  - Test: Curl output pasted in the report
+  - Commit: "Correct STATUS and KI-013/KI-017 from the live probe"
+  - Covers: P1-1
+- [ ] **P1-S2.** Remove the unused files and dependencies that `knip` reports (keep `scripts/emergency-reset-staff-totp.ts` and `src/server/worker.ts`).
+  - Test: `bunx knip` clean; `bun run verify`
+  - Commit: "Remove unused files and dependencies"
+  - Covers: P1-2
+- [ ] **P1-S3.** Custom field values on contact, company and deal records: wire in `features/custom-fields/custom-fields-section.tsx`, add inputs and save.
+  - Test: Integration test (set, show, filter, tenant isolation) and a browser test
+  - Commit: "Edit custom field values on records"
+  - Covers: P1-3
+- [ ] **P1-S4.** Show custom fields for every client, not only the retired CRM Full level (list gate in `app/dashboard/contacts/page.tsx`).
+  - Test: Test for a client without the old level
+  - Commit: "Show custom fields for all clients"
+  - Covers: P1-4
+- [ ] **P1-S5.** Client CSV/Excel import: upload, dry run, commit, reusing `src/server/imports/` rules and audit.
+  - Test: Integration test plus browser test
+  - Commit: "Add client self-serve lead import"
+  - Covers: P1-5
+- [ ] **P1-S6.** Tenant guard and audit for client import.
+  - Test: Integration test: cross-tenant refused, audit row written
+  - Commit: "Block cross-tenant import and audit it"
+  - Covers: P1-6
+- [ ] **P1-S7.** Accessibility scan and 390 px check for the new pages.
+  - Test: Browser test; `bun run verify:e2e`
+  - Commit: "Add accessibility tests for new CRM pages"
+  - Covers: P1-7
+- [ ] **P1-S8.** Open the PR, watch CI, fix what it finds, merge when green. Record in the build log.
+  - Test: CI green
+  - Commit: "Record phase 1 in the build log"
+  - Covers: -
+- [ ] **P1-S9.** STOP for Abdullah's say on each: merge or close stale PRs #113, #134, #136, #145, #151, #155 (#136 holds the site source); archive retired DEV scripts and `docs/codex/`; deploy main.
+  - Test: Evidence per action
+  - Commit: "Archive retired DEV scripts and docs/codex"
+  - Covers: -
+- [ ] **P1-S10.** STOP for yes: export the remaining Twenty records and 5 attachments (needs SSH from a session that reaches the server); point the contact form at the portal lead endpoint (live n8n change).
+  - Test: File listing; test lead in a demo tenant
+  - Commit: "Add remaining Twenty export to the archive"
+  - Covers: P1-8, P1-9

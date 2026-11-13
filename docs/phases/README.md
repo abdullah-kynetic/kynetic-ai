@@ -7,7 +7,7 @@ Source: the Nov 12, 2026 audit and build plan (Claude doc "Portal audit and buil
 Abdullah says "do phase N". The session then:
 
 1. Reads `PROTOCOL.md` (the loop and the stop rules) and `phase-N.md` (scope and acceptance checks).
-2. Works on one branch per phase, in small commits, following the loop.
+2. Works on one branch per phase, following the numbered `## Steps` in `phase-N.md` one at a time (finish, test, commit, push, next) and ticking each as it goes. A new thread resumes at the first unticked step.
 3. Comes back only at the end with a filled `REPORT-TEMPLATE.md`: what is done, which checks passed (with the `bun run verify` table), what could not be checked, and the exact live steps that need a yes.
 
 It does not come back earlier unless a stop rule in `PROTOCOL.md` fires.

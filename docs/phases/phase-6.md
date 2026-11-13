@@ -36,3 +36,44 @@ Each n8n credential and change; activating any workflow; `PROVIDER_MODE=live`, `
 - Follow-up sequences run in the portal worker, not n8n (recommended).
 - Whether the receptionist is in the first package (recommended: no).
 - Counsel sign-off on calling, recording and consent wording (KI-002) before any real prospect contact.
+
+## Steps
+
+Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finishes the step. A new thread resumes at the first unticked step. For every step: finish it, test it, commit, push, then move on (see `PROTOCOL.md`). A STOP step waits for Abdullah's yes; do the steps after it that do not depend on it.
+
+- [ ] **P6-S1.** Demo-client end-to-end test in stub mode (lead, call, booking, follow-up text, dashboard and admin views), reusing `dev-runtime-smoke` and `tests/e2e`.
+  - Test: Passes from a clean database in CI
+  - Commit: "Add the demo client end-to-end test"
+  - Covers: P6-1, P6-3
+- [ ] **P6-S2.** Webhook signature rejection tests (bad or missing signature).
+  - Test: Integration tests
+  - Commit: "Test webhook signature rejection"
+  - Covers: P6-2
+- [ ] **P6-S3.** Follow-up blocked by consent, quiet hours or DNC.
+  - Test: Integration test
+  - Commit: "Test follow-up gating"
+  - Covers: P6-4
+- [ ] **P6-S4.** Remove the dev-only chain once the test replaces it.
+  - Test: `bun run verify:e2e`
+  - Commit: "Remove the dev-only chain"
+  - Covers: -
+- [ ] **P6-S5.** Calendar sync with Cal.com (KI-027) against a fake.
+  - Test: Integration test
+  - Commit: "Add Cal.com calendar sync"
+  - Covers: -
+- [ ] **P6-S6.** Editable automations: versioned, validated by schema and the compliance gate, approved by a person, audited.
+  - Test: Integration tests: valid edit versioned and audited, invalid edit refused
+  - Commit: "Add editable automations"
+  - Covers: P6-5
+- [ ] **P6-S7.** Onboarding automation for a new client.
+  - Test: Test
+  - Commit: "Add onboarding automation"
+  - Covers: -
+- [ ] **P6-S8.** n8n, built inactive, each credential and change with its own yes: credentials, one booking workflow, signature check, error alert.
+  - Test: n8n listing shows nothing active
+  - Commit: "Record the n8n workflow export"
+  - Covers: P6-6
+- [ ] **P6-S9.** Open PR; record in the build log. STOP for yes: live test to Abdullah's phone only, then outbound off.
+  - Test: Evidence
+  - Commit: "Record phase 6 in the build log"
+  - Covers: P6-7

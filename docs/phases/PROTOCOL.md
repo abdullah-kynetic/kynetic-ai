@@ -12,6 +12,18 @@
 8. **Record.** Append dated entries to `docs/progress.md`, and to `docs/decisions.md` and `docs/known-issues.md` when something changed (short, no duplicates), using the `build-log` skill.
 9. **Report** with `REPORT-TEMPLATE.md`.
 
+## The step loop
+
+Each `phase-N.md` has a `## Steps` list (P0-S1, P0-S2, ...). For every step, in order:
+
+1. **Finish** the step as written.
+2. **Test** it: add or run the test named in the step, then `bun run verify:quick` (full `verify` before the PR).
+3. **Commit** it with a plain message (no AI trailer), and tick the step's `- [ ]` to `- [x]` in the same commit.
+4. **Push** the branch (`git push -u origin <branch>`, retry network errors up to four times).
+5. **Next step.** Do not start it until the test passes and the push succeeded.
+
+A new thread resumes at the first unticked step in the phase file. A step marked STOP waits for a yes; continue with later steps that do not depend on it.
+
 ## What "ready to ship" means
 
 All of these, with evidence in the report:
