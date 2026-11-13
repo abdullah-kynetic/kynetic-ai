@@ -46,7 +46,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: `load-m10` without the CI override
   - Commit: "Record the load test result"
   - Covers: P4-3
-- [ ] **P4-S4.** Runbooks: deploy, rollback, restore from backup, incident, offboarding.
+- [x] **P4-S4.** Runbooks: deploy, rollback, restore from backup, incident, offboarding.
   - Test: Read-through; rehearsal script still passes
   - Commit: "Add operations runbooks"
   - Covers: -
