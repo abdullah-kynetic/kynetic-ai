@@ -48,7 +48,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Browser test loads each page
   - Commit: "Add archive pages to admin"
   - Covers: -
-- [ ] **P2-S5.** Attachment download through the signed link that expires.
+- [x] **P2-S5.** Attachment download through the signed link that expires.
   - Test: Integration test: link works, then expires
   - Commit: "Add expiring attachment downloads"
   - Covers: P2-4
