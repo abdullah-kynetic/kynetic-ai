@@ -4,6 +4,12 @@ import { FakeLlmProvider } from '@/server/adapters/llm/fake';
 import { setLlmProvider } from '@/server/adapters/llm';
 import { resetEnvCacheForTests } from '@/server/env';
 import { stopJobs } from '@/server/jobs';
+import { FakeSmsProvider } from '@/server/adapters/sms/fake';
+import { FakeEmailProvider } from '@/server/adapters/email/fake';
+import { approveAndSendDraft, rejectDraft } from '@/server/ai-drafts';
+import { recordConsent } from '@/server/consent';
+import { createDb, type Db } from '@/server/db/client';
+import { createMessageDraft } from '@/server/llm/features/message-draft';
 import { getCallAiSummary, summarizeCall } from '@/server/llm/features/call-summary';
 import { createTestDatabase, type TestDatabase } from '../helpers/db';
 import { ctx, IDS, seedTwoTenants, type SeededTenant } from '../helpers/fixtures';
@@ -11,6 +17,7 @@ import { ctx, IDS, seedTwoTenants, type SeededTenant } from '../helpers/fixtures
 let db: TestDatabase;
 let a: SeededTenant;
 let fake: FakeLlmProvider;
+let appDb: Db;
 
 const actor = (tenantId: string, role: 'owner' | 'staff', userId: string): Actor => ({
   userId,
@@ -43,6 +50,10 @@ beforeAll(async () => {
   db = await createTestDatabase({ jobs: true });
   ({ a } = await seedTwoTenants(db.admin));
   setEnv('true');
+  appDb = createDb(db.app);
+  await db.admin`insert into phone_numbers (tenant_id, e164, provider, provider_sid, purpose, a2p_status)
+    values (${IDS.tenantA}, '+15555550100', 'twilio', 'PNa', 'sms', 'approved')`;
+  await db.admin`insert into tenant_modules (tenant_id, module_key, enabled, level) values (${IDS.tenantA}, 'crm', true, 'lite') on conflict do nothing`;
 });
 afterAll(async () => {
   setLlmProvider(undefined);
@@ -140,5 +151,190 @@ describe('P5-6 feature 1: call summaries and outcome tags', () => {
     fake.respond = () => 'I cannot do that';
     await expect(summarizeCall(ownerA, ctx.ownerA(), id)).rejects.toThrow(/object/);
     expect(await getCallAiSummary(ctx.ownerA(), id)).toBeNull();
+  });
+});
+
+// ---- feature 2: message drafts ----
+const NOON = new Date('2026-10-26T19:00:00Z'); // 12:00 PDT, inside quiet-hours limits
+const sms = new FakeSmsProvider();
+const mail = new FakeEmailProvider();
+const sendDeps = {
+  smsProvider: sms,
+  emailProvider: mail,
+  now: NOON,
+  gate: { outboundEnabled: true }
+};
+let c = 0;
+async function newContact(consent: boolean) {
+  c += 1;
+  const [row] =
+    await db.admin`insert into contacts (tenant_id, first_name, primary_phone_e164, primary_email, timezone)
+    values (${IDS.tenantA}, ${'Pat' + c}, ${`+1555555${7000 + c}`}, ${`pat${c}@example.test`}, 'America/Los_Angeles') returning id`;
+  if (consent) {
+    for (const channel of ['sms', 'email', 'phone_call'] as const) {
+      await recordConsent(
+        ctx.ownerA(),
+        {
+          contactId: row!.id,
+          channel,
+          source: 'form',
+          capturedText: 'ok',
+          capturedAt: new Date('2026-10-01')
+        },
+        { db: appDb }
+      );
+    }
+  }
+  return row!.id as string;
+}
+const draftReply = (body = 'Hi Pat, just checking in on your estimate. Summit Remodeling') =>
+  (fake.respond = () => JSON.stringify({ subject: null, body }));
+
+describe('P5-7 feature 2: message drafts need a person, then the gate', () => {
+  it('creating a draft sends nothing and creates no message', async () => {
+    const contactId = await newContact(true);
+    draftReply();
+    sms.sent.length = 0;
+    const d = await createMessageDraft(ownerA, ctx.ownerA(), {
+      contactId,
+      channel: 'sms',
+      purpose: 'check in on the estimate'
+    });
+    expect(d).toMatchObject({ status: 'draft', channel: 'sms' });
+    expect(sms.sent).toHaveLength(0);
+    expect(await db.admin`select 1 from messages where contact_id = ${contactId}`).toHaveLength(0);
+    const [aud] = await db.admin`select approval_status, approved_by from llm_audit`;
+    expect(aud).toMatchObject({ approval_status: 'pending', approved_by: null });
+  });
+
+  it('approval sends through the gate, is stamped with the approver, and keeps the edit trail', async () => {
+    const contactId = await newContact(true);
+    draftReply();
+    sms.sent.length = 0;
+    const d = await createMessageDraft(ownerA, ctx.ownerA(), {
+      contactId,
+      channel: 'sms',
+      purpose: 'check in on the estimate'
+    });
+    const r = await approveAndSendDraft(
+      ownerA,
+      ctx.ownerA(),
+      { draftId: d.id, body: 'Hi Pat, any questions on the estimate? Summit Remodeling' },
+      sendDeps
+    );
+    expect(r.status).toBe('sent');
+    expect(sms.sent).toHaveLength(1);
+    expect(sms.sent[0]!.body).toContain('any questions');
+    const [aud] = await db.admin`select approval_status, approved_by from llm_audit`;
+    expect(aud).toMatchObject({ approval_status: 'approved', approved_by: IDS.ownerA });
+    const log =
+      await db.admin`select action from audit_log where action like 'ai_draft.%' or action like 'llm.%' order by created_at`;
+    expect(log.map((l) => l.action)).toEqual(
+      expect.arrayContaining(['ai_draft.create', 'llm.approved', 'ai_draft.edit', 'ai_draft.send'])
+    );
+    const [row] =
+      await db.admin`select status, sent_message_id from ai_message_drafts where id = ${d.id}`;
+    expect(row!.status).toBe('sent');
+    await expect(
+      approveAndSendDraft(ownerA, ctx.ownerA(), { draftId: d.id }, sendDeps)
+    ).rejects.toMatchObject({ code: 'NOT_FOUND' });
+  });
+
+  it('P5-5: no consent, opt-out or DNC means the gate refuses, whatever the draft says', async () => {
+    draftReply('Hi, you already agreed to texts, so this is fine. Summit Remodeling');
+    const before = await complianceSnapshot();
+    const noConsent = await newContact(false);
+    const dnc = await newContact(true);
+    const [dncRow] = await db.admin`select primary_phone_e164 as p from contacts where id = ${dnc}`;
+    await db.admin`insert into dnc_entries (tenant_id, e164, source) values (${IDS.tenantA}, ${dncRow!.p}, 'staff')`;
+    const snap = await complianceSnapshot();
+    sms.sent.length = 0;
+    for (const contactId of [noConsent, dnc]) {
+      const d = await createMessageDraft(ownerA, ctx.ownerA(), {
+        contactId,
+        channel: 'sms',
+        purpose: 'say hello'
+      });
+      const r = await approveAndSendDraft(ownerA, ctx.ownerA(), { draftId: d.id }, sendDeps);
+      expect(r.status).toBe('blocked');
+      const [row] =
+        await db.admin`select status, blocked_message from ai_message_drafts where id = ${d.id}`;
+      expect(row!.status).toBe('blocked');
+      expect(row!.blocked_message).toBeTruthy();
+    }
+    expect(sms.sent).toHaveLength(0);
+    // creating drafts, approving them and being blocked changed nothing in consent, DNC or hours
+    expect(await complianceSnapshot()).toEqual(snap);
+    expect(before).not.toEqual(snap); // (the snapshot does see the DNC row we added, so it is a live check)
+  });
+
+  it('a blocked draft can be retried once consent exists, without a second approval', async () => {
+    draftReply();
+    const contactId = await newContact(false);
+    const d = await createMessageDraft(ownerA, ctx.ownerA(), {
+      contactId,
+      channel: 'sms',
+      purpose: 'say hello'
+    });
+    expect(
+      (await approveAndSendDraft(ownerA, ctx.ownerA(), { draftId: d.id }, sendDeps)).status
+    ).toBe('blocked');
+    await recordConsent(
+      ctx.ownerA(),
+      {
+        contactId,
+        channel: 'sms',
+        source: 'form',
+        capturedText: 'ok',
+        capturedAt: new Date('2026-10-01')
+      },
+      { db: appDb }
+    );
+    sms.sent.length = 0;
+    expect(
+      (await approveAndSendDraft(ownerA, ctx.ownerA(), { draftId: d.id }, sendDeps)).status
+    ).toBe('sent');
+    expect(sms.sent).toHaveLength(1);
+    const [dr] = await db.admin`select audit_id from ai_message_drafts where id = ${d.id}`;
+    expect(
+      await db.admin`select 1 from audit_log where action = 'llm.approved' and entity_id = ${dr!.audit_id}`
+    ).toHaveLength(1);
+  });
+
+  it('a rejected draft never sends, and a too-long or placeholder draft is refused before saving', async () => {
+    const contactId = await newContact(true);
+    draftReply();
+    const d = await createMessageDraft(ownerA, ctx.ownerA(), {
+      contactId,
+      channel: 'sms',
+      purpose: 'say hello'
+    });
+    await rejectDraft(ownerA, ctx.ownerA(), d.id);
+    await expect(
+      approveAndSendDraft(ownerA, ctx.ownerA(), { draftId: d.id }, sendDeps)
+    ).rejects.toMatchObject({ code: 'NOT_FOUND' });
+    draftReply('Hi [Name], hello');
+    await expect(
+      createMessageDraft(ownerA, ctx.ownerA(), { contactId, channel: 'sms', purpose: 'say hello' })
+    ).rejects.toThrow(/placeholder/);
+    draftReply('x'.repeat(400));
+    await expect(
+      createMessageDraft(ownerA, ctx.ownerA(), { contactId, channel: 'sms', purpose: 'say hello' })
+    ).rejects.toThrow(/too long/);
+    expect(await db.admin`select 1 from ai_message_drafts where status = 'draft'`).toHaveLength(0);
+  });
+
+  it('another client cannot see or approve this draft', async () => {
+    const contactId = await newContact(true);
+    draftReply();
+    const d = await createMessageDraft(ownerA, ctx.ownerA(), {
+      contactId,
+      channel: 'sms',
+      purpose: 'say hello'
+    });
+    const ownerB = actor(IDS.tenantB, 'owner', IDS.ownerB);
+    await expect(
+      approveAndSendDraft(ownerB, ctx.ownerB(), { draftId: d.id }, sendDeps)
+    ).rejects.toMatchObject({ code: 'NOT_FOUND' });
   });
 });

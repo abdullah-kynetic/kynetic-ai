@@ -11,6 +11,8 @@ import { resolveTaskConfig } from '../src/config/llm-models';
 import {
   EVAL_PASS_RATE,
   runCallSummaryEval,
+  runMessageDraftEval,
+  type MessageDraftCase,
   type CallSummaryCase,
   type EvalReport
 } from '../src/server/llm/evals';
@@ -45,6 +47,21 @@ for (const task of only ? [only] : LLM_TASKS) {
       };
     }
     reports.push(await runCallSummaryEval(cases, { provider: p, model }));
+  }
+  if (task === 'message_draft') {
+    const cases = load<MessageDraftCase>('message-draft.json');
+    const p = provider();
+    if (p instanceof FakeLlmProvider) {
+      p.respond = (req) => {
+        const c = cases.find((x) => req.messages[1]!.content.includes(`<purpose>${x.purpose}</purpose>`))!;
+        const name = /ignore/i.test(c.firstName) ? 'there' : c.firstName;
+        return JSON.stringify({
+          subject: c.channel === 'email' ? 'A note from us' : null,
+          body: `Hi ${name}, a quick note about your project. ${c.businessName}`
+        });
+      };
+    }
+    reports.push(await runMessageDraftEval(cases, { provider: p, model }));
   }
 }
 

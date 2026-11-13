@@ -63,7 +63,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Eval set of real cases against the chosen model
   - Commit: "Add call summaries"
   - Covers: P5-6
-- [ ] **P5-S7.** Feature 2: message drafts (draft only, through the consent gate).
+- [x] **P5-S7.** Feature 2: message drafts (draft only, through the consent gate).
   - Test: Eval set and integration test
   - Commit: "Add message drafts"
   - Covers: P5-6, P5-7
