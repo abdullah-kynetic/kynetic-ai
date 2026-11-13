@@ -56,7 +56,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Unit test
   - Commit: "Add support alert email behind two flags"
   - Covers: P3-5
-- [ ] **P3-S6.** Extend outbound tests: no send while `OUTBOUND_ENABLED=false` or `PROVIDER_MODE=stub`.
+- [x] **P3-S6.** Extend outbound tests: no send while `OUTBOUND_ENABLED=false` or `PROVIDER_MODE=stub`.
   - Test: Extended existing tests
   - Commit: "Extend outbound off tests"
   - Covers: P3-6
