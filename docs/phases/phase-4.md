@@ -50,7 +50,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Read-through; rehearsal script still passes
   - Commit: "Add operations runbooks"
   - Covers: -
-- [ ] **P4-S5.** Monitoring and alerts: worker heartbeat, failed jobs, backup failure, disk, health.
+- [x] **P4-S5.** Monitoring and alerts: worker heartbeat, failed jobs, backup failure, disk, health.
   - Test: Unit and integration tests for each alert rule
   - Commit: "Add monitoring alert rules"
   - Covers: P4-5

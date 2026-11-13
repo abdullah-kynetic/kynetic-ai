@@ -26,6 +26,7 @@ import { registerScheduleWorkers, scheduleTenantJobs } from './schedules';
 import { registerUsageWorker } from './usage';
 import { registerWeeklyEmailWorker } from './reports/weekly-email';
 import { publishAdminDigest } from './admin/alerts';
+import { runMonitoringCheck } from './monitoring/run';
 import { registerTenantExportWorker } from './admin/tenant-export';
 import { purgeExpiredRateLimits, RATE_LIMIT_PURGE_CRON } from './security/rate-limit';
 import { getWorkerDb } from './db/client';
@@ -85,6 +86,9 @@ await registerTenantExportWorker();
 await registerWorker('admin.digest', async () => {
   await publishAdminDigest();
 });
+await registerWorker('monitor.check', async () => {
+  await runMonitoringCheck();
+});
 await registerWorker('security.rate_limit_purge', async () => {
   await purgeExpiredRateLimits(getWorkerDb());
 });
@@ -98,6 +102,7 @@ await scheduleRecurring(
   'admin-daily-digest',
   'America/Los_Angeles'
 );
+await scheduleRecurring('worker', 'monitor.check', '*/5 * * * *', {}, 'monitor-check-5min');
 await scheduleRecurring(
   'worker',
   'security.rate_limit_purge',

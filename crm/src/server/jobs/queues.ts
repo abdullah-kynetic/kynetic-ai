@@ -51,6 +51,8 @@ export const QUEUES = {
   'client.weekly_fanout': { ...retrying, policy: 'short' },
   /** In-app daily digest for Kynetic admins. Email stays off unless ADMIN_ALERT_EMAIL_ENABLED. */
   'admin.digest': { ...retrying, policy: 'short' },
+  /** Evaluates the alert rules (dead worker, backups, disk, queue). One notice per rule per six hours. */
+  'monitor.check': { ...retrying, policy: 'short' },
   /** Deletes expired rate-limit counters. */
   'security.rate_limit_purge': { ...retrying, policy: 'short' },
   /** One zip export for an offboarded client. */

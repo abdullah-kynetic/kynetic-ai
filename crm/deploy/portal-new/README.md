@@ -9,6 +9,7 @@ restricted SSH key, instead of a personal login. Nothing here is installed yet; 
 | --- | --- | --- |
 | `portal-new-deploy-entry` | `/usr/local/sbin/portal-new-deploy-entry` | SSH forced command. Accepts only `status`, `rollback`, `seed`, `deploy <40-hex sha>`. |
 | `portal-new-deploy` | `/usr/local/sbin/portal-new-deploy` | Root-owned worker. Backup, build, migrate, switch app and worker only, health check, auto rollback. |
+| `monitor/portal-monitor` | `/usr/local/sbin/portal-monitor` (not installed) | Cron every 5 minutes. Runs the alert rules from outside the worker so a dead worker still alerts. See `docs/runbooks/monitoring.md`. |
 | `install.sh` | run once as root | Creates user `portalnew-deploy`, installs the scripts, authorized_keys line, sudoers rule, log file. |
 
 ## authorized_keys line (public key only)
