@@ -11,14 +11,29 @@ export type CompanyFormState = { error?: string; fieldErrors?: FieldErrors; save
 const text = (v: FormDataEntryValue | null) => (typeof v === 'string' ? v.trim() : '');
 const orNull = (v: string) => (v === '' ? null : v);
 
+/** The hidden `custom` field is a JSON object of typed values. Without it the stored values stay. */
+function parseCustom(raw: FormDataEntryValue | null): Record<string, unknown> | undefined {
+  if (typeof raw !== 'string' || raw === '') return undefined;
+  try {
+    const v: unknown = JSON.parse(raw);
+    return v && typeof v === 'object' && !Array.isArray(v)
+      ? (v as Record<string, unknown>)
+      : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 /** Form fields to the service input. Blank optional fields clear the value. */
 function fromForm(fd: FormData) {
+  const custom = parseCustom(fd.get('custom'));
   const address = Object.fromEntries(
     (['line1', 'city', 'state', 'postalCode'] as const)
       .map((k) => [k, text(fd.get(k))] as const)
       .filter(([, v]) => v !== '')
   );
   return {
+    ...(custom ? { custom } : {}),
     name: text(fd.get('name')),
     phone: orNull(text(fd.get('phone'))),
     website: orNull(text(fd.get('website'))),

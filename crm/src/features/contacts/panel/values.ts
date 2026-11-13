@@ -1,3 +1,4 @@
+import type { CustomDrafts } from '@/features/custom-fields/inputs';
 import type { ContactStatus } from '@/server/contacts/constants';
 
 // Form values for the create and edit panel (M1-04, PRD F-07). Phones and emails are typed one per
@@ -12,7 +13,12 @@ export type PanelValues = {
   source: string;
   ownerId: string;
   tags: string[];
+  /** Custom field drafts by field key (F-12). Turned into stored values by the panel on save. */
+  custom: CustomDrafts;
 };
+
+/** What the edit panel loads: the form values plus the contact's stored custom values as they are. */
+export type LoadedPanelValues = PanelValues & { customRaw: Record<string, unknown> };
 
 export const emptyPanelValues: PanelValues = {
   firstName: '',
@@ -22,7 +28,8 @@ export const emptyPanelValues: PanelValues = {
   status: 'new',
   source: '',
   ownerId: '',
-  tags: []
+  tags: [],
+  custom: {}
 };
 
 /** One entry per line or comma, blanks dropped. */
@@ -42,9 +49,10 @@ type EditableContact = {
   source: string | null;
   ownerId: string | null;
   tags: string[];
+  custom?: unknown;
 };
 
-export function valuesFromContact(c: EditableContact): PanelValues {
+export function valuesFromContact(c: EditableContact): LoadedPanelValues {
   return {
     firstName: c.firstName,
     lastName: c.lastName ?? '',
@@ -53,12 +61,17 @@ export function valuesFromContact(c: EditableContact): PanelValues {
     status: c.status as ContactStatus,
     source: c.source ?? '',
     ownerId: c.ownerId ?? '',
-    tags: c.tags
+    tags: c.tags,
+    custom: {},
+    customRaw:
+      c.custom && typeof c.custom === 'object' && !Array.isArray(c.custom)
+        ? (c.custom as Record<string, unknown>)
+        : {}
   };
 }
 
 /** The payload the contacts service takes. Empty text becomes null, never an empty string. */
-export function toContactInput(v: PanelValues) {
+export function toContactInput(v: PanelValues, custom?: Record<string, unknown>) {
   return {
     firstName: v.firstName.trim(),
     lastName: v.lastName.trim() || null,
@@ -67,6 +80,8 @@ export function toContactInput(v: PanelValues) {
     status: v.status,
     source: v.source.trim() || null,
     ownerId: v.ownerId || null,
-    tags: v.tags
+    tags: v.tags,
+    // Left out when the tenant has no custom fields, so a save never clears stored values.
+    ...(custom ? { custom } : {})
   };
 }

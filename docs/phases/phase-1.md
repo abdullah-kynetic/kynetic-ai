@@ -54,7 +54,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: `bunx knip` clean; `bun run verify`
   - Commit: "Remove unused files and dependencies"
   - Covers: P1-2
-- [ ] **P1-S3.** Custom field values on contact, company and deal records: wire in `features/custom-fields/custom-fields-section.tsx`, add inputs and save.
+- [x] **P1-S3.** Custom field values on contact, company and deal records: wire in `features/custom-fields/custom-fields-section.tsx`, add inputs and save.
   - Test: Integration test (set, show, filter, tenant isolation) and a browser test
   - Commit: "Edit custom field values on records"
   - Covers: P1-3

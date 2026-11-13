@@ -518,7 +518,12 @@ export function ContactsTable({
     </DataTableToolbar>
   );
   const panelEl = canWrite ? (
-    <ContactPanel target={panel} onClose={() => setPanel(null)} owners={facets.owners} />
+    <ContactPanel
+      target={panel}
+      onClose={() => setPanel(null)}
+      owners={facets.owners}
+      customDefs={customFields}
+    />
   ) : null;
 
   if (total === 0 && !filtered) {

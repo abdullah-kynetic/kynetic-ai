@@ -6,6 +6,9 @@ import { Timeline } from '@/components/timeline/timeline';
 import { StatusBadge, type StatusTone } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/states';
+import { CustomFieldsSection } from '@/features/custom-fields/custom-fields-section';
+import { listFieldDefs } from '@/server/custom-fields';
+import { isModuleEnabled } from '@/server/modules';
 import { listActivities, type TimelinePage } from '@/server/activity';
 import { formatCents, getDealDetail, type DealDetail } from '@/server/deals';
 import { AppError } from '@/server/errors';
@@ -87,6 +90,10 @@ export default async function DealPage({
   });
 
   const { deal, stage, stages, owner, members, contacts } = detail;
+  const customDefs = (await isModuleEnabled(ctx, 'crm', { level: 'full' }))
+    ? await listFieldDefs(ctx, 'deal')
+    : [];
+  const customValues = (deal.custom ?? {}) as Record<string, unknown>;
   const label = (m: { name: string | null; email: string }) => m.name ?? m.email;
   const canEdit = shell.role === 'owner' || shell.role === 'staff';
 
@@ -108,8 +115,10 @@ export default async function DealPage({
                 source: deal.source,
                 ownerId: deal.ownerId,
                 stageId: deal.stageId,
-                lostReason: deal.lostReason
+                lostReason: deal.lostReason,
+                custom: customValues
               }}
+              customDefs={customDefs}
               stages={stages.map((s) => ({ id: s.id, name: s.name, isLost: s.isLost }))}
               members={members.map((m) => ({ id: m.id, label: label(m) }))}
             />
@@ -139,6 +148,11 @@ export default async function DealPage({
                 {deal.lostAt && <Item label='Lost' value={when(deal.lostAt)} />}
                 <Item label='Added' value={when(deal.createdAt)} />
               </dl>
+              {customDefs.length > 0 && (
+                <div className='mt-6'>
+                  <CustomFieldsSection defs={customDefs} values={customValues} />
+                </div>
+              )}
             </CardContent>
           </Card>
 

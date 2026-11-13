@@ -1,6 +1,7 @@
 import { and, asc, desc, eq, gt, isNull, ne, sql } from 'drizzle-orm';
 import { recordActivity } from '../activity';
 import { audit } from '../audit';
+import { validateCustomValues } from '../custom-fields';
 import { contacts, dealContacts, deals, memberships, pipelineStages } from '../db/schema';
 import { ValidationError } from '../errors';
 import { emitEvent } from '../events';
@@ -166,7 +167,7 @@ export async function createDeal(
         expectedClose: v.expectedClose ?? null,
         ownerId: v.ownerId ?? null,
         source: v.source ?? null,
-        custom: v.custom,
+        custom: await validateCustomValues(ctx, tx, 'deal', v.custom),
         position: await nextPosition(tx, stage.id, undefined),
         ...outcome
       })
@@ -261,6 +262,7 @@ export async function updateDeal(
   return run(ctx, opts, async (tx) => {
     const before = await loadLive(tx, id);
     if (v.ownerId !== undefined) await assertOwner(tx, v.ownerId);
+    if (v.custom !== undefined) v.custom = await validateCustomValues(ctx, tx, 'deal', v.custom);
     const [after] = await tx
       .update(deals)
       .set({ ...v, updatedAt: now() })
