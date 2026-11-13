@@ -9,6 +9,7 @@ Every procedure here that touches the server, a bucket, a provider or a client's
 | [restore.md](restore.md) | The database must be recovered, or the restore drill is due |
 | [incident.md](incident.md) | Something may have leaked, sent wrongly, or broken for clients |
 | [offboarding.md](offboarding.md) | A client leaves |
+| [client-onboarding.md](client-onboarding.md) | A new client must be live in one day |
 | [monitoring.md](monitoring.md) | An alert fired, or alert settings need checking |
 | [demo-clients-seed.md](demo-clients-seed.md) | Loading or removing the demo workspaces |
 

@@ -54,7 +54,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Unit and integration tests for each alert rule
   - Commit: "Add monitoring alert rules"
   - Covers: P4-5
-- [ ] **P4-S6.** One-step client onboarding: create client, owner invite, defaults.
+- [x] **P4-S6.** One-step client onboarding: create client, owner invite, defaults.
   - Test: End-to-end test
   - Commit: "Add one-step client onboarding"
   - Covers: P4-6
