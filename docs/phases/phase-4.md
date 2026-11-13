@@ -34,7 +34,7 @@ Whether staff may keep the email-code login once real client data is in the syst
 
 Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finishes the step. A new thread resumes at the first unticked step. For every step: finish it, test it, commit, push, then move on (see `PROTOCOL.md`). A STOP step waits for Abdullah's yes; do the steps after it that do not depend on it.
 
-- [ ] **P4-S1.** Accessibility pass to WCAG 2.2 AA on every client and admin page.
+- [x] **P4-S1.** Accessibility pass to WCAG 2.2 AA on every client and admin page.
   - Test: Browser scan across all routes, no serious or critical
   - Commit: "Fix accessibility violations"
   - Covers: P4-1
