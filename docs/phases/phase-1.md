@@ -78,11 +78,11 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: CI green
   - Commit: "Record phase 1 in the build log"
   - Covers: -
-- [ ] **P1-S9.** STOP for Abdullah's say on each: merge or close stale PRs #113, #134, #136, #145, #151, #155 (#136 holds the site source); archive retired DEV scripts and `docs/codex/`; deploy main.
+- [x] **P1-S9.** (Abdullah delegated the yes to the coordinator, 2026-11-13.) STOP for Abdullah's say on each: merge or close stale PRs #113, #134, #136, #145, #151, #155 (#136 holds the site source); archive retired DEV scripts and `docs/codex/`; deploy main.
   - Test: Evidence per action
   - Commit: "Archive retired DEV scripts and docs/codex"
   - Covers: -
-- [ ] **P1-S10.** STOP for yes: export the remaining Twenty records and 5 attachments (needs SSH from a session that reaches the server); point the contact form at the portal lead endpoint (live n8n change).
+- [ ] **P1-S10.** (Portal side and rollback backup done; the Twenty export and the live n8n switch wait for the Mac Codex prompt in /mnt/project-files/phase1/.) STOP for yes: export the remaining Twenty records and 5 attachments (needs SSH from a session that reaches the server); point the contact form at the portal lead endpoint (live n8n change).
   - Test: File listing; test lead in a demo tenant
   - Commit: "Add remaining Twenty export to the archive"
   - Covers: P1-8, P1-9
