@@ -68,7 +68,7 @@ export function Pager({
   return (
     <nav aria-label={label} className='mt-4 flex items-center gap-3 text-sm'>
       {page > 1 ? (
-        <Link href={href(page - 1)} className='text-primary hover:underline'>
+        <Link href={href(page - 1)} className='text-foreground underline underline-offset-2'>
           Previous
         </Link>
       ) : null}
@@ -76,7 +76,7 @@ export function Pager({
         {(page - 1) * ARCHIVE_PAGE_SIZE + 1}-{(page - 1) * ARCHIVE_PAGE_SIZE + count}
       </span>
       {hasNext ? (
-        <Link href={href(page + 1)} className='text-primary hover:underline'>
+        <Link href={href(page + 1)} className='text-foreground underline underline-offset-2'>
           Next
         </Link>
       ) : null}

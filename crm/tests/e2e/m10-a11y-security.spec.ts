@@ -119,7 +119,11 @@ test('M10-04 WCAG 2.2 A/AA automated scan on admin routes across themes and view
     '/admin/users',
     '/admin/audit',
     '/admin/operations',
-    '/admin/backups'
+    '/admin/backups',
+    '/admin/archive/notes',
+    '/admin/archive/tasks',
+    '/admin/archive/attachments',
+    '/admin/archive/records'
   ];
   for (const route of routes) violations.push(...(await scanMatrix(adminPage, route)));
   expect(violations, violations.join('\n')).toEqual([]);

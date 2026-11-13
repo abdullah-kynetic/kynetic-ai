@@ -55,7 +55,7 @@ export default async function ArchiveAttachmentsPage() {
                   {a.available ? (
                     <a
                       href={`/api/admin/archive/attachments/${a.id}/download`}
-                      className='text-primary hover:underline'
+                      className='text-foreground underline underline-offset-2'
                     >
                       Download<span className='sr-only'> {a.fileName}</span>
                     </a>

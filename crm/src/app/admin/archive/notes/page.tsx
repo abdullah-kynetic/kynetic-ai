@@ -106,7 +106,7 @@ export default async function ArchiveNotesPage({
               <li key={n.id} className='p-3'>
                 <Link
                   href={`/admin/archive/notes/${n.id}`}
-                  className='text-primary font-medium hover:underline'
+                  className='text-foreground font-medium underline underline-offset-2'
                 >
                   {n.title}
                 </Link>

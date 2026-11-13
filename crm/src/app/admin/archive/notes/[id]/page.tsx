@@ -23,7 +23,7 @@ export default async function ArchiveNotePage({ params }: { params: Promise<{ id
       pageDescription={`Archived note · created ${note.createdOn}`}
     >
       <p className='mb-4 text-sm'>
-        <Link href='/admin/archive/notes' className='text-primary hover:underline'>
+        <Link href='/admin/archive/notes' className='text-foreground underline underline-offset-2'>
           Back to notes
         </Link>
       </p>

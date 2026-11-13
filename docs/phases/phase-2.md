@@ -56,7 +56,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Integration and browser tests
   - Commit: "Test archive access is staff-only"
   - Covers: P2-2
-- [ ] **P2-S7.** Accessibility scan and 390 px check; open PR; record in the build log.
+- [x] **P2-S7.** Accessibility scan and 390 px check; open PR; record in the build log.
   - Test: `bun run verify:e2e`; CI green
   - Commit: "Record phase 2 in the build log"
   - Covers: P2-6
