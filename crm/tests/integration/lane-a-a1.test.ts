@@ -140,6 +140,16 @@ describe('Lane A A1 usage', () => {
     const usage = await getClientUsage(ctx.ownerA(), '2026-11', { db, now });
     expect(usage.totals).toMatchObject({ minutes: 10, calls: 3, sms: 2, emails: 1 });
     expect(JSON.stringify(usage)).not.toMatch(/cents|cost|\$/i);
+    // P3-S7: cost stays hidden by default, so the shape is exactly counts and the cap status.
+    expect(Object.keys(usage).toSorted()).toEqual(['cap', 'daily', 'month', 'totals']);
+    expect(Object.keys(usage.daily[0]).toSorted()).toEqual([
+      'calls',
+      'day',
+      'emails',
+      'minutes',
+      'sms'
+    ]);
+    expect(Object.keys(usage.cap).toSorted()).toEqual(['label', 'status']);
     await expect(getClientUsage(ctx.staffA(), '2026-11', { db, now })).rejects.toMatchObject({
       code: 'FORBIDDEN'
     });

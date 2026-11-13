@@ -60,7 +60,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Extended existing tests
   - Commit: "Extend outbound off tests"
   - Covers: P3-6
-- [ ] **P3-S7.** Usage page: show usage; cost only if decided (default hidden).
+- [x] **P3-S7.** Usage page: show usage; cost only if decided (default hidden).
   - Test: Integration test
   - Commit: "Hide cost on the client Usage page by default"
   - Covers: -
