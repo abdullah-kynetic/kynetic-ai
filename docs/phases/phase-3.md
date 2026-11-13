@@ -40,7 +40,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Integration test: sent message passes consent, quiet hours and DNC, is logged, shows on the timeline
   - Commit: "Send text or email from a contact"
   - Covers: P3-1
-- [ ] **P3-S2.** Show why a contact cannot be messaged (opt-out, DNC).
+- [x] **P3-S2.** Show why a contact cannot be messaged (opt-out, DNC).
   - Test: Integration and browser tests
   - Commit: "Explain blocked messages in the compose box"
   - Covers: P3-2
