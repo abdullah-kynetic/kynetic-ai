@@ -36,7 +36,7 @@ Deploy; setting any flag live; turning on any real provider.
 
 Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finishes the step. A new thread resumes at the first unticked step. For every step: finish it, test it, commit, push, then move on (see `PROTOCOL.md`). A STOP step waits for Abdullah's yes; do the steps after it that do not depend on it.
 
-- [ ] **P3-S1.** Compose box and reply view on the contact page (fake providers).
+- [x] **P3-S1.** Compose box and reply view on the contact page (fake providers).
   - Test: Integration test: sent message passes consent, quiet hours and DNC, is logged, shows on the timeline
   - Commit: "Send text or email from a contact"
   - Covers: P3-1

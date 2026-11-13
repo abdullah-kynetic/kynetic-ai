@@ -8,6 +8,7 @@ import { Timeline } from '@/components/timeline/timeline';
 import { parseTimelineParams } from '@/components/timeline/params';
 import { listActivities, type TimelinePage } from '@/server/activity';
 import {
+  contactsScope,
   getContactDetail,
   listContacts,
   NotFoundError,
@@ -30,6 +31,8 @@ import { addNote, editNote, pinNote, removeNote } from './note-actions';
 import { CustomFieldsSection } from '@/features/custom-fields/custom-fields-section';
 import { listFieldDefs } from '@/server/custom-fields';
 import { MergeContactForm } from '@/features/contacts/merge-contact-form';
+import { MessageBox } from '@/features/contacts/message-box';
+import { getComposeState, listContactThread } from '@/server/messaging';
 
 export const metadata: Metadata = {
   title: 'Contact',
@@ -125,6 +128,11 @@ export default async function ContactPage({
     ? await Promise.all([listNotes(ctx, { contactId: id }), listTeammates(ctx)])
     : [[], []];
   const customDefs = await listFieldDefs(ctx, 'contact');
+  const [thread, channelStates, writeScope] = await Promise.all([
+    listContactThread(ctx, id),
+    getComposeState(ctx, id),
+    contactsScope(requestHeaders, 'tenant_data.write')
+  ]);
   const linkedDeals = dealsOn ? await listDealsForContact(ctx, id) : [];
   // Tasks are CRM Lite (F-20): without the module the section is not rendered at all.
   const tasksOn = moduleSatisfied(
@@ -228,6 +236,24 @@ export default async function ContactPage({
                 items={emails}
                 primary={contact.primaryEmail}
                 kind='mailto'
+              />
+            </CardContent>
+          </Card>
+
+          <Card id='messages' aria-labelledby='section-Messages'>
+            <CardHeader>
+              <CardTitle id='section-Messages'>Messages</CardTitle>
+              <CardDescription>
+                Texts and emails with this person. Every send checks consent, do-not-contact and
+                quiet hours first.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <MessageBox
+                contactId={id}
+                thread={thread}
+                channels={channelStates}
+                canWrite={writeScope !== null}
               />
             </CardContent>
           </Card>
