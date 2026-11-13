@@ -60,7 +60,7 @@ export function renderAdminDigest(facts: DigestFacts): { title: string; body: st
   };
 }
 
-async function emailAdmins(
+export async function emailAdmins(
   subject: string,
   text: string,
   key: string,

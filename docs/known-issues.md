@@ -8,6 +8,8 @@ Mirror of open problems tracked in Twenty. Twenty is canonical; this file mirror
 ## Open
 ### KI-039: Manual messages and review requests cannot send for real yet (medium)
 Found 2026-11-13. The contact page now has a Messages card (text and email, with a reply view) and queued review requests can send, both through the outbound gate. Nothing leaves while `OUTBOUND_ENABLED=false`, and a text also needs an approved sending number (KI-003) and counsel's consent wording (KI-002). Email from a contact uses `EMAIL_FROM_ADDRESS` and Resend has no reply-to in our adapter, so a customer's email reply does not come back into the portal. Inbound texts do show in the reply view. Review requests need a `review_url` (https) in the client's `opm` module config, set by staff; with none, the request stays queued. Review sending needs `REVIEW_REQUESTS_ENABLED=true`; after turning it on, `sweepQueuedReviewRequests(tenantId)` queues requests that were waiting. Nothing has been turned on.
+### KI-038: Alert rules exist but nothing is switched on yet (medium)
+Found 2026-11-13. The six alert rules (phase 4) are in the code and tested, but they only start once a commit with migration `1060_ops_alert_kind` is deployed; the host check `portal-monitor` is not installed; alert email is off. `backup_stale` will fire at once on the live system because no backup has ever succeeded (KI-034); that is correct. Steps: `docs/runbooks/monitoring.md`.
 
 ### KI-037: Only the leads list filters by custom fields (low)
 Found 2026-11-13. Custom field values are now entered and shown on contacts, companies and deals, and the leads list can filter and export them. The companies list and the deals board have no custom field filter or column. Phase 1 acceptance P1-3 was met for filtering on contacts only.
@@ -50,7 +52,7 @@ Found 2026-11-10. The automations page can turn a template on or off and can sho
 
 ### KI-029: Support alerts do not send email (low)
 Found 2026-11-10. A new client request notifies Kynetic in the portal, and a Kynetic reply notifies the requester in the portal. The email preference for `support_request` and `support_reply` defaults to off, and this batch does not queue an email even if someone turns that preference on. Blocked by the rule that this work must not add a real outbound send.
-Update 2026-11-13: a reply from Kynetic now emails the client when `SUPPORT_ALERT_EMAIL_ENABLED=true` and the person turned on email for that notice (off by default). The staff alert for a new request is never emailed to client users. Migration `1061` lets the per-person setting be saved for mention and support notices. Flag is off, nothing sent.
+Update 2026-11-13: a reply from Kynetic now emails the client when `SUPPORT_ALERT_EMAIL_ENABLED=true` and the person turned on email for that notice (off by default). The staff alert for a new request is never emailed to client users. Migration `1071` lets the per-person setting be saved for mention and support notices. Flag is off, nothing sent.
 
 ### KI-002: TCPA emergency branch opt-out gap (high)
 Emergency calls and urgent notifications may reach someone who opted out.

@@ -53,6 +53,8 @@ export const QUEUES = {
   'admin.digest': { ...retrying, policy: 'short' },
   /** One client review request to send. Only enqueued, and only acted on, when REVIEW_REQUESTS_ENABLED is on. */
   'review.send': { ...retrying, policy: 'short' },
+  /** Evaluates the alert rules (dead worker, backups, disk, queue). One notice per rule per six hours. */
+  'monitor.check': { ...retrying, policy: 'short' },
   /** Deletes expired rate-limit counters. */
   'security.rate_limit_purge': { ...retrying, policy: 'short' },
   /** One zip export for an offboarded client. */

@@ -65,7 +65,7 @@ blocked_step() {
 
 deploy_scripts() {
   local f
-  for f in deploy/prod/*.sh deploy/prod/host/*.sh deploy/prod/monitor/*.sh deploy/prod/tests/*.sh; do
+  for f in deploy/prod/*.sh deploy/prod/host/*.sh deploy/prod/monitor/*.sh deploy/prod/tests/*.sh deploy/portal-new/portal-new-deploy deploy/portal-new/portal-new-deploy-entry deploy/portal-new/monitor/portal-monitor; do
     bash -n "$f" || return 1
   done
   bash deploy/prod/tests/rehearse.sh
