@@ -2,6 +2,17 @@
 
 > **Canonical plan (2026-11-08, precedence restated 2026-11-08 PST; portal line 2026-11-09 PST):** the business roadmap, progress baseline and scorecard live in Twenty: roadmap note `7bfdcb7e`, baseline v1 note `603fe300`, scorecard note `5c44b12e`. GitHub owns technical tracking only (code, PRs, CI, deploy evidence: `docs/audit/2026-11-08-code-evidence.md`). The operating summary, offer, pricing precedence, and the docs-reconciliation journal are in `docs/STATUS.md`. `docs/codex/COMPLETION-PLAN.md` is historical evidence, not a competing roadmap. Do not keep a second editable acceptance list in this repo.
 
+## Phase 1: clean, switch and core CRM (2026-11-13)
+
+Branch `claude/project-thread-bq8q2c`, steps P1-S1 to P1-S8 in `docs/phases/phase-1.md`. Nothing deployed and nothing live was touched. No migration.
+- Live probe (2026-11-13 01:15 UTC): `/api/health` 200, `/admin` 401, `/dashboard` 307 to `/sign-in`. STATUS, KI-013 and KI-017 corrected.
+- `knip`: removed 33 unused files and 11 unused dependencies. Kept `scripts/emergency-reset-staff-totp.ts`, `src/server/worker.ts`, `src/features/custom-fields/custom-fields-section.tsx` (now used) and `src/server/leads/verify-dev-gates-cli.ts` (the retired DEV compose file still names it; it goes with the DEV archive in P1-S9).
+- Custom field values (F-12): inputs on the contact panel, the company form and the deal panel; read-only values on the contact and deal pages. Company and deal custom values were stored unchecked before; they now go through the same type and option check as contacts. A save from a tenant with no definitions leaves stored values alone.
+- Custom fields for every client: the CRM Full gate is gone from the service, the settings page, the nav item and the pages (P1-4).
+- Client import (F-95): owners get `/dashboard/import` and `/api/my-imports`. New permission `import.self` (owner only, contacts only). It reuses the staff import service, dry run, consent rules, undo and audit. The tenant comes from the signed-in membership, never from the request.
+- Tests added: custom-field-values, client-import, client-import-tenant-guard (integration); custom-field-inputs, import-mapping (unit); custom-field-values, client-import, phase-1-a11y (browser, desktop and 390 px).
+- Not done in this phase run (need Abdullah): P1-S9 (stale PRs #113, #134, #136, #145, #151, #155, archive DEV scripts and `docs/codex/`, deploy) and P1-S10 (remaining Twenty export, contact form to the portal).
+
 ## Client growth pages (2026-11-11)
 
 Lane A A1 on branch `lane-a/a1-reviews-referrals-usage`: Reviews, Referrals and Usage pages with migration `1020_client_growth_reviews_referrals`. Review requests queue only and referral rewards are tracked only; the usage page hides dollar cost. Not deployed. See KI-030 to KI-032.

@@ -74,7 +74,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Browser test; `bun run verify:e2e`
   - Commit: "Add accessibility tests for new CRM pages"
   - Covers: P1-7
-- [ ] **P1-S8.** Open the PR, watch CI, fix what it finds, merge when green. Record in the build log.
+- [x] **P1-S8.** Open the PR, watch CI, fix what it finds, merge when green. Record in the build log.
   - Test: CI green
   - Commit: "Record phase 1 in the build log"
   - Covers: -

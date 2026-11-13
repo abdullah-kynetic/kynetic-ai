@@ -6,6 +6,15 @@
 Mirror of open problems tracked in Twenty. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Open
+### KI-037: Only the leads list filters by custom fields (low)
+Found 2026-11-13. Custom field values are now entered and shown on contacts, companies and deals, and the leads list can filter and export them. The companies list and the deals board have no custom field filter or column. Phase 1 acceptance P1-3 was met for filtering on contacts only.
+
+### KI-036: A client import can record consent dated after an opt-out (medium)
+Found 2026-11-13. The client import (P1-5) uses the staff import's consent rule: a row with a date, a channel and proof saves an express consent. The newest event wins, so a client-supplied date later than a person's opt-out or DNC would make them reachable again. Decision for Abdullah: should an import refuse to record consent for a contact who has opted out or is on the DNC list? Not changed in code; it matches the existing staff import.
+
+### KI-035: Primary button hover falls below 4.5:1 for the brand blue #2563eb (low)
+Found 2026-11-13 by the phase 1 accessibility scan: white text on the hover colour (primary mixed 8% with white) measures 4.41:1 on the synthetic tenant colour. The resting state passes. The scan moves the pointer away first. Not fixed. Also note the import and CSV export share a budget of 5 uploads an hour per tenant.
+
 ### KI-034: Portal database backups fail and do not reach R2 (high)
 Found 2026-11-12. Every `backup_runs` row (21 of 21, 2026-11-10 to 2026-11-12) failed: the worker image's `pg_dump` was version 15 against Postgres 16 ("server version mismatch"). Nothing reached R2, and the worker's `STORAGE_BUCKET` is `kynetic-portal-test` while the production bucket is `kynetic-portal-files`. The backup alert is off. The Dockerfile now installs the version 16 client and fails the build otherwise. Phase 0 (2026-11-13) added the worker heartbeat to `/api/health`, so the next dead worker shows as 503 instead of silent. Still needed on the server: deploy the new worker image, set the bucket, turn on `BACKUP_ALERT_ENABLED`, then one manual backup and one restore test. The root cron job `/etc/cron.d/portal-backup` is unread.
 
