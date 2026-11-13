@@ -69,7 +69,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: Test
   - Commit: "Add onboarding automation"
   - Covers: -
-- [ ] **P6-S8.** n8n, built inactive, each credential and change with its own yes: credentials, one booking workflow, signature check, error alert.
+- [x] **P6-S8.** n8n, built inactive, each credential and change with its own yes: credentials, one booking workflow, signature check, error alert.
   - Test: n8n listing shows nothing active
   - Commit: "Record the n8n workflow export"
   - Covers: P6-6

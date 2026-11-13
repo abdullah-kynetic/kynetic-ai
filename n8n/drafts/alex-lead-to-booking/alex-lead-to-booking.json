@@ -1,0 +1,401 @@
+{
+  "name": "Alex lead to booking (portal, DRAFT)",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "alex-book",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "tool-call-webhook",
+      "name": "Tool call webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "Alex tool secret (header)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.cal.com/v2/slots",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "eventTypeId",
+              "value": "={{ $env.CAL_EVENT_TYPE_ID }}"
+            },
+            {
+              "name": "start",
+              "value": "={{ $json.body.date_from }}"
+            },
+            {
+              "name": "end",
+              "value": "={{ $json.body.date_to }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "cal-api-version",
+              "value": "2024-09-04"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "find-open-slots",
+      "name": "Find open slots",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        260,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "Cal.com API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cal.com/v2/bookings",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "cal-api-version",
+              "value": "2024-08-13"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ start: $('Tool call webhook').item.json.body.slot_start, eventTypeId: Number($env.CAL_EVENT_TYPE_ID), attendee: { name: $('Tool call webhook').item.json.body.name, timeZone: $('Tool call webhook').item.json.body.time_zone, phoneNumber: $('Tool call webhook').item.json.body.phone } }) }}",
+        "options": {}
+      },
+      "id": "book-on-cal.com",
+      "name": "Book on Cal.com",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        520,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "Cal.com API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.PORTAL_BASE_URL }}/api/appointments/book",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ contactId: $('Tool call webhook').item.json.body.contact_id, dealId: $('Tool call webhook').item.json.body.deal_id, startsAt: $json.data.start, endsAt: $json.data.end, externalEventId: 'calcom:' + $json.data.uid }) }}",
+        "options": {}
+      },
+      "id": "record-booking-in-portal",
+      "name": "Record booking in portal",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        780,
+        0
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "name": "Portal service token (booking)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ booked: true, appointment_id: $json.appointment.id }) }}",
+        "options": {}
+      },
+      "id": "answer-the-agent",
+      "name": "Answer the agent",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1040,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "alex-call-ended",
+        "authentication": "none",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "post-call-webhook",
+      "name": "Post-call webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Run Once for All Items. Front Door check for the ElevenLabs post-call webhook. Same scheme as the\n// portal's own check (crm/src/server/adapters/voice/elevenlabs.ts): header \"elevenlabs-signature\" is\n// \"t=<unix seconds>,v0=<hex HMAC-SHA256 of '<t>.<raw body>'>\", five minute window, constant-time compare.\n// Needs NODE_FUNCTION_ALLOW_BUILTIN=crypto on the n8n instance and the Webhook node's Raw Body option on.\nconst crypto = require('crypto');\nconst item = $input.first();\nconst secret = $env.ELEVENLABS_POST_CALL_SECRET;\nconst header = String((item.json.headers || {})['elevenlabs-signature'] || '');\nconst raw = item.binary && item.binary.data ? Buffer.from(item.binary.data.data, 'base64').toString('utf8') : '';\nconst reject = () => [{ json: { verified: false } }];\nif (!secret || !header || !raw) return reject();\nconst parts = Object.fromEntries(header.split(',').map((p) => p.trim().split('=')));\nconst t = Number(parts.t);\nif (!parts.v0 || !Number.isFinite(t) || Math.abs(Date.now() / 1000 - t) > 300) return reject();\nconst expected = crypto.createHmac('sha256', secret).update(`${t}.${raw}`).digest();\nconst given = Buffer.from(parts.v0, 'hex');\nif (given.length !== expected.length || !crypto.timingSafeEqual(given, expected)) return reject();\nreturn [{ json: { verified: true, body: JSON.parse(raw) } }];\n"
+      },
+      "id": "verify-signature",
+      "name": "Verify signature",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "ok",
+              "leftValue": "={{ $json.verified }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "signature-ok?",
+      "name": "Signature ok?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        520,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "noData",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "reject-401",
+      "name": "Reject 401",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        780,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Run Once for All Items. Maps a verified ElevenLabs post-call payload onto the portal's call-result\n// body (POST /api/service/call-results). The portal re-validates everything; unknown outcomes become \"other\".\n// Needs NODE_FUNCTION_ALLOW_BUILTIN=crypto (the same setting the signature check needs).\nconst crypto = require('crypto');\nconst OUTCOMES = ['booked', 'qualified', 'not_interested', 'voicemail', 'no_answer', 'transferred', 'dnc', 'other'];\nconst body = $input.first().json.body || {};\nconst data = body.data || {};\nconst meta = data.metadata || {};\nconst analysis = data.analysis || {};\nconst collected = (analysis.data_collection_results || {});\nconst rawOutcome = String((collected.outcome && collected.outcome.value) || '').trim().toLowerCase().replace(/[\\s-]+/g, '_');\nconst contactId = (data.conversation_initiation_client_data || {}).dynamic_variables?.contact_id;\nconst started = new Date((meta.start_time_unix_secs || body.event_timestamp || 0) * 1000).toISOString();\nfunction uuidFrom(text) {\n  const h = crypto.createHash('sha256').update(text).digest('hex');\n  return `${h.slice(0, 8)}-${h.slice(8, 12)}-4${h.slice(13, 16)}-8${h.slice(17, 20)}-${h.slice(20, 32)}`;\n}\nif (!contactId || !data.conversation_id || !data.agent_id) {\n  return [{ json: { skip: true, reason: 'missing contact_id, conversation_id or agent_id' } }];\n}\nreturn [{\n  json: {\n    skip: false,\n    request: {\n      // Deterministic, so a retried delivery of the same call is the same event and the portal dedupes it.\n      eventId: uuidFrom(String(data.conversation_id)),\n      version: 1,\n      occurredAt: started,\n      payload: {\n        contactId,\n        provider: 'elevenlabs',\n        providerCallId: String(data.conversation_id),\n        agentId: String(data.agent_id),\n        direction: 'outbound',\n        startedAt: started,\n        durationS: Math.max(0, Math.round(meta.call_duration_secs || 0)),\n        outcome: OUTCOMES.includes(rawOutcome) ? rawOutcome : 'other',\n        summary: analysis.transcript_summary ? String(analysis.transcript_summary).slice(0, 5000) : undefined\n      }\n    }\n  }\n}];\n"
+      },
+      "id": "map-call-result",
+      "name": "Map call result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        780,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.PORTAL_BASE_URL }}/api/service/call-results",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.request) }}",
+        "options": {}
+      },
+      "id": "post-call-result",
+      "name": "Post call result",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1040,
+        200
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "name": "Portal service token (booking)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "noData",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "acknowledge",
+      "name": "Acknowledge",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1300,
+        200
+      ]
+    }
+  ],
+  "connections": {
+    "Tool call webhook": {
+      "main": [
+        [
+          {
+            "node": "Find open slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find open slots": {
+      "main": [
+        [
+          {
+            "node": "Book on Cal.com",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Book on Cal.com": {
+      "main": [
+        [
+          {
+            "node": "Record booking in portal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Record booking in portal": {
+      "main": [
+        [
+          {
+            "node": "Answer the agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post-call webhook": {
+      "main": [
+        [
+          {
+            "node": "Verify signature",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify signature": {
+      "main": [
+        [
+          {
+            "node": "Signature ok?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Signature ok?": {
+      "main": [
+        [
+          {
+            "node": "Map call result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject 401",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map call result": {
+      "main": [
+        [
+          {
+            "node": "Post call result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post call result": {
+      "main": [
+        [
+          {
+            "node": "Acknowledge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "REPLACE_WITH_ERROR_ALERT_WORKFLOW_ID"
+  },
+  "pinData": {},
+  "meta": {
+    "note": "Built inactive in the repo. Not imported. Activation needs Abdullah's yes."
+  }
+}
