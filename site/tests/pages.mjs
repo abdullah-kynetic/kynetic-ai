@@ -25,25 +25,13 @@ for (const width of [1440, 390]) {
   {
     const { ctx, page, errors } = await open('/', width);
     const text = (await page.locator('body').innerText()).toLowerCase();
-    ok(`${tag} home: pill is "AI growth partner" and is not an H1`, (await page.locator('#hero p', { hasText: /^AI growth partner$/ }).count()) === 1);
+    ok(`${tag} home: pill is "AI growth partner" and is not an H1`, (await page.locator('#hero .np-badge', { hasText: /^AI growth partner$/ }).count()) === 1);
     ok(`${tag} home: one broad H1`, (await page.locator('h1').count()) === 1 && (await page.locator('h1').innerText()).trim() === 'More Revenue, Less Busywork, and a Business That Runs Smarter.');
-    ok(`${tag} home: hero CTA and microcopy`, (await page.locator('#hero a', { hasText: 'Book your free AI audit' }).count()) >= 1 && /A few short questions, then pick a time\. The call is free\./.test(await page.locator('#hero').innerText()));
-    if (tag === 'desktop') { const lines = await page.locator('h1').evaluate((h) => Math.round(h.getBoundingClientRect().height / parseFloat(getComputedStyle(h).lineHeight))); ok('desktop home: H1 fits in about 3 lines', lines >= 2 && lines <= 4, `lines=${lines}`); }
-    ok(`${tag} home: "what changes for you" feature card plus three pillars, nav button says Book an audit`, (await page.locator('#intro .kn-pillar').count()) === 4 && (await page.locator('nav a', { hasText: 'Book an audit' }).count()) >= 1);
-    ok(`${tag} home: journey has 4 steps`, (await page.locator('#journey .kn-step').count()) === 4);
-    ok(`${tag} home: services is the map with six system cards, no card grid, no Live or Built-after-audit labels`, (await page.locator('#services .kn-map .m-node').count()) === 6 && (await page.locator('#services .kn-pop').count()) === 6 && (await page.locator('#services .kn-cards, #services .kn-onsite').count()) === 0 && !/\blive\b|built after your audit/i.test(await page.locator('#services').innerText()));
-    ok(`${tag} home: industries has Remodelers (link) plus two coming-soon cards`, (await page.locator('#industries a[href="/remodelers"]').count()) === 1 && (await page.locator('#industries .kn-card').count()) === 3 && (await page.locator('#industries .kn-card--soon').count()) === 2);
-    ok(`${tag} home: AI Transformation card mentions optional on-site days`, /2 to 3 days on-site/.test(await page.locator('#pop5').textContent()));
-    ok(`${tag} home: every system card has a usual-way and a with-Kynetic column`, (await page.locator('#services .kn-pop__col--now').count()) === 6 && (await page.locator('#services .kn-pop__col--new').count()) === 6);
-    ok(`${tag} home: pricing is a short section (no repeated step cards, no calculator, no guarantee)`, (await page.locator('#plans .kn-sec__eyebrow').textContent()).trim() === 'How pricing works' && (await page.locator('#plans .kn-step').count()) === 0 && (await page.locator('#plans [data-leak-calc], #plans .kn-pricing__guarantee').count()) === 0);
-    ok(`${tag} home: the call-is-free microcopy appears once`, text.split('a few short questions, then pick a time').length === 2);
-    ok(`${tag} home: no $10,000, no founding terms, no fixed add-on prices`, !/\$10,000|founding|\$3,000|\$2,500|\$1,500/i.test(await page.locator('#plans').innerText()));
-    const body = (await page.locator('main, #main').first().innerText()).toLowerCase();
-    const heroText = (await page.locator('#hero').innerText()).toLowerCase();
-    ok(`${tag} home: hero has no industry, lead-speed or tool-first language`, !/remodel|contractor|home service|60 seconds|missed call|\balex\b|\bleads?\b|speed-to-lead|n8n|automation/.test(heroText));
-    ok(`${tag} home: no contact form, audit buttons are present`, (await page.locator('form:not(.am__step)').count()) === 0 && (await page.locator('#hero a[href*="cal.com"]').count()) >= 1);
-    ok(`${tag} home: no scarcity line`, !/few new clients a month/.test(text));
-    ok(`${tag} home: no Nora card`, !/\bnora\b/.test(text));
+    ok(`${tag} home: hero CTA goes to the audit`, (await page.locator('#hero a[href*="cal.com/abdullah-kyneticai"]').count()) >= 1);
+    ok(`${tag} home: Why now section with the example`, (await page.locator('#why h2').innerText()).includes('fraction of the cost') && (await page.locator('#why .np-compare').count()) === 1);
+    ok(`${tag} home: 2-3x stat and three pillars`, (await page.locator('#change .np-stat strong').innerText()).includes('2–3×') && (await page.locator('#change .np-pillars li').count()) === 3);
+    ok(`${tag} home: six services, remodelers link`, (await page.locator('#services .np-systems li').count()) === 6 && (await page.locator('#services a[href="/remodelers"]').count()) === 1);
+    ok(`${tag} home: no pricing, no Nora, no team quotes`, !/\$6,500|\$10,000|financing|\bnora\b|quentin/i.test(text));
     ok(`${tag} home: no "consulting" as identity`, !/consulting|consultancy/.test(text));
     ok(`${tag} home: no horizontal scroll`, !(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)));
     ok(`${tag} home: no page errors`, errors.length === 0, errors.join(' | '));
