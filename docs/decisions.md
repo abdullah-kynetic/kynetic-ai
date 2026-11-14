@@ -225,3 +225,7 @@ All model calls go through `server/llm`, which checks the switch, the chosen mod
 ## 2026-11-13 — phase 6 defaults (no new decision needed from Abdullah)
 
 The portal owns consent, quiet hours and DNC; every follow-up passes the outbound gate at send time. Sequences run in the portal worker; n8n only brings Alex's results in. Kynetic admin approves client edits to automations. Cal.com sync is off by default and off in stub mode. n8n workflow changes live in the repo as drafts until Abdullah says yes.
+
+## 2026-11-14 — website home is the short static page; Score and FAQ removed
+
+Abdullah chose the simple jtsolutions-style home: hero, why now, what changes, services map, how it works (audit, build, run), final call. The free AI Score section and the FAQ were removed after trial. The site serves every industry. It went live on www.kyneticai.com the same day at his yes. Back end for any future Score stays parked (KI-042).
