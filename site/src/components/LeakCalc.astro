@@ -1,0 +1,16 @@
+---
+// Worked lost-revenue example. Example inputs only, never client results. Script: src/scripts/leak-calc.ts
+interface Props { title: string }
+const { title } = Astro.props;
+---
+<div class="kn-calc" data-leak-calc>
+  <p class="kn-calc__title">{title}</p>
+  <div class="kn-calc__row">
+    <label class="kn-calc__f"><span>Missed leads a month</span><input type="number" inputmode="numeric" min="0" step="1" value="40" data-leak="leads" /></label>
+    <label class="kn-calc__f"><span>Close rate (%)</span><input type="number" inputmode="decimal" min="0" max="100" step="1" value="20" data-leak="rate" /></label>
+    <label class="kn-calc__f"><span>Average job ($)</span><input type="number" inputmode="numeric" min="0" step="500" value="35000" data-leak="job" /></label>
+  </div>
+  <p class="kn-calc__formula">Missed leads &times; close rate &times; average job</p>
+  <p class="kn-calc__result"><strong data-leak-out aria-live="polite">$280,000</strong> a month in revenue leaking</p>
+  <p class="kn-calc__note">Example numbers only, not real results. Change them to yours.</p>
+</div>

@@ -1,7 +1,161 @@
 ---
-import Page from '../layouts/Page.astro';
-import head from '../snapshot/index.head.html?raw';
-import css from '../snapshot/index.css?raw';
-import body from '../snapshot/index.body.html?raw';
+// Home page. Plain static HTML in the same simple flow as the niche pages: hero, why now, what changes,
+// services, how it works, final call to action. Every "audit" link points at the Cal page; audit-modal.ts turns
+// each of them into the application overlay (without JS they still go to Cal).
+import { transformSync } from 'esbuild';
+import tokens_raw from '../styles/tokens.css?raw';
+import niche_raw from '../styles/niche.css?raw';
+import home_raw from '../styles/home.css?raw';
+import extras_raw from '../styles/home-extras.css?raw';
+import motion_raw from '../styles/motion.css?raw';
+// One minified inline stylesheet: no extra request, nothing render-blocking beyond the page itself.
+const css = transformSync([tokens_raw, niche_raw, home_raw, extras_raw, motion_raw].join('\n'), { loader: 'css', minify: true }).code;
+import SiteNav from '../components/SiteNav.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import servicesMap from '../components/services-map.html?raw';
+
+const CAL = 'https://cal.com/abdullah-kyneticai/kynetic-ai-discovery-call';
+const title = 'Kynetic AI | Your AI Growth Partner';
+const description = 'Kynetic AI finds where your business loses time and money, then designs, builds and runs the AI that fixes it. Start with a free AI audit.';
+const url = new URL('/', Astro.site).href;
+const ogImage = new URL('/brand/og-image-espresso.png', Astro.site).href;
+
 ---
-<Page head={head} css={css} body={body} />
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={url} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#faf8f5" />
+    <link rel="preload" href="/fonts/cormorant-garamond-var.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin />
+    <style is:inline set:html={css} />
+  </head>
+  <body class="np">
+    <a class="kn-skip" href={CAL}>Skip to the audit request</a>
+    <SiteNav cal={CAL} />
+
+    <main>
+      <section class="np-hero np-hero--home" id="hero" data-motion="hero">
+        <div class="np-wrap np-hero__inner">
+          <p class="np-badge">AI growth partner</p>
+          <h1>More Revenue, Less Busywork, and a Business That Runs Smarter.</h1>
+          <p class="np-lede">We find where your business loses time and money, then design, build and run the AI that fixes it, from your first audit to a full AI transformation of how you run.</p>
+          <div class="np-cta">
+            <a class="np-btn np-btn--primary" href={CAL}>Book your free AI Audit</a>
+            <p class="np-cta__note">A few quick questions, then choose a time. The call is free.</p>
+          </div>
+          <ul class="np-assure">
+            <li>Free 30 minute AI Audit</li>
+            <li>Built, run and monitored for you</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="np-section np-alt" id="why" data-motion="reveal">
+        <div class="np-wrap np-why">
+          <div>
+            <p class="np-badge">Why now</p>
+            <h2>Smarter systems.<br /><em>A fraction of the cost.</em></h2>
+            <p>AI has made it far faster and cheaper to build software that fits how a business actually runs. Work that once took an agency months and a large budget now takes a small team a few weeks.</p>
+            <p>Most businesses have not caught up. They still chase leads by hand, let quotes go quiet, and pay good people to retype the same details into three different tools.</p>
+          </div>
+          <div class="np-compare" role="group" aria-label="An example">
+            <p class="np-compare__label">An example</p>
+            <p class="np-compare__big"><strong>$280,000</strong><span>a month</span></p>
+            <h3>A business that misses 40 inquiries a month</h3>
+            <p class="np-compare__text">With a 20% close rate and a $35,000 average job, slow replies can leave this much work on the table every month.</p>
+            <div class="np-bars" aria-label="Example reply time">
+              <div class="np-bars__row"><span><b>Today</b><i>Replies when someone is free</i></span><div class="np-bars__track"><div class="np-bars__fill np-bars__fill--old" style="width:100%"></div></div></div>
+              <div class="np-bars__row"><span><b>With a speed-to-lead system</b><i>Under 60 seconds</i></span><div class="np-bars__track"><div class="np-bars__fill" style="width:9%"></div></div></div>
+            </div>
+            <p class="np-compare__note">Example numbers only, not real results.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="np-section" id="change" data-motion="reveal">
+        <div class="np-wrap">
+          <header class="np-head">
+            <p class="np-badge">What changes for you</p>
+            <h2>Your best people get their time back.</h2>
+            <p class="np-lede">We take the repetitive work off their plate, then build AI into the way they already work.</p>
+          </header>
+          <div class="np-change">
+            <div class="np-stat">
+              <strong>2–3×</strong>
+              <b>as productive</b>
+              <p>The lift your best people get once the busywork is handled and AI tools sit inside their day.</p>
+            </div>
+            <ul class="np-pillars">
+              <li><span class="np-pillars__n">01</span><h3>Yours to keep</h3><p>The systems, data and accounts sit in your business's name, so what we build adds to what the company is worth.</p></li>
+              <li><span class="np-pillars__n">02</span><h3>Fits your team</h3><p>We start from how your team already does the job, so people use the tools instead of working around them.</p></li>
+              <li><span class="np-pillars__n">03</span><h3>One connected operation</h3><p>Leads, quotes, scheduling and reporting live in one place instead of across spreadsheets, inboxes and apps that never talk.</p></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="np-section np-alt" id="services" data-motion="reveal">
+        <div class="np-wrap">
+          <header class="np-head">
+            <p class="np-badge">Services</p>
+            <h2>Start with the biggest opportunity.</h2>
+            <p class="np-lede">The audit shows where AI pays back first. Every system is scoped on your audit, and nothing is switched on until you agree.</p>
+          </header>
+          <Fragment set:html={servicesMap} />
+        </div>
+      </section>
+
+      <section class="np-section" id="how" data-motion="reveal">
+        <div class="np-wrap">
+          <header class="np-head">
+            <p class="np-badge">How it works</p>
+            <h2>Audit, build, run.</h2>
+            <p class="np-lede">Three steps, in order. You decide at each one whether to go on.</p>
+          </header>
+          <ul class="np-pillars">
+            <li><span class="np-pillars__n">01</span><h3>Audit</h3><p>A free 30 minute call. We go through how your business runs and where time and money slip away. You leave with a list of fixes and what each is worth, whether or not you work with us.</p></li>
+            <li><span class="np-pillars__n">02</span><h3>Build</h3><p>We design and build the system that pays back first, scoped with you. Nothing is switched on until you agree.</p></li>
+            <li><span class="np-pillars__n">03</span><h3>Run</h3><p>We run and monitor it for you, and your client portal shows what each system produces.</p></li>
+          </ul>
+          <p class="np-how__cta"><a class="np-btn np-btn--primary" href={CAL}>Book your free AI Audit</a></p>
+        </div>
+      </section>
+
+      <section class="np-band" id="book" data-motion="reveal">
+        <div class="np-wrap np-wrap--narrow np-band__inner">
+          <h2>Let's find where AI pays off first.</h2>
+          <p>We look at how your business runs today, what it costs you, and where AI is worth building.</p>
+          <a class="np-btn np-btn--primary" href={CAL}>Book your free AI Audit</a>
+          <p class="np-band__cap">Prefer to reach us directly? <a href="tel:+19084779490">(908) 477-9490</a> or <a href="mailto:abdullah@kyneticai.com">abdullah@kyneticai.com</a></p>
+        </div>
+      </section>
+    </main>
+
+    <SiteFooter />
+    <script>
+      import { initMapPop } from '../scripts/map-pop';
+      import { initHomeMotion } from '../scripts/home-motion';
+      initMapPop();
+      initHomeMotion();
+      import { initAuditLazy } from '../scripts/audit-lazy';
+      initAuditLazy();
+    </script>
+  </body>
+</html>

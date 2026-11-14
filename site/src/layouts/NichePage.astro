@@ -1,14 +1,19 @@
 ---
 // Reusable niche landing page. All copy comes from a src/niches/<slug>.ts file (see _types.ts).
-// Static HTML and CSS only, no client script, so it stays fast on mobile.
+// Static HTML and CSS, plus two tiny scripts (worked example, pre-call qualifier). Unfinished items render only when PUBLIC_SHOW_DRAFTS=1.
 import tokens from '../styles/tokens.css?raw';
 import niche_css from '../styles/niche.css?raw';
+import calc_css from '../styles/calc.css?raw';
+import LeakCalc from '../components/LeakCalc.astro';
 import type { Niche } from '../niches/_types';
 
 interface Props { niche: Niche }
 const { niche: n } = Astro.props;
 // Existing Cal booking link used across the site.
 const CAL = 'https://cal.com/abdullah-kyneticai/kynetic-ai-discovery-call';
+// Draft items (TODO notes, video placeholder, unapproved guarantee, proof placeholders) are removed from the page unless this build flag is on.
+const showDrafts = import.meta.env.PUBLIC_SHOW_DRAFTS === '1';
+const BOOK = '#book';
 const url = new URL(`/${n.slug}`, Astro.site).href;
 const ogImage = new URL('/brand/og-image-light.png', Astro.site).href;
 ---
@@ -32,10 +37,10 @@ const ogImage = new URL('/brand/og-image-light.png', Astro.site).href;
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#faf8f5" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="preload" href="/fonts/cormorant-garamond-var.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin />
     <style is:inline set:html={tokens} />
+    <style is:inline set:html={calc_css} />
     <style is:inline set:html={niche_css} />
   </head>
   <body class="np">
@@ -47,7 +52,7 @@ const ogImage = new URL('/brand/og-image-light.png', Astro.site).href;
           <a href="#how">How it works</a>
           <a href="#portal">Portal</a>
         </nav>
-        <a class="np-btn np-btn--primary np-btn--sm" href={CAL}>Free audit</a>
+        <a class="np-btn np-btn--primary np-btn--sm" href={BOOK}>Free audit</a>
       </div>
     </header>
 
@@ -58,22 +63,29 @@ const ogImage = new URL('/brand/og-image-light.png', Astro.site).href;
           <h1>{n.hero.headline}</h1>
           <p class="np-lede">{n.hero.sub}</p>
           <div class="np-cta">
-            <a class="np-btn np-btn--primary" href={CAL}>{n.hero.ctaLabel}</a>
+            <a class="np-btn np-btn--primary" href={BOOK}>{n.hero.ctaLabel}</a>
             {n.hero.ctaNote && <p class="np-cta__note">{n.hero.ctaNote}</p>}
+            {n.hero.termsLink && <p class="np-cta__note"><a href="#guarantee">{n.hero.termsLink}</a></p>}
           </div>
         </div>
       </section>
 
-      <section class="np-section np-video" aria-label={n.video.title}>
-        <div class="np-wrap np-wrap--narrow">
-          <div class="np-video__frame">
-            {n.video.embedUrl
-              ? <iframe src={n.video.embedUrl} title={n.video.title} loading="lazy" allow="fullscreen; picture-in-picture" allowfullscreen></iframe>
-              : <div class="np-video__ph"><span class="np-play" aria-hidden="true"></span><p>{n.video.placeholder}</p></div>}
-          </div>
-          {!n.video.embedUrl && <p class="np-todo">{n.video.todo}</p>}
-        </div>
+      <section class="np-section" aria-label={n.example.title}>
+        <div class="np-wrap np-wrap--narrow"><LeakCalc title={n.example.title} /></div>
       </section>
+
+      {(n.video.embedUrl || showDrafts) && (
+        <section class="np-section np-video" aria-label={n.video.title}>
+          <div class="np-wrap np-wrap--narrow">
+            <div class="np-video__frame">
+              {n.video.embedUrl
+                ? <iframe src={n.video.embedUrl} title={n.video.title} loading="lazy" allow="fullscreen; picture-in-picture" allowfullscreen></iframe>
+                : <div class="np-video__ph"><span class="np-play" aria-hidden="true"></span><p>{n.video.placeholder}</p></div>}
+            </div>
+            {!n.video.embedUrl && <p class="np-pending">{n.video.todo}</p>}
+          </div>
+        </section>
+      )}
 
       <section class="np-section np-alt" id="services">
         <div class="np-wrap">
@@ -85,9 +97,10 @@ const ogImage = new URL('/brand/og-image-light.png', Astro.site).href;
           <article class="np-core">
             <div class="np-core__copy">
               <div class="np-core__top">
-                <h3>{n.services.core.name}</h3>
+                <h3>{n.services.core.title}</h3>
                 <span class="np-tag np-tag--live">{n.services.core.badge}</span>
               </div>
+              <p class="np-core__name">{n.services.core.name}</p>
               <p>{n.services.core.desc}</p>
               <ul>{n.services.core.points.map((p) => <li>{p}</li>)}</ul>
             </div>
@@ -101,7 +114,6 @@ const ogImage = new URL('/brand/og-image-light.png', Astro.site).href;
                   </li>
                 ))}
               </ol>
-              <p class="np-demo__note">{n.services.core.demo.note}</p>
             </div>
           </article>
           <h3 class="np-subtitle">{n.services.addonsTitle}</h3>
@@ -110,12 +122,15 @@ const ogImage = new URL('/brand/og-image-light.png', Astro.site).href;
             {n.services.addons.map((a) => (
               <li>
                 <span class="np-tag">{a.badge}</span>
-                <strong>{a.name}</strong>
+                <strong>{a.outcome}</strong>
+                <span class="np-addons__sys">{a.name}</span>
                 <span>{a.desc}</span>
+                <span class="np-addons__price">{a.price}</span>
               </li>
             ))}
           </ul>
-          <p class="np-todo">{n.services.todo}</p>
+          <p class="np-own">{n.services.own}</p>
+          {showDrafts && <p class="np-pending">{n.services.todo}</p>}
         </div>
       </section>
 
@@ -150,7 +165,7 @@ const ogImage = new URL('/brand/og-image-light.png', Astro.site).href;
             <div class="np-mock__row"><span>{n.services.core.name}</span><b class="np-on">On</b></div>
             {n.services.addons.map((a) => <div class="np-mock__row"><span>{a.name}</span><b class="np-off">Off</b></div>)}
             <div class="np-mock__stats">
-              <div><small>Booked estimates</small><strong>&ndash;</strong></div>
+              <div><small>Booked appointments</small><strong>&ndash;</strong></div>
               <div><small>Lead response time</small><strong>&ndash;</strong></div>
             </div>
             <p class="np-mock__note">{n.portal.mockNote}</p>
@@ -158,17 +173,20 @@ const ogImage = new URL('/brand/og-image-light.png', Astro.site).href;
         </div>
       </section>
 
-      <section class="np-section" id="guarantee">
-        <div class="np-wrap np-wrap--narrow">
-          <div class="np-guarantee">
-            <p class="np-badge">{n.guarantee.eyebrow}</p>
-            <h2>{n.guarantee.title}</h2>
-            <p class="np-guarantee__draft">{n.guarantee.draftWording}</p>
-            <p class="np-guarantee__cond">{n.guarantee.condition}</p>
-            <p class="np-todo">{n.guarantee.todo}</p>
+      {(n.guarantee.approved || showDrafts) && (
+        <section class="np-section" id="guarantee">
+          <div class="np-wrap np-wrap--narrow">
+            <div class="np-guarantee">
+              <p class="np-badge">{n.guarantee.eyebrow}</p>
+              <h2>{n.guarantee.title}</h2>
+              <p class="np-guarantee__wording">{n.guarantee.wording}</p>
+              <h3 class="np-guarantee__terms-title">{n.guarantee.termsTitle}</h3>
+              <ul class="np-guarantee__terms">{n.guarantee.terms.map((t) => <li>{t}</li>)}</ul>
+              {showDrafts && <p class="np-pending">{n.guarantee.todo}</p>}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section class="np-section np-alt" id="results">
         <div class="np-wrap">
@@ -176,16 +194,45 @@ const ogImage = new URL('/brand/og-image-light.png', Astro.site).href;
             <p class="np-badge">{n.proof.eyebrow}</p>
             <h2>{n.proof.title}</h2>
           </header>
-          <ul class="np-proof">{n.proof.placeholders.map((p) => <li>{p}</li>)}</ul>
-          <p class="np-todo">{n.proof.todo}</p>
+          {n.proof.cases.length > 0
+            ? <ul class="np-cases">{n.proof.cases.map((c) => (
+                <li class="np-case">
+                  <h3>{c.client}</h3>
+                  <p class="np-case__who">{c.contact}</p>
+                  <p><strong>What we built</strong><br />{c.built}</p>
+                  <p><strong>Result</strong><br />{c.result}</p>
+                </li>
+              ))}</ul>
+            : <p class="np-honest">{n.proof.emptyNote}</p>}
+          {showDrafts && n.proof.cases.length === 0 && <ul class="np-proof">{n.proof.placeholders.map((p) => <li>{p}</li>)}</ul>}
+          {showDrafts && <p class="np-pending">{n.proof.todo}</p>}
         </div>
       </section>
 
-      <section class="np-band">
+      <section class="np-band" id="book">
         <div class="np-wrap np-wrap--narrow np-band__inner">
           <h2>{n.finalCta.title}</h2>
           <p>{n.finalCta.sub}</p>
-          <a class="np-btn np-btn--primary" href={CAL}>{n.finalCta.ctaLabel}</a>
+          <form class="np-qual" data-qualifier action={CAL} method="get">
+            <p class="np-qual__intro">{n.finalCta.steps}</p>
+            <label>Company name<input type="text" name="company" required autocomplete="organization" /></label>
+            <label>Monthly revenue
+              <select name="revenue">
+                <option value="">Select a range</option>
+                <option>Under $50K</option><option>$50K to $100K</option><option>$100K to $250K</option><option>$250K to $500K</option><option>Over $500K</option>
+              </select>
+            </label>
+            <label>New leads a month
+              <select name="leads">
+                <option value="">Select a range</option>
+                <option>Under 20</option><option>20 to 50</option><option>50 to 100</option><option>Over 100</option>
+              </select>
+            </label>
+            <label>Where do leads slip away today?<textarea name="slip" rows="3" maxlength="500"></textarea></label>
+            <p class="np-qual__hint">Please do not include sensitive details. These answers go into your booking notes so we can prepare.</p>
+            <button class="np-btn np-btn--primary" type="submit">{n.finalCta.ctaLabel}</button>
+          </form>
+          {n.finalCta.capacity && <p class="np-band__cap">{n.finalCta.capacity}</p>}
         </div>
       </section>
     </main>
@@ -197,5 +244,11 @@ const ogImage = new URL('/brand/og-image-light.png', Astro.site).href;
         <nav aria-label="Footer"><a href="/">Home</a><a href="/privacy">Privacy Policy</a><a href="/terms">Terms &amp; Conditions</a></nav>
       </div>
     </footer>
+  <script>
+    import { initLeakCalc } from '../scripts/leak-calc';
+    import { initQualifier } from '../scripts/qualifier';
+    initLeakCalc();
+    initQualifier();
+  </script>
   </body>
 </html>

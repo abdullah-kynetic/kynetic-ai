@@ -1,7 +1,5 @@
 ---
-import Page from '../layouts/Page.astro';
-import head from '../snapshot/privacy.head.html?raw';
-import css from '../snapshot/privacy.css?raw';
-import body from '../snapshot/privacy.body.html?raw';
+import LegalPage from '../layouts/LegalPage.astro';
+import body from '../content/privacy.html?raw';
 ---
-<Page head={head} css={css} body={body} />
+<LegalPage title="Privacy Policy | Kynetic AI" description="Privacy Policy for Kynetic AI, your AI growth partner." path="/privacy/" body={body} />

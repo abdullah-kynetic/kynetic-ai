@@ -66,7 +66,7 @@ function calc() {
   const biz = str('biz') || 'you';
   $('au-talk').textContent = `"You're getting ${leads} leads a month, reaching about ${reached}, booking ${booked} and closing about ${closed}. ` +
     `Getting your booking rate from ${num('book')}% to ${num('aTarget')}% alone is about ${r1(coreJobs)} more jobs, so ${biz === 'you' ? "you're" : biz + ' is'} losing about ${usd(monthlyValue)} a month in profit right now. ` +
-    `We'd fix that for ${usd(totMonthly)} a month, about ${Math.round(feePct * 100)}% of what it recovers, and if you're not live with booked appointments in 14 days, that month is free."`;
+    `We'd fix that for ${usd(totMonthly)} a month, about ${Math.round(feePct * 100)}% of what it recovers, and our offer is 20% more booked appointments than last month in 30 days, or we work free until we do."`;
 
   $('au-solutions').innerHTML = `<tr><th>Solution</th><th class="n">Jobs</th><th class="n">Profit</th><th class="n">Setup / one-time</th><th class="n">Monthly</th></tr>` +
     rows.map((r) => `<tr class="${r.rec ? '' : 'skip'}"><td><strong>${r.name}</strong><span class="tag ${r.rec ? 'yes' : 'no'}">${r.rec ? 'Recommend' : 'Skip'}</span><br>${esc(r.why)}</td>` +
@@ -88,7 +88,7 @@ function summary() {
     '', 'Solutions:', ...rows.map((r) => `- ${r.rec ? '[x]' : '[ ]'} ${r.name}: ${usd(r.value)}${r.once ? ' once' : '/mo'} value · setup ${usd(r.setup)} · ${usd(r.monthly)}/mo`),
     '', `Recovered profit: ${usd(monthlyValue)}/mo`, `Price: ${usd(totSetup)} setup + ${usd(totMonthly)}/mo`, '', 'Talk track:', $('au-talk').textContent || '',
     '', 'Pain notes:', `- 2 more jobs: ${str('pain2jobs')}`, `- Cost of bad follow-up: ${str('painCost')}`, `- Tried before: ${str('painTried')}`,
-    '', 'Guarantee: live in 14 days with booked appointments, or that month\'s fee is waived.'];
+    '', 'Guarantee: we book 20% more appointments than last month in 30 days, or we work free until we do.'];
   return L.join('\n');
 }
 
