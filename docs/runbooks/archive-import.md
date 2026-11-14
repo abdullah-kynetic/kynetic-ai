@@ -24,7 +24,7 @@ docker run --rm --network portal-new_default --env-file /opt/portal-new/runtime.
   'cd /app && DATABASE_URL_SEED="postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@postgres:5432/$POSTGRES_DB" bun src/server/archive/import-cli.ts /roadmap'
 ```
 
-`<tag>` is the first 7 characters of the deployed commit. It prints one JSON line. Expected counts today: 120 notes, 63 tasks, 5 attachments, 5 records. The `POSTGRES_USER` connection bypasses row-level security, the same way `seed` does.
+`<tag>` is the first 7 characters of the deployed commit. It prints one JSON line. Expected counts after the 2026-11-14 trim: 48 notes (the live database keeps the 120 already imported, because the importer only adds or updates), 63 tasks, 5 attachments, 5 records. The `POSTGRES_USER` connection bypasses row-level security, the same way `seed` does.
 3. Check: `/admin/archive/notes` lists notes when signed in as staff; a client user gets 403.
 
 ## Attachments
