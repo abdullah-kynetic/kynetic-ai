@@ -4,7 +4,7 @@ A pointer, not a second scoreboard. Twenty is the business source of truth. GitH
 
 ## Live probe (2026-11-13 01:15 UTC, 2026-11-12 PST)
 
-Anonymous requests to portal.kyneticai.com: `/api/health` HTTP 200 (`database: ok`, `queue: not_configured`), `/admin` HTTP 401, `/dashboard` HTTP 307 to `/sign-in`. Sign-in is enforced. The older lines below that say live is `416b1656`, `df8b61a6` or `350bf673`, or that `/admin` returned 200, are historical. Live is `main` `58405247` (deployed 2026-11-12); `main` is ahead of it and not deployed. Deploys still need Abdullah's yes.
+Anonymous requests to portal.kyneticai.com: `/api/health` HTTP 200 (`database: ok`, `queue: not_configured`), `/admin` HTTP 401, `/dashboard` HTTP 307 to `/sign-in`. Sign-in is enforced. The older lines below that say live is `416b1656`, `df8b61a6` or `350bf673`, or that `/admin` returned 200, are historical. Live is `main` `8e771a8e64de98931ef3a419653254fb9e122929` (deployed 2026-11-14 UTC, migration `1090_staff_archive`, archive loaded: 120 notes, 63 tasks, 5 attachments, 5 records); see `docs/progress.md`. Deploys still need Abdullah's yes.
 
 ## Source-of-truth change (2026-11-12)
 
