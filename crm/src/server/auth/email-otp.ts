@@ -27,11 +27,21 @@ export type EmailOtpDeps = {
 };
 
 export type EmailOtpVerifyResult =
-  | { ok: true; next: '/dashboard' | '/sign-up/profile'; setCookie: string }
+  | {
+      ok: true;
+      next: '/admin' | '/dashboard' | '/sign-up/profile';
+      setCookie: string;
+    }
   | { ok: false; message: string };
 
-const sent = (): { ok: true; message: string } => ({ ok: true, message: EMAIL_CODE_SENT_MESSAGE });
-const failed = (): EmailOtpVerifyResult => ({ ok: false, message: EMAIL_CODE_FAILED_MESSAGE });
+const sent = (): { ok: true; message: string } => ({
+  ok: true,
+  message: EMAIL_CODE_SENT_MESSAGE
+});
+const failed = (): EmailOtpVerifyResult => ({
+  ok: false,
+  message: EMAIL_CODE_FAILED_MESSAGE
+});
 
 function emailHash(email: string): string {
   return createHash('sha256').update(email).digest('hex');
@@ -102,7 +112,9 @@ export async function requestEmailOtp(
     await deps.sendCode({ email: normalized, code });
   } catch {
     await deps.db.execute(sql`delete from verifications where identifier = ${identifier}`);
-    await auditOtp(deps.db, normalized, 'auth.otp_suppressed', { reason: 'send_failed' });
+    await auditOtp(deps.db, normalized, 'auth.otp_suppressed', {
+      reason: 'send_failed'
+    });
     return sent();
   }
 
@@ -165,7 +177,9 @@ export async function verifyEmailOtp(
   const normalized = email.trim().toLowerCase();
   const consumed = await consumeCode(deps, normalized, code);
   if (!consumed.ok) {
-    await auditOtp(deps.db, normalized, 'auth.otp_failed', { reason: consumed.reason });
+    await auditOtp(deps.db, normalized, 'auth.otp_failed', {
+      reason: consumed.reason
+    });
     return failed();
   }
 
@@ -191,7 +205,9 @@ export async function verifyEmailOtp(
         { method: 'email-otp' }
       );
     } else if (!user.emailVerified) {
-      user = await ctx.internalAdapter.updateUser(user.id, { emailVerified: true });
+      user = await ctx.internalAdapter.updateUser(user.id, {
+        emailVerified: true
+      });
     }
     await deps.db.execute(sql`select accept_pending_invitations(${user.id}::uuid)`);
     const session = await ctx.internalAdapter.createSession(user.id);
@@ -210,9 +226,17 @@ export async function verifyEmailOtp(
     );
     await auditOtp(deps.db, normalized, 'auth.otp_verified', {});
     const name = typeof user.name === 'string' ? user.name.trim() : '';
-    return { ok: true, next: name.length > 0 ? '/dashboard' : '/sign-up/profile', setCookie };
+    // Kynetic staff land on the admin side; everyone else on their own workspace.
+    const home = gate.staff ? '/admin' : '/dashboard';
+    return {
+      ok: true,
+      next: name.length > 0 ? home : '/sign-up/profile',
+      setCookie
+    };
   } catch {
-    await auditOtp(deps.db, normalized, 'auth.otp_failed', { reason: 'rejected' });
+    await auditOtp(deps.db, normalized, 'auth.otp_failed', {
+      reason: 'rejected'
+    });
     return failed();
   }
 }

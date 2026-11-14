@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 export default async function ProfilePage() {
   try {
     const user = await requireUser(await headers(), { allowPendingSecondFactor: true });
-    if (user.name?.trim()) redirect('/dashboard');
+    if (user.name?.trim()) redirect('/');
   } catch (err) {
     if (err instanceof UnauthenticatedError) redirect('/sign-in');
     throw err;
