@@ -14,12 +14,6 @@ const description = 'Kynetic AI finds where your business loses time and money, 
 const url = new URL('/', Astro.site).href;
 const ogImage = new URL('/brand/og-image-espresso.png', Astro.site).href;
 
-const faqs = [
-  { q: 'What does the free AI Audit cover?', a: 'A 30 minute call where we walk through how your whole business runs, from operations and admin to sales, customer service and management. You leave with a list of where time and money slip away, what each costs you, and where AI pays back first, whether or not you work with us.' },
-  { q: 'What results can I expect, and how fast?', a: 'The timeline for your first system is agreed on your audit. We build, run and monitor it for you, and your client portal shows what each system produces. Results depend on your business, so we measure them with you rather than promise a number.' },
-  { q: 'Will this add work for my team?', a: 'No. The point is to take work off your team.' },
-  { q: 'Who owns what you build?', a: 'You do. The systems, data and accounts sit in your business, so what we build adds to what the company is worth.' },
-];
 ---
 <!doctype html>
 <html lang="en">
@@ -59,7 +53,6 @@ const faqs = [
           <a href="#why">Why now</a>
           <a href="#change">What changes</a>
           <a href="#services">Services</a>
-          <a href="#faq">FAQ</a>
         </nav>
         <a class="np-btn np-btn--primary np-btn--sm" href={CAL}>Book an audit</a>
       </div>
@@ -79,6 +72,15 @@ const faqs = [
             <li>Free 30 minute AI Audit</li>
             <li>Built, run and monitored for you</li>
           </ul>
+        </div>
+      </section>
+
+      <section class="np-band" id="book" data-motion="reveal">
+        <div class="np-wrap np-wrap--narrow np-band__inner">
+          <h2>Let's find where AI pays off first.</h2>
+          <p>We look at how your business runs today, what it costs you, and where AI is worth building.</p>
+          <a class="np-btn np-btn--primary" href={CAL}>Book your free AI Audit</a>
+          <p class="np-band__cap">Prefer to reach us directly? <a href="tel:+19084779490">(908) 477-9490</a> or <a href="mailto:abdullah@kyneticai.com">abdullah@kyneticai.com</a></p>
         </div>
       </section>
 
@@ -137,7 +139,7 @@ const faqs = [
         </div>
       </section>
 
-      <section class="np-section np-alt" id="how" data-motion="reveal">
+      <section class="np-section" id="how" data-motion="reveal">
         <div class="np-wrap">
           <header class="np-head">
             <p class="np-badge">How it works</p>
@@ -150,27 +152,6 @@ const faqs = [
             <li><span class="np-pillars__n">03</span><h3>Run</h3><p>We run and monitor it for you, and your client portal shows what each system produces.</p></li>
           </ul>
           <p class="np-how__cta"><a class="np-btn np-btn--primary" href={CAL}>Book your free AI Audit</a></p>
-        </div>
-      </section>
-
-      <section class="np-section" id="faq" data-motion="reveal">
-        <div class="np-wrap">
-          <header class="np-head">
-            <p class="np-badge">FAQs</p>
-            <h2>Straight answers.</h2>
-          </header>
-          <div class="np-faq">
-            {faqs.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}
-          </div>
-        </div>
-      </section>
-
-      <section class="np-band" id="book" data-motion="reveal">
-        <div class="np-wrap np-wrap--narrow np-band__inner">
-          <h2>Let's find where AI pays off first.</h2>
-          <p>We look at how your business runs today, what it costs you, and where AI is worth building.</p>
-          <a class="np-btn np-btn--primary" href={CAL}>Book your free AI Audit</a>
-          <p class="np-band__cap">Prefer to reach us directly? <a href="tel:+19084779490">(908) 477-9490</a> or <a href="mailto:abdullah@kyneticai.com">abdullah@kyneticai.com</a></p>
         </div>
       </section>
     </main>

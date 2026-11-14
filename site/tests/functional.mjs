@@ -27,10 +27,8 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
 {
   const { ctx, page, errors, external } = await open(1440);
   // new home: simple static flow
-  ok('home: seven main sections in order', JSON.stringify(await page.locator('main > section').evaluateAll((s) => s.map((x) => x.id))) === JSON.stringify(['hero', 'why', 'change', 'services', 'how', 'faq', 'book']));
+  ok('home: six main sections in order', JSON.stringify(await page.locator('main > section').evaluateAll((s) => s.map((x) => x.id))) === JSON.stringify(['hero', 'book', 'why', 'change', 'services', 'how']));
   ok('home: nav links point at real sections', await page.locator('.np-nav__links a').evaluateAll((as) => as.every((a) => document.querySelector(a.getAttribute('href')))));
-  const faqItems = page.locator('#faq details');
-  ok('FAQ: 4 questions that open and close', (await faqItems.count()) === 4 && await (async () => { await faqItems.first().locator('summary').click(); const o = await faqItems.first().evaluate((d) => d.open); await faqItems.first().locator('summary').click(); return o && !(await faqItems.first().evaluate((d) => d.open)); })());
   // audit overlay validation
   let reqs = 0; page.on('request', (r) => { if (r.method() === 'POST') reqs++; });
   await page.locator('#hero a[href*="cal.com"]').first().click(); await page.waitForTimeout(500);
