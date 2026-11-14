@@ -3,7 +3,9 @@
 import NichePage from '../layouts/NichePage.astro';
 import type { Niche } from '../niches/_types';
 
+// Niche pages are hidden for now: nothing is built unless INCLUDE_NICHES=1 (same switch as the internal audit tool).
 export function getStaticPaths() {
+  if (process.env.INCLUDE_NICHES !== '1') return [];
   const mods = import.meta.glob<{ default: Niche }>('../niches/[!_]*.ts', { eager: true });
   return Object.values(mods).map((m) => ({ params: { niche: m.default.slug }, props: { niche: m.default } }));
 }

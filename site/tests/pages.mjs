@@ -30,7 +30,7 @@ for (const width of [1440, 390]) {
     ok(`${tag} home: hero CTA goes to the audit`, (await page.locator('#hero a[href*="cal.com/abdullah-kyneticai"]').count()) >= 1);
     ok(`${tag} home: Why now section with the example`, (await page.locator('#why h2').innerText()).includes('fraction of the cost') && (await page.locator('#why .np-compare').count()) === 1);
     ok(`${tag} home: 2-3x stat and three pillars`, (await page.locator('#change .np-stat strong').innerText()).includes('2–3×') && (await page.locator('#change .np-pillars li').count()) === 3);
-    ok(`${tag} home: six-system map with six hover cards, remodelers link in the footer`, (await page.locator('#services .kn-map .m-node').count()) === 6 && (await page.locator('#services .kn-pop').count()) === 6 && (await page.locator('footer a[href="/remodelers"]').count()) === 1);
+    ok(`${tag} home: six-system map with six hover cards, no Remodelers link in the footer`, (await page.locator('#services .kn-map .m-node').count()) === 6 && (await page.locator('#services .kn-pop').count()) === 6 && (await page.locator('footer a[href="/remodelers"]').count()) === 0);
     ok(`${tag} home: no pricing, no Nora, no team quotes`, !/\$6,500|\$10,000|financing|\bnora\b|quentin/i.test(text));
     ok(`${tag} home: How it works has three steps and no Industries or Score section`, (await page.locator('#how .np-pillars li').count()) === 3 && (await page.locator('#industries, #score').count()) === 0);
     ok(`${tag} home: no "consulting" as identity`, !/consulting|consultancy/.test(text));
@@ -38,8 +38,8 @@ for (const width of [1440, 390]) {
     ok(`${tag} home: no page errors`, errors.length === 0, errors.join(' | '));
     await ctx.close();
   }
-  // Remodelers
-  {
+  // Remodelers (hidden: only checked when the page is built with INCLUDE_NICHES=1)
+  if (process.env.INCLUDE_NICHES === '1') {
     const { ctx, page, errors } = await open('/remodelers', width);
     ok(`${tag} remodelers: label and outcome H1`, (await page.locator('.np-hero .np-badge').textContent()).trim() === 'Done-for-you AI System for remodelers' && (await page.locator('h1').count()) === 1 && (await page.locator('h1').innerText()).trim() === 'We book remodelers 20% more appointments than last month in 30 days, or we work free until we do.');
     ok(`${tag} remodelers: noindex while draft`, (await page.locator('meta[name="robots"]').getAttribute('content')) === 'noindex, nofollow');
@@ -57,7 +57,7 @@ for (const width of [1440, 390]) {
   }
 }
 // Legal pages and the home page: no dead header anchors, no generic social links, no third-party font requests, no Framer leftovers.
-for (const f of ['dist/index.html', 'dist/privacy/index.html', 'dist/terms/index.html', 'dist/confirmation/index.html', 'dist/remodelers/index.html']) {
+for (const f of ['dist/index.html', 'dist/privacy/index.html', 'dist/terms/index.html', 'dist/confirmation/index.html', ...(process.env.INCLUDE_NICHES === '1' ? ['dist/remodelers/index.html'] : [])]) {
   const html = readFileSync(f, 'utf8');
   const bad = ['facebook.com', 'instagram.com', 'x.com"', 'threads.net', 'fonts.googleapis.com', '#journey', '#industries', '#plans', '#contact', 'framer'].filter((w) => html.includes(w));
   ok(`${f}: no dead anchors, social icons, Google Fonts or Framer leftovers`, bad.length === 0, bad.join(','));
@@ -65,7 +65,7 @@ for (const f of ['dist/index.html', 'dist/privacy/index.html', 'dist/terms/index
 // Built output scan: visible text and comments must not carry draft markers (form placeholder="" attributes are not text).
 import { readFileSync } from 'node:fs';
 import { load } from 'cheerio';
-for (const f of ['dist/index.html', 'dist/remodelers/index.html']) {
+for (const f of ['dist/index.html', ...(process.env.INCLUDE_NICHES === '1' ? ['dist/remodelers/index.html'] : [])]) {
   const $ = load(readFileSync(new URL('../' + f, import.meta.url), 'utf8'));
   $('script, style').remove();
   const comments = [];
