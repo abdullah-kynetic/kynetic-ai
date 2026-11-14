@@ -84,7 +84,10 @@ function nav() {
   const run = () => {
     tick = false;
     const y = scrollY;
-    bar.classList.toggle('is-compact', y > 140);
+    // Hysteresis: collapse once past 200px, expand again only when back above 90px, so a scroll that hovers near one line never flickers.
+    const compact = bar.classList.contains('is-compact');
+    if (!compact && y > 200) bar.classList.add('is-compact');
+    else if (compact && y < 90) bar.classList.remove('is-compact');
     let cur = -1;
     secs.forEach((s, i) => { if (s.getBoundingClientRect().top <= 140) cur = i; });
     links.forEach((a, i) => a.classList.toggle('is-on', i === cur));

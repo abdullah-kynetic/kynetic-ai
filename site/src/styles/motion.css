@@ -43,16 +43,20 @@
 .np-nav__links { gap: 4px; }
 .np-nav__links a { padding: 8px 12px; border-radius: 8px; transition: background .3s ease, color .3s ease; }
 .np-nav__links a:hover, .np-nav__links a.is-on { background: var(--color-alt); color: var(--color-text); }
-.np-nav__pill { transition: box-shadow .4s ease, padding .5s cubic-bezier(.22,.8,.3,1), gap .5s cubic-bezier(.22,.8,.3,1); }
-.np-nav__logo { display: inline-flex; align-items: center; }
-.np-nav__word { display: block; max-width: 124px; overflow: hidden; transition: max-width .5s cubic-bezier(.22,.8,.3,1), opacity .35s ease; }
-.np-nav__mark { display: block; width: 0; height: 28px; opacity: 0; transition: width .5s cubic-bezier(.22,.8,.3,1), opacity .35s ease; }
-.np-nav.is-compact .np-nav__pill { box-shadow: 0 10px 30px rgba(40,31,28,.10); gap: 14px; }
-.np-nav.is-compact .np-nav__word { max-width: 0; opacity: 0; }
-.np-nav.is-compact .np-nav__mark { width: 28px; opacity: 1; }
+.np-nav__pill { transition: box-shadow .5s ease; }
+/* One width transition does the whole collapse (wordmark to mark); the two logos only cross-fade inside it. */
+.np-nav__logo { position: relative; display: block; flex: none; width: 124px; height: 28px; transition: width .55s cubic-bezier(.22,.8,.3,1); }
+.np-nav__logo img { position: absolute; left: 0; top: 0; height: 28px; transition: opacity .3s ease; }
+.np-nav__word { width: 124px; }
+.np-nav__mark { width: 28px; opacity: 0; }
+.np-nav.is-compact .np-nav__pill { box-shadow: 0 10px 30px rgba(40,31,28,.10); }
+.np-nav.is-compact .np-nav__logo { width: 28px; }
+.np-nav.is-compact .np-nav__word { opacity: 0; }
+.np-nav.is-compact .np-nav__mark { opacity: 1; }
 
 @media (prefers-reduced-motion: reduce) {
   .np-hero--home .np-hero__inner > *, .np-nav__pill, .np-particles { animation: none; }
+  .np-nav__logo, .np-nav__logo img, .np-nav__pill { transition: none; }
   .m-on [data-m], .m-w { opacity: 1; transform: none; filter: none; transition: none; }
   .np-btn__t > span { transition: none; }
 }
