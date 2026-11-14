@@ -4,6 +4,8 @@ This runbook loads or removes only the 13 allow-listed demo client workspaces an
 `demo-kynetic-agency` workspace. It writes directly with the seed role and never queues outbound
 work. Run it only with `OUTBOUND_ENABLED=false` and `PROVIDER_MODE=stub`.
 
+Quoting note (found 2026-11-14): when running these over `ssh`, a `$POSTGRES_USER` or a single-quoted SQL string can be expanded or stripped on the host or the Mac before it reaches the container. Pipe SQL on stdin (`ssh kynetic-vps "docker exec -i portal-new-postgres-1 sh -c 'psql -U \$POSTGRES_USER -d \$POSTGRES_DB'" < check.sql`) and check the host has no `pg_restore`; run `pg_restore --list` inside the Postgres container instead.
+
 ## 1. Back up
 
 Before seeding, take and verify the normal production database backup. Record its path and checksum.
@@ -54,7 +56,7 @@ from tenants t left join calls c on c.tenant_id=t.id
 where exists (select 1 from demo_seed_records d where d.tenant_id=t.id)
 group by t.slug order by t.slug;
 
-select t.slug, count(*) as metric_days, sum(m.leads) as leads, sum(m.booked) as booked
+select t.slug, count(*) as metric_days, sum(m.leads) as leads, sum(m.estimates_booked) as booked
 from tenants t join metrics_daily m on m.tenant_id=t.id
 where exists (select 1 from demo_seed_records d where d.tenant_id=t.id)
 group by t.slug order by t.slug;
