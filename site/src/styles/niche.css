@@ -93,13 +93,18 @@
 /* Guarantee, proof */
 .np-guarantee { text-align: center; background: var(--color-alt); border-radius: 16px; padding: 40px 32px; }
 .np-guarantee h2 { font-size: clamp(1.75rem, 3.5vw, 2.5rem); }
-.np-guarantee__draft { font-size: 1.125rem; margin: 16px 0 8px; }
-.np-guarantee__cond { color: var(--color-muted); margin: 0; }
+.np-guarantee__wording { font-size: 1.125rem; margin: 16px 0 8px; }
+.np-guarantee__wording { font-family: var(--font-serif); font-weight: 600; font-size: clamp(1.35rem, 2.6vw, 1.75rem); line-height: 1.3; }
+.np-guarantee h3.np-guarantee__terms-title { font-size: .8125rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--color-gold-on-alt); margin: 24px 0 8px; font-family: var(--font-sans); }
+.np-guarantee__terms { list-style: none; margin: 0 auto; padding: 0; max-width: 480px; text-align: left; color: var(--color-muted); display: grid; gap: 8px; }
+.np-guarantee__terms li { padding-left: 22px; position: relative; }
+.np-guarantee__terms li::before { content: ''; position: absolute; left: 0; top: .6em; width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent); }
+.np-cta__note a { color: var(--color-accent-text); text-decoration: underline; text-underline-offset: 2px; }
 .np-proof { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .np-proof li { background: var(--color-card); border: 1px dashed var(--color-border-input); border-radius: 12px; padding: 40px 20px; text-align: center; color: var(--color-muted); }
 
-/* TODO markers: visible on the preview, must be resolved before publishing */
-.np-todo { margin: 24px auto 0; max-width: 720px; padding: 10px 14px; border: 2px dashed #b3261e; border-radius: 8px; background: #fdf0ee; color: #7a1a14; font-size: .875rem; text-align: left; }
+/* Pending markers: only rendered when the preview flag is on */
+.np-pending { margin: 24px auto 0; max-width: 720px; padding: 10px 14px; border: 2px dashed #b3261e; border-radius: 8px; background: #fdf0ee; color: #7a1a14; font-size: .875rem; text-align: left; }
 
 /* Closing CTA and footer */
 .np-band { background: var(--espresso-band); color: var(--espresso-text); padding: 80px 0; text-align: center; }
@@ -140,3 +145,22 @@
   .np-core { padding: 24px; }
 }
 @media (max-width: 480px) { .np-steps { grid-template-columns: 1fr; } }
+
+/* Outcome-first rewrite ------------------------------------------------------------------------------------ */
+.np-core__name { margin: -4px 0 8px; font-size: .8125rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--color-accent-text); }
+.np-addons__sys { font-size: .8125rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--color-accent-text); }
+.np-addons li > .np-addons__price { color: var(--color-text); font-weight: 600; font-size: .95rem; margin-top: auto; }
+.np-own { margin: 24px auto 0; max-width: 720px; text-align: center; font-weight: 600; color: var(--color-text); }
+.np-honest { max-width: 640px; margin: 0 auto; text-align: center; font-size: 1.125rem; color: var(--color-muted); }
+.np-cases { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.np-case { background: var(--color-card); border: 1px solid var(--color-border); border-radius: 12px; padding: 24px; }
+.np-case h3 { margin: 0 0 4px; }
+.np-case__who { color: var(--color-muted); margin: 0 0 12px; }
+.np-qual { text-align: left; background: var(--color-card); color: var(--color-text); border-radius: 16px; padding: 28px; display: grid; gap: 14px; max-width: 560px; margin: 0 auto; }
+.np-qual label { display: grid; gap: 6px; font-weight: 600; font-size: .9375rem; }
+.np-qual input, .np-qual select, .np-qual textarea { font: inherit; font-weight: 400; color: var(--color-text); background: var(--color-page); border: 1px solid var(--color-border-input); border-radius: 8px; padding: 10px 12px; width: 100%; box-sizing: border-box; }
+.np-qual input:focus-visible, .np-qual select:focus-visible, .np-qual textarea:focus-visible { outline: 2px solid var(--color-accent-text); outline-offset: 2px; }
+.np-band .np-qual__intro, .np-band .np-qual__hint { margin: 0; font-size: .9375rem; color: var(--color-muted); }
+.np-band .np-qual__hint { font-size: .8125rem; }
+.np-band .np-band__cap { margin: 20px 0 0; font-size: .9375rem; }
+@media (max-width: 760px) { .np-cases { grid-template-columns: 1fr; } .np-qual { padding: 20px 16px; } }

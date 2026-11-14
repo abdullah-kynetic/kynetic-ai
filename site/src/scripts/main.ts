@@ -8,9 +8,12 @@ import { initParticles } from './particles';
 import { initTicker } from './ticker';
 import { initButtons } from './buttons';
 import { initNav } from './nav';
-import { initFaq } from './faq';
+import { initLeakCalc } from './leak-calc';
 import { initForm } from './form';
 import { initLoops, initCodeLoop } from './loops';
+import { initReveal } from './reveal';
+import { initMapPop } from './map-pop';
+import { initAuditModal } from './audit-modal';
 
 const start = () => {
   initAppear();
@@ -20,10 +23,13 @@ const start = () => {
   initTicker();
   initButtons();
   initNav();
-  initFaq();
+  initLeakCalc();
   initForm();
   initLoops();
   initCodeLoop();
+  initReveal();
+  initMapPop();
+  initAuditModal();
 };
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);

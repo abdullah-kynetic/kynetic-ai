@@ -37,7 +37,7 @@
 
   /* Typography */
   --font-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
-  --font-sans: "Inter", "Inter Placeholder", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --weight-regular: 400;
   --weight-medium: 500;
   --weight-semibold: 600;
