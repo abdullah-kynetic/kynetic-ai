@@ -29,15 +29,17 @@ afterAll(async () => {
 
 describe('P2-3 archive search', () => {
   it('finds a known note by a phrase from its body', async () => {
-    // From the Agency Overview note body (exported 2026-11-12).
-    const res = await searchNotes(staff, { q: 'Lead status flow' }, { db });
-    expect(res.rows.map((r) => r.title)).toContain('Agency Overview');
-    expect(res.rows.find((r) => r.title === 'Agency Overview')?.snippet.length).toBeGreaterThan(0);
+    // From the TCPA note body (exported 2026-11-12, kept in the 2026-11-14 trim).
+    const res = await searchNotes(staff, { q: 'not reviewed by an attorney' }, { db });
+    expect(res.rows.map((r) => r.title)).toContain('TCPA Consent & Opt-Out Language');
+    expect(
+      res.rows.find((r) => r.title === 'TCPA Consent & Opt-Out Language')?.snippet.length
+    ).toBeGreaterThan(0);
   });
 
   it('finds an exact substring that full-text search would stem away', async () => {
-    const res = await searchNotes(staff, { q: 'New Lead -> Contacted' }, { db });
-    expect(res.rows.map((r) => r.title)).toContain('Agency Overview');
+    const res = await searchNotes(staff, { q: 'intent -> appointment type/resource' }, { db });
+    expect(res.rows.map((r) => r.title)).toContain('BUILD PLAN 11: Scheduling');
   });
 
   it('matches a title, filters by tag and date, and treats % and _ as literal', async () => {
@@ -51,16 +53,16 @@ describe('P2-3 archive search', () => {
     const old = await searchNotes(staff, { to: '2026-09-24', from: '2026-09-24' }, { db });
     expect(old.rows.every((r) => r.createdOn === '2026-09-24')).toBe(true);
     const wild = await searchNotes(staff, { q: '%' }, { db });
-    expect(wild.rows.length).toBeLessThan(120);
+    expect(wild.rows.length).toBeLessThan(48);
   });
 
   it('pages 25 at a time and returns the full note by id', async () => {
     const p1 = await searchNotes(staff, {}, { db });
     expect(p1.rows).toHaveLength(25);
     expect(p1.hasNext).toBe(true);
-    const p5 = await searchNotes(staff, { page: 5 }, { db });
-    expect(p5.rows).toHaveLength(20);
-    expect(p5.hasNext).toBe(false);
+    const p2 = await searchNotes(staff, { page: 2 }, { db });
+    expect(p2.rows).toHaveLength(23);
+    expect(p2.hasNext).toBe(false);
     const full = await getNote(staff, p1.rows[0]!.id, { db });
     expect(full.body.length).toBeGreaterThan(0);
   });
