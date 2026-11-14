@@ -10,7 +10,7 @@
 .np-why p { margin: 16px 0 0; font-size: 1.125rem; }
 .np-compare { background: var(--color-card); border: 1px solid var(--color-border); border-radius: 16px; padding: 28px; }
 .np-compare__label { margin: 0 0 4px; font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--color-muted); }
-.np-compare h3 { font-size: 1.5rem; margin-bottom: 20px; }
+.np-compare h3 { font-size: 1.375rem; margin-bottom: 8px; }
 .np-compare__row { border-top: 1px solid var(--color-border); padding: 16px 0; }
 .np-compare__row small { display: block; color: var(--color-muted); font-size: .8125rem; }
 .np-compare__row strong { font-family: var(--font-serif); font-size: 1.75rem; font-weight: 600; line-height: 1.2; }
@@ -101,3 +101,19 @@
   .np-score__actions .np-btn { width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) { .np-score__track i, .np-score__opt, .np-score__checks li::before { transition: none; } }
+
+/* Why now: headline highlight, big example number, comparison bars */
+.np-why h2 em { font-style: normal; color: var(--color-accent); }
+.np-compare__big { margin: 4px 0 8px; display: flex; align-items: baseline; gap: 10px; }
+.np-compare__big strong { font-family: var(--font-serif); font-size: clamp(3rem, 6vw, 4.5rem); line-height: 1; font-weight: 600; letter-spacing: -1px; }
+.np-compare__big span { color: var(--color-muted); }
+.np-compare__text { margin: 0 0 20px; color: var(--color-muted); font-size: 1rem; }
+.np-bars { display: grid; gap: 16px; padding-top: 16px; border-top: 1px solid var(--color-border); }
+.np-bars__row { display: grid; gap: 8px; }
+.np-bars__row span { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: .875rem; }
+.np-bars__row b { font-weight: 600; }
+.np-bars__row i { font-style: normal; color: var(--color-muted); }
+.np-bars__track { height: 10px; background: var(--color-alt); border-radius: 999px; overflow: hidden; }
+.np-bars__fill { height: 100%; background: var(--color-accent); border-radius: 999px; }
+.np-bars__fill--old { background: var(--color-border-input); }
+.np-why p.np-badge { margin: 0 0 24px; }
