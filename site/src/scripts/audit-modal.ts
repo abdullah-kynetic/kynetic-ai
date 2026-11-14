@@ -28,7 +28,7 @@ type Step =
 const STEPS: Step[] = [
   { n: 2, key: 'company', label: 'Company', kind: 'company', q: 'Tell us about your business.' },
   { n: 3, key: 'niche', label: 'Business type', kind: 'choice', q: 'What kind of business do you run?', other: true,
-    options: ['Remodeling', 'Solar and battery', 'Foundation repair', 'Other home service or improvement', OTHER] },
+    options: ['Home services or construction', 'Professional services', 'Retail or e-commerce', 'Restaurant or hospitality', 'Real estate or property', 'Automotive', 'Fitness, beauty or salon', OTHER] },
   { n: 4, key: 'revenue', label: 'Annual revenue', kind: 'choice', q: 'Roughly how much does the business make in a year?',
     options: ['Under $500K', '$500K to $2.5M', '$2.5M to $10M', '$10M to $25M', '$25M to $50M', '$50M+'] },
   { n: 5, key: 'teamTime', label: 'Team time', kind: 'text', q: "What takes up most of your team's time?", hint: 'A sentence is plenty', placeholder: 'Scheduling, follow-ups, paperwork...' },
@@ -62,7 +62,7 @@ function stepHtml(s: Step) {
     <fieldset class="am__opts"><legend class="am__sr">${esc(s.q)}</legend>
       ${s.options.map((o, j) => `<label class="am__opt"><input type="radio" name="${s.key}" value="${esc(o)}" /><span class="am__key">${LETTERS[j]}</span><span class="am__txt">${esc(o)}</span></label>`).join('')}
     </fieldset>
-    ${s.other ? '<div class="am__other" hidden><input name="other" type="text" maxlength="120" placeholder="Type your niche" aria-label="Your niche" /><button class="am__btn" type="submit">OK</button></div>' : ''}
+    ${s.other ? '<div class="am__other" hidden><input name="other" type="text" maxlength="120" placeholder="Type your industry" aria-label="Your industry" /><button class="am__btn" type="submit">OK</button></div>' : ''}
     <p class="am__err" role="alert" hidden></p>
     <div class="am__okrow" hidden><button class="am__btn" type="submit">OK</button></div>${BACK}</form>`;
 }
@@ -288,7 +288,7 @@ export function initAuditModal() {
       } else {
         const picked = f.querySelector<HTMLInputElement>('input[type=radio]:checked');
         if (!picked) { err(f, 'Please pick one.'); return; }
-        if (s.other && picked.value === OTHER && !val(f, 'other')) { err(f, 'Please type your niche.'); focus(f, 'other'); return; }
+        if (s.other && picked.value === OTHER && !val(f, 'other')) { err(f, 'Please type your industry.'); focus(f, 'other'); return; }
       }
       err(f);
       if (s.n < COUNT) advance(s.n + 1); else void submit();

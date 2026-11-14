@@ -15,9 +15,19 @@ const url = new URL('/', Astro.site).href;
 const ogImage = new URL('/brand/og-image-espresso.png', Astro.site).href;
 
 const faqs = [
-  { q: 'What does the free audit cover?', a: 'A 30 minute walkthrough of how your business runs, from operations and admin to sales, customer service and management. You leave with a list of where time and money slip away, what each costs you, and where AI pays back first, whether or not you work with us.' },
+  { q: 'What does the free AI Audit cover?', a: 'A 30 minute call where we walk through how your whole business runs, from operations and admin to sales, customer service and management. You leave with a list of where time and money slip away, what each costs you, and where AI pays back first, whether or not you work with us.' },
+  { q: 'What is the difference between the free AI Score and the free AI Audit?', a: 'The AI Score is a quick, automated look at how your business shows up online and where AI could help, from a few questions. The AI Audit is the 30 minute call where we go through the whole business, not just the online part.' },
   { q: 'What results can I expect, and how fast?', a: 'The timeline for your first system is agreed on your audit. We build, run and monitor it for you, and your client portal shows what each system produces. Results depend on your business, so we measure them with you rather than promise a number.' },
-  { q: 'Will this add work for my team?', a: 'No. We build, run and monitor it for you. The point is to take work off your team.' },
+  { q: 'Will this add work for my team?', a: 'No. The point is to take work off your team.' },
+  { q: 'Who owns what you build?', a: 'You do. The systems, data and accounts sit in your business, so what we build adds to what the company is worth.' },
+];
+const industries = ['Home services or construction', 'Roofing, HVAC, plumbing or electrical', 'Solar or energy', 'Landscaping, cleaning or pest control', 'Real estate or property management', 'Mortgage, insurance or finance', 'Law firm', 'Accounting or bookkeeping', 'Auto repair or dealership', 'Restaurant or hospitality', 'Retail or e-commerce', 'Fitness, beauty or salon', 'Education or tutoring', 'Veterinary or pet services', 'Staffing or recruiting', 'Marketing or creative agency', 'IT or software services', 'Manufacturing or logistics', 'Nonprofit'];
+const questions = [
+  { key: 'find', q: 'How do most new customers find you?', opts: ['Google or search', 'Referrals', 'Paid ads', 'Social media', 'Something else'] },
+  { key: 'after', q: 'What happens when you miss a call or message after hours?', opts: ['Someone gets back to them the next day', 'They leave a voicemail or form and we call back later', 'Nothing, they usually move on', 'Something answers them right away'] },
+  { key: 'volume', q: 'About how many leads or inquiries do you get a month?', opts: ['Under 20', '20 to 50', '50 to 150', 'Over 150'] },
+  { key: 'follow', q: 'How do you follow up with leads?', opts: ['By hand, when we remember', 'With a CRM or reminders', 'We do not really follow up'] },
+  { key: 'drain', q: 'Where does your team lose the most time?', opts: ['Admin and paperwork', 'Following up with leads', 'Scheduling', 'Answering the same questions', 'Something else'] },
 ];
 ---
 <!doctype html>
@@ -58,6 +68,7 @@ const faqs = [
           <a href="#why">Why now</a>
           <a href="#change">What changes</a>
           <a href="#services">Services</a>
+          <a href="#score">AI Score</a>
           <a href="#faq">FAQ</a>
         </nav>
         <a class="np-btn np-btn--primary np-btn--sm" href={CAL}>Book an audit</a>
@@ -65,24 +76,23 @@ const faqs = [
     </header>
 
     <main>
-      <section class="np-hero np-hero--home" id="hero">
+      <section class="np-hero np-hero--home" id="hero" data-motion="hero">
         <div class="np-wrap np-hero__inner">
           <p class="np-badge">AI growth partner</p>
           <h1>More Revenue, Less Busywork, and a Business That Runs Smarter.</h1>
           <p class="np-lede">We find where your business loses time and money, then design, build and run the AI that fixes it, from your first audit to a full AI transformation of how you run.</p>
           <div class="np-cta">
-            <a class="np-btn np-btn--primary" href={CAL}>Book your free AI audit</a>
-            <p class="np-cta__note">A few quick questions, then choose a time. The audit is free.</p>
+            <a class="np-btn np-btn--primary" href={CAL}>Book your free AI Audit</a>
+            <p class="np-cta__note">A few quick questions, then choose a time. The call is free. Or <a href="#score">get your free AI Score first</a>.</p>
           </div>
           <ul class="np-assure">
-            <li>Free 30 minute audit</li>
+            <li>Free 30 minute AI Audit</li>
             <li>Built, run and monitored for you</li>
-            <li>You own what we build</li>
           </ul>
         </div>
       </section>
 
-      <section class="np-section np-alt" id="why">
+      <section class="np-section np-alt" id="why" data-motion="reveal">
         <div class="np-wrap np-why">
           <div>
             <p class="np-badge">Why now</p>
@@ -92,15 +102,15 @@ const faqs = [
           </div>
           <div class="np-compare" role="group" aria-label="An example">
             <p class="np-compare__label">An example</p>
-            <h3>A remodeler who misses 40 leads a month</h3>
-            <div class="np-compare__row"><small>Today</small><strong>$280,000 a month in jobs that never get booked</strong></div>
-            <div class="np-compare__row np-compare__row--new"><small>With a speed-to-lead system</small><strong>Every lead called back in under 60 seconds</strong></div>
-            <p class="np-compare__note">Example numbers only (40 leads, 20% close rate, $35,000 average job), not real results.</p>
+            <h3>A business that misses 40 inquiries a month</h3>
+            <div class="np-compare__row"><small>Today</small><strong>$280,000 a month in work that never gets booked</strong></div>
+            <div class="np-compare__row np-compare__row--new"><small>With a speed-to-lead system</small><strong>Every inquiry answered in under 60 seconds</strong></div>
+            <p class="np-compare__note">Example numbers only (40 inquiries, 20% close rate, $35,000 average job), not real results.</p>
           </div>
         </div>
       </section>
 
-      <section class="np-section" id="change">
+      <section class="np-section" id="change" data-motion="reveal">
         <div class="np-wrap">
           <header class="np-head">
             <p class="np-badge">What changes for you</p>
@@ -115,14 +125,14 @@ const faqs = [
             </div>
             <ul class="np-pillars">
               <li><span class="np-pillars__n">01</span><h3>Yours to keep</h3><p>The systems, data and accounts sit in your business's name, so what we build adds to what the company is worth.</p></li>
-              <li><span class="np-pillars__n">02</span><h3>Fits your crew</h3><p>We start from how your team already does the job, so people use the tools instead of working around them.</p></li>
+              <li><span class="np-pillars__n">02</span><h3>Fits your team</h3><p>We start from how your team already does the job, so people use the tools instead of working around them.</p></li>
               <li><span class="np-pillars__n">03</span><h3>One connected operation</h3><p>Leads, quotes, scheduling and reporting live in one place instead of across spreadsheets, inboxes and apps that never talk.</p></li>
             </ul>
           </div>
         </div>
       </section>
 
-      <section class="np-section np-alt" id="services">
+      <section class="np-section np-alt" id="services" data-motion="reveal">
         <div class="np-wrap">
           <header class="np-head">
             <p class="np-badge">Services</p>
@@ -130,11 +140,92 @@ const faqs = [
             <p class="np-lede">The audit shows where AI pays back first. Every system is scoped on your audit, and nothing is switched on until you agree.</p>
           </header>
           <Fragment set:html={servicesMap} />
-          <p class="np-industry">We built our first playbook for <a href="/remodelers">remodelers</a>, with solar and battery and foundation repair next. The partnership works for any established business.</p>
         </div>
       </section>
 
-      <section class="np-section" id="faq">
+      <section class="np-section np-alt np-score" id="score" data-motion="score" data-gate="partial">
+        <div class="np-wrap np-wrap--narrow">
+          <header class="np-head">
+            <p class="np-badge">Free AI Score</p>
+            <h2>See where your business stands.</h2>
+            <p class="np-lede">Answer a few quick questions and get your AI Score: how your business looks online and where AI could help. It takes about two minutes and it is free.</p>
+          </header>
+          <div class="np-score__card" data-score aria-live="polite">
+            <div class="np-score__bar"><span class="np-score__count" data-count>Step 1 of 4</span><span class="np-score__track"><i data-fill style="width:5%"></i></span></div>
+
+            <form class="np-score__step" data-step="1" novalidate>
+              <h3>Let's look at your business.</h3>
+              <label>Business name<input name="biz" type="text" autocomplete="organization" maxlength="200" required /></label>
+              <label><span>Website <em>(optional)</em></span><input name="site" type="text" inputmode="url" autocomplete="url" maxlength="200" placeholder="yourbusiness.com" /></label>
+              <label>City and state<input name="loc" type="text" maxlength="120" placeholder="Austin, TX" /></label>
+              <label class="np-score__check"><input name="online" type="checkbox" /> We are online only</label>
+              <label>Industry<input name="industry" type="text" list="np-industries" maxlength="120" placeholder="Start typing, or enter your own" required /></label>
+              <datalist id="np-industries">{industries.map((i) => <option value={i}></option>)}</datalist>
+              <p class="np-score__err" role="alert" hidden></p>
+              <button class="np-btn np-btn--primary" type="submit">Continue</button>
+            </form>
+
+            {questions.map((q, i) => (
+              <form class="np-score__step" data-step={i + 2} hidden novalidate>
+                <p class="np-score__qn">Question {i + 1} of {questions.length}</p>
+                <h3>{q.q}</h3>
+                <fieldset class="np-score__opts">
+                  <legend class="np-sr">{q.q}</legend>
+                  {q.opts.map((o, j) => <label class="np-score__opt"><input type="radio" name={q.key} value={o} /><span class="np-score__key">{'ABCDE'[j]}</span><span>{o}</span></label>)}
+                </fieldset>
+                <button class="np-score__back" type="button" data-back>&larr; Back</button>
+              </form>
+            ))}
+
+            <div class="np-score__step np-score__run" data-step="run" hidden>
+              <h3>Running your AI Score…</h3>
+              <ul class="np-score__checks">
+                <li data-check>Reading your Google profile</li>
+                <li data-check>Comparing your reviews with nearby competitors</li>
+                <li data-check>Asking AI assistants about your market</li>
+                <li data-check>Scanning your website</li>
+                <li data-check>Matching your answers to where AI could help</li>
+              </ul>
+            </div>
+
+            <div class="np-score__step np-score__result" data-step="result" hidden>
+              <p class="np-score__sample" data-sample>Preview with sample results. Live results switch on with the finished tool.</p>
+              <h3 data-result-title>Your AI Score</h3>
+              <div class="np-score__scores">
+                <div class="np-score__big"><strong>58</strong><span>out of 100</span></div>
+                <ul>
+                  <li><span>Google presence and reviews</span><b>72</b></li>
+                  <li><span>AI visibility</span><b>31</b></li>
+                  <li><span>Website</span><b>64</b></li>
+                  <li><span>Lead handling</span><b>45</b></li>
+                </ul>
+              </div>
+              <h4>What we found</h4>
+              <ol class="np-score__finds">
+                <li>Sample finding: your review count is well below the top businesses near you.</li>
+                <li>Sample finding: AI assistants did not name your business when asked for the best in your area.</li>
+                <li>Sample finding: there is no way to book or chat outside business hours.</li>
+              </ol>
+              <h4>Quick wins</h4>
+              <ul class="np-score__wins"><li>Sample win: reply to unanswered reviews.</li><li>Sample win: put a booking link at the top of your site.</li></ul>
+              <h4>Where AI could help you</h4>
+              <ul class="np-score__wins"><li>Answer missed calls and book after hours</li><li>Follow up with every inquiry within minutes</li></ul>
+              <div class="np-score__locked" aria-label="Included in the Full AI Audit">
+                <p><b>This is your instant AI Score.</b> The free AI Audit goes deeper into how your team spends its time, where leads leak, how your systems connect, and what each fix is worth.</p>
+              </div>
+              <div class="np-score__actions">
+                <a class="np-btn np-btn--primary" href={CAL}>Book your free AI Audit (30 min)</a>
+                <button class="np-btn np-btn--ghost" type="button" data-todo-backend="pdf">Download PDF</button>
+                <button class="np-btn np-btn--ghost" type="button" data-todo-backend="email">Email me my report</button>
+              </div>
+              <p class="np-score__note" data-note hidden>Report delivery switches on with the finished tool.</p>
+              <button class="np-score__back" type="button" data-restart>Start over</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="np-section" id="faq" data-motion="reveal">
         <div class="np-wrap">
           <header class="np-head">
             <p class="np-badge">FAQs</p>
@@ -146,11 +237,11 @@ const faqs = [
         </div>
       </section>
 
-      <section class="np-band" id="book">
+      <section class="np-band" id="book" data-motion="reveal">
         <div class="np-wrap np-wrap--narrow np-band__inner">
           <h2>Let's find where AI pays off first.</h2>
           <p>We look at how your business runs today, what it costs you, and where AI is worth building.</p>
-          <a class="np-btn np-btn--primary" href={CAL}>Book your free AI audit</a>
+          <a class="np-btn np-btn--primary" href={CAL}>Book your free AI Audit</a>
           <p class="np-band__cap">Prefer to reach us directly? <a href="tel:+19084779490">(908) 477-9490</a> or <a href="mailto:abdullah@kyneticai.com">abdullah@kyneticai.com</a></p>
         </div>
       </section>
@@ -160,7 +251,7 @@ const faqs = [
       <div class="np-wrap np-footer__inner">
         <a href="/" aria-label="Kynetic AI home"><img src="/brand/wordmark-a-espresso.svg" alt="Kynetic AI" width="124" height="28" /></a>
         <p>An AI growth partner that finds your leaks, then builds and runs the AI systems that fix them.</p>
-        <nav aria-label="Footer"><a href="/">Home</a><a href="/privacy">Privacy Policy</a><a href="/terms">Terms &amp; Conditions</a></nav>
+        <nav aria-label="Footer"><a href="/">Home</a><a href="/remodelers">Remodelers</a><a href="/privacy">Privacy Policy</a><a href="/terms">Terms &amp; Conditions</a></nav>
       </div>
     </footer>
     <script>
@@ -169,7 +260,9 @@ const faqs = [
       import { initReveal } from '../scripts/reveal';
       initAuditModal();
       initMapPop();
+      import { initScore } from '../scripts/score';
       initReveal();
+      initScore();
     </script>
   </body>
 </html>

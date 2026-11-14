@@ -27,10 +27,23 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
 {
   const { ctx, page, errors, external } = await open(1440);
   // new home: simple static flow
-  ok('home: six main sections in order', JSON.stringify(await page.locator('main > section').evaluateAll((s) => s.map((x) => x.id))) === JSON.stringify(['hero', 'why', 'change', 'services', 'faq', 'book']));
+  ok('home: seven main sections in order', JSON.stringify(await page.locator('main > section').evaluateAll((s) => s.map((x) => x.id))) === JSON.stringify(['hero', 'why', 'change', 'services', 'score', 'faq', 'book']));
   ok('home: nav links point at real sections', await page.locator('.np-nav__links a').evaluateAll((as) => as.every((a) => document.querySelector(a.getAttribute('href')))));
   const faqItems = page.locator('#faq details');
-  ok('FAQ: 3 questions that open and close', (await faqItems.count()) === 3 && await (async () => { await faqItems.first().locator('summary').click(); const o = await faqItems.first().evaluate((d) => d.open); await faqItems.first().locator('summary').click(); return o && !(await faqItems.first().evaluate((d) => d.open)); })());
+  ok('FAQ: 5 questions that open and close', (await faqItems.count()) === 5 && await (async () => { await faqItems.first().locator('summary').click(); const o = await faqItems.first().evaluate((d) => d.open); await faqItems.first().locator('summary').click(); return o && !(await faqItems.first().evaluate((d) => d.open)); })());
+  // Free AI Score (front end only): walk the five steps to the sample result
+  const sc = page.locator('[data-score]');
+  await sc.scrollIntoViewIfNeeded();
+  await sc.locator('input[name=biz]').fill('Test Co');
+  await sc.locator('input[name=industry]').fill('Law firm');
+  await sc.locator('[data-step="1"] button[type=submit]').click(); await page.waitForTimeout(400);
+  ok('score: first question shows after the business step', await sc.locator('[data-step="2"]').isVisible());
+  for (let i = 2; i <= 6; i++) { await sc.locator(`[data-step="${i}"] .np-score__opt`).first().click(); await page.waitForTimeout(500); }
+  ok('score: running state shows after the last question', await sc.locator('[data-step="run"]').isVisible());
+  await page.waitForTimeout(4500);
+  ok('score: sample result shows, labelled as sample, with the audit button', await sc.locator('[data-step="result"]').isVisible() && await sc.locator('[data-sample]').isVisible() && (await sc.locator('a.np-btn--primary').getAttribute('href')).includes('cal.com/abdullah-kyneticai'));
+  await sc.locator('[data-restart]').click(); await page.waitForTimeout(300);
+  ok('score: start over returns to step 1', await sc.locator('[data-step="1"]').isVisible());
   // audit overlay validation
   let reqs = 0; page.on('request', (r) => { if (r.method() === 'POST') reqs++; });
   await page.locator('#hero a[href*="cal.com"]').first().click(); await page.waitForTimeout(500);
@@ -70,7 +83,7 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
     await page.locator('.am input[name=company]').fill('Test Co');
     await page.locator('.am input[name=site]').fill('testco.com');
     await page.locator('.am [data-step="2"] button[type=submit]').click();
-    await page.locator('.am [data-step="3"] .am__opt').nth(4).click(); // Something else
+    await page.locator('.am [data-step="3"] .am__opt').last().click(); // Something else
     await page.locator('.am input[name=other]').fill('Pest control');
     await page.locator('.am [data-step="3"] .am__other button').click();
     await page.locator('.am [data-step="4"] .am__opt').nth(1).click();
