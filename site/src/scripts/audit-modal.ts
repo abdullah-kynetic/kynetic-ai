@@ -7,8 +7,8 @@
 // Progress is saved in this browser after every OK: closing or leaving and coming back reopens the
 // step they were on, with earlier answers filled in, and Back / OK walk through them (like J&T's).
 // Without JS the buttons still go to Cal.
-import { animate } from 'motion';
-import { reducedMotion } from './appear';
+const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+const EASE = 'cubic-bezier(.22,.8,.3,1)';
 import { mountPicker } from './cal-picker';
 
 const ENDPOINT: string = import.meta.env.PUBLIC_CONTACT_WEBHOOK ?? 'https://n8n.kyneticai.com/webhook/website-contact';
@@ -163,7 +163,7 @@ export function initAuditModal() {
     const focusEl = next.querySelector<HTMLElement>('input[type=text]:not(.am__trap), input[type=tel], input[type=radio]:checked, .am__opt input');
     (focusEl ?? card).focus({ preventScroll: true });
     card.scrollTop = 0;
-    if (!reducedMotion()) animate(next, { opacity: [0, 1], y: [14, 0] }, { type: 'spring', stiffness: 260, damping: 28 });
+    if (!reducedMotion()) next.animate([{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'none' }], { duration: 400, easing: EASE });
   };
   // Where to resume: the saved step, or the calendar once the application was sent.
   const resume = () => {
@@ -181,8 +181,8 @@ export function initAuditModal() {
     ensurePicker();
     resume();
     if (!reducedMotion()) {
-      animate(root.querySelector('.am__scrim')!, { opacity: [0, 1] }, { duration: 0.2 });
-      animate(card, { opacity: [0, 1], y: [24, 0], scale: [0.97, 1] }, { type: 'spring', stiffness: 300, damping: 28 });
+      root.querySelector('.am__scrim')!.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200 });
+      card.animate([{ opacity: 0, transform: 'translateY(24px) scale(.97)' }, { opacity: 1, transform: 'none' }], { duration: 450, easing: EASE });
     }
   };
   const close = () => {

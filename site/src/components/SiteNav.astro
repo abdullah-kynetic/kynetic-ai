@@ -1,0 +1,15 @@
+---
+const { cal, base = '' } = Astro.props;
+---
+    <header class="np-nav">
+      <div class="np-nav__pill">
+        <a class="np-nav__logo" href="/" aria-label="Kynetic AI home"><img class="np-nav__word" src="/brand/wordmark-a-light.svg" alt="Kynetic AI" width="124" height="28" /><img class="np-nav__mark" src="/brand/mark-orange.svg" alt="" width="28" height="28" aria-hidden="true" /></a>
+        <nav class="np-nav__links" aria-label="Page sections">
+          <a href={`${base}#why`}>Why now</a>
+          <a href={`${base}#change`}>What changes</a>
+          <a href={`${base}#services`}>Services</a>
+          <a href={`${base}#how`}>How it works</a>
+        </nav>
+        <a class="np-btn np-btn--primary np-btn--sm" href={cal}>Book an audit</a>
+      </div>
+    </header>

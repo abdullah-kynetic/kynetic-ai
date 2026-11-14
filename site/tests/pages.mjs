@@ -56,6 +56,12 @@ for (const width of [1440, 390]) {
     await ctx.close();
   }
 }
+// Legal pages and the home page: no dead header anchors, no generic social links, no third-party font requests, no Framer leftovers.
+for (const f of ['dist/index.html', 'dist/privacy/index.html', 'dist/terms/index.html', 'dist/confirmation/index.html', 'dist/remodelers/index.html']) {
+  const html = readFileSync(f, 'utf8');
+  const bad = ['facebook.com', 'instagram.com', 'x.com"', 'threads.net', 'fonts.googleapis.com', '#journey', '#industries', '#plans', '#contact', 'framer'].filter((w) => html.includes(w));
+  ok(`${f}: no dead anchors, social icons, Google Fonts or Framer leftovers`, bad.length === 0, bad.join(','));
+}
 // Built output scan: visible text and comments must not carry draft markers (form placeholder="" attributes are not text).
 import { readFileSync } from 'node:fs';
 import { load } from 'cheerio';

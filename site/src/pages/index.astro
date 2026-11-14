@@ -2,10 +2,16 @@
 // Home page. Plain static HTML in the same simple flow as the niche pages: hero, why now, what changes,
 // services, how it works, final call to action. Every "audit" link points at the Cal page; audit-modal.ts turns
 // each of them into the application overlay (without JS they still go to Cal).
-import tokens from '../styles/tokens.css?raw';
-import niche_css from '../styles/niche.css?raw';
-import home_css from '../styles/home.css?raw';
-import extras from '../styles/home-extras.css?raw';
+import { transformSync } from 'esbuild';
+import tokens_raw from '../styles/tokens.css?raw';
+import niche_raw from '../styles/niche.css?raw';
+import home_raw from '../styles/home.css?raw';
+import extras_raw from '../styles/home-extras.css?raw';
+import motion_raw from '../styles/motion.css?raw';
+// One minified inline stylesheet: no extra request, nothing render-blocking beyond the page itself.
+const css = transformSync([tokens_raw, niche_raw, home_raw, extras_raw, motion_raw].join('\n'), { loader: 'css', minify: true }).code;
+import SiteNav from '../components/SiteNav.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 import servicesMap from '../components/services-map.html?raw';
 
 const CAL = 'https://cal.com/abdullah-kyneticai/kynetic-ai-discovery-call';
@@ -36,28 +42,13 @@ const ogImage = new URL('/brand/og-image-espresso.png', Astro.site).href;
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#faf8f5" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <style is:inline set:html={tokens} />
-    <style is:inline set:html={niche_css} />
-    <style is:inline set:html={home_css} />
-    <style is:inline set:html={extras} />
+    <link rel="preload" href="/fonts/cormorant-garamond-var.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin />
+    <style is:inline set:html={css} />
   </head>
   <body class="np">
     <a class="kn-skip" href={CAL}>Skip to the audit request</a>
-    <header class="np-nav">
-      <div class="np-nav__pill">
-        <a class="np-nav__logo" href="/" aria-label="Kynetic AI home"><img src="/brand/wordmark-a-light.svg" alt="Kynetic AI" width="124" height="28" /></a>
-        <nav class="np-nav__links" aria-label="Page sections">
-          <a href="#why">Why now</a>
-          <a href="#change">What changes</a>
-          <a href="#services">Services</a>
-          <a href="#how">How it works</a>
-        </nav>
-        <a class="np-btn np-btn--primary np-btn--sm" href={CAL}>Book an audit</a>
-      </div>
-    </header>
+    <SiteNav cal={CAL} />
 
     <main>
       <section class="np-hero np-hero--home" id="hero" data-motion="hero">
@@ -157,20 +148,14 @@ const ogImage = new URL('/brand/og-image-espresso.png', Astro.site).href;
       </section>
     </main>
 
-    <footer class="np-footer">
-      <div class="np-wrap np-footer__inner">
-        <a href="/" aria-label="Kynetic AI home"><img src="/brand/wordmark-a-espresso.svg" alt="Kynetic AI" width="124" height="28" /></a>
-        <p>An AI growth partner that finds your leaks, then builds and runs the AI systems that fix them.</p>
-        <nav aria-label="Footer"><a href="/">Home</a><a href="/remodelers">Remodelers</a><a href="/privacy">Privacy Policy</a><a href="/terms">Terms &amp; Conditions</a></nav>
-      </div>
-    </footer>
+    <SiteFooter />
     <script>
-      import { initAuditModal } from '../scripts/audit-modal';
       import { initMapPop } from '../scripts/map-pop';
-      import { initReveal } from '../scripts/reveal';
-      initAuditModal();
+      import { initHomeMotion } from '../scripts/home-motion';
       initMapPop();
-      initReveal();
+      initHomeMotion();
+      import { initAuditLazy } from '../scripts/audit-lazy';
+      initAuditLazy();
     </script>
   </body>
 </html>

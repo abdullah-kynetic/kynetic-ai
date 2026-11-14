@@ -90,8 +90,7 @@ html.am-lock { overflow: hidden; }
 .kn-contact .kn-btn { cursor: pointer; border: 0; }
 
 /* Scroll-reveal helper: starts hidden only when JS is running (class set by reveal.ts) */
-.js-reveal [data-reveal] { opacity: 0; transform: translateY(24px); }
-@media (prefers-reduced-motion: reduce) { .js-reveal [data-reveal] { opacity: 1; transform: none; } .kn-map .m-hub-ring { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .kn-map .m-hub-ring { animation: none; } }
 
 /* Map popovers, mobile card detail, on-site partner band --------------------------------------------- */
 .kn-map { position: relative; }
@@ -99,7 +98,7 @@ html.am-lock { overflow: hidden; }
 .kn-map .m-node rect { transition: stroke .2s, fill .2s; }
 .kn-map .m-node:hover rect, .kn-map .m-node:focus-visible rect, .kn-map .m-node.is-open rect { stroke: var(--color-accent); stroke-width: 2; fill: var(--color-page); }
 .kn-map .m-node:focus-visible rect { stroke-dasharray: none; }
-.kn-map__hint { text-align: center; margin: -28px 0 36px; font-size: .875rem; color: var(--color-muted); }
+.kn-map__hint { text-align: center; margin: 4px 0 36px; font-size: .875rem; color: var(--color-muted); }
 .kn-pop { position: absolute; z-index: 5; width: min(340px, 90%); background: var(--color-card); border: 1px solid var(--color-accent); border-radius: 16px; padding: 20px 22px; box-shadow: 0 16px 40px rgba(20, 16, 12, .14); pointer-events: none; font-family: var(--font-sans); }
 .kn-pop[hidden] { display: none; }
 .kn-pop__title { font-family: var(--font-serif); font-weight: 600; font-size: 1.375rem; line-height: 1.2; margin: 10px 0 8px; color: var(--color-text); }

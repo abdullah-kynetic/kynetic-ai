@@ -1,0 +1,54 @@
+---
+// Privacy and Terms: the same top bar, fonts and footer as the home page, plain text in between. No client script.
+import { transformSync } from 'esbuild';
+import tokens_raw from '../styles/tokens.css?raw';
+import niche_raw from '../styles/niche.css?raw';
+import home_raw from '../styles/home.css?raw';
+import extras_raw from '../styles/home-extras.css?raw';
+import motion_raw from '../styles/motion.css?raw';
+import SiteNav from '../components/SiteNav.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+
+const { title, description, path, body, noindex = false } = Astro.props;
+const CAL = 'https://cal.com/abdullah-kyneticai/kynetic-ai-discovery-call';
+const url = new URL(path, Astro.site).href;
+const ogImage = new URL('/brand/og-image-espresso.png', Astro.site).href;
+const legal = `.np-legal{padding:56px 0 88px}.np-legal h1{margin-bottom:12px}.np-legal h2{font-size:1.75rem;margin:40px 0 12px}.np-legal p,.np-legal li{font-size:1.0625rem;line-height:1.65;color:var(--color-text)}.np-legal ul{padding-left:22px;display:grid;gap:10px}.np-legal p:nth-of-type(1){color:var(--color-muted)}`;
+const css = transformSync([tokens_raw, niche_raw, home_raw, extras_raw, motion_raw, legal].join('\n'), { loader: 'css', minify: true }).code;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={url} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#faf8f5" />
+    <link rel="preload" href="/fonts/cormorant-garamond-var.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin />
+    <style is:inline set:html={css} />
+  </head>
+  <body class="np">
+    <SiteNav cal={CAL} base="/" />
+    <main class="np-legal"><div class="np-wrap np-wrap--narrow" set:html={body} /></main>
+    <SiteFooter />
+    <script>
+      import { initAuditLazy } from '../scripts/audit-lazy';
+      import { initHomeMotion } from '../scripts/home-motion';
+      initHomeMotion();
+      initAuditLazy();
+    </script>
+  </body>
+</html>

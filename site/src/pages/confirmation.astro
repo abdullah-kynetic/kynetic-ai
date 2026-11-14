@@ -1,20 +1,21 @@
 ---
-import Page from '../layouts/Page.astro';
-const head = `<meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>You're booked | Kynetic AI</title><meta name="robots" content="noindex"><link rel="canonical" href="https://www.kyneticai.com/confirmation/">`;
-const body = `<div class="nf">
-  <header class="nf__nav"><a href="/" aria-label="Kynetic AI home"><img src="/brand/wordmark-a-light.svg" alt="Kynetic AI" width="124" height="28" /></a></header>
-  <main class="nf__main"><section class="nf__card">
-    <span class="am__pill"><i></i>You're booked</span>
-    <h1 class="nf__title">Your AI audit is on the calendar.</h1>
-    <p id="when" hidden></p>
-    <p>We'll look at what you run today and what it costs you. We'll text you to confirm the call, and a calendar invite is on its way to your email.</p>
-  </section></main>
-</div>
+import LegalPage from '../layouts/LegalPage.astro';
+const body = `<p class="np-badge">You're booked</p>
+<h1>Your AI audit is on the calendar.</h1>
+<p id="when" hidden></p>
+<p>We'll look at what you run today and what it costs you. We'll text you to confirm the call, and a calendar invite is on its way to your email.</p>
+<h2>What to expect</h2>
+<ul>
+  <li>The call takes about 30 minutes and is free.</li>
+  <li>Have a rough idea of how leads reach you, who follows up, and where the day-to-day work piles up.</li>
+  <li>You leave with a list of where time and money slip away, and where AI pays back first.</li>
+</ul>
+<p><a class="np-btn np-btn--primary" href="/">Back to the home page</a></p>
 <script>
 try {
   var t = new URLSearchParams(location.search).get('t'); var d = t && new Date(t);
-  if (d && !isNaN(d)) { var el = document.getElementById('when'); el.textContent = d.toLocaleString('en-US', { weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }); el.hidden = false; el.style.fontWeight = '600'; el.style.color = 'var(--color-text)'; }
+  if (d && !isNaN(d)) { var el = document.getElementById('when'); el.textContent = d.toLocaleString('en-US', { weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }); el.hidden = false; el.style.fontWeight = '600'; }
 } catch (e) {}
 </script>`;
 ---
-<Page head={head} css="" body={body} script={false} />
+<LegalPage title="You're booked | Kynetic AI" description="Your AI audit is booked." path="/confirmation/" body={body} noindex />

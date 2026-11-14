@@ -1,7 +1,5 @@
 ---
-import Page from '../layouts/Page.astro';
-import head from '../snapshot/terms.head.html?raw';
-import css from '../snapshot/terms.css?raw';
-import body from '../snapshot/terms.body.html?raw';
+import LegalPage from '../layouts/LegalPage.astro';
+import body from '../content/terms.html?raw';
 ---
-<Page head={head} css={css} body={body} />
+<LegalPage title="Terms & Conditions | Kynetic AI" description="Terms & Conditions for Kynetic AI, your AI growth partner." path="/terms/" body={body} />
