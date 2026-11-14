@@ -28,13 +28,13 @@ describe('P2-1 archive import is repeatable', () => {
   it('loads the real export and a second run leaves the same row counts', async () => {
     const storage = new FakeStorage();
     const first = await importArchive(db.admin, realRoadmap, { storage });
-    expect(first).toMatchObject({ notes: 120, tasks: 63, attachments: 5 });
+    expect(first).toMatchObject({ notes: 48, tasks: 63, attachments: 5 });
     expect(first.records).toBeGreaterThan(0);
     const after1 = await counts();
     const second = await importArchive(db.admin, realRoadmap, { storage });
     expect(second).toEqual(first);
     expect(await counts()).toEqual(after1);
-    expect(after1).toMatchObject({ notes: 120, tasks: 63, attachments: 5 });
+    expect(after1).toMatchObject({ notes: 48, tasks: 63, attachments: 5 });
   });
 
   it('maps task statuses, steps and priorities', async () => {

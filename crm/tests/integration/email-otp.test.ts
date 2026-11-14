@@ -123,6 +123,8 @@ describe('client email code sign-in', () => {
     );
     expect(verified.ok).toBe(true);
     if (!verified.ok) return;
+    // Staff never go straight to the client dashboard: '/admin', or the profile step that ends at '/'.
+    expect(verified.next).not.toBe('/dashboard');
     const headers = cookieHeader(verified.setCookie);
     const user = await getSessionUser(headers, {
       db: createDb(db.auth),

@@ -5,11 +5,13 @@ test.describe('P2 archive pages (staff only)', () => {
   test('notes: search finds a note by a body phrase and the note opens', async ({ adminPage }) => {
     await adminPage.goto('/admin/archive/notes');
     await expect(adminPage.getByRole('heading', { name: 'Archive' })).toBeVisible();
-    await adminPage.getByLabel('Search title and text').fill('Lead status flow');
+    await adminPage.getByLabel('Search title and text').fill('not reviewed by an attorney');
     await adminPage.getByRole('button', { name: 'Search', exact: true }).click();
-    await adminPage.getByRole('link', { name: 'Agency Overview' }).click();
-    await expect(adminPage.getByRole('heading', { name: 'Agency Overview' })).toBeVisible();
-    await expect(adminPage.getByText('New Lead -> Contacted')).toBeVisible();
+    await adminPage.getByRole('link', { name: 'TCPA Consent & Opt-Out Language' }).click();
+    await expect(
+      adminPage.getByRole('heading', { name: 'TCPA Consent & Opt-Out Language' })
+    ).toBeVisible();
+    await expect(adminPage.getByText('Draft, not reviewed by an attorney')).toBeVisible();
   });
 
   test('tasks: filter by status', async ({ adminPage }) => {

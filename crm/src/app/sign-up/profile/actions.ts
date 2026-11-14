@@ -24,5 +24,5 @@ export async function saveProfileName(
     .update(users)
     .set({ name: parsed.data, updatedAt: new Date() })
     .where(eq(users.id, user.id));
-  redirect('/dashboard');
+  redirect('/');
 }

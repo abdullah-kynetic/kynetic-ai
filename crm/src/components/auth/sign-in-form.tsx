@@ -75,7 +75,9 @@ export function SignInForm({
       setError(data.message || 'That code did not work. Request a new one.');
       return;
     }
-    window.location.assign(data.next === '/dashboard' && nextPath ? nextPath : data.next);
+    window.location.assign(
+      (data.next === '/dashboard' || data.next === '/admin') && nextPath ? nextPath : data.next
+    );
   }
 
   const google = googleEnabled && mode !== 'help' && (
@@ -87,7 +89,7 @@ export function SignInForm({
         onClick={() =>
           authClient.signIn.social({
             provider: 'google',
-            callbackURL: nextPath ?? '/dashboard',
+            callbackURL: nextPath ?? '/',
             errorCallbackURL: nextPath
               ? `/sign-in?error=google&next=${encodeURIComponent(nextPath)}`
               : '/sign-in?error=google'
