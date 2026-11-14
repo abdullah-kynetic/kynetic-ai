@@ -16,7 +16,7 @@ const ogImage = new URL('/brand/og-image-espresso.png', Astro.site).href;
 
 const faqs = [
   { q: 'What does the free AI Audit cover?', a: 'A 30 minute call where we walk through how your whole business runs, from operations and admin to sales, customer service and management. You leave with a list of where time and money slip away, what each costs you, and where AI pays back first, whether or not you work with us.' },
-  { q: 'What is the difference between the free AI Score and the free AI Audit?', a: 'The AI Score is a quick, automated look at how your business shows up online and where AI could help, from a few questions. The AI Audit is the 30 minute call where we go through the whole business, not just the online part.' },
+  { q: 'What is the difference between the free AI Score and the free AI Audit?', a: 'The AI Score is a quick peek from the outside: what is visible about your business online, plus a few of your answers. The AI Audit is the look from the inside, a 30 minute call where we go through how your team, leads, tools and costs really work, and what each fix is worth.' },
   { q: 'What results can I expect, and how fast?', a: 'The timeline for your first system is agreed on your audit. We build, run and monitor it for you, and your client portal shows what each system produces. Results depend on your business, so we measure them with you rather than promise a number.' },
   { q: 'Will this add work for my team?', a: 'No. The point is to take work off your team.' },
   { q: 'Who owns what you build?', a: 'You do. The systems, data and accounts sit in your business, so what we build adds to what the company is worth.' },
@@ -83,7 +83,7 @@ const questions = [
           <p class="np-lede">We find where your business loses time and money, then design, build and run the AI that fixes it, from your first audit to a full AI transformation of how you run.</p>
           <div class="np-cta">
             <a class="np-btn np-btn--primary" href={CAL}>Book your free AI Audit</a>
-            <p class="np-cta__note">A few quick questions, then choose a time. The call is free. Or <a href="#score">get your free AI Score first</a>.</p>
+            <p class="np-cta__note">A few quick questions, then choose a time. The call is free. Or <a href="#score">take a quick peek with the free AI Score</a>.</p>
           </div>
           <ul class="np-assure">
             <li>Free 30 minute AI Audit</li>
@@ -151,8 +151,8 @@ const questions = [
         <div class="np-wrap np-wrap--narrow">
           <header class="np-head">
             <p class="np-badge">Free AI Score</p>
-            <h2>See where your business stands.</h2>
-            <p class="np-lede">Answer a few quick questions and get your AI Score: how your business looks online and where AI could help. It takes about two minutes and it is free.</p>
+            <h2>Take a peek under the hood.</h2>
+            <p class="np-lede">A quick, outside-in look at how your business shows up online and where AI might fit. It takes about two minutes and it is free. It is a small taste of the free AI Audit, where we go inside the business.</p>
           </header>
           <div class="np-score__card" data-score aria-live="polite">
             <div class="np-score__bar"><span class="np-score__count" data-count>Step 1 of 4</span><span class="np-score__track"><i data-fill style="width:5%"></i></span></div>
@@ -195,6 +195,7 @@ const questions = [
             <div class="np-score__step np-score__result" data-step="result" hidden>
               <p class="np-score__sample" data-sample>Preview with sample results. Live results switch on with the finished tool.</p>
               <h3 data-result-title>Your AI Score</h3>
+              <p class="np-score__lens">A quick look from the outside, based on what is visible online and a few of your answers.</p>
               <div class="np-score__scores">
                 <div class="np-score__big"><strong>58</strong><span>out of 100</span></div>
                 <ul>
@@ -214,8 +215,17 @@ const questions = [
               <ul class="np-score__wins"><li>Sample win: reply to unanswered reviews.</li><li>Sample win: put a booking link at the top of your site.</li></ul>
               <h4>Where AI could help you</h4>
               <ul class="np-score__wins"><li>Answer missed calls and book after hours</li><li>Follow up with every inquiry within minutes</li></ul>
-              <div class="np-score__locked" aria-label="Included in the Full AI Audit">
-                <p><b>This is your instant AI Score.</b> The free AI Audit goes deeper into how your team spends its time, where leads leak, how your systems connect, and what each fix is worth.</p>
+              <div class="np-score__vs" aria-label="The AI Score compared with the AI Audit">
+                <div class="np-score__vs-col">
+                  <p class="np-score__vs-label">Your AI Score</p>
+                  <b>A quick look from the outside</b>
+                  <ul><li>Based on what is public and a few answers</li><li>About two minutes, no call</li><li>Shows where to look first</li></ul>
+                </div>
+                <div class="np-score__vs-col np-score__vs-col--next">
+                  <p class="np-score__vs-label">The free AI Audit</p>
+                  <b>The full look from the inside</b>
+                  <ul><li>A 30 minute call on how your team, leads, tools and costs really work</li><li>What each fix is worth</li><li>A clear plan for what to build first</li></ul>
+                </div>
               </div>
               <div class="np-score__actions">
                 <a class="np-btn np-btn--primary" href={CAL}>Book your free AI Audit (30 min)</a>
