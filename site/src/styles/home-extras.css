@@ -124,13 +124,33 @@ html.am-lock { overflow: hidden; }
 .kn-onsite p.kn-onsite__eyebrow { font-size: 11px; line-height: 1.2; color: var(--espresso-gold); }
 .kn-onsite__list li { font-size: 1rem; }
 
-/* Cards removed: on phones the map is replaced by the same explanations stacked as a list */
+/* Phones: the same map redrawn as a vertical chain (built by map-pop.ts): hub on top, six systems below, tap one to open its card */
+.kn-mmap { display: none; }
 @media (max-width: 809px) {
   .kn-map { display: block; margin-bottom: 24px; }
-  .kn-map svg { display: none; }
-  .kn-map .kn-pop { position: static; display: block !important; width: auto; margin: 0 0 14px; pointer-events: auto; border-color: var(--color-border); }
-  .kn-map .kn-pop[hidden] { display: block !important; }
+  .kn-map > svg, .kn-map > .kn-pop, .kn-map > .kn-pop[hidden] { display: none !important; }
+  .kn-mmap { display: block; }
+  .kn-mmap__hub { width: 132px; height: 132px; margin: 0 auto; border-radius: 50%; background: var(--espresso-band); color: var(--espresso-text); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; position: relative; box-shadow: 0 0 0 8px var(--color-alt), 0 0 0 9.5px var(--color-accent); }
+  .kn-mmap__hub small { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--espresso-gold); }
+  .kn-mmap__hub b { font-family: var(--font-serif); font-size: 22px; font-weight: 600; line-height: 1.1; }
+  .kn-mmap__list { list-style: none; margin: 0; padding: 0; }
+  .kn-mmap__list > li { position: relative; padding-top: 28px; }
+  .kn-mmap__list > li::before { content: ''; position: absolute; left: 50%; top: 0; height: 28px; border-left: 1.5px dashed var(--color-border-input); }
+  .kn-mmap__list > li::after { content: ''; position: absolute; left: 50%; top: 0; width: 7px; height: 7px; margin-left: -3.5px; border-radius: 50%; background: var(--color-accent); animation: kn-drop 2.4s linear infinite; animation-delay: calc(var(--i) * .35s); }
+  @keyframes kn-drop { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { transform: translateY(26px); opacity: 0; } }
+  .kn-mmap__node { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: left; font: inherit; color: var(--color-text); background: var(--color-card); border: 1.5px solid var(--color-border); border-radius: 14px; padding: 14px 16px; cursor: pointer; transition: border-color .2s; }
+  .kn-mmap__node b { display: block; font-size: 15px; font-weight: 600; }
+  .kn-mmap__node small { display: block; font-size: 12px; color: var(--color-muted); margin-top: 2px; }
+  .kn-mmap__node i { flex: none; width: 10px; height: 10px; border-right: 2px solid var(--color-accent-text); border-bottom: 2px solid var(--color-accent-text); transform: rotate(45deg); transition: transform .25s; margin-right: 4px; }
+  .kn-mmap__node[aria-expanded="true"] { border-color: var(--color-accent); }
+  .kn-mmap__node[aria-expanded="true"] i { transform: rotate(-135deg); }
+  .kn-mmap__node:focus-visible { outline: 2px solid var(--color-accent-text); outline-offset: 3px; }
+  .kn-mmap__pop { background: var(--color-card); border: 1px solid var(--color-border); border-radius: 14px; margin-top: 8px; padding: 12px; animation: kn-pop-in .25s ease-out; }
+  .kn-mmap__pop[hidden] { display: none; }
+  .kn-mmap .kn-pop__cols { grid-template-columns: 1fr; }
+  @keyframes kn-pop-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 }
+@media (prefers-reduced-motion: reduce) { .kn-mmap__list > li::after { animation: none; opacity: 0; } .kn-mmap__pop { animation: none; } }
 
 /* Hover card: how it is usually done vs with Kynetic */
 .kn-pop { width: min(460px, 94%); }

@@ -122,6 +122,12 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
   const { ctx, page, errors } = await open(390);
   ok('mobile: no horizontal scroll', !(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)));
   ok('mobile: hero audit button is visible', await page.locator('#hero a.np-btn').isVisible());
+  await page.evaluate(() => document.getElementById('services').scrollIntoView()); await page.waitForTimeout(800);
+  ok('mobile map: six systems, first one open', (await page.locator('.kn-mmap__node').count()) === 6 && (await page.locator('.kn-mmap__node[aria-expanded=true]').count()) === 1);
+  await page.locator('.kn-mmap__node').nth(3).click(); await page.waitForTimeout(300);
+  ok('mobile map: tapping another system opens only that one', (await page.locator('.kn-mmap__node[aria-expanded=true]').count()) === 1 && await page.locator('#mmp3').isVisible() && (await page.locator('#mmp0').isHidden()));
+  await page.locator('.kn-mmap__node').nth(3).click(); await page.waitForTimeout(300);
+  ok('mobile map: tapping the open system closes it', (await page.locator('.kn-mmap__node[aria-expanded=true]').count()) === 0);
   ok('mobile: no console errors', errors.length === 0, errors.slice(0, 3).join(' | '));
   await ctx.close();
 }

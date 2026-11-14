@@ -1,8 +1,42 @@
 // Hover, focus or tap a system on the services map to see a card explaining what it does.
 // The cards are plain HTML next to the map (hidden without JS; the system cards below carry the same facts).
+// Phones: build a vertical chain (hub, then six systems you tap open). The desktop SVG and cards stay in the page but are hidden by CSS.
+function buildMobileMap(map: HTMLElement) {
+  const esc = (s: string) => s.replace(/&(?!amp;|lt;|gt;)/g, '&amp;');
+  const nodes = [...map.querySelectorAll<SVGGElement>('.m-node[data-pop]')];
+  const wrap = document.createElement('div');
+  wrap.className = 'kn-mmap';
+  wrap.innerHTML = '<div class="kn-mmap__hub"><small>Your</small><b>Business</b><small>AI partner</small></div><ol class="kn-mmap__list"></ol>';
+  const list = wrap.querySelector('ol')!;
+  const opens: (() => void)[] = [];
+  const btns: HTMLButtonElement[] = [];
+  nodes.forEach((n, i) => {
+    const texts = n.querySelectorAll('text');
+    const cols = map.querySelector('#pop' + n.dataset.pop + ' .kn-pop__cols')!.cloneNode(true) as HTMLElement;
+    const li = document.createElement('li');
+    li.style.setProperty('--i', String(i));
+    li.innerHTML = `<button type="button" class="kn-mmap__node" aria-expanded="false" aria-controls="mmp${i}"><span><b>${esc(texts[0]?.textContent ?? '')}</b><small>${esc(texts[1]?.textContent ?? '')}</small></span><i aria-hidden="true"></i></button><div class="kn-mmap__pop" id="mmp${i}" hidden></div>`;
+    const pop = li.querySelector<HTMLElement>('.kn-mmap__pop')!;
+    pop.append(cols);
+    const btn = li.querySelector<HTMLButtonElement>('button')!;
+    btns.push(btn);
+    const set = (open: boolean) => { btn.setAttribute('aria-expanded', String(open)); pop.hidden = !open; };
+    opens.push(() => set(true));
+    btn.addEventListener('click', () => {
+      const wasOpen = btn.getAttribute('aria-expanded') === 'true';
+      btns.forEach((b) => { b.setAttribute('aria-expanded', 'false'); (document.getElementById(b.getAttribute('aria-controls')!) as HTMLElement).hidden = true; });
+      set(!wasOpen);
+    });
+    list.append(li);
+  });
+  map.append(wrap);
+  opens[0]?.();
+}
+
 export function initMapPop() {
   const map = document.querySelector<HTMLElement>('.kn-map');
   if (!map) return;
+  buildMobileMap(map);
   const nodes = [...map.querySelectorAll<SVGGElement>('.m-node[data-pop]')];
   const pops = new Map(nodes.map((n) => [n, map.querySelector<HTMLElement>('#pop' + n.dataset.pop)!]));
   let active: SVGGElement | null = null;
