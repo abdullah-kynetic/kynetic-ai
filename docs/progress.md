@@ -2,6 +2,10 @@
 
 > **Canonical plan (2026-11-08, precedence restated 2026-11-08 PST; portal line 2026-11-09 PST):** the business roadmap, progress baseline and scorecard live in Twenty: roadmap note `7bfdcb7e`, baseline v1 note `603fe300`, scorecard note `5c44b12e`. GitHub owns technical tracking only (code, PRs, CI, deploy evidence: `docs/audit/2026-11-08-code-evidence.md`). The operating summary, offer, pricing precedence, and the docs-reconciliation journal are in `docs/STATUS.md`. `docs/codex/COMPLETION-PLAN.md` is historical evidence, not a competing roadmap. Do not keep a second editable acceptance list in this repo.
 
+## Staff sign-in switched to email code (2026-11-14 UTC)
+
+Abdullah asked for the staff sign-in to be an emailed code, not Google plus an authenticator. `STAFF_EMAIL_LOGIN=true` was set in `/opt/portal-new/runtime.env` and only the app container was recreated; commit unchanged (`8e771a8e`), health ok. Env backup `runtime.env.bak-before-staff-email-login`. Staff sessions last 30 days and skip the authenticator (KI-033, S-05). Not yet checked: a real emailed-code sign-in as `abdullah@kyneticai.com`.
+
 ## Deploy 8e771a8e and archive import (2026-11-14 UTC)
 
 Live at portal.kyneticai.com is `main` `8e771a8e64de98931ef3a419653254fb9e122929` (phases 0 to 6, the staff-only archive viewer, PR #175 runbook, PR #176). Abdullah approved the deploy and the import. Pre-deploy dump `/var/backups/portal-new-pre-deploy-8e771a8-20261114T010726Z.dump` (1,126,624 bytes). Migrations ran cleanly; last ledger entry `id=64`, and `1090_staff_archive` is applied. Health: `status ok`, `database ok`, `worker ok`. The archive import ran in the `kynetic-portal-tools` image per `docs/runbooks/archive-import.md`: 120 notes, 63 tasks, 5 attachments, 5 records (`archive_notes=120`, `archive_tasks=63`, `archive_attachments=5`, `archive_records=5`). No rollback.

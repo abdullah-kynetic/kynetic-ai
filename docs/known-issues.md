@@ -222,6 +222,7 @@ Found 2026-11-11. SPEC 01 in Twenty lists the usage page as "minutes, cost, cap"
 Update 2026-11-13: still hidden. Phase 3 added tests that fix the page to counts and cap status. The decision is still Abdullah's (recommendation: keep it hidden).
 
 ### KI-033: Staff email-code login removes the authenticator step (medium)
+Update 2026-11-14: `STAFF_EMAIL_LOGIN=true` is now ON in production (`/opt/portal-new/runtime.env`, app container recreated, health ok on `8e771a8e`). Abdullah chose the emailed code as the staff sign-in and wants the authenticator off. Backup of the previous env: `/opt/portal-new/runtime.env.bak-before-staff-email-login`. Google staff sign-in still works and also skips the authenticator. Still open: protect the staff mailbox (abdullah@kyneticai.com) with its own strong sign-in.
 Found 2026-11-12. At Abdullah's request, `STAFF_EMAIL_LOGIN=true` lets a Kynetic admin or VA sign in with a 6-digit emailed code, with no authenticator app and a 30 day session. Anyone who controls that mailbox then has admin access, so the mailbox needs its own strong sign-in. It is off by default. Codes are sent through Resend, so `RESEND_API_KEY` must be set on the server or no code arrives. Google staff sign-in still works; with the setting on it also skips the authenticator. Turning the setting off restores Google plus authenticator and 7 day sessions.
 
 ### KI-037: Phase 6 gaps (low)
