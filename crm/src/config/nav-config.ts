@@ -274,8 +274,8 @@ export const adminNavGroups: NavGroup[] = [
         items: []
       },
       {
-        title: 'View as client',
-        url: '/admin/view-as',
+        title: 'Client portals',
+        url: '/admin/portals',
         icon: 'user',
         isActive: false,
         shortcut: ['a', 'v'],
@@ -316,8 +316,20 @@ export const adminNavGroups: NavGroup[] = [
   {
     label: 'Platform',
     items: [
-      { title: 'Backups', url: '/admin/backups', icon: 'post', isActive: false, items: [] },
-      { title: 'Archive', url: '/admin/archive', icon: 'post', isActive: false, items: [] },
+      {
+        title: 'Backups',
+        url: '/admin/backups',
+        icon: 'post',
+        isActive: false,
+        items: []
+      },
+      {
+        title: 'Archive',
+        url: '/admin/archive',
+        icon: 'post',
+        isActive: false,
+        items: []
+      },
       {
         title: 'Audit log',
         url: '/admin/audit',
