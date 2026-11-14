@@ -6,6 +6,7 @@ import tokens from '../styles/tokens.css?raw';
 import niche_css from '../styles/niche.css?raw';
 import home_css from '../styles/home.css?raw';
 import extras from '../styles/home-extras.css?raw';
+import servicesMap from '../components/services-map.html?raw';
 
 const CAL = 'https://cal.com/abdullah-kyneticai/kynetic-ai-discovery-call';
 const title = 'Kynetic AI | Your AI Growth Partner';
@@ -13,14 +14,6 @@ const description = 'Kynetic AI finds where your business loses time and money, 
 const url = new URL('/', Astro.site).href;
 const ogImage = new URL('/brand/og-image-espresso.png', Astro.site).href;
 
-const systems = [
-  { t: 'Speed-to-lead', d: 'Alex calls every new lead back in under 60 seconds, texts if they do not pick up, and books the appointment on your calendar.' },
-  { t: 'Follow-up and lead recovery', d: 'Every quote is followed up until you get a yes or a clear no, and old leads and past customers hear from you again.' },
-  { t: 'Reviews and online presence', d: 'Every customer is asked for a review, with no review gating, and your listings and profiles stay accurate.' },
-  { t: 'Back office', d: 'Scheduling, reminders, data entry and reports run on their own, so your team stops retyping the same details.' },
-  { t: 'Custom AI and CRM', d: 'One system shaped around how you work, for when off-the-shelf software makes you bend your process to fit it.' },
-  { t: 'AI transformation', d: 'We audit every process and build AI into each step, on top of what you already use. Optional on-site days are scoped separately.' },
-];
 const faqs = [
   { q: 'What does the free audit cover?', a: 'A 30 minute walkthrough of how your business runs, from operations and admin to sales, customer service and management. You leave with a list of where time and money slip away, what each costs you, and where AI pays back first, whether or not you work with us.' },
   { q: 'What results can I expect, and how fast?', a: 'The timeline for your first system is agreed on your audit. We build, run and monitor it for you, and your client portal shows what each system produces. Results depend on your business, so we measure them with you rather than promise a number.' },
@@ -136,9 +129,7 @@ const faqs = [
             <h2>Start with the biggest opportunity.</h2>
             <p class="np-lede">The audit shows where AI pays back first. Every system is scoped on your audit, and nothing is switched on until you agree.</p>
           </header>
-          <ul class="np-systems">
-            {systems.map((s) => <li><h3>{s.t}</h3><p>{s.d}</p></li>)}
-          </ul>
+          <Fragment set:html={servicesMap} />
           <p class="np-industry">We built our first playbook for <a href="/remodelers">remodelers</a>, with solar and battery and foundation repair next. The partnership works for any established business.</p>
         </div>
       </section>
@@ -174,7 +165,11 @@ const faqs = [
     </footer>
     <script>
       import { initAuditModal } from '../scripts/audit-modal';
+      import { initMapPop } from '../scripts/map-pop';
+      import { initReveal } from '../scripts/reveal';
       initAuditModal();
+      initMapPop();
+      initReveal();
     </script>
   </body>
 </html>

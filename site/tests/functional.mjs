@@ -104,6 +104,14 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
   await page.goto(base + '/', { waitUntil: 'load' }); await openAudit(); await page.waitForTimeout(300);
   ok('resume: after booking, reopening goes to the confirmation page', page.url().includes('/confirmation/'));
   await page.evaluate(() => localStorage.clear()); await page.goto(base + '/', { waitUntil: 'load' });
+  // services map popovers
+  await page.evaluate(() => document.getElementById('services').scrollIntoView()); await page.waitForTimeout(1500);
+  await page.locator('.m-node[data-pop="1"]').hover(); await page.waitForTimeout(300);
+  ok('map: hovering a system shows its card', await page.locator('#pop1').isVisible() && (await page.locator('#pop1').innerText()).includes('Follow-Up'));
+  await page.locator('.m-node[data-pop="3"]').hover(); await page.waitForTimeout(300);
+  ok('map: only one card shows at a time', (await page.locator('.kn-pop:visible').count()) === 1 && await page.locator('#pop3').isVisible());
+  await page.mouse.move(5, 5); await page.waitForTimeout(300);
+  ok('map: leaving the system hides the card', (await page.locator('.kn-pop:visible').count()) === 0);
   ok('desktop: no console errors', errors.length === 0, errors.slice(0, 3).join(' | '));
   ok('desktop: external requests all aborted (none succeeded)', true, `${external.length} attempted (fonts etc.)`);
   await ctx.close();

@@ -28,10 +28,6 @@
 .np-pillars p { margin: 0; color: var(--color-muted); }
 .np-pillars__n { display: inline-flex; width: 40px; height: 40px; align-items: center; justify-content: center; border-radius: 50%; background: #fbe9df; color: var(--color-accent-text); font-weight: 600; }
 
-.np-systems { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.np-systems li { background: var(--color-card); border: 1px solid var(--color-border); border-radius: 16px; padding: 24px; }
-.np-systems h3 { font-size: 1.375rem; margin-bottom: 8px; }
-.np-systems p { margin: 0; color: var(--color-muted); font-size: .975rem; }
 .np-industry { margin: 40px auto 0; max-width: 720px; text-align: center; font-size: 1.0625rem; }
 
 .np-faq { max-width: 820px; margin: 0 auto; display: grid; gap: 12px; }
@@ -45,7 +41,7 @@
 
 @media (max-width: 899px) {
   .np-why, .np-change { grid-template-columns: 1fr; }
-  .np-pillars, .np-systems { grid-template-columns: 1fr; }
+  .np-pillars { grid-template-columns: 1fr; }
   .np-nav__links { display: none; }
   .np-hero--home { padding: 56px 0 40px; }
 }

@@ -30,7 +30,7 @@ for (const width of [1440, 390]) {
     ok(`${tag} home: hero CTA goes to the audit`, (await page.locator('#hero a[href*="cal.com/abdullah-kyneticai"]').count()) >= 1);
     ok(`${tag} home: Why now section with the example`, (await page.locator('#why h2').innerText()).includes('fraction of the cost') && (await page.locator('#why .np-compare').count()) === 1);
     ok(`${tag} home: 2-3x stat and three pillars`, (await page.locator('#change .np-stat strong').innerText()).includes('2–3×') && (await page.locator('#change .np-pillars li').count()) === 3);
-    ok(`${tag} home: six services, remodelers link`, (await page.locator('#services .np-systems li').count()) === 6 && (await page.locator('#services a[href="/remodelers"]').count()) === 1);
+    ok(`${tag} home: six-system map with six hover cards, remodelers link`, (await page.locator('#services .kn-map .m-node').count()) === 6 && (await page.locator('#services .kn-pop').count()) === 6 && (await page.locator('#services a[href="/remodelers"]').count()) === 1);
     ok(`${tag} home: no pricing, no Nora, no team quotes`, !/\$6,500|\$10,000|financing|\bnora\b|quentin/i.test(text));
     ok(`${tag} home: no "consulting" as identity`, !/consulting|consultancy/.test(text));
     ok(`${tag} home: no horizontal scroll`, !(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)));
