@@ -46,7 +46,7 @@ Same checks the worker's restore test makes (`crm/src/server/admin/backups.ts`):
 - `select count(*) from information_schema.tables where table_schema='public'` is at least 20.
 - `contacts`, `deals`, `consents` and `tenant_documents` all exist.
 - Row counts for `tenants`, `contacts`, `calls` look like the live system on the day of the dump.
-- Tenant isolation holds: as the app role, with `app.tenant_id` set to client A, a contact of client B returns 0 rows.
+- Tenant isolation holds: as the app role, with `app.tenant_id` set to client A, a contact of client B returns 0 rows. The scratch copy is restored with `--no-privileges`, so first grant the app role what it needs inside the throwaway copy only: `GRANT USAGE ON SCHEMA public TO kynetic_app; GRANT SELECT ON contacts TO kynetic_app;` (the worker's own restore test does the same). Without this the check fails with "permission denied for table contacts" before row security is tested (seen 2026-11-14). Run it as `begin; set local role kynetic_app; select set_config('app.tenant_id','<tenantA>',true); select count(*) from contacts where id='<contactA>'; select count(*) from contacts where id='<contactB>'; commit;` with the SQL on stdin; expect 1 then 0.
 
 ## 4. Clean up
 
@@ -71,4 +71,4 @@ Run steps 1 to 4 once with the newest good backup, and write the date, the file 
 
 | Date | Backup used | Result | Time taken |
 |---|---|---|---|
-| (not run yet) | | | |
+| 2026-11-14 | `backups/kynetic-crm/2026-11-14/manual-8a4e7577184bf4fd75cb1960b03852f4.dump.enc` | Passed: decrypted; 102 public tables; `contacts`, `deals`, `consents`, `tenant_documents` present; tenants 14, contacts 1,476, calls 2,691; isolation as `kynetic_app`: tenant A sees its contact (1) and not B's (0), B the reverse, no tenant set sees neither (0 and 0). | 84 seconds |

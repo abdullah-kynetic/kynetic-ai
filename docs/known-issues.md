@@ -29,7 +29,8 @@ Found 2026-11-13. Abdullah decided the same day: an import refuses to save conse
 ### KI-035: Primary button hover falls below 4.5:1 for the brand blue #2563eb (low)
 Found 2026-11-13 by the phase 1 accessibility scan: white text on the hover colour (primary mixed 8% with white) measures 4.41:1 on the synthetic tenant colour. The resting state passes. The scan moves the pointer away first. Not fixed. Also note the import and CSV export share a budget of 5 uploads an hour per tenant.
 
-### KI-034: Portal database backups fail and do not reach R2 (high)
+### KI-034: Portal database backups fail and do not reach R2 (high; fixed 2026-11-14)
+Update 2026-11-14: fixed on the server. `0d531d8` deployed, `STORAGE_BUCKET=kynetic-portal-files`, `BACKUP_ALERT_ENABLED=true`, three manual backups `ok` (newest run `898cece5-ce15-475b-8576-a7df909058e7`, object under `backups/kynetic-crm/2026-11-14/`), and a restore drill passed (see `docs/runbooks/restore.md`). Still open: `/etc/cron.d/portal-backup` was not read, and the nightly 02:00 run has not yet been seen. The text below is the original finding.
 Found 2026-11-12. Every `backup_runs` row (21 of 21, 2026-11-10 to 2026-11-12) failed: the worker image's `pg_dump` was version 15 against Postgres 16 ("server version mismatch"). Nothing reached R2, and the worker's `STORAGE_BUCKET` is `kynetic-portal-test` while the production bucket is `kynetic-portal-files`. The backup alert is off. The Dockerfile now installs the version 16 client and fails the build otherwise. Phase 0 (2026-11-13) added the worker heartbeat to `/api/health`, so the next dead worker shows as 503 instead of silent. Still needed on the server: deploy the new worker image, set the bucket, turn on `BACKUP_ALERT_ENABLED`, then one manual backup and one restore test. The root cron job `/etc/cron.d/portal-backup` is unread.
 
 ### KI-035: Archive attachments are not copied in yet (open)
