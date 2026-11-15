@@ -79,3 +79,26 @@ test('phase 7 client page exposes tabs without changing subpage addresses', asyn
   await adminPage.getByRole('link', { name: 'Systems', exact: true }).click();
   await expect(adminPage).toHaveURL(/\/admin\/clients\/[^/]+\/systems$/);
 });
+
+test('phase 7 Today shows all blocks to admin and only permitted blocks to VA', async ({
+  adminPage,
+  vaPage
+}) => {
+  await adminPage.goto('/admin');
+  for (const heading of [
+    'Needs you now',
+    'Sales today',
+    'Clients needing attention',
+    'Support',
+    'Daily summary'
+  ]) {
+    await expect(adminPage.getByRole('heading', { name: heading, exact: true })).toBeVisible();
+  }
+  await vaPage.goto('/admin');
+  await expect(
+    vaPage.getByRole('heading', { name: 'Clients needing attention', exact: true })
+  ).toBeVisible();
+  await expect(vaPage.getByRole('heading', { name: 'Support', exact: true })).toBeVisible();
+  await expect(vaPage.getByRole('heading', { name: 'Sales today', exact: true })).toHaveCount(0);
+  await expect(vaPage.getByRole('heading', { name: 'Daily summary', exact: true })).toHaveCount(0);
+});

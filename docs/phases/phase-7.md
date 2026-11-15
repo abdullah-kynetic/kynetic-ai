@@ -54,7 +54,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: e2e that every tab loads; existing offboard tests unchanged
   - Commit: "Add tabs to the client page"
   - Covers: P7-3
-- [ ] **P7-S4.** The Today page at `/admin`, built from the existing alert, job, dialer, health and support queries, with the role gate on the server. Remove the `/admin` redirect from S2.
+- [x] **P7-S4.** The Today page at `/admin`, built from the existing alert, job, dialer, health and support queries, with the role gate on the server. Remove the `/admin` redirect from S2.
   - Test: integration test of the data function for admin and VA; e2e for both
   - Commit: "Add the admin Today page"
   - Covers: P7-4
