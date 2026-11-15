@@ -42,7 +42,7 @@ Defaults used unless Abdullah says otherwise: Sales and Money stay admin-only (t
 
 Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finishes the step. A new thread resumes at the first unticked step. For every step: finish it, test it, commit, push, then move on (see `PROTOCOL.md`). Use `bun run verify:quick` after each step and `bun run verify:e2e` before the PR.
 
-- [ ] **P7-S1.** Role table, then the menu regroup. First read each admin page and its server function and write a table of who can open it (admin, VA or both) into the PR body and the appendix of `docs/plans/ADMIN-CLEANUP.md`. Then regroup `adminNavGroups` into the six entries and filter by role so a VA never sees an entry its page refuses. Keep every page address.
+- [x] **P7-S1.** Role table, then the menu regroup. First read each admin page and its server function and write a table of who can open it (admin, VA or both) into the PR body and the appendix of `docs/plans/ADMIN-CLEANUP.md`. Then regroup `adminNavGroups` into the six entries and filter by role so a VA never sees an entry its page refuses. Keep every page address.
   - Test: unit test of the nav filter for admin and VA; existing `lane-a-a0` Backups link test still passes (keep System expanded or update the test with a reason)
   - Commit: "Regroup the admin menu"
   - Covers: P7-1

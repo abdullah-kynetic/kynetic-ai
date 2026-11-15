@@ -4,6 +4,7 @@ import Header from '@/components/layout/header';
 import { ModulesProvider } from '@/components/modules/module-gate';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { adminNavGroups } from '@/config/nav-config';
+import { visibleNavGroups } from '@/config/nav-registry';
 import { decideAdminAccess } from '@/server/admin';
 import { resolveViewAs, VIEW_AS_COOKIE } from '@/server/impersonation';
 import { roleLabel } from '@/server/shell';
@@ -37,8 +38,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   const defaultOpen = cookieStore.get('sidebar_state')?.value !== 'false';
   const { user, role } = access;
-  const groups =
-    role === 'admin' ? adminNavGroups : adminNavGroups.filter((group) => group.label !== 'Agency');
+  const groups = visibleNavGroups(
+    adminNavGroups,
+    { keys: new Set(['platform']), crmLevel: null },
+    role
+  );
   return (
     // The admin side is platform-only and takes no tenant (DESIGN_SYSTEM: Kynetic orange chrome).
     <ModulesProvider modules={{ keys: ['platform'], crmLevel: null }}>
