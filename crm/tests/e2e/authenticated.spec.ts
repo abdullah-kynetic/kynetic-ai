@@ -39,6 +39,6 @@ test('verified non-admin cannot open admin, while verified admin can', async ({
   expect(
     (await authenticatedPage.context().request.get('/admin', { maxRedirects: 0 })).status()
   ).toBe(403);
-  await adminPage.goto('/admin');
+  await adminPage.goto('/admin/clients');
   await expect(adminPage.getByRole('heading', { name: 'All clients', exact: true })).toBeVisible();
 });

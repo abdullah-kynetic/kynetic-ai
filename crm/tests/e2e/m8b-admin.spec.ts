@@ -3,7 +3,7 @@ import { expect, test } from './fixtures';
 test('F-53/F-54 admin all-clients table shows synthetic tenants and health thresholds', async ({
   adminPage
 }) => {
-  await adminPage.goto('/admin');
+  await adminPage.goto('/admin/clients');
   await expect(adminPage.getByRole('heading', { name: 'All clients' })).toBeVisible();
   await expect(adminPage.getByText(/green ≥70, yellow ≥40, red <40/)).toBeVisible();
   await expect(adminPage.getByRole('row').filter({ hasText: 'Synthetic Brand Co' })).toContainText(
@@ -15,6 +15,24 @@ test('F-53/F-54 admin all-clients table shows synthetic tenants and health thres
   await expect(
     adminPage.getByRole('row').filter({ hasNotText: /Kynetic AI \(synthetic\)|E2E / })
   ).toHaveCount(4);
+});
+
+test('phase 7 client list keeps view-as available to admin and VA and old lists redirect', async ({
+  adminPage,
+  vaPage
+}) => {
+  for (const page of [adminPage, vaPage]) {
+    await page.goto('/admin/clients');
+    await expect(page.getByRole('heading', { name: 'All clients', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Status', exact: true })).toBeVisible();
+  }
+  await expect(
+    adminPage.getByRole('link', { name: 'Onboard a client', exact: true })
+  ).toBeVisible();
+  for (const oldPath of ['/admin', '/admin/portals', '/admin/view-as']) {
+    await adminPage.goto(oldPath);
+    await expect(adminPage).toHaveURL(/\/admin\/clients$/);
+  }
 });
 
 test('F-28/F-62 admin operations shows integration failures and reviews a flagged call', async ({
