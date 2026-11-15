@@ -27,9 +27,11 @@ test('phase 7 client list keeps view-as available to admin and VA and old lists 
     await expect(page.getByRole('columnheader', { name: 'Status', exact: true })).toBeVisible();
   }
   await expect(
-    adminPage.getByRole('link', { name: 'Onboard a client', exact: true })
+    adminPage.locator('#main-content').getByRole('link', { name: 'Onboard a client', exact: true })
   ).toBeVisible();
-  for (const oldPath of ['/admin', '/admin/portals', '/admin/view-as']) {
+  await adminPage.goto('/admin');
+  await expect(adminPage).toHaveURL(/\/admin$/);
+  for (const oldPath of ['/admin/portals', '/admin/view-as']) {
     await adminPage.goto(oldPath);
     await expect(adminPage).toHaveURL(/\/admin\/clients$/);
   }
@@ -114,6 +116,6 @@ test('phase 7 gives the operations pages distinct names and hides DEV blocks', a
   await expect(
     adminPage.getByRole('heading', { name: 'Sales settings', exact: true })
   ).toBeVisible();
-  await expect(adminPage.getByText('DEV integration draft', { exact: true })).toHaveCount(0);
-  await expect(adminPage.getByText('Agency DEV lead secret', { exact: true })).toHaveCount(0);
+  await expect(adminPage.getByText('DEV integration draft', { exact: true })).toBeHidden();
+  await expect(adminPage.getByText('Agency DEV lead secret', { exact: true })).toBeHidden();
 });

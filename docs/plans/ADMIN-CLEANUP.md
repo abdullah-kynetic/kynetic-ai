@@ -1,6 +1,6 @@
 # Admin side cleanup plan
 
-Status: P7-S1 complete 2026-11-15. The remaining five steps are not built yet. It runs as phase 7 (`docs/phases/phase-7.md`): six steps, one branch, one pull request, and nothing deploys without Abdullah's explicit yes.
+Status: P7-S6 complete 2026-11-15. Phase 7 is ready to ship after its required CI run; nothing deploys without Abdullah's explicit yes. It runs as phase 7 (`docs/phases/phase-7.md`): six steps, one branch, one pull request.
 
 The admin side is cleaned up in six small steps (commits on one branch) that change where things are reached from, not what the pages do. Page addresses stay the same except one: the client table moves from `/admin` to `/admin/clients` so `/admin` can become a Today page. No page is rewritten and nothing is deleted.
 

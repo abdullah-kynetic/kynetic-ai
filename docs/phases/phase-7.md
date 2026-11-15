@@ -62,7 +62,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: unit test on unique titles; e2e on the changed pages
   - Commit: "Tidy admin page names"
   - Covers: P7-5
-- [ ] **P7-S6.** Old-address test, accessibility scan and 390 px screenshots of Today, the client list and a client page with tabs, then docs: `docs/STATUS.md`, `docs/progress.md` (dated entry), the status line in `docs/plans/ADMIN-CLEANUP.md`, `docs/known-issues.md` only if something new was found.
+- [x] **P7-S6.** Old-address test, accessibility scan and 390 px screenshots of Today, the client list and a client page with tabs, then docs: `docs/STATUS.md`, `docs/progress.md` (dated entry), the status line in `docs/plans/ADMIN-CLEANUP.md`, `docs/known-issues.md` only if something new was found.
   - Test: old-address test, accessibility scan, `bun run verify:e2e`
   - Commit: "Check old admin addresses and update docs"
   - Covers: P7-6, P7-7, P7-8
