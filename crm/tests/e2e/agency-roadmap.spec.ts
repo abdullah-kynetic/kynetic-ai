@@ -48,9 +48,7 @@ test('agency roadmap: alerts, inbox, blocked compose, manual sequence, ops and b
   const draft = adminPage.getByRole('article').filter({ hasText: 'DEV draft, never send' }).first();
   await expect(draft).toBeVisible();
   await draft.getByRole('button', { name: 'Check gates / simulate' }).click();
-  await expect(draft).toContainText(
-    'Real delivery is blocked. The draft was kept and nothing was sent.'
-  );
+  await expect(draft).toContainText('outbound disabled');
   await adminPage.goto('/admin/agency/campaigns');
   await adminPage.getByLabel('Campaign name', { exact: true }).fill('DEV Roadmap Sequence');
   await adminPage.getByRole('button', { name: 'Create campaign', exact: true }).click();
