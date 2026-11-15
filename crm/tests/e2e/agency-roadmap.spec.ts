@@ -34,7 +34,7 @@ test('agency roadmap: alerts, inbox, blocked compose, manual sequence, ops and b
   await adminPage.getByLabel('Message', { exact: true }).fill('DEV manually recorded inbound DM');
   await adminPage.getByRole('button', { name: 'Save log' }).click();
   await expect(
-    adminPage.getByRole('article').filter({ hasText: 'DEV manually recorded inbound DM' })
+    adminPage.getByRole('article').filter({ hasText: 'DEV manually recorded inbound DM' }).first()
   ).toBeVisible();
   await adminPage.getByRole('combobox', { name: 'Channel', exact: true }).selectOption('email');
   await adminPage.getByRole('button', { name: 'Filter', exact: true }).click();
@@ -45,10 +45,12 @@ test('agency roadmap: alerts, inbox, blocked compose, manual sequence, ops and b
     .selectOption({ label: 'DEV Roadmap Prospect' });
   await adminPage.getByLabel('Message', { exact: true }).fill('DEV draft, never send');
   await adminPage.getByRole('button', { name: 'Save draft', exact: true }).click();
-  const draft = adminPage.getByRole('article').filter({ hasText: 'DEV draft, never send' });
+  const draft = adminPage.getByRole('article').filter({ hasText: 'DEV draft, never send' }).first();
   await expect(draft).toBeVisible();
   await draft.getByRole('button', { name: 'Check gates / simulate' }).click();
-  await expect(draft).toContainText('outbound disabled');
+  await expect(draft).toContainText(
+    'Real delivery is blocked. The draft was kept and nothing was sent.'
+  );
   await adminPage.goto('/admin/agency/campaigns');
   await adminPage.getByLabel('Campaign name', { exact: true }).fill('DEV Roadmap Sequence');
   await adminPage.getByRole('button', { name: 'Create campaign', exact: true }).click();
