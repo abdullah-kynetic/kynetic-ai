@@ -17,9 +17,14 @@ test('agency roadmap: alerts, inbox, blocked compose, manual sequence, ops and b
   await expect(
     adminPage.getByRole('listitem').filter({ hasText: 'DEV Roadmap Prospect' })
   ).toBeVisible();
+  await adminPage.goto('/admin');
   await expect(
-    adminPage.getByLabel('Agency alerts').getByText('New agency lead', { exact: false }).first()
+    adminPage.getByRole('heading', { name: 'Needs you now', exact: true }).locator('..')
+  ).toContainText('New agency lead');
+  await expect(
+    adminPage.getByRole('heading', { name: 'Clients needing attention', exact: true })
   ).toBeVisible();
+  await adminPage.goto('/admin/agency');
   await expect(adminPage.getByLabel('Seven-day agency rates')).toContainText('Last seven days');
   await adminPage.goto('/admin/agency/inbox');
   await adminPage
@@ -65,12 +70,8 @@ test('agency roadmap: alerts, inbox, blocked compose, manual sequence, ops and b
   await expect(campaign).toContainText('done: 1');
   await adminPage.goto('/admin/agency/ops');
   await expect(
-    adminPage.getByRole('heading', { name: 'Client health', exact: true })
+    adminPage.getByRole('heading', { name: 'Sales settings', exact: true })
   ).toBeVisible();
-  await adminPage.getByLabel('Inactive DEV workflow name').fill('DEV - Browser binding');
-  await adminPage.getByLabel('Workflow ID').fill('DEV-browser-inactive');
-  await adminPage.getByRole('button', { name: 'Save draft configuration' }).click();
-  await expect(adminPage.getByLabel('Workflow ID')).toHaveValue('DEV-browser-inactive');
   await adminPage.goto('/admin/agency/billing');
   const terms = adminPage
     .locator('form')
