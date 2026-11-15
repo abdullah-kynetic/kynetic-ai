@@ -23,6 +23,7 @@ It does not come back earlier unless a stop rule in `PROTOCOL.md` fires.
 | 4. Hardening | `phase-4.md` | 4 to 5 |
 | 5. AI layer through OpenRouter | `phase-5.md` | 5 to 6 |
 | 6. Automations and the Alex chain | `phase-6.md` | 7 to 9 |
+| 7. Admin side cleanup | `phase-7.md` | 3 to 4 |
 
 Day counts are estimates for one builder and will move.
 

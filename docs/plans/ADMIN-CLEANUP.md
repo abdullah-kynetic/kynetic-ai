@@ -1,8 +1,8 @@
 # Admin side cleanup plan
 
-Status: proposed 2026-11-15. Nothing here is built yet. Each step is its own pull request and nothing deploys without Abdullah's explicit yes.
+Status: proposed 2026-11-15. Nothing here is built yet. It runs as phase 7 (`docs/phases/phase-7.md`): six steps, one branch, one pull request, and nothing deploys without Abdullah's explicit yes.
 
-The admin side is cleaned up in six small pull requests that change where things are reached from, not what the pages do. Page addresses stay the same except one: the client table moves from `/admin` to `/admin/clients` so `/admin` can become a Today page. No page is rewritten and nothing is deleted.
+The admin side is cleaned up in six small steps (commits on one branch) that change where things are reached from, not what the pages do. Page addresses stay the same except one: the client table moves from `/admin` to `/admin/clients` so `/admin` can become a Today page. No page is rewritten and nothing is deleted.
 
 Basis: a read of the page files and `crm/src/config/nav-config.ts` on 2026-11-14. The live site was not clicked through, so this covers structure, not how each page looks.
 
@@ -61,9 +61,9 @@ An empty block says "Nothing needs you" instead of disappearing, so a clear page
 
 ## Build order
 
-Each step is its own pull request. CI must pass, and nothing deploys without an explicit yes.
+Each step is its own commit on the phase 7 branch (`docs/phases/phase-7.md`). CI must pass, and nothing deploys without an explicit yes.
 
-| # | Pull request | Size | Tests that change | What you see afterward |
+| # | Step | Size | Tests that change | What you see afterward |
 | --- | --- | --- | --- | --- |
 | 1 | Regroup the sidebar into the six entries (menu file only) | Small | None expected | The new menu. Every page still works at its old address |
 | 2 | One client list: table moves to `/admin/clients`, Client portals merged in, View as retired; `/admin` redirects there for now | Small to medium | Three end-to-end tests that open `/admin` and expect "All clients" | One list with status, health and "Open as client" |
@@ -72,7 +72,7 @@ Each step is its own pull request. CI must pass, and nothing deploys without an 
 | 5 | Tidy Sales, Money and Build: rename the two Operations pages, move the alerts block, hide the DEV blocks (needs a yes) | Small | The Agency end-to-end tests if headings change | No duplicate names, no retired-environment leftovers |
 | 6 | Remove dead links, update STATUS and progress docs | Small | None | Docs match the product |
 
-Steps 1 and 2 can go out together as the first deploy. Steps 3 to 6 are the second.
+The phase merges as one pull request and deploys once, after Abdullah's yes.
 
 ## Risks and defaults
 
