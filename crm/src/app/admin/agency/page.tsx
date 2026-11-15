@@ -12,12 +12,7 @@ import { AgencySubmitButton as Button } from '@/components/agency/motion';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { decideAdminAccess } from '@/server/admin';
-import {
-  getAgencyWorkspace,
-  getAgencyPipeline,
-  listAgencyLeads,
-  listAgencyAlerts
-} from '@/server/agency';
+import { getAgencyWorkspace, getAgencyPipeline, listAgencyLeads } from '@/server/agency';
 import { isViewingAs } from '../view-as-guard';
 import { AgencyRatesLine, AgencySourceBars } from './charts';
 import {
@@ -64,10 +59,9 @@ export default async function AgencyPage({
     ...(z.uuid().safeParse(query.stageId ?? '').success ? { stageId: query.stageId } : {})
   };
   const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
-  const [{ stages }, data, alerts, rates, monthRates, rateSeries, finance] = await Promise.all([
+  const [{ stages }, data, rates, monthRates, rateSeries, finance] = await Promise.all([
     getAgencyPipeline(caller),
     listAgencyLeads(caller, filter),
-    listAgencyAlerts(caller),
     getAgencyRates(caller),
     getAgencyRates(caller, { days: 30 }),
     getAgencyRateSeries(caller),
@@ -285,18 +279,6 @@ export default async function AgencyPage({
         </ul>
         {data.leads.length === 0 && (
           <p className='text-muted-foreground'>No leads match these filters.</p>
-        )}
-      </section>
-      <section aria-label='Agency alerts' className='agency-alerts'>
-        <h2 className='font-semibold'>Agency alerts</h2>
-        {alerts.length ? (
-          alerts.map((a) => (
-            <p key={a.id}>
-              {a.title} · {a.body}
-            </p>
-          ))
-        ) : (
-          <p>No alerts yet.</p>
         )}
       </section>
       <section className='mb-8 space-y-4' aria-labelledby='agency-add-lead'>

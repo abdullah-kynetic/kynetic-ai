@@ -21,4 +21,10 @@ describe('Today role visibility', () => {
       dailySummary: true
     });
   });
+
+  it('keeps navigation titles unique', async () => {
+    const { adminNavGroups } = await import('@/config/nav-config');
+    const titles = adminNavGroups.flatMap((group) => group.items.map((item) => item.title));
+    expect(new Set(titles).size).toBe(titles.length);
+  });
 });

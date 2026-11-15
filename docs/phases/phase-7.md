@@ -58,7 +58,7 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: integration test of the data function for admin and VA; e2e for both
   - Commit: "Add the admin Today page"
   - Covers: P7-4
-- [ ] **P7-S5.** Tidy: rename the two Operations pages (Build: "Jobs and integrations"; Agency: "Sales settings" or similar), move the Agency alerts block to Today, hide the DEV blocks on Agency operations. Update any e2e heading checks that change.
+- [x] **P7-S5.** Tidy: rename the two Operations pages (Build: "Jobs and integrations"; Agency: "Sales settings" or similar), move the Agency alerts block to Today, hide the DEV blocks on Agency operations. Update any e2e heading checks that change.
   - Test: unit test on unique titles; e2e on the changed pages
   - Commit: "Tidy admin page names"
   - Covers: P7-5

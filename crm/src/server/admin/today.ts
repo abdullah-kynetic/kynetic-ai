@@ -2,6 +2,7 @@ import { buildAdminDigest } from './alerts';
 import { listAdminTenantOverview, type AdminTenantOverview } from './overview';
 import { listStaffNotifications } from './platform-controls';
 import { listSupportQueue, type SupportQueueRow } from '../support';
+import { listAgencyAlerts } from '../agency';
 import type { Db } from '../db/client';
 
 export type TodayCaller = { userId: string; role: 'admin' | 'va' };
@@ -10,6 +11,7 @@ type StaffNotification = Awaited<ReturnType<typeof listStaffNotifications>>[numb
 export type TodayData = {
   needsYouNow: {
     notices: StaffNotification[];
+    agencyAlerts: { id: string; title: string; body: string }[];
     failedJobs: { name: string; count: number }[];
   } | null;
   salesToday: {
@@ -48,12 +50,13 @@ export async function getTodayData(
       dailySummary: null
     };
   }
-  const [digest, notices] = await Promise.all([
+  const [digest, notices, agencyAlerts] = await Promise.all([
     buildAdminDigest(opts.now ?? new Date(), opts),
-    listStaffNotifications(caller, opts)
+    listStaffNotifications(caller, opts),
+    listAgencyAlerts({ id: caller.userId, kyneticRole: caller.role }, opts).catch(() => [])
   ]);
   return {
-    needsYouNow: { notices, failedJobs: digest.failedJobs },
+    needsYouNow: { notices, agencyAlerts, failedJobs: digest.failedJobs },
     salesToday: { leads: digest.leads, flaggedCalls: digest.flaggedCalls },
     clientsNeedingAttention: visibleTenants,
     support: { open: openSupport.length, oldest: openSupport[0] ?? null },

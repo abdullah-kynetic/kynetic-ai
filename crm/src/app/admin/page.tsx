@@ -18,10 +18,17 @@ export default async function AdminHomePage() {
     >
       {data.needsYouNow && (
         <TodayBlock title='Needs you now'>
-          {data.needsYouNow.notices.length || data.needsYouNow.failedJobs.length ? (
+          {data.needsYouNow.notices.length ||
+          data.needsYouNow.agencyAlerts.length ||
+          data.needsYouNow.failedJobs.length ? (
             <ul className='list-disc space-y-1 ps-5 text-sm'>
               {data.needsYouNow.notices.map((notice) => (
                 <li key={notice.id}>{notice.title}</li>
+              ))}
+              {data.needsYouNow.agencyAlerts.map((alert) => (
+                <li key={alert.id}>
+                  {alert.title}: {alert.body}
+                </li>
               ))}
               {data.needsYouNow.failedJobs.map((job) => (
                 <li key={job.name}>

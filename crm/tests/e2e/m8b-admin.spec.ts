@@ -102,3 +102,18 @@ test('phase 7 Today shows all blocks to admin and only permitted blocks to VA', 
   await expect(vaPage.getByRole('heading', { name: 'Sales today', exact: true })).toHaveCount(0);
   await expect(vaPage.getByRole('heading', { name: 'Daily summary', exact: true })).toHaveCount(0);
 });
+
+test('phase 7 gives the operations pages distinct names and hides DEV blocks', async ({
+  adminPage
+}) => {
+  await adminPage.goto('/admin/operations');
+  await expect(
+    adminPage.getByRole('heading', { name: 'Jobs and integrations', exact: true })
+  ).toBeVisible();
+  await adminPage.goto('/admin/agency/ops');
+  await expect(
+    adminPage.getByRole('heading', { name: 'Sales settings', exact: true })
+  ).toBeVisible();
+  await expect(adminPage.getByText('DEV integration draft', { exact: true })).toHaveCount(0);
+  await expect(adminPage.getByText('Agency DEV lead secret', { exact: true })).toHaveCount(0);
+});
