@@ -67,3 +67,15 @@ test('F-58 admin updates client Alex configuration and creates a prompt version'
   await expect(adminPage.getByText(/prompt version 2/)).toBeVisible();
   await expect(adminPage.getByLabel('Greeting')).toHaveValue('Synthetic revised greeting');
 });
+
+test('phase 7 client page exposes tabs without changing subpage addresses', async ({
+  adminPage
+}) => {
+  await adminPage.goto('/admin/clients/11111111-1111-4111-8111-111111111111');
+  for (const label of ['Overview', 'Systems', 'Alex', 'Reports', 'Documents', 'Billing', 'Setup']) {
+    await expect(adminPage.getByRole('link', { name: label, exact: true })).toBeVisible();
+  }
+  await expect(adminPage.getByRole('link', { name: 'Offboard', exact: true })).toBeVisible();
+  await adminPage.getByRole('link', { name: 'Systems', exact: true }).click();
+  await expect(adminPage).toHaveURL(/\/admin\/clients\/[^/]+\/systems$/);
+});
