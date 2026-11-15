@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic';
 export default async function AgencyOps() {
   const caller = await agencyCaller();
   if (!(await getAgencyWorkspace(caller)))
-    return <AgencyWorkspaceMissing pageTitle='Agency operations' />;
+    return <AgencyWorkspaceMissing pageTitle='Sales settings' />;
   const [{ clients, settings }, secret, digest] = await Promise.all([
     getAgencyOps(caller),
     agencySecretStatus(caller),
@@ -20,7 +20,7 @@ export default async function AgencyOps() {
   ]);
   return (
     <PageContainer
-      pageTitle='Agency operations'
+      pageTitle='Sales settings'
       pageDescription='Client health, onboarding and isolated DEV configuration.'
     >
       <Link href='/admin/agency'>Agency dashboard</Link>
@@ -48,7 +48,7 @@ export default async function AgencyOps() {
         ))}
       </section>
       <div className='agency-columns'>
-        <form action={saveOpsAction} className='agency-form my-8'>
+        <form action={saveOpsAction} className='agency-form my-8' hidden>
           <h2 className='font-semibold'>DEV integration draft</h2>
           <p>Saving metadata does not execute or activate a workflow or enable webhook dispatch.</p>
           <label htmlFor='ops-devWebhookUrl'>
@@ -84,7 +84,7 @@ export default async function AgencyOps() {
           </label>
           <Button type='submit'>Save draft configuration</Button>
         </form>
-        <section className='agency-panel space-y-3'>
+        <section className='agency-panel space-y-3' hidden>
           <h2 className='font-semibold'>Agency DEV lead secret</h2>
           <p>
             {secret.isSet ? '•••••••• (configured)' : 'Not configured'} · Last rotation{' '}

@@ -94,6 +94,10 @@ A parallel Twenty cleanup finished on 2026-11-08 PST. The parent verified the wo
 
 ## Branch artifact (not authority)
 
+## Phase 7 admin cleanup (2026-11-15)
+
+Phase 7 is complete on `phase-7-admin-cleanup`: the admin navigation is regrouped, `/admin/clients` is the single client list, client pages have tabs, `/admin` is the role-aware Today page, duplicate operations names are fixed, and retired DEV blocks are hidden without removing their routes or data. Old-address coverage and responsive screenshots cover Today, the client list, and client tabs at 390 px and 1280 px. No database migration, provider flag change, live-data change, deploy, or server access was made. The pull request and merge commit are the technical execution record.
+
 `archive/dev-retired/docs-codex/COMPLETION-PLAN.md` is historical evidence from the old portal branch (snapshot `81496f99b2dd20a88e6cbc080b33e0a73e76a2aa`, 2026-11-06). It is not the roadmap. The 2026-11-09 PST decision puts the portal code on `main` and retires the separate DEV environment until after go-live. Do not execute that file as the plan, and do not open new work on `dev/codex-setup`. `archive/dev-retired/docs-codex/PROGRESS.md` is a technical log, not a checklist to execute.
 
 ## Docs reconciliation (2026-11-08 PST)

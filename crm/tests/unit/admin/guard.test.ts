@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { AuthUser } from '@/server/auth';
 import { decideAdminAccess } from '@/server/admin';
 import { adminNavGroups, adminEntryGroup, navGroups } from '@/config/nav-config';
+import { visibleNavGroups } from '@/config/nav-registry';
 
 const headers = new Headers();
 const user = (over: Partial<AuthUser> = {}): AuthUser => ({
@@ -44,9 +45,41 @@ describe('decideAdminAccess (M8a-01, F-53 shell)', () => {
 });
 
 describe('admin navigation (M8a-01)', () => {
-  it('has the all-clients entry point', () => {
+  it('has the six phase 7 groups and one entry point per group', () => {
+    expect(adminNavGroups.map((g) => g.label)).toEqual([
+      'Today',
+      'Sales',
+      'Clients',
+      'Money',
+      'Build',
+      'System'
+    ]);
     const urls = adminNavGroups.flatMap((g) => g.items.map((i) => i.url));
-    expect(urls).toContain('/admin');
+    expect(urls).toContain('/admin/clients');
+    expect(new Set(adminNavGroups.flatMap((g) => g.items.map((i) => i.title))).size).toBe(
+      adminNavGroups.flatMap((g) => g.items).length
+    );
+  });
+
+  it('shows staff only the pages their role can open', () => {
+    const va = visibleNavGroups(
+      adminNavGroups,
+      { keys: new Set(['platform']), crmLevel: null },
+      'va'
+    );
+    expect(va.map((g) => g.label)).toEqual(['Today', 'Clients', 'System']);
+    expect(va.flatMap((g) => g.items.map((i) => i.url))).toEqual([
+      '/admin',
+      '/admin/clients',
+      '/admin/clients/new',
+      '/admin/support',
+      '/admin/system-requests',
+      '/admin/view-as',
+      '/admin/users',
+      '/admin/backups',
+      '/admin/archive',
+      '/admin/audit'
+    ]);
   });
 
   it('keeps the admin entry out of the client registry', () => {

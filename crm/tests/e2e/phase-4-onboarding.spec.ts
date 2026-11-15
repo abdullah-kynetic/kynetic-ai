@@ -37,7 +37,7 @@ test('admin onboards a client from one form; nothing is sent until the invite is
   await expect(body).toContainText('Voice agent configured');
 
   // The new client is in the all-clients table.
-  await page.goto('/admin');
+  await page.goto('/admin/clients');
   await expect(page.getByRole('row').filter({ hasText: 'E2E Onboard Roofing' })).toBeVisible();
 });
 

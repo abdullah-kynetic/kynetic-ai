@@ -17,9 +17,14 @@ test('agency roadmap: alerts, inbox, blocked compose, manual sequence, ops and b
   await expect(
     adminPage.getByRole('listitem').filter({ hasText: 'DEV Roadmap Prospect' })
   ).toBeVisible();
+  await adminPage.goto('/admin');
   await expect(
-    adminPage.getByLabel('Agency alerts').getByText('New agency lead', { exact: false }).first()
+    adminPage.getByRole('heading', { name: 'Needs you now', exact: true }).locator('..')
+  ).toContainText('New agency lead');
+  await expect(
+    adminPage.getByRole('heading', { name: 'Clients needing attention', exact: true })
   ).toBeVisible();
+  await adminPage.goto('/admin/agency');
   await expect(adminPage.getByLabel('Seven-day agency rates')).toContainText('Last seven days');
   await adminPage.goto('/admin/agency/inbox');
   await adminPage
@@ -29,7 +34,7 @@ test('agency roadmap: alerts, inbox, blocked compose, manual sequence, ops and b
   await adminPage.getByLabel('Message', { exact: true }).fill('DEV manually recorded inbound DM');
   await adminPage.getByRole('button', { name: 'Save log' }).click();
   await expect(
-    adminPage.getByRole('article').filter({ hasText: 'DEV manually recorded inbound DM' })
+    adminPage.getByRole('article').filter({ hasText: 'DEV manually recorded inbound DM' }).first()
   ).toBeVisible();
   await adminPage.getByRole('combobox', { name: 'Channel', exact: true }).selectOption('email');
   await adminPage.getByRole('button', { name: 'Filter', exact: true }).click();
@@ -40,7 +45,7 @@ test('agency roadmap: alerts, inbox, blocked compose, manual sequence, ops and b
     .selectOption({ label: 'DEV Roadmap Prospect' });
   await adminPage.getByLabel('Message', { exact: true }).fill('DEV draft, never send');
   await adminPage.getByRole('button', { name: 'Save draft', exact: true }).click();
-  const draft = adminPage.getByRole('article').filter({ hasText: 'DEV draft, never send' });
+  const draft = adminPage.getByRole('article').filter({ hasText: 'DEV draft, never send' }).first();
   await expect(draft).toBeVisible();
   await draft.getByRole('button', { name: 'Check gates / simulate' }).click();
   await expect(draft).toContainText('outbound disabled');
@@ -65,12 +70,8 @@ test('agency roadmap: alerts, inbox, blocked compose, manual sequence, ops and b
   await expect(campaign).toContainText('done: 1');
   await adminPage.goto('/admin/agency/ops');
   await expect(
-    adminPage.getByRole('heading', { name: 'Client health', exact: true })
+    adminPage.getByRole('heading', { name: 'Sales settings', exact: true })
   ).toBeVisible();
-  await adminPage.getByLabel('Inactive DEV workflow name').fill('DEV - Browser binding');
-  await adminPage.getByLabel('Workflow ID').fill('DEV-browser-inactive');
-  await adminPage.getByRole('button', { name: 'Save draft configuration' }).click();
-  await expect(adminPage.getByLabel('Workflow ID')).toHaveValue('DEV-browser-inactive');
   await adminPage.goto('/admin/agency/billing');
   const terms = adminPage
     .locator('form')

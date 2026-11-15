@@ -57,6 +57,7 @@ export {
   type IntegrationHealthRow
 } from './operations';
 export { placeAdminTestCall, updateAdminAlexConfig } from './alex-config';
+export { getTodayData, todayVisibility, type TodayCaller, type TodayData } from './today';
 export { auditManualBackup, listBackups, runBackup, type BackupJob } from './backups';
 export { replayWebhook, setOutboundKillSwitch, suspendTenant } from './operations-tools';
 export {

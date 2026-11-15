@@ -251,13 +251,66 @@ export const navGroups: NavGroup[] = [
  */
 export const adminNavGroups: NavGroup[] = [
   {
-    label: 'Agency',
+    label: 'Today',
     items: [
       {
-        title: 'Agency workspace',
+        title: 'Today',
+        url: '/admin',
+        icon: 'dashboard',
+        isActive: false,
+        items: []
+      }
+    ]
+  },
+  {
+    label: 'Sales',
+    items: [
+      {
+        title: 'Sales workspace',
         url: '/admin/agency',
         icon: 'kanban',
         isActive: false,
+        access: { role: 'admin' },
+        items: []
+      },
+      {
+        title: 'Human dialer',
+        url: '/admin/agency/dialer',
+        icon: 'phone',
+        isActive: false,
+        access: { role: 'admin' },
+        items: []
+      },
+      {
+        title: 'Inbox',
+        url: '/admin/agency/inbox',
+        icon: 'chat',
+        isActive: false,
+        access: { role: 'admin' },
+        items: []
+      },
+      {
+        title: 'Campaigns',
+        url: '/admin/agency/campaigns',
+        icon: 'calendar',
+        isActive: false,
+        access: { role: 'admin' },
+        items: []
+      },
+      {
+        title: 'Proposals',
+        url: '/admin/agency/proposals',
+        icon: 'post',
+        isActive: false,
+        access: { role: 'admin' },
+        items: []
+      },
+      {
+        title: 'Contracts',
+        url: '/admin/agency/contracts',
+        icon: 'post',
+        isActive: false,
+        access: { role: 'admin' },
         items: []
       }
     ]
@@ -267,18 +320,10 @@ export const adminNavGroups: NavGroup[] = [
     items: [
       {
         title: 'All clients',
-        url: '/admin',
+        url: '/admin/clients',
         icon: 'teams',
         isActive: false,
         shortcut: ['a', 'c'],
-        items: []
-      },
-      {
-        title: 'Client portals',
-        url: '/admin/portals',
-        icon: 'user',
-        isActive: false,
-        shortcut: ['a', 'v'],
         items: []
       },
       {
@@ -290,9 +335,9 @@ export const adminNavGroups: NavGroup[] = [
         items: []
       },
       {
-        title: 'Template library',
-        url: '/admin/templates',
-        icon: 'post',
+        title: 'Support requests',
+        url: '/admin/support',
+        icon: 'help',
         isActive: false,
         items: []
       },
@@ -304,18 +349,76 @@ export const adminNavGroups: NavGroup[] = [
         items: []
       },
       {
+        title: 'View as client',
+        url: '/admin/view-as',
+        icon: 'user',
+        isActive: false,
+        items: []
+      }
+    ]
+  },
+  {
+    label: 'Money',
+    items: [
+      {
+        title: 'Finance',
+        url: '/admin/agency/finance',
+        icon: 'billing',
+        isActive: false,
+        access: { role: 'admin' },
+        items: []
+      },
+      {
+        title: 'Agency billing',
+        url: '/admin/agency/billing',
+        icon: 'billing',
+        isActive: false,
+        access: { role: 'admin' },
+        items: []
+      },
+      {
+        title: 'Usage',
+        url: '/admin/usage',
+        icon: 'billing',
+        isActive: false,
+        access: { role: 'admin' },
+        items: []
+      }
+    ]
+  },
+  {
+    label: 'Build',
+    items: [
+      {
+        title: 'Template library',
+        url: '/admin/templates',
+        icon: 'post',
+        isActive: false,
+        access: { role: 'admin' },
+        items: []
+      },
+      {
+        title: 'Jobs and integrations',
+        url: '/admin/operations',
+        icon: 'settings',
+        isActive: false,
+        access: { role: 'admin' },
+        shortcut: ['a', 'o'],
+        items: []
+      }
+    ]
+  },
+  {
+    label: 'System',
+    items: [
+      {
         title: 'Users',
         url: '/admin/users',
         icon: 'user',
         isActive: false,
         shortcut: ['a', 'u'],
         items: []
-      }
-    ]
-  },
-  {
-    label: 'Platform',
-    items: [
+      },
       {
         title: 'Backups',
         url: '/admin/backups',
@@ -336,29 +439,6 @@ export const adminNavGroups: NavGroup[] = [
         icon: 'post',
         isActive: false,
         shortcut: ['a', 'l'],
-        items: []
-      },
-      {
-        title: 'Operations',
-        url: '/admin/operations',
-        icon: 'settings',
-        isActive: false,
-        shortcut: ['a', 'o'],
-        items: []
-      },
-      {
-        title: 'Usage',
-        url: '/admin/usage',
-        icon: 'billing',
-        isActive: false,
-        shortcut: ['a', 'g'],
-        items: []
-      },
-      {
-        title: 'Support requests',
-        url: '/admin/support',
-        icon: 'help',
-        isActive: false,
         items: []
       }
     ]

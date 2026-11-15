@@ -37,21 +37,7 @@ export default async function ClientOverviewPage({
     booked: overview.guarantee.bookedInWindow ?? 0
   });
   const active = overview.modules.filter((module) => module.enabled);
-  const links = [
-    ['Systems', `/admin/clients/${tenant.id}/systems`],
-    ['Reports', `/admin/clients/${tenant.id}/reports`],
-    ['Service tokens', `/admin/clients/${tenant.id}/service-tokens`],
-    ['Alex', `/admin/clients/${tenant.id}/alex`],
-    ['Checklist', `/admin/clients/${tenant.id}/checklist`],
-    ['Billing', `/admin/clients/${tenant.id}/billing`],
-    ['Documents', `/admin/clients/${tenant.id}/documents`],
-    ['Import', `/admin/clients/${tenant.id}/imports`],
-    ['Webhooks', `/admin/clients/${tenant.id}/webhooks`],
-    ['Online presence', `/admin/clients/${tenant.id}/presence`],
-    ...(access.role === 'admin'
-      ? ([['Offboard', `/admin/clients/${tenant.id}/offboard`]] as const)
-      : [])
-  ];
+  const base = `/admin/clients/${tenant.id}`;
 
   return (
     <PageContainer
@@ -236,16 +222,59 @@ export default async function ClientOverviewPage({
           )}
         </section>
       </div>
-      <nav aria-label='Client shortcuts' className='mt-4 flex flex-wrap gap-x-4 gap-y-1'>
-        {links.map(([label, href]) => (
+      <nav aria-label='Client tabs' className='mt-4 flex flex-wrap gap-2 border-b pb-2'>
+        {[
+          ['Overview', base],
+          ['Systems', `${base}/systems`],
+          ['Alex', `${base}/alex`],
+          ['Reports', `${base}/reports`],
+          ['Documents', `${base}/documents`],
+          ['Billing', `${base}/billing`]
+        ].map(([label, href]) => (
           <Link
             key={href}
             href={href}
-            className='text-primary-text inline-flex min-h-11 items-center underline'
+            className='inline-flex min-h-11 items-center rounded px-3 underline'
           >
             {label}
           </Link>
         ))}
+        <Link
+          href={`${base}/checklist`}
+          className='inline-flex min-h-11 items-center rounded px-3 underline'
+        >
+          Setup
+        </Link>
+        <details className='relative'>
+          <summary className='inline-flex min-h-11 cursor-pointer items-center rounded px-3 underline'>
+            More setup
+          </summary>
+          <div className='bg-background absolute z-10 mt-1 grid min-w-48 gap-1 rounded border p-2 shadow'>
+            {[
+              ['Checklist', `${base}/checklist`],
+              ['Import', `${base}/imports`],
+              ['Webhooks', `${base}/webhooks`],
+              ['Tokens and Presence', `${base}/service-tokens`],
+              ['Online presence', `${base}/presence`]
+            ].map(([label, href]) => (
+              <Link
+                key={href}
+                href={href}
+                className='inline-flex min-h-11 items-center px-2 underline'
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
+        </details>
+        {access.role === 'admin' && (
+          <Link
+            href={`${base}/offboard`}
+            className='border-destructive text-destructive inline-flex min-h-11 items-center rounded border px-3 underline'
+          >
+            Offboard
+          </Link>
+        )}
       </nav>
     </PageContainer>
   );

@@ -1,117 +1,101 @@
-import PageContainer from '@/components/layout/page-container';
-import { StatusBadge, type StatusTone } from '@/components/ui/badge';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@/components/ui/table';
-import { requireUser } from '@/server/auth';
-import { listAdminTenantOverview } from '@/server/admin';
+import Link from 'next/link';
 import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
-import Link from 'next/link';
+import PageContainer from '@/components/layout/page-container';
+import { decideAdminAccess, getTodayData } from '@/server/admin';
+import { TodayBlock, NothingNeedsYou, TodayLink } from './today-block';
 
-const tones: Record<'green' | 'yellow' | 'red', StatusTone> = {
-  green: 'success',
-  yellow: 'warning',
-  red: 'error'
-};
+export const dynamic = 'force-dynamic';
 
-// Entry point for the admin side. The client table (F-53) and health chips (F-54) arrive in M8b.
 export default async function AdminHomePage() {
-  const user = await requireUser(await headers());
-  if (!user.kyneticRole) forbidden();
-  const rows = await listAdminTenantOverview({ userId: user.id, role: user.kyneticRole });
+  const access = await decideAdminAccess(await headers());
+  if (access.kind !== 'ok') forbidden();
+  const data = await getTodayData({ userId: access.user.id, role: access.role });
   return (
     <PageContainer
-      pageTitle='All clients'
-      pageDescription='Every client in one place, with performance and health signals. Health: green ≥70, yellow ≥40, red <40.'
+      pageTitle='Today'
+      pageDescription='What needs attention across clients and operations today.'
     >
-      {user.kyneticRole === 'admin' && (
-        <Link href='/admin/agency' className='mb-4 inline-flex min-h-11 items-center underline'>
-          Open agency workspace
-        </Link>
-      )}
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Client</TableHead>
-            <TableHead>Plan</TableHead>
-            <TableHead>Leads (30d)</TableHead>
-            <TableHead>Bookings</TableHead>
-            <TableHead>MRR inputs</TableHead>
-            <TableHead>Health</TableHead>
-            <TableHead>Documents</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {rows.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={7}>No clients yet.</TableCell>
-            </TableRow>
+      {data.needsYouNow && (
+        <TodayBlock title='Needs you now'>
+          {data.needsYouNow.notices.length ||
+          data.needsYouNow.agencyAlerts.length ||
+          data.needsYouNow.failedJobs.length ? (
+            <ul className='list-disc space-y-1 ps-5 text-sm'>
+              {data.needsYouNow.notices.map((notice) => (
+                <li key={notice.id}>{notice.title}</li>
+              ))}
+              {data.needsYouNow.agencyAlerts.map((alert) => (
+                <li key={alert.id}>
+                  {alert.title}: {alert.body}
+                </li>
+              ))}
+              {data.needsYouNow.failedJobs.map((job) => (
+                <li key={job.name}>
+                  Failed jobs: {job.name} ({job.count})
+                </li>
+              ))}
+            </ul>
           ) : (
-            rows.map((row) => (
-              <TableRow key={row.tenantId}>
-                <TableCell className='font-medium'>
-                  <Link
-                    className='inline-flex min-h-11 items-center underline'
-                    href={`/admin/clients/${row.tenantId}`}
-                  >
-                    {row.name}
-                  </Link>
-                </TableCell>
-                <TableCell>
-                  {row.plan} {row.pricingTier ?? ''}
-                </TableCell>
-                <TableCell>{row.leads30d}</TableCell>
-                <TableCell>{row.appointments30d}</TableCell>
-                <TableCell>
-                  {row.modules.length} systems
-                  {user.kyneticRole === 'admin' ? ' · $ to be confirmed' : ''}
-                </TableCell>
-                <TableCell>
-                  <StatusBadge tone={tones[row.healthTone]}>
-                    {row.healthScore} · {row.healthTone}
-                  </StatusBadge>
-                </TableCell>
-                <TableCell>
-                  <Link
-                    className='min-h-11 inline-flex items-center underline'
-                    href={`/admin/clients/${row.tenantId}/documents`}
-                  >
-                    Manage
-                  </Link>
-                  {user.kyneticRole === 'admin' && (
-                    <>
-                      <Link
-                        className='ml-3 min-h-11 inline-flex items-center underline'
-                        href={`/admin/clients/${row.tenantId}/webhooks`}
-                      >
-                        Webhooks
-                      </Link>
-                      <Link
-                        className='ml-3 min-h-11 inline-flex items-center underline'
-                        href={`/admin/clients/${row.tenantId}/reports`}
-                      >
-                        Reports
-                      </Link>
-                      <Link
-                        className='ml-3 min-h-11 inline-flex items-center underline'
-                        href={`/admin/clients/${row.tenantId}/service-tokens`}
-                      >
-                        Service tokens
-                      </Link>
-                    </>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))
+            <NothingNeedsYou />
           )}
-        </TableBody>
-      </Table>
+        </TodayBlock>
+      )}
+      {data.salesToday && (
+        <TodayBlock title='Sales today'>
+          {data.salesToday.leads.length || data.salesToday.flaggedCalls.length ? (
+            <ul className='list-disc space-y-1 ps-5 text-sm'>
+              {data.salesToday.leads.map((lead) => (
+                <li key={lead.name}>
+                  New leads: {lead.name} ({lead.count})
+                </li>
+              ))}
+              {data.salesToday.flaggedCalls.map((call) => (
+                <li key={call.name}>
+                  Flagged calls: {call.name} ({call.count})
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <NothingNeedsYou />
+          )}
+        </TodayBlock>
+      )}
+      <TodayBlock title='Clients needing attention'>
+        {data.clientsNeedingAttention.length ? (
+          <ul className='space-y-2 text-sm'>
+            {data.clientsNeedingAttention.map((client) => (
+              <li key={client.tenantId}>
+                <TodayLink href={`/admin/clients/${client.tenantId}`}>
+                  {client.name} · {client.healthScore} · {client.healthTone}
+                </TodayLink>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <NothingNeedsYou />
+        )}
+      </TodayBlock>
+      <TodayBlock title='Support'>
+        {data.support.open ? (
+          <p className='text-sm'>
+            <TodayLink href='/admin/support'>
+              {data.support.open} open request{data.support.open === 1 ? '' : 's'}
+            </TodayLink>
+            {data.support.oldest ? ` · oldest: ${data.support.oldest.subject}` : ''}
+          </p>
+        ) : (
+          <NothingNeedsYou />
+        )}
+      </TodayBlock>
+      {data.dailySummary && (
+        <TodayBlock title='Daily summary'>
+          <p className='whitespace-pre-wrap text-sm'>{data.dailySummary}</p>
+        </TodayBlock>
+      )}
+      <Link href='/admin/clients' className='inline-flex min-h-11 items-center underline'>
+        Open all clients
+      </Link>
     </PageContainer>
   );
 }

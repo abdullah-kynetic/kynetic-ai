@@ -42,7 +42,7 @@ Defaults used unless Abdullah says otherwise: Sales and Money stay admin-only (t
 
 Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finishes the step. A new thread resumes at the first unticked step. For every step: finish it, test it, commit, push, then move on (see `PROTOCOL.md`). Use `bun run verify:quick` after each step and `bun run verify:e2e` before the PR.
 
-- [ ] **P7-S1.** Role table, then the menu regroup. First read each admin page and its server function and write a table of who can open it (admin, VA or both) into the PR body and the appendix of `docs/plans/ADMIN-CLEANUP.md`. Then regroup `adminNavGroups` into the six entries and filter by role so a VA never sees an entry its page refuses. Keep every page address.
+- [x] **P7-S1.** Role table, then the menu regroup. First read each admin page and its server function and write a table of who can open it (admin, VA or both) into the PR body and the appendix of `docs/plans/ADMIN-CLEANUP.md`. Then regroup `adminNavGroups` into the six entries and filter by role so a VA never sees an entry its page refuses. Keep every page address.
   - Test: unit test of the nav filter for admin and VA; existing `lane-a-a0` Backups link test still passes (keep System expanded or update the test with a reason)
   - Commit: "Regroup the admin menu"
   - Covers: P7-1
@@ -54,15 +54,15 @@ Work these in order. Tick each `- [ ]` as `- [x]` in the same commit that finish
   - Test: e2e that every tab loads; existing offboard tests unchanged
   - Commit: "Add tabs to the client page"
   - Covers: P7-3
-- [ ] **P7-S4.** The Today page at `/admin`, built from the existing alert, job, dialer, health and support queries, with the role gate on the server. Remove the `/admin` redirect from S2.
+- [x] **P7-S4.** The Today page at `/admin`, built from the existing alert, job, dialer, health and support queries, with the role gate on the server. Remove the `/admin` redirect from S2.
   - Test: integration test of the data function for admin and VA; e2e for both
   - Commit: "Add the admin Today page"
   - Covers: P7-4
-- [ ] **P7-S5.** Tidy: rename the two Operations pages (Build: "Jobs and integrations"; Agency: "Sales settings" or similar), move the Agency alerts block to Today, hide the DEV blocks on Agency operations. Update any e2e heading checks that change.
+- [x] **P7-S5.** Tidy: rename the two Operations pages (Build: "Jobs and integrations"; Agency: "Sales settings" or similar), move the Agency alerts block to Today, hide the DEV blocks on Agency operations. Update any e2e heading checks that change.
   - Test: unit test on unique titles; e2e on the changed pages
   - Commit: "Tidy admin page names"
   - Covers: P7-5
-- [ ] **P7-S6.** Old-address test, accessibility scan and 390 px screenshots of Today, the client list and a client page with tabs, then docs: `docs/STATUS.md`, `docs/progress.md` (dated entry), the status line in `docs/plans/ADMIN-CLEANUP.md`, `docs/known-issues.md` only if something new was found.
+- [x] **P7-S6.** Old-address test, accessibility scan and 390 px screenshots of Today, the client list and a client page with tabs, then docs: `docs/STATUS.md`, `docs/progress.md` (dated entry), the status line in `docs/plans/ADMIN-CLEANUP.md`, `docs/known-issues.md` only if something new was found.
   - Test: old-address test, accessibility scan, `bun run verify:e2e`
   - Commit: "Check old admin addresses and update docs"
   - Covers: P7-6, P7-7, P7-8

@@ -1,6 +1,6 @@
 # Admin side cleanup plan
 
-Status: proposed 2026-11-15. Nothing here is built yet. It runs as phase 7 (`docs/phases/phase-7.md`): six steps, one branch, one pull request, and nothing deploys without Abdullah's explicit yes.
+Status: P7-S6 complete 2026-11-15. Phase 7 is ready to ship after its required CI run; nothing deploys without Abdullah's explicit yes. It runs as phase 7 (`docs/phases/phase-7.md`): six steps, one branch, one pull request.
 
 The admin side is cleaned up in six small steps (commits on one branch) that change where things are reached from, not what the pages do. Page addresses stay the same except one: the client table moves from `/admin` to `/admin/clients` so `/admin` can become a Today page. No page is rewritten and nothing is deleted.
 
@@ -86,3 +86,26 @@ Defaults unless Abdullah says otherwise:
 - Sales and Money stay admin-only, as the Agency group is today.
 - The DEV blocks on Agency operations are only hidden, not deleted, until removal is approved.
 - Support requests live under Clients, with a count on Today.
+
+## P7-S1 role table (read from route guards and server functions)
+
+This table records who can open each existing admin address. “Both” means the route's page guard or its staff helper accepts both `admin` and `va`; action-level permissions remain unchanged.
+
+| Address | Admin | VA | Evidence |
+| --- | --- | --- | --- |
+| `/admin` | Yes | Yes | admin layout; page has no narrower guard |
+| `/admin/agency` and all `/admin/agency/*` | Yes | No | `decideAdminAccess` with admin checks on Agency pages and actions |
+| `/admin/clients`, `/admin/clients/new` | Yes | Yes | admin layout; onboarding service retains action guard |
+| `/admin/clients/[tenantId]` | Yes | Yes | client overview guard and tenant-scoped service |
+| `/admin/clients/[tenantId]/systems`, `/alex`, `/reports`, `/documents`, `/billing`, `/checklist`, `/imports`, `/webhooks`, `/service-tokens`, `/presence`, `/modules` | Yes | Yes | existing client-page guards and tenant-scoped services |
+| `/admin/clients/[tenantId]/offboard` | Yes | No | page guard requires `admin` |
+| `/admin/portals`, `/admin/view-as` | Yes | Yes | existing staff guard; VA reason is required by `StartViewAsForm` |
+| `/admin/support` and `/admin/support/[id]` | Yes | Yes | `decideAdminAccess` staff guard; support service accepts both staff roles |
+| `/admin/system-requests` | Yes | Yes | `listSystemRequestQueue` accepts staff role |
+| `/admin/templates` | Yes | No | page and actions require `admin` |
+| `/admin/operations` | Yes | Yes | page loads read-only staff data; mutations require admin |
+| `/admin/usage` | Yes | Yes | `listUsageMonth` receives the authenticated staff role; client costs remain staff-only |
+| `/admin/users` | Yes | Yes | page explicitly documents staff list/invite/reset access |
+| `/admin/backups` | Yes | Yes | page lists for staff; manual backup action requires admin |
+| `/admin/audit` | Yes | Yes | `decideAdminAccess` and audit viewer staff guard |
+| `/admin/archive` and `/admin/archive/{notes,tasks,records,attachments}` | Yes | Yes | `requireArchiveStaff` |
