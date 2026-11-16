@@ -85,9 +85,14 @@ try:
 
     image = (
         modal.Image.debian_slim(python_version="3.11")
-        .apt_install("fonts-liberation", "fonts-dejavu-core", "nodejs", "npm")
+        .apt_install("ca-certificates", "curl", "fonts-liberation", "fonts-dejavu-core")
         .pip_install("playwright", "fastapi")
-        .run_commands("python -m playwright install --with-deps chromium", "npm install -g unlighthouse")
+        .run_commands(
+            "curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs",
+            "node --version",
+            "npm install -g unlighthouse@0.15.2",
+            "python -m playwright install --with-deps chromium",
+        )
         .add_local_python_source("audit")
     )
     app = modal.App("kynetic-audit")

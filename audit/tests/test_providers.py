@@ -9,7 +9,7 @@ from audit.checks.ai_mentions import OpenRouterError, check_mentions_with_fallba
 from audit.checks.geocode import geocode
 from audit.checks.maps import parse_maps_page
 from audit.checks.pagespeed import fetch_pagespeed, normalize_target
-from audit.checks.unlighthouse import parse_summary
+from audit.checks.unlighthouse import parse_summary, unlighthouse_command
 from audit.geogrid import full_audit_grid
 from audit.service import run
 
@@ -99,6 +99,12 @@ class ProviderPolicyTests(unittest.TestCase):
         parsed = parse_summary((self.fixtures / "unlighthouse-summary.json").read_text())
         self.assertEqual(15, parsed["pages"])
         self.assertEqual(0.81, parsed["score"]["performance"])
+
+    def test_unlighthouse_command_is_pinned_and_bounded(self):
+        command = unlighthouse_command("https://synthetic.test")
+        self.assertIn("unlighthouse@0.15.2", command)
+        self.assertEqual("15", command[command.index("--max-routes") + 1])
+        self.assertEqual("https://synthetic.test", command[command.index("--site") + 1])
 
     def test_maps_aria_fixture_parses_rating_and_reviews(self):
         result = parse_maps_page((self.fixtures / "maps-aria.html").read_text())
