@@ -162,7 +162,7 @@ export default function AppSidebar({
             return (
               <SidebarMenuItem key={link.title}>
                 <SidebarMenuButton
-                  render={<Link href={link.url} />}
+                  render={<Link href={link.url} aria-label={link.title} />}
                   tooltip={link.title}
                   isActive={pathname === link.url}
                   className={ACTIVE_MARKER}
