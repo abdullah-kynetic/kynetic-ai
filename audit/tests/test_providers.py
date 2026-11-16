@@ -7,6 +7,7 @@ from pathlib import Path
 
 from audit.checks.ai_mentions import OpenRouterError, check_mentions_with_fallback
 from audit.checks.geocode import geocode
+from audit.checks.maps import parse_maps_page
 from audit.checks.pagespeed import fetch_pagespeed, normalize_target
 from audit.checks.unlighthouse import parse_summary
 from audit.service import run
@@ -80,6 +81,18 @@ class ProviderPolicyTests(unittest.TestCase):
         parsed = parse_summary((self.fixtures / "unlighthouse-summary.json").read_text())
         self.assertEqual(15, parsed["pages"])
         self.assertEqual(0.81, parsed["score"]["performance"])
+
+    def test_maps_aria_fixture_parses_rating_and_reviews(self):
+        result = parse_maps_page((self.fixtures / "maps-aria.html").read_text())
+        self.assertEqual("ok", result.status)
+        self.assertEqual(4.8, result.data["rating"])
+        self.assertEqual(216, result.data["review_count"])
+
+    def test_maps_failure_includes_debug_context(self):
+        result = parse_maps_page('<html><head><title>Consent</title></head><body>Search</body></html>')
+        self.assertEqual("couldnt_check", result.status)
+        self.assertIn("title='Consent'", result.reason or "")
+        self.assertIn("html_length=", result.reason or "")
 
     def test_public_request_ignores_phantomreach_flag(self):
         payload = {"mode":"operator", "operator_phantomreach":True,
