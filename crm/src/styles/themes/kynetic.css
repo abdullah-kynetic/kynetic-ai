@@ -60,6 +60,20 @@
   --shadow-lg: 0 1px 2px rgb(20 16 12 / 12%);
   --shadow-xl: 0 1px 2px rgb(20 16 12 / 12%);
   --shadow-2xl: 0 1px 2px rgb(20 16 12 / 12%);
+  /* Meaning tokens (DESIGN.md). Additive: nothing existing reads them until pages are restyled. */
+  --alert: #c2255c;
+  --alert-soft: #fce8ef;
+  --gain: #1e7a46;
+  --gain-soft: #e4f3ea;
+  --attention: #8a5a06;
+  --attention-soft: #fdf0d8;
+  --neutral: #5c5650;
+  --neutral-soft: #f2eee8;
+  --surface-sunken: #f4f0ea;
+  --radius-card: 1.25rem;
+  --radius-panel: 1rem;
+  --radius-control: 0.75rem;
+  --shadow-popover: 0 8px 24px rgb(20 16 12 / 12%), 0 0 0 1px #e8e2d8;
 }
 
 [data-theme='kynetic'].dark {
@@ -91,6 +105,16 @@
   --chart-3: #f4f1ea;
   --chart-4: #b9b2a7;
   --chart-5: #6fbf8e;
+  --alert: #ff7aa2;
+  --alert-soft: color-mix(in srgb, #ff7aa2 16%, #1d1916);
+  --gain: #6fd39a;
+  --gain-soft: color-mix(in srgb, #6fd39a 14%, #1d1916);
+  --attention: #f2b552;
+  --attention-soft: color-mix(in srgb, #f2b552 14%, #1d1916);
+  --neutral: #b9b2a7;
+  --neutral-soft: #241f1b;
+  --surface-sunken: #241f1b;
+  --shadow-popover: 0 8px 24px rgb(0 0 0 / 40%), 0 0 0 1px #322b25;
 }
 
 [data-theme='kynetic'] {
@@ -116,6 +140,15 @@
     --color-success: var(--success);
     --color-warning: var(--warning);
     --color-info: var(--info);
+    --color-alert: var(--alert);
+    --color-alert-soft: var(--alert-soft);
+    --color-gain: var(--gain);
+    --color-gain-soft: var(--gain-soft);
+    --color-attention: var(--attention);
+    --color-attention-soft: var(--attention-soft);
+    --color-neutral: var(--neutral);
+    --color-neutral-soft: var(--neutral-soft);
+    --color-surface-sunken: var(--surface-sunken);
     --color-scrim: var(--scrim);
     --color-input: var(--input);
     --color-ring: var(--ring);
