@@ -7,6 +7,7 @@ Status: local implementation scaffold and deterministic engine complete. Live de
 - `audit/models.py`: request/check contracts.
 - `audit/scoring.py`: six-question tags and deterministic nine-problem scoring.
 - `audit/checks/`: dependency-free SEO and site-signal checks.
+- `audit/config.py`: eight business-type KPI templates and the `:free` model hard-fail.
 - `audit/service.py`: authenticated, capped, idempotent local service boundary.
 - `audit/pdf/`: branded HTML teaser source for Chromium PDF rendering.
 - `audit/tests/`: unit and contract-boundary tests, including operator and blocked-page fixtures.

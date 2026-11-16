@@ -1,4 +1,5 @@
 import unittest
+from audit.config import BUSINESS_TYPES, require_free_model
 from audit.service import parse_request, run
 
 HTML = '<html><head><title>Acme</title></head><body><h1>Acme</h1><a href="tel:1">Call us</a></body></html>'
@@ -30,6 +31,11 @@ class AuditTests(unittest.TestCase):
         payload = {**self.payload(), "idempotency_key": "blocked-fixture"}
         result = run(payload, "secret", "secret", "<html><title>captcha</title></html>")
         self.assertEqual("couldnt_check", result["checks"]["seo"]["status"])
+
+    def test_eight_business_types_and_free_model_policy(self):
+        self.assertEqual(8, len(BUSINESS_TYPES))
+        self.assertEqual("model:free", require_free_model("model:free"))
+        with self.assertRaises(ValueError): require_free_model("model:paid")
 
 
 if __name__ == "__main__": unittest.main()
