@@ -94,20 +94,20 @@ describe('admin navigation (M8a-01)', () => {
       { keys: new Set(['platform']), crmLevel: null },
       'va'
     );
-    expect(va.map((g) => g.label)).toEqual(['Today', 'Clients', 'Money', 'Build', 'System']);
+    expect(va.map((g) => g.label)).toEqual(['Today', 'Clients', 'Build', 'System']);
     expect(va.flatMap((g) => g.items.map((i) => i.url))).toEqual([
       '/admin',
       '/admin/clients',
       '/admin/clients/new',
       '/admin/support',
       '/admin/system-requests',
-      '/admin/usage',
       '/admin/operations',
       '/admin/users',
       '/admin/backups',
       '/admin/archive',
       '/admin/audit'
     ]);
+    expect(va.flatMap((g) => g.items.map((i) => i.url))).not.toContain('/admin/usage');
   });
 
   it('keeps the admin entry out of the client registry', () => {
