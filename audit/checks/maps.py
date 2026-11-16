@@ -32,7 +32,8 @@ def parse_maps_page(html: str) -> CheckResult:
     competitors = re.findall(r"(?:competitor|nearby)[:\s]+([A-Z][A-Za-z0-9 &'-]{2,60})", text)
     if not rating or not reviews:
         title = (re.search(r"<title[^>]*>(.*?)</title>", html, re.I | re.S) or [None, ""])[1]
-        reason = f"Maps result did not contain rating and review count (title={re.sub(r'\s+', ' ', title).strip()[:120]!r}, html_length={len(html)})"
+        title_text = re.sub(r"\s+", " ", title or "").strip()[:120]
+        reason = f"Maps result did not contain rating and review count (title={title_text!r}, html_length={len(html)})"
         return CheckResult("couldnt_check", reason=reason)
     category = re.search(r"(?:category|type)[:\s]+([^|<]{2,80})", text, re.I)
     return CheckResult("ok", {"rating": float(rating.group(1)),
