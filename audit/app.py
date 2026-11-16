@@ -58,14 +58,15 @@ try:
     app = modal.App("kynetic-audit")
     volume = modal.Volume.from_name("kynetic-audit-pdfs", create_if_missing=True)
 
+    from fastapi import Header
+    from fastapi.responses import JSONResponse
+
     @app.function(image=image, volumes={"/mnt/pdfs": volume}, secrets=[modal.Secret.from_name("kynetic-audit-secrets")],
                    timeout=300, concurrency_limit=2)
     @modal.fastapi_endpoint(method="POST")
-    def audit_endpoint(item: dict[str, Any], x_audit_key: str | None = None) -> dict[str, Any]:
+    def audit_endpoint(item: dict[str, Any], x_audit_key: str | None = Header(default=None, alias="X-Audit-Key")) -> Any:
         status, body = handle_request(item, x_audit_key, "/mnt/pdfs")
-        if status != 200:
-            raise Exception(json.dumps(body))
-        return body
+        return JSONResponse(body, status_code=status)
 
     @app.function(image=image)
     @modal.fastapi_endpoint(method="GET")

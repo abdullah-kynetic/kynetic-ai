@@ -20,6 +20,7 @@ Status: local implementation scaffold and deterministic engine complete. Live de
 ## Decisions and constraints
 
 - Operator mode never accepts or infers form answers; it scores automated evidence only.
+- The existing portal's locked module catalog remains unchanged; `free_audit` is a source-specific lead path that bypasses `alex_core`, so existing module seed/isolation contracts do not regress.
 - PhantomReach is not imported or called from the public engine. Any future operator adapter must remain behind an explicit mode check.
 - No paid providers are selected. OpenRouter integration is not enabled in this local scaffold; when added, only `:free` model ids may pass validation.
 - Migration convention verified: `crm/src/server/db/migrate.ts` calls Drizzle with `migrationsFolder: './drizzle'`; `crm/deploy/prod/deploy.sh:72-73` runs the Compose `migrate` service before the new app starts; `crm/deploy/Dockerfile:45-47` copies `drizzle/` into that image. The live convention in this repo is therefore `crm/drizzle/NNNN_*.sql`, not a `1090_staff_archive` series. The latest repo migration is `0054_tags_notification_prefs.sql`, so `0055_audit_results.sql` is correctly named.

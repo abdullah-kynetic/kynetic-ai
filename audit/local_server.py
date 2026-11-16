@@ -2,6 +2,7 @@
 
 import json
 import os
+from urllib.parse import unquote
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from .app import handle_request, health
@@ -11,6 +12,14 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:
         if self.path == "/health":
             self._respond(200, health())
+        elif self.path.startswith("/pdf/"):
+            name = Path(unquote(self.path[5:])).name
+            path = Path(os.getenv("AUDIT_PDF_DIR", "/tmp/kynetic-audit-pdfs")) / name
+            if not path.is_file(): self._respond(404, {"error": "not found"})
+            else:
+                data = path.read_bytes()
+                self.send_response(200); self.send_header("Content-Type", "application/pdf")
+                self.send_header("Content-Length", str(len(data))); self.end_headers(); self.wfile.write(data)
         else:
             self._respond(404, {"error": "not found"})
 
