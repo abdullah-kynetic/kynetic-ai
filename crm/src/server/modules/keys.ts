@@ -2,6 +2,7 @@
 export const MODULE_KEYS = [
   'platform',
   'alex_core',
+  'free_audit',
   'quote_followup',
   'after_hours',
   'missed_call_textback',

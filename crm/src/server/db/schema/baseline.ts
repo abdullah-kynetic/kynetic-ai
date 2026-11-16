@@ -457,7 +457,7 @@ export const moduleCatalog = pgTable(
   (table) => [
     check(
       'module_catalog_module_key_check',
-      sql`module_key = ANY (ARRAY['platform'::text, 'alex_core'::text, 'quote_followup'::text, 'after_hours'::text, 'missed_call_textback'::text, 'reactivation'::text, 'opm'::text, 'followup_bundle'::text, 'crm'::text])`
+      sql`module_key = ANY (ARRAY['platform'::text, 'alex_core'::text, 'free_audit'::text, 'quote_followup'::text, 'after_hours'::text, 'missed_call_textback'::text, 'reactivation'::text, 'opm'::text, 'followup_bundle'::text, 'crm'::text])`
     )
   ]
 );
