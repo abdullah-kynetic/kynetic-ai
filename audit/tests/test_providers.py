@@ -10,6 +10,7 @@ from audit.checks.geocode import geocode
 from audit.checks.maps import parse_maps_page
 from audit.checks.pagespeed import fetch_pagespeed, normalize_target
 from audit.checks.unlighthouse import parse_summary
+from audit.geogrid import full_audit_grid
 from audit.service import run
 
 
@@ -76,6 +77,23 @@ class ProviderPolicyTests(unittest.TestCase):
         self.assertEqual(first.data, second.data)
         self.assertEqual(1, len(calls))
         self.assertIn("User-Agent", calls[0][1])
+
+    def test_geogrid_fallback_city_is_labeled_and_total_failure_is_couldnt_check(self):
+        calls = []
+        def city_only(url, headers):
+            calls.append(url)
+            if "Austin" in url and "Synthetic" not in url and "synthetic.test" not in url:
+                return b'[{"lat":"30.2672","lon":"-97.7431"}]'
+            return b"[]"
+        result = full_audit_grid({"name": "Synthetic", "website": "https://synthetic.test",
+                                  "city": "Austin", "state": "TX"}, city_only)
+        self.assertEqual("ok", result.status)
+        self.assertEqual("estimate; centered on city", result.data["label"])
+        self.assertEqual(9, len(result.data["points"]))
+        failed = full_audit_grid({"name": "No Place", "website": "https://none.test",
+                                  "city": "Nowhere", "state": "ZZ"}, lambda *_: b"[]")
+        self.assertEqual("couldnt_check", failed.status)
+        self.assertIn("Nominatim", failed.reason or "")
 
     def test_unlighthouse_fixture_parser(self):
         parsed = parse_summary((self.fixtures / "unlighthouse-summary.json").read_text())
