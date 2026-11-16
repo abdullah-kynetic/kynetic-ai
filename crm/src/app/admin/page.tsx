@@ -43,8 +43,24 @@ export default async function AdminHomePage() {
       )}
       {data.salesToday && (
         <TodayBlock title='Sales today'>
-          {data.salesToday.leads.length || data.salesToday.flaggedCalls.length ? (
+          {data.salesToday.dialer.next ||
+          data.salesToday.dialer.callbacksDue.length ||
+          data.salesToday.leads.length ||
+          data.salesToday.flaggedCalls.length ? (
             <ul className='list-disc space-y-1 ps-5 text-sm'>
+              {data.salesToday.dialer.next ? (
+                <li>
+                  <TodayLink href='/admin/agency/dialer'>
+                    Next: {data.salesToday.dialer.next.name}
+                    {data.salesToday.dialer.next.callbackDue ? ' (callback due)' : ''}
+                  </TodayLink>
+                </li>
+              ) : null}
+              {data.salesToday.dialer.callbacksDue.map((callback) => (
+                <li key={callback.id}>
+                  <TodayLink href='/admin/agency/dialer'>Callback due: {callback.name}</TodayLink>
+                </li>
+              ))}
               {data.salesToday.leads.map((lead) => (
                 <li key={lead.name}>
                   New leads: {lead.name} ({lead.count})
@@ -90,7 +106,8 @@ export default async function AdminHomePage() {
       </TodayBlock>
       {data.dailySummary && (
         <TodayBlock title='Daily summary'>
-          <p className='whitespace-pre-wrap text-sm'>{data.dailySummary}</p>
+          <p className='whitespace-pre-wrap text-sm'>{data.dailySummary.body}</p>
+          <p className='mt-2 text-xs text-slate-500'>{data.dailySummary.note}</p>
         </TodayBlock>
       )}
       <Link href='/admin/clients' className='inline-flex min-h-11 items-center underline'>
