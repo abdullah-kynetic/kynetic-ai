@@ -53,6 +53,16 @@ class ProviderPolicyTests(unittest.TestCase):
         self.assertEqual("ok", result.status)
         self.assertEqual("second:free", result.data["model"])
         self.assertEqual("model recall, not live search", result.data["label"])
+        self.assertEqual([{"model": "first:free", "status": 429},
+                          {"model": "second:free", "status": 200}], result.data["models_tried"])
+
+    def test_ai_failure_populates_reason_and_models_tried(self):
+        result = check_mentions_with_fallback(
+            {"name": "Synthetic Co", "city": "Austin", "industry": "contractor"},
+            ["broken:free"], lambda *_: (_ for _ in ()).throw(RuntimeError("connection reset")), sleep=lambda _: None)
+        self.assertEqual("couldnt_check", result.status)
+        self.assertIn("RuntimeError", result.reason or "")
+        self.assertEqual([{"model": "broken:free", "status": 0}], result.data["models_tried"])
 
     def test_nominatim_mocked_and_cached(self):
         calls = []

@@ -127,8 +127,8 @@ def _safe_check(fn) -> dict[str, Any]:
     try:
         result = fn()
         return result if isinstance(result, dict) else asdict(result)
-    except Exception:
-        return asdict(CheckResult("couldnt_check"))
+    except Exception as exc:
+        return asdict(CheckResult("couldnt_check", data={}, reason=f"{type(exc).__name__}: {str(exc) or 'check failed'}"))
 
 
 def collect_checks(request: AuditRequest, html: str = "") -> dict[str, dict[str, Any]]:
