@@ -107,7 +107,9 @@ export default async function AdminHomePage() {
       {data.dailySummary && (
         <TodayBlock title='Daily summary'>
           <p className='whitespace-pre-wrap text-sm'>{data.dailySummary.body}</p>
-          <p className='mt-2 text-xs text-slate-500'>{data.dailySummary.note}</p>
+          <p className='mt-2 text-xs text-slate-500 dark:text-slate-300'>
+            {data.dailySummary.note}
+          </p>
         </TodayBlock>
       )}
       <Link href='/admin/clients' className='inline-flex min-h-11 items-center underline'>
