@@ -30,6 +30,18 @@ class ProviderPolicyTests(unittest.TestCase):
         self.assertEqual(4, calls[0].count("category="))
         self.assertNotIn("secret-not-printed", result.reason or "")
 
+    def test_pagespeed_real_fixtures_parse_100_and_report_missing_category(self):
+        perfect = fetch_pagespeed("https://example.test", "fixture-key",
+                                  lambda _: (self.fixtures / "pagespeed-100.json").read_bytes())
+        self.assertEqual("ok", perfect.status)
+        self.assertEqual(100, perfect.data["performance_score"])
+        self.assertEqual(100, perfect.data["scores"]["best-practices"])
+        incomplete = fetch_pagespeed("https://example.test", "fixture-key",
+                                     lambda _: (self.fixtures / "pagespeed-missing-categories.json").read_bytes())
+        self.assertEqual("couldnt_check", incomplete.status)
+        self.assertIn("ValueError", incomplete.reason or "")
+        self.assertIn("missing seo score", incomplete.reason or "")
+
     def test_ai_fallback_429_then_success_records_model(self):
         calls = []
         def ask(model, prompt):

@@ -27,6 +27,39 @@ def _response(value: object) -> tuple[int, bytes]:
     return int(status), bytes(body)
 
 
+def _failure(exc: Exception, api_key: str) -> CheckResult:
+    message = str(exc).replace(api_key, "[redacted]") if api_key else str(exc)
+    return CheckResult("couldnt_check", reason=f"PageSpeed {type(exc).__name__}: {message or 'response could not be parsed'}")
+
+
+def _parse_success(raw: bytes) -> dict[str, object]:
+    payload = json.loads(raw)
+    lighthouse = payload.get("lighthouseResult")
+    if not isinstance(lighthouse, dict):
+        raise ValueError("missing lighthouseResult")
+    audits = lighthouse.get("audits")
+    categories = lighthouse.get("categories")
+    if not isinstance(audits, dict) or not isinstance(categories, dict):
+        raise ValueError("missing lighthouse audits or categories")
+    scores: dict[str, int] = {}
+    for name in BASE_CATEGORIES:
+        category = categories.get(name)
+        score = category.get("score") if isinstance(category, dict) else None
+        if not isinstance(score, (int, float)) or isinstance(score, bool):
+            raise ValueError(f"missing {name} score")
+        scores[name] = round(score * 100)
+    return {
+        "scores": scores,
+        "performance_score": scores["performance"],
+        "lcp_ms": audits.get("largest-contentful-paint", {}).get("numericValue")
+        if isinstance(audits.get("largest-contentful-paint", {}), dict) else None,
+        "cls": audits.get("cumulative-layout-shift", {}).get("numericValue")
+        if isinstance(audits.get("cumulative-layout-shift", {}), dict) else None,
+        "inp_ms": audits.get("interaction-to-next-paint", {}).get("numericValue")
+        if isinstance(audits.get("interaction-to-next-paint", {}), dict) else None,
+    }
+
+
 def fetch_pagespeed(website: str, api_key: str, transport: Callable[[str], object], sleep: Callable[[float], None] = time.sleep) -> CheckResult:
     if not api_key:
         return CheckResult("couldnt_check", reason="PageSpeed API key is not configured")
@@ -47,18 +80,7 @@ def fetch_pagespeed(website: str, api_key: str, transport: Callable[[str], objec
                 except (TypeError, ValueError, json.JSONDecodeError):
                     detail = "HTTP error"
                 return CheckResult("couldnt_check", reason=f"PageSpeed HTTP {status}: {detail}")
-            payload = json.loads(raw)
-            lighthouse = payload["lighthouseResult"]
-            audits = lighthouse["audits"]
-            categories = lighthouse.get("categories", {})
-            return CheckResult("ok", {
-                "scores": {name: round((categories.get(name, {}).get("score") or 0) * 100)
-                           for name in BASE_CATEGORIES},
-                "performance_score": round(lighthouse["categories"]["performance"]["score"] * 100),
-                "lcp_ms": audits.get("largest-contentful-paint", {}).get("numericValue"),
-                "cls": audits.get("cumulative-layout-shift", {}).get("numericValue"),
-                "inp_ms": audits.get("interaction-to-next-paint", {}).get("numericValue"),
-            })
+            return CheckResult("ok", _parse_success(raw))
         except urllib.error.HTTPError as exc:
             if exc.code in (429,) or exc.code >= 500:
                 if attempt == 0:
@@ -70,6 +92,6 @@ def fetch_pagespeed(website: str, api_key: str, transport: Callable[[str], objec
                 detail = "HTTP error"
             return CheckResult("couldnt_check", reason=f"PageSpeed HTTP {exc.code}: {detail}")
         except (KeyError, TypeError, ValueError, json.JSONDecodeError, OSError, TimeoutError) as exc:
-            return CheckResult("couldnt_check", reason=f"PageSpeed response could not be parsed: {type(exc).__name__}")
+            return _failure(exc, api_key)
     return CheckResult("couldnt_check", reason="PageSpeed retry budget exhausted")
 
