@@ -449,6 +449,13 @@
       "when": 1793720000000,
       "tag": "1090_staff_archive",
       "breakpoints": true
+    },
+    {
+      "idx": 64,
+      "version": "7",
+      "when": 1794000000000,
+      "tag": "1091_service_idempotency",
+      "breakpoints": true
     }
   ]
 }

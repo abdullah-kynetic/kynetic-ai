@@ -92,6 +92,10 @@ export function ServiceTokenPanel({
             <p className='text-sm text-muted-foreground'>
               {row.revokedAt ? 'Revoked' : 'Active'} · {row.scopes.join(', ') || 'No scopes'}
             </p>
+            <p className='text-sm text-muted-foreground'>
+              Created {new Date(row.createdAt).toLocaleDateString()} · Last used{' '}
+              {row.lastUsedAt ? new Date(row.lastUsedAt).toLocaleString() : 'never'}
+            </p>
             {!row.revokedAt && (
               <button
                 className='min-h-11 rounded border px-4'

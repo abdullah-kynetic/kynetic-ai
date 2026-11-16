@@ -1,10 +1,16 @@
 import { and, eq, isNull, sql } from 'drizzle-orm';
 import { getDb, type Db } from '../db/client';
 import { serviceTokens, tenants } from '../db/schema';
+import { errorResponse, RateLimitedError } from '../errors';
 import { withTenant } from '../tenancy';
+import { consumeRateLimit, RATE_LIMITS } from '../security/rate-limit';
 import { bearerFromHeader, generateServiceToken, hashesEqual, parseServiceToken } from './token';
 
-export type ServiceContext = { tenantId: string; tokenId: string; scopes: string[] };
+export type ServiceContext = {
+  tenantId: string;
+  tokenId: string;
+  scopes: string[];
+};
 
 type Opts = { db?: Db };
 
@@ -42,7 +48,11 @@ export async function authenticateServiceToken(
   if (!tenant || tenant.status === 'suspended' || tenant.status === 'offboarded') return null;
 
   await db.execute(sql`select service_token_touch(${row.id}::uuid)`);
-  return { tenantId: row.tenant_id, tokenId: row.id, scopes: row.scopes.filter(Boolean) };
+  return {
+    tenantId: row.tenant_id,
+    tokenId: row.id,
+    scopes: row.scopes.filter(Boolean)
+  };
 }
 
 /** Runs fn in the token's tenant. The role is `system`; RLS still pins every row to that tenant. */
@@ -122,9 +132,21 @@ export function withServiceAuth<A extends unknown[]>(
     if (!svc) {
       return Response.json(
         { error: 'unauthorized' },
-        { status: 401, headers: { 'WWW-Authenticate': 'Bearer', 'Cache-Control': 'no-store' } }
+        {
+          status: 401,
+          headers: {
+            'WWW-Authenticate': 'Bearer',
+            'Cache-Control': 'no-store'
+          }
+        }
       );
     }
+    // Per token, after authentication, so unauthenticated floods cannot burn a client's budget.
+    const rule = ['GET', 'HEAD'].includes(req.method)
+      ? RATE_LIMITS.serviceRead
+      : RATE_LIMITS.serviceWrite;
+    const limit = await consumeRateLimit(opts.db ?? getDb(), rule, svc.tokenId);
+    if (!limit.allowed) return errorResponse(new RateLimitedError(limit.retryAfterSeconds));
     return handler(req, svc, ...rest);
   };
 }

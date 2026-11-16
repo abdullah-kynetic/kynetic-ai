@@ -36,6 +36,7 @@ import { runMonitoringCheck } from './monitoring/run';
 import { registerTenantExportWorker } from './admin/tenant-export';
 import { purgeExpiredRateLimits, RATE_LIMIT_PURGE_CRON } from './security/rate-limit';
 import { getWorkerDb } from './db/client';
+import { purgeServiceIdempotency } from './service-auth';
 import { registerN8nEventSubscribers } from './integrations/n8n';
 import { registerWorker, scheduleRecurring } from './jobs';
 import { handleBackupJob, type BackupJob } from './admin/backups';
@@ -100,6 +101,7 @@ await registerWorker('monitor.check', async () => {
 });
 await registerWorker('security.rate_limit_purge', async () => {
   await purgeExpiredRateLimits(getWorkerDb());
+  await purgeServiceIdempotency(getWorkerDb());
 });
 await scheduleTenantJobs();
 await scheduleRetentionPurge();

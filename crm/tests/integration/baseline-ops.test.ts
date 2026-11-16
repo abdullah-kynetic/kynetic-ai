@@ -36,6 +36,8 @@ const EXTRA_TABLES = [
   'review_snapshots',
   // M7 table for tenant-scoped reactivation launches.
   'reactivation_batches',
+  // Service API idempotency records (migration 1091).
+  'service_idempotency',
   // M12 contact-decision ledger and call-result receipts.
   'contact_decisions',
   'call_result_receipts',
