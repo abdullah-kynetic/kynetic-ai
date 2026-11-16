@@ -2,7 +2,7 @@ import json
 import subprocess
 from ..models import CheckResult
 
-UNLIGHTHOUSE_VERSION = "0.15.2"
+UNLIGHTHOUSE_VERSION = "0.19.1"
 
 
 def unlighthouse_command(website: str, output_path: str = "/tmp/unlighthouse") -> list[str]:

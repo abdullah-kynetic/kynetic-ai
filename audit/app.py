@@ -90,7 +90,7 @@ try:
         .run_commands(
             "curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs",
             "node --version",
-            "npm install -g unlighthouse@0.15.2",
+            "npm install -g unlighthouse@0.19.1",
             "python -m playwright install --with-deps chromium",
         )
         .add_local_python_source("audit")

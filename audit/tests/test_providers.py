@@ -102,7 +102,7 @@ class ProviderPolicyTests(unittest.TestCase):
 
     def test_unlighthouse_command_is_pinned_and_bounded(self):
         command = unlighthouse_command("https://synthetic.test")
-        self.assertIn("unlighthouse@0.15.2", command)
+        self.assertIn("unlighthouse@0.19.1", command)
         self.assertEqual("15", command[command.index("--max-routes") + 1])
         self.assertEqual("https://synthetic.test", command[command.index("--site") + 1])
 
