@@ -20,6 +20,8 @@ export const RATE_LIMITS = {
   providerWebhookSource: { name: 'provider_webhook_source', limit: 600, windowSeconds: 60 },
   exportImportTenant: { name: 'export_import_tenant', limit: 5, windowSeconds: 3600 },
   searchUser: { name: 'search_user', limit: 30, windowSeconds: 60 },
+  serviceRead: { name: 'service_read', limit: 120, windowSeconds: 60 },
+  serviceWrite: { name: 'service_write', limit: 60, windowSeconds: 60 },
   impersonationStart: { name: 'impersonation_start', limit: 20, windowSeconds: 3600 }
 } as const satisfies Record<string, RateLimitRule>;
 

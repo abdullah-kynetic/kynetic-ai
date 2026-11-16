@@ -5,6 +5,7 @@ export * from './email';
 export * from './presence';
 export * from './contact-decisions';
 export * from './call-result-receipts';
+export * from './service-idempotency';
 export * from './agency';
 export * from './agency-dialer';
 export * from './agency-desk';

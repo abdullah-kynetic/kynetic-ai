@@ -118,7 +118,10 @@ async function seedTenant(
   await admin`insert into phone_numbers (tenant_id, e164, provider, provider_sid, purpose) values (${t}, ${`+1555555000${n}`}, 'twilio', ${`PN${n}`}, 'sms')`;
   await admin`insert into alex_configs (tenant_id, provider) values (${t}, 'fake')`;
   await admin`insert into alex_prompts (tenant_id, version, body, is_active) values (${t}, 1, 'prompt', true)`;
-  await admin`insert into service_tokens (tenant_id, prefix, key_hash, label) values (${t}, ${`pfx_${key}`}, 'hash', 'n8n')`;
+  const [svcToken] =
+    await admin`insert into service_tokens (tenant_id, prefix, key_hash, label) values (${t}, ${`pfx_${key}`}, 'hash', 'n8n') returning id`;
+  await admin`insert into service_idempotency (tenant_id, token_id, key, method, path, request_hash, status, response)
+    values (${t}, ${svcToken.id}, ${`fixture-key-${key}`}, 'POST', '/api/service/fixture', ${'0'.repeat(64)}, 201, '{}')`;
   await admin`insert into appointments (tenant_id, contact_id, deal_id, starts_at, ends_at, booked_by)
     values (${t}, ${contact.id}, ${deal.id}, now() + interval '1 day', now() + interval '1 day 1 hour', 'alex')`;
   await admin`insert into metrics_daily (tenant_id, day) values (${t}, current_date)`;
