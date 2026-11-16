@@ -6,8 +6,11 @@ Status: local implementation scaffold and deterministic engine complete. Live de
 
 - `audit/models.py`: request/check contracts.
 - `audit/scoring.py`: six-question tags and deterministic nine-problem scoring.
-- `audit/checks/`: dependency-free SEO and site-signal checks.
+- `audit/checks/`: SEO, site-signal, mocked PageSpeed, Maps fixture parsing, AI mention parsing, and mode-gated wrappers.
 - `audit/config.py`: eight business-type KPI templates and the `:free` model hard-fail.
+- `audit/app.py` and `audit/local_server.py`: shared authenticated service handler, local HTTP harness, caps, idempotency, and Chromium PDF output.
+- `audit/web/`: standalone four-step preview component because the kyneticai.com site source is not present in this repository.
+- `audit/acceptance.py` and `audit/samples/`: ten synthetic operator acceptance records and PDFs.
 - `audit/service.py`: authenticated, capped, idempotent local service boundary.
 - `audit/pdf/`: branded HTML teaser source for Chromium PDF rendering.
 - `audit/tests/`: unit and contract-boundary tests, including operator and blocked-page fixtures.
@@ -25,6 +28,7 @@ Status: local implementation scaffold and deterministic engine complete. Live de
 ## Verification log
 
 - `python -m unittest discover -s audit/tests -p 'test_*.py'` — expected local suite for this layer.
+- `python -m audit.acceptance` — ten synthetic operator runs, each with PDF, section scores, finding, and cost record.
 - CRM and portal suites remain to be run after route/schema integration; no production database was touched.
 - Modal deployment, live smoke tests, measured provider cost, n8n import, site discovery/deploy, and production migration are handoffs because the request forbids those writes and this workspace has no deployment credential.
 

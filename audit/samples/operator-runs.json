@@ -1,0 +1,102 @@
+[
+  {
+    "business": "Synthetic Operator 1",
+    "pdf": "audit/samples/054f12de-686b-4013-bca2-1d4a89baec76.pdf",
+    "section_scores": {
+      "questions": 0,
+      "automated": 0
+    },
+    "finding": "More evidence is needed before recommending a system.",
+    "cost_cents": 0
+  },
+  {
+    "business": "Synthetic Operator 2",
+    "pdf": "audit/samples/af05392f-4ebf-4bdb-9584-0f4a044efc89.pdf",
+    "section_scores": {
+      "questions": 0,
+      "automated": 0
+    },
+    "finding": "More evidence is needed before recommending a system.",
+    "cost_cents": 0
+  },
+  {
+    "business": "Synthetic Operator 3",
+    "pdf": "audit/samples/5c44a225-854f-43d4-ba50-94b73da7e803.pdf",
+    "section_scores": {
+      "questions": 0,
+      "automated": 0
+    },
+    "finding": "More evidence is needed before recommending a system.",
+    "cost_cents": 0
+  },
+  {
+    "business": "Synthetic Operator 4",
+    "pdf": "audit/samples/8c54d8c8-29eb-4907-bcec-8b9ef8cf93ad.pdf",
+    "section_scores": {
+      "questions": 0,
+      "automated": 0
+    },
+    "finding": "More evidence is needed before recommending a system.",
+    "cost_cents": 0
+  },
+  {
+    "business": "Synthetic Operator 5",
+    "pdf": "audit/samples/bdc47b7f-5081-42d4-8eed-f4a58d812c6e.pdf",
+    "section_scores": {
+      "questions": 0,
+      "automated": 0
+    },
+    "finding": "More evidence is needed before recommending a system.",
+    "cost_cents": 0
+  },
+  {
+    "business": "Synthetic Operator 6",
+    "pdf": "audit/samples/aa287f77-97ea-400d-860b-5978454dceed.pdf",
+    "section_scores": {
+      "questions": 0,
+      "automated": 0
+    },
+    "finding": "More evidence is needed before recommending a system.",
+    "cost_cents": 0
+  },
+  {
+    "business": "Synthetic Operator 7",
+    "pdf": "audit/samples/5dc3c888-e76b-4a42-a3dd-2287390d0e46.pdf",
+    "section_scores": {
+      "questions": 0,
+      "automated": 0
+    },
+    "finding": "More evidence is needed before recommending a system.",
+    "cost_cents": 0
+  },
+  {
+    "business": "Synthetic Operator 8",
+    "pdf": "audit/samples/da1764e2-9588-4d70-a3c2-0d082ce2a99e.pdf",
+    "section_scores": {
+      "questions": 0,
+      "automated": 0
+    },
+    "finding": "More evidence is needed before recommending a system.",
+    "cost_cents": 0
+  },
+  {
+    "business": "Synthetic Operator 9",
+    "pdf": "audit/samples/21947e68-a9e7-46df-8395-37dc718b9188.pdf",
+    "section_scores": {
+      "questions": 0,
+      "automated": 0
+    },
+    "finding": "More evidence is needed before recommending a system.",
+    "cost_cents": 0
+  },
+  {
+    "business": "Synthetic Operator 10",
+    "pdf": "audit/samples/02c501fb-725d-4a2f-9ca6-97cfd63dc58f.pdf",
+    "section_scores": {
+      "questions": 0,
+      "automated": 0
+    },
+    "finding": "More evidence is needed before recommending a system.",
+    "cost_cents": 0
+  }
+]

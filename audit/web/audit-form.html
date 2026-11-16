@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kynetic AI Instant Audit</title><link rel="stylesheet" href="audit-form.css"></head>
+<body><main class="audit-card"><p class="eyebrow">Kynetic AI</p><h1>Find the next constraint in your business.</h1>
+<form id="audit-form"><section data-step="1"><label>Business name<input name="name" required></label><label>Website<input name="website" type="url" required></label><label>City<input name="city" required></label><label>State<input name="state" maxlength="2" required></label><label>Industry<input name="industry" required></label></section>
+<section data-step="2" hidden><fieldset><legend>How many leads do you receive monthly?</legend><label><input type="radio" name="q1" value="&lt;20" required> &lt;20</label><label><input type="radio" name="q1" value="20-50">20–50</label><label><input type="radio" name="q1" value="50-150">50–150</label><label><input type="radio" name="q1" value="150+">150+</label></fieldset><label>Missed call handling<select name="q2"><option>voicemail</option><option>same-day callback</option><option>next day</option><option>often not</option></select></label><label>Close rate<select name="q3"><option>&lt;20%</option><option>20-40%</option><option>40%+</option><option>not sure</option></select></label></section>
+<section data-step="3" hidden><p>We’re checking public business signals. This takes a few seconds.</p><progress id="progress" max="100" value="35"></progress></section>
+<section data-step="4" hidden><div id="result"></div><label class="consent"><input type="checkbox" name="consent"> Email me this result (optional)</label></section>
+<nav><button type="button" id="back" hidden>Back</button><button type="button" id="next">Continue</button></nav></form></main><script src="audit-form.js"></script></body></html>
