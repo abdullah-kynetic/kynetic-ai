@@ -11,7 +11,8 @@ export const SERVICE_TOKEN_SCOPES = [
   'contact-policy:read',
   'send-state:read',
   'tenant:read',
-  'metrics:read'
+  'metrics:read',
+  'deals:read'
 ] as const;
 
 export type ServiceTokenScope = (typeof SERVICE_TOKEN_SCOPES)[number];
