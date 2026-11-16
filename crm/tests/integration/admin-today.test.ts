@@ -56,6 +56,16 @@ describe('admin Today data', () => {
     ]);
   });
 
+  it('shows the full agency digest and its delivery note on Today', async () => {
+    const today = await getTodayData({ userId: IDS.admin, role: 'admin' }, { db });
+    expect(today.dailySummary).toEqual({
+      body: expect.stringMatching(
+        /^\d+ client workspaces; \d+ need attention; \d+ integration errors; \d+ onboarding\.$/
+      ),
+      note: 'In-app summaries at 8 a.m. Pacific. No external delivery.'
+    });
+  });
+
   it('does not put admin-only data in a VA response', async () => {
     const admin = await getTodayData({ userId: IDS.admin, role: 'admin' }, { db });
     const va = await getTodayData({ userId: IDS.va, role: 'va' }, { db });
