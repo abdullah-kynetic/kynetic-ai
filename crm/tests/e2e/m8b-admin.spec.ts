@@ -116,6 +116,12 @@ test('phase 7 gives the operations pages distinct names and hides DEV blocks', a
   await expect(
     adminPage.getByRole('heading', { name: 'Sales settings', exact: true })
   ).toBeVisible();
-  await expect(adminPage.getByText('DEV integration draft', { exact: true })).toBeHidden();
-  await expect(adminPage.getByText('Agency DEV lead secret', { exact: true })).toBeHidden();
+  await expect(
+    adminPage.getByRole('heading', { name: 'DEV integration draft', exact: true })
+  ).toBeHidden();
+  await expect(
+    adminPage.getByRole('heading', { name: 'Agency DEV lead secret', exact: true })
+  ).toBeHidden();
+  await expect(adminPage.getByLabel('DEV lead webhook URL', { exact: true })).toBeHidden();
+  await expect(adminPage.getByLabel('Inactive DEV workflow name', { exact: true })).toBeHidden();
 });
