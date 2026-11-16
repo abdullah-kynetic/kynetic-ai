@@ -62,12 +62,40 @@ describe('admin navigation (M8a-01)', () => {
   });
 
   it('shows staff only the pages their role can open', () => {
+    const admin = visibleNavGroups(
+      adminNavGroups,
+      { keys: new Set(['platform']), crmLevel: null },
+      'admin'
+    );
+    expect(admin.flatMap((g) => g.items.map((i) => i.url))).toEqual([
+      '/admin',
+      '/admin/agency',
+      '/admin/agency/dialer',
+      '/admin/agency/inbox',
+      '/admin/agency/campaigns',
+      '/admin/agency/proposals',
+      '/admin/agency/contracts',
+      '/admin/clients',
+      '/admin/clients/new',
+      '/admin/support',
+      '/admin/system-requests',
+      '/admin/view-as',
+      '/admin/agency/finance',
+      '/admin/agency/billing',
+      '/admin/usage',
+      '/admin/templates',
+      '/admin/operations',
+      '/admin/users',
+      '/admin/backups',
+      '/admin/archive',
+      '/admin/audit'
+    ]);
     const va = visibleNavGroups(
       adminNavGroups,
       { keys: new Set(['platform']), crmLevel: null },
       'va'
     );
-    expect(va.map((g) => g.label)).toEqual(['Today', 'Clients', 'System']);
+    expect(va.map((g) => g.label)).toEqual(['Today', 'Clients', 'Money', 'Build', 'System']);
     expect(va.flatMap((g) => g.items.map((i) => i.url))).toEqual([
       '/admin',
       '/admin/clients',
@@ -75,6 +103,8 @@ describe('admin navigation (M8a-01)', () => {
       '/admin/support',
       '/admin/system-requests',
       '/admin/view-as',
+      '/admin/usage',
+      '/admin/operations',
       '/admin/users',
       '/admin/backups',
       '/admin/archive',
