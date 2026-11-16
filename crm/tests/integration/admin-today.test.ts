@@ -1,23 +1,71 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { getTodayData } from '@/server/admin';
-import { createDb, type Db } from '@/server/db/client';
-import { createTestDatabase, type TestDatabase } from '../helpers/db';
-import { IDS, seedTwoTenants } from '../helpers/fixtures';
+import { createAgencyLead } from '@/server/agency';
+import { setupAgency } from '../helpers/agency';
+import type { Db } from '@/server/db/client';
+import { IDS } from '../helpers/fixtures';
 
-let test: TestDatabase;
+let agency: Awaited<ReturnType<typeof setupAgency>>;
 let db: Db;
 
 beforeAll(async () => {
-  test = await createTestDatabase();
-  await seedTwoTenants(test.admin);
-  db = createDb(test.app);
+  agency = await setupAgency();
+  db = agency.db;
 });
 
 afterAll(async () => {
-  await test?.drop();
+  await agency?.close();
 });
 
 describe('admin Today data', () => {
+  it('uses the Human dialer queue for callbacks and next leads', async () => {
+    const callback = await createAgencyLead(
+      { id: IDS.admin, kyneticRole: 'admin' },
+      {
+        firstName: 'Today callback',
+        email: 'today-callback@example.test',
+        direction: 'outbound',
+        channel: 'cold_call',
+        phone: '+12025550121',
+        state: 'CA'
+      },
+      { db }
+    );
+    await createAgencyLead(
+      { id: IDS.admin, kyneticRole: 'admin' },
+      {
+        firstName: 'Today next lead',
+        email: 'today-next@example.test',
+        direction: 'outbound',
+        channel: 'cold_call',
+        phone: '+12025550122',
+        state: 'CA'
+      },
+      { db }
+    );
+    const now = new Date();
+    await agency.test.admin`insert into tasks (tenant_id, title, contact_id, due_at)
+      values (${agency.tenantId}, 'Scheduled callback', ${callback.contactId}, ${new Date(now.getTime() - 60_000).toISOString()})`;
+    const today = await getTodayData({ userId: IDS.admin, role: 'admin' }, { db, now });
+    expect(today.salesToday?.dialer.next).toMatchObject({
+      name: 'Today callback',
+      callbackDue: true
+    });
+    expect(today.salesToday?.dialer.callbacksDue).toEqual([
+      { id: callback.contactId, name: 'Today callback' }
+    ]);
+  });
+
+  it('shows the full agency digest and its delivery note on Today', async () => {
+    const today = await getTodayData({ userId: IDS.admin, role: 'admin' }, { db });
+    expect(today.dailySummary).toEqual({
+      body: expect.stringMatching(
+        /^\d+ client workspaces; \d+ need attention; \d+ integration errors; \d+ onboarding\.$/
+      ),
+      note: 'In-app summaries at 8 a.m. Pacific. No external delivery.'
+    });
+  });
+
   it('does not put admin-only data in a VA response', async () => {
     const admin = await getTodayData({ userId: IDS.admin, role: 'admin' }, { db });
     const va = await getTodayData({ userId: IDS.va, role: 'va' }, { db });

@@ -212,6 +212,7 @@ export async function getAgencyDialer(
             }
           : null,
         remaining: queue.length,
+        callbacksDue: callbacks.map((contact) => ({ id: contact.id, name: contact.firstName })),
         unavailable: rows.length - available.length,
         script,
         history

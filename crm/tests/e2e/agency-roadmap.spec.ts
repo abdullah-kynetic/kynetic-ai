@@ -33,9 +33,11 @@ test('agency roadmap: alerts, inbox, blocked compose, manual sequence, ops and b
   await adminPage.getByLabel('Platform', { exact: true }).fill('LinkedIn');
   await adminPage.getByLabel('Message', { exact: true }).fill('DEV manually recorded inbound DM');
   await adminPage.getByRole('button', { name: 'Save log' }).click();
-  await expect(
-    adminPage.getByRole('article').filter({ hasText: 'DEV manually recorded inbound DM' }).first()
-  ).toBeVisible();
+  const inbound = adminPage
+    .getByRole('article')
+    .filter({ has: adminPage.getByText('DEV manually recorded inbound DM', { exact: true }) });
+  await expect(inbound).toHaveCount(1);
+  await expect(inbound).toBeVisible();
   await adminPage.getByRole('combobox', { name: 'Channel', exact: true }).selectOption('email');
   await adminPage.getByRole('button', { name: 'Filter', exact: true }).click();
   await expect(adminPage.getByText('No matching messages.')).toBeVisible();
@@ -45,10 +47,13 @@ test('agency roadmap: alerts, inbox, blocked compose, manual sequence, ops and b
     .selectOption({ label: 'DEV Roadmap Prospect' });
   await adminPage.getByLabel('Message', { exact: true }).fill('DEV draft, never send');
   await adminPage.getByRole('button', { name: 'Save draft', exact: true }).click();
-  const draft = adminPage.getByRole('article').filter({ hasText: 'DEV draft, never send' }).first();
+  const draft = adminPage
+    .getByRole('article')
+    .filter({ has: adminPage.getByText('DEV draft, never send', { exact: true }) });
+  await expect(draft).toHaveCount(1);
   await expect(draft).toBeVisible();
   await draft.getByRole('button', { name: 'Check gates / simulate' }).click();
-  await expect(draft).toContainText('outbound disabled');
+  await expect(draft).toHaveText(/outbound disabled/);
   await adminPage.goto('/admin/agency/campaigns');
   await adminPage.getByLabel('Campaign name', { exact: true }).fill('DEV Roadmap Sequence');
   await adminPage.getByRole('button', { name: 'Create campaign', exact: true }).click();

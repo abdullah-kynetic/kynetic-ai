@@ -1,6 +1,6 @@
 # Admin side cleanup plan
 
-Status: P7-S6 complete 2026-11-15. Phase 7 is ready to ship after its required CI run; nothing deploys without Abdullah's explicit yes. It runs as phase 7 (`docs/phases/phase-7.md`): six steps, one branch, one pull request.
+Status: Phase 7 follow-up complete 2026-11-16. Phase 7 is ready to ship after its required CI run; nothing deploys without Abdullah's explicit yes. It runs as phase 7 (`docs/phases/phase-7.md`): six steps, one branch, one pull request.
 
 The admin side is cleaned up in six small steps (commits on one branch) that change where things are reached from, not what the pages do. Page addresses stay the same except one: the client table moves from `/admin` to `/admin/clients` so `/admin` can become a Today page. No page is rewritten and nothing is deleted.
 
@@ -15,8 +15,8 @@ Six entries, ordered by how often they are used. The Agency group is already hid
 | Today | `/admin` | The work queue (new page) | Yes | Yes |
 | Sales | `/admin/agency` | Overview and leads, Inbox, Compose, Human dialer, Campaigns, Proposals, Contracts | Yes | No |
 | Clients | `/admin/clients` | Client list, Onboard a client, Support requests, System requests; each client opens with tabs | Yes | Yes |
-| Money | `/admin/agency/finance` | Finance, Agency billing, Usage and cost | Yes | No for Usage; to confirm for the rest |
-| Build | `/admin/templates` | Template library, Client jobs and integrations (today's Operations) | Yes | Operations only |
+| Money | `/admin/agency/finance` | Finance, Agency billing, Usage and cost | Yes | Usage only |
+| Build | `/admin/templates` | Template library, Client jobs and integrations (today's Operations) | Yes | Jobs and integrations only |
 | System | `/admin/users` | Users, Backups, Audit log, Archive | Yes | To confirm per page |
 
 Each entry expands in the sidebar to show its pages, so the Sales sub-menu stops living on the page itself.
@@ -83,9 +83,11 @@ The phase merges as one pull request and deploys once, after Abdullah's yes.
 
 Defaults unless Abdullah says otherwise:
 
-- Sales and Money stay admin-only, as the Agency group is today.
+- Sales and Money mutations stay admin-only; the read-only Usage page is open to both staff roles.
 - The DEV blocks on Agency operations are only hidden, not deleted, until removal is approved.
 - Support requests live under Clients, with a count on Today.
+
+Follow-up evidence (2026-11-16): Today reads `getAgencyDialer` and `agencyDigest`; the VA response leaves admin-only Today blocks null. Usage and Operations have no admin-only menu access filter because their page data is staff-readable and their mutations still require admin. `/admin/view-as` remains in the route table below but is intentionally absent from both role menus. Agency DEV forms remain rendered with `hidden`, and their route/data functions are unchanged. No migration or schema change was made.
 
 ## P7-S1 role table (read from route guards and server functions)
 

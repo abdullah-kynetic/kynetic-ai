@@ -347,13 +347,6 @@ export const adminNavGroups: NavGroup[] = [
         icon: 'help',
         isActive: false,
         items: []
-      },
-      {
-        title: 'View as client',
-        url: '/admin/view-as',
-        icon: 'user',
-        isActive: false,
-        items: []
       }
     ]
   },
@@ -381,7 +374,6 @@ export const adminNavGroups: NavGroup[] = [
         url: '/admin/usage',
         icon: 'billing',
         isActive: false,
-        access: { role: 'admin' },
         items: []
       }
     ]
@@ -402,7 +394,6 @@ export const adminNavGroups: NavGroup[] = [
         url: '/admin/operations',
         icon: 'settings',
         isActive: false,
-        access: { role: 'admin' },
         shortcut: ['a', 'o'],
         items: []
       }

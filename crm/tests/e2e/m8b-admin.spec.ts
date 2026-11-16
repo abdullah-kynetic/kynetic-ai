@@ -17,7 +17,7 @@ test('F-53/F-54 admin all-clients table shows synthetic tenants and health thres
   ).toHaveCount(4);
 });
 
-test('phase 7 client list keeps view-as available to admin and VA and old lists redirect', async ({
+test('phase 7 client list keeps view-as routes available and removes the menu item', async ({
   adminPage,
   vaPage
 }) => {
@@ -25,6 +25,7 @@ test('phase 7 client list keeps view-as available to admin and VA and old lists 
     await page.goto('/admin/clients');
     await expect(page.getByRole('heading', { name: 'All clients', exact: true })).toBeVisible();
     await expect(page.getByRole('columnheader', { name: 'Status', exact: true })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'View as client', exact: true })).toHaveCount(0);
   }
   await expect(
     adminPage.locator('#main-content').getByRole('link', { name: 'Onboard a client', exact: true })
@@ -116,6 +117,12 @@ test('phase 7 gives the operations pages distinct names and hides DEV blocks', a
   await expect(
     adminPage.getByRole('heading', { name: 'Sales settings', exact: true })
   ).toBeVisible();
-  await expect(adminPage.getByText('DEV integration draft', { exact: true })).toBeHidden();
-  await expect(adminPage.getByText('Agency DEV lead secret', { exact: true })).toBeHidden();
+  await expect(
+    adminPage.getByRole('heading', { name: 'DEV integration draft', exact: true })
+  ).toBeHidden();
+  await expect(
+    adminPage.getByRole('heading', { name: 'Agency DEV lead secret', exact: true })
+  ).toBeHidden();
+  await expect(adminPage.getByLabel('DEV lead webhook URL', { exact: true })).toBeHidden();
+  await expect(adminPage.getByLabel('Inactive DEV workflow name', { exact: true })).toBeHidden();
 });
