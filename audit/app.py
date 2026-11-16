@@ -91,7 +91,7 @@ try:
         volumes={"/mnt/pdfs": volume},
         secrets=[modal.Secret.from_name("kynetic-audit-secrets")],
         timeout=300,
-        concurrency_limit=2,
+        max_containers=2,
         memory=2048,
     )
     @modal.asgi_app()

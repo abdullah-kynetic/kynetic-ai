@@ -14,13 +14,13 @@ export AUDIT_SERVICE_API_KEY="$(python -c 'import secrets; print(secrets.token_u
   AUDIT_SERVICE_API_KEY="$AUDIT_SERVICE_API_KEY" \
   OPENROUTER_API_KEY="$OPENROUTER_API_KEY" \
   GOOGLE_PAGESPEED_API_KEY="$GOOGLE_PAGESPEED_API_KEY"
-.venv-audit/bin/modal deploy audit/app.py
+.venv-audit/bin/modal deploy -m audit.app
 ```
 
 The generated key exists only in the shell variable and Modal secret; do not print it or commit it. Copy it into n8n manually from the Modal dashboard when ready. The deploy command targets only the app declared as `kynetic-audit` in `audit/app.py`.
 
 
-`modal deploy audit/app.py` prints one web URL for the `web` ASGI function. Use that URL as `$AUDIT_URL`. Routes are `GET /health`, `POST /audit`, and `GET /pdf/{run_id}.pdf`. Successful audit responses include a signed `pdf_url` (1-hour expiry). Download it from `$AUDIT_URL$pdf_url` without sending the audit key.
+`modal deploy -m audit.app` prints one web URL for the `web` ASGI function. Use that URL as `$AUDIT_URL`. Routes are `GET /health`, `POST /audit`, and `GET /pdf/{run_id}.pdf`. Successful audit responses include a signed `pdf_url` (1-hour expiry). Download it from `$AUDIT_URL$pdf_url` without sending the audit key.
 
 Smoke tests from the deployment machine:
 
