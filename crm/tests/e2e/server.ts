@@ -79,6 +79,8 @@ async function main(): Promise<void> {
   await db.admin`insert into calls (id, tenant_id, contact_id, provider, provider_call_id, direction, started_at, summary)
     values ('cccccccc-0000-4000-8000-000000000063', '11111111-1111-4111-8111-111111111111', ${seeded.a.contactId}, 'fake', 'synthetic-a11y-detail', 'outbound', now(), 'Synthetic accessibility review call')`;
   await db.admin`insert into tenants (id, slug, name, plan, timezone) values ('33333333-3333-4333-8333-333333333333', 'tenant-c', 'Tenant C', 'founding', 'UTC')`;
+  // A ready portal, so the workspace switcher's "View as client" is enabled in browser tests.
+  await db.admin`insert into tenants (id, slug, name, plan, status, timezone) values ('44444444-4444-4444-8444-444444444444', 'ready-roofing', 'Ready Roofing', 'founding', 'active', 'UTC')`;
   await db.admin`update tenants set name = 'Synthetic Brand Co', primary_color = '#2563eb', business_hours = ${db.admin.json(
     {
       mon: [{ open: '08:00', close: '17:00' }],

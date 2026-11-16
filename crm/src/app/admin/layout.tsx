@@ -2,6 +2,12 @@ import KBar from '@/components/kbar';
 import AppSidebar from '@/components/layout/app-sidebar';
 import Header from '@/components/layout/header';
 import { ModulesProvider } from '@/components/modules/module-gate';
+import { StaticWorkspaceCard } from '@/components/workspace/workspace-card';
+import { WorkspaceSwitcher } from '@/components/workspace/workspace-switcher';
+import { toWorkspaces } from '@/lib/workspaces';
+import { listAdminTenantOverview } from '@/server/admin';
+import { AGENCY_SYNTHETIC_SLUG } from '@/server/agency/constants';
+import { DEMO_CLIENT_PROFILES } from '@/server/db/seed/demo-client-profiles';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { adminNavGroups } from '@/config/nav-config';
 import { visibleNavGroups } from '@/config/nav-registry';
@@ -43,6 +49,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     { keys: new Set(['platform']), crmLevel: null },
     role
   );
+  // The switcher lists every client, so it is for the admin role only; support staff get a plain card.
+  const workspaces =
+    role === 'admin'
+      ? toWorkspaces(await listAdminTenantOverview({ userId: user.id, role: 'admin' }), {
+          demoSlugs: new Set(DEMO_CLIENT_PROFILES.map((p) => p.slug)),
+          hiddenSlugs: new Set([AGENCY_SYNTHETIC_SLUG])
+        })
+      : null;
+  const roleText = roleLabel(role);
   return (
     // The admin side is platform-only and takes no tenant (DESIGN_SYSTEM: Kynetic orange chrome).
     <ModulesProvider modules={{ keys: ['platform'], crmLevel: null }}>
@@ -54,9 +69,20 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           >
             Skip to content
           </a>
-          <AppSidebar tenant={null} groups={groups} />
+          <AppSidebar
+            groups={groups}
+            workspace={
+              workspaces ? (
+                <WorkspaceSwitcher workspaces={workspaces} />
+              ) : (
+                <StaticWorkspaceCard name='Kynetic AI' detail='Support' />
+              )
+            }
+            footerLinks={[{ title: 'Help', url: '/admin/support', icon: 'help' }]}
+            user={{ name: user.name, email: user.email, roleLabel: roleText }}
+          />
           <SidebarInset id='main-content' tabIndex={-1} className='scroll-mt-16'>
-            <Header user={{ name: user.name, email: user.email, roleLabel: roleLabel(role) }} />
+            <Header user={{ name: user.name, email: user.email, roleLabel: roleText }} />
             {children}
           </SidebarInset>
         </SidebarProvider>

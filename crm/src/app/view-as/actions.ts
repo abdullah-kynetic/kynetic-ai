@@ -14,6 +14,10 @@ import { clientIp } from '@/server/terms';
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
+import { safeAdminReturn } from '@/lib/workspaces';
+
+// Where Exit goes back to: the admin page the switcher was used on (checked again on exit).
+const RETURN_COOKIE = 'view_as_return';
 
 export type ViewAsActionResult = { error: string } | void;
 
@@ -63,6 +67,7 @@ export async function startViewAsAction(formData: FormData): Promise<ViewAsActio
     return { error: message(err) };
   }
   cookieStore.set(VIEW_AS_COOKIE, value, COOKIE_OPTIONS);
+  cookieStore.set(RETURN_COOKIE, safeAdminReturn(formData.get('returnTo')), COOKIE_OPTIONS);
   redirect('/dashboard');
 }
 
@@ -72,7 +77,9 @@ export async function exitViewAsAction(): Promise<void> {
   const cookieStore = await cookies();
   await endViewAs({ user, cookie: cookieStore.get(VIEW_AS_COOKIE)?.value });
   cookieStore.delete(VIEW_AS_COOKIE);
-  redirect('/admin');
+  const back = safeAdminReturn(cookieStore.get(RETURN_COOKIE)?.value);
+  cookieStore.delete(RETURN_COOKIE);
+  redirect(back);
 }
 
 /** Admin only: write mode for 30 minutes, with a second reason. */
