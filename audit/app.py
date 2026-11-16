@@ -1,5 +1,6 @@
 """Modal entrypoint and shared HTTP handler for the Kynetic audit service."""
 
+import asyncio
 import hashlib
 import hmac
 import os
@@ -60,9 +61,12 @@ def handle_request(payload: dict[str, Any], audit_key: str | None, pdf_dir: str 
         return 401, {"error": "unauthorized"}
     except (RuntimeError, ValueError) as exc:
         return 422, {"error": str(exc)}
-    pdf_path = render_pdf(payload["business"]["name"], result["overall_score"], result["findings"],
-                          Path(pdf_dir) / f"{result['run_id']}.pdf")
-    result["pdf_url"] = f"/pdf/{pdf_path.name}"
+    try:
+        pdf_path = render_pdf(payload["business"]["name"], result["overall_score"], result["findings"],
+                              Path(pdf_dir) / f"{result['run_id']}.pdf")
+        result["pdf_url"] = f"/pdf/{pdf_path.name}"
+    except Exception:
+        result["pdf_url"] = None
     cost = int(result.get("cost_cents", 0))
     _runs.append((now, cost))
     _month_runs.append((now, cost))
@@ -108,7 +112,7 @@ try:
         @api.post("/audit")
         async def audit_route(request: Request, x_audit_key: str | None = Header(default=None, alias="X-Audit-Key")):
             item = await request.json()
-            status, body = handle_request(item, x_audit_key, "/mnt/pdfs")
+            status, body = await asyncio.to_thread(handle_request, item, x_audit_key, "/mnt/pdfs")
             if status == 200 and body.get("pdf_url"):
                 name = Path(str(body["pdf_url"])).name
                 body["pdf_url"] = _sign_pdf(name)

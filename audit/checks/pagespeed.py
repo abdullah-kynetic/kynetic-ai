@@ -20,6 +20,6 @@ def fetch_pagespeed(website: str, api_key: str, transport: Callable[[str], bytes
             "cls": audits.get("cumulative-layout-shift", {}).get("numericValue"),
             "inp_ms": audits.get("interaction-to-next-paint", {}).get("numericValue"),
         })
-    except (KeyError, TypeError, ValueError, json.JSONDecodeError):
+    except (KeyError, TypeError, ValueError, json.JSONDecodeError, OSError, TimeoutError):
         return CheckResult("couldnt_check")
 

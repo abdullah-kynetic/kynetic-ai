@@ -101,6 +101,15 @@ def _maps_html(business: Business) -> str:
         return ""
 
 
+
+def _safe_check(fn) -> dict[str, Any]:
+    try:
+        result = fn()
+        return result if isinstance(result, dict) else asdict(result)
+    except Exception:
+        return asdict(CheckResult("couldnt_check"))
+
+
 def collect_checks(request: AuditRequest, html: str = "") -> dict[str, dict[str, Any]]:
     """Run site/provider checks. Provided HTML keeps tests offline; live fetches run only when it is empty."""
     checks: dict[str, dict[str, Any]] = {}
@@ -114,24 +123,23 @@ def collect_checks(request: AuditRequest, html: str = "") -> dict[str, dict[str,
 
     if not html:
         pagespeed_key = os.getenv("GOOGLE_PAGESPEED_API_KEY", "")
-        if pagespeed_key:
-            checks["pagespeed"] = asdict(fetch_pagespeed(request.business.website, pagespeed_key, _pagespeed_transport))
-        else:
-            checks["pagespeed"] = asdict(CheckResult("couldnt_check"))
-        maps_html = _maps_html(request.business)
-        checks["maps"] = asdict(parse_maps_page(maps_html) if maps_html else CheckResult("couldnt_check"))
+        checks["pagespeed"] = _safe_check(
+            lambda: fetch_pagespeed(request.business.website, pagespeed_key, _pagespeed_transport)
+            if pagespeed_key else CheckResult("couldnt_check")
+        )
+        checks["maps"] = _safe_check(lambda: parse_maps_page(_maps_html(request.business) or "captcha"))
         model = os.getenv("AUDIT_OPENROUTER_MODEL", DEFAULT_FREE_MODEL)
         business = {field.name: getattr(request.business, field.name) for field in fields(Business)}
-        checks["ai_mentions"] = asdict(check_mentions(business, model, _openrouter_ask))
+        checks["ai_mentions"] = _safe_check(lambda: check_mentions(business, model, _openrouter_ask))
         def _geogrid() -> dict:
             raise RuntimeError("no business coordinates available")
-        checks["geogrid"] = asdict(run_full_only(request.mode, "geogrid", _geogrid))
-        checks["unlighthouse"] = asdict(run_full_only(request.mode, "unlighthouse", lambda: (_ for _ in ()).throw(
-            RuntimeError("unlighthouse not configured")
-        )))
-        checks["phantomreach"] = asdict(run_operator_only(request.mode, lambda: (_ for _ in ()).throw(
-            RuntimeError("phantomreach is not vendored")
-        )))
+        checks["geogrid"] = _safe_check(lambda: run_full_only(request.mode, "geogrid", _geogrid))
+        checks["unlighthouse"] = _safe_check(lambda: run_full_only(
+            request.mode, "unlighthouse", lambda: (_ for _ in ()).throw(RuntimeError("unlighthouse not configured"))
+        ))
+        checks["phantomreach"] = _safe_check(lambda: run_operator_only(
+            request.mode, lambda: (_ for _ in ()).throw(RuntimeError("phantomreach is not vendored"))
+        ))
     return checks
 
 
