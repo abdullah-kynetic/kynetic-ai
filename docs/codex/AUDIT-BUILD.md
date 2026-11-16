@@ -1,0 +1,36 @@
+# Kynetic AI audit build
+
+Status: local implementation scaffold and deterministic engine complete. Live deployment and external writes are intentionally not performed.
+
+## Plan and file map
+
+- `audit/models.py`: request/check contracts.
+- `audit/scoring.py`: six-question tags and deterministic nine-problem scoring.
+- `audit/checks/`: dependency-free SEO and site-signal checks.
+- `audit/service.py`: authenticated, capped, idempotent local service boundary.
+- `audit/pdf/`: branded HTML teaser source for Chromium PDF rendering.
+- `audit/tests/`: unit and contract-boundary tests, including operator and blocked-page fixtures.
+- `n8n/audit/`: export-only workflow definitions (not imported or activated).
+- `crm/drizzle/0055_audit_results.sql`: additive schema migration using this repository's actual numbering.
+
+## Decisions and constraints
+
+- Operator mode never accepts or infers form answers; it scores automated evidence only.
+- PhantomReach is not imported or called from the public engine. Any future operator adapter must remain behind an explicit mode check.
+- No paid providers are selected. OpenRouter integration is not enabled in this local scaffold; when added, only `:free` model ids may pass validation.
+- The repo's latest migration is `0054_tags_notification_prefs.sql`, not `1090_staff_archive` as described in the request. `0055` is therefore the next safe additive number.
+- Existing repo instructions prohibit AGPL code, while the request names AGPL PhantomReach. It is not vendored; this is a deliberate license boundary.
+
+## Verification log
+
+- `python -m unittest discover -s audit/tests -p 'test_*.py'` — expected local suite for this layer.
+- CRM and portal suites remain to be run after route/schema integration; no production database was touched.
+- Modal deployment, live smoke tests, measured provider cost, n8n import, site discovery/deploy, and production migration are handoffs because the request forbids those writes and this workspace has no deployment credential.
+
+## Handoffs
+
+1. Create Modal secret `kynetic-audit-secrets` from environment-managed values only, then deploy only app `kynetic-audit`.
+2. Import the JSON files in `n8n/audit/` into a non-production n8n workspace; keep credentials referenced by name and leave workflows inactive until reviewed.
+3. Apply the CRM migration on a backed-up preview database first, then production only through the approved VPS change process.
+4. Add Turnstile site/secret keys through deployment secret management; never commit them.
+

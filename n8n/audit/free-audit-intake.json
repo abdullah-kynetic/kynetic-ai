@@ -1,0 +1,13 @@
+{
+  "name": "Kynetic Free Audit - export only",
+  "active": false,
+  "nodes": [
+    {"name":"Webhook intake","type":"n8n-nodes-base.webhook","parameters":{"path":"free-audit","httpMethod":"POST"}},
+    {"name":"Turnstile verify","type":"n8n-nodes-base.httpRequest","parameters":{"url":"={{$env.TURNSTILE_VERIFY_URL}}","method":"POST"}},
+    {"name":"Portal lead hook","type":"n8n-nodes-base.httpRequest","parameters":{"url":"={{$env.PORTAL_LEAD_HOOK_URL}}","method":"POST","authentication":"predefinedCredentialType","nodeCredentialType":"portalAudit"}},
+    {"name":"Modal audit","type":"n8n-nodes-base.httpRequest","parameters":{"url":"={{$env.AUDIT_MODAL_URL}}/audit","method":"POST","headerParameters":{"parameters":[{"name":"X-Audit-Key","value":"={{$env.AUDIT_SERVICE_API_KEY}}"}]} }},
+    {"name":"Portal audit results","type":"n8n-nodes-base.httpRequest","parameters":{"url":"={{$env.PORTAL_AUDIT_RESULTS_URL}}","method":"POST","authentication":"predefinedCredentialType","nodeCredentialType":"portalAudit"}},
+    {"name":"Respond","type":"n8n-nodes-base.respondToWebhook","parameters":{"respondWith":"firstIncomingItem"}}
+  ],
+  "connections": {}
+}

@@ -1,0 +1,9 @@
+{
+  "name": "Kynetic Audit - operator batch export only",
+  "active": false,
+  "nodes": [
+    {"name":"Batch input","type":"n8n-nodes-base.manualTrigger","parameters":{}},
+    {"name":"Modal operator audit","type":"n8n-nodes-base.httpRequest","parameters":{"url":"={{$env.AUDIT_MODAL_URL}}/audit","method":"POST","headerParameters":{"parameters":[{"name":"X-Audit-Key","value":"={{$env.AUDIT_SERVICE_API_KEY}}"}]}}}
+  ],
+  "connections": {}
+}
