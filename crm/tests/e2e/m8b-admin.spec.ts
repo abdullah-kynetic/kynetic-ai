@@ -17,7 +17,7 @@ test('F-53/F-54 admin all-clients table shows synthetic tenants and health thres
   ).toHaveCount(4);
 });
 
-test('phase 7 client list keeps view-as available to admin and VA and old lists redirect', async ({
+test('phase 7 client list keeps view-as routes available and removes the menu item', async ({
   adminPage,
   vaPage
 }) => {
@@ -25,6 +25,7 @@ test('phase 7 client list keeps view-as available to admin and VA and old lists 
     await page.goto('/admin/clients');
     await expect(page.getByRole('heading', { name: 'All clients', exact: true })).toBeVisible();
     await expect(page.getByRole('columnheader', { name: 'Status', exact: true })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'View as client', exact: true })).toHaveCount(0);
   }
   await expect(
     adminPage.locator('#main-content').getByRole('link', { name: 'Onboard a client', exact: true })

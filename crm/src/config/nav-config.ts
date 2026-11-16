@@ -347,13 +347,6 @@ export const adminNavGroups: NavGroup[] = [
         icon: 'help',
         isActive: false,
         items: []
-      },
-      {
-        title: 'View as client',
-        url: '/admin/view-as',
-        icon: 'user',
-        isActive: false,
-        items: []
       }
     ]
   },
