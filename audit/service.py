@@ -8,9 +8,13 @@ import urllib.request
 from dataclasses import asdict, fields
 from typing import Any
 
-from .checks import check_mentions, fetch_pagespeed, inspect_html, inspect_signals, parse_maps_page
+from .checks import check_mentions_with_fallback, fetch_pagespeed, inspect_html, inspect_signals, parse_maps_page, run_unlighthouse
+from .checks.ai_mentions import OpenRouterError
+from .checks.maps import fetch_public_maps
+from .checks.geocode import geocode
 from .checks.full import run_full_only, run_operator_only
-from .config import require_free_model
+from .config import free_models_from_catalog
+from .geogrid import full_audit_grid
 from .models import AuditRequest, Business, CheckResult
 from .scoring import findings, score
 
@@ -60,10 +64,14 @@ def _fetch_html(website: str) -> str:
 
 
 def _pagespeed_transport(url: str) -> bytes:
-    return _http_get(url, timeout=90)
+    try:
+        return 200, _http_get(url, timeout=90)
+    except urllib.error.HTTPError as exc:
+        return exc.code, exc.read()
 
 
 def _openrouter_ask(model: str, prompt: str) -> str:
+    from .config import require_free_model
     model = require_free_model(model)
     key = os.getenv("OPENROUTER_API_KEY", "")
     if not key:
@@ -85,11 +93,24 @@ def _openrouter_ask(model: str, prompt: str) -> str:
         method="POST",
     )
     try:
-        with urllib.request.urlopen(request, timeout=30) as response:
+        with urllib.request.urlopen(request, timeout=10) as response:
             body = json.loads(response.read())
         return body["choices"][0]["message"]["content"]
+    except urllib.error.HTTPError as exc:
+        raise OpenRouterError(exc.code, "OpenRouter request failed") from exc
     except (urllib.error.URLError, TimeoutError, KeyError, IndexError, TypeError, json.JSONDecodeError) as exc:
-        raise TimeoutError("openrouter request failed") from exc
+        raise OpenRouterError(0, "OpenRouter request failed") from exc
+
+
+def _openrouter_models() -> list[str]:
+    key = os.getenv("OPENROUTER_API_KEY", "")
+    if not key: return []
+    try:
+        raw = _http_get("https://openrouter.ai/api/v1/models", timeout=10, headers={"Authorization": f"Bearer {key}"})
+        rows = json.loads(raw).get("data", [])
+        return free_models_from_catalog(rows)
+    except (OSError, TimeoutError, ValueError, TypeError, json.JSONDecodeError):
+        return []
 
 
 def _maps_html(business: Business) -> str:
@@ -127,24 +148,18 @@ def collect_checks(request: AuditRequest, html: str = "") -> dict[str, dict[str,
             lambda: fetch_pagespeed(request.business.website, pagespeed_key, _pagespeed_transport)
             if pagespeed_key else CheckResult("couldnt_check")
         )
-        checks["maps"] = _safe_check(lambda: parse_maps_page(_maps_html(request.business) or "captcha"))
-        model = os.getenv("AUDIT_OPENROUTER_MODEL", DEFAULT_FREE_MODEL)
+        checks["maps"] = _safe_check(lambda: fetch_public_maps(f"{request.business.name} {request.business.city} {request.business.state}"))
+        models = _openrouter_models() or [os.getenv("AUDIT_OPENROUTER_MODEL", DEFAULT_FREE_MODEL)]
         business = {field.name: getattr(request.business, field.name) for field in fields(Business)}
-        checks["ai_mentions"] = _safe_check(lambda: check_mentions(business, model, _openrouter_ask))
-        def _geogrid() -> dict:
-            raise RuntimeError("no business coordinates available")
-        checks["geogrid"] = _safe_check(lambda: run_full_only(request.mode, "geogrid", _geogrid))
-        checks["unlighthouse"] = _safe_check(lambda: run_full_only(
-            request.mode, "unlighthouse", lambda: (_ for _ in ()).throw(RuntimeError("unlighthouse not configured"))
-        ))
-        checks["phantomreach"] = _safe_check(lambda: run_operator_only(
-            request.mode, lambda: (_ for _ in ()).throw(RuntimeError("phantomreach is not vendored"))
-        ))
+        checks["ai_mentions"] = _safe_check(lambda: check_mentions_with_fallback(business, models, _openrouter_ask))
+        checks["geogrid"] = _safe_check(lambda: run_full_only(request.mode, "geogrid", lambda: full_audit_grid(business, lambda url, headers: _http_get(url, headers=headers))))
+        checks["unlighthouse"] = _safe_check(lambda: run_unlighthouse(request.mode, request.business.website))
+        checks["phantomreach"] = _safe_check(lambda: run_operator_only(request.mode, lambda: {"status": "skipped", "reason": "operator key required"}))
     return checks
 
 
 def run(payload: dict[str, Any], supplied_key: str | None = None, expected_key: str | None = None,
-        html: str = "") -> dict[str, Any]:
+        html: str = "", operator_authorized: bool = False) -> dict[str, Any]:
     if not _auth(expected_key or os.getenv("AUDIT_SERVICE_API_KEY"), supplied_key):
         raise PermissionError("unauthorized")
     request = parse_request(payload)
@@ -155,6 +170,8 @@ def run(payload: dict[str, Any], supplied_key: str | None = None, expected_key: 
         raise RuntimeError("daily cap reached")
     started = time.monotonic()
     checks = collect_checks(request, html)
+    if request.mode != "operator" or not operator_authorized or not payload.get("operator_phantomreach"):
+        checks["phantomreach"] = asdict(CheckResult("skipped", reason="public path cannot enable PhantomReach"))
     scored = score(request.answers if request.mode != "operator" else {}, checks)
     cost = sum(int(item.get("cost_cents") or 0) for item in checks.values())
     result = {"run_id": str(uuid.uuid4()), "mode": request.mode, **scored,

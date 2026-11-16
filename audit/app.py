@@ -17,6 +17,7 @@ _runs: list[tuple[float, int]] = []
 _month_runs: list[tuple[float, int]] = []
 _PDF_NAME = re.compile(r"^[0-9a-f-]{36}\.pdf$")
 _PDF_TTL_SECONDS = 3600
+_DAILY_CAP = int(os.getenv("AUDIT_DAILY_CAP_OVERRIDE", os.getenv("AUDIT_DAILY_CAP", "50")))
 
 
 def _authorized(supplied: str | None) -> bool:
@@ -45,18 +46,20 @@ def _valid_pdf_signature(name: str, exp: str | None, sig: str | None) -> bool:
     return hmac.compare_digest(expected, sig)
 
 
-def handle_request(payload: dict[str, Any], audit_key: str | None, pdf_dir: str | Path = "/tmp/kynetic-audit-pdfs") -> tuple[int, dict[str, Any]]:
+def handle_request(payload: dict[str, Any], audit_key: str | None, pdf_dir: str | Path = "/tmp/kynetic-audit-pdfs", operator_key: str | None = None) -> tuple[int, dict[str, Any]]:
     if not _authorized(audit_key):
         return 401, {"error": "unauthorized"}
     now = time.time()
-    daily_cap = int(os.getenv("AUDIT_DAILY_CAP", "50"))
+    daily_cap = _DAILY_CAP
     monthly_cap = int(os.getenv("AUDIT_MONTHLY_CAP_CENTS", "2500"))
     _runs[:] = [(stamp, cost) for stamp, cost in _runs if now - stamp < 86400]
     _month_runs[:] = [(stamp, cost) for stamp, cost in _month_runs if now - stamp < 31 * 86400]
     if len(_runs) >= daily_cap or sum(cost for _, cost in _month_runs) >= monthly_cap:
         return 429, {"error": "audit capacity cap reached"}
     try:
-        result = run(payload, audit_key, os.getenv("AUDIT_SERVICE_API_KEY"), html=payload.get("html", ""))
+        expected_operator = os.getenv("AUDIT_OPERATOR_KEY", "")
+        operator_authorized = bool(expected_operator and operator_key and hmac.compare_digest(expected_operator, operator_key))
+        result = run(payload, audit_key, os.getenv("AUDIT_SERVICE_API_KEY"), html=payload.get("html", ""), operator_authorized=operator_authorized)
     except PermissionError:
         return 401, {"error": "unauthorized"}
     except (RuntimeError, ValueError) as exc:
@@ -82,9 +85,9 @@ try:
 
     image = (
         modal.Image.debian_slim(python_version="3.11")
-        .apt_install("fonts-liberation", "fonts-dejavu-core")
+        .apt_install("fonts-liberation", "fonts-dejavu-core", "nodejs", "npm")
         .pip_install("playwright", "fastapi")
-        .run_commands("python -m playwright install --with-deps chromium")
+        .run_commands("python -m playwright install --with-deps chromium", "npm install -g unlighthouse")
         .add_local_python_source("audit")
     )
     app = modal.App("kynetic-audit")
@@ -112,7 +115,7 @@ try:
         @api.post("/audit")
         async def audit_route(request: Request, x_audit_key: str | None = Header(default=None, alias="X-Audit-Key")):
             item = await request.json()
-            status, body = await asyncio.to_thread(handle_request, item, x_audit_key, "/mnt/pdfs")
+            status, body = await asyncio.to_thread(handle_request, item, x_audit_key, "/mnt/pdfs", request.headers.get("X-Operator-Key"))
             if status == 200 and body.get("pdf_url"):
                 name = Path(str(body["pdf_url"])).name
                 body["pdf_url"] = _sign_pdf(name)

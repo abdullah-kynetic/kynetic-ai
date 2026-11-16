@@ -29,7 +29,7 @@ class Handler(BaseHTTPRequestHandler):
             return
         length = int(self.headers.get("content-length", "0"))
         payload = json.loads(self.rfile.read(length))
-        status, body = handle_request(payload, self.headers.get("X-Audit-Key"), os.getenv("AUDIT_PDF_DIR", "/tmp/kynetic-audit-pdfs"))
+        status, body = handle_request(payload, self.headers.get("X-Audit-Key"), os.getenv("AUDIT_PDF_DIR", "/tmp/kynetic-audit-pdfs"), self.headers.get("X-Operator-Key"))
         self._respond(status, body)
 
     def _respond(self, status: int, body: dict) -> None:

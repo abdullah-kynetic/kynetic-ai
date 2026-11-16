@@ -14,6 +14,11 @@ BUSINESS_TYPES = {
     "b2b_local_services": {"label": "B2B / local services", "kpis": ["sales cycle", "win rate", "days to cash"]},
 }
 
+START_FREE_MODELS = (
+    "particle-ai/particle-1:free",
+    "google/gemma-4-26b-a4b-it:free",
+)
+
 
 def require_free_model(model_id: str) -> str:
     """Reject paid OpenRouter models before a provider request can be made."""
@@ -21,4 +26,15 @@ def require_free_model(model_id: str) -> str:
     if not normalized or not normalized.endswith(":free"):
         raise ValueError("only OpenRouter :free models are permitted")
     return model_id.strip()
+
+
+def free_models_from_catalog(payload: list[dict]) -> list[str]:
+    models = []
+    for item in payload:
+        pricing = item.get("pricing") or {}
+        if pricing.get("prompt") in (0, "0", "0.0") and pricing.get("completion") in (0, "0", "0.0"):
+            model_id = item.get("id")
+            if isinstance(model_id, str) and model_id.endswith(":free"):
+                models.append(model_id)
+    return list(dict.fromkeys((*START_FREE_MODELS, *sorted(models))))
 

@@ -28,4 +28,5 @@ class CheckResult:
     data: dict[str, Any] = field(default_factory=dict)
     cost_cents: int = 0
     ms: int = 0
+    reason: str | None = None
 
