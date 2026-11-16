@@ -79,5 +79,5 @@ async def fetch_public_maps_html(query: str, timeout_ms: int = 15_000) -> str:
 
 def fetch_public_maps(query: str) -> CheckResult:
     html = asyncio.run(fetch_public_maps_html(query))
-    return parse_maps_page(html or "captcha")
+    return parse_maps_page(html)
 
