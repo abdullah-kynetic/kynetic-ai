@@ -41,3 +41,17 @@ Also verify one full request, a fake business returns `couldnt_check`, repeated 
 
 The local test suite mocks PageSpeed, OpenRouter, Nominatim, Maps HTML, and Unlighthouse output. If Node/Chromium is unavailable locally, the Unlighthouse live run is reported as `couldnt_check`; the Modal image installs Python 3.11, Node/npm, Chromium/Playwright, and Unlighthouse.
 
+## Provider probe
+
+From the repository root, the deployer can run individual checks without printing response payloads or secrets:
+
+```bash
+python audit/scripts/live_probe.py https://www.kyneticai.com --check pagespeed
+python audit/scripts/live_probe.py https://www.kyneticai.com --check ai_mentions
+python audit/scripts/live_probe.py https://www.kyneticai.com --check maps --name "Business Name" --city Austin --state TX
+python audit/scripts/live_probe.py https://www.kyneticai.com --check geogrid --name "Business Name" --city Austin --state TX
+python audit/scripts/live_probe.py https://www.kyneticai.com --check unlighthouse --mode full
+```
+
+Each line contains only the check name, status, and non-secret reason. Provider keys are read from the environment by the check or Modal function.
+
