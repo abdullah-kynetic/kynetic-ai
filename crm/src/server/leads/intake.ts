@@ -94,9 +94,10 @@ export async function handleLeadIntake(
     throw new AppError('VALIDATION_FAILED', { fieldErrors: { '': ['invalid_json'] } });
   }
   const lead = parseInput(leadPayloadSchema, json);
-  const requiredModule = lead.source === 'free_audit' ? 'free_audit' : 'alex_core';
   try {
-    await requireModule({ tenantId, role: 'system' }, requiredModule, { db: workerDb });
+    if (lead.source !== 'free_audit') {
+      await requireModule({ tenantId, role: 'system' }, 'alex_core', { db: workerDb });
+    }
   } catch (e) {
     if (e instanceof ModuleDisabledError) return moduleDisabledResponse(e);
     throw e;
@@ -152,7 +153,7 @@ export async function processLead(
   const db = opts.db ?? getWorkerDb();
   const now = opts.now ?? new Date();
   const ctx = { tenantId, role: 'system' as const };
-  await requireModule(ctx, lead.source === 'free_audit' ? 'free_audit' : 'alex_core', { db });
+  if (lead.source !== 'free_audit') await requireModule(ctx, 'alex_core', { db });
 
   return withTenant(
     ctx,
