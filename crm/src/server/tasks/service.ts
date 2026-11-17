@@ -27,7 +27,15 @@ import {
 // ids only (ARCHITECTURE section 6).
 
 export type Task = typeof tasks.$inferSelect;
-export type TaskOpts = { db?: Db; tx?: Tx };
+export type TaskOpts = {
+  db?: Db;
+  tx?: Tx;
+  /**
+   * Set by the service API. The change is recorded as a system action and no due reminder is queued
+   * (the reminder makes an in-app notification that can be emailed to the assignee).
+   */
+  origin?: 'service-api';
+};
 
 /** A task with the names the list shows. */
 export type TaskRow = Task & {
@@ -47,6 +55,7 @@ function run<T>(ctx: TenantContextInput, opts: TaskOpts, fn: (tx: Tx) => Promise
 }
 
 const actorOf = (ctx: TenantContextInput) => ({ type: 'user' as const, id: ctx.userId });
+const systemActor = { type: 'system' as const };
 const now = () => sql`now()` as unknown as string;
 
 export class TaskNotFoundError extends AppError {
@@ -145,7 +154,7 @@ export async function createTask(
       refTable: 'tasks',
       refId: row.id,
       summary: `Task added: ${row.title}`,
-      actor: actorOf(ctx)
+      actor: opts.origin ? systemActor : actorOf(ctx)
     });
     await audit(tx, {
       action: 'task.create',
@@ -153,7 +162,7 @@ export async function createTask(
       entityId: row.id,
       after: { dueAt: row.dueAt, assigneeId: row.assigneeId, priority: row.priority }
     });
-    await scheduleTaskDue(tx, row);
+    if (!opts.origin) await scheduleTaskDue(tx, row);
     return row;
   });
 }
@@ -206,7 +215,7 @@ export async function updateTask(
         after: Object.fromEntries(changed.map((k) => [k, after[k]]))
       });
     }
-    if (changed.includes('dueAt')) await scheduleTaskDue(tx, after);
+    if (changed.includes('dueAt') && !opts.origin) await scheduleTaskDue(tx, after);
     return after;
   });
 }

@@ -1,7 +1,20 @@
-import { errorResponse } from '@/server/errors';
-import { taskListSchema, listTasksDto, usedFilters } from '@/server/service-api';
-import { auditService, withServiceAuth, withServiceTenant } from '@/server/service-auth';
-import { parseSearchParams } from '@/server/validation';
+import { errorResponse, ValidationError } from '@/server/errors';
+import { moduleDisabledResponse, ModuleDisabledError } from '@/server/modules';
+import {
+  createServiceTask,
+  listTasksDto,
+  serviceTaskCreateSchema,
+  taskListSchema,
+  usedFilters
+} from '@/server/service-api';
+import {
+  auditService,
+  idempotentResponse,
+  runIdempotent,
+  withServiceAuth,
+  withServiceTenant
+} from '@/server/service-auth';
+import { parseInput, parseSearchParams } from '@/server/validation';
 
 export const dynamic = 'force-dynamic';
 
@@ -32,4 +45,44 @@ export const GET = withServiceAuth(
     }
   },
   { requiredScope: 'tasks:read' }
+);
+
+// Creates one task. The title is untrusted text, reduced to plain text. A task made here is a system
+// action and queues no due reminder, so nothing is notified or emailed. Requires an Idempotency-Key header.
+export const POST = withServiceAuth(
+  async (request, svc) => {
+    try {
+      const raw = await request.text();
+      if (raw.length > 10_000) throw new ValidationError({ '': ['too_big'] });
+      let json: unknown;
+      try {
+        json = JSON.parse(raw);
+      } catch {
+        throw new ValidationError({ '': ['invalid_json'] });
+      }
+      const input = parseInput(serviceTaskCreateSchema, json);
+      const result = await runIdempotent(svc, request, raw, async (tx) => {
+        const data = await createServiceTask(tx, svc, input);
+        await auditService(tx, svc, {
+          action: 'service.task_create',
+          entity: 'task',
+          entityId: data.id,
+          after: {
+            route: 'POST /api/service/tasks',
+            contactId: data.contactId,
+            dealId: data.dealId,
+            assigneeId: data.assigneeId,
+            priority: data.priority,
+            dueAt: data.dueAt
+          }
+        });
+        return { status: 201, body: { ok: true, data } };
+      });
+      return idempotentResponse(result);
+    } catch (error) {
+      if (error instanceof ModuleDisabledError) return moduleDisabledResponse(error);
+      return errorResponse(error);
+    }
+  },
+  { requiredScope: 'tasks:write' }
 );

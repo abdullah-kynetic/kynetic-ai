@@ -4,3 +4,4 @@ export * from './reads-activity';
 export * from './call-log';
 export * from './notes-write';
 export * from './deal-stage';
+export * from './tasks-write';
