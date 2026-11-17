@@ -54,7 +54,7 @@ export default async function CampaignsPage({
             defaultValue={DEFAULT_DIALER_SCRIPT}
             maxLength={5000}
             required
-            className='border-input bg-background mt-2 min-h-32 w-full rounded border p-3'
+            className='border-input bg-background mt-2 min-h-32 w-full rounded-[var(--radius-control)] border p-3'
           />
         </div>
         <Button type='submit'>Create campaign</Button>
@@ -92,7 +92,7 @@ export default async function CampaignsPage({
                   id={`contact-${c.id}`}
                   name='contactId'
                   required
-                  className='border-input bg-background block min-h-11 rounded border px-3'
+                  className='border-input bg-background block min-h-11 rounded-[var(--radius-control)] border px-3'
                 >
                   {data.leads.map((lead) => (
                     <option key={lead.id} value={lead.id}>

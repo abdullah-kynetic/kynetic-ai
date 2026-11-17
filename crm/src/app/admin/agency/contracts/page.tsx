@@ -91,7 +91,7 @@ export default async function ContractsPage({
       )}
       <div className='space-y-4'>
         {contracts.map((contract) => (
-          <article key={contract.id} className='rounded border p-4'>
+          <article key={contract.id} className='bg-card rounded-[var(--radius-card)] border p-5'>
             <h2 className='font-semibold'>{contract.title}</h2>
             <p>
               {contract.dealTitle} · {contract.stageName} · <AgencyStatus value={contract.status} />

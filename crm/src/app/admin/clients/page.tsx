@@ -64,7 +64,10 @@ export default async function ClientsIndexPage() {
       />
       <ul aria-label='Clients in numbers' className='grid grid-cols-2 gap-4 lg:grid-cols-4'>
         {stats.map((stat) => (
-          <li key={stat.label} className='bg-card flex flex-col gap-1 rounded-xl border p-5'>
+          <li
+            key={stat.label}
+            className='bg-card flex flex-col gap-1 rounded-[var(--radius-card)] border p-5'
+          >
             <span className='text-muted-foreground text-[13px] font-medium'>{stat.label}</span>
             <span className='text-4xl/[1.05] font-semibold tracking-tight tabular-nums'>
               {stat.value}
@@ -73,7 +76,7 @@ export default async function ClientsIndexPage() {
           </li>
         ))}
       </ul>
-      <div className='bg-card overflow-hidden rounded-xl border'>
+      <div className='bg-card overflow-hidden rounded-[var(--radius-card)] border'>
         <Table scrollLabel='Clients table'>
           <TableHeader className='bg-surface-sunken'>
             <TableRow>

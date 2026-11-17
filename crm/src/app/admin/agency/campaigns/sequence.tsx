@@ -34,7 +34,10 @@ export async function CampaignSequence({
       {!tasks.length && (
         <form action={saveSequence.bind(null, id)} className='space-y-3'>
           {[0, 1, 2, 3].map((n) => (
-            <fieldset key={n} className='flex flex-wrap gap-3 border p-3'>
+            <fieldset
+              key={n}
+              className='flex flex-wrap gap-3 rounded-[var(--radius-panel)] border p-4'
+            >
               <legend>
                 Step {n + 1}
                 {n ? ' (optional)' : ''}

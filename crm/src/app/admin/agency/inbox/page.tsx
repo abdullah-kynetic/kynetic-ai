@@ -120,7 +120,12 @@ export default async function Inbox({
             </label>
             <label>
               Message
-              <textarea name='body' required maxLength={5000} className='block w-full border p-2' />
+              <textarea
+                name='body'
+                required
+                maxLength={5000}
+                className='border-input bg-background block w-full rounded-[var(--radius-control)] border p-3'
+              />
             </label>
             <Button type='submit' disabled={!leads.length}>
               Save log

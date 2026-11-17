@@ -41,7 +41,7 @@ export default async function ProposalsPage({
       <Link href='/admin/agency' className='mb-4 inline-flex min-h-11 items-center underline'>
         Back to agency workspace
       </Link>
-      <p className='mb-6 rounded border p-3'>
+      <p className='agency-notice'>
         Drafts stay internal. Saving a draft does not send it or move the deal to Proposal Sent.
       </p>
       {query.error && (
@@ -57,7 +57,7 @@ export default async function ProposalsPage({
               id='dealId'
               name='dealId'
               defaultValue={deals.some((d) => d.id === query.dealId) ? query.dealId : deals[0]!.id}
-              className='border-input bg-background block min-h-11 max-w-full rounded border px-3'
+              className='border-input bg-background block min-h-11 max-w-full rounded-[var(--radius-control)] border px-3'
             >
               {deals.map((d) => (
                 <option key={d.id} value={d.id}>
@@ -77,7 +77,7 @@ export default async function ProposalsPage({
         {drafts.map((d) => (
           <li
             key={d.id}
-            className='flex flex-wrap items-center justify-between gap-3 rounded border p-4'
+            className='flex flex-wrap items-center justify-between gap-3 bg-card rounded-[var(--radius-card)] border p-5'
           >
             <div>
               <Link
