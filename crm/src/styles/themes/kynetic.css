@@ -7,9 +7,9 @@
   --card-foreground: #14100c;
   --popover: #ffffff;
   --popover-foreground: #14100c;
-  /* Fill only: white on #D9662A is 3.57:1, so the label is near-black (5.44:1). */
-  --primary: #d9662a;
-  --primary-foreground: #0e0d0b;
+  /* Near-black primary, white label (DESIGN.md). Brand orange is an accent only. */
+  --primary: #14100c;
+  --primary-foreground: #ffffff;
   --secondary: #f2eee8;
   --secondary-foreground: #14100c;
   --muted: #f2eee8;
@@ -83,8 +83,8 @@
   --card-foreground: #f4f1ea;
   --popover: #26211c;
   --popover-foreground: #f4f1ea;
-  --primary: #d9662a;
-  --primary-foreground: #0e0d0b;
+  --primary: #f4f1ea;
+  --primary-foreground: #14110f;
   --secondary: #221e1a;
   --secondary-foreground: #f4f1ea;
   --muted: #221e1a;

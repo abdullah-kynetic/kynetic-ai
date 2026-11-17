@@ -55,13 +55,7 @@ export function TodayBlock({
       {children}
       {action ? (
         <div className='mt-auto pt-2'>
-          <Link
-            href={action.href}
-            className={cn(
-              buttonVariants({ variant: 'default' }),
-              'bg-foreground text-background hover:bg-foreground/90'
-            )}
-          >
+          <Link href={action.href} className={buttonVariants({ variant: 'default' })}>
             {action.label}
           </Link>
         </div>
