@@ -15,47 +15,48 @@ const admin: Viewer = { id: 'u1', kyneticRole: 'admin', twoFactor: 'verified' };
 const va: Viewer = { id: 'u1', kyneticRole: 'va', twoFactor: 'verified' };
 const row = (over: Partial<SessionRow> = {}): SessionRow => ({
   impersonatorUserId: 'u1',
-  readOnly: true,
   endedAt: null,
-  lastSeenAt: ago(60_000),
-  writeUntil: null,
+  startedAt: ago(60_000),
   ...over
 });
 
 describe('evaluateSession (F-57, SECURITY 2.6)', () => {
-  it('is read-only by default for admin and VA', () => {
-    expect(evaluateSession(row(), admin, now)).toEqual({
-      kind: 'active',
-      readOnly: true,
-      writeLapsed: false
-    });
-    expect(evaluateSession(row(), va, now)).toMatchObject({ kind: 'active', readOnly: true });
+  it('is always read-only, for admin and VA, with a hard end 30 minutes after the start', () => {
+    for (const viewer of [admin, va]) {
+      const d = evaluateSession(row(), viewer, now);
+      expect(d).toMatchObject({ kind: 'active', readOnly: true });
+      if (d.kind === 'active')
+        expect(d.expiresAt.getTime()).toBe(now.getTime() - 60_000 + VIEW_AS.maxMs);
+    }
   });
 
-  it('gives an admin write mode only inside the window', () => {
-    const open = row({ readOnly: false, writeUntil: new Date(now.getTime() + 60_000) });
-    expect(evaluateSession(open, admin, now)).toMatchObject({ kind: 'active', readOnly: false });
-    const lapsed = row({ readOnly: false, writeUntil: ago(1) });
-    expect(evaluateSession(lapsed, admin, now)).toEqual({
-      kind: 'active',
-      readOnly: true,
-      writeLapsed: true
-    });
+  it('has no write mode: extra stored write fields change nothing', () => {
+    const edited = {
+      ...row(),
+      readOnly: false,
+      writeReason: 'Fixing a stage the owner mis-set',
+      writeUntil: new Date(now.getTime() + 60_000)
+    } as unknown as SessionRow;
+    for (const viewer of [admin, va])
+      expect(evaluateSession(edited, viewer, now)).toMatchObject({
+        kind: 'active',
+        readOnly: true
+      });
   });
 
-  it('never gives a VA write mode, even if the row says write', () => {
-    const open = row({ readOnly: false, writeUntil: new Date(now.getTime() + 60_000) });
-    expect(evaluateSession(open, va, now)).toMatchObject({ kind: 'active', readOnly: true });
-  });
-
-  it('ends an idle session after 30 minutes', () => {
-    expect(evaluateSession(row({ lastSeenAt: ago(VIEW_AS.idleMs + 1) }), admin, now)).toEqual({
-      kind: 'end',
-      reason: 'idle'
-    });
-    expect(evaluateSession(row({ lastSeenAt: ago(VIEW_AS.idleMs) }), admin, now).kind).toBe(
+  it('ends at exactly 30 minutes after the start, however recently it was used', () => {
+    expect(VIEW_AS.maxMs).toBe(30 * 60 * 1000);
+    expect(evaluateSession(row({ startedAt: ago(VIEW_AS.maxMs - 1) }), admin, now).kind).toBe(
       'active'
     );
+    expect(evaluateSession(row({ startedAt: ago(VIEW_AS.maxMs) }), admin, now)).toEqual({
+      kind: 'end',
+      reason: 'expired'
+    });
+    expect(evaluateSession(row({ startedAt: ago(VIEW_AS.maxMs + 5_000) }), admin, now)).toEqual({
+      kind: 'end',
+      reason: 'expired'
+    });
   });
 
   it('ends the session when the Kynetic role is gone', () => {
@@ -65,10 +66,13 @@ describe('evaluateSession (F-57, SECURITY 2.6)', () => {
     });
   });
 
-  it('is invalid, and changes nothing, for another user, an ended row or pending TOTP', () => {
+  it('is invalid, and changes nothing, for another user, an ended row or an unverified staff session', () => {
     expect(evaluateSession(row(), { ...admin, id: 'u2' }, now)).toEqual({ kind: 'invalid' });
     expect(evaluateSession(row({ endedAt: ago(5) }), admin, now)).toEqual({ kind: 'invalid' });
     expect(evaluateSession(row(), { ...admin, twoFactor: 'challenge' }, now)).toEqual({
+      kind: 'invalid'
+    });
+    expect(evaluateSession(row(), { ...admin, twoFactor: 'enrol' }, now)).toEqual({
       kind: 'invalid'
     });
   });

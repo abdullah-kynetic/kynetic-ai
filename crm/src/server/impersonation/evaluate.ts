@@ -1,10 +1,10 @@
 import { z } from 'zod';
 
-// SECURITY 2.6 (Decided 2026-10-25): 30-minute idle expiry; write mode is admin only, needs its own
-// reason and lasts 30 minutes. The reason bounds are DC-093.
+// SECURITY 2.6 (changed 2026-11-17): a view-as session is strictly read-only, with no write mode and
+// no override. It ends 30 minutes after it starts, whatever the activity (a hard cap, not an idle
+// timer). The reason bounds are DC-093.
 export const VIEW_AS = {
-  idleMs: 30 * 60 * 1000,
-  writeMs: 30 * 60 * 1000,
+  maxMs: 30 * 60 * 1000,
   reasonMin: 10,
   reasonMax: 500
 } as const;
@@ -17,10 +17,8 @@ export const reasonSchema = z
 
 export type SessionRow = {
   impersonatorUserId: string;
-  readOnly: boolean;
   endedAt: Date | null;
-  lastSeenAt: Date;
-  writeUntil: Date | null;
+  startedAt: Date;
 };
 
 export type Viewer = {
@@ -30,30 +28,26 @@ export type Viewer = {
 };
 
 export type SessionDecision =
-  /** Usable. `readOnly` is the effective mode; `writeLapsed` means the stored write mode has run out. */
-  | { kind: 'active'; readOnly: boolean; writeLapsed: boolean }
+  /** Usable. Always read-only. `expiresAt` is the hard end, 30 minutes after the start. */
+  | { kind: 'active'; readOnly: true; expiresAt: Date }
   /** Must be closed now, with this reason. */
-  | { kind: 'end'; reason: 'idle' | 'role_lost' }
+  | { kind: 'end'; reason: 'expired' | 'role_lost' }
   /** Not usable by this caller; nothing is changed (a copied cookie must not end someone's session). */
   | { kind: 'invalid' };
 
 /**
  * Pure decision for one request. Everything is re-checked from live data: the caller must be the
- * session's own Kynetic user with TOTP passed, and a VA is read-only whatever the row says, so a
- * hand-edited row cannot give a VA write mode.
+ * session's own Kynetic user with a verified staff session, and the result is read-only whatever the
+ * stored row says, so a hand-edited row cannot switch writes on.
  */
 export function evaluateSession(row: SessionRow, viewer: Viewer, now: Date): SessionDecision {
   if (row.endedAt) return { kind: 'invalid' };
   if (row.impersonatorUserId !== viewer.id) return { kind: 'invalid' };
   if (!viewer.kyneticRole) return { kind: 'end', reason: 'role_lost' };
   if (viewer.twoFactor !== 'verified') return { kind: 'invalid' };
-  if (now.getTime() - row.lastSeenAt.getTime() > VIEW_AS.idleMs)
-    return { kind: 'end', reason: 'idle' };
-
-  const writeLapsed =
-    !row.readOnly && (!row.writeUntil || row.writeUntil.getTime() <= now.getTime());
-  const readOnly = viewer.kyneticRole !== 'admin' || row.readOnly || writeLapsed;
-  return { kind: 'active', readOnly, writeLapsed };
+  const expiresAt = new Date(row.startedAt.getTime() + VIEW_AS.maxMs);
+  if (now.getTime() >= expiresAt.getTime()) return { kind: 'end', reason: 'expired' };
+  return { kind: 'active', readOnly: true, expiresAt };
 }
 
 const uuid = z.uuid();
@@ -78,3 +72,5 @@ export function parseCookie(
 }
 
 export const VIEW_AS_COOKIE = 'view_as';
+/** The admin page the session was started from; Exit and expiry send the admin back there. */
+export const VIEW_AS_RETURN_COOKIE = 'view_as_return';

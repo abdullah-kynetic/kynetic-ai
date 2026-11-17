@@ -266,8 +266,10 @@ describe('F-76 lead intake', () => {
     }
     expect(await count('webhook_events')).toBe(before);
 
+    // The cap is 60 per fixed one-minute window, so a window boundary can split a short burst below
+    // it. 130 requests always cross it (two windows hold at most 120); stop at the first 429.
     let limited = 0;
-    for (let i = 0; i < 70; i++) {
+    for (let i = 0; i < 130 && limited === 0; i++) {
       const s = await status(call(signedRequest(lead(), { secret: secretA }), IDS.tenantA));
       if (s === 429) limited++;
     }

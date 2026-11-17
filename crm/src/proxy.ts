@@ -4,6 +4,7 @@ import { errorBody } from '@/server/errors';
 import { newNonce, securityHeaders } from '@/server/security/headers';
 import { getVerifiedSessionUser } from '@/server/auth';
 import { decideAdminAccess } from '@/server/admin/guard';
+import { resolveViewAs, VIEW_AS_COOKIE } from '@/server/impersonation';
 import { isOriginAllowed } from '@/server/security/origin';
 import { isHtmlNavigation, safeNextPath } from '@/lib/return-path';
 
@@ -53,6 +54,30 @@ export async function proxy(request: NextRequest) {
     if (!user) return NextResponse.redirect(new URL('/sign-in', request.url), 307);
     if (user.twoFactor === 'enrol' || user.twoFactor === 'challenge') {
       return NextResponse.redirect(new URL('/staff/2fa', request.url), 307);
+    }
+  }
+
+  // View as client is strictly read-only (SECURITY 2.6, no write mode). While a session is live, every
+  // write request from that browser is refused here, before any route or server action runs. The
+  // database refuses writes too (READ ONLY transaction and row-level security) as a backstop.
+  const viewAsCookie = request.cookies.get(VIEW_AS_COOKIE)?.value;
+  if (
+    viewAsCookie &&
+    !['GET', 'HEAD', 'OPTIONS'].includes(request.method) &&
+    !path.startsWith('/api/auth/')
+  ) {
+    const user = await getVerifiedSessionUser(request.headers);
+    if (user?.kyneticRole) {
+      const state = await resolveViewAs({ user, cookie: viewAsCookie, touch: false });
+      if (state.kind === 'active') {
+        return NextResponse.json(
+          errorBody(
+            'FORBIDDEN',
+            'Viewing only. This session is read-only. Exit View as client to make changes.'
+          ),
+          { status: 403, headers: { ...headers, 'Cache-Control': 'no-store' } }
+        );
+      }
     }
   }
 

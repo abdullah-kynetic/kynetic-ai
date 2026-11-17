@@ -21,7 +21,12 @@ export type ShellContext = {
   /** Plain data for ModulesProvider (DC-057). */
   modules: { keys: ModuleKey[]; crmLevel: CrmLevel | null };
   /** Set while a Kynetic user is viewing this tenant as the client (F-57); drives the banner. */
-  viewAs: Pick<ActiveViewAs, 'tenantName' | 'readOnly' | 'writeUntil'> | null;
+  viewAs:
+    | (Pick<ActiveViewAs, 'tenantName' | 'readOnly' | 'expiresAt'> & {
+        /** Milliseconds until the hard end, measured on the server at this request. */
+        msRemaining: number;
+      })
+    | null;
 };
 
 export type ShellDeps = {
@@ -123,7 +128,8 @@ export async function loadShellContext(
         viewAs: {
           tenantName: session.tenantName,
           readOnly: session.readOnly,
-          writeUntil: session.writeUntil
+          expiresAt: session.expiresAt,
+          msRemaining: Math.max(0, session.expiresAt.getTime() - Date.now())
         }
       };
     }

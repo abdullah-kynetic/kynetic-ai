@@ -3,6 +3,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
   SidebarHeader,
@@ -20,19 +21,44 @@ import { useFilteredNavGroups } from '@/hooks/use-nav';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icons } from '../icons';
+import { useKBar } from 'kbar';
+import { initials } from '@/lib/workspaces';
 
-export type SidebarTenant = { name: string; logoUrl: string | null } | null;
+export type SidebarFooterLink = { title: string; url: string; icon: keyof typeof Icons };
+export type SidebarUser = { name: string | null; email: string; roleLabel: string };
 
-// Active item: 3px primary marker on the left edge (DESIGN_SYSTEM shell chrome).
+// Active item: near-black pill (DESIGN.md). Hover is a quiet warm gray.
 const ACTIVE_MARKER =
-  "relative data-active:before:absolute data-active:before:inset-y-1 data-active:before:left-0 data-active:before:w-[3px] data-active:before:rounded-full data-active:before:bg-sidebar-primary data-active:before:content-['']";
+  'rounded-lg data-active:bg-sidebar-primary data-active:text-sidebar-primary-foreground data-active:hover:bg-sidebar-primary data-active:hover:text-sidebar-primary-foreground';
+
+function SidebarSearch() {
+  const { query } = useKBar();
+  return (
+    <button
+      type='button'
+      onClick={query.toggle}
+      className='bg-card text-muted-foreground border-border hover:bg-card/70 focus-visible:ring-sidebar-ring flex min-h-9 w-full items-center gap-2 rounded-lg border px-2.5 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none group-data-[collapsible=icon]:hidden'
+    >
+      <Icons.search aria-hidden className='size-4' />
+      <span className='flex-1 text-left'>Search or jump to</span>
+      <kbd aria-hidden className='bg-muted rounded px-1.5 font-mono text-[10px]'>
+        ⌘K
+      </kbd>
+    </button>
+  );
+}
 
 export default function AppSidebar({
-  tenant,
+  workspace,
   groups = clientNavGroups,
-  role
+  role,
+  footerLinks = [],
+  user
 }: {
-  tenant: SidebarTenant;
+  /** Static card for client users, the switcher for admins (rendered by the layout). */
+  workspace: React.ReactNode;
+  footerLinks?: SidebarFooterLink[];
+  user: SidebarUser;
   /** The signed-in role, so owner-only entries hide for everyone else. */
   role?: string;
   /** Defaults to the client portal registry; the admin shell passes its own (M8a-01). */
@@ -43,24 +69,32 @@ export default function AppSidebar({
 
   return (
     <Sidebar collapsible='icon'>
-      <SidebarHeader className='group-data-[collapsible=icon]:pt-4'>
-        <div className='flex items-center gap-2 px-2'>
-          {/* Logo sits on a cream chip so any client logo stays legible on the espresso band. */}
-          <span
-            aria-hidden
-            className='bg-sidebar-foreground text-sidebar flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-md text-sm font-semibold'
-          >
-            {tenant?.logoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element -- tenant logo, arbitrary origin
-              <img src={tenant.logoUrl} alt='' className='size-full object-contain p-0.5' />
-            ) : (
-              tenant?.name.trim().charAt(0).toUpperCase() || 'K'
-            )}
-          </span>
-          <span className='truncate text-sm font-semibold group-data-[collapsible=icon]:hidden'>
-            {tenant?.name ?? 'Kynetic'}
-          </span>
-        </div>
+      <SidebarHeader className='gap-3 p-3 group-data-[collapsible=icon]:items-center'>
+        <Link
+          href='/'
+          aria-label='Kynetic AI'
+          className='focus-visible:ring-sidebar-ring rounded-md px-1 focus-visible:ring-2 focus-visible:outline-none'
+        >
+          {/* eslint-disable @next/next/no-img-element -- static brand SVGs */}
+          <img
+            src='/brand/wordmark-ink.svg'
+            alt=''
+            className='h-4 w-auto dark:hidden group-data-[collapsible=icon]:hidden'
+          />
+          <img
+            src='/brand/wordmark-cream.svg'
+            alt=''
+            className='hidden h-4 w-auto dark:block group-data-[collapsible=icon]:hidden'
+          />
+          <img
+            src='/brand/k-orange.svg'
+            alt=''
+            className='hidden size-6 group-data-[collapsible=icon]:block'
+          />
+          {/* eslint-enable @next/next/no-img-element */}
+        </Link>
+        {workspace}
+        <SidebarSearch />
       </SidebarHeader>
       <SidebarContent className='overflow-x-hidden'>
         {filteredGroups.map((group) => (
@@ -121,6 +155,41 @@ export default function AppSidebar({
           </SidebarGroup>
         ))}
       </SidebarContent>
+      <SidebarFooter className='gap-1 p-3'>
+        <SidebarMenu>
+          {footerLinks.map((link) => {
+            const Icon = Icons[link.icon];
+            return (
+              <SidebarMenuItem key={link.title}>
+                <SidebarMenuButton
+                  render={<Link href={link.url} aria-label={link.title} />}
+                  tooltip={link.title}
+                  isActive={pathname === link.url}
+                  className={ACTIVE_MARKER}
+                >
+                  <Icon />
+                  <span>{link.title}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
+        </SidebarMenu>
+        <div
+          data-slot='user-card'
+          className='bg-card border-border flex items-center gap-2.5 rounded-lg border p-2 group-data-[collapsible=icon]:border-0 group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:p-0'
+        >
+          <span
+            aria-hidden
+            className='bg-secondary text-secondary-foreground flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold'
+          >
+            {initials(user.name ?? user.email)}
+          </span>
+          <span className='flex min-w-0 flex-col leading-tight group-data-[collapsible=icon]:hidden'>
+            <span className='truncate text-sm font-medium'>{user.name ?? user.email}</span>
+            <span className='text-muted-foreground truncate text-xs'>{user.roleLabel}</span>
+          </span>
+        </div>
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
