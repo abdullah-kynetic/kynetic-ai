@@ -27,6 +27,7 @@ export type TodayData = {
     flaggedCalls: { name: string; count: number }[];
   } | null;
   clientsNeedingAttention: AdminTenantOverview[];
+  totalClients: number;
   support: { open: number; oldest: SupportQueueRow | null };
   dailySummary: { body: string; note: string } | null;
 };
@@ -54,6 +55,7 @@ export async function getTodayData(
       needsYouNow: null,
       salesToday: null,
       clientsNeedingAttention: visibleTenants,
+      totalClients: tenants.length,
       support: { open: openSupport.length, oldest: openSupport[0] ?? null },
       dailySummary: null
     };
@@ -82,6 +84,7 @@ export async function getTodayData(
       flaggedCalls: digest.flaggedCalls
     },
     clientsNeedingAttention: visibleTenants,
+    totalClients: tenants.length,
     support: { open: openSupport.length, oldest: openSupport[0] ?? null },
     dailySummary: agencySummary
       ? {
