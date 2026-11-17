@@ -3,6 +3,7 @@ import { headers } from 'next/headers';
 import { forbidden, notFound } from 'next/navigation';
 import PageContainer from '@/components/agency/page';
 import { AgencySubmitButton as Button } from '@/components/agency/motion';
+import { StatusPill } from '@/components/ui/status-pill';
 import { Label } from '@/components/ui/label';
 import { decideAdminAccess } from '@/server/admin';
 import { getAgencyWorkspace } from '@/server/agency';
@@ -45,7 +46,7 @@ export default async function DialerPage({
       <Link href='/admin/agency' className='mb-4 inline-flex min-h-11 items-center underline'>
         Back to agency workspace
       </Link>
-      <p className='mb-4 rounded border p-3'>
+      <p className='agency-notice'>
         Synthetic test numbers only. This page places no calls. DNC, protected businesses and
         excluded states are filtered and rechecked before saving.
       </p>
@@ -66,7 +67,7 @@ export default async function DialerPage({
             id='campaignId'
             name='campaignId'
             defaultValue={query.campaignId ?? ''}
-            className='border-input bg-background block min-h-11 rounded border px-3'
+            className='border-input bg-background block min-h-11 rounded-[var(--radius-control)] border px-3'
           >
             <option value=''>All eligible leads</option>
             {campaigns.map((c) => (
@@ -80,18 +81,27 @@ export default async function DialerPage({
           Apply
         </Button>
       </form>
-      <p className='mb-4'>
-        {data.remaining} eligible · {data.unavailable} unavailable or already logged
+      <p className='mb-4 flex flex-wrap items-center gap-2'>
+        <StatusPill tone={data.remaining ? 'gain' : 'neutral'}>
+          {data.remaining} eligible
+        </StatusPill>
+        <StatusPill tone='neutral'>{data.unavailable} unavailable or already logged</StatusPill>
       </p>
       {next ? (
         <section className='max-w-3xl space-y-4' aria-labelledby='dialer-next'>
           <h2 id='dialer-next' className='text-xl font-semibold'>
             {next.name}
-            {next.callbackDue ? <span className='ml-2 text-base'>Callback due</span> : null}
+            {next.callbackDue ? (
+              <span className='ml-2 align-middle'>
+                <StatusPill tone='attention'>Callback due</StatusPill>
+              </span>
+            ) : null}
           </h2>
           <p className='text-lg'>{next.phone}</p>
-          <p>DNC check: clear</p>
-          <div className='rounded border p-4'>
+          <p>
+            <StatusPill tone='gain'>DNC check: clear</StatusPill>
+          </p>
+          <div className='bg-surface-sunken rounded-[var(--radius-panel)] p-5'>
             <h3 className='mb-2 font-medium'>Draft script — review before use</h3>
             <p className='whitespace-pre-wrap'>{data.script}</p>
           </div>
@@ -104,7 +114,7 @@ export default async function DialerPage({
                   id='callbackDate'
                   name='callbackDate'
                   type='date'
-                  className='border-input bg-background mt-2 block min-h-11 rounded border px-3'
+                  className='border-input bg-background mt-2 block min-h-11 rounded-[var(--radius-control)] border px-3'
                 />
               </div>
               <div>
@@ -113,7 +123,7 @@ export default async function DialerPage({
                   id='callbackTime'
                   name='callbackTime'
                   type='time'
-                  className='border-input bg-background mt-2 block min-h-11 rounded border px-3'
+                  className='border-input bg-background mt-2 block min-h-11 rounded-[var(--radius-control)] border px-3'
                 />
               </div>
             </div>
@@ -123,7 +133,7 @@ export default async function DialerPage({
                 id='notes'
                 name='notes'
                 maxLength={1000}
-                className='border-input bg-background mt-2 min-h-24 w-full rounded border p-3'
+                className='border-input bg-background mt-2 min-h-24 w-full rounded-[var(--radius-control)] border p-3'
               />
             </div>
             <div className='flex flex-wrap gap-2'>
@@ -147,7 +157,7 @@ export default async function DialerPage({
           </form>
         </section>
       ) : (
-        <p className='mb-6 rounded border p-4'>No eligible leads remain in this queue.</p>
+        <p className='agency-notice'>No eligible leads remain in this queue.</p>
       )}
       <p className='text-muted-foreground mt-6 text-sm'>
         Logged leads leave the queue. Schedule callback to put a due task back at the top. A
@@ -159,7 +169,7 @@ export default async function DialerPage({
         </h2>
         <ul className='space-y-2'>
           {data.history.map((h) => (
-            <li key={h.id} className='rounded border p-3'>
+            <li key={h.id} className='bg-card rounded-[var(--radius-panel)] border p-4'>
               {h.name} · {h.outcome.replaceAll('_', ' ')} ·{' '}
               <time dateTime={h.loggedAt}>{new Date(h.loggedAt).toISOString()}</time>
             </li>

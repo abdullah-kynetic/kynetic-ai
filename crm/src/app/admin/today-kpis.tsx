@@ -37,7 +37,10 @@ export function TodayKpis({ items }: { items: Kpi[] }) {
       className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 [&>li]:min-w-0'
     >
       {items.map((kpi) => (
-        <li key={kpi.label} className='bg-card flex flex-col gap-2 rounded-xl border p-5'>
+        <li
+          key={kpi.label}
+          className='bg-card flex flex-col gap-2 rounded-[var(--radius-card)] border p-5'
+        >
           <span className='text-muted-foreground text-[13px] font-medium'>{kpi.label}</span>
           <span className='text-4xl/[1.05] font-semibold tracking-tight tabular-nums'>
             <CountUp value={kpi.value} />

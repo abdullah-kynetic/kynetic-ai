@@ -18,7 +18,7 @@ export function TodayBlock({
   const id = `today-${title.toLowerCase().replaceAll(' ', '-')}`;
   return (
     <section
-      className='bg-card text-card-foreground flex flex-col gap-4 rounded-xl border p-6'
+      className='bg-card text-card-foreground flex flex-col gap-4 rounded-[var(--radius-card)] border p-6'
       aria-labelledby={id}
     >
       <h2 id={id} className='text-lg font-semibold tracking-tight'>
