@@ -14,7 +14,8 @@ export const SERVICE_TOKEN_SCOPES = [
   'metrics:read',
   'deals:read',
   'tasks:read',
-  'calls:read'
+  'calls:read',
+  'call-log:write'
 ] as const;
 
 export type ServiceTokenScope = (typeof SERVICE_TOKEN_SCOPES)[number];
