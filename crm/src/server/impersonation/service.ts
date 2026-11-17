@@ -28,11 +28,12 @@ export type ActiveViewAs = {
   sessionId: string;
   tenantId: string;
   tenantName: string;
-  /** Effective mode: true unless an admin has an unexpired write window. */
-  readOnly: boolean;
-  writeUntil: Date | null;
+  /** Always true: view-as has no write mode. */
+  readOnly: true;
   startedAt: Date;
-  /** The context for tenant reads (and writes, in write mode) during this session. */
+  /** The hard end of the session, 30 minutes after it started. */
+  expiresAt: Date;
+  /** The read-only context for tenant reads during this session. */
   ctx: TenantContextInput;
 };
 
@@ -55,6 +56,8 @@ function sessionCtx(user: ViewAsUser & { kyneticRole: 'admin' | 'va' }, tenantId
     userId: user.id,
     role: user.kyneticRole,
     impersonatorId: user.id,
+    // The service writes its own session and audit rows with this context. The context handed to
+    // callers for tenant work is the read-only one built in `resolveViewAs`.
     readOnly: false
   } satisfies TenantContextInput;
 }
@@ -102,10 +105,8 @@ function decide(row: Row, user: ViewAsUser, now: Date) {
   return evaluateSession(
     {
       impersonatorUserId: row.impersonatorUserId,
-      readOnly: row.readOnly,
       endedAt: asDate(row.endedAt),
-      lastSeenAt: new Date(row.lastSeenAt),
-      writeUntil: asDate(row.writeUntil)
+      startedAt: new Date(row.startedAt)
     },
     viewerOf(user),
     now
@@ -113,7 +114,7 @@ function decide(row: Row, user: ViewAsUser, now: Date) {
 }
 
 /**
- * Starts a session. Needs TOTP-verified staff, a reason (optional for the admin role, DC-125), and no session already open in this browser
+ * Starts a session. Needs a verified staff session (an emailed code while STAFF_EMAIL_LOGIN is on), a reason (optional for the admin role, DC-125), and no session already open in this browser
  * (impersonation does not nest). Starts are limited per user (SECURITY 5.4); a refused start is
  * audited so repeated attempts are visible.
  */
@@ -198,7 +199,7 @@ export async function startViewAs(
 /**
  * The current session for a request, or none. With `touch` (the default) it also records the
  * request: last-seen time for the idle expiry and one audit row carrying tenant and impersonator.
- * Idle and role-loss end the session; an expired write window drops back to read-only.
+ * Expiry (30 minutes after the start) and role-loss end the session and audit the stop.
  */
 export async function resolveViewAs(
   input: { user: ViewAsUser; cookie: string | undefined; touch?: boolean },
@@ -221,17 +222,6 @@ export async function resolveViewAs(
         await closeRow(tx, row, decision.reason, now);
         return { kind: 'none' };
       }
-      if (decision.writeLapsed) {
-        await tx
-          .update(schema.impersonationSessions)
-          .set({ readOnly: true })
-          .where(eq(schema.impersonationSessions.id, row.id));
-        await audit(tx, {
-          action: 'viewas.write_expired',
-          entity: 'impersonation_session',
-          entityId: row.id
-        });
-      }
       if (input.touch ?? true) {
         await tx
           .update(schema.impersonationSessions)
@@ -253,10 +243,10 @@ export async function resolveViewAs(
         sessionId: row.id,
         tenantId: ref.tenantId,
         tenantName: tenant?.name ?? 'Unknown business',
-        readOnly: decision.readOnly,
-        writeUntil: decision.readOnly ? null : asDate(row.writeUntil),
+        readOnly: true,
         startedAt: new Date(row.startedAt),
-        ctx: { ...sessionCtx(staff, ref.tenantId), readOnly: decision.readOnly }
+        expiresAt: decision.expiresAt,
+        ctx: { ...sessionCtx(staff, ref.tenantId), readOnly: true }
       };
     },
     { db: deps.db }
@@ -300,90 +290,6 @@ export async function endViewAs(
   );
 }
 
-/**
- * Admin only: switches the open session to write mode for 30 minutes, with a second reason.
- * A VA is refused and the attempt is audited (SEC-T-11). The forbidden actions of SECURITY 2.6
- * (export, users, modules, billing, Alex prompt, send as client) stay closed in write mode through
- * `can()`, not here.
- */
-export async function enableWriteMode(
-  input: { user: ViewAsUser; cookie: string | undefined; reason: unknown },
-  deps: ViewAsDeps = {}
-): Promise<{ writeUntil: Date }> {
-  const { user } = input;
-  staffOnly(user);
-  const ref = parseCookie(input.cookie);
-  if (!ref) throw new AppError('NOT_FOUND');
-  const now = deps.now ?? new Date();
-
-  if (user.kyneticRole !== 'admin') {
-    await withTenant(
-      sessionCtx(user, ref.tenantId),
-      (tx) =>
-        audit(tx, {
-          action: 'viewas.write_denied',
-          entity: 'impersonation_session',
-          entityId: ref.sessionId
-        }),
-      { db: deps.db }
-    ).catch(() => undefined);
-    throw new ForbiddenError();
-  }
-  const reason = checkReason(input.reason);
-
-  return withTenant(
-    sessionCtx(user, ref.tenantId),
-    async (tx) => {
-      const row = await loadRow(tx, ref.sessionId, ref.tenantId);
-      if (!row || decide(row, user, now).kind !== 'active') throw new AppError('NOT_FOUND');
-      if (!row.readOnly && row.writeUntil && new Date(row.writeUntil) > now)
-        throw new AppError('CONFLICT', { message: 'Write mode is already on for this session.' });
-      const writeUntil = new Date(now.getTime() + VIEW_AS.writeMs);
-      await tx
-        .update(schema.impersonationSessions)
-        .set({ readOnly: false, writeReason: reason, writeUntil: writeUntil.toISOString() })
-        .where(eq(schema.impersonationSessions.id, row.id));
-      await audit(tx, {
-        action: 'viewas.write_enable',
-        entity: 'impersonation_session',
-        entityId: row.id,
-        after: { reason, writeUntil: writeUntil.toISOString() }
-      });
-      return { writeUntil };
-    },
-    { db: deps.db }
-  );
-}
-
-/** Back to read-only before the window runs out. */
-export async function disableWriteMode(
-  input: { user: ViewAsUser; cookie: string | undefined },
-  deps: ViewAsDeps = {}
-): Promise<void> {
-  const { user } = input;
-  staffOnly(user);
-  const ref = parseCookie(input.cookie);
-  if (!ref) return;
-  const now = deps.now ?? new Date();
-  await withTenant(
-    sessionCtx(user, ref.tenantId),
-    async (tx) => {
-      const row = await loadRow(tx, ref.sessionId, ref.tenantId);
-      if (!row || row.readOnly || decide(row, user, now).kind !== 'active') return;
-      await tx
-        .update(schema.impersonationSessions)
-        .set({ readOnly: true, writeReason: null, writeUntil: null })
-        .where(eq(schema.impersonationSessions.id, row.id));
-      await audit(tx, {
-        action: 'viewas.write_disable',
-        entity: 'impersonation_session',
-        entityId: row.id
-      });
-    },
-    { db: deps.db }
-  );
-}
-
 export type ViewAsTenant = { id: string; name: string; status: string };
 
 /**
@@ -409,10 +315,10 @@ export async function listViewAsTenants(
 }
 
 /**
- * Runs tenant work for a view-as session. When the session is read-only the transaction is also
- * `READ ONLY` (SECURITY 2.6), so any write, including UPDATE and DELETE that RLS would turn into a
- * silent no-op, raises 25006. Audit rows are written by the session service in its own transaction,
- * not here. `withTenant` is unchanged for every other caller.
+ * Runs tenant work for a view-as session. The transaction is `READ ONLY` (SECURITY 2.6), so any
+ * write, including UPDATE and DELETE that RLS would turn into a silent no-op, raises 25006. The
+ * context also sets `app.read_only`, which row-level security checks on every write. Audit rows are
+ * written by the session service in its own transaction, not here.
  */
 export async function withViewAs<T>(
   session: Pick<ActiveViewAs, 'ctx'>,
@@ -422,7 +328,7 @@ export async function withViewAs<T>(
   return withTenant(
     session.ctx,
     async (tx) => {
-      if (session.ctx.readOnly) await tx.execute(sql`set transaction read only`);
+      await tx.execute(sql`set transaction read only`);
       return fn(tx);
     },
     opts

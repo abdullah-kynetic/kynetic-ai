@@ -13,7 +13,7 @@ test('F-53/F-54 admin all-clients table shows synthetic tenants and health thres
   // The synthetic Kynetic agency tenant exists once the agency specs have run; it is not a client row.
   // Other specs onboard clients (E2E ...) into the same database, so only the seeded rows are counted.
   await expect(
-    adminPage.getByRole('row').filter({ hasNotText: /Kynetic AI \(synthetic\)|E2E / })
+    adminPage.getByRole('row').filter({ hasNotText: /Kynetic AI \(synthetic\)|E2E |Ready Roofing/ })
   ).toHaveCount(4);
 });
 

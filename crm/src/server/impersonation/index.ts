@@ -1,6 +1,4 @@
 export {
-  disableWriteMode,
-  enableWriteMode,
   endViewAs,
   listViewAsTenants,
   resolveViewAs,
@@ -20,5 +18,6 @@ export {
   reasonSchema,
   VIEW_AS,
   VIEW_AS_COOKIE,
+  VIEW_AS_RETURN_COOKIE,
   type SessionDecision
 } from './evaluate';

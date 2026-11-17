@@ -1,4 +1,5 @@
 import { adminEntryGroup, navGroups } from '@/config/nav-config';
+import { StaticWorkspaceCard } from '@/components/workspace/workspace-card';
 import KBar from '@/components/kbar';
 import AppSidebar from '@/components/layout/app-sidebar';
 import Header from '@/components/layout/header';
@@ -63,6 +64,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
     cookieStore.get(VIEW_AS_COOKIE)?.value
   );
   if (!shell) redirect('/sign-in');
+  // A view-as cookie with no live session behind it (the 30 minutes ran out, or it is stale): close it
+  // out, clear the cookies and send the admin back to the page they started from.
+  if (cookieStore.get(VIEW_AS_COOKIE)?.value && !shell.viewAs) redirect('/view-as/expired');
 
   const termsTarget = await termsGateTarget(shell.user.id, shell.role, requestHeaders);
   if (termsTarget) redirect(termsTarget);
@@ -91,9 +95,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             <ViewAsBanner
               tenantName={viewAs.tenantName}
               adminName={shell.user.name ?? shell.user.email}
-              readOnly={viewAs.readOnly}
-              writeUntil={viewAs.writeUntil?.toISOString() ?? null}
-              canWrite={shell.role === 'admin'}
+              msRemaining={viewAs.msRemaining}
             />
           )}
           <KBar groups={groups} role={shell.role}>
@@ -104,7 +106,23 @@ export default async function DashboardLayout({ children }: { children: React.Re
               >
                 Skip to content
               </a>
-              <AppSidebar tenant={shell.tenant} groups={groups} role={shell.role} />
+              <AppSidebar
+                groups={groups}
+                role={shell.role}
+                workspace={
+                  <StaticWorkspaceCard
+                    name={shell.tenant?.name ?? 'Kynetic AI'}
+                    detail={shell.tenant ? 'Client portal' : 'Agency admin'}
+                    logoUrl={shell.tenant?.logoUrl}
+                  />
+                }
+                footerLinks={[
+                  { title: 'Notifications', url: '/dashboard/notifications', icon: 'notification' },
+                  { title: 'Settings', url: '/dashboard/settings/business', icon: 'settings' },
+                  { title: 'Help', url: '/dashboard/support', icon: 'help' }
+                ]}
+                user={{ ...shell.user, roleLabel: roleLabel(shell.role) }}
+              />
               <SidebarInset id='main-content' tabIndex={-1} className='scroll-mt-16'>
                 <Header user={{ ...shell.user, roleLabel: roleLabel(shell.role) }} />
                 {shell.tenant ? children : <NoClientSelected />}

@@ -1,5 +1,5 @@
 /* Kynetic tokens (DESIGN_SYSTEM "UI tokens"). Light is the default; dark is a user toggle.
-   The sidebar is an espresso band in both themes. Components use the shadcn names only. */
+   The sidebar is a light warm panel in the light theme and an espresso band in dark (DESIGN.md). Components use the shadcn names only. */
 [data-theme='kynetic'] {
   --background: #faf8f5;
   --foreground: #14100c;
@@ -33,14 +33,14 @@
   --chart-3: #14100c;
   --chart-4: #5c5650;
   --chart-5: #1e7a46;
-  --sidebar: #1c1916;
-  --sidebar-foreground: #f4f1ea;
-  --sidebar-primary: #d9662a;
-  --sidebar-primary-foreground: #0e0d0b;
-  --sidebar-accent: #26211c;
-  --sidebar-accent-foreground: #f4f1ea;
-  --sidebar-border: #3a332b;
-  --sidebar-ring: #e07a3f;
+  --sidebar: #f4f0ea;
+  --sidebar-foreground: #14100c;
+  --sidebar-primary: #14100c;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #eae4da;
+  --sidebar-accent-foreground: #14100c;
+  --sidebar-border: #e8e2d8;
+  --sidebar-ring: #a8461a;
   --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-display: var(--font-cormorant), Georgia, serif;
   --font-serif: var(--font-cormorant), Georgia, serif;
@@ -60,6 +60,20 @@
   --shadow-lg: 0 1px 2px rgb(20 16 12 / 12%);
   --shadow-xl: 0 1px 2px rgb(20 16 12 / 12%);
   --shadow-2xl: 0 1px 2px rgb(20 16 12 / 12%);
+  /* Meaning tokens (DESIGN.md). Additive: nothing existing reads them until pages are restyled. */
+  --alert: #c2255c;
+  --alert-soft: #fce8ef;
+  --gain: #1e7a46;
+  --gain-soft: #e4f3ea;
+  --attention: #8a5a06;
+  --attention-soft: #fdf0d8;
+  --neutral: #5c5650;
+  --neutral-soft: #f2eee8;
+  --surface-sunken: #f4f0ea;
+  --radius-card: 1.25rem;
+  --radius-panel: 1rem;
+  --radius-control: 0.75rem;
+  --shadow-popover: 0 8px 24px rgb(20 16 12 / 12%), 0 0 0 1px #e8e2d8;
 }
 
 [data-theme='kynetic'].dark {
@@ -91,6 +105,24 @@
   --chart-3: #f4f1ea;
   --chart-4: #b9b2a7;
   --chart-5: #6fbf8e;
+  --sidebar: #1c1916;
+  --sidebar-foreground: #f4f1ea;
+  --sidebar-primary: #d9662a;
+  --sidebar-primary-foreground: #0e0d0b;
+  --sidebar-accent: #26211c;
+  --sidebar-accent-foreground: #f4f1ea;
+  --sidebar-border: #3a332b;
+  --sidebar-ring: #e07a3f;
+  --alert: #ff7aa2;
+  --alert-soft: color-mix(in srgb, #ff7aa2 16%, #1d1916);
+  --gain: #6fd39a;
+  --gain-soft: color-mix(in srgb, #6fd39a 14%, #1d1916);
+  --attention: #f2b552;
+  --attention-soft: color-mix(in srgb, #f2b552 14%, #1d1916);
+  --neutral: #b9b2a7;
+  --neutral-soft: #241f1b;
+  --surface-sunken: #241f1b;
+  --shadow-popover: 0 8px 24px rgb(0 0 0 / 40%), 0 0 0 1px #322b25;
 }
 
 [data-theme='kynetic'] {
@@ -116,6 +148,15 @@
     --color-success: var(--success);
     --color-warning: var(--warning);
     --color-info: var(--info);
+    --color-alert: var(--alert);
+    --color-alert-soft: var(--alert-soft);
+    --color-gain: var(--gain);
+    --color-gain-soft: var(--gain-soft);
+    --color-attention: var(--attention);
+    --color-attention-soft: var(--attention-soft);
+    --color-neutral: var(--neutral);
+    --color-neutral-soft: var(--neutral-soft);
+    --color-surface-sunken: var(--surface-sunken);
     --color-scrim: var(--scrim);
     --color-input: var(--input);
     --color-ring: var(--ring);
