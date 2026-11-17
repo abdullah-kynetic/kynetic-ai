@@ -146,10 +146,27 @@ class ProviderPolicyTests(unittest.TestCase):
         self.assertEqual(0.81, parsed["score"]["performance"])
 
     def test_unlighthouse_command_is_pinned_and_bounded(self):
-        command = unlighthouse_command("https://synthetic.test")
-        self.assertIn("unlighthouse@0.19.1", command)
-        self.assertEqual("15", command[command.index("--max-routes") + 1])
+        command = unlighthouse_command("https://synthetic.test", "/tmp/unlighthouse", "/tmp/unlighthouse.config.mjs")
+        self.assertEqual("unlighthouse-ci", command[0])
         self.assertEqual("https://synthetic.test", command[command.index("--site") + 1])
+        self.assertEqual("/tmp/unlighthouse", command[command.index("--output-path") + 1])
+        self.assertEqual("jsonExpanded", command[command.index("--reporter") + 1])
+        self.assertEqual("/tmp/unlighthouse.config.mjs", command[command.index("--config-file") + 1])
+        from audit.checks.unlighthouse import write_unlighthouse_config
+        path = Path("/tmp/unlighthouse-test-config.mjs")
+        write_unlighthouse_config(path, max_routes=15, chrome_path="/tmp/fake-chrome")
+        contents = path.read_text()
+        self.assertIn('"maxRoutes": 15', contents)
+        self.assertIn("/tmp/fake-chrome", contents)
+        path.unlink(missing_ok=True)
+
+    def test_unlighthouse_parses_ci_result_payloads(self):
+        simple = parse_summary('[{"path":"/","score":0.8,"performance":0.81,"seo":0.94}]')
+        self.assertEqual(1, simple["pages"])
+        self.assertEqual(0.81, simple["score"]["performance"])
+        expanded = parse_summary('{"summary":{"score":0.8,"categories":{"performance":{"score":0.81},"seo":{"score":0.94}}},"routes":[{"path":"/"},{"path":"/about"}]}')
+        self.assertEqual(2, expanded["pages"])
+        self.assertEqual(0.81, expanded["score"]["performance"])
 
     def test_unlighthouse_rejects_old_node_before_cli(self):
         node = type("Completed", (), {"stdout": "v20.19.0", "stderr": ""})()
