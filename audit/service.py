@@ -8,10 +8,9 @@ import urllib.request
 from dataclasses import asdict, fields
 from typing import Any
 
-from .checks import check_mentions_with_fallback, fetch_pagespeed, inspect_html, inspect_signals, parse_maps_page, run_unlighthouse
+from .checks import check_mentions_with_fallback, fetch_pagespeed, inspect_html, inspect_signals, run_unlighthouse
 from .checks.ai_mentions import OpenRouterError
 from .checks.maps import fetch_public_maps
-from .checks.geocode import geocode
 from .checks.full import run_full_only, run_operator_only
 from .config import free_models_from_catalog
 from .geogrid import full_audit_grid
@@ -63,7 +62,7 @@ def _fetch_html(website: str) -> str:
         return ""
 
 
-def _pagespeed_transport(url: str) -> bytes:
+def _pagespeed_transport(url: str) -> object:
     try:
         return 200, _http_get(url, timeout=90)
     except urllib.error.HTTPError as exc:

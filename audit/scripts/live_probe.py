@@ -6,26 +6,23 @@ import argparse
 import json
 import os
 import sys
-from dataclasses import asdict
 from pathlib import Path
 
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from audit.checks.ai_mentions import check_mentions_with_fallback
-from audit.checks.geocode import geocode
 from audit.checks.maps import fetch_public_maps
 from audit.checks.pagespeed import fetch_pagespeed
 from audit.checks.unlighthouse import run_unlighthouse
-from audit.config import free_models_from_catalog
 from audit.geogrid import full_audit_grid
+from audit.models import CheckResult
 from audit.service import _http_get, _openrouter_ask, _openrouter_models, _pagespeed_transport
 
 
-def _line(name: str, result: object) -> None:
-    data = asdict(result) if hasattr(result, "status") else result
-    print(json.dumps({"check": name, "status": data.get("status", "couldnt_check"),
-                      "reason": data.get("reason") or ""}, sort_keys=True))
+def _line(name: str, result: CheckResult) -> None:
+    print(json.dumps({"check": name, "status": result.status,
+                      "reason": result.reason or ""}, sort_keys=True))
 
 
 def main() -> int:

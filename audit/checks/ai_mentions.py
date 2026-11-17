@@ -1,7 +1,7 @@
 import random
 import time
 from typing import Any, Callable, Iterable
-from ..config import free_models_from_catalog, require_free_model
+from ..config import require_free_model
 from ..models import CheckResult
 
 PROMPTS = (

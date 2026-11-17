@@ -39,7 +39,7 @@ def score(answers: dict[str, str], checks: dict[str, dict[str, Any]] | None = No
         if seo.get("status") == "ok" and not seo.get("data", {}).get("indexable", True):
             evidence["Not getting found"].append("site: not indexable")
             severity["Not getting found"] = max(severity["Not getting found"], 1.0)
-    problems = []
+    problems: list[dict[str, Any]] = []
     for name in PROBLEMS:
         confidence = min(1.0, len(evidence[name]) / 2)
         effort = 1.0 if name in ("Bad or no data", "Losing leads") else 1.5

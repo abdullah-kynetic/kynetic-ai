@@ -42,7 +42,6 @@ def parse_maps_page(html: str, business_name: str | None = None) -> CheckResult:
     text = " ".join(parser.text)
     # Google changes class names frequently; visible text and aria-labels are more stable.
     aria = " ".join(re.findall(r"aria-label\s*=\s*[\"']([^\"']+)", html, re.I))
-    searchable = f"{text} {aria}"
     title_match = re.search(r"<title[^>]*>(.*?)</title>", html, re.I | re.S)
     title_text = title_match.group(1) if title_match else ""
     listing_prefix = re.split(r"\b(?:rating|rated|latest review|owner reply)\b", text, maxsplit=1, flags=re.I)[0]
@@ -78,7 +77,7 @@ def parse_maps_page(html: str, business_name: str | None = None) -> CheckResult:
 async def fetch_public_maps_html(query: str, timeout_ms: int = 15_000) -> str:
     """Load public Maps search, accepting consent and falling back to the local search form."""
     try:
-        from playwright.async_api import async_playwright
+        from playwright.async_api import async_playwright  # type: ignore[import-not-found]
         async with async_playwright() as playwright:
             browser = await playwright.chromium.launch(headless=True)
             page = await browser.new_page(extra_http_headers={

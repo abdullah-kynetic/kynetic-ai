@@ -1,5 +1,4 @@
 import unittest
-import json
 from pathlib import Path
 from audit.config import BUSINESS_TYPES, require_free_model
 from audit.checks import fetch_pagespeed, parse_maps_page

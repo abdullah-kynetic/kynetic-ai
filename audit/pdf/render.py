@@ -5,7 +5,7 @@ from .teaser import render_html
 
 def render_pdf(business_name: str, score: int, findings: list[str], output: str | Path) -> Path:
     """Render through Chromium/Playwright; keeps PDF generation out of scoring logic."""
-    from playwright.sync_api import sync_playwright
+    from playwright.sync_api import sync_playwright  # type: ignore[import-not-found]
 
     output_path = Path(output)
     output_path.parent.mkdir(parents=True, exist_ok=True)

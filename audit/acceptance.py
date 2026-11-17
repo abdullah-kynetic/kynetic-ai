@@ -2,6 +2,7 @@
 import json
 import os
 from pathlib import Path
+from typing import Any
 from .app import handle_request
 
 
@@ -9,9 +10,9 @@ def run(output: str | Path = "audit/samples") -> list[dict]:
     directory = Path(output)
     directory.mkdir(parents=True, exist_ok=True)
     os.environ["AUDIT_SERVICE_API_KEY"] = "local-acceptance-only"
-    records = []
+    records: list[dict[str, Any]] = []
     for index in range(10):
-        payload = {"mode": "operator", "business": {"name": f"Synthetic Operator {index + 1}",
+        payload: dict[str, Any] = {"mode": "operator", "business": {"name": f"Synthetic Operator {index + 1}",
             "website": f"https://synthetic-{index + 1}.test", "city": "Austin", "state": "TX",
             "industry": "local services"}, "idempotency_key": f"operator-{index + 1}",
             "html": "<title>Synthetic</title><h1>Synthetic</h1>"}

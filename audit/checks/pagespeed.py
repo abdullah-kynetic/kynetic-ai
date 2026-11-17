@@ -1,7 +1,7 @@
 import json
 import time
 import urllib.error
-from typing import Callable
+from collections.abc import Callable
 from urllib.parse import urlencode, urlparse, urlunparse
 from ..models import CheckResult
 
@@ -28,7 +28,11 @@ def _response(value: object) -> tuple[int, bytes]:
         return int(value[0]), bytes(value[1])
     status = getattr(value, "status", 200)
     body = value.read() if hasattr(value, "read") else value
-    return int(status), bytes(body)
+    if isinstance(body, bytes):
+        return int(status), body
+    if isinstance(body, bytearray):
+        return int(status), bytes(body)
+    raise TypeError("PageSpeed transport returned a non-bytes body")
 
 
 def build_pagespeed_url(website: str, api_key: str) -> str:

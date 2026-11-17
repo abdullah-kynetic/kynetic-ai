@@ -17,8 +17,8 @@ class _Parser(HTMLParser):
         if tag == "title": self.meta = True
         if tag == "h1": self.h1 += 1
         if tag == "script" and attrs_dict.get("type") == "application/ld+json": self.schema = True
-        if tag == "meta" and attrs_dict.get("name", "").lower() == "robots":
-            self.noindex = "noindex" in attrs_dict.get("content", "").lower()
+        if tag == "meta" and (attrs_dict.get("name") or "").lower() == "robots":
+            self.noindex = "noindex" in (attrs_dict.get("content") or "").lower()
 
     def handle_endtag(self, tag: str) -> None:
         if tag == "title": self.meta = False

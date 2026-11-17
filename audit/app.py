@@ -81,7 +81,7 @@ def health() -> dict[str, str]:
 
 
 try:
-    import modal
+    import modal  # type: ignore[import-not-found]
 
     image = (
         modal.Image.debian_slim(python_version="3.11")
@@ -108,8 +108,8 @@ try:
     )
     @modal.asgi_app()
     def web():
-        from fastapi import FastAPI, Header, Request
-        from fastapi.responses import FileResponse, JSONResponse
+        from fastapi import FastAPI, Header, Request  # type: ignore[import-not-found]
+        from fastapi.responses import FileResponse, JSONResponse  # type: ignore[import-not-found]
 
         api = FastAPI()
 
@@ -130,8 +130,10 @@ try:
         @api.get("/pdf/{name}")
         def pdf_route(name: str, request: Request):
             query = parse_qs(urlparse(str(request.url)).query)
-            exp = (query.get("exp") or [None])[0]
-            sig = (query.get("sig") or [None])[0]
+            exp_values = query.get("exp")
+            sig_values = query.get("sig")
+            exp = exp_values[0] if exp_values else None
+            sig = sig_values[0] if sig_values else None
             if not _valid_pdf_signature(name, exp, sig):
                 return JSONResponse({"error": "unauthorized"}, status_code=401)
             volume.reload()
