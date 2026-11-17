@@ -22,6 +22,8 @@ async function notifyOnce(
 
 export function registerStageRuleSubscribers() {
   subscribe('deal.won', 'm7-deal-won-alert', async (env) => {
+    // The alert emails the tenant's owners, so a win recorded through the service API does not raise it.
+    if (env.payload.origin === 'service-api') return;
     const dealId = env.payload.dealId;
     if (typeof dealId !== 'string') return;
     await withTenant(

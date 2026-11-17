@@ -29,6 +29,7 @@ import {
 export type Deal = typeof deals.$inferSelect;
 
 const actorOf = (ctx: TenantContextInput) => ({ type: 'user' as const, id: ctx.userId });
+const systemActor = { type: 'system' as const };
 const now = () => sql`now()` as unknown as string;
 
 async function assertOwner(tx: Tx, ownerId: string | null | undefined) {
@@ -107,17 +108,28 @@ async function primaryContactId(tx: Tx, dealId: string): Promise<string | null> 
   return row?.contactId ?? null;
 }
 
-async function emitOutcome(tx: Tx, ctx: TenantContextInput, deal: Deal, stage: Stage) {
-  const base = { tenantId: deal.tenantId, actor: actorOf(ctx) };
+async function emitOutcome(
+  tx: Tx,
+  ctx: TenantContextInput,
+  deal: Deal,
+  stage: Stage,
+  origin?: DealOpts['origin']
+) {
+  const base = { tenantId: deal.tenantId, actor: origin ? systemActor : actorOf(ctx) };
+  const tag = origin ? { origin } : {};
   const contactId = await primaryContactId(tx, deal.id);
   if (stage.isWon) {
     await emitEvent(tx, {
       ...base,
       name: 'deal.won',
-      payload: { dealId: deal.id, contactId, valueCents: deal.valueCents }
+      payload: { dealId: deal.id, contactId, valueCents: deal.valueCents, ...tag }
     });
   } else if (stage.isLost) {
-    await emitEvent(tx, { ...base, name: 'deal.lost', payload: { dealId: deal.id, contactId } });
+    await emitEvent(tx, {
+      ...base,
+      name: 'deal.lost',
+      payload: { dealId: deal.id, contactId, ...tag }
+    });
   }
 }
 
@@ -329,15 +341,21 @@ export async function moveDeal(
       refTable: 'deals',
       refId: id,
       summary: `Moved from ${from.name} to ${to.name}`,
-      actor: actorOf(ctx)
+      actor: opts.origin ? systemActor : actorOf(ctx)
     });
     await emitEvent(tx, {
       name: 'deal.stage_changed',
       tenantId: after.tenantId,
-      actor: actorOf(ctx),
-      payload: { dealId: id, fromStageId: from.id, toStageId: to.id, contactId }
+      actor: opts.origin ? systemActor : actorOf(ctx),
+      payload: {
+        dealId: id,
+        fromStageId: from.id,
+        toStageId: to.id,
+        contactId,
+        ...(opts.origin ? { origin: opts.origin } : {})
+      }
     });
-    await emitOutcome(tx, ctx, after, to);
+    await emitOutcome(tx, ctx, after, to, opts.origin);
     return after;
   });
 }

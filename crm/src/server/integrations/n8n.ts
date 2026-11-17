@@ -72,6 +72,9 @@ export function registerN8nEventSubscribers(
   for (const name of ['lead.created', 'deal.stage_changed', 'call.completed'] as const) {
     // Subscribe to the producer's canonical event name. Prefixing this name used to make the
     // subscriber unreachable because emitEvent() queues `lead.created`, not `n8n.lead.created`.
-    subscribe(name, `n8n-${name.replaceAll('.', '-')}`, (env) => deliver(env, opts));
+    subscribe(name, `n8n-${name.replaceAll('.', '-')}`, (env) =>
+      // Changes made through the service API never reach n8n.
+      env.payload.origin === 'service-api' ? Promise.resolve() : deliver(env, opts)
+    );
   }
 }

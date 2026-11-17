@@ -10,7 +10,15 @@ import { boardFiltersSchema, type BoardFilters } from './schemas';
 // Pipelines and stages (M2-01; PRD F-16, F-17; DATABASE Pipelines and deals). One pipeline per
 // tenant in v1 (F-18 is Later). Renaming and reordering stages is M2-05.
 
-export type DealOpts = { db?: Db; tx?: Tx };
+export type DealOpts = {
+  db?: Db;
+  tx?: Tx;
+  /**
+   * Set by the service API. The change is then recorded as a system action and its events carry
+   * `origin: 'service-api'`, which every outbound consumer skips (n8n push, quote follow-up, won alert).
+   */
+  origin?: 'service-api';
+};
 export type Pipeline = typeof pipelines.$inferSelect;
 export type Stage = typeof pipelineStages.$inferSelect;
 
