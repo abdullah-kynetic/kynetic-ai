@@ -21,6 +21,10 @@ class EmptyModelContent(ValueError):
     """The provider returned no usable assistant content."""
 
 
+# 404 is treated as a missing/retired free model so the next fallback can run.
+_RETRYABLE_STATUS = {404, 408, 409, 425, 429}
+
+
 def parse_answer(answer: str | None, business_name: str) -> dict[str, Any]:
     if not isinstance(answer, str) or not answer.strip():
         raise EmptyModelContent("model returned empty content")
@@ -57,9 +61,10 @@ def check_mentions_with_fallback(business: dict[str, str], models: Iterable[str]
         except OpenRouterError as exc:
             last_reason = f"OpenRouter {model} returned HTTP {exc.status}"
             models_tried.append({"model": model, "status": exc.status})
-            if exc.status not in (429,) and exc.status < 500:
-                break
-            sleep(min(0.8, 0.2 + random.random() * 0.2))
+            if exc.status in _RETRYABLE_STATUS or exc.status >= 500:
+                sleep(min(0.8, 0.2 + random.random() * 0.2))
+                continue
+            break
         except EmptyModelContent as exc:
             last_reason = f"OpenRouter {model}: {exc}"
             models_tried.append({"model": model, "status": "empty"})

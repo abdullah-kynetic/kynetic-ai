@@ -98,6 +98,19 @@ class ProviderPolicyTests(unittest.TestCase):
                           {"model": "success:free", "status": 200}], result.data["models_tried"])
         with self.assertRaises(ValueError): parse_answer(None, "Synthetic Co")
 
+    def test_ai_404_then_success_tries_next_model(self):
+        def ask(model, prompt):
+            if model == "missing:free":
+                raise OpenRouterError(404)
+            return "Synthetic Co is mentioned."
+        result = check_mentions_with_fallback(
+            {"name": "Synthetic Co", "city": "Austin", "industry": "contractor"},
+            ["missing:free", "success:free"], ask, sleep=lambda _: None)
+        self.assertEqual("ok", result.status)
+        self.assertEqual("success:free", result.data["model"])
+        self.assertEqual([{"model": "missing:free", "status": 404},
+                          {"model": "success:free", "status": 200}], result.data["models_tried"])
+
     def test_nominatim_mocked_and_cached(self):
         calls = []
         def transport(url, headers):

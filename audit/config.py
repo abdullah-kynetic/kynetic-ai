@@ -17,7 +17,7 @@ BUSINESS_TYPES = {
 START_FREE_MODELS = (
     "particle-ai/particle-1:free",
     "google/gemma-4-26b-a4b-it:free",
-    "qwen/qwen3-4b:free",
+    "google/gemma-4-31b-it:free",
 )
 
 
