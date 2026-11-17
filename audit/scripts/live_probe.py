@@ -45,7 +45,7 @@ def main() -> int:
         models = _openrouter_models() or [os.getenv("AUDIT_OPENROUTER_MODEL", "google/gemma-4-26b-a4b-it:free")]
         _line("ai_mentions", check_mentions_with_fallback(business, models, _openrouter_ask))
     if "maps" in selected:
-        _line("maps", fetch_public_maps(f"{args.name} {args.city} {args.state}"))
+        _line("maps", fetch_public_maps(f"{args.name} {args.city} {args.state}", args.name))
     if "geogrid" in selected:
         _line("geogrid", full_audit_grid(business, lambda url, headers: _http_get(url, headers=headers)))
     if "unlighthouse" in selected:
