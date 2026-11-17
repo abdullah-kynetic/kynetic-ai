@@ -4,8 +4,8 @@ import { Bar, BarChart, CartesianGrid, Line, LineChart, XAxis, YAxis } from 'rec
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 
 const ratesConfig = {
-  pickRate: { label: 'Pick rate', color: 'var(--chart-1)' },
-  replyRate: { label: 'Reply rate', color: 'var(--chart-2)' }
+  pickRate: { label: 'Pick rate', color: 'var(--chart-3)' },
+  replyRate: { label: 'Reply rate', color: 'var(--chart-4)' }
 };
 
 export type RatesPoint = { day: string; pickRate: number | null; replyRate: number | null };
@@ -87,7 +87,8 @@ export function AgencyRatesLine({ points }: { points: RatesPoint[] }) {
   );
 }
 
-const sourceConfig = { count: { label: 'Leads', color: 'var(--chart-1)' } };
+/** Gray by default: DESIGN.md keeps brand orange out of chart fills. */
+const sourceConfig = { count: { label: 'Leads', color: 'var(--chart-4)' } };
 const sourceLabel = (direction: string, channel: string) =>
   `${direction === 'inbound' ? 'Inbound' : 'Outbound'} · ${channel.replaceAll('_', ' ')}`;
 
