@@ -148,7 +148,8 @@ def collect_checks(request: AuditRequest, html: str = "") -> dict[str, dict[str,
             lambda: fetch_pagespeed(request.business.website, pagespeed_key, _pagespeed_transport)
             if pagespeed_key else CheckResult("couldnt_check")
         )
-        checks["maps"] = _safe_check(lambda: fetch_public_maps(f"{request.business.name} {request.business.city} {request.business.state}"))
+        checks["maps"] = _safe_check(lambda: fetch_public_maps(
+            f"{request.business.name} {request.business.city} {request.business.state}", request.business.name))
         models = _openrouter_models() or [os.getenv("AUDIT_OPENROUTER_MODEL", DEFAULT_FREE_MODEL)]
         business = {field.name: getattr(request.business, field.name) for field in fields(Business)}
         checks["ai_mentions"] = _safe_check(lambda: check_mentions_with_fallback(business, models, _openrouter_ask))

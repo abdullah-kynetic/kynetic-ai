@@ -10,12 +10,30 @@ class _MapsParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__()
         self.text: list[str] = []
+        self._ignored = 0
+
+    def handle_starttag(self, tag: str, attrs) -> None:
+        if tag.lower() in {"script", "style"}:
+            self._ignored += 1
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag.lower() in {"script", "style"} and self._ignored:
+            self._ignored -= 1
 
     def handle_data(self, data: str) -> None:
-        self.text.append(data.strip())
+        if not self._ignored:
+            self.text.append(data.strip())
 
 
-def parse_maps_page(html: str) -> CheckResult:
+def _token_similarity(left: str, right: str) -> float:
+    tokens_left = set(re.findall(r"[a-z0-9]+", left.lower()))
+    tokens_right = set(re.findall(r"[a-z0-9]+", right.lower()))
+    if not tokens_left or not tokens_right:
+        return 0.0
+    return len(tokens_left & tokens_right) / max(len(tokens_left), len(tokens_right))
+
+
+def parse_maps_page(html: str, business_name: str | None = None) -> CheckResult:
     lowered = html.lower()
     if any(x in lowered for x in ("captcha", "unusual traffic", "access denied", "sorry")):
         return CheckResult("couldnt_check", reason="blocked")
@@ -25,20 +43,33 @@ def parse_maps_page(html: str) -> CheckResult:
     # Google changes class names frequently; visible text and aria-labels are more stable.
     aria = " ".join(re.findall(r"aria-label\s*=\s*[\"']([^\"']+)", html, re.I))
     searchable = f"{text} {aria}"
-    rating = (re.search(r"([0-5](?:\.[0-9])?)\s*stars?", searchable, re.I)
-              or re.search(r"(?:rating|rated)\s*[:：]?\s*([0-5](?:\.[0-9])?)", searchable, re.I))
-    reviews = re.search(r"([0-9][0-9,]*)\s*(?:reviews|ratings)", searchable, re.I)
+    title_match = re.search(r"<title[^>]*>(.*?)</title>", html, re.I | re.S)
+    title_text = title_match.group(1) if title_match else ""
+    listing_prefix = re.split(r"\b(?:rating|rated|latest review|owner reply)\b", text, maxsplit=1, flags=re.I)[0]
+    confirmed_name = business_name and any(
+        _token_similarity(business_name, candidate) >= 0.6
+        for candidate in (*parser.text, title_text, listing_prefix)
+    )
+    if not confirmed_name:
+        return CheckResult("couldnt_check", reason="no confirmed listing")
+    rating = (re.search(r"([0-5](?:\.[0-9])?)\s*stars?", aria, re.I)
+              or re.search(r"(?:rating|rated)\s*[:：]?\s*([0-5](?:\.[0-9])?)", text, re.I))
+    reviews = (re.search(r"([0-9][0-9,]*)\s*(?:reviews|ratings)", aria, re.I)
+               or re.search(r"([0-9][0-9,]*)\s*(?:reviews|ratings)", text, re.I))
     dates = re.findall(r"(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2},\s+\d{4}", text, re.I)
     competitors = re.findall(r"(?:competitor|nearby)[:\s]+([A-Z][A-Za-z0-9 &'-]{2,60})", text)
     if not rating or not reviews:
         title = (re.search(r"<title[^>]*>(.*?)</title>", html, re.I | re.S) or [None, ""])[1]
         title_text = re.sub(r"\s+", " ", title or "").strip()[:120]
-        reason = f"Maps result did not contain rating and review count (title={title_text!r}, html_length={len(html)})"
+        reason = f"no confirmed listing (title={title_text!r}, html_length={len(html)})"
         return CheckResult("couldnt_check", reason=reason)
     category = re.search(r"(?:category|type)[:\s]+([^|<]{2,80})", text, re.I)
+    category_value = category.group(1).strip() if category else None
+    if category_value and re.search(r"[{};=]|\bfunction\b|=>", category_value, re.I):
+        return CheckResult("couldnt_check", reason="no confirmed listing")
     return CheckResult("ok", {"rating": float(rating.group(1)),
         "review_count": int(reviews.group(1).replace(",", "")),
-        "category": category.group(1).strip() if category else None,
+        "category": category_value,
         "latest_review_date": dates[-1] if dates else None,
         "owner_replies": len(re.findall(r"owner reply|response from the owner", text, re.I)),
         "top_competitors": competitors[:3]})
@@ -78,7 +109,7 @@ async def fetch_public_maps_html(query: str, timeout_ms: int = 15_000) -> str:
         return ""
 
 
-def fetch_public_maps(query: str) -> CheckResult:
+def fetch_public_maps(query: str, business_name: str | None = None) -> CheckResult:
     html = asyncio.run(fetch_public_maps_html(query))
-    return parse_maps_page(html)
+    return parse_maps_page(html, business_name)
 

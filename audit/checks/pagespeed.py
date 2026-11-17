@@ -8,6 +8,10 @@ from ..models import CheckResult
 BASE_CATEGORIES = ("performance", "seo", "accessibility", "best-practices")
 
 
+class MissingPerformanceScore(ValueError):
+    """The API returned Lighthouse data without a usable performance score."""
+
+
 def normalize_target(website: str) -> str:
     value = website.strip()
     if "://" not in value:
@@ -27,12 +31,19 @@ def _response(value: object) -> tuple[int, bytes]:
     return int(status), bytes(body)
 
 
+def build_pagespeed_url(website: str, api_key: str) -> str:
+    params: list[tuple[str, str]] = [("url", normalize_target(website)), ("key", api_key),
+                                     ("strategy", "mobile")]
+    params.extend(("category", category) for category in BASE_CATEGORIES)
+    return "https://www.googleapis.com/pagespeedonline/v5/runPagespeed?" + urlencode(params)
+
+
 def _failure(exc: Exception, api_key: str) -> CheckResult:
     message = str(exc).replace(api_key, "[redacted]") if api_key else str(exc)
     return CheckResult("couldnt_check", reason=f"PageSpeed {type(exc).__name__}: {message or 'response could not be parsed'}")
 
 
-def _parse_success(raw: bytes) -> dict[str, object]:
+def _parse_success(raw: bytes, allow_missing_performance: bool = False) -> dict[str, object]:
     payload = json.loads(raw)
     lighthouse = payload.get("lighthouseResult")
     if not isinstance(lighthouse, dict):
@@ -41,14 +52,21 @@ def _parse_success(raw: bytes) -> dict[str, object]:
     categories = lighthouse.get("categories")
     if not isinstance(audits, dict) or not isinstance(categories, dict):
         raise ValueError("missing lighthouse audits or categories")
-    scores: dict[str, int] = {}
+    scores: dict[str, int | None] = {}
+    missing: list[str] = []
     for name in BASE_CATEGORIES:
         category = categories.get(name)
         score = category.get("score") if isinstance(category, dict) else None
         if not isinstance(score, (int, float)) or isinstance(score, bool):
+            if allow_missing_performance:
+                scores[name] = None
+                missing.append(name)
+                continue
+            if name == "performance":
+                raise MissingPerformanceScore("missing performance score")
             raise ValueError(f"missing {name} score")
         scores[name] = round(score * 100)
-    return {
+    data: dict[str, object] = {
         "scores": scores,
         "performance_score": scores["performance"],
         "lcp_ms": audits.get("largest-contentful-paint", {}).get("numericValue")
@@ -58,15 +76,20 @@ def _parse_success(raw: bytes) -> dict[str, object]:
         "inp_ms": audits.get("interaction-to-next-paint", {}).get("numericValue")
         if isinstance(audits.get("interaction-to-next-paint", {}), dict) else None,
     }
+    if missing:
+        data["category_status"] = {
+            name: {"status": "couldnt_check", "reason": f"missing {name} score"}
+            for name in missing
+        }
+        if "performance" in missing:
+            data["performance"] = {"status": "couldnt_check", "reason": "missing performance score"}
+    return data
 
 
 def fetch_pagespeed(website: str, api_key: str, transport: Callable[[str], object], sleep: Callable[[float], None] = time.sleep) -> CheckResult:
     if not api_key:
         return CheckResult("couldnt_check", reason="PageSpeed API key is not configured")
-    params: list[tuple[str, str]] = [("url", normalize_target(website)), ("key", api_key),
-                                     ("strategy", "mobile")]
-    params.extend(("category", category) for category in BASE_CATEGORIES)
-    url = "https://www.googleapis.com/pagespeedonline/v5/runPagespeed?" + urlencode(params)
+    url = build_pagespeed_url(website, api_key)
     for attempt in range(2):
         try:
             status, raw = _response(transport(url))
@@ -80,7 +103,13 @@ def fetch_pagespeed(website: str, api_key: str, transport: Callable[[str], objec
                 except (TypeError, ValueError, json.JSONDecodeError):
                     detail = "HTTP error"
                 return CheckResult("couldnt_check", reason=f"PageSpeed HTTP {status}: {detail}")
-            return CheckResult("ok", _parse_success(raw))
+            try:
+                return CheckResult("ok", _parse_success(raw))
+            except MissingPerformanceScore:
+                if attempt == 0:
+                    sleep(2.0)
+                    continue
+                return CheckResult("ok", _parse_success(raw, allow_missing_performance=True))
         except urllib.error.HTTPError as exc:
             if exc.code in (429,) or exc.code >= 500:
                 if attempt == 0:

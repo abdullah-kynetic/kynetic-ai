@@ -17,7 +17,13 @@ class OpenRouterError(Exception):
         self.status = status
 
 
-def parse_answer(answer: str, business_name: str) -> dict[str, Any]:
+class EmptyModelContent(ValueError):
+    """The provider returned no usable assistant content."""
+
+
+def parse_answer(answer: str | None, business_name: str) -> dict[str, Any]:
+    if not isinstance(answer, str) or not answer.strip():
+        raise EmptyModelContent("model returned empty content")
     lower = answer.lower()
     return {"mentioned": business_name.lower() in lower,
             "competitors_named": [], "citations": [], "label": "model recall, not live search"}
@@ -54,6 +60,10 @@ def check_mentions_with_fallback(business: dict[str, str], models: Iterable[str]
             if exc.status not in (429,) and exc.status < 500:
                 break
             sleep(min(0.8, 0.2 + random.random() * 0.2))
+        except EmptyModelContent as exc:
+            last_reason = f"OpenRouter {model}: {exc}"
+            models_tried.append({"model": model, "status": "empty"})
+            continue
         except Exception as exc:
             last_reason = f"OpenRouter {type(exc).__name__}: {str(exc) or 'request failed'}"
             models_tried.append({"model": model, "status": 0})

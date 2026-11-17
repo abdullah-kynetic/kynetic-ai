@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from audit.checks.ai_mentions import OpenRouterError, check_mentions_with_fallback
+from audit.checks.ai_mentions import OpenRouterError, check_mentions_with_fallback, parse_answer
 from audit.checks.geocode import geocode
 from audit.checks.maps import parse_maps_page
 from audit.checks.pagespeed import fetch_pagespeed, normalize_target
@@ -44,6 +44,20 @@ class ProviderPolicyTests(unittest.TestCase):
         self.assertIn("ValueError", incomplete.reason or "")
         self.assertIn("missing seo score", incomplete.reason or "")
 
+    def test_pagespeed_missing_performance_retries_then_keeps_other_categories(self):
+        calls = []
+        sleeps = []
+        def transport(url):
+            calls.append(url)
+            return (self.fixtures / "pagespeed-missing-performance.json").read_bytes()
+        result = fetch_pagespeed("https://example.test", "fixture-key", transport, sleep=sleeps.append)
+        self.assertEqual("ok", result.status)
+        self.assertIsNone(result.data["performance_score"])
+        self.assertEqual(91, result.data["scores"]["seo"])
+        self.assertEqual("couldnt_check", result.data["performance"]["status"])
+        self.assertEqual(2, len(calls))
+        self.assertEqual([2.0], sleeps)
+
     def test_ai_fallback_429_then_success_records_model(self):
         calls = []
         def ask(model, prompt):
@@ -65,6 +79,24 @@ class ProviderPolicyTests(unittest.TestCase):
         self.assertEqual("couldnt_check", result.status)
         self.assertIn("RuntimeError", result.reason or "")
         self.assertEqual([{"model": "broken:free", "status": 0}], result.data["models_tried"])
+
+    def test_ai_none_empty_429_then_success_records_each_status(self):
+        calls = []
+        def ask(model, prompt):
+            calls.append(model)
+            if model == "none:free": return None
+            if model == "empty:free": return "  "
+            if model == "rate:free": raise OpenRouterError(429)
+            return "Synthetic Co is mentioned."
+        result = check_mentions_with_fallback(
+            {"name": "Synthetic Co", "city": "Austin", "industry": "contractor"},
+            ["none:free", "empty:free", "rate:free", "success:free"], ask, sleep=lambda _: None)
+        self.assertEqual("ok", result.status)
+        self.assertEqual([{"model": "none:free", "status": "empty"},
+                          {"model": "empty:free", "status": "empty"},
+                          {"model": "rate:free", "status": 429},
+                          {"model": "success:free", "status": 200}], result.data["models_tried"])
+        with self.assertRaises(ValueError): parse_answer(None, "Synthetic Co")
 
     def test_nominatim_mocked_and_cached(self):
         calls = []
@@ -107,16 +139,24 @@ class ProviderPolicyTests(unittest.TestCase):
         self.assertEqual("https://synthetic.test", command[command.index("--site") + 1])
 
     def test_maps_aria_fixture_parses_rating_and_reviews(self):
-        result = parse_maps_page((self.fixtures / "maps-aria.html").read_text())
+        result = parse_maps_page((self.fixtures / "maps-aria.html").read_text(), "Synthetic Maps Result")
         self.assertEqual("ok", result.status)
         self.assertEqual(4.8, result.data["rating"])
         self.assertEqual(216, result.data["review_count"])
 
     def test_maps_failure_includes_debug_context(self):
-        result = parse_maps_page('<html><head><title>Consent</title></head><body>Search</body></html>')
+        result = parse_maps_page('<html><head><title>Consent</title></head><body>Consent Business</body></html>', "Consent Business")
         self.assertEqual("couldnt_check", result.status)
         self.assertIn("title='Consent'", result.reason or "")
         self.assertIn("html_length=", result.reason or "")
+
+    def test_maps_js_and_fake_business_are_not_confirmed(self):
+        js = '<html><body><div>Acme Plumbing</div><script>rating=3.4; reviews=10;</script></body></html>'
+        self.assertEqual("couldnt_check", parse_maps_page(js, "Acme Plumbing").status)
+        fake = '<html><body><div aria-label="3.4 stars"></div><div aria-label="10 reviews"></div><div>Other Business</div></body></html>'
+        result = parse_maps_page(fake, "Acme Plumbing")
+        self.assertEqual("couldnt_check", result.status)
+        self.assertEqual("no confirmed listing", result.reason)
 
     def test_public_request_ignores_phantomreach_flag(self):
         payload = {"mode":"operator", "operator_phantomreach":True,

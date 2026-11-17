@@ -17,6 +17,7 @@ BUSINESS_TYPES = {
 START_FREE_MODELS = (
     "particle-ai/particle-1:free",
     "google/gemma-4-26b-a4b-it:free",
+    "qwen/qwen3-4b:free",
 )
 
 
@@ -35,6 +36,9 @@ def free_models_from_catalog(payload: list[dict]) -> list[str]:
         if pricing.get("prompt") in (0, "0", "0.0") and pricing.get("completion") in (0, "0", "0.0"):
             model_id = item.get("id")
             if isinstance(model_id, str) and model_id.endswith(":free"):
-                models.append(model_id)
-    return list(dict.fromkeys((*START_FREE_MODELS, *sorted(models))))
+                searchable = " ".join(str(item.get(key, "")) for key in ("id", "name", "description")).lower()
+                preference = 0 if any(word in searchable for word in ("instruct", "chat")) else 1
+                models.append((preference, model_id))
+    models.sort(key=lambda item: (item[0], item[1]))
+    return list(dict.fromkeys((*START_FREE_MODELS, *(model_id for _, model_id in models))))
 

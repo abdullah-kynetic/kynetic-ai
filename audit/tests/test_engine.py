@@ -49,10 +49,10 @@ class AuditTests(unittest.TestCase):
         self.assertEqual(83, result.data["performance_score"])
 
     def test_maps_fixture_and_captcha(self):
-        result = parse_maps_page((self.fixture_dir / "maps.html").read_text())
+        result = parse_maps_page((self.fixture_dir / "maps.html").read_text(), "Acme")
         self.assertEqual(123, result.data["review_count"])
         self.assertEqual(1, result.data["owner_replies"])
-        self.assertEqual("couldnt_check", parse_maps_page((self.fixture_dir / "maps-captcha.html").read_text()).status)
+        self.assertEqual("couldnt_check", parse_maps_page((self.fixture_dir / "maps-captcha.html").read_text(), "Acme").status)
 
     def test_geogrid_is_bounded_and_deterministic(self):
         points = grid_points(30.2672, -97.7431, count=9)
