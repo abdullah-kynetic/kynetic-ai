@@ -89,6 +89,7 @@ def run_unlighthouse(mode: str, website: str) -> CheckResult:
     if mode != "full":
         return CheckResult("skipped", reason="Unlighthouse is full-audit only")
     output_dir = None
+    work_dirs: list[str] = []
     try:
         version_result = subprocess.run(["node", "--version"], capture_output=True, text=True, timeout=5, check=True)
         version = (version_result.stdout or "").strip()
@@ -96,8 +97,10 @@ def run_unlighthouse(mode: str, website: str) -> CheckResult:
         match = re.match(r"v(\d+)", version)
         if not match or int(match.group(1)) < 22:
             return CheckResult("couldnt_check", reason=f"Unlighthouse requires Node 22+, found {version or 'unknown'}")
-        output_dir = tempfile.mkdtemp(prefix="unlighthouse-")
-        config_path = write_unlighthouse_config(Path(output_dir) / "unlighthouse.config.mjs")
+        output_dir = tempfile.mkdtemp(prefix="unlighthouse-out-")
+        config_dir = tempfile.mkdtemp(prefix="unlighthouse-cfg-")
+        work_dirs.append(config_dir)
+        config_path = write_unlighthouse_config(Path(config_dir) / "unlighthouse.config.mjs")
         chrome = discover_chrome()
         env = os.environ.copy()
         if chrome:
@@ -105,7 +108,7 @@ def run_unlighthouse(mode: str, website: str) -> CheckResult:
             env.setdefault("CHROME_PATH", chrome)
         completed = subprocess.run(
             unlighthouse_command(website, output_dir, str(config_path)),
-            capture_output=True, text=True, timeout=90, check=False, env=env, cwd=output_dir,
+            capture_output=True, text=True, timeout=90, check=False, env=env, cwd=config_dir,
         )
         result_path = Path(output_dir) / "ci-result.json"
         if result_path.is_file():
@@ -126,5 +129,5 @@ def run_unlighthouse(mode: str, website: str) -> CheckResult:
         detail = getattr(exc, "stderr", "") or str(exc)
         return CheckResult("couldnt_check", reason=f"Unlighthouse failed: {type(exc).__name__}: {str(detail)[-1000:]}")
     finally:
-        if output_dir:
-            shutil.rmtree(output_dir, ignore_errors=True)
+        for directory in ([output_dir] if output_dir else []) + work_dirs:
+            shutil.rmtree(directory, ignore_errors=True)
