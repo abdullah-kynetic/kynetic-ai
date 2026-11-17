@@ -88,7 +88,7 @@ try:
         .apt_install("ca-certificates", "curl", "fonts-liberation", "fonts-dejavu-core")
         .pip_install("playwright", "fastapi")
         .run_commands(
-            "curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs",
+            "curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get install -y nodejs",
             "node --version",
             "npm install -g unlighthouse@0.19.1",
             "python -m playwright install --with-deps chromium",

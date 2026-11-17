@@ -3,13 +3,14 @@ import json
 import os
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 from audit.checks.ai_mentions import OpenRouterError, check_mentions_with_fallback, parse_answer
 from audit.checks.geocode import geocode
 from audit.checks.maps import parse_maps_page
 from audit.checks.pagespeed import fetch_pagespeed, normalize_target
-from audit.checks.unlighthouse import parse_summary, unlighthouse_command
+from audit.checks.unlighthouse import parse_summary, run_unlighthouse, unlighthouse_command
 from audit.geogrid import full_audit_grid
 from audit.service import run
 
@@ -137,6 +138,14 @@ class ProviderPolicyTests(unittest.TestCase):
         self.assertIn("unlighthouse@0.19.1", command)
         self.assertEqual("15", command[command.index("--max-routes") + 1])
         self.assertEqual("https://synthetic.test", command[command.index("--site") + 1])
+
+    def test_unlighthouse_rejects_old_node_before_cli(self):
+        node = type("Completed", (), {"stdout": "v20.19.0", "stderr": ""})()
+        with patch("audit.checks.unlighthouse.subprocess.run", return_value=node) as run:
+            result = run_unlighthouse("full", "https://synthetic.test")
+        self.assertEqual("couldnt_check", result.status)
+        self.assertIn("requires Node 22+", result.reason or "")
+        run.assert_called_once_with(["node", "--version"], capture_output=True, text=True, timeout=5, check=True)
 
     def test_maps_aria_fixture_parses_rating_and_reviews(self):
         result = parse_maps_page((self.fixtures / "maps-aria.html").read_text(), "Synthetic Maps Result")
