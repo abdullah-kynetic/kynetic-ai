@@ -1,4 +1,7 @@
-import PageContainer from '@/components/layout/page-container';
+import { PageHeader } from '@/components/layout/page-header';
+import { buttonVariants } from '@/components/ui/button';
+import { StatusPill } from '@/components/ui/status-pill';
+import { cn } from '@/lib/utils';
 import { decideAdminAccess } from '@/server/admin';
 import { loadClientOverview } from '@/server/admin/client-overview';
 import { guaranteeProgress } from '@/server/metrics';
@@ -40,13 +43,79 @@ export default async function ClientOverviewPage({
   const base = `/admin/clients/${tenant.id}`;
 
   return (
-    <PageContainer
-      pageTitle={tenant.name}
-      pageDescription='Profile, systems, pipeline, and the booking guarantee for this client.'
-    >
-      <div className='grid gap-4 lg:grid-cols-2'>
-        <section className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
-          <h2 className='font-medium'>Profile</h2>
+    <div className='mx-auto flex w-full max-w-[1280px] flex-1 flex-col gap-6 px-4 pt-2 pb-8 md:px-6 md:pt-4'>
+      <PageHeader
+        title={tenant.name}
+        description='Profile, systems, pipeline, and the booking guarantee for this client.'
+        actions={
+          <StatusPill tone={tenant.status === 'active' ? 'gain' : 'attention'}>
+            {tenant.status === 'active'
+              ? 'Active'
+              : tenant.status.charAt(0).toUpperCase() + tenant.status.slice(1)}
+          </StatusPill>
+        }
+      />
+      <nav
+        aria-label='Client tabs'
+        className='-mx-1 flex flex-wrap items-center gap-1 border-b pb-2'
+      >
+        {[
+          ['Overview', base],
+          ['Systems', `${base}/systems`],
+          ['Alex', `${base}/alex`],
+          ['Reports', `${base}/reports`],
+          ['Documents', `${base}/documents`],
+          ['Billing', `${base}/billing`],
+          ['Setup', `${base}/checklist`]
+        ].map(([label, href]) => (
+          <Link
+            key={href}
+            href={href}
+            aria-current={href === base ? 'page' : undefined}
+            className={cn(
+              'inline-flex min-h-11 items-center rounded-full px-4 text-[13px] font-medium',
+              href === base
+                ? 'bg-primary text-primary-foreground'
+                : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+            )}
+          >
+            {label}
+          </Link>
+        ))}
+        <details className='relative'>
+          <summary className='text-muted-foreground hover:bg-secondary hover:text-foreground inline-flex min-h-11 cursor-pointer items-center rounded-full px-4 text-[13px] font-medium'>
+            More setup
+          </summary>
+          <div className='bg-popover absolute z-10 mt-1 grid min-w-52 gap-1 rounded-xl border p-2 shadow-[0_8px_24px_rgb(20_16_12/0.12)]'>
+            {[
+              ['Checklist', `${base}/checklist`],
+              ['Import', `${base}/imports`],
+              ['Webhooks', `${base}/webhooks`],
+              ['Tokens and Presence', `${base}/service-tokens`],
+              ['Online presence', `${base}/presence`]
+            ].map(([label, href]) => (
+              <Link
+                key={href}
+                href={href}
+                className='hover:bg-secondary inline-flex min-h-11 items-center rounded-lg px-3 text-sm'
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
+        </details>
+        {access.role === 'admin' && (
+          <Link
+            href={`${base}/offboard`}
+            className='text-alert hover:bg-alert-soft ml-auto inline-flex min-h-11 items-center rounded-full px-4 text-[13px] font-medium'
+          >
+            Offboard
+          </Link>
+        )}
+      </nav>
+      <div className='grid gap-4 lg:grid-cols-2 [&>section]:min-w-0'>
+        <section className='bg-card rounded-xl border p-6'>
+          <h2 className='text-lg font-semibold tracking-tight'>Profile</h2>
           <dl className='mt-3 space-y-2 text-sm'>
             <div>
               <dt className='text-muted-foreground'>Status</dt>
@@ -88,8 +157,8 @@ export default async function ClientOverviewPage({
           </dl>
         </section>
 
-        <section className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
-          <h2 className='font-medium'>Booking guarantee</h2>
+        <section className='bg-card rounded-xl border p-6'>
+          <h2 className='text-lg font-semibold tracking-tight'>Booking guarantee</h2>
           <p className='text-muted-foreground mt-1 text-sm'>
             20% more booked appointments than last month, measured over 30 days.
           </p>
@@ -125,8 +194,8 @@ export default async function ClientOverviewPage({
           )}
         </section>
 
-        <section className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
-          <h2 className='font-medium'>Systems</h2>
+        <section className='bg-card rounded-xl border p-6'>
+          <h2 className='text-lg font-semibold tracking-tight'>Systems</h2>
           {active.length === 0 ? (
             <p className='text-muted-foreground mt-3 text-sm'>No systems are on yet.</p>
           ) : (
@@ -143,8 +212,8 @@ export default async function ClientOverviewPage({
           )}
         </section>
 
-        <section className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
-          <h2 className='font-medium'>Pipeline</h2>
+        <section className='bg-card rounded-xl border p-6'>
+          <h2 className='text-lg font-semibold tracking-tight'>Pipeline</h2>
           {overview.stages.length === 0 ? (
             <p className='text-muted-foreground mt-3 text-sm'>No pipeline yet.</p>
           ) : (
@@ -153,8 +222,8 @@ export default async function ClientOverviewPage({
         </section>
 
         {access.role === 'admin' && (
-          <section className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
-            <h2 className='font-medium'>Spend cap</h2>
+          <section className='bg-card rounded-xl border p-6'>
+            <h2 className='text-lg font-semibold tracking-tight'>Spend cap</h2>
             <p className='text-muted-foreground mt-1 text-sm'>
               Month-to-date provider cost. Blank means no cap. This does not change the monthly fee.
             </p>
@@ -163,18 +232,21 @@ export default async function ClientOverviewPage({
               <label className='grid gap-1 text-sm'>
                 Cap in cents
                 <input
-                  className='min-h-11 rounded border px-3'
+                  className='border-input bg-background min-h-11 rounded-xl border px-3'
                   name='cents'
                   inputMode='numeric'
                   defaultValue={tenant.monthlySpendCapCents ?? ''}
                   aria-label='Monthly spend cap in cents'
                 />
               </label>
-              <button className='min-h-11 rounded border px-3' type='submit'>
+              <button
+                className={cn(buttonVariants({ variant: 'secondary' }), 'min-h-11')}
+                type='submit'
+              >
                 Save cap
               </button>
             </form>
-            <h2 className='mt-6 font-medium'>AI spend cap</h2>
+            <h2 className='mt-6 text-lg font-semibold tracking-tight'>AI spend cap</h2>
             <p className='text-muted-foreground mt-1 text-sm'>
               Month-to-date model cost. Blank means the platform default applies. At the cap, no
               further model calls run for this client.
@@ -184,14 +256,17 @@ export default async function ClientOverviewPage({
               <label className='grid gap-1 text-sm'>
                 AI cap in cents
                 <input
-                  className='min-h-11 rounded border px-3'
+                  className='border-input bg-background min-h-11 rounded-xl border px-3'
                   name='cents'
                   inputMode='numeric'
                   defaultValue={tenant.llmMonthlyCapCents ?? ''}
                   aria-label='Monthly AI spend cap in cents'
                 />
               </label>
-              <button className='min-h-11 rounded border px-3' type='submit'>
+              <button
+                className={cn(buttonVariants({ variant: 'secondary' }), 'min-h-11')}
+                type='submit'
+              >
                 Save AI cap
               </button>
             </form>
@@ -204,8 +279,8 @@ export default async function ClientOverviewPage({
           </section>
         )}
 
-        <section className='rounded-xl bg-card p-4 ring-1 ring-foreground/10 lg:col-span-2'>
-          <h2 className='font-medium'>Recent activity</h2>
+        <section className='bg-card rounded-xl border p-6 lg:col-span-2'>
+          <h2 className='text-lg font-semibold tracking-tight'>Recent activity</h2>
           {overview.activity.length === 0 ? (
             <p className='text-muted-foreground mt-3 text-sm'>No activity yet.</p>
           ) : (
@@ -222,60 +297,6 @@ export default async function ClientOverviewPage({
           )}
         </section>
       </div>
-      <nav aria-label='Client tabs' className='mt-4 flex flex-wrap gap-2 border-b pb-2'>
-        {[
-          ['Overview', base],
-          ['Systems', `${base}/systems`],
-          ['Alex', `${base}/alex`],
-          ['Reports', `${base}/reports`],
-          ['Documents', `${base}/documents`],
-          ['Billing', `${base}/billing`]
-        ].map(([label, href]) => (
-          <Link
-            key={href}
-            href={href}
-            className='inline-flex min-h-11 items-center rounded px-3 underline'
-          >
-            {label}
-          </Link>
-        ))}
-        <Link
-          href={`${base}/checklist`}
-          className='inline-flex min-h-11 items-center rounded px-3 underline'
-        >
-          Setup
-        </Link>
-        <details className='relative'>
-          <summary className='inline-flex min-h-11 cursor-pointer items-center rounded px-3 underline'>
-            More setup
-          </summary>
-          <div className='bg-background absolute z-10 mt-1 grid min-w-48 gap-1 rounded border p-2 shadow'>
-            {[
-              ['Checklist', `${base}/checklist`],
-              ['Import', `${base}/imports`],
-              ['Webhooks', `${base}/webhooks`],
-              ['Tokens and Presence', `${base}/service-tokens`],
-              ['Online presence', `${base}/presence`]
-            ].map(([label, href]) => (
-              <Link
-                key={href}
-                href={href}
-                className='inline-flex min-h-11 items-center px-2 underline'
-              >
-                {label}
-              </Link>
-            ))}
-          </div>
-        </details>
-        {access.role === 'admin' && (
-          <Link
-            href={`${base}/offboard`}
-            className='border-destructive text-destructive inline-flex min-h-11 items-center rounded border px-3 underline'
-          >
-            Offboard
-          </Link>
-        )}
-      </nav>
-    </PageContainer>
+    </div>
   );
 }
