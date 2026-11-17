@@ -80,6 +80,8 @@ export function registerAutomationSubscribers() {
     'deal.stage_changed',
     'automation-quote-followup',
     async (env) => {
+      // A stage move made through the service API never enrolls a follow-up sequence.
+      if (env.payload.origin === 'service-api') return;
       const stageId = env.payload.toStageId;
       const contactId = env.payload.contactId;
       if (typeof stageId !== 'string' || typeof contactId !== 'string') return;
