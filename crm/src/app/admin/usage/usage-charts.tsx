@@ -4,8 +4,8 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 
 const config = {
-  cost: { label: 'Provider cost', color: 'var(--chart-2)' },
-  margin: { label: 'Margin', color: 'var(--chart-1)' }
+  cost: { label: 'Provider cost', color: 'var(--chart-4)' },
+  margin: { label: 'Margin', color: 'var(--chart-3)' }
 };
 
 export type UsageChartRow = {

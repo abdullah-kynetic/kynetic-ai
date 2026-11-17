@@ -4,8 +4,8 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 
 const config = {
-  revenueCents: { label: 'Revenue', color: 'var(--chart-1)' },
-  expenseCents: { label: 'Expenses', color: 'var(--chart-2)' }
+  revenueCents: { label: 'Revenue', color: 'var(--chart-3)' },
+  expenseCents: { label: 'Expenses', color: 'var(--chart-4)' }
 };
 
 export type FinanceMonth = {

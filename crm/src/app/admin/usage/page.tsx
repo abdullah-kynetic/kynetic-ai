@@ -1,7 +1,8 @@
 /* oxlint-disable jsx-a11y/no-noninteractive-tabindex -- scrollable table regions must be keyboard focusable (WCAG 2.1.1) */
 import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
-import PageContainer from '@/components/layout/page-container';
+import { PageHeader } from '@/components/layout/page-header';
+import { StatusPill } from '@/components/ui/status-pill';
 import { decideAdminAccess, listUsageMonth } from '@/server/admin';
 import { CostVsFeeChart, type UsageChartRow } from './usage-charts';
 import {
@@ -17,10 +18,10 @@ import {
 export const dynamic = 'force-dynamic';
 
 const statusColor: Record<string, string> = {
-  no_cap: 'bg-primary',
-  under: 'bg-primary',
-  watch: 'bg-[var(--chart-2)]',
-  reached: 'bg-[var(--destructive)]'
+  no_cap: 'bg-[var(--gain)]',
+  under: 'bg-[var(--gain)]',
+  watch: 'bg-[var(--attention)]',
+  reached: 'bg-[var(--alert)]'
 };
 
 function CapUsageBar({
@@ -38,10 +39,10 @@ function CapUsageBar({
       <div
         role='img'
         aria-label={`${capStatusLabel(status)}: ${pct}% of the monthly spend cap`}
-        className='relative h-3 w-full overflow-hidden rounded bg-muted'
+        className='bg-surface-sunken relative h-2 w-full overflow-hidden rounded-full'
       >
         <div
-          className={`h-full ${statusColor[status] ?? 'bg-primary'}`}
+          className={`h-full ${statusColor[status] ?? 'bg-[var(--gain)]'}`}
           style={{ width: `${pct}%` }}
         />
         <div
@@ -73,35 +74,61 @@ export default async function UsagePage({
     (row) =>
       row.callCount === 0 && row.smsCount === 0 && row.emailCount === 0 && row.llmCostMicros === 0
   );
+  const totalCost = rows.reduce((sum, row) => sum + providerCostCents(row), 0);
+  const totalAi = rows.reduce((sum, row) => sum + llmCostCents(row), 0);
+  const feeRows = rows.filter((row) => row.monthlyFeeCents != null);
+  const totalFees = feeRows.reduce((sum, row) => sum + (row.monthlyFeeCents ?? 0), 0);
+  const totalMargin = feeRows.reduce((sum, row) => sum + (marginCents(row) ?? 0), 0);
+  const stats: [string, string][] = [
+    ['Provider cost', formatCents(totalCost)],
+    ['AI cost', formatCents(totalAi)],
+    ['Recorded fees', feeRows.length ? formatCents(totalFees) : 'Not recorded'],
+    ['Margin', feeRows.length ? formatCents(totalMargin) : 'Not recorded']
+  ];
   return (
-    <PageContainer
-      pageTitle='Usage'
-      pageDescription='Minutes, messages, provider cost, and the fee already recorded for each client. Clients do not see this page.'
-    >
-      <form className='mb-4 flex flex-wrap items-end gap-3' method='get'>
+    <div className='mx-auto flex w-full max-w-[1280px] flex-1 flex-col gap-6 px-4 pt-2 pb-8 md:px-6 md:pt-4'>
+      <PageHeader
+        title='Usage'
+        description='Minutes, messages, provider cost, and the fee already recorded for each client. Clients do not see this page.'
+      />
+      <dl className=' grid gap-3 sm:grid-cols-2 lg:grid-cols-4' aria-label={`Totals for ${month}`}>
+        {stats.map(([label, value]) => (
+          <div key={label} className='bg-card rounded-[var(--radius-card)] border p-5'>
+            <dt className='text-muted-foreground text-sm'>{label}</dt>
+            <dd className='mt-1 text-2xl font-semibold tabular-nums'>{value}</dd>
+          </div>
+        ))}
+      </dl>
+      <form className=' flex flex-wrap items-end gap-3' method='get'>
         <label className='grid gap-1 text-sm'>
           Month
           <input
-            className='min-h-11 rounded border px-3'
+            className='bg-card min-h-11 rounded-[var(--radius-control)] border px-3'
             name='month'
             type='month'
             defaultValue={month}
           />
         </label>
-        <button className='min-h-11 rounded border px-3' type='submit'>
+        <button
+          className='bg-secondary text-secondary-foreground min-h-11 rounded-[var(--radius-control)] px-4 font-medium'
+          type='submit'
+        >
           Show month
         </button>
         <a
-          className='inline-flex min-h-11 items-center underline'
+          className='inline-flex min-h-11 items-center px-2 font-medium underline underline-offset-4'
           href={`/admin/usage/export?month=${month}`}
         >
           Download CSV
         </a>
       </form>
-      {empty ? <p>No usage recorded for {month}.</p> : null}
+      {empty ? <p className='text-muted-foreground '>No usage recorded for {month}.</p> : null}
       {!empty && (
-        <section aria-label='Cost versus recorded fee' className='mb-6'>
-          <h2 className='mb-2 font-semibold'>Cost vs fee by client</h2>
+        <section
+          aria-label='Cost versus recorded fee'
+          className='bg-card  rounded-[var(--radius-card)] border p-5'
+        >
+          <h2 className='mb-3 font-semibold'>Cost vs fee by client</h2>
           <CostVsFeeChart
             rows={rows.map((row): UsageChartRow => ({
               tenantName: row.tenantName,
@@ -113,25 +140,25 @@ export default async function UsagePage({
         </section>
       )}
       <div
-        className='overflow-x-auto rounded-lg border'
+        className='bg-card overflow-x-auto rounded-[var(--radius-card)] border'
         role='region'
         aria-label='Usage by client'
         tabIndex={0}
       >
         <table className='w-full text-sm'>
-          <thead>
+          <thead className='bg-surface-sunken'>
             <tr>
-              <th className='p-3 text-start'>Client</th>
-              <th className='p-3 text-start'>Minutes</th>
-              <th className='p-3 text-start'>Calls</th>
-              <th className='p-3 text-start'>SMS</th>
-              <th className='p-3 text-start'>Emails</th>
-              <th className='p-3 text-start'>Provider cost</th>
-              <th className='p-3 text-start'>AI cost</th>
-              <th className='p-3 text-start'>AI cap</th>
-              <th className='p-3 text-start'>Recorded fee</th>
-              <th className='p-3 text-start'>Margin</th>
-              <th className='p-3 text-start'>Cap</th>
+              <th className='text-muted-foreground p-3 text-start font-medium'>Client</th>
+              <th className='text-muted-foreground p-3 text-start font-medium'>Minutes</th>
+              <th className='text-muted-foreground p-3 text-start font-medium'>Calls</th>
+              <th className='text-muted-foreground p-3 text-start font-medium'>SMS</th>
+              <th className='text-muted-foreground p-3 text-start font-medium'>Emails</th>
+              <th className='text-muted-foreground p-3 text-start font-medium'>Provider cost</th>
+              <th className='text-muted-foreground p-3 text-start font-medium'>AI cost</th>
+              <th className='text-muted-foreground p-3 text-start font-medium'>AI cap</th>
+              <th className='text-muted-foreground p-3 text-start font-medium'>Recorded fee</th>
+              <th className='text-muted-foreground p-3 text-start font-medium'>Margin</th>
+              <th className='text-muted-foreground p-3 text-start font-medium'>Cap</th>
             </tr>
           </thead>
           <tbody>
@@ -146,7 +173,14 @@ export default async function UsagePage({
                   <td className='p-3'>{row.emailCount}</td>
                   <td className='p-3'>
                     {formatCents(providerCostCents(row))}
-                    {row.costUnknown ? ' · cost unknown' : ''}
+                    {row.costUnknown ? (
+                      <>
+                        {' '}
+                        · <StatusPill tone='attention'>cost unknown</StatusPill>
+                      </>
+                    ) : (
+                      ''
+                    )}
                   </td>
                   <td className='p-3'>{formatCents(llmCostCents(row))}</td>
                   <td className='p-3'>
@@ -175,6 +209,6 @@ export default async function UsagePage({
           </tbody>
         </table>
       </div>
-    </PageContainer>
+    </div>
   );
 }

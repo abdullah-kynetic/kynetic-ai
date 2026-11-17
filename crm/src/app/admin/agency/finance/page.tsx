@@ -1,3 +1,4 @@
+/* oxlint-disable jsx-a11y/no-noninteractive-tabindex -- scrollable table regions must be keyboard focusable (WCAG 2.1.1) */
 import Link from 'next/link';
 import PageContainer, { AgencyEmptyState } from '@/components/agency/page';
 import { AgencySubmitButton as Button } from '@/components/agency/motion';
@@ -49,16 +50,29 @@ export default async function FinancePage({
       pageDescription='Revenue, expenses, referrals and case studies for the agency workspace. Nothing is sent.'
     >
       <Link href='/admin/agency'>Agency dashboard</Link>
-      <p className='my-3'>
-        This month (Pacific): revenue {usd(data.summary.revenueCents)}, expenses{' '}
-        {usd(data.summary.expenseCents)}, net {usd(data.summary.netCents)}.
-      </p>
-      <section aria-label='Monthly revenue versus expenses' className='mb-6'>
-        <h2 className='mb-2 font-semibold'>Revenue vs expenses by month</h2>
+      <dl className='agency-kpis' aria-label='This month (Pacific)'>
+        <div>
+          <dt>Revenue</dt>
+          <dd>{usd(data.summary.revenueCents)}</dd>
+        </div>
+        <div>
+          <dt>Expenses</dt>
+          <dd>{usd(data.summary.expenseCents)}</dd>
+        </div>
+        <div>
+          <dt>Net</dt>
+          <dd>{usd(data.summary.netCents)}</dd>
+        </div>
+      </dl>
+      <section
+        aria-label='Monthly revenue versus expenses'
+        className='bg-card mb-6 rounded-[var(--radius-card)] border p-5'
+      >
+        <h2 className='mb-3 font-semibold'>Revenue vs expenses by month</h2>
         <FinanceMonthsChart months={data.months} />
       </section>
       {query.error && <p role='alert'>Check the amount, date and link, then try again.</p>}
-      <nav aria-label='Finance tabs' className='my-4 flex flex-wrap gap-3'>
+      <nav aria-label='Finance tabs' className='agency-subtabs'>
         {tabs.map(([id, label]) => (
           <Link
             key={id}
@@ -81,30 +95,37 @@ export default async function FinancePage({
               description='Won deals and manual entries show here. Amounts are the values already stored.'
             />
           )}
-          <table>
-            <thead>
-              <tr>
-                <th>Month</th>
-                <th>Won deals</th>
-                <th>Manual</th>
-                <th>Revenue</th>
-                <th>Expenses</th>
-                <th>Net</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.months.map((month) => (
-                <tr key={month.month}>
-                  <td>{month.month}</td>
-                  <td>{usd(month.wonCents)}</td>
-                  <td>{usd(month.manualCents)}</td>
-                  <td>{usd(month.revenueCents)}</td>
-                  <td>{usd(month.expenseCents)}</td>
-                  <td>{usd(month.netCents)}</td>
+          <div
+            className='overflow-x-auto'
+            role='region'
+            aria-label='Monthly revenue table'
+            tabIndex={0}
+          >
+            <table className='agency-table'>
+              <thead>
+                <tr>
+                  <th>Month</th>
+                  <th>Won deals</th>
+                  <th>Manual</th>
+                  <th>Revenue</th>
+                  <th>Expenses</th>
+                  <th>Net</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {data.months.map((month) => (
+                  <tr key={month.month}>
+                    <td>{month.month}</td>
+                    <td>{usd(month.wonCents)}</td>
+                    <td>{usd(month.manualCents)}</td>
+                    <td>{usd(month.revenueCents)}</td>
+                    <td>{usd(month.expenseCents)}</td>
+                    <td>{usd(month.netCents)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
           <form action={addRevenueAction} className='agency-form max-w-xl'>
             <h3 className='font-semibold'>Manual revenue</h3>
             <Label htmlFor='revenue-date'>Date</Label>
@@ -198,7 +219,7 @@ export default async function FinancePage({
             />
           )}
           {data.referrals.map((referral) => (
-            <article key={referral.id} className='rounded border p-3'>
+            <article key={referral.id} className='bg-card rounded-[var(--radius-card)] border p-5'>
               <p>
                 {referral.referrerName}
                 {referral.contactName ? ` · ${referral.contactName}` : ''} · {referral.status}
