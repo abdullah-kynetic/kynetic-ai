@@ -52,13 +52,48 @@ test('View as client starts a read-only session, shows the banner and Exit retur
   await expect(page).toHaveURL(/\/dashboard/);
   const banner = page.getByRole('region', { name: 'View as client' });
   await expect(banner).toContainText(`Viewing as ${READY} the way they see it`);
-  await expect(banner).toContainText('Read-only');
+  await expect(banner).toContainText('Viewing only');
+  await expect(banner).toContainText(/Ends in \d+ min/);
   // The client sees a static card and no switcher while being viewed.
   await expect(page.locator('[data-slot=workspace-card]')).toContainText(READY);
   await expect(page.getByRole('button', { name: /Switch workspace/ })).toHaveCount(0);
-  await banner.getByRole('button', { name: 'Exit' }).click();
+  await banner.getByRole('link', { name: 'Exit' }).click();
   await expect(page).toHaveURL(/\/admin\/clients$/);
   await expect(page.getByRole('region', { name: 'View as client' })).toHaveCount(0);
+});
+
+test('every write during View as client is refused with a clear message', async ({
+  adminPage: page
+}) => {
+  await page.goto('/admin/clients');
+  await page.getByRole('button', { name: /Switch workspace/ }).click();
+  await page.getByRole('button', { name: `View as client: ${READY}` }).click();
+  await expect(page).toHaveURL(/\/dashboard/);
+  const origin = new URL(page.url()).origin;
+  // A server-action style POST to a dashboard page, a JSON POST, and a PUT/DELETE: all refused.
+  for (const [method, path] of [
+    ['post', '/dashboard/tasks'],
+    ['post', '/dashboard/contacts'],
+    ['put', '/dashboard/settings/business'],
+    ['delete', '/dashboard/contacts']
+  ] as const) {
+    const res = await page.request[method](path, {
+      headers: { origin, 'content-type': 'application/json' },
+      data: { reason: 'Fixing something the owner reported' },
+      failOnStatusCode: false
+    });
+    expect(res.status(), `${method} ${path}`).toBe(403);
+    expect(await res.text()).toContain('Viewing only');
+  }
+  // The expiry route does nothing while the 30 minutes are still running.
+  await page.goto('/view-as/expired');
+  await expect(page).toHaveURL(/\/dashboard/);
+  await expect(page.getByRole('region', { name: 'View as client' })).toBeVisible();
+  await page
+    .getByRole('region', { name: 'View as client' })
+    .getByRole('link', { name: 'Exit' })
+    .click();
+  await expect(page).toHaveURL(/\/admin\/clients$/);
 });
 
 test('a building portal cannot be viewed as the client', async ({ adminPage: page }) => {

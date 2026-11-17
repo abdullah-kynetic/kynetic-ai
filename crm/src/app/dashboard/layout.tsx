@@ -64,6 +64,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
     cookieStore.get(VIEW_AS_COOKIE)?.value
   );
   if (!shell) redirect('/sign-in');
+  // A view-as cookie with no live session behind it (the 30 minutes ran out, or it is stale): close it
+  // out, clear the cookies and send the admin back to the page they started from.
+  if (cookieStore.get(VIEW_AS_COOKIE)?.value && !shell.viewAs) redirect('/view-as/expired');
 
   const termsTarget = await termsGateTarget(shell.user.id, shell.role, requestHeaders);
   if (termsTarget) redirect(termsTarget);
@@ -92,9 +95,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             <ViewAsBanner
               tenantName={viewAs.tenantName}
               adminName={shell.user.name ?? shell.user.email}
-              readOnly={viewAs.readOnly}
-              writeUntil={viewAs.writeUntil?.toISOString() ?? null}
-              canWrite={shell.role === 'admin'}
+              msRemaining={viewAs.msRemaining}
             />
           )}
           <KBar groups={groups} role={shell.role}>

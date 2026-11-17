@@ -1,9 +1,10 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { audit } from '@/server/audit';
+import { readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { createDb, type Db } from '@/server/db/client';
+import * as impersonation from '@/server/impersonation';
 import {
-  disableWriteMode,
-  enableWriteMode,
   endViewAs,
   listViewAsTenants,
   resolveViewAs,
@@ -147,7 +148,7 @@ describe('resolve, read-only and audit', () => {
     expect(rows[0]).toMatchObject({ tenant_id: IDS.tenantA, impersonator_user_id: IDS.admin });
   });
 
-  it('blocks writes at the database in read-only, and stamps the impersonator when write mode is on', async () => {
+  it('blocks writes at the database', async () => {
     const { cookie } = await start(admin);
     const ro = await resolveViewAs({ user: admin, cookie }, { db, now: T0 });
     if (ro.kind !== 'active') throw new Error('expected active');
@@ -205,14 +206,29 @@ describe('resolve, read-only and audit', () => {
     expect((await resolveViewAs({ user: admin, cookie }, { db, now: T0 })).kind).toBe('active');
   });
 
-  it('ends after 30 idle minutes and logs the end', async () => {
+  it('ends 30 minutes after the start, however active, and logs the stop', async () => {
     const { sessionId, cookie } = await start(admin);
-    const s = await resolveViewAs({ user: admin, cookie }, { db, now: at(VIEW_AS.idleMs + 1000) });
+    // Constant use does not extend it: every request up to the last second still works...
+    for (const ms of [60_000, 10 * 60_000, 20 * 60_000, VIEW_AS.maxMs - 1000]) {
+      const s = await resolveViewAs({ user: admin, cookie }, { db, now: at(ms) });
+      expect(s.kind).toBe('active');
+      if (s.kind === 'active') expect(s.expiresAt.getTime()).toBe(T0.getTime() + VIEW_AS.maxMs);
+    }
+    // ...and the next request after the 30 minutes ends it and writes the audit row.
+    const s = await resolveViewAs({ user: admin, cookie }, { db, now: at(VIEW_AS.maxMs + 1000) });
     expect(s.kind).toBe('none');
     const [row] =
       await tdb.admin`select ended_at, ended_reason from impersonation_sessions where id = ${sessionId}`;
-    expect(row.ended_reason).toBe('idle');
-    expect((await auditRows('viewas.end', sessionId))[0].after).toMatchObject({ reason: 'idle' });
+    expect(row.ended_reason).toBe('expired');
+    expect(row.ended_at).not.toBeNull();
+    const [stop] = await auditRows('viewas.end', sessionId);
+    expect(stop.after).toMatchObject({ reason: 'expired' });
+    expect(stop).toMatchObject({ tenant_id: IDS.tenantA, impersonator_user_id: IDS.admin });
+    // It cannot be revived, and a second look does not log a second stop.
+    expect(
+      (await resolveViewAs({ user: admin, cookie }, { db, now: at(VIEW_AS.maxMs + 2000) })).kind
+    ).toBe('none');
+    expect(await auditRows('viewas.end', sessionId)).toHaveLength(1);
   });
 
   it('exit ends the session once and is safe to repeat', async () => {
@@ -243,87 +259,82 @@ describe('READ ONLY transaction (SECURITY 2.6)', () => {
     const [t] = await tdb.admin`select title from tasks where tenant_id = ${IDS.tenantA}`;
     expect(t.title).not.toBe('x');
   });
+});
 
-  it('does not restrict an admin in write mode', async () => {
-    const { cookie } = await start(admin);
-    await enableWriteMode({ user: admin, cookie, reason }, { db, now: T0 });
+describe('no write mode (read-only, no override)', () => {
+  it('exports no way to switch writes on', () => {
+    expect(Object.keys(impersonation).filter((k) => /write/i.test(k))).toEqual([]);
+    const actions = readFileSync(join(process.cwd(), 'src/app/view-as/actions.ts'), 'utf8');
+    expect(actions).not.toMatch(/(enable|disable)Write/i);
+  });
+
+  it('rejects writes even when a reason is supplied and the stored row says write', async () => {
+    const { sessionId, cookie } = await start(admin);
+    // Simulate everything the old write mode stored: a reason, a window, read_only = false.
+    await tdb.admin`update impersonation_sessions
+      set read_only = false, write_reason = 'Fixing the stage the owner mis-set',
+          write_until = ${at(60 * 60_000).toISOString()}
+      where id = ${sessionId}`;
     const s = await resolveViewAs({ user: admin, cookie }, { db, now: at(1000) });
     if (s.kind !== 'active') throw new Error('expected active');
-    await withViewAs(
-      s,
-      (tx) =>
-        tx.execute(
-          `update tasks set title = 'Support edit' where tenant_id = '${IDS.tenantA}'` as never
-        ),
-      { db }
-    );
+    expect(s.readOnly).toBe(true);
+    expect(s.ctx.readOnly).toBe(true);
+    const run = (q: string) => withViewAs(s, (tx) => tx.execute(q as never), { db });
+    for (const sql of [
+      `update tasks set title = 'Support edit' where tenant_id = '${IDS.tenantA}'`,
+      `delete from tasks where tenant_id = '${IDS.tenantA}'`,
+      `insert into tasks (tenant_id, title) values ('${IDS.tenantA}', 'x')`
+    ])
+      await expect(run(sql)).rejects.toMatchObject({ cause: { code: '25006' } });
+    // Even outside withViewAs, the session context alone blocks writes through row-level security.
+    expect(
+      await withTenant(
+        s.ctx,
+        (tx) =>
+          tx.execute(
+            `update tasks set title = 'Support edit' where tenant_id = '${IDS.tenantA}' returning id` as never
+          ),
+        { db }
+      )
+    ).toHaveLength(0);
     const [t] = await tdb.admin`select title from tasks where tenant_id = ${IDS.tenantA}`;
-    expect(t.title).toBe('Support edit');
+    expect(t.title).toBe('Call back');
   });
 });
 
-describe('write mode (admin only, reason, 30 minutes)', () => {
-  it('lets an admin write inside the window with the impersonator stamped, then drops back to read-only', async () => {
-    const { sessionId, cookie } = await start(admin);
-    await expect(
-      enableWriteMode({ user: admin, cookie, reason: 'no' }, { db, now: T0 })
-    ).rejects.toMatchObject({
-      code: 'VALIDATION_FAILED'
-    });
-    const { writeUntil } = await enableWriteMode(
-      { user: admin, cookie, reason: 'Fixing the stage the owner mis-set' },
-      { db, now: T0 }
-    );
-    expect(writeUntil.getTime()).toBe(T0.getTime() + VIEW_AS.writeMs);
+describe('no message to the client (email, SMS, notification, webhook)', () => {
+  const count = async () => {
+    const [m] = await tdb.admin`select count(*)::int as n from messages`;
+    const [n] = await tdb.admin`select count(*)::int as n from notifications`;
+    const [w] = await tdb.admin`select count(*)::int as n from webhook_events`;
+    return { messages: m.n, notifications: n.n, webhooks: w.n };
+  };
 
-    const rw = await resolveViewAs({ user: admin, cookie }, { db, now: at(60_000) });
-    if (rw.kind !== 'active') throw new Error('expected active');
-    expect(rw.readOnly).toBe(false);
-    await withTenant(
-      rw.ctx,
-      async (tx) => {
-        await tx.execute(
-          `update tasks set title = 'Edited by support' where tenant_id = '${IDS.tenantA}'` as never
-        );
-        await audit(tx, { action: 'task.update', entity: 'task' });
-      },
-      { db }
-    );
-    const [a] = await auditRows('task.update');
-    expect(a).toMatchObject({ tenant_id: IDS.tenantA, impersonator_user_id: IDS.admin });
-    expect(await auditRows('viewas.write_enable', sessionId)).toHaveLength(1);
-
-    // A second enable inside the window is refused; after it, the session is read-only again.
-    await expect(
-      enableWriteMode({ user: admin, cookie, reason }, { db, now: at(120_000) })
-    ).rejects.toMatchObject({ code: 'CONFLICT' });
-    const lapsed = await resolveViewAs(
-      { user: admin, cookie },
-      { db, now: at(VIEW_AS.writeMs + 1000) }
-    );
-    expect(lapsed).toMatchObject({ kind: 'active', readOnly: true });
-    expect(await auditRows('viewas.write_expired', sessionId)).toHaveLength(1);
+  it('start, requests, stop and expiry create no messages, notifications or webhook events', async () => {
+    const before = await count();
+    const one = await start(admin);
+    await resolveViewAs({ user: admin, cookie: one.cookie }, { db, now: at(1000) });
+    await endViewAs({ user: admin, cookie: one.cookie }, { db, now: at(2000) });
+    const two = await start(admin);
+    await resolveViewAs({ user: admin, cookie: two.cookie }, { db, now: at(VIEW_AS.maxMs + 1000) });
+    expect(await count()).toEqual(before);
   });
 
-  it('refuses a VA and audits the attempt', async () => {
-    const { sessionId, cookie } = await start(va, IDS.tenantA, at(10 * 3600_000));
-    await expect(
-      enableWriteMode({ user: va, cookie, reason }, { db, now: at(10 * 3600_000) })
-    ).rejects.toMatchObject({
-      name: 'ForbiddenError'
-    });
-    expect(await auditRows('viewas.write_denied', sessionId)).toHaveLength(1);
-    const s = await resolveViewAs({ user: va, cookie }, { db, now: at(10 * 3600_000 + 1000) });
-    expect(s).toMatchObject({ kind: 'active', readOnly: true });
-  });
-
-  it('can be switched back to read-only early', async () => {
-    const { cookie } = await start(admin);
-    await enableWriteMode({ user: admin, cookie, reason }, { db, now: T0 });
-    await disableWriteMode({ user: admin, cookie }, { db, now: at(1000) });
-    expect(await resolveViewAs({ user: admin, cookie }, { db, now: at(2000) })).toMatchObject({
-      readOnly: true
-    });
+  it('the view-as code does not import any sender, queue, notification or webhook module', () => {
+    const files = [
+      ...readdirSync(join(process.cwd(), 'src/server/impersonation')).map((f) =>
+        join('src/server/impersonation', f)
+      ),
+      'src/app/view-as/actions.ts',
+      'src/app/view-as/exit/route.ts',
+      'src/app/view-as/expired/route.ts',
+      'src/components/view-as/view-as-banner.tsx',
+      'src/components/workspace/workspace-switcher.tsx'
+    ];
+    const banned =
+      /from\s+['"][^'"]*(adapters|messaging|notifications|webhook|jobs|queue|mailer|twilio|resend)[^'"]*['"]/i;
+    for (const file of files)
+      expect(readFileSync(join(process.cwd(), file), 'utf8'), file).not.toMatch(banned);
   });
 });
 

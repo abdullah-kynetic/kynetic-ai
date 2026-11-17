@@ -3,11 +3,9 @@
 import { ForbiddenError, getSessionUser, SecondFactorRequiredError } from '@/server/auth';
 import { AppError, ValidationError } from '@/server/errors';
 import {
-  disableWriteMode,
-  enableWriteMode,
-  endViewAs,
   startViewAs,
   VIEW_AS_COOKIE,
+  VIEW_AS_RETURN_COOKIE,
   type ViewAsUser
 } from '@/server/impersonation';
 import { clientIp } from '@/server/terms';
@@ -16,9 +14,6 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { safeAdminReturn } from '@/lib/workspaces';
 
-// Where Exit goes back to: the admin page the switcher was used on (checked again on exit).
-const RETURN_COOKIE = 'view_as_return';
-
 export type ViewAsActionResult = { error: string } | void;
 
 const COOKIE_OPTIONS = {
@@ -26,8 +21,8 @@ const COOKIE_OPTIONS = {
   sameSite: 'lax',
   secure: process.env.NODE_ENV === 'production',
   path: '/',
-  // Browser-side cap only. The 30-minute idle expiry is enforced from the database row.
-  maxAge: 8 * 60 * 60
+  // Browser-side cap. The hard 30-minute end is enforced from the database row.
+  maxAge: 30 * 60
 } as const;
 
 function message(err: unknown): string {
@@ -45,7 +40,11 @@ async function staffUser(): Promise<{ user: ViewAsUser; requestHeaders: Headers 
   return { user, requestHeaders };
 }
 
-/** Starts view-as for one tenant. Needs a reason. Origin is checked by Next for server actions. */
+/**
+ * Starts view-as for one tenant (read-only, ends 30 minutes after it starts). The admin role needs no
+ * typed reason; a VA does. There is no write mode: Exit and expiry live in `/view-as/exit` and
+ * `/view-as/expired`, and the proxy refuses every write while a session is open.
+ */
 export async function startViewAsAction(formData: FormData): Promise<ViewAsActionResult> {
   const { user, requestHeaders } = await staffUser();
   const tenantId = z.uuid().safeParse(formData.get('tenantId'));
@@ -67,40 +66,6 @@ export async function startViewAsAction(formData: FormData): Promise<ViewAsActio
     return { error: message(err) };
   }
   cookieStore.set(VIEW_AS_COOKIE, value, COOKIE_OPTIONS);
-  cookieStore.set(RETURN_COOKIE, safeAdminReturn(formData.get('returnTo')), COOKIE_OPTIONS);
-  redirect('/dashboard');
-}
-
-/** Ends the session, clears the cookie and goes back to the admin side. */
-export async function exitViewAsAction(): Promise<void> {
-  const { user } = await staffUser();
-  const cookieStore = await cookies();
-  await endViewAs({ user, cookie: cookieStore.get(VIEW_AS_COOKIE)?.value });
-  cookieStore.delete(VIEW_AS_COOKIE);
-  const back = safeAdminReturn(cookieStore.get(RETURN_COOKIE)?.value);
-  cookieStore.delete(RETURN_COOKIE);
-  redirect(back);
-}
-
-/** Admin only: write mode for 30 minutes, with a second reason. */
-export async function enableWriteModeAction(formData: FormData): Promise<ViewAsActionResult> {
-  const { user } = await staffUser();
-  const cookieStore = await cookies();
-  try {
-    await enableWriteMode({
-      user,
-      cookie: cookieStore.get(VIEW_AS_COOKIE)?.value,
-      reason: formData.get('reason')
-    });
-  } catch (err) {
-    return { error: message(err) };
-  }
-  redirect('/dashboard');
-}
-
-export async function disableWriteModeAction(): Promise<void> {
-  const { user } = await staffUser();
-  const cookieStore = await cookies();
-  await disableWriteMode({ user, cookie: cookieStore.get(VIEW_AS_COOKIE)?.value });
+  cookieStore.set(VIEW_AS_RETURN_COOKIE, safeAdminReturn(formData.get('returnTo')), COOKIE_OPTIONS);
   redirect('/dashboard');
 }
