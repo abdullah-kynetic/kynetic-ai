@@ -9,6 +9,8 @@ import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
 import PageContainer from '@/components/agency/page';
 import { AgencySubmitButton as Button } from '@/components/agency/motion';
+import { buttonVariants } from '@/components/ui/button';
+import { StatusPill } from '@/components/ui/status-pill';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { decideAdminAccess } from '@/server/admin';
@@ -67,10 +69,16 @@ export default async function AgencyPage({
     getAgencyRateSeries(caller),
     getAgencyFinanceSummary(caller)
   ]);
+  const totalLeads = data.counts.reduce((sum, c) => sum + c.count, 0);
   return (
     <PageContainer
       pageTitle='Agency workspace'
-      pageDescription='Synthetic leads and your sales pipeline. Outbound is disabled.'
+      pageDescription={`${totalLeads} ${totalLeads === 1 ? 'prospect' : 'prospects'} in the pipeline${rates.attempted ? `, pick rate ${percent(rates.pickRate)} over the last seven days` : ''}. Outbound is disabled.`}
+      actions={
+        <a href='#agency-add-lead' className={buttonVariants({ variant: 'default' })}>
+          Add a lead
+        </a>
+      }
     >
       {query.error && (
         <p role='alert' className='mb-4'>
@@ -78,78 +86,80 @@ export default async function AgencyPage({
           @example.test email, and provide a reason when moving to Lost.
         </p>
       )}
-      <section aria-label='This month finance' className='agency-metrics'>
-        <h2>This month</h2>
-        <dl>
-          <div>
-            <dt>Revenue</dt>
-            <dd>{money.format(finance.revenueCents / 100)}</dd>
-          </div>
-          <div>
-            <dt>Expenses</dt>
-            <dd>{money.format(finance.expenseCents / 100)}</dd>
-          </div>
-          <div>
-            <dt>Net</dt>
-            <dd>{money.format(finance.netCents / 100)}</dd>
-          </div>
-        </dl>
-        <p>
-          <Link href='/admin/agency/finance'>Open finance</Link>
-        </p>
-      </section>
-      <section aria-label='Seven-day agency rates' className='agency-metrics'>
-        <h2>Last seven days</h2>
-        <dl>
-          <div>
-            <dt>Pick rate</dt>
-            <dd>
-              {percent(rates.pickRate)}
-              <span>
-                {rates.picked} answered / {rates.attempted} attempted calls
-              </span>
-            </dd>
-          </div>
-          <div>
-            <dt>Reply rate</dt>
-            <dd>
-              {percent(rates.replyRate)}
-              <span>
-                {rates.replied} replies / {rates.contacted} messaged prospects
-              </span>
-            </dd>
-          </div>
-        </dl>
-        <p>
-          Replies count unique prospects after outreach in this window. Failed messages and
-          simulated sends are excluded.
-        </p>
-      </section>
+      <div className='agency-metrics-grid'>
+        <section aria-label='This month finance' className='agency-metrics'>
+          <h2>This month</h2>
+          <dl>
+            <div>
+              <dt>Revenue</dt>
+              <dd>{money.format(finance.revenueCents / 100)}</dd>
+            </div>
+            <div>
+              <dt>Expenses</dt>
+              <dd>{money.format(finance.expenseCents / 100)}</dd>
+            </div>
+            <div>
+              <dt>Net</dt>
+              <dd>{money.format(finance.netCents / 100)}</dd>
+            </div>
+          </dl>
+          <p>
+            <Link href='/admin/agency/finance'>Open finance</Link>
+          </p>
+        </section>
+        <section aria-label='Seven-day agency rates' className='agency-metrics'>
+          <h2>Last seven days</h2>
+          <dl>
+            <div>
+              <dt>Pick rate</dt>
+              <dd>
+                {percent(rates.pickRate)}
+                <span>
+                  {rates.picked} answered / {rates.attempted} attempted calls
+                </span>
+              </dd>
+            </div>
+            <div>
+              <dt>Reply rate</dt>
+              <dd>
+                {percent(rates.replyRate)}
+                <span>
+                  {rates.replied} replies / {rates.contacted} messaged prospects
+                </span>
+              </dd>
+            </div>
+          </dl>
+          <p>
+            Replies count unique prospects after outreach in this window. Failed messages and
+            simulated sends are excluded.
+          </p>
+        </section>
 
-      <section aria-label='Thirty-day agency rates' className='agency-metrics'>
-        <h2>Last thirty days</h2>
-        <dl>
-          <div>
-            <dt>Pick rate</dt>
-            <dd>
-              {percent(monthRates.pickRate)}
-              <span>
-                {monthRates.picked} answered / {monthRates.attempted} attempted calls
-              </span>
-            </dd>
-          </div>
-          <div>
-            <dt>Reply rate</dt>
-            <dd>
-              {percent(monthRates.replyRate)}
-              <span>
-                {monthRates.replied} replies / {monthRates.contacted} messaged prospects
-              </span>
-            </dd>
-          </div>
-        </dl>
-        <AgencyRatesLine points={rateSeries.points} />
-      </section>
+        <section aria-label='Thirty-day agency rates' className='agency-metrics'>
+          <h2>Last thirty days</h2>
+          <dl>
+            <div>
+              <dt>Pick rate</dt>
+              <dd>
+                {percent(monthRates.pickRate)}
+                <span>
+                  {monthRates.picked} answered / {monthRates.attempted} attempted calls
+                </span>
+              </dd>
+            </div>
+            <div>
+              <dt>Reply rate</dt>
+              <dd>
+                {percent(monthRates.replyRate)}
+                <span>
+                  {monthRates.replied} replies / {monthRates.contacted} messaged prospects
+                </span>
+              </dd>
+            </div>
+          </dl>
+          <AgencyRatesLine points={rateSeries.points} />
+        </section>
+      </div>
 
       <p className='agency-notice'>
         Synthetic workspace · Use fictional names and @example.test emails. No outreach starts from
@@ -229,10 +239,25 @@ export default async function AgencyPage({
           {data.leads.map((lead) => (
             <li
               key={lead.id}
-              className='flex flex-wrap items-center justify-between gap-3 rounded border p-4'
+              className='bg-card flex flex-wrap items-center justify-between gap-3 rounded-xl border p-5'
             >
               <div>
-                <p className='font-medium'>{lead.firstName}</p>
+                <p className='flex flex-wrap items-center gap-2 font-medium'>
+                  {lead.firstName}
+                  {lead.deal ? (
+                    <StatusPill
+                      tone={
+                        lead.deal.lostReason
+                          ? 'alert'
+                          : lead.deal.stageName === 'Won'
+                            ? 'gain'
+                            : 'neutral'
+                      }
+                    >
+                      {lead.deal.stageName}
+                    </StatusPill>
+                  ) : null}
+                </p>
                 <p className='text-muted-foreground text-sm'>
                   {lead.email} · {lead.source?.replace('agency_', '').replaceAll('_', ' ')}
                 </p>

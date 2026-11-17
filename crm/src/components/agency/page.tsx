@@ -1,24 +1,34 @@
 import type { ReactNode } from 'react';
-import { Heading } from '@/components/ui/heading';
+import { PageHeader } from '@/components/layout/page-header';
 import { IconLock } from '@tabler/icons-react';
 
 export default function AgencyPage({
   children,
   pageTitle,
-  pageDescription
+  pageDescription,
+  actions
 }: {
   children: ReactNode;
   pageTitle: string;
   pageDescription?: string;
+  actions?: ReactNode;
 }) {
   return (
     <div className='agency-page'>
-      <header className='agency-page-heading'>
-        <Heading title={pageTitle} description={pageDescription ?? ''} />
-        <span className='agency-environment'>
-          <IconLock size={14} aria-hidden='true' /> Synthetic workspace
-        </span>
-      </header>
+      <div className='agency-page-heading'>
+        <PageHeader
+          title={pageTitle}
+          description={pageDescription}
+          actions={
+            <>
+              {actions}
+              <span className='agency-environment'>
+                <IconLock size={14} aria-hidden='true' /> Synthetic workspace
+              </span>
+            </>
+          }
+        />
+      </div>
       {children}
     </div>
   );
