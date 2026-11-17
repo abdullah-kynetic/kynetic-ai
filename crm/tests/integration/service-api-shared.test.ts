@@ -45,8 +45,11 @@ beforeAll(async () => {
   await seedTwoTenants(tdb.admin);
   db = createDb(tdb.app);
   (globalThis as typeof globalThis & { __kyneticDb?: Db }).__kyneticDb = db;
+  // Seeded tenants are America/Los_Angeles and the route's default range uses the tenant's local date,
+  // so the seed must too: current_date is the UTC date and is a day ahead from 00:00 to 08:00 UTC.
   await tdb.admin`insert into metrics_daily (tenant_id, day, leads, calls) values
-    (${IDS.tenantA}, current_date, 7, 3), (${IDS.tenantB}, current_date, 99, 98)
+    (${IDS.tenantA}, (now() at time zone 'America/Los_Angeles')::date, 7, 3),
+    (${IDS.tenantB}, (now() at time zone 'America/Los_Angeles')::date, 99, 98)
     on conflict (tenant_id, day) do update set leads = excluded.leads, calls = excluded.calls`;
 });
 afterAll(async () => {
