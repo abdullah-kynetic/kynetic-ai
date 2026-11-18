@@ -55,6 +55,10 @@ jobs:
           # Shared runners are slower than the local baseline; the decided 500 ms target (DC-033) is unchanged.
           LOAD_P95_MS: '5000'
       - run: bun run build
+      # The production deploy archives only crm/. Tests may import repository-level files
+      # (such as mcp/tools.ts), so verify the Docker context as well as the full checkout.
+      - name: Production app image (crm-only context)
+        run: docker build --progress=plain --target app --build-arg BUILD_COMMIT_SHA=${{ github.sha }} -f deploy/Dockerfile .
       - name: Production deploy scripts (rehearsal with stubs, syntax, compose config)
         run: |
           for f in deploy/prod/*.sh deploy/prod/host/*.sh deploy/prod/monitor/*.sh deploy/prod/tests/*.sh; do bash -n "$f"; done
