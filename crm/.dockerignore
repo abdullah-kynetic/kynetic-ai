@@ -10,6 +10,9 @@ build/
 .vercel/
 
 # Tests
+# Repository tests can import files outside the crm-only production context.
+# CI typechecks and runs them from the full checkout before building the image.
+tests/
 coverage/
 __tests__/
 __mocks__/
