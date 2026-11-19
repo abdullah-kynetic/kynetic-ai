@@ -48,7 +48,6 @@ export const why = [
   { title: "Dealer-level kit", body: "Manufacturer-grade diagnostics without the manufacturer-grade bill or the wait." },
 ];
 
-export const logos = ["Pinpoint", "Mamilio", "U-Turn", "Product", "Luminous", "Arazel", "Fairway", "Silicon.V", "Vision"];
 
 export const caseStudy = {
   car: "BMW 320D",
@@ -66,8 +65,8 @@ export const reviews = [
   { text: "Booked online, dropped the keys, sorted. They explained everything in plain English - no jargon, no pressure.", name: "Lukas Schneider", car: "Nissan Qashqai" },
 ];
 
+export const founder = { name: "Dan Whitlock", role: "Founder & MOT tester · 17 yrs" };
 export const team = [
-  { name: "Dan Whitlock", role: "Founder & MOT tester · 17 yrs" },
   { name: "Marcus Hill", role: "Senior technician · 12 yrs" },
   { name: "Sofia Reyes", role: "Diagnostics lead · 9 yrs" },
   { name: "Priya Anand", role: "Service advisor · 6 yrs" },
