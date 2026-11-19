@@ -31,3 +31,5 @@ Local build, typecheck and lint passed; unit suite passed 663 tests on retry aft
 The custom-field row now gives the label a full mobile line. Build, typecheck, lint, 663 unit tests and the four Settings browser checks passed after this change. The updated mobile capture is `docs/redesign/pr-8/after-custom-fields-390.png`; full integration remains in progress.
 
 The Settings browser suite now also checks that an unauthenticated visitor is redirected to sign-in (5/5 passed). A full integration run has reported a backup/restore test timeout and is still running; no integration pass is claimed.
+
+Notification preferences now use a readable card/list and labels for existing notification kinds. Build, typecheck, lint and 663 unit tests passed; Settings browser checks passed 6/6 including a mocked notification save failure. The updated before/after captures are in `docs/redesign/pr-8/`.

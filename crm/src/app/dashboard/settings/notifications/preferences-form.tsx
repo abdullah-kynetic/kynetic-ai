@@ -12,7 +12,10 @@ const LABELS: Record<string, string> = {
   task_due: 'Task due',
   deal_won: 'Deal won',
   report_ready: 'Report ready',
-  action_needed: 'Action needed'
+  action_needed: 'Action needed',
+  mention: 'Mention',
+  support_reply: 'Support reply',
+  support_request: 'Support request'
 };
 
 export function PreferencesForm({ initial }: { initial: Pref[] }) {
@@ -37,11 +40,14 @@ export function PreferencesForm({ initial }: { initial: Pref[] }) {
   }
 
   return (
-    <form onSubmit={save} className='max-w-xl space-y-4'>
-      <fieldset className='space-y-3'>
-        <legend className='text-sm font-medium'>Email me about</legend>
+    <form onSubmit={save} className='w-full max-w-xl space-y-4'>
+      <fieldset className='bg-card space-y-1 rounded-[var(--radius-card)] border p-4 sm:p-6'>
+        <legend className='sr-only'>Email me about</legend>
+        <p className='pb-2 font-semibold' aria-hidden='true'>
+          Email me about
+        </p>
         {prefs.map((p) => (
-          <label key={p.kind} className='flex items-center gap-3 text-sm'>
+          <label key={p.kind} className='flex min-h-11 items-center gap-3 border-t py-2 text-sm'>
             <input
               type='checkbox'
               checked={p.emailEnabled}

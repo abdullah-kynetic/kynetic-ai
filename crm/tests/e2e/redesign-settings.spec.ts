@@ -85,3 +85,17 @@ test('Unauthenticated visitors cannot open settings', async ({ browser }) => {
   await expect(page).toHaveURL(/sign-in/);
   await context.close();
 });
+
+test('Notification preferences show a save error', async ({ authenticatedPage: page }) => {
+  await page.goto('/dashboard/settings/notifications');
+  await page.route('**/api/settings/notifications', async (route) => {
+    await route.fulfill({
+      status: 500,
+      json: { error: { message: 'Unable to save preferences' } }
+    });
+  });
+  await page.getByRole('button', { name: 'Save preferences' }).click();
+  await expect(
+    page.getByRole('status').filter({ hasText: 'Unable to save preferences' })
+  ).toBeVisible();
+});
