@@ -158,6 +158,26 @@ test('Notification preferences show a save error', async ({ authenticatedPage: p
   ).toContainText('Unable to save preferences');
 });
 
+test('Notification Cancel restores the latest saved preferences', async ({
+  authenticatedPage: page
+}) => {
+  await page.goto('/dashboard/settings/notifications');
+  const checkbox = page.getByRole('checkbox', { name: 'New lead' });
+  const original = await checkbox.isChecked();
+  try {
+    await checkbox.setChecked(!original);
+    await page.getByRole('button', { name: 'Save preferences' }).click();
+    await expect(page.getByRole('status').filter({ hasText: 'Preferences saved.' })).toBeVisible();
+    await checkbox.setChecked(original);
+    await page.getByRole('button', { name: 'Cancel' }).click();
+    expect(await checkbox.isChecked()).toBe(!original);
+  } finally {
+    await checkbox.setChecked(original);
+    await page.getByRole('button', { name: 'Save preferences' }).click();
+    await expect(page.getByRole('status').filter({ hasText: 'Preferences saved.' })).toBeVisible();
+  }
+});
+
 test('Staff can read business settings and cannot manage the team or branding', async ({
   browser
 }) => {
