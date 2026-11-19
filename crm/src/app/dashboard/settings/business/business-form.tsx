@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 const DAYS = [
   ['mon', 'Monday'],
@@ -31,16 +31,23 @@ export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: 
   const [services, setServices] = useState(initial.services.join('\n'));
   const [transfer, setTransfer] = useState(initial.transferNumber ?? '');
   const [timezone, setTimezone] = useState(initial.timezone);
+  const saved = useRef({
+    hours: initial.businessHours,
+    zips: (initial.serviceArea.zips ?? []).join(', '),
+    services: initial.services.join('\n'),
+    transfer: initial.transferNumber ?? '',
+    timezone: initial.timezone
+  });
   const [status, setStatus] = useState<{ ok: boolean; text: string } | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
   function cancel() {
-    setHours(initial.businessHours);
-    setZips((initial.serviceArea.zips ?? []).join(', '));
-    setServices(initial.services.join('\n'));
-    setTransfer(initial.transferNumber ?? '');
-    setTimezone(initial.timezone);
+    setHours(saved.current.hours);
+    setZips(saved.current.zips);
+    setServices(saved.current.services);
+    setTransfer(saved.current.transfer);
+    setTimezone(saved.current.timezone);
     setFieldErrors({});
     setStatus(null);
   }
@@ -75,6 +82,7 @@ export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: 
         })
       });
       const body = await res.json().catch(() => ({}));
+      if (res.ok) saved.current = { hours, zips, services, transfer, timezone };
       const errors = body.error?.fieldErrors as Record<string, string[] | undefined> | undefined;
       setFieldErrors(
         Object.fromEntries(

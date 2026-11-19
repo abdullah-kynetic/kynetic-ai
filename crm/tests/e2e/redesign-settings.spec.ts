@@ -42,6 +42,9 @@ test('Business settings report save success and validation errors', async ({
     await timeZone.fill('America/Denver');
     await save.click();
     await expect(page.getByRole('status').filter({ hasText: 'Saved.' })).toBeVisible();
+    await timeZone.fill('America/Chicago');
+    await page.getByRole('button', { name: 'Cancel' }).click();
+    await expect(timeZone).toHaveValue('America/Denver');
     await page.reload();
     await expect(timeZone).toHaveValue('America/Denver');
   } finally {
