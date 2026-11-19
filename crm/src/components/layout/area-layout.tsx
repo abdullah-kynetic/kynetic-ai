@@ -23,6 +23,9 @@ export function AreaLayout({ area, children }: { area: Area; children: ReactNode
             {area.tabs.map((tab) => {
               const selected =
                 pathname === tab.href ||
+                (area.href === '/dashboard/settings' &&
+                  tab.href === area.href &&
+                  pathname === '/dashboard/settings/business') ||
                 (tab.href !== area.href && pathname.startsWith(`${tab.href}/`));
               return (
                 <Link

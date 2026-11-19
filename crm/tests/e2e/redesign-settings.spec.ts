@@ -77,6 +77,52 @@ test('Settings stay usable in dark mode and with keyboard focus', async ({
   }
 });
 
+test('Every Settings page renders in dark mode on desktop', async ({ authenticatedPage: page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/dashboard/settings/business');
+  await page.evaluate(() => localStorage.setItem('theme', 'dark'));
+  for (const [name, path] of pages) {
+    await page.goto(path);
+    await expect(page.locator('html')).toHaveClass(/dark/);
+    await expect(page.getByRole('heading', { level: 1 }).last()).toBeVisible();
+    await expect(
+      page.locator('nav[aria-label="Settings pages"] a[aria-current="page"]')
+    ).toHaveCount(1);
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth),
+      name
+    ).toBeLessThanOrEqual(1280);
+    if (process.env.SHOT_PREFIX) {
+      await page.screenshot({
+        path: `${process.env.SHOT_PREFIX}-${name}-dark-1280.png`,
+        fullPage: true
+      });
+    }
+  }
+});
+
+test('Owner can pause Alex and persist only the settings flag', async ({
+  authenticatedPage: page
+}) => {
+  await page.goto('/dashboard/settings/alex');
+  const checkbox = page.getByRole('checkbox', { name: /Pause Alex/ });
+  await expect(checkbox).toBeVisible();
+  const initiallyChecked = await checkbox.isChecked();
+  try {
+    if (initiallyChecked) await checkbox.uncheck();
+    else await checkbox.check();
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await expect(page.getByRole('status').filter({ hasText: 'Saved.' })).toBeVisible();
+    await page.reload();
+    expect(await checkbox.isChecked()).toBe(!initiallyChecked);
+  } finally {
+    if (initiallyChecked) await checkbox.check();
+    else await checkbox.uncheck();
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await expect(page.getByRole('status').filter({ hasText: 'Saved.' })).toBeVisible();
+  }
+});
+
 test('CRM-disabled workspace retains its settings access message', async ({ browser }) => {
   const context = await browser.newContext({
     storageState: '/tmp/kynetic-crm-e2e-lane-a-owner-b.json'
