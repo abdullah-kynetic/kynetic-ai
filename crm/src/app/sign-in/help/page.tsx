@@ -29,7 +29,7 @@ export default async function CantSignInPage() {
     >
       <SignInForm googleEnabled={Boolean(env.GOOGLE_CLIENT_ID)} mode='help' />
       <p className='text-muted-foreground mt-6 text-center text-sm'>
-        <Link className='underline' href='/sign-in'>
+        <Link className='text-card-foreground underline' href='/sign-in'>
           Back to log in
         </Link>
       </p>
