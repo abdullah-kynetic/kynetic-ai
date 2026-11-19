@@ -1,4 +1,4 @@
-import { adminEntryGroup, navGroups } from '@/config/nav-config';
+import { navGroups } from '@/config/nav-config';
 import { StaticWorkspaceCard } from '@/components/workspace/workspace-card';
 import KBar from '@/components/kbar';
 import AppSidebar from '@/components/layout/app-sidebar';
@@ -73,10 +73,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   // Only Kynetic staff are shown the way into the admin side; the admin routes check the role again.
   // Inside a view-as session the page is the client's, so there is no way into the admin side.
-  const groups =
-    (shell.role === 'admin' || shell.role === 'va') && !shell.viewAs
-      ? [...navGroups, adminEntryGroup]
-      : navGroups;
+  const groups = navGroups;
+  const adminHref =
+    (shell.role === 'admin' || shell.role === 'va') && !shell.viewAs ? '/admin' : undefined;
   const defaultOpen = cookieStore.get('sidebar_state')?.value !== 'false';
   const viewAs = shell.viewAs;
   return (
@@ -116,15 +115,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
                     logoUrl={shell.tenant?.logoUrl}
                   />
                 }
-                footerLinks={[
-                  { title: 'Notifications', url: '/dashboard/notifications', icon: 'notification' },
-                  { title: 'Settings', url: '/dashboard/settings/business', icon: 'settings' },
-                  { title: 'Help', url: '/dashboard/support', icon: 'help' }
-                ]}
+                footerLinks={[]}
                 user={{ ...shell.user, roleLabel: roleLabel(shell.role) }}
               />
               <SidebarInset id='main-content' tabIndex={-1} className='scroll-mt-16'>
-                <Header user={{ ...shell.user, roleLabel: roleLabel(shell.role) }} />
+                <Header
+                  user={{ ...shell.user, roleLabel: roleLabel(shell.role) }}
+                  adminHref={adminHref}
+                />
                 {shell.tenant ? children : <NoClientSelected />}
               </SidebarInset>
             </SidebarProvider>

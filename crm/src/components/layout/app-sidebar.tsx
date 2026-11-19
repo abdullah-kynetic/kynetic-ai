@@ -66,6 +66,9 @@ export default function AppSidebar({
 }) {
   const pathname = usePathname();
   const filteredGroups = useFilteredNavGroups(groups, role);
+  const areaActive = (url: string) =>
+    pathname === url ||
+    (url !== '/admin' && url !== '/dashboard' && pathname.startsWith(`${url}/`));
 
   return (
     <Sidebar collapsible='icon'>
@@ -113,7 +116,7 @@ export default function AppSidebar({
                       render={
                         <SidebarMenuButton
                           tooltip={item.title}
-                          isActive={pathname === item.url}
+                          isActive={areaActive(item.url)}
                           className={`group/collapsible ${ACTIVE_MARKER}`}
                         />
                       }
@@ -142,7 +145,7 @@ export default function AppSidebar({
                     <SidebarMenuButton
                       render={<Link href={item.url} aria-label={item.title} />}
                       tooltip={item.title}
-                      isActive={pathname === item.url}
+                      isActive={areaActive(item.url)}
                       className={ACTIVE_MARKER}
                     >
                       <Icon />

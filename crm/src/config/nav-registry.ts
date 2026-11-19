@@ -13,6 +13,8 @@ export function visibleNavGroups(
 ): NavGroup[] {
   const keep = (item: NavItem): NavItem | null => {
     // Kynetic admins act as the owner when they view a client, so they keep every owner entry.
+    // VA-only utility links are specific to the support shell, not an admin impersonation grant.
+    if (role === 'admin' && item.access?.role === 'va') return null;
     if (role && role !== 'admin' && item.access?.role && item.access.role !== role) return null;
     if (item.module && !moduleSatisfied(enabled, { module: item.module, level: item.level })) {
       return null;

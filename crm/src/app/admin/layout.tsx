@@ -78,7 +78,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 <StaticWorkspaceCard name='Kynetic AI' detail='Support' />
               )
             }
-            footerLinks={[{ title: 'Help', url: '/admin/support', icon: 'help' }]}
+            footerLinks={[]}
             user={{ name: user.name, email: user.email, roleLabel: roleText }}
           />
           <SidebarInset id='main-content' tabIndex={-1} className='scroll-mt-16'>

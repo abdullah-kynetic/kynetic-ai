@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { auditFiltersSchema, searchAuditLog } from '@/server/admin';
-import { adminNavGroups } from '@/config/nav-config';
+import { adminAreas } from '@/config/area-nav';
 
 describe('audit viewer filters (M8a-05, F-60)', () => {
   it('treats blank fields as no filter and defaults to page 1', () => {
@@ -34,8 +34,8 @@ describe('audit viewer filters (M8a-05, F-60)', () => {
     ).rejects.toThrow(/staff only/);
   });
 
-  it('is linked in the admin nav', () => {
-    const urls = adminNavGroups.flatMap((g) => g.items.map((i) => i.url));
-    expect(urls).toContain('/admin/audit');
+  it('is reachable through the Settings system area', () => {
+    const settings = adminAreas.find((area) => area.title === 'Settings');
+    expect(settings?.tabs.map((tab) => tab.href)).toContain('/admin/settings/system');
   });
 });
