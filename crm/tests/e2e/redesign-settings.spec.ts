@@ -183,6 +183,12 @@ test('Staff can read business settings and cannot manage the team or branding', 
       page.getByRole('status').filter({ hasText: 'Only the account owner' })
     ).toBeVisible();
     await expect(page.getByLabel('Pause Alex')).toHaveCount(0);
+
+    await page.goto('/dashboard/settings/automations');
+    await expect(
+      page.getByRole('status').filter({ hasText: 'Only the account owner' })
+    ).toBeVisible();
+    await expect(page.getByRole('button', { name: /^(Enable|Disable)$/ })).toHaveCount(0);
   } finally {
     await context.close();
   }
