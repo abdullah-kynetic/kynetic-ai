@@ -11,14 +11,15 @@ export function Header() {
     <motion.header initial={{ y: -30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}
       className="sticky top-0 z-50 bg-page">
       <div className="mx-auto flex h-[83px] max-w-[1440px] items-center justify-between px-[30px]">
-        <a href="#top" aria-label={site.name}><img src={img.logoDark} alt={site.name} width={186} height={34} className="h-[34px] w-auto" /></a>
+        <a href="#top" aria-label={site.name}><img src={img.logo} alt={site.name} width={186} height={49} className="h-[56px] w-auto mix-blend-multiply" /></a>
         <nav className="absolute left-1/2 hidden -translate-x-1/2 gap-10 text-[18px] tracking-[-0.03em] md:flex" aria-label="Main">
           {nav.map((n, i) => (
             <a key={n.label} href={n.href} className={`relative ${i === 0 ? "underline underline-offset-4" : "hover:opacity-60"}`}>{n.label}</a>
           ))}
         </nav>
         <div className="flex items-center gap-3">
-          <Button href={`tel:${site.phone.replace(/\s/g, "")}`} className="!h-[43px] max-sm:hidden">Call&nbsp; {site.phone}</Button>
+          <Button href={`tel:${site.tel}`} className="!h-[43px] max-sm:hidden">Call&nbsp; {site.phone}</Button>
+          <Button href={`sms:${site.tel}`} variant="outline" className="!h-[43px] max-sm:hidden">Text</Button>
           <button className="text-2xl md:hidden" aria-label="Menu" aria-expanded={open} onClick={() => setOpen(!open)}>☰</button>
         </div>
       </div>
