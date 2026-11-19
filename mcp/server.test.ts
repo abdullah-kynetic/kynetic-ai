@@ -237,6 +237,34 @@ describe("configuration and errors", () => {
       }),
     ).toThrow();
   });
+  test("bounds simultaneous requests and response size", async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const handler = createHandler(
+      new URL("http://localhost"),
+      new Map([["alpha", alphaToken]]),
+      async () => {
+        await gate;
+        return Response.json({ ok: true });
+      },
+    );
+    const pending = Array.from({ length: 4 }, () => handler("get_client", { client: "alpha" }));
+    await expect(handler("get_client", { client: "alpha" })).rejects.toThrow(
+      "Request limit exceeded",
+    );
+    release();
+    await Promise.all(pending);
+    const large = createHandler(
+      new URL("http://localhost"),
+      new Map([["alpha", alphaToken]]),
+      async () => new Response("x".repeat(2_000_001)),
+    );
+    await expect(large("get_client", { client: "alpha" })).rejects.toThrow(
+      "Portal response too large",
+    );
+  });
   test("hides token and transport errors", async () => {
     const registry = new Map([["alpha", alphaToken]]);
     const handler = createHandler(new URL("http://localhost"), registry, async () =>
@@ -248,6 +276,8 @@ describe("configuration and errors", () => {
     const failed = createHandler(new URL("http://localhost"), registry, async () => {
       throw new Error(alphaToken);
     });
-    expect(failed("get_client", { client: "alpha" })).rejects.toThrow("Portal request failed");
+    await expect(failed("get_client", { client: "alpha" })).rejects.toThrow(
+      "Portal request failed",
+    );
   });
 });
