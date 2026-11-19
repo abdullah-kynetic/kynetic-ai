@@ -65,6 +65,22 @@ describe('stdio protocol and portal contracts', () => {
     expect(text(await call('get_contact', { client: 'beta', id: alphaId }))).toContain('HTTP 404');
     expect(text(await call('get_contact', { client: 'alpha', id: alphaId }))).toContain('alpha');
   });
+  test('all read routes use their declared method, path and parameters', async () => {
+    for (const tool of TOOLS.filter((item) => item.access === 'read' && item.route && item.name !== 'get_kpi_summary')) {
+      const args: Record<string, unknown> = { client: 'alpha' };
+      for (const param of tool.pathParams) args[param] = alphaId;
+      const result = await call(tool.name, args);
+      expect(result.isError, tool.name).not.toBe(true);
+      const last = requests.at(-1)!;
+      expect(last.method, tool.name).toBe('GET');
+      expect(last.path, tool.name).toBe(tool.route!.path.replace(/\{\w+\}/g, alphaId));
+      expect(last.tenant, tool.name).toBe('alpha');
+    }
+  });
+  test('rejects unauthorized portal responses without exposing response text', async () => {
+    const handler = createHandler(new URL(`http://127.0.0.1:${portal.port}`), new Map([['alpha', 'synthetic-invalid-token']]));
+    await expect(handler('get_client', { client: 'alpha' })).rejects.toThrow('HTTP 401');
+  });
   test('KPI returns each client separately and refuses unknown clients', async () => {
     const result = text(await call('get_kpi_summary', { clients: ['alpha', 'beta'], from: '2026-01-01', to: '2026-01-02' }));
     expect(result).toContain('alpha'); expect(result).toContain('beta');
@@ -91,6 +107,8 @@ describe('stdio protocol and portal contracts', () => {
       expect(last.method).toBe(method); expect(last.path).toBe(path); expect(last.key).toBe(args.idempotencyKey);
       expect(JSON.parse(last.body)).toEqual(Object.fromEntries(Object.entries(input).filter(([key]) => key !== 'id')));
     }
+    const conflict = await call('create_task', { client: 'alpha', idempotencyKey: 'test_create_task', title: 'different' });
+    expect(text(conflict)).toContain('HTTP 409');
     expect(outbound).toBe(0);
     expect(text(await call('update_task', { client: 'alpha', id: alphaId, idempotencyKey: 'another_key' }))).toContain('Invalid');
   });
