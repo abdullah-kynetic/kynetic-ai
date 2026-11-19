@@ -16,6 +16,8 @@ For each changed route preserve existing server guards, tenant and module bounda
 
 Owned files are the Settings route and component files under `crm/src/app/dashboard/settings/`, route-specific tests/evidence, and this log. Shared shell, tokens and server contracts are out of scope. Later batches must name their files here before editing. Docs alignment follows page work.
 
+The custom-field manager at `crm/src/features/custom-fields/custom-fields-manager.tsx` is used by the Settings route and is included for a presentation-only mobile row fix; its actions and server types remain untouched.
+
 ## Status
 
 The older `docs/ui/AGENCY-DESIGN.md` describes a historical agency pass and conflicts with the newer root `DESIGN.md` on typography; use the newer redesign contract for this sequence.
@@ -25,3 +27,5 @@ The older `docs/ui/AGENCY-DESIGN.md` describes a historical agency pass and conf
 Nine client settings routes use a Settings-local redesign header; business hours have responsive rows and token-based cards, and team member names no longer collapse on mobile. Authorization, module checks, form actions and server logic are unchanged. Before/after synthetic captures at 390 and 1280 are in `docs/redesign/pr-8/`, plus a dark mobile business capture. Mobile review exposed cramped custom-field rows in the separate feature component; that component is not yet changed. The remaining Settings forms need a fuller polish and state review; this is not completion of position 8.
 
 Local build, typecheck and lint passed; unit suite passed 663 tests on retry after one worker timed out during parallel load. Browser checks passed 4/4: route overflow, mocked business save/error, dark/focus and CRM-disabled pipeline. Full integration is running. Permission-denied browser coverage, exhaustive dark/desktop visual inspection, all form error states, CI for the final commit, and remaining pages/docs remain open. Local tests use an isolated `/tmp` PostgreSQL 16 cluster and synthetic provider stubs; no production database was used.
+
+The custom-field row now gives the label a full mobile line. Build, typecheck, lint, 663 unit tests and the four Settings browser checks passed after this change. The updated mobile capture is `docs/redesign/pr-8/after-custom-fields-390.png`; full integration remains in progress.

@@ -394,9 +394,9 @@ function EntityFields({
         >
           {defs.map((d, i) => (
             <li key={d.id} className='flex flex-wrap items-center gap-3 p-3'>
-              <div className='min-w-0 flex-1'>
-                <p className='font-medium'>{d.label}</p>
-                <p className='text-muted-foreground text-sm'>
+              <div className='min-w-0 basis-full sm:basis-auto sm:flex-1'>
+                <p className='font-medium break-words'>{d.label}</p>
+                <p className='text-muted-foreground text-sm break-all'>
                   {CUSTOM_FIELD_TYPE_LABELS[d.type]} · <code>{d.key}</code>
                   {d.options.length ? ` · ${d.options.length} options` : ''}
                 </p>
