@@ -42,6 +42,9 @@ test('Business settings report save success and validation errors', async ({
     await timeZone.fill('America/Denver');
     await save.click();
     await expect(page.getByRole('status').filter({ hasText: 'Saved.' })).toBeVisible();
+    await timeZone.fill('America/Chicago');
+    await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await expect(timeZone).toHaveValue('America/Denver');
     await page.reload();
     await expect(timeZone).toHaveValue('America/Denver');
   } finally {
@@ -107,6 +110,22 @@ test('Notification preferences show a save error', async ({ authenticatedPage: p
   await expect(
     page.getByRole('alert').filter({ hasText: 'Preferences were not saved' })
   ).toContainText('Unable to save preferences');
+});
+
+test('Notification preferences stay editable after an invalid success response', async ({
+  authenticatedPage: page
+}) => {
+  await page.goto('/dashboard/settings/notifications');
+  await page.route('**/api/settings/notifications', (route) =>
+    route.fulfill({ status: 200, json: { ok: true } })
+  );
+  const save = page.getByRole('button', { name: 'Save preferences' });
+  await save.click();
+  await expect(
+    page.getByRole('alert').filter({ hasText: 'Preferences were not saved' })
+  ).toContainText('Could not save.');
+  await expect(save).toBeEnabled();
+  await expect(page.getByRole('checkbox').first()).toBeVisible();
 });
 
 test('Staff can read business settings and cannot manage the team or branding', async ({

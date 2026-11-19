@@ -26,6 +26,7 @@ type Initial = {
 
 /** One window per day in this form; days with two windows keep the extra window until edited. */
 export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: boolean }) {
+  const [savedSettings, setSavedSettings] = useState(initial);
   const [hours, setHours] = useState(initial.businessHours);
   const [zips, setZips] = useState((initial.serviceArea.zips ?? []).join(', '));
   const [services, setServices] = useState(initial.services.join('\n'));
@@ -36,11 +37,11 @@ export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: 
   const [saving, setSaving] = useState(false);
 
   function cancel() {
-    setHours(initial.businessHours);
-    setZips((initial.serviceArea.zips ?? []).join(', '));
-    setServices(initial.services.join('\n'));
-    setTransfer(initial.transferNumber ?? '');
-    setTimezone(initial.timezone);
+    setHours(savedSettings.businessHours);
+    setZips((savedSettings.serviceArea.zips ?? []).join(', '));
+    setServices(savedSettings.services.join('\n'));
+    setTransfer(savedSettings.transferNumber ?? '');
+    setTimezone(savedSettings.timezone);
     setFieldErrors({});
     setStatus(null);
   }
@@ -75,7 +76,7 @@ export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: 
         })
       });
       const body = await res.json().catch(() => ({}));
-      const errors = body.error?.fieldErrors as Record<string, string[] | undefined> | undefined;
+      const errors = body?.error?.fieldErrors as Record<string, string[] | undefined> | undefined;
       setFieldErrors(
         Object.fromEntries(
           Object.entries(errors ?? {}).map(([key, messages]) => [
@@ -84,16 +85,12 @@ export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: 
           ])
         )
       );
-      setStatus(
-        res.ok
-          ? { ok: true, text: 'Saved.' }
-          : {
-              ok: false,
-              text: body.error?.fieldErrors
-                ? `Check these fields: ${Object.keys(body.error.fieldErrors).join(', ')}`
-                : (body.error?.message ?? 'Could not save.')
-            }
-      );
+      if (res.ok && body?.ok === true && body.settings) {
+        setSavedSettings(body.settings);
+        setStatus({ ok: true, text: 'Saved.' });
+      } else {
+        setStatus({ ok: false, text: body?.error?.message ?? 'Could not save.' });
+      }
     } catch {
       setStatus({ ok: false, text: 'Could not save. Check your connection and try again.' });
     } finally {
@@ -133,6 +130,9 @@ export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: 
               </p>
             )}
           </div>
+          {fieldErrors.businessHours && (
+            <p className='text-destructive text-sm'>{fieldErrors.businessHours}</p>
+          )}
           {DAYS.map(([key, label]) => {
             const w = hours[key]?.[0];
             return (

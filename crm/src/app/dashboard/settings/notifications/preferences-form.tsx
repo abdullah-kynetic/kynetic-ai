@@ -19,6 +19,7 @@ const LABELS: Record<string, string> = {
 };
 
 export function PreferencesForm({ initial }: { initial: Pref[] }) {
+  const [savedPrefs, setSavedPrefs] = useState(initial);
   const [prefs, setPrefs] = useState(initial);
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<{ ok: boolean; text: string } | null>(null);
@@ -34,7 +35,11 @@ export function PreferencesForm({ initial }: { initial: Pref[] }) {
         body: JSON.stringify({ preferences: prefs })
       });
       const body = await res.json().catch(() => ({}));
-      if (!res.ok) return setStatus({ ok: false, text: body.error?.message ?? 'Could not save.' });
+      if (!res.ok || body?.ok !== true || !Array.isArray(body.preferences)) {
+        setStatus({ ok: false, text: body?.error?.message ?? 'Could not save.' });
+        return;
+      }
+      setSavedPrefs(body.preferences);
       setPrefs(body.preferences);
       setStatus({ ok: true, text: 'Preferences saved.' });
     } catch {
@@ -84,7 +89,7 @@ export function PreferencesForm({ initial }: { initial: Pref[] }) {
           variant='outline'
           disabled={busy}
           onClick={() => {
-            setPrefs(initial);
+            setPrefs(savedPrefs);
             setStatus(null);
           }}
         >
