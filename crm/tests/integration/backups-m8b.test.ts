@@ -74,7 +74,7 @@ describe('F-63 encrypted database backup and restore drill', () => {
     const after =
       await tdb.admin`select datname from pg_database where datname like 'kynetic_restore_%'`;
     expect(after).toHaveLength(0);
-  }, 30_000);
+  });
 
   it('backup role is a non-superuser with dump and scratch-restore privileges but no table writes', async () => {
     const grants =
