@@ -24,7 +24,7 @@ export function AlexControls({
 
   return (
     <form action={action} className='space-y-4'>
-      <div className='flex items-start gap-3'>
+      <div className='flex items-center gap-3'>
         <Checkbox id='paused' name='paused' defaultChecked={paused} />
         <label htmlFor='paused' className='text-sm leading-5'>
           Pause Alex. No calls start while paused.

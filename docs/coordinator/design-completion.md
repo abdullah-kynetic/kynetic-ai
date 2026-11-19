@@ -33,3 +33,9 @@ The custom-field row now gives the label a full mobile line. Build, typecheck, l
 The Settings browser suite now also checks that an unauthenticated visitor is redirected to sign-in (5/5 passed). A full integration run has reported a backup/restore test timeout and is still running; no integration pass is claimed.
 
 Notification preferences now use a readable card/list and labels for existing notification kinds. Build, typecheck, lint and 663 unit tests passed; Settings browser checks passed 6/6 including a mocked notification save failure. The updated before/after captures are in `docs/redesign/pr-8/`.
+
+### Escalation — 2026-11-19
+
+Stop after two failures on the same check, per task. The full integration run finished with 1022 passed, 2 skipped, and one failure: `tests/integration/backups-m8b.test.ts`, `F-63 encrypted database backup and restore drill > runs a real pg_dump, encrypts it, uploads it, restores to scratch, verifies tenant schema and removes scratch`, timed out at 5000 ms. An isolated retry of that file also timed out at 5000 ms (4 passed, 1 failed). Both used the disposable local PostgreSQL 16 cluster on 127.0.0.1:55432 with extracted client/server binaries. The timeout was not increased and the test was not changed. Escalate to the Coordinator for one-model-up investigation; no integration-green claim is made.
+
+A final presentation-only alignment of the Alex pause checkbox is saved as WIP: build, typecheck, lint and 663 unit tests passed with it, but browser review and final-commit CI are pending. Settings and all later pages/docs remain unfinished. Branch pushes have no GitHub workflow runs, so CI evidence is absent. No migrations or production changes.
