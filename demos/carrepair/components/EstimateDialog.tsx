@@ -6,7 +6,7 @@ import { ease } from "./ui";
 
 // "Get your free estimate" pop-up: one question per screen, answers saved in this browser for 30 days.
 // Nothing is sent anywhere. Photos stay in memory (files cannot be saved in localStorage).
-const KEY = "aa-estimate-v1";
+const KEY = "aa-estimate-v2";
 const DAYS30 = 30 * 864e5;
 const LETTERS = "ABCD";
 const COUNT = 7;
@@ -134,7 +134,6 @@ export function EstimateDialog() {
     e.preventDefault();
     const t = (k: string) => (v[k] ?? "").trim();
     if (step === "1") {
-      if (v.trap) { go("done"); return; }
       if (!t("name")) return setErr("Please enter your name.");
       if ((t("phone").match(/\d/g) ?? []).length < 7) return setErr("Please enter a phone number.");
       if (t("email") && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(t("email"))) return setErr("Please enter a valid email address.");
@@ -194,7 +193,7 @@ export function EstimateDialog() {
                         <Field v={v} set={set} k="name" label="Name" autoComplete="name" placeholder="Your full name" data-focus />
                         <Field v={v} set={set} k="phone" label="Phone number" type="tel" autoComplete="tel" placeholder="(214) 555-0100" />
                         <Field v={v} set={set} k="email" label="Email (optional)" type="email" autoComplete="email" placeholder="you@email.com" />
-                        <input className="sr-only" name="trap" tabIndex={-1} autoComplete="off" aria-hidden value={v.trap ?? ""} onChange={(e) => set("trap", e.target.value)} />
+                        
                         <p className="mt-4 text-[13px] text-muted">We&rsquo;ll use these details to contact you about your free estimate.</p>
                       </>)}
                       {step === "2" && (<><Q n={2} id="est-title">What are we repairing?</Q><Field v={v} set={set} k="vehicle" label="Year / Make / Model" placeholder="e.g. 2018 Honda Accord" data-focus /></>)}
