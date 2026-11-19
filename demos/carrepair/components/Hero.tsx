@@ -35,7 +35,7 @@ export function Hero() {
           <div className="relative flex min-h-[757px] flex-col justify-end gap-10 p-6 md:p-20 md:pb-[50px] lg:min-h-[880px] lg:flex-row lg:items-end lg:justify-between max-md:min-h-[820px]">
             <div className="pb-0">
               <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="eyebrow !text-[14px] !tracking-[.05em] !text-white">{site.tagline}</motion.p>
-              <h1 className="mt-2 font-[family-name:var(--font-head)] text-[56px] font-medium leading-[1.05] tracking-[-0.03em] text-white sm:text-[100px] sm:leading-[1.15] lg:text-[72px] min-[1280px]:text-[100px]">
+              <h1 className="mt-2 font-[family-name:var(--font-head)] text-[44px] font-medium leading-[1.05] tracking-[-0.03em] text-white min-[390px]:text-[56px] sm:text-[100px] sm:leading-[1.15] lg:text-[72px] min-[1280px]:text-[100px]">
                 {["Quality Work.", "Honest Service."].map((l, i) => (
                   <span key={l} className="block overflow-hidden pb-1">
                     <motion.span className="block" initial={{ y: "110%" }} animate={{ y: 0 }} transition={{ duration: 0.9, ease, delay: 0.35 + i * 0.12 }}>{l}</motion.span>

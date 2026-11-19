@@ -20,7 +20,7 @@ export function Header() {
         <div className="flex items-center gap-3">
           <Button href={`tel:${site.tel}`} className="!h-[43px] max-sm:hidden">Call&nbsp; {site.phone}</Button>
           <Button href={`sms:${site.tel}`} variant="outline" className="!h-[43px] max-sm:hidden">Text</Button>
-          <button className="text-2xl md:hidden" aria-label="Menu" aria-expanded={open} onClick={() => setOpen(!open)}>☰</button>
+          <button className="grid h-11 w-11 place-items-center text-2xl md:hidden" aria-label="Menu" aria-expanded={open} onClick={() => setOpen(!open)}>☰</button>
         </div>
       </div>
       {open && (
