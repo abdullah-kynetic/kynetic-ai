@@ -11,7 +11,7 @@ export function Header() {
   useMotionValueEvent(scrollY, "change", (v) => setStuck(v > 24));
   return (
     <motion.header initial={{ y: -40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}
-      className={`fixed inset-x-0 top-0 z-50 transition-colors ${stuck ? "bg-white/90 shadow-sm backdrop-blur" : "bg-transparent"}`}>
+      className={`fixed inset-x-0 top-0 z-50 transition-colors ${stuck ? "bg-white/90 text-dark shadow-sm backdrop-blur" : "bg-transparent text-white"}`}>
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5">
         <a href="#top" className="flex items-center gap-2 text-lg font-bold">
           <span className="grid h-7 w-7 place-items-center rounded-full bg-sun text-xs text-ink">C</span>{site.name}
