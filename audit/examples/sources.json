@@ -1,0 +1,37 @@
+{
+  "reviewed": "2026-11-19",
+  "method": "Read-only review of indexed public pages. Index snapshots can lag the live page. No forms submitted or contact attempted.",
+  "businesses": [
+    {
+      "slug": "pri-premiere", "name": "PRI-Premiere Roofing", "location": "Livermore, California",
+      "priority": "Give repair, replacement and commercial requests a distinct path from the estimate button to the right estimator.",
+      "observations": [
+        ["Estimate intake", "The contact page pairs an estimate invitation with published weekday office hours of 8 am to 5 pm. Weekend hours are listed as closed.", "Check who owns an estimate request received on Friday evening and measure the time until its first human response.", "https://pripremiereroofing.com/Contact-Us"],
+        ["Website and search", "The roofing catalog links city-specific inspection and leak-repair content, including Livermore.", "Connect each landing page to its estimate outcome so the team can see which services generate qualified requests.", "https://pripremiereroofing.com/roofing"],
+        ["Review evidence", "The homepage displays three review summaries. The largest displayed count is 55. These are publisher-displayed figures.", "Link each summary to its originating profile and date the snapshot before using it in an estimate packet.", "https://pripremiereroofing.com/"],
+        ["Project proof", "The portfolio identifies a Sagewood hip roof in Livermore.", "Show a relevant local project alongside the matching estimate invitation.", "https://pripremiereroofing.com/Portfolio"],
+        ["Local comparison", "Nearby Moran Roofing asks for project location and project type on its estimate page.", "Compare how much an estimator can learn from the initial request before making a callback.", "https://moranroofing.com/contact/"]
+      ]
+    },
+    {
+      "slug": "moran", "name": "Moran Roofing", "location": "Livermore, California",
+      "priority": "Follow referrals through the estimate pipeline and measure which project types reach a booked inspection.",
+      "observations": [
+        ["Estimate intake", "The estimate form requests project location and project type alongside contact details.", "Use those existing fields to assign the estimator and measure time to first response by job type.", "https://moranroofing.com/contact/"],
+        ["Website and search", "The homepage describes referrals as a leading source of work and lists HOA, commercial, repair and insulation services.", "Capture referral source and service category separately so a commercial referral can be counted in both views.", "https://moranroofing.com/"],
+        ["Review evidence", "CertainTeed shows a 4.82 rating across 150 reviews on its contractor profile and lists the business in Livermore.", "Keep this manufacturer profile distinct from Google when tracking reputation over time.", "https://www.certainteed.com/profiles/moran-roofing-inspection-co-inc"],
+        ["Local comparison", "PRI-Premiere publishes a named local roofing project in its portfolio.", "Attach a comparable completed project to HOA and multi-family estimate conversations where permission allows.", "https://pripremiereroofing.com/Portfolio"]
+      ]
+    },
+    {
+      "slug": "maciel", "name": "Maciel Roofing Construction", "location": "Hayward, California",
+      "priority": "Bring phone and email estimate requests into a single work queue with a named owner.",
+      "observations": [
+        ["Estimate intake", "The contact page invites free estimate requests and publishes phone, fax and email channels.", "Sample a week of inbound requests and check whether every channel produces a dated estimate record.", "https://www.macielroofing.com/contact-us.html"],
+        ["Website and search", "The contact page identifies the company and its Hayward office.", "Check that the same business name and service area appear on the pages that attract replacement and gutter prospects.", "https://www.macielroofing.com/contact-us.html"],
+        ["Reputation evidence", "BBB lists accreditation and an A+ business rating. The grade measures BBB criteria and is distinct from a customer star average.", "Keep accreditation and customer feedback separately labeled in proposals.", "https://www.bbb.org/us/ca/hayward/profile/roofing-contractors/maciel-roofing-company-1116-19451"],
+        ["Local comparison", "East Bay contractor Moran Roofing collects project type and location in a structured estimate request.", "Evaluate a short project intake for customers who prefer writing, while preserving the phone path.", "https://moranroofing.com/contact/"]
+      ]
+    }
+  ]
+}
