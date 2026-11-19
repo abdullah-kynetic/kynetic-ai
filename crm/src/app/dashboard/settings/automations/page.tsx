@@ -1,4 +1,4 @@
-import { SettingsPage as PageContainer } from '../settings-page';
+import { SettingsPage } from '../settings-page';
 import { AutomationHistoryDrawer } from '@/components/automations/history-drawer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -37,7 +37,7 @@ export default async function AutomationSettingsPage() {
     )
   );
   return (
-    <PageContainer
+    <SettingsPage
       pageTitle='Automations'
       pageDescription='Turn approved follow-up templates on or off, and see how recent runs finished.'
     >
@@ -76,7 +76,7 @@ export default async function AutomationSettingsPage() {
           );
         })}
       </div>
-    </PageContainer>
+    </SettingsPage>
   );
 }
 

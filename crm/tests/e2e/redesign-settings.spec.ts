@@ -99,3 +99,27 @@ test('Notification preferences show a save error', async ({ authenticatedPage: p
     page.getByRole('status').filter({ hasText: 'Unable to save preferences' })
   ).toBeVisible();
 });
+
+test('Staff can read business settings and cannot manage the team or branding', async ({
+  browser
+}) => {
+  const context = await browser.newContext({ storageState: '/tmp/kynetic-crm-e2e-staff.json' });
+  try {
+    const page = await context.newPage();
+    await page.goto('/dashboard/settings/business');
+    await expect(page.getByRole('heading', { name: 'Business settings' })).toBeVisible();
+    await expect(page.getByLabel('Time zone')).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Save', exact: true })).toHaveCount(0);
+
+    await page.goto('/dashboard/settings/team');
+    await expect(page.getByRole('heading', { name: 'Team', exact: true })).toBeVisible();
+    await expect(page.getByRole('status').filter({ hasText: 'You do not have access' })).toBeVisible();
+
+    await page.goto('/dashboard/settings/branding');
+    await expect(page.getByRole('heading', { name: 'Branding' })).toBeVisible();
+    await expect(page.getByText('Only the account owner can change branding.')).toBeVisible();
+    await expect(page.getByLabel('Business name')).toHaveCount(0);
+  } finally {
+    await context.close();
+  }
+});

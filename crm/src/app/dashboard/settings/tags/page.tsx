@@ -1,4 +1,4 @@
-import { SettingsPage as PageContainer } from '../settings-page';
+import { SettingsPage } from '../settings-page';
 import { can } from '@/server/auth/permissions';
 import { stageScope } from '@/server/deals';
 import { isModuleEnabled } from '@/server/modules';
@@ -14,21 +14,21 @@ export default async function TagSettingsPage() {
   // F-85: tag settings belong to CRM Lite. Tags can still be applied to a contact without it.
   if (!(await isModuleEnabled(ctx, 'crm', { level: 'lite' }))) {
     return (
-      <PageContainer
+      <SettingsPage
         pageTitle='Tags'
         access={false}
         accessFallback={
-          <p className='text-muted-foreground text-center text-lg'>
+          <p className='text-muted-foreground text-sm'>
             Tag settings are part of the CRM build-out. Ask Kynetic to add it to your plan.
           </p>
         }
       >
         {null}
-      </PageContainer>
+      </SettingsPage>
     );
   }
   return (
-    <PageContainer
+    <SettingsPage
       pageTitle='Tags'
       pageDescription='Create, rename and remove the tags you put on contacts.'
     >
@@ -36,6 +36,6 @@ export default async function TagSettingsPage() {
         initial={await listTags(ctx)}
         canEdit={can(actor, 'settings.business', ctx.tenantId)}
       />
-    </PageContainer>
+    </SettingsPage>
   );
 }

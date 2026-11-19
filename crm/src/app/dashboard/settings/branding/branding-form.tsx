@@ -33,7 +33,7 @@ export function BrandingForm({ initial }: { initial: Initial }) {
 
   return (
     <form
-      className='flex max-w-xl flex-col gap-6'
+      className='bg-card flex w-full max-w-xl flex-col gap-6 rounded-xl border p-4 sm:p-6'
       action={(fd) => start(async () => setResult(await saveBrandingAction(fd)))}
     >
       <div className='flex flex-col gap-2'>

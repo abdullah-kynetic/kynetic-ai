@@ -9,6 +9,7 @@ import { importArchive } from '../../src/server/archive';
 const port = Number(process.env.E2E_PORT ?? 3100);
 const baseUrl = `http://localhost:${port}`;
 const storagePath = join('/tmp', 'kynetic-crm-e2e-owner.json');
+const staffStoragePath = join('/tmp', 'kynetic-crm-e2e-staff.json');
 const adminStoragePath = join('/tmp', 'kynetic-crm-e2e-admin.json');
 const vaStoragePath = join('/tmp', 'kynetic-crm-e2e-va.json');
 const enrolStoragePath = join('/tmp', 'kynetic-crm-e2e-enrol.json');
@@ -19,12 +20,12 @@ let db: TestDatabase | undefined;
 let child: ReturnType<typeof spawn> | undefined;
 
 // Authenticated synthetic storage state. Production builds never enable persona switching.
-async function sessionState(persona: 'owner' | 'admin' | 'va'): Promise<string> {
-  const userId = { owner: IDS.ownerA, admin: IDS.admin, va: IDS.va }[persona];
+async function sessionState(persona: 'owner' | 'staff' | 'admin' | 'va'): Promise<string> {
+  const userId = { owner: IDS.ownerA, staff: IDS.staffA, admin: IDS.admin, va: IDS.va }[persona];
   const token = randomBytes(32).toString('hex');
   await db!.admin`insert into sessions (user_id, token, expires_at, two_factor_verified_at)
     values (${userId}, ${token}, now() + interval '1 hour', now())`;
-  if (persona !== 'owner')
+  if (persona === 'admin' || persona === 'va')
     await db!.admin`update users set two_factor_enabled = true where id = ${userId}`;
   const signature = createHmac('sha256', secret).update(token).digest('base64');
   return JSON.stringify({
@@ -147,6 +148,7 @@ async function main(): Promise<void> {
     values (${ENROL_USER}, ${enrolToken}, now() + interval '1 hour')`;
   const enrolSignature = createHmac('sha256', secret).update(enrolToken).digest('base64');
   await writeFile(storagePath, await sessionState('owner'));
+  await writeFile(staffStoragePath, await sessionState('staff'));
   await writeFile(adminStoragePath, await sessionState('admin'));
   await writeFile(vaStoragePath, await sessionState('va'));
   await writeFile(

@@ -1,4 +1,4 @@
-import { SettingsPage as PageContainer } from '../settings-page';
+import { SettingsPage } from '../settings-page';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { can, getSessionUser, resolveActor } from '@/server/auth';
@@ -67,7 +67,7 @@ export default async function AlexSettingsPage({
   const settings = await withTenant(ctx, (tx) => getAlexSettingsView(tx));
 
   return (
-    <PageContainer
+    <SettingsPage
       pageTitle='Alex settings'
       pageDescription='How Alex answers and when Alex calls. You can pause Alex and set call hours here. To change anything else, ask Kynetic.'
     >
@@ -169,6 +169,6 @@ export default async function AlexSettingsPage({
           </Card>
         </div>
       )}
-    </PageContainer>
+    </SettingsPage>
   );
 }
