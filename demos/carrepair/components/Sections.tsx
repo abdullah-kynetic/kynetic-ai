@@ -14,7 +14,7 @@ export function Services() {
     <section id="services" className={`${wrap} pt-[120px]`}>
       <div className="flex items-end justify-between gap-4">
         <Reveal><h2 className="h2">What we do</h2></Reveal>
-        <Button href="#contact" variant="outline" className="shrink-0 max-sm:hidden">Get a free estimate</Button>
+        <Button href="#estimate" variant="outline" className="shrink-0 max-sm:hidden">Get a free estimate</Button>
       </div>
       <Stagger className="mt-[30px] grid gap-[30px] sm:grid-cols-2 lg:grid-cols-3">
         {c.services.map((s, i) => (
@@ -144,7 +144,7 @@ export function Team() {
         <div className="flex flex-col justify-between gap-8 rounded-[20px] bg-dark p-[40px] text-white">
           <img src={img.quote} alt="" width={35} height={30} />
           <p className={`${head} text-[26px] font-medium leading-[1.3] tracking-[-0.04em] sm:text-[28px]`}>{c.founderQuote}</p>
-          <div><p className={`${head} text-[18px] font-medium tracking-[-0.03em]`}>{c.founder.name}</p><p className="font-[family-name:var(--font-mono)] text-[14px] text-white/70">{c.founder.role}</p><Button href="#contact" className="mt-6">Get your free estimate</Button></div>
+          <div><p className={`${head} text-[18px] font-medium tracking-[-0.03em]`}>{c.founder.name}</p><p className="font-[family-name:var(--font-mono)] text-[14px] text-white/70">{c.founder.role}</p><Button href="#estimate" className="mt-6">Get your free estimate</Button></div>
         </div>
       </Reveal>
     </section>
@@ -253,7 +253,7 @@ export function CTAFooter() {
           <Reveal className="relative">
             <p className="eyebrow !text-white/60">Ready when you are</p>
             <h2 className={`${head} mx-auto mt-4 max-w-[760px] text-[56px] font-medium leading-[1.1] tracking-[-0.045em] sm:text-[90px] sm:leading-[1.15]`}>Get your free estimate today.</h2>
-            <div className="mt-[50px] flex flex-wrap justify-center gap-5"><Button href="#contact" variant="glass">Get your free estimate</Button><Button href={`tel:${c.site.tel}`}>Call&nbsp; {c.site.phone}</Button><Button href={`sms:${c.site.tel}`} variant="white">Text us</Button></div>
+            <div className="mt-[50px] flex flex-wrap justify-center gap-5"><Button href="#estimate" variant="glass">Get your free estimate</Button><Button href={`tel:${c.site.tel}`}>Call&nbsp; {c.site.phone}</Button><Button href={`sms:${c.site.tel}`} variant="white">Text us</Button></div>
           </Reveal>
         </div>
         <div className="grid gap-10 px-[30px] py-[80px] md:grid-cols-[1fr_212px_373px] md:gap-0 md:px-[80px]">

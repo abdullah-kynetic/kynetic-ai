@@ -18,7 +18,7 @@ export const nav = [
   { label: "Home", href: "#top" },
   { label: "Services", href: "#services" },
   { label: "About", href: "#about" },
-  { label: "Contact", href: "#contact" },
+  { label: "Contact", href: "#estimate" },
 ];
 
 export const contactOptions = ["Call", "Text"];

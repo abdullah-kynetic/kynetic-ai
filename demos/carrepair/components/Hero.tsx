@@ -1,7 +1,6 @@
 "use client";
 import { motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
-import { confirmation, contactOptions, site, ticker } from "@/lib/content";
+import { site, ticker } from "@/lib/content";
 import { img } from "@/lib/img";
 import { ease } from "./ui";
 
@@ -9,59 +8,19 @@ const field = "h-[42px] w-full rounded-full border border-line bg-white px-4 tex
 const label = "mt-[12px] block text-[14px] tracking-[-0.02em]";
 const arrow = "appearance-none bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%2214%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222%22><path d=%22M2 4l5 5 5-5%22/></svg>')] bg-[length:14px] bg-[position:right_16px_center] bg-no-repeat";
 
-// Nothing in this form is sent anywhere. Photos stay in the browser tab.
-function EstimateForm() {
-  const [done, setDone] = useState(false);
-  const [thumbs, setThumbs] = useState<{ url: string; name: string }[]>([]);
-  const urls = useRef<string[]>([]);
-  useEffect(() => () => urls.current.forEach((u) => URL.revokeObjectURL(u)), []);
-  const onFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const next = Array.from(e.target.files ?? []).filter((f) => f.type.startsWith("image/")).map((f) => ({ url: URL.createObjectURL(f), name: f.name }));
-    urls.current.push(...next.map((n) => n.url));
-    setThumbs((t) => [...t, ...next]);
-    e.target.value = "";
-  };
+function EstimateCard() {
   return (
-    <motion.form onSubmit={(e) => { e.preventDefault(); setDone(true); }} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease, delay: 0.6 }}
-      id="contact" className="w-full rounded-[24px] bg-white p-[26px] lg:absolute lg:bottom-[30px] lg:right-[30px] lg:w-[420px]">
-      {done ? (
-        <div role="status" className="py-10 text-center">
-          <h2 className="font-[family-name:var(--font-head)] text-[24px] font-medium tracking-[-0.04em]">Thank you</h2>
-          <p className="body mt-4 text-[16px] text-black">{confirmation}</p>
-        </div>
-      ) : (
-        <>
-          <h2 className="font-[family-name:var(--font-head)] text-[24px] font-medium tracking-[-0.04em]">Get your free estimate</h2>
-          <label className={label}>Name*<input required name="name" autoComplete="name" className={`${field} mt-1.5`} placeholder="Your full name" /></label>
-          <div className="grid grid-cols-2 gap-3 max-sm:grid-cols-1">
-            <label className={label}>Phone*<input required name="phone" type="tel" autoComplete="tel" className={`${field} mt-1.5`} placeholder="Your number" /></label>
-            <label className={label}>Email<input name="email" type="email" autoComplete="email" className={`${field} mt-1.5`} placeholder="you@email.com" /></label>
-          </div>
-          <label className={label}>Year / Make / Model<input name="vehicle" className={`${field} mt-1.5`} placeholder="e.g. 2018 Honda Accord" /></label>
-          <label className={label}>What happened<textarea name="what" rows={2} className={`${field} mt-1.5 !h-[64px] resize-none !rounded-[20px] py-2.5`} placeholder="A short description" /></label>
-          <div className="grid grid-cols-2 gap-3 max-sm:grid-cols-1">
-            <label className={label}>Insurance company<input name="insurance" className={`${field} mt-1.5`} placeholder="Optional" /></label>
-            <label className={label}>Claim #<input name="claim" className={`${field} mt-1.5`} placeholder="Optional" /></label>
-          </div>
-          <div className="grid grid-cols-2 gap-3 max-sm:grid-cols-1">
-            <label className={label}>Preferred contact
-              <select name="contact" defaultValue="Call" className={`${field} ${arrow} mt-1.5`}>{contactOptions.map((o) => <option key={o}>{o}</option>)}</select>
-            </label>
-            <label className={label}>Drop-off date<input name="date" type="date" className={`${field} mt-1.5`} /></label>
-          </div>
-          <label className={label}>Damage photos
-            <span className="mt-1.5 flex h-[42px] cursor-pointer items-center justify-center rounded-full border border-dashed border-black/30 text-[14px] text-muted hover:border-black">+ Add photos</span>
-            <input type="file" name="photos" accept="image/*" multiple onChange={onFiles} className="sr-only" />
-          </label>
-          {thumbs.length > 0 && (
-            <ul className="mt-2 flex flex-wrap gap-2" aria-label="Selected photos">
-              {thumbs.map((t, i) => <li key={t.url}><img src={t.url} alt={`Damage photo ${i + 1}`} title={t.name} width={44} height={44} className="h-[44px] w-[44px] rounded-[10px] object-cover" /></li>)}
-            </ul>
-          )}
-          <motion.button whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }} className="mt-4 h-[42px] w-full rounded-full bg-sun/80 text-[16px] font-medium">Get my free estimate</motion.button>
-        </>
-      )}
-    </motion.form>
+    <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease, delay: 0.6 }}
+      id="contact" className="w-full rounded-[24px] bg-white p-[30px] lg:absolute lg:bottom-[30px] lg:right-[30px] lg:w-[400px]">
+      <h2 className="font-[family-name:var(--font-head)] text-[24px] font-medium tracking-[-0.04em]">Get your free estimate</h2>
+      <p className="body mt-3">Answer a few quick questions and add photos of the damage. We&rsquo;ll call or text you with your free estimate.</p>
+      <motion.a href="#estimate" whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }} className="mt-6 flex h-[50px] w-full items-center justify-center rounded-full bg-sun text-[16px] font-medium">Get my free estimate</motion.a>
+      <div className="mt-3 grid grid-cols-2 gap-3">
+        <a href={`tel:${site.tel}`} className="flex h-[42px] items-center justify-center rounded-full border border-line text-[15px] font-medium hover:border-black">Call</a>
+        <a href={`sms:${site.tel}`} className="flex h-[42px] items-center justify-center rounded-full border border-line text-[15px] font-medium hover:border-black">Text</a>
+      </div>
+      <p className="mt-4 text-center text-[13px] text-muted">{site.hours}</p>
+    </motion.div>
   );
 }
 
@@ -87,7 +46,7 @@ export function Hero() {
                 We work with your insurance company and handle the claim, so you don&rsquo;t have to worry about the process.
               </motion.p>
             </div>
-            <EstimateForm />
+            <EstimateCard />
           </div>
         </div>
       </div>
