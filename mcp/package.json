@@ -1,0 +1,22 @@
+{
+  "name": "kynetic-local-mcp",
+  "private": true,
+  "scripts": {
+    "build": "bun build ./server.ts --target=bun --outdir=dist --packages=external",
+    "start": "bun run dist/server.js",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@types/bun": "1.4.4",
+    "@types/node": "26.6.6",
+    "typescript": "7.0.2"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1"
+  },
+  "version": "0.1.0",
+  "type": "module"
+}
