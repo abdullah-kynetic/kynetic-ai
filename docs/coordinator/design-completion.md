@@ -1,5 +1,9 @@
 # Portal design completion running log
 
+## Saved WIP — Sales board and migration 1092
+
+The uncommitted Sales board, its server action, the `1092_client_lifecycle` migration, and the Sales browser spec were saved together as WIP. The targeted Sales browser test failed while setting up its synthetic prospect: after clicking “Create synthetic agency workspace,” `/admin/prospecting` still showed the creation prompt, so the test timed out waiting for the Name field. The board drag and persistence path has **not** been verified. No production migration was run. This WIP is paused while Phase 1 Settings is audited.
+
 ## Design-finish baseline — 2026-11-19
 
 The requested `~/code/kai-design` directory is absent in this environment, so work continues in the existing clean-code `t3/design-finish` worktree. That worktree has pre-existing modified screenshots under `docs/screenshots/`; they are preserved and excluded from design-finish commits. `bun install --frozen-lockfile` made no changes. Baseline `PROVIDER_MODE=stub OUTBOUND_ENABLED=false bun run verify` passed typecheck, lint, formatting, 663 unit tests, deploy-script rehearsal, and production build. Integration was **BLOCKED** because no PostgreSQL 16 server was reachable on the configured local port. This failure predates edits in this run. No full verification pass is claimed.
