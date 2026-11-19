@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { SettingsPage as PageContainer } from '../settings-page';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { can, getSessionUser, resolveActor } from '@/server/auth';

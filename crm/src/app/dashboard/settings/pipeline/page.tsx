@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { SettingsPage as PageContainer } from '../settings-page';
 import { can } from '@/server/auth/permissions';
 import { listStagesWithCounts, stageScope } from '@/server/deals';
 import { isModuleEnabled } from '@/server/modules';

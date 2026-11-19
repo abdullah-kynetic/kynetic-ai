@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { SettingsPage as PageContainer } from '../settings-page';
 import { CustomFieldsManager } from '@/features/custom-fields/custom-fields-manager';
 import { customFieldsScope, listFieldDefs } from '@/server/custom-fields';
 import { headers } from 'next/headers';

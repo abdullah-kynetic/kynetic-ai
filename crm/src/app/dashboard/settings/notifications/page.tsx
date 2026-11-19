@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { SettingsPage as PageContainer } from '../settings-page';
 import { stageScope } from '@/server/deals';
 import { listMyPreferences } from '@/server/notifications';
 import { headers } from 'next/headers';

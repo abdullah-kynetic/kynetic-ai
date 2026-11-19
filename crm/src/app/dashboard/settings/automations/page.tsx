@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { SettingsPage as PageContainer } from '../settings-page';
 import { AutomationHistoryDrawer } from '@/components/automations/history-drawer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

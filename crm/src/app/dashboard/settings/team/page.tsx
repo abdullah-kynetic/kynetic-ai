@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { SettingsPage as PageContainer } from '../settings-page';
 import { can } from '@/server/auth/permissions';
 import { listTeam, settingsScope } from '@/server/settings';
 import { headers } from 'next/headers';

@@ -76,9 +76,13 @@ export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: 
   }
 
   return (
-    <form onSubmit={save} className='max-w-2xl space-y-8' aria-describedby='save-status'>
-      <fieldset disabled={!canEdit} className='space-y-8'>
-        <section className='space-y-3'>
+    <form
+      onSubmit={save}
+      className='w-full max-w-2xl space-y-6'
+      aria-describedby={canEdit ? 'save-status' : undefined}
+    >
+      <fieldset disabled={!canEdit} className='space-y-4'>
+        <section className='bg-card space-y-4 rounded-[var(--radius-card)] border p-4 sm:p-6'>
           <h2 className='text-lg font-semibold'>Business hours</h2>
           <div className='space-y-1'>
             <Label htmlFor='timezone'>Time zone</Label>
@@ -87,8 +91,11 @@ export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: 
           {DAYS.map(([key, label]) => {
             const w = hours[key]?.[0];
             return (
-              <div key={key} className='flex flex-wrap items-center gap-3'>
-                <span className='w-24 text-sm'>{label}</span>
+              <div
+                key={key}
+                className='grid grid-cols-2 items-center gap-3 border-t py-3 sm:grid-cols-[6rem_5rem_1fr_1fr]'
+              >
+                <span className='text-sm font-medium'>{label}</span>
                 <label className='flex items-center gap-2 text-sm'>
                   <input
                     type='checkbox'
@@ -102,14 +109,14 @@ export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: 
                     <Input
                       aria-label={`${label} opens`}
                       type='time'
-                      className='w-32'
+                      className='min-w-0 w-full'
                       value={w.open}
                       onChange={(e) => setDay(key, { open: e.target.value })}
                     />
                     <Input
                       aria-label={`${label} closes`}
                       type='time'
-                      className='w-32'
+                      className='min-w-0 w-full'
                       value={w.close}
                       onChange={(e) => setDay(key, { close: e.target.value })}
                     />
@@ -120,23 +127,23 @@ export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: 
           })}
         </section>
 
-        <section className='space-y-1'>
+        <section className='bg-card space-y-2 rounded-[var(--radius-card)] border p-4 sm:p-6'>
           <Label htmlFor='zips'>Service area (ZIP codes, comma separated)</Label>
           <Input id='zips' value={zips} onChange={(e) => setZips(e.target.value)} />
         </section>
 
-        <section className='space-y-1'>
+        <section className='bg-card space-y-2 rounded-[var(--radius-card)] border p-4 sm:p-6'>
           <Label htmlFor='services'>Services offered (one per line)</Label>
           <textarea
             id='services'
             rows={5}
-            className='border-input bg-background w-full rounded-md border p-2 text-sm'
+            className='border-input bg-background focus-visible:ring-ring w-full rounded-[var(--radius-control)] border p-3 text-sm focus-visible:ring-2 focus-visible:outline-none'
             value={services}
             onChange={(e) => setServices(e.target.value)}
           />
         </section>
 
-        <section className='space-y-1'>
+        <section className='bg-card space-y-2 rounded-[var(--radius-card)] border p-4 sm:p-6'>
           <Label htmlFor='transfer'>Transfer number (E.164, for example +15555550123)</Label>
           <Input
             id='transfer'

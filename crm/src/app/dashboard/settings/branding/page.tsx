@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { SettingsPage as PageContainer } from '../settings-page';
 import { can, requireUser, resolveActor } from '@/server/auth';
 import { getBranding, logoUrl } from '@/server/branding';
 import { loadShellContext } from '@/server/shell';

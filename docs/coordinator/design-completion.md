@@ -18,4 +18,10 @@ Owned files are the Settings route and component files under `crm/src/app/dashbo
 
 ## Status
 
-Inventory started; no redesign implemented or verified. The older `docs/ui/AGENCY-DESIGN.md` describes a historical agency pass and conflicts with the newer root `DESIGN.md` on typography; use the newer redesign contract for this sequence. Local dependencies installed with the frozen lockfile. This environment currently has no discovered PostgreSQL binaries, Docker, or browser executable; synthetic browser and integration prerequisites remain to be established.
+The older `docs/ui/AGENCY-DESIGN.md` describes a historical agency pass and conflicts with the newer root `DESIGN.md` on typography; use the newer redesign contract for this sequence.
+
+### Settings first pass (in progress)
+
+Nine client settings routes use a Settings-local redesign header; business hours have responsive rows and token-based cards, and team member names no longer collapse on mobile. Authorization, module checks, form actions and server logic are unchanged. Before/after synthetic captures at 390 and 1280 are in `docs/redesign/pr-8/`, plus a dark mobile business capture. Mobile review exposed cramped custom-field rows in the separate feature component; that component is not yet changed. The remaining Settings forms need a fuller polish and state review; this is not completion of position 8.
+
+Local build, typecheck and lint passed; unit suite passed 663 tests on retry after one worker timed out during parallel load. Browser checks passed 4/4: route overflow, mocked business save/error, dark/focus and CRM-disabled pipeline. Full integration is running. Permission-denied browser coverage, exhaustive dark/desktop visual inspection, all form error states, CI for the final commit, and remaining pages/docs remain open. Local tests use an isolated `/tmp` PostgreSQL 16 cluster and synthetic provider stubs; no production database was used.
