@@ -20,13 +20,12 @@ export function AlexControls({
     saveAlexSettings,
     {}
   );
-  const errorId = React.useId();
+  const [draftPaused, setDraftPaused] = React.useState<boolean | null>(null);
 
   return (
-    <form action={action} className='space-y-5'>
+    <form action={action} onReset={() => setDraftPaused(null)} className='space-y-5'>
       {state.error && (
         <div
-          id={errorId}
           role='alert'
           className='border-destructive/40 bg-destructive/10 text-destructive rounded-lg border p-4 text-sm'
         >
@@ -34,7 +33,12 @@ export function AlexControls({
         </div>
       )}
       <div className='flex items-center gap-3'>
-        <Checkbox id='paused' name='paused' defaultChecked={paused} />
+        <Checkbox
+          id='paused'
+          name='paused'
+          checked={draftPaused ?? paused}
+          onCheckedChange={setDraftPaused}
+        />
         <label htmlFor='paused' className='text-sm leading-5'>
           Pause Alex. No calls start while paused.
         </label>

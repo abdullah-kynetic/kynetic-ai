@@ -61,6 +61,36 @@ test('Business settings report save success and validation errors', async ({
   ).toContainText('Invalid settings');
 });
 
+test('Alex rejects invalid call hours and Cancel restores pause and hours', async ({
+  authenticatedPage: page
+}) => {
+  await page.goto('/dashboard/settings/alex');
+  const start = page.getByLabel('Calls start at');
+  const end = page.getByLabel('Calls stop at');
+  const pause = page.getByRole('checkbox', { name: /Pause Alex/ });
+  const originalStart = await start.inputValue();
+  const originalEnd = await end.inputValue();
+  const originallyPaused = await pause.isChecked();
+
+  await start.fill('20:00');
+  await end.fill('10:00');
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(
+    page.getByRole('alert').filter({ hasText: 'Alex settings were not saved' })
+  ).toContainText('Start must be before end.');
+
+  await page.reload();
+  await expect(start).toHaveValue(originalStart);
+  await expect(end).toHaveValue(originalEnd);
+  await expect(pause).toBeChecked({ checked: originallyPaused });
+
+  await start.fill('08:30');
+  await pause.click();
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await expect(start).toHaveValue(originalStart);
+  await expect(pause).toBeChecked({ checked: originallyPaused });
+});
+
 test('Settings stay usable in dark mode and with keyboard focus', async ({
   authenticatedPage: page
 }) => {
