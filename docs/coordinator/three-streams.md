@@ -32,3 +32,7 @@ Each small phase: build, unit/integration, typecheck/lint, local synthetic/e2e a
 Branch CI/protection was absent at setup; CI evidence must be obtained without claiming a branch push ran checks it did not. No repository protection changes are implied. SAFE/RISKY releases serialize after review, using merge commits via work into main, verified DB backup, exact SHA, migrations, health/auth/worker checks, unchanged stub/outbound flags and logs (10 minutes RISKY). Rollback on failed health checks; two failed deploys stop. Destructive migrations/backfills, tenant/compliance changes, server secrets/DNS/provider writes remain approval-gated. Local MCP has no hosted process to deploy.
 
 No implementation or deploy is complete yet. Follow delegate completion events; do not poll running tasks. Record verified phase and deploy results in this log and Honcho. Delegate-specific logs: free-audit.md, mcp-server.md, design-completion.md.
+
+## Scope correction (2026-11-19)
+
+Abdullah requested a pause of all delegates, then explicitly continued only Design and MCP. Cancellation was requested for all three; Design and MCP were confirmed interrupted and resumed in their existing threads on GPT-6.1 Terra. Free Audit remains stopped and excluded from current implementation/release. Preserve its saved branch; do not resume, merge, deploy, or test the audit work. The audit report acceptance and integration above are deferred, not completed. No replacement delegates were created.
