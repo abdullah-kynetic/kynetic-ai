@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import type { Metadata } from 'next';
 import { OnboardingForm } from './onboarding-form';
 

@@ -1,5 +1,5 @@
 import { headers } from 'next/headers';
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { EmptyState } from '@/components/ui/states';
 import { contactsActorScope } from '@/server/contacts';
 import { listTenantDocuments } from '@/server/documents';

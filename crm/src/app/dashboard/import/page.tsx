@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { ImportLeads } from '@/features/imports/import-leads';
 import { listImportBatches } from '@/server/imports';
 import { importSelfScope } from '@/server/imports/scope';

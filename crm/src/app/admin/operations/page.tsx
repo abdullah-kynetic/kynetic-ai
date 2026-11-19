@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import {
   decideAdminAccess,
   listAdminTenantOverview,
@@ -58,7 +58,7 @@ export default async function OperationsPage() {
             Admin alerts
           </h2>
           {notices.length ? (
-            <ul className='divide-y rounded-lg border'>
+            <ul className='bg-card divide-y rounded-xl border'>
               {notices.map((notice) => (
                 <li key={notice.id} className='p-3'>
                   <p className='font-medium'>{notice.title}</p>
@@ -77,7 +77,7 @@ export default async function OperationsPage() {
         </h2>
         {integrations.length ? (
           <div
-            className='overflow-x-auto rounded-lg border'
+            className='bg-card overflow-x-auto rounded-xl border'
             role='region'
             aria-label='Integration health table'
             tabIndex={0}
@@ -116,7 +116,7 @@ export default async function OperationsPage() {
           Flagged calls for review
         </h2>
         {flagged.length ? (
-          <ul className='divide-y rounded-lg border'>
+          <ul className='bg-card divide-y rounded-xl border'>
             {flagged.map((row) => (
               <li key={row.callId} className='flex flex-wrap items-center gap-3 p-3'>
                 <div className='min-w-0 flex-1'>
@@ -146,11 +146,11 @@ export default async function OperationsPage() {
           <h2 id='controls-heading' className='text-lg font-semibold'>
             Tenant controls
           </h2>
-          <ul className='divide-y rounded-lg border'>
+          <ul className='bg-card divide-y rounded-xl border'>
             {tenants.map((tenant) => (
               <li key={tenant.tenantId} className='flex flex-wrap items-center gap-3 p-3'>
                 <Link
-                  className='min-h-11 flex-1 underline'
+                  className='flex min-h-11 min-w-0 flex-1 items-center wrap-anywhere underline'
                   href={`/admin/clients/${tenant.tenantId}/alex`}
                 >
                   {tenant.name} · Alex configuration
@@ -191,7 +191,7 @@ export default async function OperationsPage() {
             Failed webhooks
           </h2>
           {failedWebhooks.length ? (
-            <ul className='divide-y rounded-lg border'>
+            <ul className='bg-card divide-y rounded-xl border'>
               {failedWebhooks.map((event) => (
                 <li key={event.eventId} className='flex flex-wrap items-center gap-3 p-3'>
                   <div className='min-w-0 flex-1'>
@@ -223,7 +223,7 @@ export default async function OperationsPage() {
           </h2>
           {recentJobs.length ? (
             <div
-              className='overflow-x-auto rounded-lg border'
+              className='bg-card overflow-x-auto rounded-xl border'
               role='region'
               aria-label='Recent jobs table'
               tabIndex={0}

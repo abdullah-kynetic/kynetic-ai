@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { Button } from '@/components/ui/button';
 import { contactsActorScope } from '@/server/contacts';
 import { SYSTEM_CATALOG } from '@/server/modules/catalog';

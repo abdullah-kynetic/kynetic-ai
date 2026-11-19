@@ -1,6 +1,6 @@
 import { requireModule } from '@/server/modules';
 import { CountChart, DailyTrend } from './metrics-charts';
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { SetupProgressCard } from '@/components/onboarding/setup-progress-card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

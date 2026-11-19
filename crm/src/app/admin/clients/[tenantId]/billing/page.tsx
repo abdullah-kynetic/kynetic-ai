@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { decideAdminAccess } from '@/server/admin';
 import { getTenantBilling } from '@/server/billing';
 import { AppError } from '@/server/errors';

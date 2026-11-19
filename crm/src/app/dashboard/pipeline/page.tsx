@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { EmptyState } from '@/components/ui/states';
 import { KanbanBoardView } from '@/features/pipeline/board/kanban-board';
 import { BoardFilterBar } from '@/features/pipeline/board/board-filters';

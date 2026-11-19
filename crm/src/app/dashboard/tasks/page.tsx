@@ -1,5 +1,5 @@
 import { currentTime } from '@/components/timeline/format';
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { presentTasks } from '@/components/tasks/present';
 import { TaskList, type TaskGroup } from '@/components/tasks/task-list';
 import { NoAccess } from '@/components/ui/states';

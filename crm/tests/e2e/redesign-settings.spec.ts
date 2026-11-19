@@ -35,13 +35,20 @@ test('Business settings report save success and validation errors', async ({
   authenticatedPage: page
 }) => {
   await page.goto('/dashboard/settings/business');
-  await page.route('**/api/settings/business', async (route) => {
-    await route.fulfill({ status: 200, json: {} });
-  });
-  await page.getByLabel('Time zone').fill('America/Los_Angeles');
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
-  await expect(page.getByRole('status').filter({ hasText: 'Saved.' })).toBeVisible();
-  await page.unroute('**/api/settings/business');
+  const timeZone = page.getByLabel('Time zone');
+  const original = await timeZone.inputValue();
+  const save = page.getByRole('button', { name: 'Save', exact: true });
+  try {
+    await timeZone.fill('America/Denver');
+    await save.click();
+    await expect(page.getByRole('status').filter({ hasText: 'Saved.' })).toBeVisible();
+    await page.reload();
+    await expect(timeZone).toHaveValue('America/Denver');
+  } finally {
+    await timeZone.fill(original);
+    await save.click();
+    await expect(page.getByRole('status').filter({ hasText: 'Saved.' })).toBeVisible();
+  }
   await page.route('**/api/settings/business', async (route) => {
     await route.fulfill({ status: 400, json: { error: { message: 'Invalid settings' } } });
   });
@@ -113,7 +120,9 @@ test('Staff can read business settings and cannot manage the team or branding', 
 
     await page.goto('/dashboard/settings/team');
     await expect(page.getByRole('heading', { name: 'Team', exact: true })).toBeVisible();
-    await expect(page.getByRole('status').filter({ hasText: 'You do not have access' })).toBeVisible();
+    await expect(
+      page.getByRole('status').filter({ hasText: 'You do not have access' })
+    ).toBeVisible();
 
     await page.goto('/dashboard/settings/branding');
     await expect(page.getByRole('heading', { name: 'Branding' })).toBeVisible();

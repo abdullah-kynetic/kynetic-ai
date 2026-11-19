@@ -1,6 +1,6 @@
 import { headers } from 'next/headers';
 import { forbidden, notFound } from 'next/navigation';
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { decideAdminAccess } from '@/server/admin';
 import { getReportScheduleForAdmin } from '@/server/admin/report-schedule';
 import { AppError } from '@/server/errors';

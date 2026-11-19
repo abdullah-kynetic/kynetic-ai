@@ -1,6 +1,6 @@
 import { headers } from 'next/headers';
 import Link from 'next/link';
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { statusLabel } from '@/components/support/thread';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { NotificationsPage } from '@/components/notifications/notifications-page';
 
 export const metadata = { title: 'Notifications' };

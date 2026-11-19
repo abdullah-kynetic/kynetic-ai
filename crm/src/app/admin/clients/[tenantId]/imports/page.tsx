@@ -1,6 +1,6 @@
 import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { decideAdminAccess } from '@/server/admin';
 import { resolveActor } from '@/server/auth';
 import { listImportBatches } from '@/server/imports';

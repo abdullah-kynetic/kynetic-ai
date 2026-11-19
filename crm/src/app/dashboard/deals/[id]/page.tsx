@@ -1,5 +1,5 @@
 import { EditDealButton } from '@/components/deals/deal-panel';
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { currentTime } from '@/components/timeline/format';
 import { parseTimelineParams } from '@/components/timeline/params';
 import { Timeline } from '@/components/timeline/timeline';

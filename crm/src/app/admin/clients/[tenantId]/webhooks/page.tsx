@@ -1,6 +1,6 @@
 import { headers } from 'next/headers';
 import { forbidden, notFound } from 'next/navigation';
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { decideAdminAccess } from '@/server/admin';
 import { getLeadWebhookSettings } from '@/server/admin/lead-webhooks';
 import { getEnv } from '@/server/env';

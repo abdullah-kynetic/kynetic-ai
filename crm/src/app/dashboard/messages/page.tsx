@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { buttonVariants } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/states';
 import { MessageLogTable } from '@/components/messages/message-log-table';
