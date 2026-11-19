@@ -53,7 +53,9 @@ test('Business settings report save success and validation errors', async ({
     await route.fulfill({ status: 400, json: { error: { message: 'Invalid settings' } } });
   });
   await page.getByRole('button', { name: 'Save', exact: true }).click();
-  await expect(page.getByRole('status').filter({ hasText: 'Invalid settings' })).toBeVisible();
+  await expect(
+    page.getByRole('alert').filter({ hasText: 'Business settings were not saved' })
+  ).toContainText('Invalid settings');
 });
 
 test('Settings stay usable in dark mode and with keyboard focus', async ({
@@ -103,8 +105,8 @@ test('Notification preferences show a save error', async ({ authenticatedPage: p
   });
   await page.getByRole('button', { name: 'Save preferences' }).click();
   await expect(
-    page.getByRole('status').filter({ hasText: 'Unable to save preferences' })
-  ).toBeVisible();
+    page.getByRole('alert').filter({ hasText: 'Preferences were not saved' })
+  ).toContainText('Unable to save preferences');
 });
 
 test('Staff can read business settings and cannot manage the team or branding', async ({
@@ -128,6 +130,13 @@ test('Staff can read business settings and cannot manage the team or branding', 
     await expect(page.getByRole('heading', { name: 'Branding' })).toBeVisible();
     await expect(page.getByText('Only the account owner can change branding.')).toBeVisible();
     await expect(page.getByLabel('Business name')).toHaveCount(0);
+
+    await page.goto('/dashboard/settings/alex');
+    await expect(page.getByRole('heading', { name: 'Alex settings' })).toBeVisible();
+    await expect(
+      page.getByRole('status').filter({ hasText: 'Only the account owner' })
+    ).toBeVisible();
+    await expect(page.getByLabel('Pause Alex')).toHaveCount(0);
   } finally {
     await context.close();
   }

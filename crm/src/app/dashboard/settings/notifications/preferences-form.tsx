@@ -27,20 +27,33 @@ export function PreferencesForm({ initial }: { initial: Pref[] }) {
     e.preventDefault();
     setBusy(true);
     setStatus(null);
-    const res = await fetch('/api/settings/notifications', {
-      method: 'PUT',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ preferences: prefs })
-    });
-    const body = await res.json().catch(() => ({}));
-    setBusy(false);
-    if (!res.ok) return setStatus({ ok: false, text: body.error?.message ?? 'Could not save.' });
-    setPrefs(body.preferences);
-    setStatus({ ok: true, text: 'Preferences saved.' });
+    try {
+      const res = await fetch('/api/settings/notifications', {
+        method: 'PUT',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ preferences: prefs })
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) return setStatus({ ok: false, text: body.error?.message ?? 'Could not save.' });
+      setPrefs(body.preferences);
+      setStatus({ ok: true, text: 'Preferences saved.' });
+    } catch {
+      setStatus({ ok: false, text: 'Check your connection and try again.' });
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
     <form onSubmit={save} className='w-full max-w-xl space-y-4'>
+      {status?.ok === false && (
+        <div
+          role='alert'
+          className='border-destructive/40 bg-destructive/10 text-destructive rounded-lg border p-4 text-sm'
+        >
+          <strong>Preferences were not saved.</strong> {status.text}
+        </div>
+      )}
       <fieldset className='bg-card space-y-1 rounded-[var(--radius-card)] border p-4 sm:p-6'>
         <legend className='sr-only'>Email me about</legend>
         <p className='pb-2 font-semibold' aria-hidden='true'>
@@ -62,12 +75,27 @@ export function PreferencesForm({ initial }: { initial: Pref[] }) {
           </label>
         ))}
       </fieldset>
-      <Button type='submit' disabled={busy}>
-        Save preferences
-      </Button>
-      <p role='status' className={status?.ok === false ? 'text-destructive text-sm' : 'text-sm'}>
-        {status?.text}
-      </p>
+      <div className='flex flex-wrap items-center gap-3'>
+        <Button type='submit' disabled={busy}>
+          Save preferences
+        </Button>
+        <Button
+          type='button'
+          variant='outline'
+          disabled={busy}
+          onClick={() => {
+            setPrefs(initial);
+            setStatus(null);
+          }}
+        >
+          Cancel
+        </Button>
+        {status?.ok && (
+          <p role='status' className='text-sm'>
+            {status.text}
+          </p>
+        )}
+      </div>
     </form>
   );
 }

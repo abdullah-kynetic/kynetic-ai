@@ -62,7 +62,17 @@ export default async function AlexSettingsPage({
   const user = await getSessionUser(requestHeaders);
   if (!user) redirect('/sign-in');
   const actor = await resolveActor(user, shell.tenant.id);
-  if (!can(actor, 'alex.settings.client', shell.tenant.id)) notFound();
+  if (!can(actor, 'alex.settings.client', shell.tenant.id)) {
+    return (
+      <SettingsPage
+        pageTitle='Alex settings'
+        access={false}
+        accessFallback='Only the account owner can change Alex settings.'
+      >
+        {null}
+      </SettingsPage>
+    );
+  }
 
   const settings = await withTenant(ctx, (tx) => getAlexSettingsView(tx));
 

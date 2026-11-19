@@ -32,7 +32,18 @@ export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: 
   const [transfer, setTransfer] = useState(initial.transferNumber ?? '');
   const [timezone, setTimezone] = useState(initial.timezone);
   const [status, setStatus] = useState<{ ok: boolean; text: string } | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
+
+  function cancel() {
+    setHours(initial.businessHours);
+    setZips((initial.serviceArea.zips ?? []).join(', '));
+    setServices(initial.services.join('\n'));
+    setTransfer(initial.transferNumber ?? '');
+    setTimezone(initial.timezone);
+    setFieldErrors({});
+    setStatus(null);
+  }
 
   const setDay = (day: (typeof DAYS)[number][0], patch: Partial<Win> | null) =>
     setHours((h) => {
@@ -46,33 +57,48 @@ export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: 
     e.preventDefault();
     setSaving(true);
     setStatus(null);
+    setFieldErrors({});
     const zipList = zips.split(/[\s,]+/).filter(Boolean);
-    const res = await fetch('/api/settings/business', {
-      method: 'PATCH',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        timezone,
-        businessHours: hours,
-        serviceArea: zipList.length ? { type: 'zips', zips: zipList } : { type: 'none' },
-        services: services
-          .split('\n')
-          .map((s) => s.trim())
-          .filter(Boolean),
-        transferNumber: transfer.trim() === '' ? null : transfer.trim()
-      })
-    });
-    const body = await res.json();
-    setSaving(false);
-    setStatus(
-      res.ok
-        ? { ok: true, text: 'Saved.' }
-        : {
-            ok: false,
-            text: body.error?.fieldErrors
-              ? `Check these fields: ${Object.keys(body.error.fieldErrors).join(', ')}`
-              : (body.error?.message ?? 'Could not save.')
-          }
-    );
+    try {
+      const res = await fetch('/api/settings/business', {
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          timezone,
+          businessHours: hours,
+          serviceArea: zipList.length ? { type: 'zips', zips: zipList } : { type: 'none' },
+          services: services
+            .split('\n')
+            .map((s) => s.trim())
+            .filter(Boolean),
+          transferNumber: transfer.trim() === '' ? null : transfer.trim()
+        })
+      });
+      const body = await res.json().catch(() => ({}));
+      const errors = body.error?.fieldErrors as Record<string, string[] | undefined> | undefined;
+      setFieldErrors(
+        Object.fromEntries(
+          Object.entries(errors ?? {}).map(([key, messages]) => [
+            key,
+            messages?.join(' ') ?? 'Check this value.'
+          ])
+        )
+      );
+      setStatus(
+        res.ok
+          ? { ok: true, text: 'Saved.' }
+          : {
+              ok: false,
+              text: body.error?.fieldErrors
+                ? `Check these fields: ${Object.keys(body.error.fieldErrors).join(', ')}`
+                : (body.error?.message ?? 'Could not save.')
+            }
+      );
+    } catch {
+      setStatus({ ok: false, text: 'Could not save. Check your connection and try again.' });
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -81,12 +107,31 @@ export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: 
       className='w-full max-w-2xl space-y-6'
       aria-describedby={canEdit ? 'save-status' : undefined}
     >
+      {status?.ok === false && (
+        <div
+          role='alert'
+          className='border-destructive/40 bg-destructive/10 text-destructive rounded-lg border p-4 text-sm'
+        >
+          <strong>Business settings were not saved.</strong> {status.text}
+        </div>
+      )}
       <fieldset disabled={!canEdit} className='space-y-4'>
         <section className='bg-card space-y-4 rounded-[var(--radius-card)] border p-4 sm:p-6'>
           <h2 className='text-lg font-semibold'>Business hours</h2>
           <div className='space-y-1'>
             <Label htmlFor='timezone'>Time zone</Label>
-            <Input id='timezone' value={timezone} onChange={(e) => setTimezone(e.target.value)} />
+            <Input
+              id='timezone'
+              value={timezone}
+              aria-invalid={Boolean(fieldErrors.timezone)}
+              aria-describedby={fieldErrors.timezone ? 'timezone-error' : undefined}
+              onChange={(e) => setTimezone(e.target.value)}
+            />
+            {fieldErrors.timezone && (
+              <p id='timezone-error' className='text-destructive text-sm'>
+                {fieldErrors.timezone}
+              </p>
+            )}
           </div>
           {DAYS.map(([key, label]) => {
             const w = hours[key]?.[0];
@@ -129,28 +174,53 @@ export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: 
 
         <section className='bg-card space-y-2 rounded-[var(--radius-card)] border p-4 sm:p-6'>
           <Label htmlFor='zips'>Service area (ZIP codes, comma separated)</Label>
-          <Input id='zips' value={zips} onChange={(e) => setZips(e.target.value)} />
+          <Input
+            id='zips'
+            value={zips}
+            aria-invalid={Boolean(fieldErrors.serviceArea)}
+            aria-describedby={fieldErrors.serviceArea ? 'zips-error' : undefined}
+            onChange={(e) => setZips(e.target.value)}
+          />
+          {fieldErrors.serviceArea && (
+            <p id='zips-error' className='text-destructive text-sm'>
+              {fieldErrors.serviceArea}
+            </p>
+          )}
         </section>
 
         <section className='bg-card space-y-2 rounded-[var(--radius-card)] border p-4 sm:p-6'>
           <Label htmlFor='services'>Services offered (one per line)</Label>
           <textarea
             id='services'
+            aria-invalid={Boolean(fieldErrors.services)}
+            aria-describedby={fieldErrors.services ? 'services-error' : undefined}
             rows={5}
             className='border-input bg-background focus-visible:ring-ring w-full rounded-[var(--radius-control)] border p-3 text-sm focus-visible:ring-2 focus-visible:outline-none'
             value={services}
             onChange={(e) => setServices(e.target.value)}
           />
+          {fieldErrors.services && (
+            <p id='services-error' className='text-destructive text-sm'>
+              {fieldErrors.services}
+            </p>
+          )}
         </section>
 
         <section className='bg-card space-y-2 rounded-[var(--radius-card)] border p-4 sm:p-6'>
           <Label htmlFor='transfer'>Transfer number (E.164, for example +15555550123)</Label>
           <Input
             id='transfer'
+            aria-invalid={Boolean(fieldErrors.transferNumber)}
+            aria-describedby={fieldErrors.transferNumber ? 'transfer-error' : undefined}
             inputMode='tel'
             value={transfer}
             onChange={(e) => setTransfer(e.target.value)}
           />
+          {fieldErrors.transferNumber && (
+            <p id='transfer-error' className='text-destructive text-sm'>
+              {fieldErrors.transferNumber}
+            </p>
+          )}
         </section>
       </fieldset>
 
@@ -159,12 +229,11 @@ export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: 
           <Button type='submit' disabled={saving}>
             {saving ? 'Saving…' : 'Save'}
           </Button>
-          <p
-            id='save-status'
-            role='status'
-            className={status?.ok === false ? 'text-destructive text-sm' : 'text-sm'}
-          >
-            {status?.text}
+          <Button type='button' variant='outline' disabled={saving} onClick={cancel}>
+            Cancel
+          </Button>
+          <p id='save-status' role='status' className='text-sm'>
+            {status?.ok ? status.text : null}
           </p>
         </div>
       ) : (

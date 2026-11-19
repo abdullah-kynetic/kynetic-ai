@@ -123,16 +123,34 @@ export function BrandingForm({ initial }: { initial: Initial }) {
       </div>
 
       {result && (
-        <p
+        <div
           role={result.ok ? 'status' : 'alert'}
-          className={result.ok ? 'text-success text-sm' : 'text-destructive text-sm'}
+          className={
+            result.ok
+              ? 'text-success text-sm'
+              : 'border-destructive/40 bg-destructive/10 text-destructive rounded-lg border p-3 text-sm'
+          }
         >
-          {result.ok ? 'Branding saved.' : result.message}
-        </p>
+          {result.ok ? 'Branding saved.' : `Branding was not saved. ${result.message}`}
+        </div>
       )}
-      <Button type='submit' disabled={pending || Boolean(live)} className='self-start'>
-        {pending ? 'Saving…' : 'Save branding'}
-      </Button>
+      <div className='flex flex-wrap gap-3'>
+        <Button type='submit' disabled={pending || Boolean(live)}>
+          {pending ? 'Saving…' : 'Save branding'}
+        </Button>
+        <Button
+          type='reset'
+          variant='outline'
+          disabled={pending}
+          onClick={() => {
+            setName(initial.name);
+            setColor(initial.primaryColor);
+            setResult(null);
+          }}
+        >
+          Cancel
+        </Button>
+      </div>
     </form>
   );
 }

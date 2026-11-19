@@ -51,7 +51,7 @@ export async function saveAlexSettings(
     await withTenant(ctx, (tx) => updateClientAlexSettings(tx, parsed.data, shell.user.id));
   } catch (e) {
     if (e instanceof AlexConfigMissingError) return { error: e.message };
-    throw e;
+    return { error: 'Alex settings could not be saved. Try again.' };
   }
   revalidatePath('/dashboard/settings/alex');
   return { saved: true };

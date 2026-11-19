@@ -23,7 +23,16 @@ export function AlexControls({
   const errorId = React.useId();
 
   return (
-    <form action={action} className='space-y-4'>
+    <form action={action} className='space-y-5'>
+      {state.error && (
+        <div
+          id={errorId}
+          role='alert'
+          className='border-destructive/40 bg-destructive/10 text-destructive rounded-lg border p-4 text-sm'
+        >
+          <strong>Alex settings were not saved.</strong> {state.error}
+        </div>
+      )}
       <div className='flex items-center gap-3'>
         <Checkbox id='paused' name='paused' defaultChecked={paused} />
         <label htmlFor='paused' className='text-sm leading-5'>
@@ -44,19 +53,19 @@ export function AlexControls({
           <Input id='end' name='end' type='time' defaultValue={end} required />
         </div>
       </div>
-      {state.error && (
-        <p id={errorId} role='alert' className='text-destructive text-sm'>
-          {state.error}
-        </p>
-      )}
       {state.saved && (
         <p role='status' className='text-sm'>
           Saved.
         </p>
       )}
-      <Button type='submit' disabled={pending}>
-        {pending ? 'Saving…' : 'Save'}
-      </Button>
+      <div className='flex flex-wrap gap-3'>
+        <Button type='submit' disabled={pending}>
+          {pending ? 'Saving…' : 'Save'}
+        </Button>
+        <Button type='reset' variant='outline' disabled={pending}>
+          Cancel
+        </Button>
+      </div>
     </form>
   );
 }
