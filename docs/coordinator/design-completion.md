@@ -1,5 +1,9 @@
 # Portal design completion running log
 
+## Design-finish baseline — 2026-11-19
+
+The requested `~/code/kai-design` directory is absent in this environment, so work continues in the existing clean-code `t3/design-finish` worktree. That worktree has pre-existing modified screenshots under `docs/screenshots/`; they are preserved and excluded from design-finish commits. `bun install --frozen-lockfile` made no changes. Baseline `PROVIDER_MODE=stub OUTBOUND_ENABLED=false bun run verify` passed typecheck, lint, formatting, 663 unit tests, deploy-script rehearsal, and production build. Integration was **BLOCKED** because no PostgreSQL 16 server was reachable on the configured local port. This failure predates edits in this run. No full verification pass is claimed.
+
 2026-11-19. Branch `t3/design-completion` starts at `614b7e40` (origin/main). No deploy or PR is authorized here.
 
 ## Recovered sequence and scope
