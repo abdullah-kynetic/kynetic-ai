@@ -29,3 +29,5 @@ Nine client settings routes use a Settings-local redesign header; business hours
 Local build, typecheck and lint passed; unit suite passed 663 tests on retry after one worker timed out during parallel load. Browser checks passed 4/4: route overflow, mocked business save/error, dark/focus and CRM-disabled pipeline. Full integration is running. Permission-denied browser coverage, exhaustive dark/desktop visual inspection, all form error states, CI for the final commit, and remaining pages/docs remain open. Local tests use an isolated `/tmp` PostgreSQL 16 cluster and synthetic provider stubs; no production database was used.
 
 The custom-field row now gives the label a full mobile line. Build, typecheck, lint, 663 unit tests and the four Settings browser checks passed after this change. The updated mobile capture is `docs/redesign/pr-8/after-custom-fields-390.png`; full integration remains in progress.
+
+The Settings browser suite now also checks that an unauthenticated visitor is redirected to sign-in (5/5 passed). A full integration run has reported a backup/restore test timeout and is still running; no integration pass is claimed.

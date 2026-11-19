@@ -77,3 +77,11 @@ test('CRM-disabled workspace retains its settings access message', async ({ brow
   await expect(page.getByText('Configurable stages are part of the CRM build-out.')).toBeVisible();
   await context.close();
 });
+
+test('Unauthenticated visitors cannot open settings', async ({ browser }) => {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  await page.goto('/dashboard/settings/team');
+  await expect(page).toHaveURL(/sign-in/);
+  await context.close();
+});
