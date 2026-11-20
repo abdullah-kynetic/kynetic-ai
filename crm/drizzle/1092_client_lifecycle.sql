@@ -10,6 +10,9 @@ ALTER TABLE client_lifecycle ENABLE ROW LEVEL SECURITY;
 --> statement-breakpoint
 ALTER TABLE client_lifecycle FORCE ROW LEVEL SECURITY;
 --> statement-breakpoint
+CREATE POLICY client_lifecycle_rollup ON client_lifecycle
+  TO kynetic_rollup USING (true) WITH CHECK (true);
+--> statement-breakpoint
 REVOKE ALL ON client_lifecycle FROM kynetic_app, kynetic_worker;
 --> statement-breakpoint
 GRANT SELECT, INSERT, UPDATE ON client_lifecycle TO kynetic_rollup;
