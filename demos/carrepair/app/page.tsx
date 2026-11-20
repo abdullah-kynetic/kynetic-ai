@@ -1,3 +1,4 @@
+import { LangProvider } from "@/lib/i18n";
 import { Header } from "@/components/Header";
 import { EstimateDialog } from "@/components/EstimateDialog";
 import { MobileBar } from "@/components/MobileBar";
@@ -6,7 +7,7 @@ import { Community, CaseStudy, CTAFooter, FAQ, HowItWorks, Pricing, Reviews, Ser
 
 export default function Home() {
   return (
-    <>
+    <LangProvider>
       <Header />
       <EstimateDialog />
       <MobileBar />
@@ -15,6 +16,6 @@ export default function Home() {
       </main>
       <CTAFooter />
       <div className="h-[72px] md:hidden" aria-hidden />
-    </>
+    </LangProvider>
   );
 }
