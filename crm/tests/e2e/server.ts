@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { createTestDatabase, type TestDatabase } from '../helpers/db';
 import { IDS, seedTwoTenants } from '../helpers/fixtures';
 import { importArchive } from '../../src/server/archive';
+import { seedPhase3 } from './phase3-seed';
 
 const port = Number(process.env.E2E_PORT ?? 3100);
 const baseUrl = `http://localhost:${port}`;
@@ -48,6 +49,7 @@ async function main(): Promise<void> {
   db = await createTestDatabase({ jobs: true });
   const seeded = await seedTwoTenants(db.admin);
   await importArchive(db.admin, join(process.cwd(), '..', 'docs', 'roadmap'));
+  await seedPhase3(db);
   // --- lane-a fixtures ---
   await db.admin`insert into metrics_daily (tenant_id, day, leads, calls, contacts_reached, estimates_booked, won_revenue_cents)
     values (${IDS.tenantA}, '2026-09-10', 10, 15, 7, 4, 120000), (${IDS.tenantA}, '2026-09-11', 5, 6, 3, 2, 30000)`;
