@@ -258,6 +258,18 @@ test('Staff can read business settings and cannot manage the team or branding', 
       page.getByRole('status').filter({ hasText: 'Only the account owner' })
     ).toBeVisible();
     await expect(page.getByRole('button', { name: /^(Enable|Disable)$/ })).toHaveCount(0);
+
+    for (const [route, title, action] of [
+      ['pipeline', 'Pipeline stages', 'Add stage'],
+      ['tags', 'Tags', 'Add tag'],
+      ['custom-fields', 'Custom fields', 'Add field']
+    ] as const) {
+      await page.goto(`/dashboard/settings/${route}`);
+      await expect(page.getByRole('heading', { name: title, exact: true })).toBeVisible();
+      await expect(page.getByRole('button', { name: action })).toHaveCount(0);
+    }
+    await page.goto('/dashboard/settings/notifications');
+    await expect(page.getByRole('heading', { name: 'Notification preferences' })).toBeVisible();
   } finally {
     await context.close();
   }
