@@ -150,3 +150,21 @@ Local production build, TypeScript, lint (warnings, zero errors), formatting, an
 The first full Chromium run had 129 passed, 6 skipped, and 2 failed. The Users page exceeded the 1280px viewport by 24px after other tests added synthetic invitations, and axe flagged dark-mode links on Sign in and Sign-in help at both widths. The follow-up scopes the Users table to its own labeled, scrollable card with wrappable identity cells. Public access links use the card foreground while retaining their destinations, form behavior, and the existing sign-in typography. This unit owns `admin/users/page.tsx`, `sign-in/help/page.tsx`, and `components/auth/sign-in-form.tsx`.
 
 Both failed browser checks passed on targeted retry against the refreshed production build. The full integration retry passed 1,023 tests with 2 existing gated R2 skips. That full run used the `pg_restore` session diagnostic described above; the restore subprocess took 2.126 seconds. It used the unmodified integration sources and no provider credentials. This establishes functional coverage on disposable Postgres and leaves default-durability timing and GitHub CI unverified.
+
+## Unslop pass — 2026-11-20
+
+Direction: an operations cockpit for home-service owners. Quiet tinted neutrals, one near-black primary, burnt orange only as the single bright element per screen (the figure or bar that matters), Inter only. Signature detail: the job-ticket stub, meaning IDs, phone numbers, counts and plan/health lines set in quiet mono with a dashed tear rule on board cards. Full audit and direction are in `docs/coordinator/unslop-audit.md`. Presentation only: no feature, route, data flow, nav structure, test ID or h1 changed.
+
+Passes, one commit each on `t3/design-finish`:
+- Spacing 12a2bb6a: one shared stat tile for every area, two-up on phones, page width on the 4px scale.
+- Color 060e7e91: quiet active nav, accent only on the key figure and the latest bar, money chart in dollars, oldest month first.
+- Icons ae0a26a0: one stroke weight across the set, 16px lock.
+- Copy 6dfaaa23: subheads without trailing periods, short dates, money compared to last month, short placeholders.
+- Type 12f5c9e8: weights 400 and 500, one title scale, no uppercase label, no wide tracking.
+- Layout 47238fa2: main chart gets two thirds, funnel beside its sources, tiles in a 4 and 3 rhythm.
+- Details 004b0b76: ticket-stub meta, nested board radii, one card token, keycap for the search shortcut.
+- Motion d1916553: named transitions instead of `transition-all`, one easing curve and duration token, theme change is a 200ms crossfade, reduced-motion respected.
+- Sidebar button label 5106c699: "Jump to", so it no longer collides with page Search buttons (archive spec).
+- Visuals: product-native only (charts, ranked lists, boards, tables). No images, paid services or new providers. Story video skipped as instructed.
+
+Unverified: light/dark by 390px was checked through the existing route-layout and axe specs, not by reviewing every screenshot by eye. Nothing was deployed or merged.
