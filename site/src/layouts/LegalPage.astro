@@ -13,7 +13,7 @@ const { title, description, path, body, noindex = false } = Astro.props;
 const CAL = 'https://cal.com/abdullah-kyneticai/kynetic-ai-discovery-call';
 const url = new URL(path, Astro.site).href;
 const ogImage = new URL('/brand/og-image-espresso.png', Astro.site).href;
-const legal = `.np-legal{padding:56px 0 88px}.np-legal h1{margin-bottom:12px}.np-legal h2{font-size:1.75rem;margin:40px 0 12px}.np-legal p,.np-legal li{font-size:1.0625rem;line-height:1.65;color:var(--color-text)}.np-legal ul{padding-left:22px;display:grid;gap:10px}.np-legal p:nth-of-type(1){color:var(--color-muted)}`;
+const legal = `.np-legal{padding:56px 0 88px}.np-legal h1{margin-bottom:12px}.np-legal h2{font-variant-numeric:lining-nums;font-size:1.75rem;margin:40px 0 12px}.np-legal p,.np-legal li{font-size:1.0625rem;line-height:1.65;color:var(--color-text)}.np-legal ul{padding-left:22px;display:grid;gap:10px}.np-legal p:nth-of-type(1){color:var(--color-muted)}`;
 const css = transformSync([tokens_raw, niche_raw, home_raw, extras_raw, motion_raw, legal].join('\n'), { loader: 'css', minify: true }).code;
 ---
 <!doctype html>

@@ -89,7 +89,7 @@ export function initAuditModal() {
           <p class="am__err" role="alert" hidden></p>
           <button class="am__btn" type="submit">OK</button>
           <p class="am__fine">By clicking OK, you agree to get calls and texts from Kynetic AI at this number, including automated messages, about your audit call and our services. Consent isn't a condition of purchase. Msg &amp; data rates may apply. Msg frequency varies. Reply HELP for help or STOP to opt out.</p>
-          <p class="am__fine">By continuing you agree to our <a href="/terms/">Terms &amp; Conditions</a> and <a href="/privacy/">Privacy Policy</a>.</p>
+          <p class="am__fine">By continuing you agree to our <a href="/terms/">Terms of Service</a> and <a href="/privacy/">Privacy Policy</a>.</p>
         </form>
         ${STEPS.map(stepHtml).join('')}
         <div class="am__step am__done am__book" data-step="book" hidden>
