@@ -1,16 +1,16 @@
-import { eq } from "drizzle-orm";
-import { z } from "zod";
-import { getStorage, type StorageAdapter } from "../adapters/storage";
-import { authorize, type Actor } from "../auth";
-import { audit } from "../audit";
-import type { Db } from "../db/client";
-import { tenants } from "../db/schema";
-import { AppError, ValidationError } from "../errors";
-import { checkPrimaryColor, normalizeHex } from "@/lib/branding/color";
-import { withTenant, type TenantContextInput } from "../tenancy";
-import { isLogoKey, logoKey, processLogo } from "./logo";
+import { eq } from 'drizzle-orm';
+import { z } from 'zod';
+import { getStorage, type StorageAdapter } from '../adapters/storage';
+import { authorize, type Actor } from '../auth';
+import { audit } from '../audit';
+import type { Db } from '../db/client';
+import { tenants } from '../db/schema';
+import { AppError, ValidationError } from '../errors';
+import { checkPrimaryColor, normalizeHex } from '@/lib/branding/color';
+import { withTenant, type TenantContextInput } from '../tenancy';
+import { isLogoKey, logoKey, processLogo } from './logo';
 
-export { processLogo, logoKey, isLogoKey } from "./logo";
+export { processLogo, logoKey, isLogoKey } from './logo';
 
 export type Branding = {
   name: string;
@@ -18,12 +18,12 @@ export type Branding = {
   logoKey: string | null;
 };
 
-export const LOGO_ROUTE = "/api/branding/logo";
+export const LOGO_ROUTE = '/api/branding/logo';
 
 /** Browser URL for a stored logo key; the hash in the key busts caches when the logo changes. */
 export function logoUrl(value: string | null): string | null {
   if (!isLogoKey(value)) return null;
-  const v = /logo-([0-9a-f]+)\.png$/.exec(value)?.[1] ?? "";
+  const v = /logo-([0-9a-f]+)\.png$/.exec(value)?.[1] ?? '';
   return `${LOGO_ROUTE}?v=${v}`;
 }
 
@@ -33,7 +33,7 @@ const nameSchema = z
   .trim()
   .min(1)
   .max(80)
-  .refine((s) => !/\p{Cc}/u.test(s), "control_characters");
+  .refine((s) => !/\p{Cc}/u.test(s), 'control_characters');
 
 export type BrandingInput = {
   name: string;
@@ -45,10 +45,7 @@ export type BrandingInput = {
 
 type Deps = { db?: Db; storage?: StorageAdapter };
 
-export async function getBranding(
-  ctx: TenantContextInput,
-  deps: Deps = {},
-): Promise<Branding> {
+export async function getBranding(ctx: TenantContextInput, deps: Deps = {}): Promise<Branding> {
   const [row] = await withTenant(
     ctx,
     (tx) =>
@@ -56,18 +53,18 @@ export async function getBranding(
         .select({
           name: tenants.name,
           color: tenants.primaryColor,
-          logo: tenants.logoUrl,
+          logo: tenants.logoUrl
         })
         .from(tenants)
         .where(eq(tenants.id, ctx.tenantId))
         .limit(1),
-    { db: deps.db },
+    { db: deps.db }
   );
-  if (!row) throw new AppError("NOT_FOUND");
+  if (!row) throw new AppError('NOT_FOUND');
   return {
     name: row.name,
     primaryColor: row.color,
-    logoKey: isLogoKey(row.logo) ? row.logo : null,
+    logoKey: isLogoKey(row.logo) ? row.logo : null
   };
 }
 
@@ -79,20 +76,20 @@ export async function saveBranding(
   ctx: TenantContextInput,
   actor: Actor,
   input: BrandingInput,
-  deps: Deps = {},
+  deps: Deps = {}
 ): Promise<Branding> {
-  authorize(actor, "settings.business", ctx.tenantId);
+  authorize(actor, 'settings.business', ctx.tenantId);
 
   const fieldErrors: Record<string, string[]> = {};
   const name = nameSchema.safeParse(input.name);
-  if (!name.success) fieldErrors.name = ["invalid"];
+  if (!name.success) fieldErrors.name = ['invalid'];
 
   let color: string | null = null;
   if (input.primaryColor && input.primaryColor.trim()) {
     const hex = normalizeHex(input.primaryColor);
     const check = hex ? checkPrimaryColor(hex) : null;
-    if (!hex || !check) fieldErrors.primaryColor = ["invalid_hex"];
-    else if (!check.ok) fieldErrors.primaryColor = ["low_contrast"];
+    if (!hex || !check) fieldErrors.primaryColor = ['invalid_hex'];
+    else if (!check.ok) fieldErrors.primaryColor = ['low_contrast'];
     else color = hex;
   }
 
@@ -101,18 +98,16 @@ export async function saveBranding(
     try {
       logo = await processLogo(input.logo);
     } catch (e) {
-      if (e instanceof ValidationError)
-        Object.assign(fieldErrors, e.fieldErrors);
+      if (e instanceof ValidationError) Object.assign(fieldErrors, e.fieldErrors);
       else throw e;
     }
   }
-  if (Object.keys(fieldErrors).length > 0)
-    throw new ValidationError(fieldErrors);
+  if (Object.keys(fieldErrors).length > 0) throw new ValidationError(fieldErrors);
 
   const newKey = logo ? logoKey(ctx.tenantId, logo.hash) : null;
   if (logo && newKey)
     await (deps.storage ?? getStorage()).put(newKey, logo.body, {
-      contentType: logo.contentType,
+      contentType: logo.contentType
     });
 
   const { before, after } = await withTenant(
@@ -122,12 +117,12 @@ export async function saveBranding(
         .select({
           name: tenants.name,
           color: tenants.primaryColor,
-          logo: tenants.logoUrl,
+          logo: tenants.logoUrl
         })
         .from(tenants)
         .where(eq(tenants.id, ctx.tenantId))
         .limit(1);
-      if (!prev) throw new AppError("NOT_FOUND");
+      if (!prev) throw new AppError('NOT_FOUND');
       const nextLogo = newKey ?? (input.removeLogo ? null : prev.logo);
       await tx
         .update(tenants)
@@ -136,26 +131,24 @@ export async function saveBranding(
       const b = { name: prev.name, primaryColor: prev.color, logo: prev.logo };
       const a = { name: name.data!, primaryColor: color, logo: nextLogo };
       await audit(tx, {
-        action: "branding.update",
-        entity: "tenant",
+        action: 'branding.update',
+        entity: 'tenant',
         entityId: ctx.tenantId,
         before: b,
-        after: a,
+        after: a
       });
       return { before: b, after: a };
     },
-    { db: deps.db },
+    { db: deps.db }
   );
 
   // The old file is only dropped once the new row has committed.
   if (isLogoKey(before.logo) && before.logo !== after.logo) {
-    await (deps.storage ?? getStorage())
-      .remove(before.logo)
-      .catch(() => undefined);
+    await (deps.storage ?? getStorage()).remove(before.logo).catch(() => undefined);
   }
   return {
     name: after.name,
     primaryColor: after.primaryColor,
-    logoKey: isLogoKey(after.logo) ? after.logo : null,
+    logoKey: isLogoKey(after.logo) ? after.logo : null
   };
 }

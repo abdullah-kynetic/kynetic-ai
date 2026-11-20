@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   checkPrimaryColor,
   deriveBranding,
   KYNETIC_ORANGE,
-  normalizeHex,
-} from "@/lib/branding/color";
-import { useRef, useState, useTransition } from "react";
-import { saveBrandingAction, type BrandingResult } from "./actions";
+  normalizeHex
+} from '@/lib/branding/color';
+import { useRef, useState, useTransition } from 'react';
+import { saveBrandingAction, type BrandingResult } from './actions';
 
 type Initial = { name: string; primaryColor: string; logoUrl: string | null };
 
@@ -26,15 +26,15 @@ export function BrandingForm({ initial }: { initial: Initial }) {
   const branding = deriveBranding(check?.ok && hex ? hex : KYNETIC_ORANGE);
   const live =
     color && !check
-      ? "Enter the color as #rrggbb."
+      ? 'Enter the color as #rrggbb.'
       : check && !check.ok
-        ? `Too ${check.ratios.light < 3 ? "light" : "dark"} for buttons (${Math.min(check.ratios.light, check.ratios.dark).toFixed(2)}:1, needs 3:1).`
+        ? `Too ${check.ratios.light < 3 ? 'light' : 'dark'} for buttons (${Math.min(check.ratios.light, check.ratios.dark).toFixed(2)}:1, needs 3:1).`
         : null;
   const suggestion = check && !check.ok ? check.suggestion : undefined;
 
   return (
     <form
-      className="bg-card flex w-full max-w-xl flex-col gap-6 rounded-xl border p-4 sm:p-6"
+      className='bg-card flex w-full max-w-xl flex-col gap-6 rounded-xl border p-4 sm:p-6'
       action={(fd) =>
         start(async () => {
           const outcome = await saveBrandingAction(fd);
@@ -43,11 +43,11 @@ export function BrandingForm({ initial }: { initial: Initial }) {
         })
       }
     >
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="name">Business name</Label>
+      <div className='flex flex-col gap-2'>
+        <Label htmlFor='name'>Business name</Label>
         <Input
-          id="name"
-          name="name"
+          id='name'
+          name='name'
           value={name}
           maxLength={80}
           required
@@ -55,66 +55,55 @@ export function BrandingForm({ initial }: { initial: Initial }) {
         />
       </div>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="primaryColor">Primary color</Label>
-        <div className="flex items-center gap-3">
+      <div className='flex flex-col gap-2'>
+        <Label htmlFor='primaryColor'>Primary color</Label>
+        <div className='flex items-center gap-3'>
           <input
-            type="color"
-            aria-label="Pick a primary color"
+            type='color'
+            aria-label='Pick a primary color'
             value={hex ?? KYNETIC_ORANGE}
             onChange={(e) => setColor(e.target.value)}
-            className="h-9 w-12 cursor-pointer rounded-md border p-1"
+            className='h-9 w-12 cursor-pointer rounded-md border p-1'
           />
           <Input
-            id="primaryColor"
-            name="primaryColor"
+            id='primaryColor'
+            name='primaryColor'
             value={color}
-            placeholder="#d9662a"
-            className="w-32 font-mono"
+            placeholder='#d9662a'
+            className='w-32 font-mono'
             aria-invalid={Boolean(live)}
-            aria-describedby="color-help"
+            aria-describedby='color-help'
             onChange={(e) => setColor(e.target.value)}
           />
         </div>
         <p
-          id="color-help"
-          role={live ? "alert" : undefined}
-          className={
-            live ? "text-destructive text-sm" : "text-muted-foreground text-sm"
-          }
+          id='color-help'
+          role={live ? 'alert' : undefined}
+          className={live ? 'text-destructive text-sm' : 'text-muted-foreground text-sm'}
         >
-          {live ?? "Leave empty to use the Kynetic color."}{" "}
+          {live ?? 'Leave empty to use the Kynetic color.'}{' '}
           {suggestion && (
-            <button
-              type="button"
-              className="underline"
-              onClick={() => setColor(suggestion)}
-            >
+            <button type='button' className='underline' onClick={() => setColor(suggestion)}>
               Use {suggestion}?
             </button>
           )}
         </p>
-        {check?.ok && check.warning && (
-          <p className="text-warning text-sm">{check.warning}</p>
-        )}
-        <div className="flex items-center gap-3 pt-1" aria-label="Preview">
+        {check?.ok && check.warning && <p className='text-warning text-sm'>{check.warning}</p>}
+        <div className='flex items-center gap-3 pt-1' aria-label='Preview'>
           <span
-            className="rounded-md px-3 py-1.5 text-sm font-medium"
+            className='rounded-md px-3 py-1.5 text-sm font-medium'
             style={{
               background: branding.light.primary,
-              color: branding.light.onPrimary,
+              color: branding.light.onPrimary
             }}
           >
             Sample button
           </span>
-          <span
-            className="text-sm font-medium dark:hidden"
-            style={{ color: branding.light.text }}
-          >
+          <span className='text-sm font-medium dark:hidden' style={{ color: branding.light.text }}>
             Sample link
           </span>
           <span
-            className="hidden text-sm font-medium dark:inline"
+            className='hidden text-sm font-medium dark:inline'
             style={{ color: branding.dark.text }}
           >
             Sample link
@@ -122,53 +111,46 @@ export function BrandingForm({ initial }: { initial: Initial }) {
         </div>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="logo">Logo</Label>
+      <div className='flex flex-col gap-2'>
+        <Label htmlFor='logo'>Logo</Label>
         {initial.logoUrl && (
           // eslint-disable-next-line @next/next/no-img-element -- same-origin, authenticated route
           <img
             src={initial.logoUrl}
-            alt="Current logo"
-            className="h-10 w-auto self-start rounded-md border bg-white p-1"
+            alt='Current logo'
+            className='h-10 w-auto self-start rounded-md border bg-white p-1'
           />
         )}
-        <Input
-          id="logo"
-          name="logo"
-          type="file"
-          accept="image/png,image/jpeg,image/webp"
-        />
-        <p className="text-muted-foreground text-sm">
+        <Input id='logo' name='logo' type='file' accept='image/png,image/jpeg,image/webp' />
+        <p className='text-muted-foreground text-sm'>
           PNG, JPEG or WebP, up to 1 MB. Transparent PNG works best.
         </p>
         {initial.logoUrl && (
-          <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" name="removeLogo" /> Remove the current logo
+          <label className='flex items-center gap-2 text-sm'>
+            <input type='checkbox' name='removeLogo' /> Remove the current logo
           </label>
         )}
       </div>
 
       {result && (
         <div
-          role={result.ok ? "status" : "alert"}
+          role={result.ok ? 'status' : 'alert'}
           className={
             result.ok
-              ? "text-success text-sm"
-              : "border-destructive/40 bg-destructive/10 text-destructive rounded-lg border p-3 text-sm"
+              ? 'text-success text-sm'
+              : 'border-destructive/40 bg-destructive/10 text-destructive rounded-lg border p-3 text-sm'
           }
         >
-          {result.ok
-            ? "Branding saved."
-            : `Branding was not saved. ${result.message}`}
+          {result.ok ? 'Branding saved.' : `Branding was not saved. ${result.message}`}
         </div>
       )}
-      <div className="flex flex-wrap gap-3">
-        <Button type="submit" disabled={pending || Boolean(live)}>
-          {pending ? "Saving…" : "Save branding"}
+      <div className='flex flex-wrap gap-3'>
+        <Button type='submit' disabled={pending || Boolean(live)}>
+          {pending ? 'Saving…' : 'Save branding'}
         </Button>
         <Button
-          type="reset"
-          variant="outline"
+          type='reset'
+          variant='outline'
           disabled={pending}
           onClick={() => {
             setName(saved.current.name);
