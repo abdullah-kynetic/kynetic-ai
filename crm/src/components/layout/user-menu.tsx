@@ -43,7 +43,9 @@ export function UserMenu({
         {adminHref && (
           <>
             <DropdownMenuSeparator />
-            <DropdownMenuItem render={<Link href={adminHref} />}>Kynetic admin</DropdownMenuItem>
+            <DropdownMenuItem render={<Link href={adminHref} aria-label='Kynetic admin' />}>
+              Kynetic admin
+            </DropdownMenuItem>
           </>
         )}
         {showPersonas && (
