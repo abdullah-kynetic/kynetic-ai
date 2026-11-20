@@ -5,6 +5,7 @@ export const img = {
   hero: a("About-3.jpg"), spark: i("0Q5RSicAGnJdW6OFU26zOZZZTkI.svg"),
   services: [a("About-2.jpg"), a("Precision-Auto-Body-Repair-with-Integrity.jpg"), a("About-1.jpg"), a("About-4.jpg"), a("About-Us.jpg"), a("About-3.jpg")],
   how: a("About-4.jpg"),
+  before: a("tacoma-before.jpg"), after: a("tacoma-after.jpg"),
   phone: i("Rv9ABU7LAsPbykXNfSO9bLjT8.svg"),
   check: i("jFCtW7MK7Wjd4abgxHZOLK1dQck.svg"),
   caseImg: a("About-1.jpg"),
