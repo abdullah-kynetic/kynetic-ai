@@ -97,7 +97,7 @@ const visible = (page, sel) => page.locator(sel).evaluateAll((els) => els.filter
   await page.locator('.am .cp__day-btn.is-open').first().click();
   await page.locator('.am .cp__time[data-time]').first().click();
   await page.locator('.am [data-confirm]').click(); await page.waitForURL(/\/confirmation\//, { timeout: 5000 }).catch(() => {});
-  ok('booking: picking a day and time books straight from the answers', bookings.length === 1 && bookings[0].attendee.name === 'Test Person' && bookings[0].attendee.email === 'test@example.com' && bookings[0].attendee.phoneNumber === '+12015550123' && bookings[0].eventTypeSlug === 'kynetic-ai-discovery-call' && bookings[0].bookingFieldsResponses.notes.includes('Test Co') && page.url().includes('/confirmation/'));
+  ok('booking: picking a day and time books straight from the answers', bookings.length === 1 && bookings[0].attendee.name === 'Test Person' && bookings[0].attendee.email === 'test@example.com' && bookings[0].attendee.phoneNumber === '+12015550123' && bookings[0].eventTypeSlug === 'kynetic-ai-audit-call' && bookings[0].bookingFieldsResponses.notes.includes('Test Co') && page.url().includes('/confirmation/'));
   ok('booking: confirmation page shows the booked time', (await page.locator('#when').innerText()).length > 10);
   await page.goto(base + '/', { waitUntil: 'load' }); await openAudit(); await page.waitForTimeout(300);
   ok('resume: after booking, reopening goes to the confirmation page', page.url().includes('/confirmation/'));

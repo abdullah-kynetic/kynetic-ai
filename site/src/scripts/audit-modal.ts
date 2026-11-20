@@ -13,7 +13,7 @@ import { mountPicker } from './cal-picker';
 
 const ENDPOINT: string = import.meta.env.PUBLIC_CONTACT_WEBHOOK ?? 'https://n8n.kyneticai.com/webhook/website-contact';
 const CAL_USER = 'abdullah-kyneticai';
-const CAL_SLUG = 'kynetic-ai-discovery-call';
+const CAL_SLUG = 'kynetic-ai-audit-call';
 const CAL = `https://cal.com/${CAL_USER}/${CAL_SLUG}`;
 const LETTERS = 'ABCDEFGH';
 const OTHER = 'Something else';
