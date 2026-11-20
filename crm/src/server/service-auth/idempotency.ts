@@ -63,6 +63,7 @@ export async function runIdempotent(
       await tx.insert(serviceIdempotency).values({
         tenantId: svc.tenantId,
         tokenId: svc.tokenId,
+        adminKeyId: svc.adminKeyId ?? null,
         key,
         method,
         path,

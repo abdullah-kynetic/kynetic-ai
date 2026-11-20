@@ -16,6 +16,10 @@ export function auditService(tx: Tx, svc: ServiceContext, input: AuditInput): Pr
         : { value: input.after };
   return audit(tx, {
     ...input,
-    after: { ...after, serviceTokenId: svc.tokenId }
+    after: {
+      ...after,
+      serviceTokenId: svc.tokenId,
+      ...(svc.adminKeyId ? { adminKeyId: svc.adminKeyId } : {})
+    }
   });
 }

@@ -19,7 +19,8 @@ export const serviceIdempotency = pgTable(
     tenantId: uuid('tenant_id')
       .notNull()
       .references(() => tenants.id, { onDelete: 'restrict' }),
-    tokenId: uuid('token_id').notNull(),
+    tokenId: uuid('token_id'),
+    adminKeyId: uuid('admin_key_id'),
     key: text().notNull(),
     method: text().notNull(),
     path: text().notNull(),

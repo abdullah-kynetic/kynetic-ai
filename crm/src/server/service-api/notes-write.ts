@@ -66,7 +66,7 @@ export async function recordServiceNote(
     refId: row.id,
     summary: 'Note added',
     actor: { type: 'system' },
-    meta: { source: 'service-api', serviceTokenId: svc.tokenId }
+    meta: { source: 'service-api', serviceTokenId: svc.tokenId, adminKeyId: svc.adminKeyId ?? null }
   });
   return { noteId: row.id };
 }

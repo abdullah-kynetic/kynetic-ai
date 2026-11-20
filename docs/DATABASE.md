@@ -35,6 +35,8 @@ Retention and classification are per table. Retention values are the PRD decisio
 | --- | --- | --- | --- | --- | --- | --- |
 | tenants | One client business: plan, tier, branding, hours, Alex transfer number, baseline, guarantee | Tenant (Kynetic creates) | Life of tenant. Offboarding delete is Later (Later) | Internal | M0 | platform |
 | client_lifecycle | Staff-managed lifecycle stage for the client board (migration 1092) | Kynetic admin | Life of tenant | Internal | Design 1092 | platform |
+| admin_api_keys | Owner-only admin keys for the service API and MCP: hashed secret, address list, revoke (migration 1095) | Portal owner only | Until revoked | Internal | Design 1095 | platform |
+| service_api_control | One-row stop-all switch for every service API key (migration 1095) | Portal owner only | Life of platform | Internal | Design 1095 | platform |
 | agency_prospects | Synthetic prospects moving through enrichment before they become Sales deals (migration 1093) | Kynetic admin | Life of the agency workspace | Internal | Design 1093 | platform |
 | account_templates | Saved client setups (GHL-style snapshots): modules, pipelines, custom fields, tags, automations (off), Alex settings. No customer data (migration 1094) | Kynetic admin | Until archived | Internal | Design 1094 | platform |
 | users | Global identity for Kynetic staff and client users | System (auth library, see Auth tables) | Until disabled and purged on request | Personal | M0 | platform |
