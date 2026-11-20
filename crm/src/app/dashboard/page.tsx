@@ -1,4 +1,5 @@
 import { requireModule } from '@/server/modules';
+import { StatTiles } from '@/components/layout/stat-tiles';
 import { CountChart, DailyTrend } from './metrics-charts';
 import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { SetupProgressCard } from '@/components/onboarding/setup-progress-card';
@@ -98,7 +99,7 @@ export default async function DashboardPage({
         ).map(([label, preset]) => (
           <a
             key={label}
-            className='inline-flex min-h-11 items-center rounded border px-3 text-sm'
+            className='bg-card hover:bg-secondary inline-flex min-h-11 items-center rounded-[var(--radius-control)] border px-3 text-sm transition-colors'
             href={rangeHref(preset.from, preset.to)}
           >
             {label}
@@ -126,28 +127,34 @@ export default async function DashboardPage({
         </p>
       ) : null}
       {metrics && (
-        <div className='mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
-          {(
-            [
-              ['Leads', metrics.totals.leads],
-              ['Speed to lead', speed],
-              ['Calls', metrics.totals.calls],
-              ['Reached', metrics.totals.contactsReached],
-              ['Booked', metrics.totals.estimatesBooked],
-              ['Booking rate', booking],
-              ['Revenue', `$${(metrics.totals.revenueCents / 100).toLocaleString()}`]
-            ] as const
-          ).map(([label, value]) => (
-            <div key={label} className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
-              <p className='text-muted-foreground text-sm'>{label}</p>
-              <p className='mt-2 text-2xl font-medium'>{value}</p>
-            </div>
-          ))}
+        <div className='mt-4 grid gap-4'>
+          <StatTiles
+            label='Dashboard in numbers'
+            tiles={[
+              { label: 'Leads', value: metrics.totals.leads, key: true },
+              { label: 'Calls', value: metrics.totals.calls },
+              { label: 'Reached', value: metrics.totals.contactsReached },
+              { label: 'Booked', value: metrics.totals.estimatesBooked }
+            ]}
+          />
+          <StatTiles
+            label='Dashboard rates'
+            tiles={[
+              { label: 'Speed to lead', value: speed },
+              { label: 'Booking rate', value: booking },
+              {
+                label: 'Revenue',
+                value: `$${(metrics.totals.revenueCents / 100).toLocaleString('en-US')}`
+              }
+            ]}
+          />
         </div>
       )}
       {metrics && (
-        <div className='mt-4 grid min-w-0 gap-4 lg:grid-cols-2'>
-          <DailyTrend days={metrics.days} />
+        <div className='mt-4 grid min-w-0 gap-4 lg:grid-cols-3'>
+          <div className='min-w-0 lg:col-span-2 [&>section]:h-full'>
+            <DailyTrend days={metrics.days} />
+          </div>
           <CountChart
             name='Conversion funnel'
             highlight='last'
@@ -165,8 +172,8 @@ export default async function DashboardPage({
             empty='No leads in this range.'
             rows={metrics.sources.map((source) => ({ label: source.source, value: source.leads }))}
           />
-          <div className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
-            <p className='font-medium'>Recent activity</p>
+          <div className='bg-card rounded-[var(--radius-card)] border p-4 sm:p-5 lg:col-span-2'>
+            <h2 className='text-base font-medium'>Recent activity</h2>
             <div className='mt-3 space-y-3'>
               {metrics.activity.length ? (
                 metrics.activity.map((item) => (

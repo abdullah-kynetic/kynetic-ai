@@ -17,8 +17,11 @@ export function DailyTrend({
   name?: string;
 }) {
   return (
-    <section aria-label={name} className='min-w-0 rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
-      <h2 className='font-medium'>{name}</h2>
+    <section
+      aria-label={name}
+      className='bg-card min-w-0 rounded-[var(--radius-card)] border p-4 sm:p-5'
+    >
+      <h2 className='text-base font-medium'>{name}</h2>
       {!days.length ? (
         <p className='text-muted-foreground mt-3 text-sm'>No activity in this range.</p>
       ) : (

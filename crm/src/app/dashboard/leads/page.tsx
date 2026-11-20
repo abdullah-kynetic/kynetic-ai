@@ -88,7 +88,7 @@ export default async function LeadsOverviewPage() {
         ) : null}
         <section
           aria-label='Recent lead activity'
-          className='bg-card min-w-0 rounded-xl p-4 ring-1 ring-foreground/10 lg:col-span-2'
+          className='bg-card min-w-0 rounded-[var(--radius-card)] border p-4 sm:p-5 lg:col-span-2'
         >
           <h2 className='font-medium'>Recent activity</h2>
           {metrics.activity.length ? (

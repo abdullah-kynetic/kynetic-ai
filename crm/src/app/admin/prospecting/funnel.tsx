@@ -64,61 +64,63 @@ export function FunnelDashboard({ funnel }: { funnel: ProspectFunnel }) {
           )
         }))}
       />
-      <section
-        aria-label='Conversion funnel'
-        className='bg-card space-y-4 rounded-[var(--radius-card)] border p-5'
-      >
-        <h2 className='font-medium'>Funnel</h2>
-        <ol className='space-y-3'>
-          {funnel.steps.map((step, index) => (
-            <li key={step.key} className='space-y-1'>
-              <div className='flex flex-wrap justify-between gap-2 text-sm'>
-                <span className='font-medium'>{step.label}</span>
-                <span className='text-muted-foreground tabular-nums'>
-                  {step.reached} reached
-                  {index > 0 && <> · {pct(step.conversion)} of previous step</>}
-                </span>
-              </div>
-              <div className='bg-muted h-2 overflow-hidden rounded-full' aria-hidden='true'>
-                <div
-                  className={`h-full rounded-full ${index === funnel.steps.length - 1 ? 'bg-chart-1' : 'bg-muted-foreground/40'}`}
-                  style={{
-                    width: `${Math.max((step.reached / top) * 100, step.reached ? 2 : 0)}%`
-                  }}
-                />
-              </div>
-            </li>
-          ))}
-        </ol>
-        <p className='text-muted-foreground text-xs'>
-          Scraped: name only. Half-enriched: a phone or website. Fully enriched: website, phone,
-          email and owner. Moving to Sales creates a deal only; nothing is sent.
-        </p>
-      </section>
-      <section
-        aria-label='Prospects by source'
-        className='bg-card space-y-3 rounded-[var(--radius-card)] border p-5'
-      >
-        <h2 className='font-medium'>Where prospects came from</h2>
-        <ul className='space-y-3'>
-          {funnel.sources.map((s) => (
-            <li key={s.source} className='space-y-1'>
-              <div className='flex justify-between text-sm'>
-                <span>{sourceLabel[s.source]}</span>
-                <span className='text-muted-foreground tabular-nums'>
-                  {s.count} · {Math.round((s.count / funnel.total) * 100)}%
-                </span>
-              </div>
-              <div className='bg-muted h-1 overflow-hidden rounded-full' aria-hidden='true'>
-                <div
-                  className={`h-full rounded-full ${s.count === sourceTop ? 'bg-chart-1' : 'bg-muted-foreground/40'}`}
-                  style={{ width: `${(s.count / sourceTop) * 100}%` }}
-                />
-              </div>
-            </li>
-          ))}
-        </ul>
-      </section>
+      <div className='grid gap-4 lg:grid-cols-3 lg:items-start'>
+        <section
+          aria-label='Conversion funnel'
+          className='bg-card space-y-4 rounded-[var(--radius-card)] border p-4 sm:p-5 lg:col-span-2'
+        >
+          <h2 className='font-medium'>Funnel</h2>
+          <ol className='space-y-3'>
+            {funnel.steps.map((step, index) => (
+              <li key={step.key} className='space-y-1'>
+                <div className='flex flex-wrap justify-between gap-2 text-sm'>
+                  <span className='font-medium'>{step.label}</span>
+                  <span className='text-muted-foreground tabular-nums'>
+                    {step.reached} reached
+                    {index > 0 && <> · {pct(step.conversion)} of previous step</>}
+                  </span>
+                </div>
+                <div className='bg-muted h-2 overflow-hidden rounded-full' aria-hidden='true'>
+                  <div
+                    className={`h-full rounded-full ${index === funnel.steps.length - 1 ? 'bg-chart-1' : 'bg-muted-foreground/40'}`}
+                    style={{
+                      width: `${Math.max((step.reached / top) * 100, step.reached ? 2 : 0)}%`
+                    }}
+                  />
+                </div>
+              </li>
+            ))}
+          </ol>
+          <p className='text-muted-foreground text-xs'>
+            Scraped: name only. Half-enriched: a phone or website. Fully enriched: website, phone,
+            email and owner. Moving to Sales creates a deal only; nothing is sent.
+          </p>
+        </section>
+        <section
+          aria-label='Prospects by source'
+          className='bg-card space-y-3 rounded-[var(--radius-card)] border p-4 sm:p-5'
+        >
+          <h2 className='font-medium'>Where prospects came from</h2>
+          <ul className='space-y-3'>
+            {funnel.sources.map((s) => (
+              <li key={s.source} className='space-y-1'>
+                <div className='flex justify-between text-sm'>
+                  <span>{sourceLabel[s.source]}</span>
+                  <span className='text-muted-foreground tabular-nums'>
+                    {s.count} · {Math.round((s.count / funnel.total) * 100)}%
+                  </span>
+                </div>
+                <div className='bg-muted h-1 overflow-hidden rounded-full' aria-hidden='true'>
+                  <div
+                    className={`h-full rounded-full ${s.count === sourceTop ? 'bg-chart-1' : 'bg-muted-foreground/40'}`}
+                    style={{ width: `${(s.count / sourceTop) * 100}%` }}
+                  />
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
     </div>
   );
 }
