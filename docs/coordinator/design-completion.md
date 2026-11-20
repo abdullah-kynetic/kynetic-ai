@@ -2,6 +2,8 @@
 
 ## Phase 3 in progress — synthetic browser fixture
 
+Sales rollback is now browser-tested: a forced failed action shows an error and returns the synthetic card to its original stage. Persistence and rollback passed 2/2 in Chromium; commit `566b4ba3`. The other Phase 3 dashboards and their tests remain unfinished, and the full Phase 3 verify has not been run.
+
 Sales drag persistence now passes in Chromium (1/1) with the isolated synthetic seed. The original test navigated before its creation action completed; it now waits for the newly created prospect, and drives the pointer sensor explicitly. Commit `25495602`. Rollback remains unverified. Clients Kanban, Prospecting tables and funnel, Money dashboard and client dashboards remain open; no Phase 3 full verify has been run.
 
 Commit `37ead5b0` seeds the synthetic agency using a separate disposable database connection. The demo seed initializes Drizzle on its connection, which interfered with later postgres-js JSON parameters when the browser fixture reused that connection; isolating it allows archive import and the remaining fixture setup to complete. Typecheck passed. The Sales board browser test reached the board but failed to find the newly created “Board Prospect”; drag persistence and rollback remain unverified. This is one failed test attempt after fixing fixture setup, not a completed Phase 3 gate. Clients, Prospecting, Money and client area dashboards remain unfinished. Full verify has not been run for Phase 3.
