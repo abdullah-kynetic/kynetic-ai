@@ -49,3 +49,25 @@ describe('F-87 env validation', () => {
     expect(parseEnv({ ...valid, GOOGLE_CLIENT_ID: 'id', GOOGLE_CLIENT_SECRET: 's' })).toBeTruthy();
   });
 });
+
+describe('SERVICE_API_OWNER_EMAIL', () => {
+  it('is unset by default, and blank counts as unset', () => {
+    expect(parseEnv(valid).SERVICE_API_OWNER_EMAIL).toBeUndefined();
+    expect(
+      parseEnv({ ...valid, SERVICE_API_OWNER_EMAIL: '' }).SERVICE_API_OWNER_EMAIL
+    ).toBeUndefined();
+    expect(
+      parseEnv({ ...valid, SERVICE_API_OWNER_EMAIL: '   ' }).SERVICE_API_OWNER_EMAIL
+    ).toBeUndefined();
+  });
+
+  it('is trimmed and lower-cased, and must be an email', () => {
+    expect(
+      parseEnv({ ...valid, SERVICE_API_OWNER_EMAIL: '  Owner@Example.TEST ' })
+        .SERVICE_API_OWNER_EMAIL
+    ).toBe('owner@example.test');
+    expect(() => parseEnv({ ...valid, SERVICE_API_OWNER_EMAIL: 'not-an-email' })).toThrow(
+      /SERVICE_API_OWNER_EMAIL/
+    );
+  });
+});

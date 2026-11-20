@@ -1,8 +1,9 @@
 import { and, desc, eq, isNull } from 'drizzle-orm';
 import { z } from 'zod';
 import { audit } from '../audit';
-import type { Db } from '../db/client';
-import { serviceTokens } from '../db/schema';
+import { getEnv } from '../env';
+import type { Db, Tx } from '../db/client';
+import { serviceTokens, users } from '../db/schema';
 import { AppError } from '../errors';
 import { SERVICE_TOKEN_SCOPES } from '../service-auth/scopes';
 import { generateServiceToken } from '../service-auth/token';
@@ -25,14 +26,65 @@ export type ServiceTokenSummary = {
   revokedAt: string | null;
 };
 
-type Options = { db?: Db };
+type Options = {
+  db?: Db;
+  /** Tests only. Production reads SERVICE_API_OWNER_EMAIL from the environment. */
+  ownerEmail?: string | null;
+};
+
+/**
+ * Only the portal owner manages service tokens, not every Kynetic admin. The owner is the one verified
+ * staff account whose email equals SERVICE_API_OWNER_EMAIL. It fails closed: if that setting is missing
+ * or blank, nobody can. The database row is read again here, so a stale session cannot pass.
+ */
+async function assertServiceApiOwner(tx: Tx, caller: StaffCaller, opts: Options) {
+  const configured =
+    opts.ownerEmail !== undefined ? opts.ownerEmail : getEnv().SERVICE_API_OWNER_EMAIL;
+  const owner = configured?.trim().toLowerCase();
+  if (!owner) throw new AppError('FORBIDDEN');
+  const [user] = await tx
+    .select({ email: users.email, verified: users.emailVerified, role: users.kyneticRole })
+    .from(users)
+    .where(eq(users.id, caller.id))
+    .limit(1);
+  if (!user || user.role !== 'admin' || !user.verified || user.email.toLowerCase() !== owner) {
+    throw new AppError('FORBIDDEN');
+  }
+}
+
+function asTokenOwner<T>(
+  caller: StaffCaller,
+  tenantId: string,
+  opts: Options,
+  fn: (tx: Tx) => Promise<T>
+): Promise<T> {
+  return asTenantAdmin(caller, tenantId, opts, async (tx) => {
+    await assertServiceApiOwner(tx, caller, opts);
+    return fn(tx);
+  });
+}
+
+/** True when this staff account is the portal owner. Used to show or hide the token page only. */
+export async function isServiceApiOwner(
+  caller: StaffCaller,
+  tenantId: string,
+  opts: Options = {}
+): Promise<boolean> {
+  try {
+    await asTokenOwner(caller, tenantId, opts, async () => undefined);
+    return true;
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'FORBIDDEN') return false;
+    throw error;
+  }
+}
 
 export async function listServiceTokens(
   caller: StaffCaller,
   tenantId: string,
   opts: Options = {}
 ): Promise<ServiceTokenSummary[]> {
-  return asTenantAdmin(caller, tenantId, opts, async (tx) => {
+  return asTokenOwner(caller, tenantId, opts, async (tx) => {
     const rows = await tx
       .select({
         id: serviceTokens.id,
@@ -70,7 +122,7 @@ export async function issueAdminServiceToken(
   if (!parsed.success)
     throw new AppError('VALIDATION_FAILED', { message: 'Choose a label and at least one scope.' });
   const minted = generateServiceToken();
-  const id = await asTenantAdmin(caller, tenantId, opts, async (tx) => {
+  const id = await asTokenOwner(caller, tenantId, opts, async (tx) => {
     const [row] = await tx
       .insert(serviceTokens)
       .values({
@@ -99,7 +151,7 @@ export async function revokeAdminServiceToken(
   opts: Options = {}
 ): Promise<{ revoked: boolean }> {
   if (!z.uuid().safeParse(tokenId).success) throw new AppError('NOT_FOUND');
-  return asTenantAdmin(caller, tenantId, opts, async (tx) => {
+  return asTokenOwner(caller, tenantId, opts, async (tx) => {
     const rows = await tx
       .update(serviceTokens)
       .set({ revokedAt: new Date().toISOString() })

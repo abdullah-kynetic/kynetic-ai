@@ -46,6 +46,15 @@ export const envSchema = z.object({
   // Phase 3. Emails a client when Kynetic replies to a support request. Also needs the person's own
   // email setting for that notice, which is off by default.
   SUPPORT_ALERT_EMAIL_ENABLED: booleanString.default(false),
+  // The one account allowed to issue, list and revoke service tokens (the API and MCP keys). Unset or
+  // blank means nobody can: the gate fails closed. Compared with the signed-in staff email, which must be verified.
+  SERVICE_API_OWNER_EMAIL: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .transform((v) => (v === '' ? undefined : v))
+    .pipe(z.email().optional())
+    .optional(),
   // Lets Kynetic staff sign in with an emailed code, with no authenticator, for a 30 day session.
   // Off by default: staff then use Google plus an authenticator app and 7 day sessions.
   STAFF_EMAIL_LOGIN: booleanString.default(false),

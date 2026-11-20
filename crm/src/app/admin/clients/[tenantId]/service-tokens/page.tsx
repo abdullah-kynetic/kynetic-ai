@@ -23,6 +23,8 @@ export default async function ServiceTokensPage({
     tenantId
   ).catch((error: unknown) => {
     if (error instanceof AppError && error.code === 'NOT_FOUND') notFound();
+    // Only the portal owner manages service tokens; any other admin sees a 403.
+    if (error instanceof AppError && error.code === 'FORBIDDEN') forbidden();
     throw error;
   });
   return (
