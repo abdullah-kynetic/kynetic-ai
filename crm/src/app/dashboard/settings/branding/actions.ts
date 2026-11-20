@@ -5,6 +5,7 @@ import { saveBranding } from '@/server/branding';
 import { checkPrimaryColor } from '@/lib/branding/color';
 import { AppError } from '@/server/errors';
 import { loadShellContext } from '@/server/shell';
+import { VIEW_AS_COOKIE } from '@/server/impersonation';
 import { cookies, headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
@@ -26,8 +27,14 @@ const MESSAGES: Record<string, string> = {
 export async function saveBrandingAction(formData: FormData): Promise<BrandingResult> {
   const [cookieStore, requestHeaders] = await Promise.all([cookies(), headers()]);
   const user = await requireUser(requestHeaders);
-  const shell = await loadShellContext(requestHeaders, cookieStore.get('tenant_id')?.value);
+  const shell = await loadShellContext(
+    requestHeaders,
+    cookieStore.get('tenant_id')?.value,
+    undefined,
+    cookieStore.get(VIEW_AS_COOKIE)?.value
+  );
   if (!shell?.tenant) return { ok: false, message: 'You do not have access to this.' };
+  if (shell.viewAs?.readOnly) return { ok: false, message: 'This view is read-only.' };
   const actor = await resolveActor(user, shell.tenant.id);
 
   const color = String(formData.get('primaryColor') ?? '').trim();

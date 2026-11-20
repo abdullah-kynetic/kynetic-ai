@@ -143,6 +143,9 @@ test('Alex settings show read-only access during staff view-as', async ({ adminP
   await page.goto('/dashboard/settings/alex');
   await expect(page.getByText('This view is read-only.')).toBeVisible();
   await expect(page.getByRole('checkbox', { name: /Pause Alex/ })).toHaveCount(0);
+  await page.goto('/dashboard/settings/branding');
+  await expect(page.getByText('This view is read-only.')).toBeVisible();
+  await expect(page.getByLabel('Business name')).toHaveCount(0);
 });
 
 test('CRM-disabled workspace retains its settings access message', async ({ browser }) => {
