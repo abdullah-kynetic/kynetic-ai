@@ -187,6 +187,7 @@ async function removeAgency(sql: Sql, tenantId: string) {
     'agency_referrals',
     'agency_case_studies',
     'agency_alerts',
+    'agency_prospects',
     'agency_campaigns',
     'deal_contacts',
     'deals',

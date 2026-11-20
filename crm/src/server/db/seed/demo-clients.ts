@@ -741,66 +741,67 @@ async function seedAgency(sql: Sql, anchor: string) {
     throw new Error(`invalid agency workspace tenant id: ${JSON.stringify(workspace.tenantId)}`);
   const [prior] =
     await sql`select 1 from demo_seed_records where tenant_id=${workspace.tenantId} and table_name='__seed_meta__' and seed_batch=${BATCH}`;
-  if (prior) return;
-  await sql.begin(async (raw) => {
-    const tx = raw as unknown as Sql;
-    await ledger(
-      tx,
-      workspace.tenantId,
-      '__seed_meta__',
-      id(AGENCY_SYNTHETIC_SLUG, '__seed_meta__', 0),
-      { anchor, workspaceCreated: workspace.created }
-    );
-    const [pipeline] =
-      await tx`select id from pipelines where tenant_id=${workspace.tenantId} and is_default=true`;
-    const stages =
-      await tx`select id from pipeline_stages where tenant_id=${workspace.tenantId} and pipeline_id=${pipeline!.id} order by position`;
-    for (let i = 0; i < 60; i++) {
-      const cid = id(AGENCY_SYNTHETIC_SLUG, 'contacts', i),
-        did = id(AGENCY_SYNTHETIC_SLUG, 'deals', i),
-        name = `Texas Growth Prospect ${i + 1} (demo)`,
-        created = atDay(anchor, i % 30).toISOString();
-      await inserted(
+  if (!prior)
+    await sql.begin(async (raw) => {
+      const tx = raw as unknown as Sql;
+      await ledger(
         tx,
         workspace.tenantId,
-        'contacts',
-        cid,
-        () => tx`insert into contacts
-      (id,tenant_id,first_name,primary_phone_e164,primary_email,phones,emails,address,source,status,custom,created_at,updated_at,imported_source,external_id) values
-      (${cid},${workspace.tenantId},${name},${phone(i)},${`prospect-${i}@example.test`},${`{${phone(i)}}`}::text[],${`{prospect-${i}@example.test}`}::text[],(${JSON.stringify({ city: 'Austin', state: 'TX' })}::text)::jsonb,'agency_outbound_cold_call','working',(${JSON.stringify({ synthetic: true })}::text)::jsonb,${created},${created},'synthetic_demo',${`agency-demo-${i}`}) on conflict do nothing returning id`
+        '__seed_meta__',
+        id(AGENCY_SYNTHETIC_SLUG, '__seed_meta__', 0),
+        { anchor, workspaceCreated: workspace.created }
       );
-      await inserted(
-        tx,
-        workspace.tenantId,
-        'deals',
-        did,
-        () => tx`insert into deals
-      (id,tenant_id,pipeline_id,stage_id,title,value_cents,source,position,custom,created_at,updated_at,imported_source,external_id) values (${did},${workspace.tenantId},${pipeline!.id},${stages[i % stages.length]!.id},${name},0,'agency_outbound_cold_call',${`a${i}`},(${JSON.stringify({ synthetic: true, price: 'to be confirmed' })}::text)::jsonb,${created},${created},'synthetic_demo',${`agency-deal-${i}`}) on conflict do nothing returning id`
-      );
-      const linked =
-        await tx`insert into deal_contacts (tenant_id,deal_id,contact_id,role) values (${workspace.tenantId},${did},${cid},'other') on conflict do nothing returning deal_id`;
-      if (linked.length)
-        await ledger(
+      const [pipeline] =
+        await tx`select id from pipelines where tenant_id=${workspace.tenantId} and is_default=true`;
+      const stages =
+        await tx`select id from pipeline_stages where tenant_id=${workspace.tenantId} and pipeline_id=${pipeline!.id} order by position`;
+      for (let i = 0; i < 60; i++) {
+        const cid = id(AGENCY_SYNTHETIC_SLUG, 'contacts', i),
+          did = id(AGENCY_SYNTHETIC_SLUG, 'deals', i),
+          name = `Texas Growth Prospect ${i + 1} (demo)`,
+          created = atDay(anchor, i % 30).toISOString();
+        await inserted(
           tx,
           workspace.tenantId,
-          'deal_contacts',
-          id(AGENCY_SYNTHETIC_SLUG, 'deal_contacts', i),
-          { dealId: did, contactId: cid }
+          'contacts',
+          cid,
+          () => tx`insert into contacts
+      (id,tenant_id,first_name,primary_phone_e164,primary_email,phones,emails,address,source,status,custom,created_at,updated_at,imported_source,external_id) values
+      (${cid},${workspace.tenantId},${name},${phone(i)},${`prospect-${i}@example.test`},${`{${phone(i)}}`}::text[],${`{prospect-${i}@example.test}`}::text[],(${JSON.stringify({ city: 'Austin', state: 'TX' })}::text)::jsonb,'agency_outbound_cold_call','working',(${JSON.stringify({ synthetic: true })}::text)::jsonb,${created},${created},'synthetic_demo',${`agency-demo-${i}`}) on conflict do nothing returning id`
         );
-    }
-    for (let i = 0; i < 150; i++) {
-      const rid = id(AGENCY_SYNTHETIC_SLUG, 'agency_call_attempts', i);
-      await inserted(
-        tx,
-        workspace.tenantId,
-        'agency_call_attempts',
-        rid,
-        () => tx`insert into agency_call_attempts
+        await inserted(
+          tx,
+          workspace.tenantId,
+          'deals',
+          did,
+          () => tx`insert into deals
+      (id,tenant_id,pipeline_id,stage_id,title,value_cents,source,position,custom,created_at,updated_at,imported_source,external_id) values (${did},${workspace.tenantId},${pipeline!.id},${stages[i % stages.length]!.id},${name},0,'agency_outbound_cold_call',${`a${i}`},(${JSON.stringify({ synthetic: true, price: 'to be confirmed' })}::text)::jsonb,${created},${created},'synthetic_demo',${`agency-deal-${i}`}) on conflict do nothing returning id`
+        );
+        const linked =
+          await tx`insert into deal_contacts (tenant_id,deal_id,contact_id,role) values (${workspace.tenantId},${did},${cid},'other') on conflict do nothing returning deal_id`;
+        if (linked.length)
+          await ledger(
+            tx,
+            workspace.tenantId,
+            'deal_contacts',
+            id(AGENCY_SYNTHETIC_SLUG, 'deal_contacts', i),
+            { dealId: did, contactId: cid }
+          );
+      }
+      for (let i = 0; i < 150; i++) {
+        const rid = id(AGENCY_SYNTHETIC_SLUG, 'agency_call_attempts', i);
+        await inserted(
+          tx,
+          workspace.tenantId,
+          'agency_call_attempts',
+          rid,
+          () => tx`insert into agency_call_attempts
       (id,tenant_id,contact_id,event_id,request_hash,outcome,notes,logged_by,logged_at) values (${rid},${workspace.tenantId},${id(AGENCY_SYNTHETIC_SLUG, 'contacts', i % 60)},${id(AGENCY_SYNTHETIC_SLUG, 'agency_call_event', i)},${createHash('sha256').update(`agency-call-${i}`).digest('hex')},${i % 4 === 0 ? 'connected' : i % 3 === 0 ? 'voicemail' : 'no_answer'},'Synthetic demo attempt',${admin.id},${atDay(anchor, i % 30).toISOString()}) on conflict do nothing returning id`
-      );
-    }
-    await seedAgencyOperations(tx, workspace.tenantId, admin.id as string, anchor);
-  });
+        );
+      }
+      await seedAgencyOperations(tx, workspace.tenantId, admin.id as string, anchor);
+    });
+  await seedAgencyProspects(sql, workspace.tenantId, anchor);
 }
 
 async function seedAgencyOperations(sql: Sql, tenantId: string, adminId: string, anchor: string) {
@@ -948,6 +949,50 @@ async function seedAgencyOperations(sql: Sql, tenantId: string, adminId: string,
       () => sql`insert into agency_alerts
       (id,tenant_id,kind,title,body,event_key) values
       (${alertId},${tenantId},${i ? 'daily_digest' : 'new_lead'},${i ? 'Demo daily summary' : 'Demo lead alert'},'Synthetic demo alert',${`demo-alert-${i}`}) on conflict do nothing returning id`
+    );
+  }
+}
+
+const PROSPECT_TRADES = ['Roofing', 'Remodeling', 'Plumbing', 'HVAC', 'Painting', 'Flooring'];
+const PROSPECT_CITIES: [string, string][] = [
+  ['Austin', 'TX'],
+  ['Dallas', 'TX'],
+  ['Denver', 'CO'],
+  ['Phoenix', 'AZ'],
+  ['Raleigh', 'NC']
+];
+const PROSPECT_SOURCE_CYCLE = ['google_maps', 'google_maps', 'directory', 'referral', 'manual'];
+
+/** Synthetic prospects across every enrichment stage. Fictional names, @example.test emails. */
+async function seedAgencyProspects(sql: Sql, tenantId: string, anchor: string) {
+  const [existing] = await sql`select 1 from agency_prospects where tenant_id=${tenantId} limit 1`;
+  if (existing) return;
+  for (let i = 0; i < 48; i++) {
+    const [city, state] = PROSPECT_CITIES[i % PROSPECT_CITIES.length]!;
+    const trade = PROSPECT_TRADES[i % PROSPECT_TRADES.length]!;
+    // 0-19 scraped, 20-33 half-enriched, 34-47 fully enriched; the first four full ones moved to Sales.
+    const stage = i < 20 ? 'scraped' : i < 34 ? 'half_enriched' : 'fully_enriched';
+    const slug = `demo-prospect-${i}`;
+    const moved = i >= 34 && i < 38;
+    const dealId = moved ? id(AGENCY_SYNTHETIC_SLUG, 'deals', i - 34) : null;
+    const recordId = id(AGENCY_SYNTHETIC_SLUG, 'agency_prospects', i);
+    const created = atDay(anchor, i % 30).toISOString();
+    const [deal] = dealId ? await sql`select 1 from deals where id=${dealId}` : [];
+    const linked = moved && deal ? dealId : null;
+    await inserted(
+      sql,
+      tenantId,
+      'agency_prospects',
+      recordId,
+      () => sql`insert into agency_prospects
+        (id,tenant_id,business_name,source,stage,website,phone,email,owner_name,city,state,moved_deal_id,moved_at,created_at,updated_at)
+        values (${recordId},${tenantId},${`${city} ${trade} Co ${i + 1} (demo)`},${PROSPECT_SOURCE_CYCLE[i % PROSPECT_SOURCE_CYCLE.length]!},${stage},
+          ${stage === 'scraped' ? null : `https://${slug}.example.test`},
+          ${stage === 'scraped' ? null : phone(i)},
+          ${stage === 'fully_enriched' ? `${slug}@example.test` : null},
+          ${stage === 'fully_enriched' ? `${FIRST[i % FIRST.length]} ${LAST[i % LAST.length]}` : null},
+          ${city},${state},${linked},${linked ? created : null},${created},${created})
+        on conflict do nothing returning id`
     );
   }
 }

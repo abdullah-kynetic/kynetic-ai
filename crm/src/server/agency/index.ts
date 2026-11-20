@@ -138,41 +138,40 @@ export const AGENCY_SOURCES = [
 ] as const;
 const sourceKey = (direction: string, channel: string) => `agency_${direction}_${channel}`;
 
-export async function createAgencyLead(caller: StaffCaller, raw: unknown, opts: { db?: Db } = {}) {
-  return inAgency(
-    caller,
-    async (tx, tenantId) => {
-      const input = parseInput(syntheticLeadSchema, raw);
-      const ctx = { tenantId, userId: caller.id, role: 'admin' as const };
-      // Use the contact service, never createManualLead: human outbound lists must not trigger outreach.
-      const contact = await createContact(
-        ctx,
-        {
-          firstName: input.firstName,
-          phones: input.phone ? [input.phone] : [],
-          address: input.state ? { state: input.state } : {},
-          emails: [input.email],
-          source: sourceKey(input.direction, input.channel)
-        },
-        { tx, asLead: false }
-      );
-      const deal = await createDeal(
-        ctx,
-        { title: input.firstName, contactId: contact.id, source: contact.source ?? undefined },
-        { tx }
-      );
-      await tx.execute(sql`insert into agency_alerts (tenant_id,kind,title,body,event_key)
-        values (${tenantId},'new_lead','New agency lead','A prospect was added to the agency pipeline.',${`lead/${contact.id}`})`);
-      await emitEvent(tx, {
-        name: 'agency.lead.created',
-        tenantId,
-        actor: { type: 'user', id: caller.id },
-        payload: { contactId: contact.id, dealId: deal.id }
-      });
-      return { contactId: contact.id, dealId: deal.id };
+/** Adds one synthetic lead and its deal inside an agency transaction. DB only; nothing is sent. */
+export async function insertAgencyLead(tx: Tx, tenantId: string, userId: string, raw: unknown) {
+  const input = parseInput(syntheticLeadSchema, raw);
+  const ctx = { tenantId, userId, role: 'admin' as const };
+  // Use the contact service, never createManualLead: human outbound lists must not trigger outreach.
+  const contact = await createContact(
+    ctx,
+    {
+      firstName: input.firstName,
+      phones: input.phone ? [input.phone] : [],
+      address: input.state ? { state: input.state } : {},
+      emails: [input.email],
+      source: sourceKey(input.direction, input.channel)
     },
-    opts
+    { tx, asLead: false }
   );
+  const deal = await createDeal(
+    ctx,
+    { title: input.firstName, contactId: contact.id, source: contact.source ?? undefined },
+    { tx }
+  );
+  await tx.execute(sql`insert into agency_alerts (tenant_id,kind,title,body,event_key)
+    values (${tenantId},'new_lead','New agency lead','A prospect was added to the agency pipeline.',${`lead/${contact.id}`})`);
+  await emitEvent(tx, {
+    name: 'agency.lead.created',
+    tenantId,
+    actor: { type: 'user', id: userId },
+    payload: { contactId: contact.id, dealId: deal.id }
+  });
+  return { contactId: contact.id, dealId: deal.id };
+}
+
+export async function createAgencyLead(caller: StaffCaller, raw: unknown, opts: { db?: Db } = {}) {
+  return inAgency(caller, (tx, tenantId) => insertAgencyLead(tx, tenantId, caller.id, raw), opts);
 }
 
 const filtersSchema = z.strictObject({
