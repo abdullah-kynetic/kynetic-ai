@@ -30,7 +30,7 @@ test('anonymous browser visits to admin pages redirect to sign-in', async ({ pag
     await expect(page).toHaveURL(new RegExp(`/sign-in\\?next=${encodeURIComponent(landed)}`));
     await expect(page.getByRole('heading', { name: 'Log in', exact: true })).toBeVisible();
   }
-  const fetched = await page.request.get('/admin/users', {
+  const fetched = await page.request.get('/admin/settings/team', {
     maxRedirects: 0,
     headers: { accept: 'application/json' }
   });
