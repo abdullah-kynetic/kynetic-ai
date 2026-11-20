@@ -65,7 +65,11 @@ export default async function AlexSettingsPage({
   const ctx = { tenantId: shell.tenant.id, userId: shell.user.id, role: shell.role };
   if (shell.viewAs?.readOnly) {
     return (
-      <SettingsPage pageTitle='Alex settings' access={false} accessFallback='This view is read-only.'>
+      <SettingsPage
+        pageTitle='Alex settings'
+        access={false}
+        accessFallback='This view is read-only.'
+      >
         {null}
       </SettingsPage>
     );

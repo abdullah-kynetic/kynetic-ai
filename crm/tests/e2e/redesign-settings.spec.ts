@@ -148,14 +148,16 @@ test('Alex settings show read-only access during staff view-as', async ({ adminP
   await expect(page.getByLabel('Business name')).toHaveCount(0);
 });
 
-test('Alex and Branding explain invalid settings before saving', async ({ authenticatedPage: page }) => {
+test('Alex and Branding explain invalid settings before saving', async ({
+  authenticatedPage: page
+}) => {
   await page.goto('/dashboard/settings/alex');
   await page.getByLabel('Calls start at').fill('18:00');
   await page.getByLabel('Calls stop at').fill('09:00');
   await page.getByRole('button', { name: 'Save', exact: true }).click();
-  await expect(page.getByRole('alert').filter({ hasText: 'Alex settings were not saved.' })).toContainText(
-    'Start must be before end.'
-  );
+  await expect(
+    page.getByRole('alert').filter({ hasText: 'Alex settings were not saved.' })
+  ).toContainText('Start must be before end.');
 
   await page.goto('/dashboard/settings/branding');
   await page.locator('#primaryColor').fill('#ffffff');
