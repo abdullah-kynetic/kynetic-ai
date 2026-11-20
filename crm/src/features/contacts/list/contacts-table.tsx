@@ -26,8 +26,7 @@ import {
   customColumnId,
   customFilterVariant,
   DEFAULT_SORT,
-  HIDEABLE_COLUMNS,
-  type ListColumn
+  HIDEABLE_COLUMNS
 } from './search-params';
 import {
   formatDay,
