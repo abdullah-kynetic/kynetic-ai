@@ -2,7 +2,7 @@
 
 import { ErrorState } from '@/components/ui/states';
 
-export default function PipelineError({ error, retry }: { error: unknown; retry: () => void }) {
+export default function PipelineError({ error, reset }: { error: unknown; reset: () => void }) {
   const reference =
     error instanceof Error ? (error as Error & { digest?: string }).digest : undefined;
   return (
@@ -10,7 +10,7 @@ export default function PipelineError({ error, retry }: { error: unknown; retry:
       <ErrorState
         message='Your pipeline could not be loaded.'
         reference={reference}
-        onRetry={retry}
+        onRetry={reset}
       />
     </div>
   );

@@ -42,7 +42,7 @@ export default function PageContainer({
   pageDescription,
   infoContent,
   pageHeaderAction,
-  redesign = false
+  redesign = true
 }: PageContainerProps & { redesign?: boolean }) {
   if (!access) {
     return (

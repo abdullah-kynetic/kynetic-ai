@@ -17,21 +17,34 @@ export default function GlobalError({
           minHeight: '100vh',
           alignItems: 'center',
           justifyContent: 'center',
-          fontFamily: 'system-ui, sans-serif'
+          fontFamily: 'Inter, system-ui, sans-serif',
+          background: '#FAF8F5',
+          color: '#14100C'
         }}
       >
         <div style={{ textAlign: 'center', padding: '1rem' }}>
-          <h1 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Something went wrong</h1>
-          <p style={{ color: '#6b7280', marginBottom: '1.25rem' }}>
+          <h1
+            style={{
+              fontSize: '1.75rem',
+              fontWeight: 600,
+              letterSpacing: '-0.015em',
+              marginBottom: '0.5rem'
+            }}
+          >
+            Something went wrong
+          </h1>
+          <p style={{ color: '#5C5650', marginBottom: '1.25rem' }}>
             An unexpected error occurred. Please try again.
           </p>
           <button
             onClick={() => reset()}
             style={{
               padding: '0.5rem 1.25rem',
-              borderRadius: '0.5rem',
-              border: '1px solid #d1d5db',
-              background: 'transparent',
+              borderRadius: '0.75rem',
+              border: '1px solid #857D72',
+              background: '#14100C',
+              color: '#FFFFFF',
+              minHeight: '44px',
               font: 'inherit',
               cursor: 'pointer'
             }}

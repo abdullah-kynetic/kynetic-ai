@@ -18,7 +18,10 @@ export function Heading({ title, description, infoContent }: HeadingProps) {
       <div className='flex items-center gap-2'>
         {createElement(
           tag,
-          { className: 'font-display text-[28px]/8 font-semibold md:text-[32px]/9' },
+          {
+            className:
+              'text-[28px]/[1.15] font-semibold tracking-[-0.015em] md:text-[32px]/[1.1] md:tracking-[-0.025em]'
+          },
           title
         )}
         {infoContent && (
