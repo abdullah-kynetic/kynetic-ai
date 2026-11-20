@@ -20,3 +20,7 @@ Base 614b7e40. Historical audit reference e3e968561afdd7280aab0c1d282ababa3d17d8
 - Run unit, integration, intake E2E, build, typecheck and lint; report exact-SHA CI and hosting dependencies. Roll back by disabling intake processing and reverting application changes while retaining stored evidence.
 
 Status: historical source trace complete. Implementation, sample artifacts and release verification pending.
+
+## 2026-11-20 rebuild plan
+
+The full build spec is `docs/coordinator/free-audit-blueprint.md` (branch `claude/project-thread-wuzri7`). WIP commit 6e4475a has the new checks, scoring and findings. Pipeline, async webhook, report, tests and samples are pending per tasks T1-T10 in the blueprint.
