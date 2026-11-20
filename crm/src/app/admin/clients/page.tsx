@@ -15,7 +15,7 @@ export default async function ClientsBoardPage() {
     { label: 'Churned', value: count('churned') }
   ];
   return (
-    <div className='flex flex-col gap-6'>
+    <div className='flex min-w-0 flex-col gap-6'>
       <div className='flex flex-wrap items-center justify-between gap-3'>
         <p className='text-muted-foreground text-[15px]'>
           {rows.length === 0

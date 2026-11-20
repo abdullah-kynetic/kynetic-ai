@@ -127,7 +127,7 @@ export function ClientsBoard({
   }
 
   return (
-    <div className='space-y-4'>
+    <div className='min-w-0 space-y-4'>
       {error && (
         <div
           role='alert'
@@ -142,7 +142,10 @@ export function ClientsBoard({
           : 'Only a Kynetic admin can move clients between stages.'}
       </p>
       <DndContext sensors={sensors} onDragEnd={onDragEnd}>
-        <div className='flex gap-4 overflow-x-auto pb-4' aria-label='Client lifecycle board'>
+        <div
+          className='relative flex gap-4 overflow-x-auto pb-4'
+          aria-label='Client lifecycle board'
+        >
           {CLIENT_STAGES.map((stage) => (
             <Column
               key={stage.id}
