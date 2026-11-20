@@ -1,5 +1,9 @@
 # Portal design completion running log
 
+## Phase 3 in progress — synthetic browser fixture
+
+Commit `37ead5b0` seeds the synthetic agency using a separate disposable database connection. The demo seed initializes Drizzle on its connection, which interfered with later postgres-js JSON parameters when the browser fixture reused that connection; isolating it allows archive import and the remaining fixture setup to complete. Typecheck passed. The Sales board browser test reached the board but failed to find the newly created “Board Prospect”; drag persistence and rollback remain unverified. This is one failed test attempt after fixing fixture setup, not a completed Phase 3 gate. Clients, Prospecting, Money and client area dashboards remain unfinished. Full verify has not been run for Phase 3.
+
 ## Phase 2 navigation — 2026-11-19
 
 **Baseline on `759b21a9`:** The requested full `bun run verify` completed with typecheck, lint, formatting, 666/666 unit tests, deploy-script rehearsal, and production build passing. Integration finished with 1,012 passed, 2 skipped, and exactly the 11 accepted inherited M7 failures in `automation-retries-m7.test.ts` (6) and `m7-module-acceptance.test.ts` (5). Both suites also fail on `origin/work`; they were not changed or weakened. The run used disposable local PostgreSQL and `PROVIDER_MODE=stub OUTBOUND_ENABLED=false`.
