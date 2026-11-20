@@ -18,6 +18,10 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* One icon set, one stroke. Icons take the colour of their text role. */
+  .tabler-icon {
+    stroke-width: 1.5;
+  }
 
   /* Global scrollbar styling to match ScrollArea */
   * {

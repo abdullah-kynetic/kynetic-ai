@@ -23,7 +23,7 @@ export default function AgencyPage({
             <>
               {actions}
               <span className='agency-environment'>
-                <IconLock size={14} aria-hidden='true' /> Synthetic workspace
+                <IconLock size={16} aria-hidden='true' /> Synthetic workspace
               </span>
             </>
           }
