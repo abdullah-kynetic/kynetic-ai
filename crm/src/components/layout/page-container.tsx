@@ -8,7 +8,7 @@ function PageSkeleton() {
     <div
       role='status'
       aria-label='Loading page'
-      className='flex flex-1 animate-pulse flex-col gap-4 p-4 md:px-6'
+      className='flex flex-1 animate-pulse flex-col gap-4 p-4 motion-reduce:animate-none md:px-6'
     >
       <div className='flex items-center justify-between'>
         <div>

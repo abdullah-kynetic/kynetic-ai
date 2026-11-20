@@ -50,7 +50,7 @@
   }
 }
 
-/* View Transition Wave Effect */
+/* Theme change: crossfade between the two themes */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
@@ -67,22 +67,18 @@
   z-index: 1;
 }
 
-@keyframes reveal {
+@keyframes theme-fade {
   from {
-    /* Use CSS variables for the origin, defaulting to center if not set */
-    clip-path: circle(0% at var(--x, 50%) var(--y, 50%));
-    opacity: 0.7;
+    opacity: 0;
   }
   to {
-    /* Use CSS variables for the origin, defaulting to center if not set */
-    clip-path: circle(150% at var(--x, 50%) var(--y, 50%));
     opacity: 1;
   }
 }
 
 ::view-transition-new(root) {
-  /* Apply the reveal animation */
-  animation: reveal 0.4s ease-in-out forwards;
+  /* A short crossfade when the theme changes, not a wipe across the page. */
+  animation: theme-fade 200ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 /* Base UI sets --accordion-panel-height on Accordion.Panel, but tw-animate-css's
@@ -139,6 +135,9 @@
 }
 
 @theme inline {
+  /* One easing curve and a short duration for every transition. */
+  --default-transition-duration: 150ms;
+  --default-transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   @keyframes scroll-fade-reveal-t {
     from {
       --scroll-fade-t: 0px;
