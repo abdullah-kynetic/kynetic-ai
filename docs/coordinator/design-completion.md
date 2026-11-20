@@ -1,5 +1,13 @@
 # Portal design completion running log
 
+## Phase 1 follow-up — 2026-11-19
+
+The previously unverified Alex view-as state is now fixed and browser-tested. During a synthetic staff view-as session, Alex and Branding show a clean read-only Settings state with no edit controls. Their server actions also resolve the view-as cookie and refuse writes. Commits: `4f3ae68d`, `1235c097`. A staff browser sweep now visits all nine Settings routes and checks that protected edit controls are hidden (`4e897424`). Alex server validation and Branding color validation show visible errors (`e841b241`); formatting follow-up is `9a7b466a`.
+
+Final focused checks on `9a7b466a`: Settings Chromium suite **13/13 passed**; Alex and backup integration files **12/12 passed** on disposable PostgreSQL; `bun run verify:quick` passed typecheck, lint, format, and **666/666 unit tests**. Production build passed on the preceding behavior-identical source revision. The nine-page dark desktop render check and 390/1280 overflow check are included in the 13 browser tests. The Alex pause action remains DB-only; `backups-m8b.test.ts` retains its `30_000` ms timeout.
+
+**Full `bun run verify` remains blocked, so Phase 1 is not marked fully complete under the original gate.** An isolated run of `baseline-ops.test.ts` and `isolation.test.ts` produced 5 failures and 21 passes: migration 1092 added `client_lifecycle` without a DATABASE.md entry, an RLS policy, or tenant A/B seed rows. The user explicitly paused Sales board/migration 1092 work, so these were diagnosed without editing that migration. Separately, `m7-module-acceptance.test.ts` and `automation-retries-m7.test.ts` set `OUTBOUND_ENABLED=true` internally, which conflicts with the required `PROVIDER_MODE=stub` and `OUTBOUND_ENABLED=false` environment. Their 11 failures were observed in the earlier full run; they were not rerun with outbound enabled. No provider or production call was made. This is a verification gate blocker outside the Settings implementation, not a passing full gate.
+
 ## Phase 1 Settings audit — 2026-11-19
 
 Sales board and migration 1092 were committed and pushed as WIP (`c8e5d7b0`) before resuming Settings. The Sales synthetic-prospect browser test timed out during workspace setup; board drag persistence is unverified and that work was not continued.
