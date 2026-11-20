@@ -20,9 +20,14 @@ test('sign-in page renders and anonymous admin requests get raw 401', async ({ p
 });
 
 test('anonymous browser visits to admin pages redirect to sign-in', async ({ page }) => {
-  for (const path of ['/admin', '/admin/agency', '/admin/users']) {
+  // Moved routes redirect first, so the sign-in return path is where they land.
+  for (const [path, landed] of [
+    ['/admin', '/admin'],
+    ['/admin/agency', '/admin/prospecting'],
+    ['/admin/users', '/admin/settings/team']
+  ]) {
     await page.goto(path);
-    await expect(page).toHaveURL(new RegExp(`/sign-in\\?next=${encodeURIComponent(path)}`));
+    await expect(page).toHaveURL(new RegExp(`/sign-in\\?next=${encodeURIComponent(landed)}`));
     await expect(page.getByRole('heading', { name: 'Log in', exact: true })).toBeVisible();
   }
   const fetched = await page.request.get('/admin/users', {
