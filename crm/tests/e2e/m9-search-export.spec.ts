@@ -2,7 +2,7 @@ import { expect, test } from './fixtures';
 
 test('F-37 Cmd+K finds a contact by phone fragment', async ({ authenticatedPage }) => {
   await authenticatedPage.goto('/dashboard');
-  await authenticatedPage.getByRole('button', { name: /Search/ }).click();
+  await authenticatedPage.getByRole('button', { name: /Jump to|Search/ }).click();
   const search = authenticatedPage.getByRole('combobox');
   await search.fill('5555550101');
   await expect(authenticatedPage.getByText('Contact a')).toBeVisible();
