@@ -24,6 +24,8 @@ export default async function BookingsOverviewPage() {
   const scope = await contactsActorScope(await headers());
   let upcoming: Awaited<ReturnType<typeof listAppointments>> | null = null;
   try {
+    // Request-time value in a server component.
+    // eslint-disable-next-line react/purity
     const from = new Date();
     upcoming = scope
       ? await listAppointments(scope.ctx, from, new Date(from.getTime() + 14 * 86_400_000))

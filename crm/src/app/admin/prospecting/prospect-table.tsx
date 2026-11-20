@@ -24,7 +24,7 @@ const sourceLabel: Record<string, string> = {
 };
 
 /** Lead table with select-all, per-row selection and a DB-only Move to Sales action. */
-export function ProspectTable({ rows }: { rows: ProspectItem[] }) {
+export function ProspectTable({ rows, emptyText }: { rows: ProspectItem[]; emptyText: string }) {
   const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [message, setMessage] = useState<{ tone: 'ok' | 'error'; text: string } | null>(null);
@@ -109,6 +109,13 @@ export function ProspectTable({ rows }: { rows: ProspectItem[] }) {
             </tr>
           </thead>
           <tbody>
+            {rows.length === 0 && (
+              <tr>
+                <td colSpan={9} className='text-muted-foreground p-6'>
+                  {emptyText}
+                </td>
+              </tr>
+            )}
             {rows.map((row) => (
               <tr key={row.id} className='border-t'>
                 <td className='p-3'>

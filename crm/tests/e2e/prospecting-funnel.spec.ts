@@ -56,6 +56,7 @@ test('Lead tables search, filter and bulk-select; Move to Sales creates deals on
   await expect(page.getByRole('row').filter({ hasText: 'Bulk Move Beta' })).toBeVisible();
   const move = page.getByRole('button', { name: /^Move to Sales/ });
   await expect(move).toBeDisabled();
+  await page.waitForLoadState('networkidle');
   await page.getByLabel('Select all prospects').check();
   await expect(move).toHaveText('Move to Sales (2)');
   await move.click();

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { getAgencyWorkspace } from '@/server/agency';
 import {
   PROSPECT_SOURCES,
@@ -112,40 +113,36 @@ export async function StageList({ stage, search }: { stage: ProspectStage; searc
         {rows.length} {rows.length === 1 ? 'prospect' : 'prospects'}
         {filtered ? ' match these filters' : ''}
       </p>
-      {rows.length === 0 ? (
-        <div className='bg-card rounded-xl border p-6 text-sm'>
-          <p className='text-muted-foreground'>
-            {filtered ? 'No prospects match these filters.' : copy[stage].empty}
-          </p>
-        </div>
-      ) : (
-        <ProspectTable
-          rows={rows.map((p) => ({
-            id: p.id,
-            businessName: p.businessName,
-            source: p.source,
-            location: [p.city, p.state].filter(Boolean).join(', '),
-            website: p.website,
-            phone: p.phone,
-            email: p.email,
-            ownerName: p.ownerName,
-            addedOn: p.createdAt.slice(0, 10)
-          }))}
-        />
-      )}
+      <ProspectTable
+        emptyText={filtered ? 'No prospects match these filters.' : copy[stage].empty}
+        rows={rows.map((p) => ({
+          id: p.id,
+          businessName: p.businessName,
+          source: p.source,
+          location: [p.city, p.state].filter(Boolean).join(', '),
+          website: p.website,
+          phone: p.phone,
+          email: p.email,
+          ownerName: p.ownerName,
+          addedOn: p.createdAt.slice(0, 10)
+        }))}
+      />
       {stage === 'scraped' && (
         <details className='bg-card rounded-xl border p-5' open={rows.length === 0}>
           <summary className='min-h-11 cursor-pointer font-medium'>
             Add a synthetic prospect
           </summary>
           <form action={createProspectAction} className='mt-4 grid gap-4 sm:grid-cols-2'>
-            <label className='space-y-1 text-sm'>
-              <span>Business name</span>
-              <Input name='businessName' maxLength={200} required />
-            </label>
-            <label className='space-y-1 text-sm'>
-              <span>Source</span>
+            <div className='space-y-1 text-sm'>
+              <Label htmlFor='p-businessName'>Business name</Label>
+
+              <Input id='p-businessName' name='businessName' maxLength={200} required />
+            </div>
+            <div className='space-y-1 text-sm'>
+              <Label htmlFor='p-source'>Source</Label>
+
               <select
+                id='p-source'
                 name='source'
                 className='bg-background block h-9 w-full rounded-md border px-3 text-sm'
               >
@@ -155,31 +152,37 @@ export async function StageList({ stage, search }: { stage: ProspectStage; searc
                   </option>
                 ))}
               </select>
-            </label>
-            <label className='space-y-1 text-sm'>
-              <span>City</span>
-              <Input name='city' maxLength={120} />
-            </label>
-            <label className='space-y-1 text-sm'>
-              <span>State</span>
-              <Input name='state' maxLength={2} placeholder='TX' />
-            </label>
-            <label className='space-y-1 text-sm'>
-              <span>Website</span>
-              <Input name='website' maxLength={300} />
-            </label>
-            <label className='space-y-1 text-sm'>
-              <span>Synthetic phone</span>
-              <Input name='phone' placeholder='+12025550123' />
-            </label>
-            <label className='space-y-1 text-sm'>
-              <span>Synthetic email</span>
-              <Input name='email' type='email' placeholder='owner@example.test' />
-            </label>
-            <label className='space-y-1 text-sm'>
-              <span>Owner name</span>
-              <Input name='ownerName' maxLength={200} />
-            </label>
+            </div>
+            <div className='space-y-1 text-sm'>
+              <Label htmlFor='p-city'>City</Label>
+
+              <Input id='p-city' name='city' maxLength={120} />
+            </div>
+            <div className='space-y-1 text-sm'>
+              <Label htmlFor='p-state'>State</Label>
+
+              <Input id='p-state' name='state' maxLength={2} placeholder='TX' />
+            </div>
+            <div className='space-y-1 text-sm'>
+              <Label htmlFor='p-website'>Website</Label>
+
+              <Input id='p-website' name='website' maxLength={300} />
+            </div>
+            <div className='space-y-1 text-sm'>
+              <Label htmlFor='p-phone'>Synthetic phone</Label>
+
+              <Input id='p-phone' name='phone' placeholder='+12025550123' />
+            </div>
+            <div className='space-y-1 text-sm'>
+              <Label htmlFor='p-email'>Synthetic email</Label>
+
+              <Input id='p-email' name='email' type='email' placeholder='owner@example.test' />
+            </div>
+            <div className='space-y-1 text-sm'>
+              <Label htmlFor='p-ownerName'>Owner name</Label>
+
+              <Input id='p-ownerName' name='ownerName' maxLength={200} />
+            </div>
             <p className='text-muted-foreground text-xs sm:col-span-2'>
               The stage follows what you fill in: a phone or website makes it half-enriched, all of
               website, phone, email and owner make it fully enriched.
