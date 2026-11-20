@@ -1,5 +1,17 @@
 # Portal design completion running log
 
+## Phase 1 Settings audit — 2026-11-19
+
+Sales board and migration 1092 were committed and pushed as WIP (`c8e5d7b0`) before resuming Settings. The Sales synthetic-prospect browser test timed out during workspace setup; board drag persistence is unverified and that work was not continued.
+
+All nine Settings routes were rendered at desktop width 1280 in dark mode and visually reviewed from local Playwright captures. The Account tab had no active state on Business settings; fixed in `a0eeec9c`. Staff saw Automation enable/disable controls; fixed in `ebb8d25d`. Business, Notifications, Branding, and Alex now restore the latest saved values when Cancel is pressed (`fc7b74c9`, `379bbd4d`, `daf11909`, `44b95f53`). Branding name/color saves now work without object-storage configuration when no logo changes. The admin menu accessibility label and repository formatting fixes are `bb709fd8` and `76c2b77c`.
+
+The Settings browser suite passed 11/11 on the final revision, including all nine dark desktop pages, permission states, error feedback, save/cancel and pause persistence. Alex has a visible pause checkbox. Its server action writes only `alex_configs.paused`, `call_windows`, and audit metadata, with no provider call. `alex-configs.test.ts` checks that provider, agent reference, voice, prompt, greeting, and other fields remain unchanged. It and `backups-m8b.test.ts` passed 12/12 together against disposable PostgreSQL with `PROVIDER_MODE=stub` and `OUTBOUND_ENABLED=false`. The backup test timeout is `30_000` ms at line 77.
+
+Alex view-as permission UX remains **unverified**. Three browser attempts failed while setting up the synthetic view-as fixture: the first chosen client had no View as button, the second navigation raced the redirect, and the available active synthetic client has `alex_core` disabled. The proxy enforces read-only view-as writes, but the Alex page/action do not independently render a read-only fallback. No live client record was used. Under the three-attempt rule this check was stopped and the exploratory edit was reverted.
+
+The final `bun run verify` passed typecheck, lint, format, 666/666 unit tests, deploy-script rehearsal, and build. Integration reported failures in `m7-module-acceptance` (5), `automation-retries-m7` (6), `baseline-ops` (1), and `isolation` (4). The integration process was interrupted after 183 seconds without a complete summary, so no complete integration result is claimed. The M7 tests set `OUTBOUND_ENABLED=true` internally, conflicting with this run's required `OUTBOUND_ENABLED=false`. The new 1092 `client_lifecycle` table is a likely cause of the schema/isolation failures; that Sales WIP is paused by request and was not changed. The 12 focused Alex/backup integration tests passed. Phase 1 remains **not fully verified** because the full gate failed and the view-as check was stopped.
+
 ## Saved WIP — Sales board and migration 1092
 
 The uncommitted Sales board, its server action, the `1092_client_lifecycle` migration, and the Sales browser spec were saved together as WIP. The targeted Sales browser test failed while setting up its synthetic prospect: after clicking “Create synthetic agency workspace,” `/admin/prospecting` still showed the creation prompt, so the test timed out waiting for the Name field. The board drag and persistence path has **not** been verified. No production migration was run. This WIP is paused while Phase 1 Settings is audited.
