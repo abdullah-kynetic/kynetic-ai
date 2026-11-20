@@ -1,5 +1,21 @@
 # Portal design completion running log
 
+## Phase 2 navigation — 2026-11-19
+
+**Baseline on `759b21a9`:** The requested full `bun run verify` completed with typecheck, lint, formatting, 666/666 unit tests, deploy-script rehearsal, and production build passing. Integration finished with 1,012 passed, 2 skipped, and exactly the 11 accepted inherited M7 failures in `automation-retries-m7.test.ts` (6) and `m7-module-acceptance.test.ts` (5). Both suites also fail on `origin/work`; they were not changed or weakened. The run used disposable local PostgreSQL and `PROVIDER_MODE=stub OUTBOUND_ENABLED=false`.
+
+**Navigation checklist:**
+
+- [x] Admin sidebar has six area links; client sidebar has six; VA sidebar has four. Browser tests count the rendered links for each role and visit every destination.
+- [x] Shared `AreaLayout` gives each area with sub-pages a horizontally scrolling tab bar with an active state. Browser tests visit every admin, client, and VA Help tab and require HTTP 200.
+- [x] Removed the old Agency landing page and its ten-link tab strip. Prospecting owns the synthetic overview. Inbox, Compose, Proposals, and Contracts live under Sales; Campaigns and Human dialer under Prospecting; Finance and Billing under Money; Operations under Clients. Proposal detail and preview have Sales routes.
+- [x] Added permanent HTTP 301 redirects for moved admin and client paths, including detail URLs. The browser test requests every configured legacy route without following redirects and checks the destination. The new map is in `docs/redesign/NAV.md`.
+- [x] Area tabs render a helpful first-visit state without the old “create the agency workspace first” instruction. No provider or production writes were made.
+
+**Pushed commits:** `5c52a200` (retire Agency catch-all), `8474f605` (route moves, redirects, navigation tests and map), `99f294e7` (VA Help area), `8835f1d3` (repository formatting), `60e56a34` (unit expectations for new URLs). The final navigation Chromium suite passed 5/5 on disposable synthetic fixtures. Targeted unit retry passed 17/17 after four old-path expectations in three test files were updated; the initial full run on `8835f1d3` had caught those four branch-caused failures and was stopped during integration. The final full verify on `60e56a34` completed: typecheck, lint, formatting, 666/666 unit tests, deploy-script rehearsal, and production build passed. Integration had 1,012 passed, 2 skipped, and exactly the same 11 accepted M7 failures as baseline. Under the requested acceptance criterion, Phase 2 is complete.
+
+Phase 3 dashboards and drag persistence remain outside this phase. The Scraped, Half-enriched, and Fully enriched tabs currently show first-visit states; their lead tables belong to Phase 3.
+
 ## Verify failure comparison against `origin/work` — 2026-11-19
 
 The last **complete** `bun run verify` before the lifecycle schema declaration had 666/666 unit tests passing and 12 integration failures (1,011 passing, 2 skipped). Typecheck, lint, format, deploy rehearsal, and build passed. The earlier interrupted run had also shown four isolation and one baseline failure; it did not produce a complete integration result. Reproduction used disposable PostgreSQL with `PROVIDER_MODE=stub OUTBOUND_ENABLED=false` and no live provider calls.
