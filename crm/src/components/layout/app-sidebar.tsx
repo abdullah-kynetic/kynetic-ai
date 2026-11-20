@@ -40,7 +40,7 @@ function SidebarSearch() {
       className='bg-card text-muted-foreground border-border hover:bg-card/70 focus-visible:ring-sidebar-ring flex min-h-9 w-full items-center gap-2 rounded-lg border px-2.5 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none group-data-[collapsible=icon]:hidden'
     >
       <Icons.search aria-hidden className='size-4' />
-      <span className='flex-1 text-left'>Search</span>
+      <span className='flex-1 text-left'>Jump to</span>
       <kbd
         aria-hidden
         className='bg-card text-muted-foreground rounded-[6px] border px-1.5 font-mono text-[11px] leading-5'
