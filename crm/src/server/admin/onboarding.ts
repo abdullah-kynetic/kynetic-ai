@@ -12,6 +12,7 @@ import { FIELD_LIMITS, parseInput } from '../validation';
 import { INDUSTRY_TEMPLATES, INDUSTRY_TEMPLATE_KEYS } from './industry-templates';
 import { applyStageDefaults } from './templates';
 import { buildChecklist } from './onboarding-steps';
+import { pgCode } from '../db/pg-error';
 
 /** Invite lifetime (SECURITY 2.1: 7 days). */
 export const INVITE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -124,14 +125,6 @@ export type OnboardResult = { tenantId: string; slug: string; ownerEmail: string
 
 export const hashToken = (token: string) => createHash('sha256').update(token).digest('hex');
 const newToken = () => randomBytes(32).toString('base64url');
-
-function pgCode(err: unknown): string | undefined {
-  for (let e: unknown = err; e && typeof e === 'object'; e = (e as { cause?: unknown }).cause) {
-    const code = (e as { code?: unknown }).code;
-    if (typeof code === 'string') return code;
-  }
-  return undefined;
-}
 
 /** The roll-up functions raise 42501 for a non-admin and P0002 for a missing tenant. */
 function mapDbError(err: unknown): unknown {
