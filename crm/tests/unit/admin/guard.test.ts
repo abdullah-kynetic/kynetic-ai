@@ -81,7 +81,7 @@ describe('admin navigation (M8a-01)', () => {
       '/admin',
       '/admin/clients',
       '/admin/settings',
-      '/admin/support'
+      '/admin/help'
     ]);
     expect(admin[0]!.items).toHaveLength(6);
     expect(va[0]!.items).toHaveLength(4);
