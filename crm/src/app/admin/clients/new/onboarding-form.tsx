@@ -72,7 +72,7 @@ function FieldRow({
   );
 }
 
-export function OnboardingForm() {
+export function OnboardingForm({ templates = [] }: { templates?: { id: string; name: string }[] }) {
   const [state, action, pending] = React.useActionState<OnboardState, FormData>(onboardClient, {
     status: 'idle'
   });
@@ -112,6 +112,23 @@ export function OnboardingForm() {
         >
           <Input id='phone' name='phone' type='tel' required />
         </FieldRow>
+        {templates.length > 0 && (
+          <FieldRow
+            id='templateId'
+            label='Account template'
+            error={fe?.templateId}
+            hint='Preloads systems, pipelines, custom fields, tags, automations (off) and Alex settings from a saved client setup.'
+          >
+            <NativeSelect id='templateId' name='templateId' defaultValue=''>
+              <NativeSelectOption value=''>No template</NativeSelectOption>
+              {templates.map((t) => (
+                <NativeSelectOption key={t.id} value={t.id}>
+                  {t.name}
+                </NativeSelectOption>
+              ))}
+            </NativeSelect>
+          </FieldRow>
+        )}
         <FieldRow id='industry' label='Industry template' error={fe?.industry}>
           <NativeSelect id='industry' name='industry' defaultValue='roofing'>
             {INDUSTRIES.map(([value, template]) => (

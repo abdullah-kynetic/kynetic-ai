@@ -159,9 +159,7 @@ export default async function ReviewsPage({
                       <TableCell className='whitespace-nowrap'>
                         {dateLabel(snapshot.capturedOn)}
                       </TableCell>
-                      <TableCell>
-                        {snapshot.source}
-                      </TableCell>
+                      <TableCell>{snapshot.source}</TableCell>
                       <TableCell className='text-right tabular-nums'>
                         {snapshot.reviewCount.toLocaleString()}
                       </TableCell>

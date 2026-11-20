@@ -11,6 +11,11 @@ import { withPlatform, type PlatformContext } from '../tenancy';
 import { FIELD_LIMITS, parseInput } from '../validation';
 import { INDUSTRY_TEMPLATES, INDUSTRY_TEMPLATE_KEYS } from './industry-templates';
 import { applyStageDefaults } from './templates';
+import {
+  applySnapshotToNewTenant,
+  loadTemplateSnapshot,
+  type AccountSnapshot
+} from './account-templates';
 import { buildChecklist } from './onboarding-steps';
 
 /** Invite lifetime (SECURITY 2.1: 7 days). */
@@ -98,7 +103,9 @@ export const onboardTenantSchema = z
     plan: z.enum(['founding', 'value']),
     tier: z.enum(['T1', 'T2', 'T3']).optional(),
     modules: z.array(z.enum(ONBOARD_MODULE_KEYS)).default([]),
-    crmLevel: z.enum(['lite', 'full']).optional()
+    crmLevel: z.enum(['lite', 'full']).optional(),
+    /** Account template (snapshot) to preload. Its modules are added to the ones ticked here. */
+    templateId: z.uuid().optional()
   })
   .strict();
 
@@ -122,7 +129,11 @@ export type OnboardDeps = {
   afterTenantCreated?: (tx: Tx) => Promise<void>;
 };
 
-export type OnboardResult = { tenantId: string; slug: string; ownerEmail: string };
+export type OnboardResult = {
+  tenantId: string;
+  slug: string;
+  ownerEmail: string;
+};
 
 export const hashToken = (token: string) => createHash('sha256').update(token).digest('hex');
 const newToken = () => randomBytes(32).toString('base64url');
@@ -160,17 +171,11 @@ export async function onboardTenant(
     throw new ValidationError({ slug: ['invalid_string'] });
   }
   const ownerEmail = input.ownerEmail.trim().toLowerCase();
-  const modules = expandModules(input.modules);
   const now = deps.now ?? new Date();
   const dayHours = { open: input.hours.open, close: input.hours.close };
   const businessHours = Object.fromEntries(
     DAYS.map((d) => [d, input.hours.days.includes(d) ? dayHours : null])
   );
-  const enabled: ModuleKey[] = [
-    'platform',
-    ...modules,
-    ...(input.crmLevel ? (['crm'] as const) : [])
-  ];
   const template = INDUSTRY_TEMPLATES[input.industry];
 
   try {
@@ -187,6 +192,28 @@ export async function onboardTenant(
           });
         }
 
+        // Read the snapshot before create_tenant: account templates are visible only with no client context.
+        const snapshot: AccountSnapshot | null = input.templateId
+          ? await loadTemplateSnapshot(tx, input.templateId)
+          : null;
+        const modules = expandModules([
+          ...input.modules,
+          ...(snapshot?.modules ?? [])
+            .map((m) => m.key)
+            .filter((k): k is (typeof ONBOARD_MODULE_KEYS)[number] =>
+              (ONBOARD_MODULE_KEYS as readonly string[]).includes(k)
+            )
+        ]);
+        const templateCrm = snapshot?.modules.find((m) => m.key === 'crm');
+        const crmLevel =
+          input.crmLevel ??
+          (templateCrm ? (templateCrm.level === 'full' ? 'full' : 'lite') : undefined);
+        const enabled: ModuleKey[] = [
+          'platform',
+          ...modules,
+          ...(crmLevel ? (['crm'] as const) : [])
+        ];
+
         const token = newToken();
         const expires = new Date(now.getTime() + INVITE_TTL_MS).toISOString();
         const [created] = await tx.execute<{ id: string }>(
@@ -198,9 +225,9 @@ export async function onboardTenant(
         for (const m of modules) {
           await tx.execute(sql`select set_tenant_module(${tenantId}::uuid, ${m}, true, '')`);
         }
-        if (input.crmLevel) {
+        if (crmLevel) {
           await tx.execute(
-            sql`select set_tenant_module(${tenantId}::uuid, 'crm', true, ${input.crmLevel})`
+            sql`select set_tenant_module(${tenantId}::uuid, 'crm', true, ${crmLevel})`
           );
         }
         if (input.tier) {
@@ -234,11 +261,17 @@ export async function onboardTenant(
           }))
         );
 
-        const stages = await applyStageDefaults(
-          { tenantId, userId: ctx.userId, role: 'admin' },
-          tx,
-          template.stages
-        );
+        const fromTemplate = snapshot
+          ? await applySnapshotToNewTenant(tx, tenantId, input.businessName, snapshot)
+          : null;
+        // A template's own pipelines win over the industry's default stage names.
+        const stages = fromTemplate?.pipelines
+          ? 'template'
+          : await applyStageDefaults(
+              { tenantId, userId: ctx.userId, role: 'admin' },
+              tx,
+              template.stages
+            );
         await audit(tx, {
           action: 'tenant.onboard',
           entity: 'tenant',
@@ -249,8 +282,10 @@ export async function onboardTenant(
             tier: input.tier ?? null,
             industry: input.industry,
             modules: enabled,
-            crmLevel: input.crmLevel ?? null,
-            stages
+            crmLevel: crmLevel ?? null,
+            stages,
+            templateId: input.templateId ?? null,
+            fromTemplate
           }
         });
         return { tenantId, slug, ownerEmail };
@@ -279,7 +314,10 @@ export type SendInviteDeps = {
 };
 
 /** The owner invite as the admin reviews it before approving. The sign-in link is added when it is sent. */
-export function draftOwnerInvite(businessName: string): { subject: string; body: string } {
+export function draftOwnerInvite(businessName: string): {
+  subject: string;
+  body: string;
+} {
   return {
     subject: `Your ${businessName} portal is ready`,
     body: `Hi,\n\nYour Kynetic portal for ${businessName} is set up. Use the link below to sign in and finish getting started. The link works once and expires in 7 days.\n\n[Sign-in link added when sent]\n\nKynetic AI`
@@ -303,7 +341,10 @@ export async function sendOwnerInvite(
   const issued = await withPlatform(
     ctx,
     async (tx) => {
-      const [row] = await tx.execute<{ owner_email: string; tenant_name: string }>(
+      const [row] = await tx.execute<{
+        owner_email: string;
+        tenant_name: string;
+      }>(
         sql`select owner_email, tenant_name from reissue_owner_invite(${tenantId}::uuid, ${hashToken(token)}, ${expires}::timestamptz)`
       );
       return row!;

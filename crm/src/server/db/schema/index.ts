@@ -23,3 +23,4 @@ export * from './worker-heartbeat';
 export * from './ai-features';
 export * from './automation-versions';
 export * from './agency-prospects';
+export * from './account-templates';
