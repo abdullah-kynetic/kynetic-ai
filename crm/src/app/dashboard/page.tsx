@@ -197,7 +197,7 @@ export default async function DashboardPage({
           </div>
         </div>
       )}
-      <div className='mt-4 rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
+      <div className='mt-4 rounded-[var(--radius-card)] bg-card p-4 sm:p-5 border'>
         <p className='font-medium'>Booking guarantee</p>
         <p className='text-muted-foreground mt-1 text-sm'>
           20% more booked appointments than last month, measured over 30 days.

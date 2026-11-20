@@ -32,7 +32,7 @@ function Card({ card }: { card: SalesCard }) {
     <div
       ref={setNodeRef}
       style={{ transform: CSS.Translate.toString(transform) }}
-      className={`bg-card rounded-lg border p-3 shadow-sm ${isDragging ? 'z-10 opacity-70' : ''}`}
+      className={`bg-card rounded-lg border p-3 ${isDragging ? 'z-10 opacity-70 shadow-md' : ''}`}
     >
       <button
         type='button'
@@ -41,7 +41,7 @@ function Card({ card }: { card: SalesCard }) {
         {...listeners}
       >
         <span className='block font-medium'>{card.name}</span>
-        <span className='text-muted-foreground block break-all text-xs'>
+        <span className='ticket-meta mt-2 block border-t border-dashed pt-2 break-all'>
           {card.email ?? 'No email'}
         </span>
         <span className='sr-only'>Drag to change sales stage</span>
@@ -56,11 +56,11 @@ function Column({ stage, cards }: { stage: SalesStage; cards: SalesCard[] }) {
     <section
       ref={setNodeRef}
       aria-label={`${stage.name} stage`}
-      className={`bg-surface-sunken min-h-48 w-64 shrink-0 space-y-3 rounded-xl border p-3 ${isOver ? 'ring-primary ring-2' : ''}`}
+      className={`bg-surface-sunken min-h-48 w-64 shrink-0 space-y-2 rounded-[var(--radius-panel)] border p-2 ${isOver ? 'ring-primary ring-2' : ''}`}
     >
-      <div className='flex justify-between gap-2'>
+      <div className='flex justify-between gap-2 px-1 pt-1'>
         <h2 className='font-medium'>{stage.name}</h2>
-        <span className='text-muted-foreground text-sm'>{cards.length}</span>
+        <span className='ticket-meta'>{cards.length}</span>
       </div>
       {cards.map((card) => (
         <Card key={card.id} card={card} />

@@ -185,6 +185,15 @@
   }
 }
 
+/* The ticket stub: quiet mono for IDs, phone numbers, dates and counts. Meta only, nowhere else. */
+@utility ticket-meta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground);
+}
+
 @utility scroll-fade {
   --_scroll-fade-size-t: var(
     --scroll-fade-t-size,

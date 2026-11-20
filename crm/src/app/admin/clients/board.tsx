@@ -42,7 +42,7 @@ function Card({ card, canMove }: { card: ClientCard; canMove: boolean }) {
     <div
       ref={setNodeRef}
       style={{ transform: CSS.Translate.toString(transform) }}
-      className={`bg-card rounded-lg border p-3 shadow-sm ${isDragging ? 'z-10 opacity-70' : ''}`}
+      className={`bg-card rounded-lg border p-3 ${isDragging ? 'z-10 opacity-70 shadow-md' : ''}`}
     >
       <button
         type='button'
@@ -51,7 +51,7 @@ function Card({ card, canMove }: { card: ClientCard; canMove: boolean }) {
         {...listeners}
       >
         <span className='block font-medium'>{card.name}</span>
-        <span className='text-muted-foreground block text-xs'>
+        <span className='ticket-meta mt-2 block border-t border-dashed pt-2'>
           {card.plan} · Health {card.health}
         </span>
         <span className='sr-only'>
@@ -60,7 +60,7 @@ function Card({ card, canMove }: { card: ClientCard; canMove: boolean }) {
       </button>
       <Link
         href={`/admin/clients/${card.id}`}
-        className='text-primary mt-2 inline-block text-xs underline-offset-4 hover:underline'
+        className='text-primary-text mt-2 inline-block text-xs underline-offset-4 hover:underline'
       >
         Open client
       </Link>
@@ -82,11 +82,11 @@ function Column({
     <section
       ref={setNodeRef}
       aria-label={`${stage.name} stage`}
-      className={`bg-surface-sunken min-h-48 w-64 shrink-0 space-y-3 rounded-xl border p-3 ${isOver ? 'ring-primary ring-2' : ''}`}
+      className={`bg-surface-sunken min-h-48 w-64 shrink-0 space-y-2 rounded-[var(--radius-panel)] border p-2 ${isOver ? 'ring-primary ring-2' : ''}`}
     >
-      <div className='flex justify-between gap-2'>
+      <div className='flex justify-between gap-2 px-1 pt-1'>
         <h2 className='font-medium'>{stage.name}</h2>
-        <span className='text-muted-foreground text-sm'>{cards.length}</span>
+        <span className='ticket-meta'>{cards.length}</span>
       </div>
       {cards.map((card) => (
         <Card key={card.id} card={card} canMove={canMove} />

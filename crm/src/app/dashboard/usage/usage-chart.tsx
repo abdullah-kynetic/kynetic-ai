@@ -14,7 +14,10 @@ const config = {
 export function UsageChart({ days }: { days: ClientUsageDay[] }) {
   const name = 'Daily usage';
   return (
-    <section aria-label={name} className='min-w-0 rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
+    <section
+      aria-label={name}
+      className='min-w-0 rounded-[var(--radius-card)] bg-card p-4 sm:p-5 border'
+    >
       <h2 className='font-medium'>{name}</h2>
       {!days.length ? (
         <p className='text-muted-foreground mt-3 text-sm'>No usage recorded for this month.</p>

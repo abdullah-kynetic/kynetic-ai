@@ -130,7 +130,7 @@ export function ProspectTable({ rows, emptyText }: { rows: ProspectItem[]; empty
                 <td className='p-3'>{sourceLabel[row.source] ?? row.source}</td>
                 <td className='p-3'>{row.location || '—'}</td>
                 <td className='p-3 break-all'>{row.website ?? '—'}</td>
-                <td className='p-3'>{row.phone ?? '—'}</td>
+                <td className='ticket-meta p-3'>{row.phone ?? '—'}</td>
                 <td className='p-3 break-all'>{row.email ?? '—'}</td>
                 <td className='p-3'>{row.ownerName ?? '—'}</td>
                 <td className='p-3'>{row.addedOn}</td>

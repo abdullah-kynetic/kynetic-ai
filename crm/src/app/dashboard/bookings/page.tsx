@@ -70,7 +70,7 @@ export default async function BookingsOverviewPage() {
         <DailyTrend days={metrics.days} name='Daily leads and bookings' />
         <section
           aria-label='Upcoming appointments'
-          className='bg-card min-w-0 rounded-xl p-4 ring-1 ring-foreground/10'
+          className='bg-card min-w-0 rounded-[var(--radius-card)] p-4 sm:p-5 border'
         >
           <h2 className='font-medium'>Next 14 days</h2>
           {upcoming === null ? (

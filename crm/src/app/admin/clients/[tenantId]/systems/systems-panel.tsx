@@ -109,7 +109,10 @@ export function SystemsPanel(props: {
           const owned = props.automations.filter((row) => row.moduleKey === module.moduleKey);
           const links = linksFor(module.moduleKey, props.tenantId);
           return (
-            <li key={module.moduleKey} className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
+            <li
+              key={module.moduleKey}
+              className='rounded-[var(--radius-card)] bg-card p-4 sm:p-5 border'
+            >
               <div className='flex flex-wrap items-start gap-3'>
                 <div className='min-w-0 flex-1'>
                   <p id={labelId} className='text-sm font-medium'>

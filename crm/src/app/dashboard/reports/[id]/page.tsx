@@ -61,7 +61,7 @@ export default async function ReportDetailPage({ params }: { params: Promise<{ i
           ],
           ['Guarantee result', content.sections.guarantee.data.result]
         ].map(([label, value]) => (
-          <div key={label} className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
+          <div key={label} className='rounded-[var(--radius-card)] bg-card p-4 sm:p-5 border'>
             <dt className='text-muted-foreground text-sm'>{label}</dt>
             <dd className='mt-2 text-xl font-medium'>{value}</dd>
           </div>

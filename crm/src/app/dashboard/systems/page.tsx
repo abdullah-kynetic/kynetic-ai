@@ -59,7 +59,7 @@ export default async function MySystemsPage({
           const catalog = SYSTEM_CATALOG[card.key];
           const status = card.on ? 'On' : card.included ? 'Included' : 'Available';
           return (
-            <li key={card.key} className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
+            <li key={card.key} className='rounded-[var(--radius-card)] bg-card p-4 sm:p-5 border'>
               <div className='flex items-start justify-between gap-3'>
                 <h2 className='font-medium'>{catalog.label}</h2>
                 <span className='text-muted-foreground text-sm'>{status}</span>
