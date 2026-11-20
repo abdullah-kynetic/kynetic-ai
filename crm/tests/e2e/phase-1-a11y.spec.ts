@@ -144,7 +144,7 @@ for (const [name, size] of sizes) {
     await page.setViewportSize(size);
     await page.goto('/dashboard/companies');
     await page.getByRole('link', { name: 'Company a' }).click();
-    await expect(page.getByLabel('Crew size')).toBeVisible();
+    await expect(page.getByLabel('Crew size').locator('visible=true')).toBeVisible();
     await page.waitForLoadState('networkidle');
     await scan(page, `company ${name}`);
   });

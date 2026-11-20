@@ -48,12 +48,12 @@ test('owner sets a custom value on a contact, a company and a deal', async ({
 test('owner sets a custom value on a company', async ({ authenticatedPage: page }) => {
   await page.goto('/dashboard/companies');
   await page.getByRole('link', { name: 'Company a' }).click();
-  const crew = page.getByLabel('Crew size');
+  const crew = page.getByLabel('Crew size').locator('visible=true');
   await crew.fill('8');
   await page.getByRole('button', { name: 'Save changes' }).click();
   await expect(page.getByRole('status').filter({ hasText: 'Saved.' })).toBeVisible();
   await page.reload();
-  await expect(page.getByLabel('Crew size')).toHaveValue('8');
+  await expect(page.getByLabel('Crew size').locator('visible=true')).toHaveValue('8');
 });
 
 for (const [name, size] of [
@@ -66,7 +66,7 @@ for (const [name, size] of [
     await page.setViewportSize(size);
     await page.goto('/dashboard/companies');
     await page.getByRole('link', { name: 'Company a' }).click();
-    await expect(page.getByLabel('Crew size')).toBeVisible();
+    await expect(page.getByLabel('Crew size').locator('visible=true')).toBeVisible();
     // The route-change progress bar is not page content.
     await page.addStyleTag({ content: '#nprogress { display: none !important; }' });
     const results = await new AxeBuilder({ page }).withTags(axeTags).analyze();
