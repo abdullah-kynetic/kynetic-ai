@@ -11,13 +11,17 @@ export function isLifecycleStage(value: string): value is LifecycleStage {
   return (LIFECYCLE_STAGES as readonly string[]).includes(value);
 }
 
-/** Stage shown before anyone has moved a card: derived from the tenant's status and demo flag. */
+/**
+ * Stage shown before anyone has moved a card: derived from the tenant's status.
+ * The 13 seeded clients default to Live so the portal runs as if they were real clients.
+ * The Demo stage is for audit prospects and is only reached by moving a card there.
+ */
 export function defaultLifecycleStage(input: {
   status: string;
   isDemo: boolean;
   healthTone?: 'green' | 'yellow' | 'red';
 }): LifecycleStage {
-  if (input.isDemo) return 'demo';
+  if (input.isDemo) return 'live';
   if (input.status === 'offboarded') return 'churned';
   if (input.status === 'onboarding') return 'onboarding';
   return input.healthTone === 'red' ? 'at_risk' : 'live';

@@ -160,10 +160,7 @@ export default async function ReviewsPage({
                         {dateLabel(snapshot.capturedOn)}
                       </TableCell>
                       <TableCell>
-                        <span className='flex flex-wrap items-center gap-2'>
-                          {snapshot.source}
-                          {snapshot.demo && <Badge variant='neutral'>Demo</Badge>}
-                        </span>
+                        {snapshot.source}
                       </TableCell>
                       <TableCell className='text-right tabular-nums'>
                         {snapshot.reviewCount.toLocaleString()}
@@ -182,7 +179,6 @@ export default async function ReviewsPage({
                   <div className='flex items-start justify-between gap-2'>
                     <span className='font-medium'>{snapshot.source}</span>
                     <span className='flex items-center gap-2'>
-                      {snapshot.demo && <Badge variant='neutral'>Demo</Badge>}
                       <span className='tabular-nums'>
                         {snapshot.averageRating == null ? '–' : snapshot.averageRating.toFixed(1)}
                       </span>
