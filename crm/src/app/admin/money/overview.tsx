@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { StatTiles } from '@/components/layout/stat-tiles';
 import { FinanceMonthsChart } from '../agency/finance/chart';
 import type { MoneyOverview } from '@/server/agency/money';
 
@@ -36,20 +37,7 @@ export function MoneyDashboard({ data }: { data: MoneyOverview }) {
     data.trend.every((t) => t.revenueCents === 0 && t.expenseCents === 0);
   return (
     <div className='space-y-6'>
-      <ul aria-label='Revenue in numbers' className='grid grid-cols-2 gap-4 lg:grid-cols-4'>
-        {tiles.map((tile) => (
-          <li
-            key={tile.label}
-            className='bg-card flex flex-col gap-1 rounded-[var(--radius-card)] border p-5'
-          >
-            <span className='text-muted-foreground text-[13px] font-medium'>{tile.label}</span>
-            <span className='text-3xl/[1.1] font-semibold tracking-tight tabular-nums'>
-              {tile.value}
-            </span>
-            <span className='text-muted-foreground text-xs'>{tile.note}</span>
-          </li>
-        ))}
-      </ul>
+      <StatTiles label='Revenue in numbers' tiles={tiles} />
       {empty && (
         <section className='bg-card space-y-2 rounded-xl border p-6'>
           <h2 className='font-semibold'>No money recorded yet</h2>

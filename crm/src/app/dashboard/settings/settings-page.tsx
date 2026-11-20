@@ -16,7 +16,7 @@ export function SettingsPage({
   accessFallback?: ReactNode;
 }) {
   return (
-    <div className='mx-auto flex w-full max-w-[1280px] flex-1 flex-col gap-6 px-4 pt-2 pb-8 md:px-6 md:pt-4'>
+    <div className='mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 pt-2 pb-8 md:px-6 md:pt-4'>
       <PageHeader title={pageTitle} description={pageDescription} />
       {access ? (
         children

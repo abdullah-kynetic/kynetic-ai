@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { StatTiles } from '@/components/layout/stat-tiles';
 import { agencyBillingCycle, agencyDate } from '@/components/agency/format';
 import { StatusPill, type Tone } from '@/components/ui/status-pill';
 import {
@@ -54,20 +55,14 @@ export default async function InvoicesPage({
         </Link>
         .
       </p>
-      <ul aria-label='Invoices by status' className='grid grid-cols-2 gap-4 lg:grid-cols-4'>
-        {Object.keys(word).map((s) => (
-          <li
-            key={s}
-            className='bg-card flex flex-col gap-1 rounded-[var(--radius-card)] border p-5'
-          >
-            <span className='text-muted-foreground text-[13px] font-medium'>{word[s]}</span>
-            <span className='text-2xl/[1.1] font-semibold tabular-nums'>{usd(total(s))}</span>
-            <span className='text-muted-foreground text-xs'>
-              {data.invoices.filter((i) => i.status === s).length} invoices
-            </span>
-          </li>
-        ))}
-      </ul>
+      <StatTiles
+        label='Invoices by status'
+        tiles={Object.keys(word).map((s) => ({
+          label: word[s]!,
+          value: usd(total(s)),
+          note: `${data.invoices.filter((i) => i.status === s).length} invoices`
+        }))}
+      />
       <nav aria-label='Invoice status filter' className='flex flex-wrap gap-2 text-sm'>
         {[['', 'All'], ...Object.entries(word)].map(([value, label]) => (
           <Link

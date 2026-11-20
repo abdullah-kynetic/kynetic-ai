@@ -62,7 +62,7 @@ export default function PageContainer({
 
   if (redesign && pageTitle && !infoContent) {
     return (
-      <div className='mx-auto flex w-full max-w-[1280px] min-w-0 flex-1 flex-col gap-6 px-4 pt-2 pb-8 md:px-6 md:pt-4'>
+      <div className='mx-auto flex w-full max-w-7xl min-w-0 flex-1 flex-col gap-6 px-4 pt-2 pb-8 md:px-6 md:pt-4'>
         <PageHeader title={pageTitle} description={pageDescription} actions={pageHeaderAction} />
         {content}
       </div>

@@ -1,5 +1,6 @@
 /* oxlint-disable jsx-a11y/no-noninteractive-tabindex -- scrollable table regions must be keyboard focusable (WCAG 2.1.1) */
 import Link from 'next/link';
+import { StatTiles } from '@/components/layout/stat-tiles';
 import { AgencyEmptyState } from '@/components/agency/page';
 import { StatusPill } from '@/components/ui/status-pill';
 import {
@@ -58,28 +59,23 @@ export default async function FinancePage({
       <p className='text-muted-foreground text-sm'>
         Revenue, expenses, referrals and case studies for the agency workspace. Nothing is sent.
       </p>
-      <ul aria-label='This month (Pacific)' className='grid grid-cols-1 gap-4 sm:grid-cols-3'>
-        {[
-          ['Revenue', data.summary.revenueCents, 'gain'],
-          ['Expenses', data.summary.expenseCents, 'neutral'],
-          ['Net', data.summary.netCents, data.summary.netCents < 0 ? 'alert' : 'gain']
-        ].map(([label, cents, tone]) => (
-          <li
-            key={label as string}
-            className='bg-card flex flex-col gap-2 rounded-[var(--radius-card)] border p-5'
-          >
-            <span className='text-muted-foreground text-[13px] font-medium'>{label}</span>
-            <span className='text-3xl/[1.1] font-semibold tracking-tight tabular-nums'>
-              {usd(cents as number)}
-            </span>
-            <span>
-              <StatusPill tone={tone as 'gain' | 'neutral' | 'alert'}>
-                This month · {data.summary.month}
-              </StatusPill>
-            </span>
-          </li>
-        ))}
-      </ul>
+      <StatTiles
+        label='This month (Pacific)'
+        tiles={[
+          {
+            label: 'Revenue',
+            value: usd(data.summary.revenueCents),
+            note: `${data.summary.month}`,
+            key: true
+          },
+          {
+            label: 'Expenses',
+            value: usd(data.summary.expenseCents),
+            note: `${data.summary.month}`
+          },
+          { label: 'Net', value: usd(data.summary.netCents), note: `${data.summary.month}` }
+        ]}
+      />
       <section
         aria-label='Monthly revenue versus expenses'
         className='bg-card mb-6 rounded-[var(--radius-card)] border p-5'

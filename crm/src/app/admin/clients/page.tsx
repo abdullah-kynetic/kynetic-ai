@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { StatTiles } from '@/components/layout/stat-tiles';
 import { buttonVariants } from '@/components/ui/button';
 import { ClientsBoard } from './board';
 import { loadClientRows } from './rows';
@@ -26,19 +27,7 @@ export default async function ClientsBoardPage() {
           Onboard a client
         </Link>
       </div>
-      <ul aria-label='Clients in numbers' className='grid grid-cols-2 gap-4 lg:grid-cols-4'>
-        {stats.map((stat) => (
-          <li
-            key={stat.label}
-            className='bg-card flex flex-col gap-1 rounded-[var(--radius-card)] border p-5'
-          >
-            <span className='text-muted-foreground text-[13px] font-medium'>{stat.label}</span>
-            <span className='text-4xl/[1.05] font-semibold tracking-tight tabular-nums'>
-              {stat.value}
-            </span>
-          </li>
-        ))}
-      </ul>
+      <StatTiles label='Clients in numbers' tiles={stats} />
       {rows.length === 0 ? (
         <section className='bg-card space-y-3 rounded-xl border p-6'>
           <h2 className='font-semibold'>No clients yet</h2>

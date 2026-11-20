@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { StatTiles } from '@/components/layout/stat-tiles';
 import { StatusPill, type Tone } from './today-block';
 
 export type Kpi = { label: string; value: number; unit: string; tone: Tone; word: string };
@@ -32,25 +33,19 @@ function CountUp({ value }: { value: number }) {
 
 export function TodayKpis({ items }: { items: Kpi[] }) {
   return (
-    <ul
-      aria-label='Today in numbers'
-      className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 [&>li]:min-w-0'
-    >
-      {items.map((kpi) => (
-        <li
-          key={kpi.label}
-          className='bg-card flex flex-col gap-2 rounded-[var(--radius-card)] border p-5'
-        >
-          <span className='text-muted-foreground text-[13px] font-medium'>{kpi.label}</span>
-          <span className='text-4xl/[1.05] font-semibold tracking-tight tabular-nums'>
-            <CountUp value={kpi.value} />
-          </span>
-          <span className='flex items-center gap-2'>
+    <StatTiles
+      label='Today in numbers'
+      tiles={items.map((kpi, index) => ({
+        label: kpi.label,
+        value: <CountUp value={kpi.value} />,
+        key: index === 0,
+        note: (
+          <>
             <StatusPill tone={kpi.tone}>{kpi.word}</StatusPill>
-            <span className='text-muted-foreground text-xs'>{kpi.unit}</span>
-          </span>
-        </li>
-      ))}
-    </ul>
+            <span>{kpi.unit}</span>
+          </>
+        )
+      }))}
+    />
   );
 }

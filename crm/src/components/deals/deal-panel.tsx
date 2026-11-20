@@ -186,7 +186,7 @@ export function DealPanel({
   return (
     <>
       <Sheet open={open} onOpenChange={requestClose}>
-        <SheetContent className='data-[side=right]:w-full data-[side=right]:sm:max-w-[480px]'>
+        <SheetContent className='data-[side=right]:w-full data-[side=right]:sm:max-w-120'>
           <SheetHeader>
             <SheetTitle>Edit deal</SheetTitle>
             <SheetDescription>Changes save to the deal and show on the board.</SheetDescription>

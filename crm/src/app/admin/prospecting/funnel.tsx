@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { StatTiles } from '@/components/layout/stat-tiles';
 import type { ProspectFunnel } from '@/server/agency/prospects';
 
 const sourceLabel: Record<string, string> = {
@@ -27,8 +28,9 @@ export function FunnelDashboard({ funnel }: { funnel: ProspectFunnel }) {
     );
   return (
     <div className='space-y-6'>
-      <ul aria-label='Prospects per stage' className='grid grid-cols-2 gap-4 lg:grid-cols-4'>
-        {[
+      <StatTiles
+        label='Prospects per stage'
+        tiles={[
           { label: 'Scraped', value: funnel.scraped, href: '/admin/prospecting/scraped' },
           {
             label: 'Half-enriched',
@@ -41,24 +43,27 @@ export function FunnelDashboard({ funnel }: { funnel: ProspectFunnel }) {
             href: '/admin/prospecting/fully-enriched'
           },
           { label: 'Moved to Sales', value: funnel.movedToSales, href: '/admin/sales' }
-        ].map((tile) => (
-          <li
-            key={tile.label}
-            className='bg-card flex flex-col gap-1 rounded-[var(--radius-card)] border p-5'
-          >
-            <span className='text-muted-foreground text-[13px] font-medium'>{tile.label}</span>
-            <span className='text-4xl/[1.05] font-semibold tracking-tight tabular-nums'>
-              {tile.value}
-            </span>
-            <Link
-              className='text-primary text-xs underline-offset-4 hover:underline'
-              href={tile.href}
-            >
-              Open list
-            </Link>
-          </li>
-        ))}
-      </ul>
+        ].map((tile, index) => ({
+          label: tile.label,
+          value: tile.value,
+          key: index === 3,
+          note: (
+            <>
+              <span>
+                {index === 0
+                  ? 'All prospects'
+                  : `${Math.round((tile.value / Math.max(funnel.scraped, 1)) * 100)}% of scraped`}
+              </span>
+              <Link
+                className='text-primary-text underline-offset-4 hover:underline'
+                href={tile.href}
+              >
+                Open list
+              </Link>
+            </>
+          )
+        }))}
+      />
       <section
         aria-label='Conversion funnel'
         className='bg-card space-y-4 rounded-[var(--radius-card)] border p-5'

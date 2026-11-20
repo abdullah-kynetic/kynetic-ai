@@ -205,7 +205,7 @@ function FieldSheet({
   return (
     <>
       <Sheet open={open} onOpenChange={requestClose}>
-        <SheetContent className='w-full sm:max-w-[480px]'>
+        <SheetContent className='w-full sm:max-w-120'>
           <form onSubmit={submit} className='flex h-full flex-col gap-4' noValidate>
             <SheetHeader>
               <SheetTitle>{editing ? `Edit ${editing.label}` : 'Add a field'}</SheetTitle>

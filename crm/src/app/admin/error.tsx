@@ -9,7 +9,7 @@ export default function AdminError({
   reset: () => void;
 }) {
   return (
-    <div className='mx-auto w-full max-w-[1280px] px-4 py-8 md:px-6'>
+    <div className='mx-auto w-full max-w-7xl px-4 py-8 md:px-6'>
       <ErrorState
         message='This page could not be loaded.'
         reference={error.digest}
