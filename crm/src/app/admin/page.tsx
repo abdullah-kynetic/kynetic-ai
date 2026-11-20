@@ -13,7 +13,10 @@ export const dynamic = 'force-dynamic';
 export default async function AdminHomePage() {
   const access = await decideAdminAccess(await headers());
   if (access.kind !== 'ok') forbidden();
-  const data = await getTodayData({ userId: access.user.id, role: access.role });
+  const data = await getTodayData({
+    userId: access.user.id,
+    role: access.role
+  });
   const needs = data.needsYouNow
     ? data.needsYouNow.notices.length +
       data.needsYouNow.agencyAlerts.length +
@@ -107,7 +110,10 @@ export default async function AdminHomePage() {
           {data.salesToday && (
             <TodayBlock
               title='Sales today'
-              action={{ href: '/admin/agency/dialer', label: 'Open dialer' }}
+              action={{
+                href: '/admin/prospecting/dialer',
+                label: 'Open dialer'
+              }}
             >
               {data.salesToday.dialer.next ||
               data.salesToday.dialer.callbacksDue.length ||
@@ -116,7 +122,7 @@ export default async function AdminHomePage() {
                 <ul className='list-disc space-y-1.5 ps-5 text-sm'>
                   {data.salesToday.dialer.next ? (
                     <li>
-                      <TodayLink href='/admin/agency/dialer'>
+                      <TodayLink href='/admin/prospecting/dialer'>
                         Next: {data.salesToday.dialer.next.name}
                         {data.salesToday.dialer.next.callbackDue ? ' (callback due)' : ''}
                       </TodayLink>
@@ -124,7 +130,7 @@ export default async function AdminHomePage() {
                   ) : null}
                   {data.salesToday.dialer.callbacksDue.map((callback) => (
                     <li key={callback.id}>
-                      <TodayLink href='/admin/agency/dialer'>
+                      <TodayLink href='/admin/prospecting/dialer'>
                         Callback due: {callback.name}
                       </TodayLink>
                     </li>
@@ -169,7 +175,8 @@ export default async function AdminHomePage() {
             {data.support.open ? (
               <p className='text-sm'>
                 <TodayLink href='/admin/support'>
-                  {data.support.open} open request{data.support.open === 1 ? '' : 's'}
+                  {data.support.open} open request
+                  {data.support.open === 1 ? '' : 's'}
                 </TodayLink>
                 {data.support.oldest ? ` · oldest: ${data.support.oldest.subject}` : ''}
               </p>

@@ -43,7 +43,7 @@ export default async function DialerPage({
       pageTitle='Human dialer'
       pageDescription='Manual call logging for the synthetic agency workspace.'
     >
-      <Link href='/admin/agency' className='mb-4 inline-flex min-h-11 items-center underline'>
+      <Link href='/admin/prospecting' className='mb-4 inline-flex min-h-11 items-center underline'>
         Back to agency workspace
       </Link>
       <p className='agency-notice'>

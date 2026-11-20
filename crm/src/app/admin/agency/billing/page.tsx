@@ -36,7 +36,7 @@ export default async function AgencyBilling({
       pageTitle='Agency billing'
       pageDescription='Custom USD deal terms, invoice drafts and reminder drafts. Saving stays local. This page does not charge a card or call Stripe.'
     >
-      <Link href='/admin/agency'>Agency dashboard</Link>
+      <Link href='/admin/prospecting'>Agency dashboard</Link>
       {q.error && (
         <p role='alert'>
           {q.error === 'blocked'

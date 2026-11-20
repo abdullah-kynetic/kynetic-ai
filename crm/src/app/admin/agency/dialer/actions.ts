@@ -29,16 +29,16 @@ export async function logAgencyCallAction(contactId: string, form: FormData) {
   } catch (error) {
     if (!(error instanceof AppError)) throw error;
     if (error.fieldErrors?.callbackDate) {
-      revalidatePath('/admin/agency/dialer');
-      redirect('/admin/agency/dialer?error=callback');
+      revalidatePath('/admin/prospecting/dialer');
+      redirect('/admin/prospecting/dialer?error=callback');
     }
     invalid = true;
   }
-  revalidatePath('/admin/agency/dialer');
-  revalidatePath('/admin/agency/campaigns');
-  if (invalid) redirect('/admin/agency/dialer?error=unavailable');
+  revalidatePath('/admin/prospecting/dialer');
+  revalidatePath('/admin/prospecting/campaigns');
+  if (invalid) redirect('/admin/prospecting/dialer?error=unavailable');
 }
 export async function markAgencyDncAction(contactId: string) {
   await markAgencyDnc(await caller(), contactId);
-  revalidatePath('/admin/agency/dialer');
+  revalidatePath('/admin/prospecting/dialer');
 }

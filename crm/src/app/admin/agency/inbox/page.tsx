@@ -12,7 +12,11 @@ export const dynamic = 'force-dynamic';
 export default async function Inbox({
   searchParams
 }: {
-  searchParams: Promise<{ channel?: string; status?: string; contactId?: string }>;
+  searchParams: Promise<{
+    channel?: string;
+    status?: string;
+    contactId?: string;
+  }>;
 }) {
   const caller = await agencyCaller();
   if (!(await getAgencyWorkspace(caller)))
@@ -28,7 +32,7 @@ export default async function Inbox({
       pageTitle='Agency inbox'
       pageDescription='SMS, email, and manually recorded DMs. No DM account is connected.'
     >
-      <Link href='/admin/agency'>Agency dashboard</Link>
+      <Link href='/admin/prospecting'>Agency dashboard</Link>
       <div className='agency-inbox-grid'>
         <div>
           <form className='agency-filter'>
@@ -79,7 +83,7 @@ export default async function Inbox({
                   <p className='agency-message-body'>{m.body}</p>
                   {m.channel !== 'dm' && (
                     <Link
-                      href={`/admin/agency/compose?contactId=${m.contact_id}&channel=${m.channel === 'dm' ? 'sms' : m.channel}`}
+                      href={`/admin/sales/compose?contactId=${m.contact_id}&channel=${m.channel === 'dm' ? 'sms' : m.channel}`}
                     >
                       Compose reply
                     </Link>

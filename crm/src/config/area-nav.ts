@@ -70,7 +70,8 @@ export const adminAreas: readonly Area[] = [
       { label: 'Overview', href: '/admin/money' },
       { label: 'Finance', href: '/admin/money/finance' },
       { label: 'Billing', href: '/admin/money/billing' },
-      { label: 'Invoices', href: '/admin/money/invoices' }
+      { label: 'Invoices', href: '/admin/money/invoices' },
+      { label: 'Usage', href: '/admin/money/usage' }
     ]
   },
   {
@@ -106,6 +107,7 @@ export const clientAreas: readonly Area[] = [
       { label: 'Contacts', href: '/dashboard/leads/contacts' },
       { label: 'Pipeline', href: '/dashboard/leads/pipeline' },
       { label: 'Import', href: '/dashboard/leads/import' },
+      { label: 'Companies', href: '/dashboard/leads/companies' },
       { label: 'Tasks', href: '/dashboard/leads/tasks' }
     ]
   },
@@ -147,7 +149,8 @@ export const clientAreas: readonly Area[] = [
       { label: 'Notifications', href: '/dashboard/settings/notifications' },
       { label: 'Automations', href: '/dashboard/settings/automations' },
       { label: 'Custom fields', href: '/dashboard/settings/custom-fields' },
-      { label: 'Alex', href: '/dashboard/settings/alex' }
+      { label: 'Alex', href: '/dashboard/settings/alex' },
+      { label: 'My systems', href: '/dashboard/settings/systems' }
     ]
   },
   {
@@ -159,7 +162,8 @@ export const clientAreas: readonly Area[] = [
       { label: 'Support', href: '/dashboard/help' },
       { label: 'Documents', href: '/dashboard/help/documents' },
       { label: 'Reports', href: '/dashboard/help/reports' },
-      { label: 'Usage', href: '/dashboard/help/usage' }
+      { label: 'Usage', href: '/dashboard/help/usage' },
+      { label: 'Notifications', href: '/dashboard/help/notifications' }
     ]
   }
 ];

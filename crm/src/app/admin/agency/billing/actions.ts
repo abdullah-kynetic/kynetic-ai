@@ -44,9 +44,9 @@ export async function saveTermsAction(form: FormData) {
       !(error instanceof Error && error.message.startsWith('Enter a USD'))
     )
       throw error;
-    redirect(`/admin/agency/billing?error=${billingError(error, 'terms')}`);
+    redirect(`/admin/money/billing?error=${billingError(error, 'terms')}`);
   }
-  revalidatePath('/admin/agency/billing');
+  revalidatePath('/admin/money/billing');
 }
 export async function createInvoiceAction(form: FormData) {
   const caller = await agencyCaller();
@@ -60,17 +60,17 @@ export async function createInvoiceAction(form: FormData) {
     });
   } catch (error) {
     if (!(error instanceof AppError)) throw error;
-    redirect(`/admin/agency/billing?error=${billingError(error, 'invoice')}`);
+    redirect(`/admin/money/billing?error=${billingError(error, 'invoice')}`);
   }
-  revalidatePath('/admin/agency/billing');
+  revalidatePath('/admin/money/billing');
 }
 export async function dunningAction() {
   try {
     await draftAgencyDunning(await agencyCaller());
   } catch (error) {
-    redirect(`/admin/agency/billing?error=${billingError(error, 'reminder')}`);
+    redirect(`/admin/money/billing?error=${billingError(error, 'reminder')}`);
   }
-  revalidatePath('/admin/agency/billing');
+  revalidatePath('/admin/money/billing');
 }
 export async function simulateInvoiceAction(
   id: string,
@@ -96,5 +96,5 @@ export async function simulateInvoiceAction(
       }
     }
   });
-  revalidatePath('/admin/agency/billing');
+  revalidatePath('/admin/money/billing');
 }

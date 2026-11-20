@@ -12,7 +12,7 @@ import { AppError } from '@/server/errors';
 
 function fail(error: unknown): never {
   if (!(error instanceof AppError)) throw error;
-  redirect('/admin/agency/contracts?error=1');
+  redirect('/admin/sales/contracts?error=1');
 }
 
 export async function createContractAction(form: FormData) {
@@ -24,7 +24,7 @@ export async function createContractAction(form: FormData) {
   } catch (error) {
     fail(error);
   }
-  revalidatePath('/admin/agency/contracts');
+  revalidatePath('/admin/sales/contracts');
 }
 export async function markContractSentAction(id: string, form: FormData) {
   try {
@@ -35,7 +35,7 @@ export async function markContractSentAction(id: string, form: FormData) {
   } catch (error) {
     fail(error);
   }
-  revalidatePath('/admin/agency/contracts');
+  revalidatePath('/admin/sales/contracts');
 }
 export async function markContractSignedAction(id: string, form: FormData) {
   const file = form.get('file');
@@ -56,7 +56,7 @@ export async function markContractSignedAction(id: string, form: FormData) {
   } catch (error) {
     fail(error);
   }
-  revalidatePath('/admin/agency/contracts');
+  revalidatePath('/admin/sales/contracts');
 }
 export async function voidContractAction(id: string) {
   try {
@@ -64,5 +64,5 @@ export async function voidContractAction(id: string) {
   } catch (error) {
     fail(error);
   }
-  revalidatePath('/admin/agency/contracts');
+  revalidatePath('/admin/sales/contracts');
 }

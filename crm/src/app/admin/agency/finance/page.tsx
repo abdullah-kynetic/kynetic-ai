@@ -49,7 +49,7 @@ export default async function FinancePage({
       pageTitle='Finance'
       pageDescription='Revenue, expenses, referrals and case studies for the agency workspace. Nothing is sent.'
     >
-      <Link href='/admin/agency'>Agency dashboard</Link>
+      <Link href='/admin/prospecting'>Agency dashboard</Link>
       <dl className='agency-kpis' aria-label='This month (Pacific)'>
         <div>
           <dt>Revenue</dt>
@@ -76,7 +76,7 @@ export default async function FinancePage({
         {tabs.map(([id, label]) => (
           <Link
             key={id}
-            href={`/admin/agency/finance?tab=${id}`}
+            href={`/admin/money/finance?tab=${id}`}
             aria-current={tab === id ? 'page' : undefined}
           >
             {label}

@@ -19,7 +19,12 @@ export const dynamic = 'force-dynamic';
 export default async function ContractsPage({
   searchParams
 }: {
-  searchParams: Promise<{ status?: string; stageId?: string; deal?: string; error?: string }>;
+  searchParams: Promise<{
+    status?: string;
+    stageId?: string;
+    deal?: string;
+    error?: string;
+  }>;
 }) {
   const caller = await agencyCaller();
   if (!(await getAgencyWorkspace(caller))) return <AgencyWorkspaceMissing pageTitle='Contracts' />;
@@ -27,7 +32,10 @@ export default async function ContractsPage({
   const [{ stages }, { leads }, contracts] = await Promise.all([
     getAgencyPipeline(caller),
     listAgencyLeads(caller),
-    listAgencyContracts(caller, { status: query.status, stageId: query.stageId })
+    listAgencyContracts(caller, {
+      status: query.status,
+      stageId: query.stageId
+    })
   ]);
   const deals = leads.flatMap((lead) =>
     lead.deal ? [{ id: lead.deal.dealId, name: lead.firstName }] : []
@@ -37,7 +45,7 @@ export default async function ContractsPage({
       pageTitle='Contracts'
       pageDescription='Track draft, sent, signed and void agreements. Nothing is emailed or e-signed.'
     >
-      <Link href='/admin/agency'>Agency dashboard</Link>
+      <Link href='/admin/prospecting'>Agency dashboard</Link>
       {query.error && (
         <p role='alert'>That contract change could not be saved. Check the deal and the dates.</p>
       )}
@@ -97,7 +105,7 @@ export default async function ContractsPage({
               {contract.dealTitle} · {contract.stageName} · <AgencyStatus value={contract.status} />
             </p>
             <p className='text-sm'>
-              <Link href={`/admin/agency/proposals?dealId=${contract.dealId}`}>Proposal draft</Link>
+              <Link href={`/admin/sales/proposals?dealId=${contract.dealId}`}>Proposal draft</Link>
               {contract.signedFileKey ? (
                 <>
                   {' '}

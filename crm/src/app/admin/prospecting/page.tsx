@@ -1,1 +1,1 @@
-export { default } from "../agency/workspace-overview";
+export { default } from '../agency/workspace-overview';

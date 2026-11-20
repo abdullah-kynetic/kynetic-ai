@@ -20,7 +20,7 @@ function fail(error: unknown): never {
     !(error instanceof Error && error.message.startsWith('Enter a USD'))
   )
     throw error;
-  redirect('/admin/agency/finance?error=1');
+  redirect('/admin/money/finance?error=1');
 }
 
 export async function addExpenseAction(form: FormData) {
@@ -35,8 +35,8 @@ export async function addExpenseAction(form: FormData) {
   } catch (error) {
     fail(error);
   }
-  revalidatePath('/admin/agency/finance');
-  revalidatePath('/admin/agency');
+  revalidatePath('/admin/money/finance');
+  revalidatePath('/admin/prospecting');
 }
 export async function editExpenseAction(id: string, form: FormData) {
   try {
@@ -51,13 +51,13 @@ export async function editExpenseAction(id: string, form: FormData) {
   } catch (error) {
     fail(error);
   }
-  revalidatePath('/admin/agency/finance');
-  revalidatePath('/admin/agency');
+  revalidatePath('/admin/money/finance');
+  revalidatePath('/admin/prospecting');
 }
 export async function deleteExpenseAction(id: string) {
   await deleteAgencyExpense(await agencyCaller(), id);
-  revalidatePath('/admin/agency/finance');
-  revalidatePath('/admin/agency');
+  revalidatePath('/admin/money/finance');
+  revalidatePath('/admin/prospecting');
 }
 export async function addRevenueAction(form: FormData) {
   try {
@@ -69,8 +69,8 @@ export async function addRevenueAction(form: FormData) {
   } catch (error) {
     fail(error);
   }
-  revalidatePath('/admin/agency/finance');
-  revalidatePath('/admin/agency');
+  revalidatePath('/admin/money/finance');
+  revalidatePath('/admin/prospecting');
 }
 export async function addReferralAction(form: FormData) {
   const contactId = String(form.get('contactId') ?? '');
@@ -83,11 +83,11 @@ export async function addReferralAction(form: FormData) {
   } catch (error) {
     fail(error);
   }
-  revalidatePath('/admin/agency/finance');
+  revalidatePath('/admin/money/finance');
 }
 export async function approveReferralAction(id: string) {
   await approveAgencyReferral(await agencyCaller(), id);
-  revalidatePath('/admin/agency/finance');
+  revalidatePath('/admin/money/finance');
 }
 export async function saveCaseStudyAction(form: FormData) {
   const id = String(form.get('id') ?? '');
@@ -103,5 +103,5 @@ export async function saveCaseStudyAction(form: FormData) {
   } catch (error) {
     fail(error);
   }
-  revalidatePath('/admin/agency/finance');
+  revalidatePath('/admin/money/finance');
 }

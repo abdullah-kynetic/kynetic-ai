@@ -23,7 +23,7 @@ export default async function AgencyOps() {
       pageTitle='Sales settings'
       pageDescription='Client health, onboarding and isolated DEV configuration.'
     >
-      <Link href='/admin/agency'>Agency dashboard</Link>
+      <Link href='/admin/prospecting'>Agency dashboard</Link>
       <section className='agency-notice'>
         <h2 className='font-semibold'>Daily summary preview</h2>
         <p>{digest.body}</p>

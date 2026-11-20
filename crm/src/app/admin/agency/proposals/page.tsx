@@ -38,7 +38,7 @@ export default async function ProposalsPage({
       pageTitle='Proposal drafts'
       pageDescription='Internal proposal drafts linked to agency deals.'
     >
-      <Link href='/admin/agency' className='mb-4 inline-flex min-h-11 items-center underline'>
+      <Link href='/admin/prospecting' className='mb-4 inline-flex min-h-11 items-center underline'>
         Back to agency workspace
       </Link>
       <p className='agency-notice'>
@@ -81,7 +81,7 @@ export default async function ProposalsPage({
           >
             <div>
               <Link
-                href={`/admin/agency/proposals/${d.id}`}
+                href={`/admin/sales/proposals/${d.id}`}
                 className='inline-flex min-h-11 items-center font-medium underline'
               >
                 {d.title}
@@ -89,7 +89,7 @@ export default async function ProposalsPage({
               <p className='text-muted-foreground text-sm'>{d.dealTitle} · Draft</p>
             </div>
             <Link
-              href={`/admin/agency/proposals/${d.id}/preview`}
+              href={`/admin/sales/proposals/${d.id}/preview`}
               className='inline-flex min-h-11 items-center underline'
             >
               Preview draft

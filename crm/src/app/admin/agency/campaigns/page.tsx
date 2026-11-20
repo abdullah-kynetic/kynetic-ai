@@ -35,7 +35,7 @@ export default async function CampaignsPage({
       pageTitle='Agency campaigns'
       pageDescription='Organize leads and review their recorded manual outcomes.'
     >
-      <Link href='/admin/agency' className='mb-4 inline-flex min-h-11 items-center underline'>
+      <Link href='/admin/prospecting' className='mb-4 inline-flex min-h-11 items-center underline'>
         Back to agency workspace
       </Link>
       {query.error && (
@@ -107,7 +107,7 @@ export default async function CampaignsPage({
             </form>
             <CampaignSequence caller={caller} id={c.id} steps={c.steps} />
             <Link
-              href={`/admin/agency/dialer?campaignId=${c.id}`}
+              href={`/admin/prospecting/dialer?campaignId=${c.id}`}
               className='inline-flex min-h-11 items-center underline'
             >
               Open campaign queue

@@ -38,7 +38,7 @@ export default async function ProposalPreview({
       <style>{`@media print { .agency-navigation, .no-print { display: none !important; } }`}</style>
       <nav className='no-print mb-5 flex flex-wrap gap-4'>
         <Link
-          href={`/admin/agency/proposals/${proposalId}`}
+          href={`/admin/sales/proposals/${proposalId}`}
           className='inline-flex min-h-11 items-center underline'
         >
           Back to editor
@@ -50,7 +50,7 @@ export default async function ProposalPreview({
           Download PDF
         </a>
         <Link
-          href={`/admin/agency/contracts?deal=${data.proposal.dealId}`}
+          href={`/admin/sales/contracts?deal=${data.proposal.dealId}`}
           className='inline-flex min-h-11 items-center underline'
         >
           Contract
