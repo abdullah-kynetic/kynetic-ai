@@ -1,10 +1,7 @@
-import { ProspectingStage } from '../stage-empty';
+import { StageList, type StageSearch } from '../stage-list';
 
-export default function ScrapedPage() {
-  return (
-    <ProspectingStage
-      title='Scraped leads'
-      description='New synthetic leads will appear here before enrichment.'
-    />
-  );
+export const dynamic = 'force-dynamic';
+
+export default function Page({ searchParams }: { searchParams: StageSearch }) {
+  return <StageList stage='scraped' search={searchParams} />;
 }

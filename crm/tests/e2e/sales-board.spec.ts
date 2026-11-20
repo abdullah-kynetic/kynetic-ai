@@ -23,7 +23,9 @@ test('moving a synthetic sales card saves its stage', async ({ adminPage: page }
   await page.mouse.move(source.x + source.width / 2, source.y + source.height / 2);
   await page.mouse.down();
   await page.mouse.move(target.x + target.width / 2, target.y + 30, { steps: 12 });
+  const saved = page.waitForResponse((r) => r.request().method() === 'POST');
   await page.mouse.up();
+  await saved;
   await expect(
     page
       .getByRole('region', { name: 'Audit sent stage' })

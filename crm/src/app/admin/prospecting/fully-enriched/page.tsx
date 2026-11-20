@@ -1,10 +1,7 @@
-import { ProspectingStage } from '../stage-empty';
+import { StageList, type StageSearch } from '../stage-list';
 
-export default function FullyEnrichedPage() {
-  return (
-    <ProspectingStage
-      title='Fully enriched'
-      description='Qualified leads will appear here when enrichment is complete.'
-    />
-  );
+export const dynamic = 'force-dynamic';
+
+export default function Page({ searchParams }: { searchParams: StageSearch }) {
+  return <StageList stage='fully_enriched' search={searchParams} />;
 }
