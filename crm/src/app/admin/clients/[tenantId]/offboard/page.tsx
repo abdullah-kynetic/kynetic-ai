@@ -79,7 +79,7 @@ export default async function OffboardPage({
         </button>
       </form>
       <section className='mt-8' aria-labelledby='exports-heading'>
-        <h2 id='exports-heading' className='text-lg font-semibold'>
+        <h2 id='exports-heading' className='text-lg font-medium'>
           Record export
         </h2>
         {exports.length === 0 ? (

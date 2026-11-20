@@ -71,7 +71,7 @@ export default async function CampaignsPage({
             className='agency-panel space-y-4'
             aria-labelledby={`campaign-${c.id}`}
           >
-            <h2 id={`campaign-${c.id}`} className='text-lg font-semibold'>
+            <h2 id={`campaign-${c.id}`} className='text-lg font-medium'>
               {c.name}
             </h2>
             <p>

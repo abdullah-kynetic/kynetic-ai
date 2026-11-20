@@ -51,7 +51,7 @@ export function DocumentList({
   if (!documents.length) return <p>No current documents.</p>;
   return (
     <div className='mt-8 grid gap-4'>
-      <h2 className='text-lg font-semibold'>Current documents</h2>
+      <h2 className='text-lg font-medium'>Current documents</h2>
       {message && (
         <p role='status' aria-live='polite'>
           {message}
@@ -59,7 +59,7 @@ export function DocumentList({
       )}
       {pendingDelete && (
         <div role='dialog' aria-labelledby='delete-document-title' className='rounded border p-4'>
-          <h3 id='delete-document-title' className='font-semibold'>
+          <h3 id='delete-document-title' className='font-medium'>
             Delete {pendingDelete.title}?
           </h3>
           <p>The client will no longer see it. The stored file is kept.</p>

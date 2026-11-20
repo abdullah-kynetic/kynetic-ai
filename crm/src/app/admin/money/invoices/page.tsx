@@ -46,7 +46,7 @@ export default async function InvoicesPage({
     data.invoices.filter((i) => i.status === s).reduce((sum, i) => sum + i.amount_cents, 0);
   return (
     <section className='space-y-5' aria-label='Invoices'>
-      <h2 className='text-xl font-semibold'>Invoices</h2>
+      <h2 className='text-xl font-medium'>Invoices</h2>
       <p className='text-muted-foreground text-sm'>
         Invoice drafts for won deals. Nothing is sent or charged. Create drafts and simulate payment
         events in{' '}

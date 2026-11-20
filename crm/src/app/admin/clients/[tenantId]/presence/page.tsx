@@ -74,7 +74,7 @@ export default async function AdminPresencePage({
         </button>
       </form>
       <section className='mt-8 max-w-2xl rounded border p-4'>
-        <h2 className='text-lg font-semibold'>Record review snapshot</h2>
+        <h2 className='text-lg font-medium'>Record review snapshot</h2>
         <form action={saveReview} className='mt-3 grid gap-3 sm:grid-cols-2'>
           <input type='hidden' name='tenantId' value={tenantId} />
           <label>

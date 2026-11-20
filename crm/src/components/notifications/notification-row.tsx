@@ -35,7 +35,7 @@ export function NotificationRow({ item, onOpen }: { item: NotificationItem; onOp
         )}
       />
       <span className='flex min-w-0 flex-1 flex-col gap-0.5'>
-        <span className={cn('text-sm', unread ? 'font-semibold' : 'font-normal')}>
+        <span className={cn('text-sm', unread ? 'font-medium' : 'font-normal')}>
           {unread && <span className='sr-only'>Unread: </span>}
           {item.title}
         </span>

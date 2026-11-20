@@ -22,7 +22,7 @@ export default async function AcceptTermsPage({
   return (
     <main id='main-content' className='bg-background min-h-svh px-4 py-10'>
       <div className='bg-card mx-auto grid max-w-2xl gap-6 rounded-[var(--radius-card)] border p-6 sm:p-8'>
-        <h1 className='text-[28px]/[1.15] font-semibold tracking-[-0.015em] sm:text-[32px]/[1.1]'>
+        <h1 className='text-[28px]/[1.15] font-medium tracking-[-0.01em] sm:text-[32px]/[1.1]'>
           Terms and privacy
         </h1>
         <p
@@ -33,10 +33,7 @@ export default async function AcceptTermsPage({
         </p>
         {CURRENT_DOCUMENTS.map((document) => (
           <section key={document.document} aria-labelledby={`doc-${document.document}`}>
-            <h2
-              id={`doc-${document.document}`}
-              className='text-lg font-semibold tracking-[-0.01em]'
-            >
+            <h2 id={`doc-${document.document}`} className='text-lg font-medium'>
               {document.title}
             </h2>
             <p className='text-muted-foreground text-xs'>Version {document.version}</p>

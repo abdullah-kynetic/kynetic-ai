@@ -30,7 +30,7 @@ export default async function ClientsBoardPage() {
       <StatTiles label='Clients in numbers' tiles={stats} />
       {rows.length === 0 ? (
         <section className='bg-card space-y-3 rounded-xl border p-6'>
-          <h2 className='font-semibold'>No clients yet</h2>
+          <h2 className='font-medium'>No clients yet</h2>
           <p className='text-muted-foreground text-sm'>
             Onboard your first client and it will appear on this board.
           </p>

@@ -20,7 +20,7 @@ export function PauseControls({
   const portal = paused ? 'paused' : 'running';
   return (
     <section className='mb-8 space-y-3' aria-labelledby='pause-heading'>
-      <h2 id='pause-heading' className='text-lg font-semibold'>
+      <h2 id='pause-heading' className='text-lg font-medium'>
         Outbound pause
       </h2>
       <p>

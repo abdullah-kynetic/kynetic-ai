@@ -46,7 +46,7 @@ export function TeamManager({ initial }: { initial: { members: Member[]; invites
         </p>
       )}
       <section aria-labelledby='members' className='space-y-3'>
-        <h2 id='members' className='text-lg font-semibold'>
+        <h2 id='members' className='text-lg font-medium'>
           Members
         </h2>
         <ul className='divide-y rounded-md border'>
@@ -100,7 +100,7 @@ export function TeamManager({ initial }: { initial: { members: Member[]; invites
       </section>
 
       <section aria-labelledby='invites' className='space-y-3'>
-        <h2 id='invites' className='text-lg font-semibold'>
+        <h2 id='invites' className='text-lg font-medium'>
           Invite staff
         </h2>
         <form

@@ -221,7 +221,7 @@ export function SystemsPanel(props: {
         })}
       </ul>
       <section aria-labelledby='history-heading'>
-        <h2 id='history-heading' className='mb-3 text-base font-semibold'>
+        <h2 id='history-heading' className='mb-3 text-base font-medium'>
           History
         </h2>
         {props.history.length === 0 ? (

@@ -133,7 +133,7 @@ export function OnboardingForm() {
       </div>
 
       <fieldset className='bg-surface-sunken grid gap-3 rounded-[var(--radius-panel)] p-4'>
-        <legend className='px-1 text-sm font-semibold'>Business hours</legend>
+        <legend className='px-1 text-sm font-medium'>Business hours</legend>
         <div className='flex flex-wrap gap-4'>
           {DAY_LABELS.map(([v, l]) => (
             <div key={v} className='flex items-center gap-2'>
@@ -210,7 +210,7 @@ export function OnboardingForm() {
       </div>
 
       <fieldset className='bg-surface-sunken grid gap-2 rounded-[var(--radius-panel)] p-4'>
-        <legend className='px-1 text-sm font-semibold'>Modules</legend>
+        <legend className='px-1 text-sm font-medium'>Modules</legend>
         {MODULES.map(([v, l]) => (
           <div key={v} className='flex items-center gap-2'>
             <Checkbox id={`mod-${v}`} name='modules' value={v} defaultChecked={v === 'alex_core'} />
@@ -241,7 +241,7 @@ function Created({ state }: { state: Extract<OnboardState, { status: 'created' }
         to {state.ownerEmail} yet.
       </p>
       <div className='bg-surface-sunken rounded-[var(--radius-panel)] p-4'>
-        <p className='text-sm font-semibold'>Invite email (draft)</p>
+        <p className='text-sm font-medium'>Invite email (draft)</p>
         <p className='text-muted-foreground mt-1 text-sm'>Subject: {state.draft.subject}</p>
         <pre className='mt-2 text-sm whitespace-pre-wrap'>{state.draft.body}</pre>
       </div>

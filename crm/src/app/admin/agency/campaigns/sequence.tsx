@@ -29,7 +29,7 @@ export async function CampaignSequence({
   ]);
   return (
     <section className='space-y-4'>
-      <h3 className='font-semibold'>Manual follow-up sequence</h3>
+      <h3 className='font-medium'>Manual follow-up sequence</h3>
       <p>No automatic sends. Stops on reply, booking, opt-out, or a closed deal.</p>
       {!tasks.length && (
         <form action={saveSequence.bind(null, id)} className='space-y-3'>

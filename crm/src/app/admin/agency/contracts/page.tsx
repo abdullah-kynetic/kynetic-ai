@@ -75,7 +75,7 @@ export default async function ContractsPage({
         </Button>
       </form>
       <form action={createContractAction} className='agency-form mb-8 max-w-xl'>
-        <h2 className='font-semibold'>New contract</h2>
+        <h2 className='font-medium'>New contract</h2>
         <Label htmlFor='contract-deal'>Deal</Label>
         <select id='contract-deal' name='dealId' required defaultValue={query.deal ?? ''}>
           <option value=''>Choose a deal</option>
@@ -100,7 +100,7 @@ export default async function ContractsPage({
       <div className='space-y-4'>
         {contracts.map((contract) => (
           <article key={contract.id} className='bg-card rounded-[var(--radius-card)] border p-5'>
-            <h2 className='font-semibold'>{contract.title}</h2>
+            <h2 className='font-medium'>{contract.title}</h2>
             <p>
               {contract.dealTitle} · {contract.stageName} · <AgencyStatus value={contract.status} />
             </p>

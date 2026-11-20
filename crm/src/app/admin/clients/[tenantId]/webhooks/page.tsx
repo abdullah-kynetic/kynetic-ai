@@ -44,7 +44,7 @@ export default async function LeadWebhookPage({
       </dl>
       <SecretPanel tenantId={tenantId} isSet={settings.secret.isSet} />
       <form action={saveN8nPushAction.bind(null, tenantId)} className='mt-10 grid max-w-xl gap-4'>
-        <h2 className='text-lg font-semibold'>n8n event push</h2>
+        <h2 className='text-lg font-medium'>n8n event push</h2>
         <p className='text-sm text-muted-foreground'>
           Portal events are signed and posted to this https URL. The signing secret is encrypted and
           is never shown again. Leave the secret blank to keep the current one.

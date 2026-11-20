@@ -71,7 +71,7 @@ export default async function ProposalsPage({
       ) : (
         <p className='mb-8'>Add an agency lead to create its deal first.</p>
       )}
-      <h2 className='mb-3 text-lg font-semibold'>Recent drafts</h2>
+      <h2 className='mb-3 text-lg font-medium'>Recent drafts</h2>
       <p className='text-muted-foreground mb-3 text-sm'>Latest 50 drafts for live agency deals.</p>
       <ul className='space-y-3'>
         {drafts.map((d) => (

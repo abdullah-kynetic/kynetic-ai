@@ -63,7 +63,7 @@ export default async function ReportDetailPage({ params }: { params: Promise<{ i
         ].map(([label, value]) => (
           <div key={label} className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
             <dt className='text-muted-foreground text-sm'>{label}</dt>
-            <dd className='mt-2 text-xl font-semibold'>{value}</dd>
+            <dd className='mt-2 text-xl font-medium'>{value}</dd>
           </div>
         ))}
       </dl>

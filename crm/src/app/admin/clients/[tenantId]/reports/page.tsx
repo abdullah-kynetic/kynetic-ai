@@ -63,7 +63,7 @@ export default async function ClientReportSchedulePage({
         action={saveClientEmailAction.bind(null, tenantId)}
         className='mt-8 grid max-w-md gap-3'
       >
-        <h2 className='text-lg font-semibold'>Client email</h2>
+        <h2 className='text-lg font-medium'>Client email</h2>
         <p>
           Weekly results and the monthly report link stay off unless this client is checked and the
           server flag is on. Nothing is attached.

@@ -85,7 +85,7 @@ function Column({
       className={`bg-surface-sunken min-h-48 w-64 shrink-0 space-y-3 rounded-xl border p-3 ${isOver ? 'ring-primary ring-2' : ''}`}
     >
       <div className='flex justify-between gap-2'>
-        <h2 className='font-semibold'>{stage.name}</h2>
+        <h2 className='font-medium'>{stage.name}</h2>
         <span className='text-muted-foreground text-sm'>{cards.length}</span>
       </div>
       {cards.map((card) => (

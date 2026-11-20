@@ -53,7 +53,7 @@ export function MoneyDashboard({ data }: { data: MoneyOverview }) {
       <StatTiles label='Revenue in numbers' tiles={tiles} />
       {empty && (
         <section className='bg-card space-y-2 rounded-xl border p-6'>
-          <h2 className='font-semibold'>No money recorded yet</h2>
+          <h2 className='font-medium'>No money recorded yet</h2>
           <p className='text-muted-foreground text-sm'>
             Save deal terms in Billing and record revenue or expenses in Finance. They appear here
             automatically.
@@ -72,7 +72,7 @@ export function MoneyDashboard({ data }: { data: MoneyOverview }) {
         aria-label='Six-month revenue trend'
         className='bg-card rounded-[var(--radius-card)] border p-5'
       >
-        <h2 className='mb-3 font-semibold'>Revenue and expenses, last six months</h2>
+        <h2 className='mb-3 font-medium'>Revenue and expenses, last six months</h2>
         <FinanceMonthsChart months={data.trend} />
       </section>
       <div className='grid gap-6 lg:grid-cols-2'>
@@ -80,7 +80,7 @@ export function MoneyDashboard({ data }: { data: MoneyOverview }) {
           aria-label='Outstanding invoices'
           className='bg-card space-y-3 rounded-[var(--radius-card)] border p-5'
         >
-          <h2 className='font-semibold'>Outstanding</h2>
+          <h2 className='font-medium'>Outstanding</h2>
           <dl className='divide-y text-sm'>
             {[
               ['Open', data.outstanding.openCents],
@@ -101,7 +101,7 @@ export function MoneyDashboard({ data }: { data: MoneyOverview }) {
           aria-label='Recurring revenue by client'
           className='bg-card space-y-3 rounded-[var(--radius-card)] border p-5'
         >
-          <h2 className='font-semibold'>Recurring revenue</h2>
+          <h2 className='font-medium'>Recurring revenue</h2>
           {data.recurringClients.length === 0 ? (
             <p className='text-muted-foreground text-sm'>
               No won deals have a monthly fee yet. Add one under Billing.

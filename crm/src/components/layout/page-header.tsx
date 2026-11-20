@@ -21,7 +21,7 @@ export function PageHeader({
           tag,
           {
             className:
-              'text-[28px]/[1.15] font-semibold tracking-[-0.015em] md:text-[32px]/[1.1] md:tracking-[-0.025em]'
+              'text-[28px]/[1.15] font-medium tracking-[-0.01em] md:text-[32px]/[1.1] md:tracking-[-0.015em]'
           },
           title
         )}

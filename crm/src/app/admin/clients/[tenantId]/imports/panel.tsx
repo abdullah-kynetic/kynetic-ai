@@ -203,7 +203,7 @@ export function ImportPanel({
   return (
     <div className='grid max-w-3xl grid-cols-[minmax(0,1fr)] gap-6'>
       <section className='grid gap-3 rounded border p-4'>
-        <h2 className='text-lg font-semibold'>Upload CSV or Excel</h2>
+        <h2 className='text-lg font-medium'>Upload CSV or Excel</h2>
         <p className='text-muted-foreground text-sm'>
           CSV or .xlsx, up to 10 MB. The first sheet is read. Formula cells use the saved value.
           Macro-enabled .xlsm files and legacy .xls files are not accepted.
@@ -255,7 +255,7 @@ export function ImportPanel({
       </section>
       {batchId && headers.length > 0 && (
         <section className='grid gap-3 rounded border p-4'>
-          <h2 className='text-lg font-semibold'>Map {entity} columns</h2>
+          <h2 className='text-lg font-medium'>Map {entity} columns</h2>
           {entityFields[entity].map((key) => (
             <label key={key}>
               {key}
@@ -323,7 +323,7 @@ export function ImportPanel({
         </p>
       )}
       <section className='grid gap-3'>
-        <h2 className='text-lg font-semibold'>Import history</h2>
+        <h2 className='text-lg font-medium'>Import history</h2>
         {batches.map((batch) => (
           <article className='grid gap-2 rounded border p-4 sm:grid-cols-[1fr_auto]' key={batch.id}>
             <div>

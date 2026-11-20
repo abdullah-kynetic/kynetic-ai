@@ -82,7 +82,7 @@ export default async function SupportPage({
           </div>
         </form>
         <section aria-labelledby='support-history' className='grid gap-3'>
-          <h2 id='support-history' className='text-lg font-semibold'>
+          <h2 id='support-history' className='text-lg font-medium'>
             Your requests
           </h2>
           {requests.length === 0 ? (

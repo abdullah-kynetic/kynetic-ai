@@ -71,7 +71,7 @@ export default async function AgencyBilling({
       )}
       <div className='agency-columns'>
         <form action={saveTermsAction} className='agency-form'>
-          <h2 className='font-semibold'>Deal pricing</h2>
+          <h2 className='font-medium'>Deal pricing</h2>
           <label>
             Deal
             <select name='dealId' required>
@@ -110,7 +110,7 @@ export default async function AgencyBilling({
         </form>
 
         <form action={createInvoiceAction} className='agency-form'>
-          <h2 className='font-semibold'>Create invoice draft</h2>
+          <h2 className='font-medium'>Create invoice draft</h2>
           <label>
             Deal
             <select name='dealId' required>
@@ -155,7 +155,7 @@ export default async function AgencyBilling({
         </form>
       </div>
       <section className='space-y-3' aria-label='Agreed draft terms'>
-        <h2 className='font-semibold'>Agreed draft terms</h2>
+        <h2 className='font-medium'>Agreed draft terms</h2>
         {data.terms.length === 0 ? (
           <AgencyEmptyState
             title='No deal terms yet'
@@ -193,7 +193,7 @@ export default async function AgencyBilling({
         )}
       </section>
       <section className='agency-ledger my-8 space-y-3'>
-        <h2 className='font-semibold'>Invoices — stub ledger</h2>
+        <h2 className='font-medium'>Invoices — stub ledger</h2>
         {!data.invoices.length && (
           <AgencyEmptyState
             title='No invoice drafts yet'
@@ -229,7 +229,7 @@ export default async function AgencyBilling({
         ))}
       </section>
       <section className='my-6 space-y-3'>
-        <h2 className='font-semibold'>Overdue reminder drafts</h2>
+        <h2 className='font-medium'>Overdue reminder drafts</h2>
         <form action={dunningAction}>
           <Button type='submit' variant='outline'>
             Draft overdue reminders

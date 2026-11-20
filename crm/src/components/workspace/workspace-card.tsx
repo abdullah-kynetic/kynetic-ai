@@ -15,7 +15,7 @@ export function WorkspaceTile({
     <span
       aria-hidden
       className={cn(
-        'bg-primary text-primary-foreground flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-md text-xs font-semibold',
+        'bg-primary text-primary-foreground flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-md text-xs font-medium',
         logoUrl && 'bg-card ring-border ring-1',
         className
       )}
@@ -34,7 +34,7 @@ export function WorkspaceTile({
 export function WorkspaceText({ name, detail }: { name: string; detail: string }) {
   return (
     <span className='flex min-w-0 flex-1 flex-col text-left leading-tight group-data-[collapsible=icon]:hidden'>
-      <span className='truncate text-sm font-semibold' title={name}>
+      <span className='truncate text-sm font-medium' title={name}>
         {name}
       </span>
       <span className='text-muted-foreground truncate text-xs' title={detail}>

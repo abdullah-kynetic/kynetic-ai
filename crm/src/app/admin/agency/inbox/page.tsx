@@ -100,7 +100,7 @@ export default async function Inbox({
         </div>
         <aside aria-label='Record a DM'>
           <form action={logDmAction} className='agency-form' id='log-dm'>
-            <h2 className='font-semibold'>Log a DM manually</h2>
+            <h2 className='font-medium'>Log a DM manually</h2>
             <label>
               Prospect{' '}
               <select name='contactId' required>

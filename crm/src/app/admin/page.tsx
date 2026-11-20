@@ -70,7 +70,7 @@ export default async function AdminHomePage() {
     <AreaLayout area={adminAreas[0]!}>
       <div className='space-y-6'>
         <header>
-          <h2 className='text-[28px]/[1.15] font-semibold tracking-[-0.015em] md:text-[40px]/[1.1] md:tracking-[-0.025em]'>
+          <h2 className='text-[28px]/[1.15] font-medium tracking-[-0.01em] md:text-[40px]/[1.1] md:tracking-[-0.02em]'>
             {headline}
           </h2>
           <p className='text-muted-foreground mt-1 text-[15px]'>

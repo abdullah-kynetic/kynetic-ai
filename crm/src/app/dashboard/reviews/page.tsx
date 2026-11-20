@@ -105,7 +105,7 @@ export default async function ReviewsPage({
         {kpis.map(([label, value]) => (
           <div key={label} className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
             <p className='text-muted-foreground text-sm'>{label}</p>
-            <p className='mt-2 text-2xl font-semibold'>{value}</p>
+            <p className='mt-2 text-2xl font-medium'>{value}</p>
           </div>
         ))}
       </div>

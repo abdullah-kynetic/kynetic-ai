@@ -8,7 +8,7 @@ export default function SettingsIndexPage() {
         href='/dashboard/settings/business'
         className='bg-card rounded-xl border p-5 hover:border-primary'
       >
-        <h2 className='font-semibold'>Business account</h2>
+        <h2 className='font-medium'>Business account</h2>
         <p className='text-muted-foreground mt-1 text-sm'>
           Hours, service area and transfer number.
         </p>
@@ -19,7 +19,7 @@ export default function SettingsIndexPage() {
           href={tab.href}
           className='bg-card rounded-xl border p-5 hover:border-primary'
         >
-          <h2 className='font-semibold'>{tab.label}</h2>
+          <h2 className='font-medium'>{tab.label}</h2>
           <p className='text-muted-foreground mt-1 text-sm'>
             Open {tab.label.toLowerCase()} settings.
           </p>

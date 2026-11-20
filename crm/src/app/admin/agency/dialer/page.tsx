@@ -89,7 +89,7 @@ export default async function DialerPage({
       </p>
       {next ? (
         <section className='max-w-3xl space-y-4' aria-labelledby='dialer-next'>
-          <h2 id='dialer-next' className='text-xl font-semibold'>
+          <h2 id='dialer-next' className='text-xl font-medium'>
             {next.name}
             {next.callbackDue ? (
               <span className='ml-2 align-middle'>
@@ -164,7 +164,7 @@ export default async function DialerPage({
         do-not-call lead cannot be scheduled.
       </p>
       <section className='mt-8 space-y-3' aria-labelledby='recent-calls'>
-        <h2 id='recent-calls' className='text-lg font-semibold'>
+        <h2 id='recent-calls' className='text-lg font-medium'>
           Recent manual outcomes
         </h2>
         <ul className='space-y-2'>

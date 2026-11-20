@@ -27,7 +27,7 @@ export function ViewAsBanner({
     >
       <ExpiryRedirect msRemaining={msRemaining} />
       <p className='min-w-0 truncate'>
-        Viewing as <strong className='font-semibold'>{tenantName}</strong> the way they see it.{' '}
+        Viewing as <strong className='font-medium'>{tenantName}</strong> the way they see it.{' '}
         <span className='opacity-80'>
           {adminName}. Viewing only. Ends in {minutes} min.
         </span>

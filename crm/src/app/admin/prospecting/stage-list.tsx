@@ -41,7 +41,7 @@ export async function StageList({ stage, search }: { stage: ProspectStage; searc
   if (!workspace)
     return (
       <section className='bg-card space-y-3 rounded-xl border p-6'>
-        <h2 className='text-lg font-semibold'>{copy[stage].title}</h2>
+        <h2 className='text-lg font-medium'>{copy[stage].title}</h2>
         <p className='text-muted-foreground text-sm'>
           Create the synthetic agency workspace on the Funnel page to start adding prospects.
         </p>
@@ -61,7 +61,7 @@ export async function StageList({ stage, search }: { stage: ProspectStage; searc
   const filtered = Boolean(filters.q || filters.source || filters.state);
   return (
     <section className='space-y-4' aria-label={copy[stage].title}>
-      <h2 className='text-xl font-semibold'>{copy[stage].title}</h2>
+      <h2 className='text-xl font-medium'>{copy[stage].title}</h2>
       {query.error && (
         <p role='alert' className='text-destructive text-sm'>
           The prospect was not saved. Use a name, a source, an @example.test email and a 555-01xx

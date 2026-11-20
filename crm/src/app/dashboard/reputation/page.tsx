@@ -78,7 +78,7 @@ export default async function ReputationOverviewPage() {
       />
       {reviews && reviews.totalReviews === 0 && (
         <section className='bg-card space-y-2 rounded-xl border p-6'>
-          <h2 className='font-semibold'>No reviews tracked yet</h2>
+          <h2 className='font-medium'>No reviews tracked yet</h2>
           <p className='text-muted-foreground text-sm'>
             Ratings from your Google and other review profiles appear here once they are connected.
           </p>

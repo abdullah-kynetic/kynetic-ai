@@ -58,7 +58,7 @@ export function PreferencesForm({ initial }: { initial: Pref[] }) {
       )}
       <fieldset className='bg-card space-y-1 rounded-[var(--radius-card)] border p-4 sm:p-6'>
         <legend className='sr-only'>Email me about</legend>
-        <p className='pb-2 font-semibold' aria-hidden='true'>
+        <p className='pb-2 font-medium' aria-hidden='true'>
           Email me about
         </p>
         {prefs.map((p) => (

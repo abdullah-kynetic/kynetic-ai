@@ -21,7 +21,7 @@ export function TodayBlock({
       className='bg-card text-card-foreground flex flex-col gap-4 rounded-[var(--radius-card)] border p-6'
       aria-labelledby={id}
     >
-      <h2 id={id} className='text-lg font-semibold tracking-tight'>
+      <h2 id={id} className='text-lg font-medium'>
         {title}
       </h2>
       {children}

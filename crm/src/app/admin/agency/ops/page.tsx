@@ -25,12 +25,12 @@ export default async function AgencyOps() {
     >
       <Link href='/admin/prospecting'>Agency dashboard</Link>
       <section className='agency-notice'>
-        <h2 className='font-semibold'>Daily summary preview</h2>
+        <h2 className='font-medium'>Daily summary preview</h2>
         <p>{digest.body}</p>
         <p>In-app summaries at 8 a.m. Pacific. No external delivery.</p>
       </section>
       <section className='agency-health-list agency-list space-y-3'>
-        <h2 className='font-semibold'>Client health</h2>
+        <h2 className='font-medium'>Client health</h2>
         {clients.map((c) => (
           <article className='rounded border p-3' key={c.tenantId}>
             <h3>{c.name}</h3>
@@ -49,7 +49,7 @@ export default async function AgencyOps() {
       </section>
       <div className='agency-columns'>
         <form action={saveOpsAction} className='agency-form my-8' hidden>
-          <h2 className='font-semibold'>DEV integration draft</h2>
+          <h2 className='font-medium'>DEV integration draft</h2>
           <p>Saving metadata does not execute or activate a workflow or enable webhook dispatch.</p>
           <label htmlFor='ops-devWebhookUrl'>
             DEV lead webhook URL
@@ -85,7 +85,7 @@ export default async function AgencyOps() {
           <Button type='submit'>Save draft configuration</Button>
         </form>
         <section className='agency-panel space-y-3' hidden>
-          <h2 className='font-semibold'>Agency DEV lead secret</h2>
+          <h2 className='font-medium'>Agency DEV lead secret</h2>
           <p>
             {secret.isSet ? '•••••••• (configured)' : 'Not configured'} · Last rotation{' '}
             {secret.rotatedAt ? agencyDateTime(secret.rotatedAt) : 'Never'}

@@ -31,7 +31,7 @@ export default async function TemplateLibraryPage() {
       pageDescription='Reusable industry and system templates. Applying a template twice does not duplicate anything.'
     >
       <section aria-labelledby='industry-heading' className='space-y-4'>
-        <h2 id='industry-heading' className='text-base font-semibold'>
+        <h2 id='industry-heading' className='text-base font-medium'>
           Industry templates
         </h2>
         <div className='grid gap-4 lg:grid-cols-2'>
@@ -79,7 +79,7 @@ export default async function TemplateLibraryPage() {
       </section>
 
       <section aria-labelledby='systems-heading' className='mt-8 space-y-4'>
-        <h2 id='systems-heading' className='text-base font-semibold'>
+        <h2 id='systems-heading' className='text-base font-medium'>
           System templates
         </h2>
         <div className='grid gap-4 lg:grid-cols-2'>
@@ -127,7 +127,7 @@ export default async function TemplateLibraryPage() {
       </section>
 
       <section aria-labelledby='soon-heading' className='mt-8 space-y-4'>
-        <h2 id='soon-heading' className='text-base font-semibold'>
+        <h2 id='soon-heading' className='text-base font-medium'>
           Coming soon
         </h2>
         <div className='grid gap-4 lg:grid-cols-3'>

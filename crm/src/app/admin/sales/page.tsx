@@ -11,7 +11,7 @@ export default async function SalesPage() {
   if (!workspace)
     return (
       <section className='bg-card space-y-3 rounded-xl border p-6'>
-        <h2 className='font-semibold'>Start with a prospect</h2>
+        <h2 className='font-medium'>Start with a prospect</h2>
         <p className='text-muted-foreground text-sm'>
           Add a synthetic prospect in Prospecting to begin tracking a deal.
         </p>

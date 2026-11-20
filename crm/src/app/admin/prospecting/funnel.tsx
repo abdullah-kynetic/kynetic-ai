@@ -17,7 +17,7 @@ export function FunnelDashboard({ funnel }: { funnel: ProspectFunnel }) {
   if (funnel.total === 0)
     return (
       <section className='bg-card space-y-3 rounded-xl border p-6' aria-label='Prospecting funnel'>
-        <h2 className='font-semibold'>No prospects yet</h2>
+        <h2 className='font-medium'>No prospects yet</h2>
         <p className='text-muted-foreground text-sm'>
           Add a synthetic prospect on the Scraped leads tab and it will show up in this funnel.
         </p>
@@ -68,7 +68,7 @@ export function FunnelDashboard({ funnel }: { funnel: ProspectFunnel }) {
         aria-label='Conversion funnel'
         className='bg-card space-y-4 rounded-[var(--radius-card)] border p-5'
       >
-        <h2 className='font-semibold'>Funnel</h2>
+        <h2 className='font-medium'>Funnel</h2>
         <ol className='space-y-3'>
           {funnel.steps.map((step, index) => (
             <li key={step.key} className='space-y-1'>
@@ -99,7 +99,7 @@ export function FunnelDashboard({ funnel }: { funnel: ProspectFunnel }) {
         aria-label='Prospects by source'
         className='bg-card space-y-3 rounded-[var(--radius-card)] border p-5'
       >
-        <h2 className='font-semibold'>Where prospects came from</h2>
+        <h2 className='font-medium'>Where prospects came from</h2>
         <ul className='space-y-3'>
           {funnel.sources.map((s) => (
             <li key={s.source} className='space-y-1'>

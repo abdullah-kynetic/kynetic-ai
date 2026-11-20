@@ -175,7 +175,7 @@ export default async function AgencyPage({
       </p>
 
       <section className='mb-8 space-y-4' aria-labelledby='agency-leads'>
-        <h2 id='agency-leads' className='text-lg font-semibold'>
+        <h2 id='agency-leads' className='text-lg font-medium'>
           Leads
         </h2>
         <dl className='agency-source-counts' aria-label='Lead source counts'>
@@ -315,7 +315,7 @@ export default async function AgencyPage({
         )}
       </section>
       <section className='mb-8 space-y-4' aria-labelledby='agency-add-lead'>
-        <h2 id='agency-add-lead' className='text-lg font-semibold'>
+        <h2 id='agency-add-lead' className='text-lg font-medium'>
           Add a synthetic lead
         </h2>
         <form action={createAgencyLeadAction} className='agency-form grid gap-4 sm:grid-cols-2'>
@@ -379,7 +379,7 @@ export default async function AgencyPage({
         </form>
       </section>
       <section className='space-y-3' aria-labelledby='agency-stages'>
-        <h2 id='agency-stages' className='text-lg font-semibold'>
+        <h2 id='agency-stages' className='text-lg font-medium'>
           Pipeline stages
         </h2>
         {stages.map((stage) => (

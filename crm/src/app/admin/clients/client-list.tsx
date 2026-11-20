@@ -65,7 +65,7 @@ export async function ClientList({
   const filtered = Boolean(q || filters.health || filters.stage);
   return (
     <section className='space-y-4' aria-label={titles[kind]}>
-      <h2 className='text-xl font-semibold'>{titles[kind]}</h2>
+      <h2 className='text-xl font-medium'>{titles[kind]}</h2>
       <form className='flex flex-wrap items-center gap-2' role='search'>
         <Input
           name='q'

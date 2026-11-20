@@ -95,7 +95,7 @@ export function BillingPanel({ view }: { view: TenantBillingView }) {
       </p>
 
       <section aria-labelledby='plan-heading'>
-        <h2 id='plan-heading' className='mb-3 text-base font-semibold'>
+        <h2 id='plan-heading' className='mb-3 text-base font-medium'>
           Plan and tier
         </h2>
         <form onSubmit={onPlanTier} className='grid max-w-xl gap-4 sm:grid-cols-2'>
@@ -133,7 +133,7 @@ export function BillingPanel({ view }: { view: TenantBillingView }) {
       </section>
 
       <section aria-labelledby='prices-heading'>
-        <h2 id='prices-heading' className='mb-3 text-base font-semibold'>
+        <h2 id='prices-heading' className='mb-3 text-base font-medium'>
           Agreed prices by module
         </h2>
         {lines.length === 0 && unpriced.length === 0 ? (
@@ -230,7 +230,7 @@ export function BillingPanel({ view }: { view: TenantBillingView }) {
       </section>
 
       <section aria-labelledby='profile-heading'>
-        <h2 id='profile-heading' className='mb-3 text-base font-semibold'>
+        <h2 id='profile-heading' className='mb-3 text-base font-medium'>
           Billing profile
         </h2>
         <form onSubmit={onProfile} className='grid max-w-xl gap-4'>

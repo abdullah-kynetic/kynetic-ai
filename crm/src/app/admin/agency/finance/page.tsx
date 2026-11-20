@@ -80,7 +80,7 @@ export default async function FinancePage({
         aria-label='Monthly revenue versus expenses'
         className='bg-card mb-6 rounded-[var(--radius-card)] border p-5'
       >
-        <h2 className='mb-3 font-semibold'>Revenue vs expenses by month</h2>
+        <h2 className='mb-3 font-medium'>Revenue vs expenses by month</h2>
         <FinanceMonthsChart months={data.months} />
       </section>
       {query.error && <p role='alert'>Check the amount, date and link, then try again.</p>}
@@ -100,7 +100,7 @@ export default async function FinancePage({
       </p>
       {tab === 'revenue' && (
         <section className='mt-6 space-y-4'>
-          <h2 className='font-semibold'>Monthly revenue</h2>
+          <h2 className='font-medium'>Monthly revenue</h2>
           {!data.months.length && (
             <AgencyEmptyState
               title='No revenue yet'
@@ -136,7 +136,7 @@ export default async function FinancePage({
             </div>
           )}
           <form action={addRevenueAction} className='agency-form max-w-xl'>
-            <h3 className='font-semibold'>Manual revenue</h3>
+            <h3 className='font-medium'>Manual revenue</h3>
             <Label htmlFor='revenue-date'>Date</Label>
             <Input id='revenue-date' name='receivedOn' type='date' required />
             <Label htmlFor='revenue-amount'>Amount (USD)</Label>
@@ -149,7 +149,7 @@ export default async function FinancePage({
       )}
       {tab === 'expenses' && (
         <section className='mt-6 space-y-4'>
-          <h2 className='font-semibold'>Expenses</h2>
+          <h2 className='font-medium'>Expenses</h2>
           {!data.expenses.length && (
             <AgencyEmptyState
               title='No expenses yet'
@@ -190,7 +190,7 @@ export default async function FinancePage({
             </form>
           ))}
           <form action={addExpenseAction} className='agency-form max-w-xl'>
-            <h3 className='font-semibold'>Add expense</h3>
+            <h3 className='font-medium'>Add expense</h3>
             <Input name='spentOn' type='date' required aria-label='Date' />
             <Input
               name='vendor'
@@ -220,7 +220,7 @@ export default async function FinancePage({
       )}
       {tab === 'referrals' && (
         <section className='mt-6 space-y-4'>
-          <h2 className='font-semibold'>Referrals</h2>
+          <h2 className='font-medium'>Referrals</h2>
           {!data.referrals.length && (
             <AgencyEmptyState
               title='No referrals yet'
@@ -265,7 +265,7 @@ export default async function FinancePage({
       )}
       {tab === 'case-studies' && (
         <section className='mt-6 space-y-4'>
-          <h2 className='font-semibold'>Case studies</h2>
+          <h2 className='font-medium'>Case studies</h2>
           {!data.studies.length && (
             <AgencyEmptyState
               title='No case studies yet'

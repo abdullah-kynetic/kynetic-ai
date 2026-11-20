@@ -54,7 +54,7 @@ export default async function OperationsPage() {
       )}
       {access.role === 'admin' && (
         <section className='mb-8 space-y-3' aria-labelledby='alerts-heading'>
-          <h2 id='alerts-heading' className='text-lg font-semibold'>
+          <h2 id='alerts-heading' className='text-lg font-medium'>
             Admin alerts
           </h2>
           {notices.length ? (
@@ -72,7 +72,7 @@ export default async function OperationsPage() {
         </section>
       )}
       <section className='mb-8 space-y-3' aria-labelledby='integrations-heading'>
-        <h2 id='integrations-heading' className='text-lg font-semibold'>
+        <h2 id='integrations-heading' className='text-lg font-medium'>
           Integration health
         </h2>
         {integrations.length ? (
@@ -112,7 +112,7 @@ export default async function OperationsPage() {
         )}
       </section>
       <section className='mb-8 space-y-3' aria-labelledby='flagged-heading'>
-        <h2 id='flagged-heading' className='text-lg font-semibold'>
+        <h2 id='flagged-heading' className='text-lg font-medium'>
           Flagged calls for review
         </h2>
         {flagged.length ? (
@@ -143,7 +143,7 @@ export default async function OperationsPage() {
       </section>
       {access.role === 'admin' && (
         <section className='space-y-3' aria-labelledby='controls-heading'>
-          <h2 id='controls-heading' className='text-lg font-semibold'>
+          <h2 id='controls-heading' className='text-lg font-medium'>
             Tenant controls
           </h2>
           <ul className='bg-card divide-y rounded-xl border'>
@@ -187,7 +187,7 @@ export default async function OperationsPage() {
       )}
       {access.role === 'admin' && (
         <section className='mt-8 space-y-3' aria-labelledby='webhook-heading'>
-          <h2 id='webhook-heading' className='text-lg font-semibold'>
+          <h2 id='webhook-heading' className='text-lg font-medium'>
             Failed webhooks
           </h2>
           {failedWebhooks.length ? (
@@ -218,7 +218,7 @@ export default async function OperationsPage() {
       )}
       {access.role === 'admin' && (
         <section className='mt-8 space-y-3' aria-labelledby='jobs-heading'>
-          <h2 id='jobs-heading' className='text-lg font-semibold'>
+          <h2 id='jobs-heading' className='text-lg font-medium'>
             Recent jobs
           </h2>
           {recentJobs.length ? (

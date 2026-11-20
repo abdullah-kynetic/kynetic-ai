@@ -10,7 +10,7 @@ export default function Forbidden() {
     >
       <div className='bg-card w-full max-w-sm rounded-[var(--radius-card)] border p-6 sm:p-8'>
         <p className='text-muted-foreground text-sm font-medium'>Error 403</p>
-        <h1 className='mt-1 text-[28px]/[1.15] font-semibold tracking-[-0.015em]'>
+        <h1 className='mt-1 text-[28px]/[1.15] font-medium tracking-[-0.01em]'>
           You do not have access to this page
         </h1>
         <p className='text-muted-foreground mt-2 text-[15px]'>

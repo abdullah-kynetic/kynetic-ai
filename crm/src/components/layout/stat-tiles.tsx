@@ -32,7 +32,7 @@ export function StatTiles({
         >
           <span className='text-muted-foreground text-[13px] leading-5'>{tile.label}</span>
           <span
-            className={`text-[28px]/8 font-medium tracking-[-0.02em] tabular-nums ${tile.key ? 'text-primary-text' : ''}`}
+            className={`text-[28px]/8 font-medium tracking-[-0.01em] tabular-nums ${tile.key ? 'text-primary-text' : ''}`}
           >
             {tile.value}
           </span>

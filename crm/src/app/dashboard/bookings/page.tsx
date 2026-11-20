@@ -60,7 +60,7 @@ export default async function BookingsOverviewPage() {
       />
       {metrics.totals.calls === 0 && metrics.totals.estimatesBooked === 0 && (
         <section className='bg-card space-y-2 rounded-xl border p-6'>
-          <h2 className='font-semibold'>No calls or bookings yet</h2>
+          <h2 className='font-medium'>No calls or bookings yet</h2>
           <p className='text-muted-foreground text-sm'>
             Calls Alex handles and appointments that get booked show up here.
           </p>

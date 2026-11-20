@@ -57,7 +57,7 @@ export default async function LeadsOverviewPage() {
       />
       {metrics.totals.leads === 0 && (
         <section className='bg-card space-y-2 rounded-xl border p-6'>
-          <h2 className='font-semibold'>No leads in the last 30 days</h2>
+          <h2 className='font-medium'>No leads in the last 30 days</h2>
           <p className='text-muted-foreground text-sm'>
             New leads from your website, calls and bookings appear here as they arrive. You can also
             add one by hand or import a list.

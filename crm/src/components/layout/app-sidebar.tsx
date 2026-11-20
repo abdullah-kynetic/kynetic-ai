@@ -183,7 +183,7 @@ export default function AppSidebar({
         >
           <span
             aria-hidden
-            className='bg-secondary text-secondary-foreground flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold'
+            className='bg-secondary text-secondary-foreground flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-medium'
           >
             {initials(user.name ?? user.email)}
           </span>

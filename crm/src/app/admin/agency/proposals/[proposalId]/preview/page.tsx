@@ -63,7 +63,7 @@ export default async function ProposalPreview({
         <p className='text-sm font-medium'>Kynetic AI · Draft for internal review</p>
         {PROPOSAL_SECTIONS.map((section) => (
           <section key={section.key} aria-labelledby={`preview-${section.key}`}>
-            <h2 id={`preview-${section.key}`} className='mb-3 text-xl font-semibold'>
+            <h2 id={`preview-${section.key}`} className='mb-3 text-xl font-medium'>
               {section.title}
             </h2>
             <p className='whitespace-pre-wrap break-words'>
@@ -72,7 +72,7 @@ export default async function ProposalPreview({
           </section>
         ))}
         <section aria-labelledby='preview-pricing'>
-          <h2 id='preview-pricing' className='mb-3 text-xl font-semibold'>
+          <h2 id='preview-pricing' className='mb-3 text-xl font-medium'>
             Pricing
           </h2>
           <p>{PRICING_PLACEHOLDER}</p>

@@ -125,7 +125,7 @@ export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: 
       )}
       <fieldset disabled={!canEdit} className='space-y-4'>
         <section className='bg-card space-y-4 rounded-[var(--radius-card)] border p-4 sm:p-6'>
-          <h2 className='text-lg font-semibold'>Business hours</h2>
+          <h2 className='text-lg font-medium'>Business hours</h2>
           <div className='space-y-1'>
             <Label htmlFor='timezone'>Time zone</Label>
             <Input
