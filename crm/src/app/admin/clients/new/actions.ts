@@ -83,7 +83,8 @@ export async function onboardClient(_prev: OnboardState, form: FormData): Promis
       plan: text(form, 'plan'),
       tier: text(form, 'tier') || undefined,
       modules: form.getAll('modules').map(String),
-      crmLevel: text(form, 'crmLevel') || undefined
+      crmLevel: text(form, 'crmLevel') || undefined,
+      templateId: text(form, 'templateId') || undefined
     });
     return {
       status: 'created',

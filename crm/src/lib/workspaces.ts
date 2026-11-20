@@ -26,10 +26,10 @@ export function planLabel(plan: string): string {
   return PLAN_LABELS[plan] ?? plan.charAt(0).toUpperCase() + plan.slice(1);
 }
 
-/** Same rule as the Clients page: active clients and seeded demo clients can be opened as the client. */
+/** Same rule as the Clients page: active clients and the seeded clients can be opened as the client. */
 export function portalState(status: string, isDemo: boolean): { label: string; canView: boolean } {
   if (status === 'active') return { label: 'Ready', canView: true };
-  if (status === 'onboarding' && isDemo) return { label: 'Demo', canView: true };
+  if (status === 'onboarding' && isDemo) return { label: 'Ready', canView: true };
   if (status === 'onboarding') return { label: 'Building', canView: false };
   return { label: 'Suspended', canView: false };
 }

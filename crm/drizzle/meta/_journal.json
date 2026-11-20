@@ -470,6 +470,13 @@
       "when": 1795178400000,
       "tag": "1093_agency_prospects",
       "breakpoints": true
+    },
+    {
+      "idx": 67,
+      "version": "7",
+      "when": 1795264800000,
+      "tag": "1094_account_templates",
+      "breakpoints": true
     }
   ]
 }
