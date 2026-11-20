@@ -30,3 +30,8 @@ Client detail URLs stay below the owning area: contact, company, and deal detail
 - **Prospecting funnel** counts prospects per enrichment stage with step conversion and source breakdown. Scraped, Half-enriched and Fully enriched are searchable, filterable tables with bulk select and **Move to Sales**, which creates a deal only (no message, call or provider request). Data is `agency_prospects` (migration 1093).
 - **Money overview** shows MRR (monthly fee on won deals), collected this month (Finance revenue), outstanding invoices and a six-month trend. Finance, Billing and Invoices use the shared table and pill styles.
 - **Client portal**: Leads, Calls & Bookings and Reputation Overview tabs are dashboards (tiles, charts, recent items). The old lists live on Contacts, Appointments and Reviews. Help shows request counts above the Support form.
+
+## Headings and legacy addresses (Phase 4)
+
+- An area layout owns the page's single h1 (the area name). Page headers rendered inside it are h2, via `HeadingLevelProvider` in `crm/src/components/layout/heading-level.tsx`. Pages outside an area (sign-in, terms, error screens) keep their own h1.
+- Redirected addresses land inside an area, so specs and sign-in return paths use the landing address: `/admin/agency` → `/admin/prospecting`, `/admin/agency/ops` → `/admin/clients/operations`, `/admin/usage` → `/admin/money/usage`, `/admin/users` → `/admin/settings/team`, `/dashboard/calls` → `/dashboard/bookings/calls`, `/dashboard/contacts` → `/dashboard/leads/contacts`.

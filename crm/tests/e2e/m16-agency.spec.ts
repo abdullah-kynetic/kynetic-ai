@@ -10,7 +10,7 @@ test('M16 F-05/F-14/F-17: admin uses an isolated synthetic agency workspace', as
   const setup = adminPage.getByRole('button', { name: 'Create synthetic agency workspace' });
   if (await setup.isVisible()) await setup.click();
   await expect(adminPage.getByText('Synthetic workspace ·')).toBeVisible();
-  await expect(adminPage.getByRole('heading', { name: 'Agency workspace' })).toBeVisible();
+  await expect(adminPage.getByRole('heading', { level: 1, name: 'Prospecting' })).toBeVisible();
   await adminPage.getByLabel('Name', { exact: true }).fill('Synthetic Browser Lead');
   await adminPage.getByLabel('Synthetic email').fill('browser-agency@example.test');
   await adminPage.getByLabel('Lead source', { exact: true }).selectOption('outbound:cold_call');

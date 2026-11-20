@@ -3,12 +3,15 @@ import { expect, test } from './fixtures';
 test('A1 reviews, referrals and usage pages load for the owner and show in the nav', async ({
   authenticatedPage: page
 }) => {
-  await page.goto('/dashboard');
-  const nav = page.getByRole('navigation').first();
-  for (const name of ['Reviews', 'Referrals', 'Usage']) {
-    await expect(page.getByRole('link', { name, exact: true }).first()).toBeVisible();
+  await page.goto('/dashboard/reputation');
+  const reputation = page.getByRole('navigation', { name: 'Reputation pages' });
+  for (const name of ['Reviews', 'Referrals']) {
+    await expect(reputation.getByRole('link', { name, exact: true })).toBeVisible();
   }
-  await expect(nav).toBeVisible();
+  await page.goto('/dashboard/help');
+  await expect(
+    page.getByRole('navigation', { name: 'Help pages' }).getByRole('link', { name: 'Usage' })
+  ).toBeVisible();
 
   await page.goto('/dashboard/reviews');
   await expect(page.getByRole('heading', { name: 'Reviews', exact: true }).first()).toBeVisible();

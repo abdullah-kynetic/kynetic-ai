@@ -60,17 +60,23 @@ test('batch 4 agency tools, documents, and parked Retell', async ({
   const addExpense = adminPage
     .locator('form')
     .filter({ has: adminPage.getByRole('button', { name: 'Add expense' }) });
-  if ((await adminPage.locator('input[name="vendor"]').count()) === 1) {
+  const vendors = await adminPage
+    .locator('input[name="vendor"]')
+    .evaluateAll((els) => els.map((e) => (e as HTMLInputElement).value));
+  if (!vendors.includes('Print shop')) {
     await addExpense.getByLabel('Date', { exact: true }).fill('2026-11-04');
     await addExpense.getByLabel('Vendor', { exact: true }).fill('Print shop');
     await addExpense.getByLabel('Category', { exact: true }).fill('materials');
     await addExpense.getByLabel('Amount in USD', { exact: true }).fill('12.50');
     await addExpense.getByRole('button', { name: 'Add expense' }).click();
   }
-  await expect(adminPage.locator('input[name="vendor"]').first()).toHaveValue('Print shop');
+  await expect(adminPage.locator('input[name="vendor"][value="Print shop"]').first()).toBeVisible();
   await adminPage.screenshot({ path: `${shot}/finance-expenses.png`, fullPage: true });
   await adminPage.goto('/admin/agency/finance');
-  await expect(adminPage.getByRole('heading', { name: 'Finance', exact: true })).toBeVisible();
+  await expect(
+    adminPage.getByRole('heading', { level: 1, name: 'Money', exact: true })
+  ).toBeVisible();
+  await expect(adminPage.getByRole('navigation', { name: 'Finance tabs' })).toBeVisible();
   await adminPage.screenshot({ path: `${shot}/finance-revenue.png`, fullPage: true });
 
   await adminPage.goto('/admin/agency/dialer');

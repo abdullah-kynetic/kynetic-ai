@@ -2,7 +2,18 @@
 
 ## Resume here
 
-Phases 1–3 are built on `t3/design-finish`. Phase 3 items 1–7 are done (see "Phase 3 completion"). Remaining outside this phase: the Settings backup-restore test timeout decision, and stale browser specs listed below. Nothing is deployed, merged or applied to production; migrations 1092 and 1093 are for disposable dev/test databases.
+**The redesign is complete on `t3/design-finish`** (Phases 1–4, see "Phase 4 completion"). Remaining outside it: the Settings backup-restore test timeout decision. Nothing is deployed, merged or applied to production; migrations 1092 and 1093 are for disposable dev/test databases.
+
+## Phase 4 completion — 2026-11-20
+
+- **Phone-width scroll** (`8b0bd5d`): file inputs on `/admin/clients/<id>/documents` and `/imports` no longer widen the form.
+- **Browser specs updated, none deleted** (`34eec52`, `410c14f` and follow-ups): prospecting, sales, portal-pages, money, today, settings, agency-roadmap, authenticated and m8b-admin now use the new routes (`/admin/prospecting/*`, `/admin/sales/*`, `/admin/money/*`, `/admin/clients/operations`) and the "<Area> pages" tab bar. Each area page now has exactly one h1 (the area); page headers inside an area render as h2 (`heading-level.tsx`). Alex save check reads the stored value after a reload.
+- **Sign-in, email code, terms and client onboarding** restyled to the portal tokens (Inter titles, card radius, brand link colour, sunken sections).
+- **Remaining pages:** the legacy page container now always uses the portal header; 404, 403 and global error screens redesigned (no gradient, no display font); an admin error boundary added; dashboard error boundaries were wired to `retry`, which Next never passes, so Try again did nothing. They now use `reset`.
+- **Light and dark, desktop and 390px:** `phase-4-a11y-all-routes` (every client, admin and public route, axe plus sideways-scroll check) passes; I also reviewed screenshots of the detail, settings, Help, sales, error and sign-in pages in both themes.
+- **Verify:** only the 11 known M7 failures (automation-retries-m7 6, m7-module-acceptance 5); everything else passes.
+
+**Unverified:** pages that need live providers (real calls, SMS, Stripe) render with stub data only. Tenant brand colours (for example the blue Save button for Synthetic Brand Co) come from the client's branding, not the portal palette, by design. The legacy `/admin/agency/*` page files still exist behind redirects and were restyled through the shared container but not removed. Settings backup-restore test timeout decision still open.
 
 ## Phase 3 completion — 2026-11-20
 
@@ -14,7 +25,7 @@ Phases 1–3 are built on `t3/design-finish`. Phase 3 items 1–7 are done (see 
 - Found and fixed along the way: a race in the Sales board persistence test (reload before the save finished), a phone-width overflow on the Clients board (absolute screen-reader text escaping the scroller), a table unmounting after Move to Sales.
 - Two early commits (`467b26e`, `7aa8373`) carry the author name "Abdullah Ahmed" (same email) because the environment overrides the git name; later commits use `abdullah-kynetic`. Not rewritten, to avoid a force-push.
 
-**Stale browser specs (not caused by Phase 3, not changed):** `redesign-prospecting` and `redesign-sales` still expect Phase 1 headings ("Agency workspace"); `redesign-portal-pages` finds two level-1 headings on the Contacts page; `phase-4-a11y-all-routes` reports phone-width scroll on `/admin/clients/<id>/documents`, `/imports` and `/admin/view-as`; two `m8b-admin` specs target moved Alex and Operations routes.
+**Stale browser specs (fixed in Phase 4; list kept as history):** `redesign-prospecting` and `redesign-sales` still expect Phase 1 headings ("Agency workspace"); `redesign-portal-pages` finds two level-1 headings on the Contacts page; `phase-4-a11y-all-routes` reports phone-width scroll on `/admin/clients/<id>/documents`, `/imports` and `/admin/view-as`; two `m8b-admin` specs target moved Alex and Operations routes.
 
 ## Phase 3 in progress — synthetic browser fixture
 
