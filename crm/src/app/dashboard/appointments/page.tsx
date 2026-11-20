@@ -63,7 +63,7 @@ export default async function AppointmentsPage({
   return (
     <PageContainer
       pageTitle='Appointments'
-      pageDescription='Month, week, and day views of your booked estimates.'
+      pageDescription='Month, week, and day views of your booked estimates'
     >
       <Card className='mb-4'>
         <CardHeader>

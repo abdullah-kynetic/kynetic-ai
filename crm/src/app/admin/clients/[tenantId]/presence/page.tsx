@@ -25,7 +25,7 @@ export default async function AdminPresencePage({
   return (
     <PageContainer
       pageTitle='Online Presence'
-      pageDescription='Track the work performed for this client.'
+      pageDescription='Track the work performed for this client'
       pageHeaderAction={
         <Link className='rounded border px-4 py-2' href={`/admin/clients/${tenantId}/imports`}>
           Imports

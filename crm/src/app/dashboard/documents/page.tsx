@@ -21,7 +21,7 @@ export default async function DocumentsPage() {
     );
   const documents = await listTenantDocuments(scope.ctx, scope.actor);
   return (
-    <PageContainer pageTitle='Documents' pageDescription='Files shared with your business.'>
+    <PageContainer pageTitle='Documents' pageDescription='Files shared with your business'>
       {documents.length === 0 ? (
         <EmptyState
           title='No documents yet'

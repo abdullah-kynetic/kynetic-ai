@@ -8,7 +8,7 @@ export default function OnboardClientPage() {
   return (
     <PageContainer
       pageTitle='Onboard a client'
-      pageDescription='One form creates the account, the owner invite, the modules and the setup checklist.'
+      pageDescription='One form creates the account, the owner invite, the modules and the setup checklist'
     >
       <OnboardingForm />
     </PageContainer>

@@ -17,7 +17,7 @@ export default async function ReportsPage() {
   const ctx = { tenantId: shell.tenant.id, userId: shell.user.id, role: shell.role };
   const [reports, schedule] = await Promise.all([listReports(ctx), readReportSchedule(ctx)]);
   return (
-    <PageContainer pageTitle='Reports' pageDescription='Monthly return and activity reports.'>
+    <PageContainer pageTitle='Reports' pageDescription='Monthly return and activity reports'>
       <p className='mb-4'>
         The monthly ROI report is generated on day {schedule.day} of each month ({schedule.timezone}
         ).

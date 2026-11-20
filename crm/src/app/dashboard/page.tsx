@@ -19,6 +19,13 @@ import {
 
 export const dynamic = 'force-dynamic';
 
+const shortDate = (iso: string) =>
+  new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC'
+  });
+
 function rangeHref(from: string, to: string) {
   return `/dashboard?from=${from}&to=${to}`;
 }
@@ -78,7 +85,7 @@ export default async function DashboardPage({
   return (
     <PageContainer
       pageTitle='Dashboard'
-      pageDescription={`Results from ${range.from} to ${range.to}.`}
+      pageDescription={`Results from ${shortDate(range.from)} to ${shortDate(range.to)}`}
     >
       {progress && <SetupProgressCard progress={progress} />}
       <form method='get' className='flex flex-wrap items-end gap-3' aria-label='Date range'>

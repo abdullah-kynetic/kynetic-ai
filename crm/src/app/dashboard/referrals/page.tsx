@@ -109,7 +109,7 @@ export default async function ReferralsPage({
   return (
     <PageContainer
       pageTitle='Referrals'
-      pageDescription='People your customers send your way, and the rewards you owe.'
+      pageDescription='People your customers send your way, and the rewards you owe'
       pageHeaderAction={<NewReferral contacts={contacts} />}
     >
       <div className='grid gap-4 sm:grid-cols-3'>

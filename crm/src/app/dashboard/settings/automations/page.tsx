@@ -39,7 +39,7 @@ export default async function AutomationSettingsPage() {
   return (
     <SettingsPage
       pageTitle='Automations'
-      pageDescription='Turn approved follow-up templates on or off, and see how recent runs finished.'
+      pageDescription='Turn approved follow-up templates on or off, and see how recent runs finished'
     >
       {!canEdit && (
         <p role='status' className='bg-card rounded-xl border p-4 text-sm'>

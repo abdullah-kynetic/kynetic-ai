@@ -21,7 +21,7 @@ export default async function AgencyOps() {
   return (
     <PageContainer
       pageTitle='Sales settings'
-      pageDescription='Client health, onboarding and isolated DEV configuration.'
+      pageDescription='Client health, onboarding and isolated DEV configuration'
     >
       <Link href='/admin/prospecting'>Agency dashboard</Link>
       <section className='agency-notice'>

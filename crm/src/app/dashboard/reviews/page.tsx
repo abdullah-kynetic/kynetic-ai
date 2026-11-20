@@ -95,7 +95,7 @@ export default async function ReviewsPage({
   return (
     <PageContainer
       pageTitle='Reviews'
-      pageDescription='Your review rating, recent snapshots and requests you have asked us to send.'
+      pageDescription='Your review rating, recent snapshots and requests you have asked us to send'
     >
       <p role='status' className='rounded border p-3 text-sm'>
         Review requests go out once live messaging is on.

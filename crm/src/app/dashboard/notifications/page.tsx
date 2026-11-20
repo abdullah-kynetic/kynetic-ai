@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <PageContainer
       pageTitle='Notifications'
-      pageDescription='Your latest leads, bookings and reminders.'
+      pageDescription='Your latest leads, bookings and reminders'
     >
       <NotificationsPage />
     </PageContainer>

@@ -15,7 +15,7 @@ export default async function BackupsPage() {
   return (
     <PageContainer
       pageTitle='Backups'
-      pageDescription='Encrypted database backup history and restore test status.'
+      pageDescription='Encrypted database backup history and restore test status'
       pageHeaderAction={
         access.role === 'admin' ? (
           <form action={startBackup}>

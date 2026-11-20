@@ -46,7 +46,7 @@ export default async function AgencyPage({
     return (
       <PageContainer
         pageTitle='Prospecting overview'
-        pageDescription='Your synthetic prospecting workspace.'
+        pageDescription='Your synthetic prospecting workspace'
       >
         <p className='mb-4'>
           No prospects yet. Set up a synthetic workspace to add fictional leads here. No calls,

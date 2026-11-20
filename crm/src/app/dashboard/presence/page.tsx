@@ -19,7 +19,7 @@ export default async function PresencePage() {
   return (
     <PageContainer
       pageTitle='Online Presence'
-      pageDescription='Status of your business profile, reviews, listings and posts.'
+      pageDescription='Status of your business profile, reviews, listings and posts'
     >
       <div className='grid gap-4 md:grid-cols-2'>
         <Card>

@@ -27,7 +27,7 @@ export default async function ReportDetailPage({ params }: { params: Promise<{ i
   return (
     <PageContainer
       pageTitle={`${report.periodStart} ROI report`}
-      pageDescription='Tenant-scoped monthly report.'
+      pageDescription='Tenant-scoped monthly report'
     >
       <Card>
         <CardHeader>

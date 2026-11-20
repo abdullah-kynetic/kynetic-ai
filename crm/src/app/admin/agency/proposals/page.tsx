@@ -36,7 +36,7 @@ export default async function ProposalsPage({
   return (
     <PageContainer
       pageTitle='Proposal drafts'
-      pageDescription='Internal proposal drafts linked to agency deals.'
+      pageDescription='Internal proposal drafts linked to agency deals'
     >
       <Link href='/admin/prospecting' className='mb-4 inline-flex min-h-11 items-center underline'>
         Back to agency workspace

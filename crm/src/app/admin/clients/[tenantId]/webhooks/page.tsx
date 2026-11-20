@@ -31,10 +31,7 @@ export default async function LeadWebhookPage({
   });
   const leadUrl = new URL(settings.leadPath, getEnv().APP_BASE_URL).toString();
   return (
-    <PageContainer
-      pageTitle='Lead webhooks'
-      pageDescription='Tenant intake URL and signing secret.'
-    >
+    <PageContainer pageTitle='Lead webhooks' pageDescription='Tenant intake URL and signing secret'>
       <dl className='mb-8 max-w-xl space-y-3'>
         <dt className='font-medium'>Portal lead intake URL</dt>
         <dd className='break-all'>{leadUrl}</dd>

@@ -42,7 +42,7 @@ export default async function OperationsPage() {
   return (
     <PageContainer
       pageTitle='Jobs and integrations'
-      pageDescription='Integration health and staff review controls.'
+      pageDescription='Integration health and staff review controls'
     >
       {pause && (
         <PauseControls

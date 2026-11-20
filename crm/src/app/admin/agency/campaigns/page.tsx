@@ -33,7 +33,7 @@ export default async function CampaignsPage({
   return (
     <PageContainer
       pageTitle='Agency campaigns'
-      pageDescription='Organize leads and review their recorded manual outcomes.'
+      pageDescription='Organize leads and review their recorded manual outcomes'
     >
       <Link href='/admin/prospecting' className='mb-4 inline-flex min-h-11 items-center underline'>
         Back to agency workspace

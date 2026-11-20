@@ -15,7 +15,7 @@ export default async function BusinessSettingsPage() {
   return (
     <SettingsPage
       pageTitle='Business settings'
-      pageDescription='Hours, service area, services and the number Alex transfers calls to.'
+      pageDescription='Hours, service area, services and the number Alex transfers calls to'
     >
       <BusinessForm initial={settings} canEdit={canEdit} />
     </SettingsPage>

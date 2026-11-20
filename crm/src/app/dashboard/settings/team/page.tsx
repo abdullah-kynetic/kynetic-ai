@@ -19,7 +19,7 @@ export default async function TeamSettingsPage() {
   }
   const team = await listTeam(ctx, actor);
   return (
-    <SettingsPage pageTitle='Team' pageDescription='Invite staff and choose what they can do.'>
+    <SettingsPage pageTitle='Team' pageDescription='Invite staff and choose what they can do'>
       <TeamManager initial={team} />
     </SettingsPage>
   );

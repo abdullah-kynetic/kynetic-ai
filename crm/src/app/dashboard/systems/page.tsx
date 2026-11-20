@@ -42,7 +42,7 @@ export default async function MySystemsPage({
   return (
     <PageContainer
       pageTitle='My systems'
-      pageDescription='What is running for your business, and what you can ask Kynetic to turn on.'
+      pageDescription='What is running for your business, and what you can ask Kynetic to turn on'
     >
       {query.requested && (
         <p role='status' className='mb-4 rounded border p-3 text-sm'>

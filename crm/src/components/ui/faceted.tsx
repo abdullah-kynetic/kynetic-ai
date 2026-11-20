@@ -255,7 +255,7 @@ interface FacetedValueProps {
   children?: React.ReactNode | ((selected: FacetedOption[]) => React.ReactNode);
 }
 
-function FacetedValue({ placeholder = 'Select options...', children }: FacetedValueProps) {
+function FacetedValue({ placeholder = 'Select options', children }: FacetedValueProps) {
   const store = useFacetedStore('FacetedValue');
   const value = useFacetedStoreSelector(store, (state) => state.value);
   const items = useFacetedStoreSelector(store, (state) => state.items);

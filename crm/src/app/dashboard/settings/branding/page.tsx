@@ -46,7 +46,7 @@ export default async function BrandingPage() {
   return (
     <SettingsPage
       pageTitle='Branding'
-      pageDescription='Choose the business name, logo and color your team sees in the portal.'
+      pageDescription='Choose the business name, logo and color your team sees in the portal'
     >
       <BrandingForm
         initial={{

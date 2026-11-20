@@ -14,14 +14,14 @@ export const adminAreas: readonly Area[] = [
     title: 'Today',
     href: '/admin',
     icon: 'dashboard',
-    description: 'The work that needs attention today.',
+    description: 'The work that needs attention today',
     tabs: []
   },
   {
     title: 'Clients',
     href: '/admin/clients',
     icon: 'teams',
-    description: 'Client lifecycle and operations.',
+    description: 'Client lifecycle and operations',
     tabs: [
       { label: 'Board', href: '/admin/clients' },
       { label: 'Live', href: '/admin/clients/live' },
@@ -34,7 +34,7 @@ export const adminAreas: readonly Area[] = [
     title: 'Prospecting',
     href: '/admin/prospecting',
     icon: 'teams',
-    description: 'From new prospects to qualified leads.',
+    description: 'From new prospects to qualified leads',
     adminOnly: true,
     tabs: [
       { label: 'Funnel', href: '/admin/prospecting' },
@@ -49,7 +49,7 @@ export const adminAreas: readonly Area[] = [
     title: 'Sales',
     href: '/admin/sales',
     icon: 'kanban',
-    description: 'Deals from audit to decision.',
+    description: 'Deals from audit to decision',
     adminOnly: true,
     tabs: [
       { label: 'Pipeline', href: '/admin/sales' },
@@ -64,7 +64,7 @@ export const adminAreas: readonly Area[] = [
     title: 'Money',
     href: '/admin/money',
     icon: 'billing',
-    description: 'Revenue, cash collection and invoices.',
+    description: 'Revenue, cash collection and invoices',
     adminOnly: true,
     tabs: [
       { label: 'Overview', href: '/admin/money' },
@@ -78,7 +78,7 @@ export const adminAreas: readonly Area[] = [
     title: 'Settings',
     href: '/admin/settings',
     icon: 'settings',
-    description: 'Account, team, integrations and system tools.',
+    description: 'Account, team, integrations and system tools',
     tabs: [
       { label: 'Account', href: '/admin/settings' },
       { label: 'Team', href: '/admin/settings/team' },
@@ -94,7 +94,7 @@ export const vaHelpArea: Area = {
   title: 'Help',
   href: '/admin/help',
   icon: 'help',
-  description: 'Client support and system requests.',
+  description: 'Client support and system requests',
   tabs: [
     { label: 'Support', href: '/admin/help' },
     { label: 'System requests', href: '/admin/help/system-requests' }
@@ -106,14 +106,14 @@ export const clientAreas: readonly Area[] = [
     title: 'Dashboard',
     href: '/dashboard',
     icon: 'dashboard',
-    description: 'Your business at a glance.',
+    description: 'Your business at a glance',
     tabs: []
   },
   {
     title: 'Leads',
     href: '/dashboard/leads',
     icon: 'teams',
-    description: 'Contacts, deals and tasks.',
+    description: 'Contacts, deals and tasks',
     tabs: [
       { label: 'Overview', href: '/dashboard/leads' },
       { label: 'Contacts', href: '/dashboard/leads/contacts' },
@@ -127,7 +127,7 @@ export const clientAreas: readonly Area[] = [
     title: 'Calls & Bookings',
     href: '/dashboard/bookings',
     icon: 'phone',
-    description: 'Calls, appointments and messages.',
+    description: 'Calls, appointments and messages',
     tabs: [
       { label: 'Overview', href: '/dashboard/bookings' },
       { label: 'Calls', href: '/dashboard/bookings/calls' },
@@ -139,7 +139,7 @@ export const clientAreas: readonly Area[] = [
     title: 'Reputation',
     href: '/dashboard/reputation',
     icon: 'kanban',
-    description: 'Reviews, referrals and online presence.',
+    description: 'Reviews, referrals and online presence',
     tabs: [
       { label: 'Overview', href: '/dashboard/reputation' },
       { label: 'Reviews', href: '/dashboard/reputation/reviews' },
@@ -151,7 +151,7 @@ export const clientAreas: readonly Area[] = [
     title: 'Settings',
     href: '/dashboard/settings',
     icon: 'settings',
-    description: 'Your account and system preferences.',
+    description: 'Your account and system preferences',
     tabs: [
       { label: 'Account', href: '/dashboard/settings' },
       { label: 'Team', href: '/dashboard/settings/team' },
@@ -169,7 +169,7 @@ export const clientAreas: readonly Area[] = [
     title: 'Help',
     href: '/dashboard/help',
     icon: 'help',
-    description: 'Support, documents and reports.',
+    description: 'Support, documents and reports',
     tabs: [
       { label: 'Support', href: '/dashboard/help' },
       { label: 'Documents', href: '/dashboard/help/documents' },

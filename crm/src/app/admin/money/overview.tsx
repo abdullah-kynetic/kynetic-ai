@@ -6,6 +6,18 @@ import type { MoneyOverview } from '@/server/agency/money';
 export const usd = (cents: number) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(cents / 100);
 
+const monthName = (month: string) =>
+  new Date(`${month}-01T12:00:00Z`).toLocaleString('en-US', { month: 'short', timeZone: 'UTC' });
+
+/** What this month's revenue compares to, in words: `+$1,200 vs Oct`. */
+function vsLastMonth(trend: MoneyOverview['trend']) {
+  const [previous, current] = trend.slice(-2);
+  if (!previous || !current) return 'Won deals and manual entries';
+  const diff = current.revenueCents - previous.revenueCents;
+  if (diff === 0) return `Same as ${monthName(previous.month)}`;
+  return `${diff > 0 ? '+' : '-'}${usd(Math.abs(diff))} vs ${monthName(previous.month)}`;
+}
+
 /** MRR, collected, outstanding and the six-month trend. */
 export function MoneyDashboard({ data }: { data: MoneyOverview }) {
   const tiles = [
@@ -18,7 +30,7 @@ export function MoneyDashboard({ data }: { data: MoneyOverview }) {
     {
       label: 'Collected this month',
       value: usd(data.collectedCents),
-      note: `Pacific ${data.month}, won deals and manual entries`
+      note: vsLastMonth(data.trend)
     },
     {
       label: 'Outstanding',

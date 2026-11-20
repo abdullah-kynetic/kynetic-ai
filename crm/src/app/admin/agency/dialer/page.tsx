@@ -41,7 +41,7 @@ export default async function DialerPage({
   return (
     <PageContainer
       pageTitle='Human dialer'
-      pageDescription='Manual call logging for the synthetic agency workspace.'
+      pageDescription='Manual call logging for the synthetic agency workspace'
     >
       <Link href='/admin/prospecting' className='mb-4 inline-flex min-h-11 items-center underline'>
         Back to agency workspace

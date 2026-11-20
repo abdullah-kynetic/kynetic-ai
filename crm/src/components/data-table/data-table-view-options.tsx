@@ -72,7 +72,7 @@ export function DataTableViewOptions<TData extends RowData>({
             className={cn('w-44', className)}
             {...props}
           >
-            <FacetedInput placeholder='Search columns...' />
+            <FacetedInput placeholder='Search columns' />
             <FacetedList>
               <FacetedEmpty>No columns found.</FacetedEmpty>
               <FacetedGroup>

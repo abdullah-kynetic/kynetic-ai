@@ -30,7 +30,7 @@ export default async function TagSettingsPage() {
   return (
     <SettingsPage
       pageTitle='Tags'
-      pageDescription='Create, rename and remove the tags you put on contacts.'
+      pageDescription='Create, rename and remove the tags you put on contacts'
     >
       <TagsManager
         initial={await listTags(ctx)}

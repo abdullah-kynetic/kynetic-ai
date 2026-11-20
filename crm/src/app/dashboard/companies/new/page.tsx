@@ -12,7 +12,7 @@ export default async function NewCompanyPage() {
   const ctx = await companiesContext();
   const customDefs = await listFieldDefs(ctx, 'company');
   return (
-    <PageContainer pageTitle='Add company' pageDescription='Name is the only required field.'>
+    <PageContainer pageTitle='Add company' pageDescription='Name is the only required field'>
       <div className='max-w-2xl'>
         <CompanyForm
           action={createCompanyAction}
