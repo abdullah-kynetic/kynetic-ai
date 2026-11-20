@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { SERVICE_TOKEN_SCOPES } from '@/server/service-auth/scopes';
+import { SCOPE_GROUPS, SCOPE_PRESETS } from '@/server/service-auth/scope-groups';
 import type { ServiceTokenSummary } from '@/server/admin/service-tokens';
 import { issueServiceTokenAction, revokeServiceTokenAction } from './actions';
 
@@ -64,15 +65,37 @@ export function ServiceTokenPanel({
           Label
           <input className='min-h-11 rounded border px-3' name='label' required maxLength={80} />
         </label>
-        <fieldset className='grid gap-2'>
-          <legend>Scopes</legend>
-          {SERVICE_TOKEN_SCOPES.map((scope) => (
-            <label key={scope} className='flex min-h-11 items-center gap-2'>
-              <input name={`scope-${scope}`} type='checkbox' />
-              {scope}
-            </label>
+        <div className='flex flex-wrap gap-2'>
+          {SCOPE_PRESETS.map((preset) => (
+            <button
+              key={preset.id}
+              type='button'
+              className='min-h-11 rounded border px-3 text-sm'
+              onClick={(event) => {
+                const form = event.currentTarget.form;
+                if (!form) return;
+                for (const scope of SERVICE_TOKEN_SCOPES) {
+                  const box = form.elements.namedItem(`scope-${scope}`) as HTMLInputElement | null;
+                  if (box) box.checked = (preset.scopes as readonly string[]).includes(scope);
+                }
+              }}
+            >
+              {preset.label}
+            </button>
           ))}
-        </fieldset>
+        </div>
+        {SCOPE_GROUPS.map((group) => (
+          <fieldset key={group.id} className='grid gap-1 rounded border p-3'>
+            <legend className='px-1 font-medium'>{group.label}</legend>
+            <p className='text-sm text-muted-foreground'>{group.hint}</p>
+            {group.scopes.map((scope) => (
+              <label key={scope} className='flex min-h-11 items-center gap-2'>
+                <input name={`scope-${scope}`} type='checkbox' />
+                {scope}
+              </label>
+            ))}
+          </fieldset>
+        ))}
         <button className='min-h-11 rounded border px-4' type='submit' disabled={pending}>
           Issue token
         </button>
