@@ -1,5 +1,19 @@
 # Portal design completion running log
 
+## Resume here
+
+Phases 1–2 are accepted. Phase 3 Sales board persistence and rollback browser tests pass (`25495602`, `566b4ba3`). Continue the remaining checklist in order:
+
+1. Clients Kanban: drag persistence and rollback tests.
+2. Clients tabs: Live, Demo, Churned and Operations tables.
+3. Prospecting funnel dashboard.
+4. Prospecting lead tables and DB-only Move to Sales.
+5. Money dashboard: MRR, collected, outstanding and trend chart.
+6. Money tabs: Finance, Billing and Invoices.
+7. Client portal area dashboards.
+8. Full `bun run verify`, allowing only the 11 accepted M7 failures.
+9. Update this log and `docs/redesign/NAV.md`.
+
 ## Phase 3 in progress — synthetic browser fixture
 
 Sales rollback is now browser-tested: a forced failed action shows an error and returns the synthetic card to its original stage. Persistence and rollback passed 2/2 in Chromium; commit `566b4ba3`. The other Phase 3 dashboards and their tests remain unfinished, and the full Phase 3 verify has not been run.
