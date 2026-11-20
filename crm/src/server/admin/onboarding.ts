@@ -17,6 +17,7 @@ import {
   type AccountSnapshot
 } from './account-templates';
 import { buildChecklist } from './onboarding-steps';
+import { pgCode } from '../db/pg-error';
 
 /** Invite lifetime (SECURITY 2.1: 7 days). */
 export const INVITE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -109,8 +110,6 @@ export const onboardTenantSchema = z
   })
   .strict();
 
-export type OnboardTenantInput = z.input<typeof onboardTenantSchema>;
-
 /** Turning the bundle on turns its three members on (PRD F-84). */
 export function expandModules(
   modules: readonly Exclude<ModuleKey, 'platform' | 'crm'>[]
@@ -137,14 +136,6 @@ export type OnboardResult = {
 
 export const hashToken = (token: string) => createHash('sha256').update(token).digest('hex');
 const newToken = () => randomBytes(32).toString('base64url');
-
-function pgCode(err: unknown): string | undefined {
-  for (let e: unknown = err; e && typeof e === 'object'; e = (e as { cause?: unknown }).cause) {
-    const code = (e as { code?: unknown }).code;
-    if (typeof code === 'string') return code;
-  }
-  return undefined;
-}
 
 /** The roll-up functions raise 42501 for a non-admin and P0002 for a missing tenant. */
 function mapDbError(err: unknown): unknown {

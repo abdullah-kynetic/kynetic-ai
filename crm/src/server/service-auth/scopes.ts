@@ -20,5 +20,3 @@ export const SERVICE_TOKEN_SCOPES = [
   'deals:write',
   'tasks:write'
 ] as const;
-
-export type ServiceTokenScope = (typeof SERVICE_TOKEN_SCOPES)[number];

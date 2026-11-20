@@ -13,6 +13,7 @@ import {
 } from '../tenancy';
 import { parseInput, uuidSchema } from '../validation';
 import { buildChecklist } from './onboarding-steps';
+import { pgCode } from '../db/pg-error';
 
 export const STEP_STATUSES = ['todo', 'doing', 'blocked', 'done', 'n/a'] as const;
 export type StepStatus = (typeof STEP_STATUSES)[number];
@@ -58,14 +59,6 @@ type Row = {
 };
 
 const iso = (v: string | Date | null) => (v === null ? null : new Date(v).toISOString());
-
-function pgCode(err: unknown): string | undefined {
-  for (let e: unknown = err; e && typeof e === 'object'; e = (e as { cause?: unknown }).cause) {
-    const code = (e as { code?: unknown }).code;
-    if (typeof code === 'string') return code;
-  }
-  return undefined;
-}
 
 /** The roll-up functions raise 42501 for the wrong role and P0002 for a missing tenant or step. */
 function mapDbError(err: unknown): unknown {

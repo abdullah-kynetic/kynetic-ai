@@ -99,8 +99,4 @@ export function readableModuleConfig(config: unknown): {
   return { entries, hidesSecrets };
 }
 
-export function automationsForModule(moduleKey: ModuleKey) {
-  return AUTOMATION_TEMPLATE_CATALOG.filter((row) => row.moduleKey === moduleKey);
-}
-
 export const CATALOG_MODULE_KEYS: readonly ModuleKey[] = MODULE_KEYS;

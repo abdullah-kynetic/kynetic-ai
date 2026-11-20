@@ -1,10 +1,5 @@
 import postgres from 'postgres';
 
-/** Returns true when a trivial query succeeds. Opens a short-lived connection. */
-export async function pingDatabase(url: string, timeoutMs = 2000): Promise<boolean> {
-  return (await readHealth(url, timeoutMs)).database;
-}
-
 export type HealthRead = {
   database: boolean;
   /** Seconds since the worker's last heartbeat, by the database clock. Null when none can be read. */

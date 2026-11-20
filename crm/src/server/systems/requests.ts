@@ -8,6 +8,7 @@ import { AppError, ValidationError } from '../errors';
 import { loadEnabledModules } from '../modules';
 import { MODULE_KEYS, moduleSatisfied, type ModuleKey } from '../modules/keys';
 import { withPlatform, withTenant, type TenantContextInput } from '../tenancy';
+import { pgCode } from '../db/pg-error';
 
 type Options = { db?: Db };
 type StaffContext = { userId: string; role: 'admin' | 'va' };
@@ -21,18 +22,6 @@ export type SystemRequestRow = {
 };
 
 export type SystemRequestQueueRow = SystemRequestRow & { tenantId: string; tenantName: string };
-
-function pgCode(err: unknown): string | undefined {
-  for (
-    let current: unknown = err;
-    current && typeof current === 'object';
-    current = (current as { cause?: unknown }).cause
-  ) {
-    const code = (current as { code?: unknown }).code;
-    if (typeof code === 'string') return code;
-  }
-  return undefined;
-}
 
 /** A client asks for a system that is off. A second request for the same system is the same row. */
 export async function requestSystem(

@@ -2,7 +2,6 @@
 import Link from 'next/link';
 import { StatTiles } from '@/components/layout/stat-tiles';
 import { AgencyEmptyState } from '@/components/agency/page';
-import { StatusPill } from '@/components/ui/status-pill';
 import {
   Table,
   TableBody,
