@@ -133,7 +133,7 @@ describe('retention purge', () => {
       where tenant_id = ${IDS.tenantA}`;
     await test.admin`
       insert into messages (tenant_id, contact_id, channel, direction, actor_type, from_address, to_address, body, status, created_at)
-      select tenant_id, id, 'sms', 'outbound', 'alex', '+15555550100', '+15555550101', 'old body', 'sent', now() - interval '25 months'
+      select tenant_id, id, 'sms', 'outbound', 'alex', '+15555550100', '+15555550101', 'old body', 'sent', '2024-09-01T00:00:00Z'
       from contacts where tenant_id = ${IDS.tenantB} limit 1`;
     await test.admin`
       insert into consents (tenant_id, contact_id, channel, kind, source, captured_text, captured_at, revoked_at)
@@ -146,11 +146,11 @@ describe('retention purge', () => {
     const importKey = `${IDS.tenantA}/imports/old.csv`;
     await storage.put(importKey, new TextEncoder().encode('a,b'));
     await test.admin`
-      update import_batches set committed_at = now() - interval '40 days', file_key = ${importKey}
+      update import_batches set committed_at = '2026-09-01T00:00:00Z', file_key = ${importKey}
       where tenant_id = ${IDS.tenantA}`;
     await test.admin`
       update webhook_events set payload = ${test.admin.json({ phone: '+15555550199' })},
-        received_at = now() - interval '40 days'
+        received_at = '2026-09-01T00:00:00Z'
       where tenant_id = ${IDS.tenantA}`;
 
     const first = await runRetentionPurge({ db: worker, now: new Date('2026-11-10T12:00:00Z') });
@@ -192,5 +192,45 @@ describe('retention purge', () => {
     expect(JSON.stringify(audits)).not.toContain('old body');
     const [auditRow] = await test.admin`select count(*)::int as n from audit_log`;
     expect(auditRow.n).toBeGreaterThan(0);
+  });
+
+  it("deletes expired messages per client and never touches another client's rows", async () => {
+    const startedAt = new Date().toISOString();
+    await test.admin`
+      insert into messages (tenant_id, contact_id, channel, direction, actor_type, from_address, to_address, body, status, created_at)
+      select tenant_id, id, 'sms', 'outbound', 'alex', '+15555550100', '+15555550101', 'old body A', 'sent', '2024-09-01T00:00:00Z'
+      from contacts, generate_series(1, 2) where tenant_id = ${IDS.tenantA} limit 2`;
+    await test.admin`
+      insert into messages (tenant_id, contact_id, channel, direction, actor_type, from_address, to_address, body, status, created_at)
+      select tenant_id, id, 'sms', 'outbound', 'alex', '+15555550100', '+15555550101', 'old body B', 'sent', '2024-09-01T00:00:00Z'
+      from contacts where tenant_id = ${IDS.tenantB} limit 1`;
+    for (const tenant of [IDS.tenantA, IDS.tenantB]) {
+      await test.admin`
+        insert into messages (tenant_id, contact_id, channel, direction, actor_type, from_address, to_address, body, status, created_at)
+        select tenant_id, id, 'sms', 'outbound', 'alex', '+15555550100', '+15555550101', 'fresh body ' || tenant_id::text, 'sent', '2026-11-09T00:00:00Z'
+        from contacts where tenant_id = ${tenant} limit 1`;
+    }
+
+    const counts = await runRetentionPurge({ db: worker, now: new Date('2026-11-10T12:00:00Z') });
+    expect(counts.messagesDeleted).toBe(3);
+
+    // One audit row per client: each client's purge transaction records only its own deletions.
+    const audits = await test.admin`
+      select tenant_id, after from audit_log
+      where action = 'retention.purge' and created_at >= ${startedAt}`;
+    const deletedByTenant = Object.fromEntries(
+      audits.map((a) => [a.tenant_id, (a.after as { messagesDeleted: number }).messagesDeleted])
+    );
+    expect(deletedByTenant[IDS.tenantA]).toBe(2);
+    expect(deletedByTenant[IDS.tenantB]).toBe(1);
+
+    const [expired] = await test.admin`
+      select count(*)::int as n from messages where body in ('old body A', 'old body B')`;
+    expect(expired.n).toBe(0);
+    const survivors = await test.admin`
+      select tenant_id from messages where body like 'fresh body %' order by tenant_id`;
+    expect(survivors.map((r) => r.tenant_id).toSorted()).toEqual(
+      [IDS.tenantA, IDS.tenantB].toSorted()
+    );
   });
 });
