@@ -1,4 +1,4 @@
-import { and, eq, gt, isNull, lt, ne, or, sql } from 'drizzle-orm';
+import { and, eq, gt, isNull, lt, ne, sql } from 'drizzle-orm';
 import type { Db, Tx } from '../db/client';
 import { appointments, contacts, deals, tenants } from '../db/schema';
 import { audit } from '../audit';

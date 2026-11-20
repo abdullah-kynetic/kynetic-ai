@@ -7,14 +7,7 @@ import * as schema from '../db/schema';
 import { AppError, RateLimitedError, ValidationError } from '../errors';
 import { enforceRateLimit, RATE_LIMITS } from '../security/rate-limit';
 import { withPlatform, withTenant, type TenantContextInput } from '../tenancy';
-import {
-  evaluateSession,
-  formatCookie,
-  parseCookie,
-  reasonSchema,
-  VIEW_AS,
-  type Viewer
-} from './evaluate';
+import { evaluateSession, formatCookie, parseCookie, reasonSchema, type Viewer } from './evaluate';
 
 // View as client (F-57, SECURITY 2.6). The session row in impersonation_sessions is the source of
 // truth; the cookie only says which row to look at. Every call re-reads the row under the claimed

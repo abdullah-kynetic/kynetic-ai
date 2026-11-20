@@ -5,11 +5,6 @@ import { activities } from '../db/schema';
 import { ACTIVITY_TYPES, ACTOR_TYPES } from './types';
 
 export { ACTIVITY_TYPES, ACTOR_TYPES, type ActivityType } from './types';
-export type ActivityActor = {
-  type: (typeof ACTOR_TYPES)[number];
-  id?: string | null;
-};
-
 const uuid = z.string().uuid();
 const inputSchema = z.object({
   contactId: uuid.nullish(),

@@ -9,7 +9,6 @@ import {
   type BulkContactsResult,
   type PanelSaveResult
 } from '@/server/contacts';
-import { createContactSchema } from '@/server/contacts/schemas';
 import { errorBody, toErrorResult, type ErrorBody } from '@/server/errors';
 import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';

@@ -12,3 +12,6 @@ __pycache__/
 .DS_Store
 .claude/settings.local.json
 *.tsbuildinfo
+
+# Graphify output (regenerate with: graphify update .)
+graphify-out/

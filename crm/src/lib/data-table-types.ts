@@ -1,6 +1,5 @@
-import type { ColumnFilter, ColumnSort, Row, RowData } from '@tanstack/react-table';
+import type { ColumnFilter, ColumnSort } from '@tanstack/react-table';
 
-import type { DataTableFeatures } from '@/lib/data-table-features';
 import type { FILTER_OPERATORS, FILTER_VARIANTS, JOIN_OPERATORS } from '@/lib/data-table-utils';
 
 export interface DataTableColumnMeta {
@@ -88,8 +87,3 @@ export interface DataTableQuery<
 
 export type DataTableColumnConfigsQuery<TColumnConfigs extends DataTableColumnConfigs> =
   DataTableQuery<FilterableColumnId<TColumnConfigs>, SortableColumnId<TColumnConfigs>>;
-
-export interface DataTableRowAction<TData extends RowData> {
-  row: Row<DataTableFeatures, TData>;
-  variant: 'update' | 'delete';
-}

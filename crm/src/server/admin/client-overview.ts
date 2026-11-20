@@ -16,6 +16,7 @@ import { AppError, ValidationError } from '../errors';
 import { getGuaranteeSettings, guaranteeProgress, type GuaranteeSettings } from '../metrics';
 import { MODULE_KEYS, type ModuleKey } from '../modules/keys';
 import { withPlatform, withTenant } from '../tenancy';
+import { pgCode } from '../db/pg-error';
 
 export type ClientOverview = {
   tenant: {
@@ -278,15 +279,6 @@ export async function setGuaranteeBaseline(
     if (code === '42501') throw new AppError('FORBIDDEN', { cause: error });
     throw error;
   }
-}
-
-function pgCode(err: unknown): string | undefined {
-  for (let current: unknown = err; current && typeof current === 'object';) {
-    const record = current as { code?: unknown; cause?: unknown };
-    if (typeof record.code === 'string') return record.code;
-    current = record.cause;
-  }
-  return undefined;
 }
 
 export { guaranteeProgress };

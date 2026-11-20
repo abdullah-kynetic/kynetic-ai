@@ -1,9 +1,5 @@
 import { DEFAULT_STAGES } from '../deals/pipelines';
-import {
-  INDUSTRY_TEMPLATES,
-  type IndustryTemplateKey,
-  type TemplateStage
-} from './industry-templates';
+import type { TemplateStage } from './industry-templates';
 
 export type PlannedStage = {
   id: string;
@@ -77,8 +73,4 @@ export function planServicesApply(
   )
     return 'unchanged';
   return 'replace';
-}
-
-export function industryDefinesStages(key: IndustryTemplateKey): boolean {
-  return Boolean(INDUSTRY_TEMPLATES[key].stages?.length);
 }
