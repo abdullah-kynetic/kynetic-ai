@@ -132,6 +132,19 @@ test('Owner can pause Alex and persist only the settings flag', async ({
   }
 });
 
+test('Alex settings show read-only access during staff view-as', async ({ adminPage: page }) => {
+  await page.goto('/admin/clients');
+  await page
+    .getByRole('row')
+    .filter({ hasText: 'Ready Roofing' })
+    .getByRole('button', { name: 'View as client' })
+    .click();
+  await expect(page).toHaveURL(/\/dashboard$/);
+  await page.goto('/dashboard/settings/alex');
+  await expect(page.getByText('This view is read-only.')).toBeVisible();
+  await expect(page.getByRole('checkbox', { name: /Pause Alex/ })).toHaveCount(0);
+});
+
 test('CRM-disabled workspace retains its settings access message', async ({ browser }) => {
   const context = await browser.newContext({
     storageState: '/tmp/kynetic-crm-e2e-lane-a-owner-b.json'

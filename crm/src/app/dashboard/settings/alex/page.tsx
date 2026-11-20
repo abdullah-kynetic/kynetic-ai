@@ -9,6 +9,7 @@ import { AlexControls } from './alex-controls';
 import { requestAlexChangeAction } from './actions';
 import { requireModule } from '@/server/modules';
 import { loadShellContext } from '@/server/shell';
+import { VIEW_AS_COOKIE } from '@/server/impersonation';
 import { withTenant } from '@/server/tenancy';
 import type { Metadata } from 'next';
 import { cookies, headers } from 'next/headers';
@@ -52,11 +53,23 @@ export default async function AlexSettingsPage({
     headers(),
     searchParams
   ]);
-  const shell = await loadShellContext(requestHeaders, cookieStore.get('tenant_id')?.value);
+  const shell = await loadShellContext(
+    requestHeaders,
+    cookieStore.get('tenant_id')?.value,
+    undefined,
+    cookieStore.get(VIEW_AS_COOKIE)?.value
+  );
   if (!shell) redirect('/sign-in');
   if (!shell.tenant) notFound();
 
   const ctx = { tenantId: shell.tenant.id, userId: shell.user.id, role: shell.role };
+  if (shell.viewAs?.readOnly) {
+    return (
+      <SettingsPage pageTitle='Alex settings' access={false} accessFallback='This view is read-only.'>
+        {null}
+      </SettingsPage>
+    );
+  }
   await requireModule(ctx, 'alex_core');
 
   const user = await getSessionUser(requestHeaders);

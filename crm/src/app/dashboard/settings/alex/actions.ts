@@ -25,8 +25,14 @@ export async function saveAlexSettings(
   formData: FormData
 ): Promise<AlexSettingsState> {
   const [cookieStore, requestHeaders] = await Promise.all([cookies(), headers()]);
-  const shell = await loadShellContext(requestHeaders, cookieStore.get('tenant_id')?.value);
+  const shell = await loadShellContext(
+    requestHeaders,
+    cookieStore.get('tenant_id')?.value,
+    undefined,
+    cookieStore.get(VIEW_AS_COOKIE)?.value
+  );
   if (!shell?.tenant) return { error: 'Sign in again to continue.' };
+  if (shell.viewAs?.readOnly) return { error: 'This view is read-only.' };
   const ctx = {
     tenantId: shell.tenant.id,
     userId: shell.user.id,
