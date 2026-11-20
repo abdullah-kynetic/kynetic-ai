@@ -1,83 +1,195 @@
 import Link from 'next/link';
-import { headers } from 'next/headers';
-import { forbidden } from 'next/navigation';
-import { listAdminTenantOverview } from '@/server/admin';
-import { requireUser } from '@/server/auth';
-import { DEMO_CLIENT_PROFILES } from '@/server/db/seed/demo-client-profiles';
+import { StatusPill, type Tone } from '@/components/ui/status-pill';
 import { Input } from '@/components/ui/input';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
+import { StartViewAsForm } from '../view-as/start-form';
+import { loadClientRows, type ClientRow } from './rows';
 
-const demoSlugs = new Set(DEMO_CLIENT_PROFILES.map((profile) => profile.slug));
-type Kind = 'live' | 'demo' | 'churned' | 'operations';
+export type ClientListKind = 'live' | 'demo' | 'churned' | 'operations';
+export type ClientListFilters = { q?: string; health?: string; stage?: string };
 
-export async function ClientList({ kind, search }: { kind: Kind; search: string }) {
-  const user = await requireUser(await headers());
-  if (!user.kyneticRole) forbidden();
-  const all = await listAdminTenantOverview({ userId: user.id, role: user.kyneticRole });
-  const rows = all
-    .filter((row) => {
-      if (kind === 'live') return row.status === 'active' && !demoSlugs.has(row.slug);
-      if (kind === 'demo') return demoSlugs.has(row.slug);
-      if (kind === 'churned') return row.status === 'offboarded';
-      return row.status !== 'offboarded';
-    })
-    .filter((row) => row.name.toLowerCase().includes(search.toLowerCase()));
+const healthPill: Record<'green' | 'yellow' | 'red', { tone: Tone; word: string }> = {
+  green: { tone: 'gain', word: 'Healthy' },
+  yellow: { tone: 'attention', word: 'Watch' },
+  red: { tone: 'alert', word: 'At risk' }
+};
+const stageWord: Record<string, string> = {
+  onboarding: 'Onboarding',
+  live: 'Live',
+  at_risk: 'At risk',
+  churned: 'Churned',
+  demo: 'Demo'
+};
+const stageTone: Record<string, Tone> = {
+  onboarding: 'attention',
+  live: 'gain',
+  at_risk: 'alert',
+  churned: 'neutral',
+  demo: 'neutral'
+};
+const titles: Record<ClientListKind, string> = {
+  live: 'Live clients',
+  demo: 'Demo clients',
+  churned: 'Churned clients',
+  operations: 'All clients'
+};
+
+function inKind(kind: ClientListKind, row: ClientRow) {
+  if (kind === 'live') return row.stage === 'live' || row.stage === 'at_risk';
+  if (kind === 'demo') return row.stage === 'demo';
+  if (kind === 'churned') return row.stage === 'churned';
+  return row.stage !== 'churned';
+}
+
+export async function ClientList({
+  kind,
+  filters
+}: {
+  kind: ClientListKind;
+  filters: ClientListFilters;
+}) {
+  const { user, rows: all } = await loadClientRows();
+  const q = (filters.q ?? '').trim().toLowerCase();
+  const kindRows = all.filter((row) => inKind(kind, row));
+  const rows = kindRows
+    .filter((row) => row.name.toLowerCase().includes(q))
+    .filter((row) => !filters.health || row.healthTone === filters.health)
+    .filter((row) => !filters.stage || row.stage === filters.stage);
+  const filtered = Boolean(q || filters.health || filters.stage);
   return (
-    <section className='space-y-4'>
-      <form className='flex flex-wrap gap-2' role='search'>
+    <section className='space-y-4' aria-label={titles[kind]}>
+      <h2 className='text-xl font-semibold'>{titles[kind]}</h2>
+      <form className='flex flex-wrap items-center gap-2' role='search'>
         <Input
           name='q'
           aria-label='Search clients'
           placeholder='Search clients'
-          defaultValue={search}
+          defaultValue={filters.q ?? ''}
           className='max-w-sm'
         />
+        <select
+          name='health'
+          aria-label='Health'
+          defaultValue={filters.health ?? ''}
+          className='bg-background h-9 rounded-md border px-3 text-sm'
+        >
+          <option value=''>Any health</option>
+          <option value='green'>Healthy</option>
+          <option value='yellow'>Watch</option>
+          <option value='red'>At risk</option>
+        </select>
+        {kind === 'operations' && (
+          <select
+            name='stage'
+            aria-label='Stage'
+            defaultValue={filters.stage ?? ''}
+            className='bg-background h-9 rounded-md border px-3 text-sm'
+          >
+            <option value=''>Any stage</option>
+            {Object.entries(stageWord)
+              .filter(([id]) => id !== 'churned')
+              .map(([id, word]) => (
+                <option key={id} value={id}>
+                  {word}
+                </option>
+              ))}
+          </select>
+        )}
         <button
-          className='bg-primary text-primary-foreground rounded-md px-4 text-sm'
+          className='bg-primary text-primary-foreground h-9 rounded-md px-4 text-sm'
           type='submit'
         >
-          Search
+          Filter
         </button>
+        {filtered && (
+          <Link className='text-sm underline' href='?'>
+            Clear filters
+          </Link>
+        )}
       </form>
-      <div className='bg-card overflow-x-auto rounded-xl border'>
-        <table className='w-full min-w-[36rem] text-left text-sm'>
-          <thead className='bg-surface-sunken'>
-            <tr>
-              <th className='p-3'>Client</th>
-              <th className='p-3'>Status</th>
-              <th className='p-3'>Health</th>
-              <th className='p-3'>Open</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={row.tenantId} className='border-t'>
-                <td className='p-3 font-medium'>{row.name}</td>
-                <td className='p-3 capitalize'>{row.status}</td>
-                <td className='p-3 capitalize'>{row.healthTone}</td>
-                <td className='p-3'>
-                  <Link
-                    className='text-primary underline-offset-4 hover:underline'
-                    href={`/admin/clients/${row.tenantId}`}
-                  >
-                    Client details
-                  </Link>
-                </td>
-              </tr>
-            ))}
-            {rows.length === 0 && (
-              <tr>
-                <td colSpan={4} className='text-muted-foreground p-6'>
-                  No matching clients.{' '}
-                  <Link className='underline' href='/admin/clients/new'>
-                    Onboard a client
-                  </Link>{' '}
-                  or clear the search.
-                </td>
-              </tr>
+      <p className='text-muted-foreground text-sm' aria-live='polite'>
+        Showing {rows.length} of {kindRows.length}
+      </p>
+      <div className='bg-card overflow-hidden rounded-[var(--radius-card)] border'>
+        <Table scrollLabel={`${titles[kind]} table`}>
+          <TableHeader className='bg-surface-sunken'>
+            <TableRow>
+              <TableHead>Client</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className='hidden md:table-cell'>Plan</TableHead>
+              <TableHead>Health</TableHead>
+              <TableHead className='hidden md:table-cell'>Open as client</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rows.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className='text-muted-foreground'>
+                  {filtered ? 'No clients match these filters.' : 'No clients here yet.'}{' '}
+                  {kind !== 'churned' && (
+                    <Link className='underline' href='/admin/clients/new'>
+                      Onboard a client
+                    </Link>
+                  )}
+                </TableCell>
+              </TableRow>
+            ) : (
+              rows.map((row) => {
+                const health = healthPill[row.healthTone];
+                const openable = row.status === 'active' || row.isDemo;
+                const open = openable ? (
+                  <StartViewAsForm
+                    tenantId={row.tenantId}
+                    tenantName={row.name}
+                    reasonRequired={user.kyneticRole !== 'admin'}
+                  />
+                ) : (
+                  <span className='text-muted-foreground text-sm'>Not available</span>
+                );
+                return (
+                  <TableRow key={row.tenantId}>
+                    <TableCell className='font-medium'>
+                      <Link
+                        className='inline-flex min-h-11 items-center underline-offset-4 hover:underline'
+                        href={`/admin/clients/${row.tenantId}`}
+                      >
+                        {row.name}
+                      </Link>
+                      <div className='mt-1 md:hidden'>{open}</div>
+                    </TableCell>
+                    <TableCell>
+                      <StatusPill tone={stageTone[row.stage] ?? 'neutral'}>
+                        {stageWord[row.stage]}
+                      </StatusPill>
+                    </TableCell>
+                    <TableCell className='hidden md:table-cell'>
+                      {row.plan} {row.pricingTier ?? ''}
+                    </TableCell>
+                    <TableCell>
+                      <StatusPill tone={health.tone}>
+                        {row.healthScore} · {health.word}
+                      </StatusPill>
+                    </TableCell>
+                    <TableCell className='hidden md:table-cell'>{open}</TableCell>
+                  </TableRow>
+                );
+              })
             )}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
+      <p className='text-muted-foreground text-xs'>
+        Health: green ≥70, yellow ≥40, red &lt;40. Healthy, Watch and At risk follow those cut-offs.
+      </p>
     </section>
   );
 }
+
+export type ClientListSearch = Promise<{ q?: string; health?: string; stage?: string }>;

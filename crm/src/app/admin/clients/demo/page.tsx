@@ -1,8 +1,7 @@
-import { ClientList } from '../client-list';
-export default async function DemoClients({
-  searchParams
-}: {
-  searchParams: Promise<{ q?: string }>;
-}) {
-  return <ClientList kind='demo' search={(await searchParams).q ?? ''} />;
+import { ClientList, type ClientListSearch } from '../client-list';
+
+export const dynamic = 'force-dynamic';
+
+export default async function DemoClients({ searchParams }: { searchParams: ClientListSearch }) {
+  return <ClientList kind='demo' filters={await searchParams} />;
 }

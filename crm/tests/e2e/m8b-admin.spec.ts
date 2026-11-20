@@ -3,7 +3,7 @@ import { expect, test } from './fixtures';
 test('F-53/F-54 admin all-clients table shows synthetic tenants and health thresholds', async ({
   adminPage
 }) => {
-  await adminPage.goto('/admin/clients');
+  await adminPage.goto('/admin/clients/operations');
   await expect(adminPage.getByRole('heading', { name: 'All clients' })).toBeVisible();
   await expect(adminPage.getByText(/green ≥70, yellow ≥40, red <40/)).toBeVisible();
   await expect(adminPage.getByRole('row').filter({ hasText: 'Synthetic Brand Co' })).toContainText(
@@ -22,7 +22,7 @@ test('phase 7 client list keeps view-as routes available and removes the menu it
   vaPage
 }) => {
   for (const page of [adminPage, vaPage]) {
-    await page.goto('/admin/clients');
+    await page.goto('/admin/clients/operations');
     await expect(page.getByRole('heading', { name: 'All clients', exact: true })).toBeVisible();
     await expect(page.getByRole('columnheader', { name: 'Status', exact: true })).toBeVisible();
     await expect(page.getByRole('link', { name: 'View as client', exact: true })).toHaveCount(0);

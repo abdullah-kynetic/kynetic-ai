@@ -1,9 +1,11 @@
 import Link from 'next/link';
-import { ClientList } from '../client-list';
+import { ClientList, type ClientListSearch } from '../client-list';
+
+export const dynamic = 'force-dynamic';
 export default async function ClientOperations({
   searchParams
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: ClientListSearch;
 }) {
   return (
     <div className='space-y-5'>
@@ -18,7 +20,7 @@ export default async function ClientOperations({
           Onboard a client
         </Link>
       </div>
-      <ClientList kind='operations' search={(await searchParams).q ?? ''} />
+      <ClientList kind='operations' filters={await searchParams} />
     </div>
   );
 }
