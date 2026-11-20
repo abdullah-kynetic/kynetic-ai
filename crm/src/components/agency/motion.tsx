@@ -1,28 +1,28 @@
-"use client";
+'use client';
 
-import { MotionConfig, motion, useReducedMotion } from "motion/react";
-import { useFormStatus } from "react-dom";
-import type { ComponentProps, ReactNode } from "react";
-import { Button } from "@/components/ui/button";
+import { MotionConfig, motion, useReducedMotion } from 'motion/react';
+import { useFormStatus } from 'react-dom';
+import type { ComponentProps, ReactNode } from 'react';
+import { Button } from '@/components/ui/button';
 
 const transition = { duration: 0.18, ease: [0.16, 1, 0.3, 1] as const };
 
 /** Motion is reserved for selection continuity and pending feedback; content never starts hidden. */
 export function AgencyMotion({ children }: { children: ReactNode }) {
   return (
-    <MotionConfig reducedMotion="user" transition={transition}>
+    <MotionConfig reducedMotion='user' transition={transition}>
       {children}
     </MotionConfig>
   );
 }
 function pendingText(children: ReactNode) {
-  if (typeof children !== "string") return "Working…";
-  if (children.startsWith("Save")) return "Saving…";
-  if (children.startsWith("Create")) return "Creating…";
-  if (children.startsWith("Simulate")) return "Simulating…";
-  if (children.startsWith("Check")) return "Checking…";
-  if (children.startsWith("Rotate")) return "Rotating…";
-  return "Working…";
+  if (typeof children !== 'string') return 'Working…';
+  if (children.startsWith('Save')) return 'Saving…';
+  if (children.startsWith('Create')) return 'Creating…';
+  if (children.startsWith('Simulate')) return 'Simulating…';
+  if (children.startsWith('Check')) return 'Checking…';
+  if (children.startsWith('Rotate')) return 'Rotating…';
+  return 'Working…';
 }
 export function AgencySubmitButton({
   children,
@@ -35,7 +35,7 @@ export function AgencySubmitButton({
   return (
     <Button
       {...props}
-      type={props.type ?? "submit"}
+      type={props.type ?? 'submit'}
       disabled={disabled || pending}
       aria-busy={pending || undefined}
     >
@@ -45,16 +45,14 @@ export function AgencySubmitButton({
         transition={{ duration: reduced ? 0 : 0.12, ease: transition.ease }}
       >
         <span
-          className="agency-submit-label"
-          style={{ visibility: pending ? "hidden" : "visible" }}
+          className='agency-submit-label'
+          style={{ visibility: pending ? 'hidden' : 'visible' }}
           aria-hidden={pending || undefined}
         >
           {children}
         </span>
         {pending && (
-          <span className="agency-submit-pending">
-            {pendingLabel ?? pendingText(children)}
-          </span>
+          <span className='agency-submit-pending'>{pendingLabel ?? pendingText(children)}</span>
         )}
       </motion.span>
     </Button>
