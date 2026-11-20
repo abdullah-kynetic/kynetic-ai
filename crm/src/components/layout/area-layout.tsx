@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 import type { Area } from '@/config/area-nav';
+import { HeadingLevelProvider } from './heading-level';
 
 /** Shared frame for an area dashboard and all of its sub-pages. */
 export function AreaLayout({ area, children }: { area: Area; children: ReactNode }) {
@@ -41,7 +42,9 @@ export function AreaLayout({ area, children }: { area: Area; children: ReactNode
           </div>
         </nav>
       )}
-      <div className='min-w-0'>{children}</div>
+      <div className='min-w-0'>
+        <HeadingLevelProvider value='h2'>{children}</HeadingLevelProvider>
+      </div>
     </div>
   );
 }

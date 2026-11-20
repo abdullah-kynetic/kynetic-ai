@@ -64,9 +64,17 @@ test('F-58 admin updates client Alex configuration and creates a prompt version'
   await adminPage.goto('/admin/clients/11111111-1111-4111-8111-111111111111/alex');
   await expect(adminPage.getByRole('heading', { name: 'Alex configuration' })).toBeVisible();
   await expect(adminPage.getByText(/prompt version 1/)).toBeVisible();
+  // Let the page hydrate first; typing into the server-rendered textarea earlier can double its text.
+  await adminPage.waitForLoadState('networkidle');
   await adminPage.getByLabel('Greeting').fill('Synthetic revised greeting');
   await adminPage.getByLabel('New prompt (optional)').fill('Synthetic admin prompt version');
+  const saved = adminPage.waitForResponse(
+    (r) => r.request().method() === 'POST' && r.url().includes('/alex')
+  );
   await adminPage.getByRole('button', { name: 'Save Alex settings' }).click();
+  await saved;
+  // Reload so the check reads what the server stored, not the form's transient client state.
+  await adminPage.reload();
   await expect(adminPage.getByText(/prompt version 2/)).toBeVisible();
   await expect(adminPage.getByLabel('Greeting')).toHaveValue('Synthetic revised greeting');
 });
@@ -113,10 +121,15 @@ test('phase 7 gives the operations pages distinct names and hides DEV blocks', a
   await expect(
     adminPage.getByRole('heading', { name: 'Jobs and integrations', exact: true })
   ).toBeVisible();
+  // The old sales settings address now lands on Clients > Operations.
   await adminPage.goto('/admin/agency/ops');
+  await expect(adminPage).toHaveURL(/\/admin\/clients\/operations$/);
+  await expect(adminPage.getByRole('heading', { level: 1, name: 'Clients' })).toBeVisible();
   await expect(
-    adminPage.getByRole('heading', { name: 'Sales settings', exact: true })
-  ).toBeVisible();
+    adminPage
+      .getByRole('navigation', { name: 'Clients pages' })
+      .getByRole('link', { name: 'Operations' })
+  ).toHaveAttribute('aria-current', 'page');
   await expect(
     adminPage.getByRole('heading', { name: 'DEV integration draft', exact: true })
   ).toBeHidden();

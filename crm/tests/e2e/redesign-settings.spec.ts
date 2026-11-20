@@ -134,11 +134,8 @@ test('Owner can pause Alex and persist only the settings flag', async ({
 
 test('Alex settings show read-only access during staff view-as', async ({ adminPage: page }) => {
   await page.goto('/admin/clients');
-  await page
-    .getByRole('row')
-    .filter({ hasText: 'Ready Roofing' })
-    .getByRole('button', { name: 'View as client' })
-    .click();
+  await page.getByRole('button', { name: /Switch workspace/ }).click();
+  await page.getByRole('button', { name: 'View as client: Ready Roofing' }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
   await page.goto('/dashboard/settings/alex');
   await expect(page.getByText('This view is read-only.')).toBeVisible();

@@ -13,7 +13,9 @@ async function workspace(page: import('@playwright/test').Page) {
 
 test('Usage shows totals and keeps the table region', async ({ adminPage: page }) => {
   await page.goto('/admin/usage');
-  await expect(page.getByRole('heading', { level: 1, name: 'Usage' })).toBeVisible();
+  await expect(page).toHaveURL(/\/admin\/money\/usage$/);
+  await expect(page.getByRole('heading', { level: 1, name: 'Money' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 2, name: 'Usage' })).toBeVisible();
   await expect(page.getByRole('region', { name: 'Usage by client' })).toBeVisible();
   await expect(page.getByText('Provider cost', { exact: true }).first()).toBeVisible();
 });

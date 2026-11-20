@@ -31,9 +31,11 @@ for (const [persona, routes] of [
       await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
       for (const [path, heading] of routes) {
         await page.goto(path);
+        // Redirected pages land inside an area (one h1 for the area, the page title below it).
         await expect(
-          page.getByRole('heading', { level: 1, name: heading, exact: true })
+          page.getByRole('heading', { name: heading, exact: true }).first()
         ).toBeVisible();
+        await expect(page.getByRole('heading', { level: 1 }), `${path} h1 count`).toHaveCount(1);
         expect(
           await page.evaluate(() => document.documentElement.scrollWidth),
           `${path} at ${width}px`
