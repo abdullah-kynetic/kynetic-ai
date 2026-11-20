@@ -1,5 +1,15 @@
 # Portal design completion running log
 
+## Verify failure comparison against `origin/work` — 2026-11-19
+
+The last **complete** `bun run verify` before the lifecycle schema declaration had 666/666 unit tests passing and 12 integration failures (1,011 passing, 2 skipped). Typecheck, lint, format, deploy rehearsal, and build passed. The earlier interrupted run had also shown four isolation and one baseline failure; it did not produce a complete integration result. Reproduction used disposable PostgreSQL with `PROVIDER_MODE=stub OUTBOUND_ENABLED=false` and no live provider calls.
+
+**Caused by `t3/design-finish` migration 1092 (fixed and pushed):** `baseline-ops` table list (1); `isolation` RLS policy, tenant A/B seed rows, cross-tenant write, and read-only write checks (4); `schema-drift` Drizzle table declaration (1). The two baseline/isolation files passed 26/26 on `origin/work`, and schema-drift passed 1/1 there. On the design branch, the lifecycle policy, synthetic rows, and database documentation were added in `cfe90950`; the Drizzle schema declaration was added in `19117f94`. The three affected files then passed 27/27 together. No production migration was applied.
+
+**Also fail on `origin/work` (11, unchanged files):** `m7-module-acceptance` fails F-79 quoted-stage enrollment, F-80 after-hours notification, F-81 missed-call fake SMS, F-33 booking stage move, and F-33 deal-won alert (5). `automation-retries-m7` fails replying-contact stop, booking stop, consent-filtered reactivation, disabled-template stop, transient retry, and quiet-hour deferral (6). The same two files failed 11/13 both on `origin/work` and `t3/design-finish`. They set `OUTBOUND_ENABLED=true` inside the tests while the required `PROVIDER_MODE=stub` validator rejects that combination; the deal-won test additionally encounters a duplicate subscriber after an earlier failed test. These inherited failures were not hidden or weakened.
+
+The requested **single** Alex view-as retry used the ready synthetic client fixture and passed 1/1. It opened no live client record. After `19117f94`, `bun run verify:quick` passed typecheck, lint, format, and 666/666 unit tests; production build also passed. Full verify has not been rerun after that declaration; the affected branch regression files were verified individually, so a final full-gate pass is not claimed.
+
 ## Phase 1 follow-up — 2026-11-19
 
 The previously unverified Alex view-as state is now fixed and browser-tested. During a synthetic staff view-as session, Alex and Branding show a clean read-only Settings state with no edit controls. Their server actions also resolve the view-as cookie and refuse writes. Commits: `4f3ae68d`, `1235c097`. A staff browser sweep now visits all nine Settings routes and checks that protected edit controls are hidden (`4e897424`). Alex server validation and Branding color validation show visible errors (`e841b241`); formatting follow-up is `9a7b466a`.
