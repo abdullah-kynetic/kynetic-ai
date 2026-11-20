@@ -16,8 +16,22 @@ export function AlexControls({
   start: string;
   end: string;
 }) {
+  const [pausedValue, setPausedValue] = React.useState(paused);
+  const [startValue, setStartValue] = React.useState(start);
+  const [endValue, setEndValue] = React.useState(end);
+  const saved = React.useRef({ paused, start, end });
   const [state, action, pending] = React.useActionState<AlexSettingsState, FormData>(
-    saveAlexSettings,
+    async (previous, formData) => {
+      const result = await saveAlexSettings(previous, formData);
+      if (result.saved) {
+        saved.current = {
+          paused: formData.get('paused') === 'on',
+          start: String(formData.get('start')),
+          end: String(formData.get('end'))
+        };
+      }
+      return result;
+    },
     {}
   );
   const errorId = React.useId();
@@ -34,7 +48,12 @@ export function AlexControls({
         </div>
       )}
       <div className='flex items-center gap-3'>
-        <Checkbox id='paused' name='paused' defaultChecked={paused} />
+        <Checkbox
+          id='paused'
+          name='paused'
+          checked={pausedValue}
+          onCheckedChange={(checked) => setPausedValue(checked === true)}
+        />
         <label htmlFor='paused' className='text-sm leading-5'>
           Pause Alex. No calls start while paused.
         </label>
@@ -44,13 +63,27 @@ export function AlexControls({
           <label htmlFor='start' className='text-sm'>
             Calls start at
           </label>
-          <Input id='start' name='start' type='time' defaultValue={start} required />
+          <Input
+            id='start'
+            name='start'
+            type='time'
+            value={startValue}
+            onChange={(event) => setStartValue(event.target.value)}
+            required
+          />
         </div>
         <div className='space-y-1'>
           <label htmlFor='end' className='text-sm'>
             Calls stop at
           </label>
-          <Input id='end' name='end' type='time' defaultValue={end} required />
+          <Input
+            id='end'
+            name='end'
+            type='time'
+            value={endValue}
+            onChange={(event) => setEndValue(event.target.value)}
+            required
+          />
         </div>
       </div>
       {state.saved && (
@@ -62,7 +95,16 @@ export function AlexControls({
         <Button type='submit' disabled={pending}>
           {pending ? 'Saving…' : 'Save'}
         </Button>
-        <Button type='reset' variant='outline' disabled={pending}>
+        <Button
+          type='reset'
+          variant='outline'
+          disabled={pending}
+          onClick={() => {
+            setPausedValue(saved.current.paused);
+            setStartValue(saved.current.start);
+            setEndValue(saved.current.end);
+          }}
+        >
           Cancel
         </Button>
       </div>

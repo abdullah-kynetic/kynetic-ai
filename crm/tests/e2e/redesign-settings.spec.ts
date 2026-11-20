@@ -133,6 +133,9 @@ test("Owner can pause Alex and persist only the settings flag", async ({
     ).toBeVisible();
     await page.reload();
     expect(await checkbox.isChecked()).toBe(!initiallyChecked);
+    await checkbox.setChecked(initiallyChecked);
+    await page.getByRole("button", { name: "Cancel" }).click();
+    expect(await checkbox.isChecked()).toBe(!initiallyChecked);
   } finally {
     if (initiallyChecked) await checkbox.check();
     else await checkbox.uncheck();
