@@ -230,3 +230,6 @@ Found 2026-11-12. At Abdullah's request, `STAFF_EMAIL_LOGIN=true` lets a Kynetic
 
 ### KI-037: Phase 6 gaps (low)
 Found 2026-11-13. n8n drafts in `n8n/drafts/alex-lead-to-booking/` were never imported or opened in n8n (connector unreachable), so the check that n8n shows nothing active was not run. No admin button yet for `provisionClientAutomations`. Docker build, VPS and any real provider not verified.
+
+### KI-043: deploy needs the full sha; retention test fails (low)
+Found 2026-11-20. `portal-new-deploy deploy` accepts only a full 40-character sha; short shas exit 2 with `bad sha` before changing anything, so do not roll back on that error. Separately, `tests/integration/portal-ops.test.ts` "retention purge" expects `importFilesDeleted` 1 and gets 0 on `1d02d4d`; no `src/server` change caused it and the cause is not found.
