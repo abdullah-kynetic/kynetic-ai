@@ -2,17 +2,19 @@
 
 ## Resume here
 
-Phases 1–2 are accepted. Phase 3 Sales board persistence and rollback browser tests pass (`25495602`, `566b4ba3`). Continue the remaining checklist in order:
+Phases 1–3 are built on `t3/design-finish`. Phase 3 items 1–7 are done (see "Phase 3 completion"). Remaining outside this phase: the Settings backup-restore test timeout decision, and stale browser specs listed below. Nothing is deployed, merged or applied to production; migrations 1092 and 1093 are for disposable dev/test databases.
 
-1. Clients Kanban: drag persistence and rollback tests.
-2. Clients tabs: Live, Demo, Churned and Operations tables.
-3. Prospecting funnel dashboard.
-4. Prospecting lead tables and DB-only Move to Sales.
-5. Money dashboard: MRR, collected, outstanding and trend chart.
-6. Money tabs: Finance, Billing and Invoices.
-7. Client portal area dashboards.
-8. Full `bun run verify`, allowing only the 11 accepted M7 failures.
-9. Update this log and `docs/redesign/NAV.md`.
+## Phase 3 completion — 2026-11-20
+
+- **Clients board** (`467b26e`): five-stage Kanban, optimistic drag, rollback on failure, `client_lifecycle` write plus `audit_log` row in one transaction, admin only, protected demo client locked. Browser tests: persistence, rollback, VA read-only. Integration test covers audit before/after and refusals.
+- **Clients tables** (`7aa8373`): Live, Demo, Churned, Operations are server-filtered tables (search, health, stage) linking to client detail, with empty states.
+- **Prospecting** (`7c6314b`, `2d1da4d`, `feea603`): migration 1093 `agency_prospects` (RLS, Drizzle declaration, DATABASE.md, isolation and baseline lists). Funnel dashboard with per-stage counts, step conversion and sources. Scraped, Half-enriched and Fully enriched tables with search, source and state filters, select-all, and Move to Sales (creates a deal through the existing lead path, audit row, no outreach; integration test checks no call, draft or DM rows appear). Seeded 48 synthetic prospects.
+- **Money** (`e2dc4d2`): overview with MRR, collected this month, outstanding and six-month trend; Finance, Billing and Invoices restyled (tiles, shared tables and pills; invoices filter by status). Seeded synthetic fees, invoices in every status and revenue. Demo removal covers the new rows.
+- **Client portal** (`e37657c`): Leads, Calls & Bookings and Reputation Overview tabs and the Help page have real dashboards with empty states; no horizontal scroll at 390px.
+- Found and fixed along the way: a race in the Sales board persistence test (reload before the save finished), a phone-width overflow on the Clients board (absolute screen-reader text escaping the scroller), a table unmounting after Move to Sales.
+- Two early commits (`467b26e`, `7aa8373`) carry the author name "Abdullah Ahmed" (same email) because the environment overrides the git name; later commits use `abdullah-kynetic`. Not rewritten, to avoid a force-push.
+
+**Stale browser specs (not caused by Phase 3, not changed):** `redesign-prospecting` and `redesign-sales` still expect Phase 1 headings ("Agency workspace"); `redesign-portal-pages` finds two level-1 headings on the Contacts page; `phase-4-a11y-all-routes` reports phone-width scroll on `/admin/clients/<id>/documents`, `/imports` and `/admin/view-as`; two `m8b-admin` specs target moved Alex and Operations routes.
 
 ## Phase 3 in progress — synthetic browser fixture
 

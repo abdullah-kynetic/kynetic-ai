@@ -82,6 +82,8 @@ describe('Money overview', () => {
     await agency.test
       .admin`update agency_invoice_drafts set status = 'past_due' where deal_id = ${openDeal}`;
     await agency.test
+      .admin`update agency_invoice_drafts set status = 'open' where deal_id = ${wonDeal}`;
+    await agency.test
       .admin`insert into agency_revenue_entries (tenant_id, received_on, amount_cents, note, created_by)
       values (${agency.tenantId}, '2026-11-05', 70000, 'Synthetic', ${IDS.admin}),
              (${agency.tenantId}, '2026-10-05', 30000, 'Synthetic', ${IDS.admin})`;
