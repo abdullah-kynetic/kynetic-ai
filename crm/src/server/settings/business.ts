@@ -35,8 +35,6 @@ export const businessSettingsPatchSchema = z
   })
   .partial()
   .strict();
-export type BusinessSettingsPatch = z.infer<typeof businessSettingsPatchSchema>;
-
 function requireBusinessWrite(actor: Actor, tenantId: string) {
   if (!can(actor, 'settings.business', tenantId)) throw new AppError('FORBIDDEN');
 }

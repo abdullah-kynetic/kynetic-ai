@@ -102,8 +102,6 @@ export const onboardTenantSchema = z
   })
   .strict();
 
-export type OnboardTenantInput = z.input<typeof onboardTenantSchema>;
-
 /** Turning the bundle on turns its three members on (PRD F-84). */
 export function expandModules(
   modules: readonly Exclude<ModuleKey, 'platform' | 'crm'>[]
