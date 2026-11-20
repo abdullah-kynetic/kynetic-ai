@@ -74,9 +74,8 @@ test('agency roadmap: alerts, inbox, blocked compose, manual sequence, ops and b
   await campaign.getByRole('button', { name: 'Mark done' }).click();
   await expect(campaign).toContainText('done: 1');
   await adminPage.goto('/admin/agency/ops');
-  await expect(
-    adminPage.getByRole('heading', { name: 'Sales settings', exact: true })
-  ).toBeVisible();
+  await expect(adminPage).toHaveURL(/\/admin\/clients\/operations$/);
+  await expect(adminPage.getByRole('heading', { level: 1, name: 'Clients' })).toBeVisible();
   await adminPage.goto('/admin/agency/billing');
   const terms = adminPage
     .locator('form')
@@ -88,7 +87,11 @@ test('agency roadmap: alerts, inbox, blocked compose, manual sequence, ops and b
   await terms.getByLabel('Optional monthly fee (USD)').fill('25');
   await terms.getByLabel('Optional setup installments').fill('50,50');
   await terms.getByRole('button', { name: 'Save deal terms' }).click();
-  await expect(adminPage.getByText(/\$100.00 setup/)).toBeVisible();
+  const termsRow = adminPage
+    .getByRole('row')
+    .filter({ hasText: 'DEV Roadmap Prospect' })
+    .filter({ hasText: '$25.00 / month' });
+  await expect(termsRow.getByRole('cell', { name: '$100.00', exact: true })).toBeVisible();
   const invoiceForm = adminPage
     .locator('form')
     .filter({ has: adminPage.getByRole('heading', { name: 'Create invoice draft', exact: true }) });
@@ -97,7 +100,7 @@ test('agency roadmap: alerts, inbox, blocked compose, manual sequence, ops and b
     .selectOption({ label: 'DEV Roadmap Prospect' });
   await invoiceForm.getByLabel('Due date', { exact: true }).fill('2026-11-01');
   await invoiceForm.getByRole('button', { name: 'Create draft', exact: true }).click();
-  await expect(adminPage.getByRole('article')).toContainText('$50.00');
+  await expect(adminPage.getByRole('article').filter({ hasText: '$50.00' }).first()).toBeVisible();
   await expect(adminPage.getByRole('button', { name: 'Simulate payment failed' })).toHaveCount(0);
   await adminPage.getByRole('button', { name: 'Draft overdue reminders' }).click();
   await expect(adminPage.getByText('Nothing is sent or charged.')).toBeVisible();
@@ -107,8 +110,14 @@ test('agency roadmap: alerts, inbox, blocked compose, manual sequence, ops and b
   await adminPage.goto('/admin/agency/inbox');
   await adminPage.screenshot({ path: '/tmp/kynetic-inbox-after-desktop.png', fullPage: true });
   await adminPage.setViewportSize({ width: 390, height: 844 });
-  for (const path of ['inbox', 'compose', 'campaigns', 'ops', 'billing']) {
-    await adminPage.goto(`/admin/agency/${path}`);
+  for (const path of [
+    'sales/inbox',
+    'sales/compose',
+    'prospecting/campaigns',
+    'clients/operations',
+    'money/billing'
+  ]) {
+    await adminPage.goto(`/admin/${path}`);
     await expect(adminPage.getByRole('heading', { level: 1 })).toBeVisible();
     await expect(adminPage.locator('#nprogress')).toHaveCount(0);
     const axe = await new AxeBuilder({ page: adminPage })
@@ -119,10 +128,14 @@ test('agency roadmap: alerts, inbox, blocked compose, manual sequence, ops and b
       await adminPage.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
       `${path} horizontal overflow`
     ).toBe(true);
-    await adminPage.screenshot({ path: `/tmp/kynetic-${path}-after-mobile.png`, fullPage: true });
+    await adminPage.screenshot({
+      path: `/tmp/kynetic-${path.replace('/', '-')}-after-mobile.png`,
+      fullPage: true
+    });
   }
   await adminPage.emulateMedia({ reducedMotion: 'reduce' });
-  const navigation = adminPage.getByRole('navigation', { name: 'Agency navigation', exact: true });
+  await adminPage.goto('/admin/sales/inbox');
+  const navigation = adminPage.getByRole('navigation', { name: 'Sales pages', exact: true });
   const composeLink = navigation.getByRole('link', { name: 'Compose', exact: true });
   await composeLink.focus();
   await expect(composeLink).toBeFocused();

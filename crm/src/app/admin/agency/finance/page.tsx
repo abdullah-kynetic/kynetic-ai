@@ -1,6 +1,16 @@
 /* oxlint-disable jsx-a11y/no-noninteractive-tabindex -- scrollable table regions must be keyboard focusable (WCAG 2.1.1) */
 import Link from 'next/link';
-import PageContainer, { AgencyEmptyState } from '@/components/agency/page';
+import { StatTiles } from '@/components/layout/stat-tiles';
+import { AgencyEmptyState } from '@/components/agency/page';
+import { StatusPill } from '@/components/ui/status-pill';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
 import { AgencySubmitButton as Button } from '@/components/agency/motion';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -45,30 +55,32 @@ export default async function FinancePage({
     listAdminTenantOverview({ userId: caller.id, role: 'admin' })
   ]);
   return (
-    <PageContainer
-      pageTitle='Finance'
-      pageDescription='Revenue, expenses, referrals and case studies for the agency workspace. Nothing is sent.'
-    >
-      <Link href='/admin/agency'>Agency dashboard</Link>
-      <dl className='agency-kpis' aria-label='This month (Pacific)'>
-        <div>
-          <dt>Revenue</dt>
-          <dd>{usd(data.summary.revenueCents)}</dd>
-        </div>
-        <div>
-          <dt>Expenses</dt>
-          <dd>{usd(data.summary.expenseCents)}</dd>
-        </div>
-        <div>
-          <dt>Net</dt>
-          <dd>{usd(data.summary.netCents)}</dd>
-        </div>
-      </dl>
+    <div className='space-y-6'>
+      <p className='text-muted-foreground text-sm'>
+        Revenue, expenses, referrals and case studies for the agency workspace. Nothing is sent.
+      </p>
+      <StatTiles
+        label='This month (Pacific)'
+        tiles={[
+          {
+            label: 'Revenue',
+            value: usd(data.summary.revenueCents),
+            note: `${data.summary.month}`,
+            key: true
+          },
+          {
+            label: 'Expenses',
+            value: usd(data.summary.expenseCents),
+            note: `${data.summary.month}`
+          },
+          { label: 'Net', value: usd(data.summary.netCents), note: `${data.summary.month}` }
+        ]}
+      />
       <section
         aria-label='Monthly revenue versus expenses'
         className='bg-card mb-6 rounded-[var(--radius-card)] border p-5'
       >
-        <h2 className='mb-3 font-semibold'>Revenue vs expenses by month</h2>
+        <h2 className='mb-3 font-medium'>Revenue vs expenses by month</h2>
         <FinanceMonthsChart months={data.months} />
       </section>
       {query.error && <p role='alert'>Check the amount, date and link, then try again.</p>}
@@ -76,7 +88,7 @@ export default async function FinancePage({
         {tabs.map(([id, label]) => (
           <Link
             key={id}
-            href={`/admin/agency/finance?tab=${id}`}
+            href={`/admin/money/finance?tab=${id}`}
             aria-current={tab === id ? 'page' : undefined}
           >
             {label}
@@ -88,46 +100,43 @@ export default async function FinancePage({
       </p>
       {tab === 'revenue' && (
         <section className='mt-6 space-y-4'>
-          <h2 className='font-semibold'>Monthly revenue</h2>
+          <h2 className='font-medium'>Monthly revenue</h2>
           {!data.months.length && (
             <AgencyEmptyState
               title='No revenue yet'
               description='Won deals and manual entries show here. Amounts are the values already stored.'
             />
           )}
-          <div
-            className='overflow-x-auto'
-            role='region'
-            aria-label='Monthly revenue table'
-            tabIndex={0}
-          >
-            <table className='agency-table'>
-              <thead>
-                <tr>
-                  <th>Month</th>
-                  <th>Won deals</th>
-                  <th>Manual</th>
-                  <th>Revenue</th>
-                  <th>Expenses</th>
-                  <th>Net</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.months.map((month) => (
-                  <tr key={month.month}>
-                    <td>{month.month}</td>
-                    <td>{usd(month.wonCents)}</td>
-                    <td>{usd(month.manualCents)}</td>
-                    <td>{usd(month.revenueCents)}</td>
-                    <td>{usd(month.expenseCents)}</td>
-                    <td>{usd(month.netCents)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {data.months.length > 0 && (
+            <div className='bg-card overflow-hidden rounded-[var(--radius-card)] border'>
+              <Table scrollLabel='Monthly revenue table'>
+                <TableHeader className='bg-surface-sunken'>
+                  <TableRow>
+                    <TableHead>Month</TableHead>
+                    <TableHead>Won deals</TableHead>
+                    <TableHead>Manual</TableHead>
+                    <TableHead>Revenue</TableHead>
+                    <TableHead>Expenses</TableHead>
+                    <TableHead>Net</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.months.map((month) => (
+                    <TableRow key={month.month}>
+                      <TableCell className='font-medium'>{month.month}</TableCell>
+                      <TableCell className='tabular-nums'>{usd(month.wonCents)}</TableCell>
+                      <TableCell className='tabular-nums'>{usd(month.manualCents)}</TableCell>
+                      <TableCell className='tabular-nums'>{usd(month.revenueCents)}</TableCell>
+                      <TableCell className='tabular-nums'>{usd(month.expenseCents)}</TableCell>
+                      <TableCell className='tabular-nums'>{usd(month.netCents)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
           <form action={addRevenueAction} className='agency-form max-w-xl'>
-            <h3 className='font-semibold'>Manual revenue</h3>
+            <h3 className='font-medium'>Manual revenue</h3>
             <Label htmlFor='revenue-date'>Date</Label>
             <Input id='revenue-date' name='receivedOn' type='date' required />
             <Label htmlFor='revenue-amount'>Amount (USD)</Label>
@@ -140,7 +149,7 @@ export default async function FinancePage({
       )}
       {tab === 'expenses' && (
         <section className='mt-6 space-y-4'>
-          <h2 className='font-semibold'>Expenses</h2>
+          <h2 className='font-medium'>Expenses</h2>
           {!data.expenses.length && (
             <AgencyEmptyState
               title='No expenses yet'
@@ -181,7 +190,7 @@ export default async function FinancePage({
             </form>
           ))}
           <form action={addExpenseAction} className='agency-form max-w-xl'>
-            <h3 className='font-semibold'>Add expense</h3>
+            <h3 className='font-medium'>Add expense</h3>
             <Input name='spentOn' type='date' required aria-label='Date' />
             <Input
               name='vendor'
@@ -211,7 +220,7 @@ export default async function FinancePage({
       )}
       {tab === 'referrals' && (
         <section className='mt-6 space-y-4'>
-          <h2 className='font-semibold'>Referrals</h2>
+          <h2 className='font-medium'>Referrals</h2>
           {!data.referrals.length && (
             <AgencyEmptyState
               title='No referrals yet'
@@ -256,7 +265,7 @@ export default async function FinancePage({
       )}
       {tab === 'case-studies' && (
         <section className='mt-6 space-y-4'>
-          <h2 className='font-semibold'>Case studies</h2>
+          <h2 className='font-medium'>Case studies</h2>
           {!data.studies.length && (
             <AgencyEmptyState
               title='No case studies yet'
@@ -300,6 +309,6 @@ export default async function FinancePage({
           </form>
         </section>
       )}
-    </PageContainer>
+    </div>
   );
 }

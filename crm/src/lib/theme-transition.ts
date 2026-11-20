@@ -1,8 +1,7 @@
 /**
- * Animate a theme (mode or palette) change with a circular reveal from the
- * pointer position, using the View Transitions API. Falls back to an instant
- * change where the API is unavailable or no origin is given. The reveal
- * keyframes live in `src/styles/globals.css`.
+ * Animate a theme (mode or palette) change with a short crossfade, using the
+ * View Transitions API. Falls back to an instant change where the API is
+ * unavailable. The `theme-fade` keyframes live in `src/styles/globals.css`.
  */
 export function startThemeTransition(
   apply: () => void,

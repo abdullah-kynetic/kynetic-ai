@@ -1,6 +1,30 @@
-import { redirect } from 'next/navigation';
+import Link from 'next/link';
+import { clientAreas } from '@/config/area-nav';
 
-// There is no settings landing page; the sidebar lists each settings page. Send visitors to the first.
 export default function SettingsIndexPage() {
-  redirect('/dashboard/settings/business');
+  return (
+    <div className='grid gap-4 sm:grid-cols-2'>
+      <Link
+        href='/dashboard/settings/business'
+        className='bg-card rounded-xl border p-5 hover:border-primary'
+      >
+        <h2 className='font-medium'>Business account</h2>
+        <p className='text-muted-foreground mt-1 text-sm'>
+          Hours, service area and transfer number.
+        </p>
+      </Link>
+      {clientAreas[4]!.tabs.slice(1).map((tab) => (
+        <Link
+          key={tab.href}
+          href={tab.href}
+          className='bg-card rounded-xl border p-5 hover:border-primary'
+        >
+          <h2 className='font-medium'>{tab.label}</h2>
+          <p className='text-muted-foreground mt-1 text-sm'>
+            Open {tab.label.toLowerCase()} settings.
+          </p>
+        </Link>
+      ))}
+    </div>
+  );
 }

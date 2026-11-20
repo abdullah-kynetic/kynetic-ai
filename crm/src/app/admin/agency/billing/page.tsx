@@ -1,6 +1,15 @@
 import { agencyDate, agencyBillingCycle } from '@/components/agency/format';
 import Link from 'next/link';
-import PageContainer, { AgencyEmptyState, AgencyStatus } from '@/components/agency/page';
+import { AgencyEmptyState } from '@/components/agency/page';
+import { StatusPill, type Tone } from '@/components/ui/status-pill';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
 import { AgencySubmitButton as Button } from '@/components/agency/motion';
 import { Input } from '@/components/ui/input';
 import { agencyCaller } from '../caller';
@@ -15,6 +24,18 @@ import {
   simulateInvoiceAction
 } from './actions';
 export const dynamic = 'force-dynamic';
+const invoiceTone: Record<string, Tone> = {
+  draft: 'neutral',
+  open: 'attention',
+  past_due: 'alert',
+  paid: 'gain'
+};
+const invoiceWord: Record<string, string> = {
+  draft: 'Draft',
+  open: 'Open',
+  past_due: 'Past due',
+  paid: 'Paid'
+};
 const usd = (cents: number) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(cents / 100);
 export default async function AgencyBilling({
@@ -32,11 +53,11 @@ export default async function AgencyBilling({
   ]);
   const deals = leads.flatMap((l) => (l.deal ? [{ id: l.deal.dealId, name: l.firstName }] : []));
   return (
-    <PageContainer
-      pageTitle='Agency billing'
-      pageDescription='Custom USD deal terms, invoice drafts and reminder drafts. Saving stays local. This page does not charge a card or call Stripe.'
-    >
-      <Link href='/admin/agency'>Agency dashboard</Link>
+    <div className='space-y-6'>
+      <p className='text-muted-foreground text-sm'>
+        Custom USD deal terms, invoice drafts and reminder drafts. Saving stays local. This page
+        does not charge a card or call Stripe.
+      </p>
       {q.error && (
         <p role='alert'>
           {q.error === 'blocked'
@@ -50,7 +71,7 @@ export default async function AgencyBilling({
       )}
       <div className='agency-columns'>
         <form action={saveTermsAction} className='agency-form'>
-          <h2 className='font-semibold'>Deal pricing</h2>
+          <h2 className='font-medium'>Deal pricing</h2>
           <label>
             Deal
             <select name='dealId' required>
@@ -89,7 +110,7 @@ export default async function AgencyBilling({
         </form>
 
         <form action={createInvoiceAction} className='agency-form'>
-          <h2 className='font-semibold'>Create invoice draft</h2>
+          <h2 className='font-medium'>Create invoice draft</h2>
           <label>
             Deal
             <select name='dealId' required>
@@ -133,18 +154,46 @@ export default async function AgencyBilling({
           </Button>
         </form>
       </div>
-      <section>
-        <h2 className='font-semibold'>Agreed draft terms</h2>
-        {data.terms.map((t) => (
-          <p key={t.deal_id}>
-            {deals.find((d) => d.id === t.deal_id)?.name ?? 'Deal'}: {usd(t.setup_cents)} setup;{' '}
-            {t.monthly_cents ? `${usd(t.monthly_cents)} / month` : 'No recurring fee'}; installments{' '}
-            {t.installments.map(usd).join(', ') || 'None'}
-          </p>
-        ))}
+      <section className='space-y-3' aria-label='Agreed draft terms'>
+        <h2 className='font-medium'>Agreed draft terms</h2>
+        {data.terms.length === 0 ? (
+          <AgencyEmptyState
+            title='No deal terms yet'
+            description='Pick a deal and save its setup and monthly fee. Nothing is charged.'
+          />
+        ) : (
+          <div className='bg-card overflow-hidden rounded-[var(--radius-card)] border'>
+            <Table scrollLabel='Agreed deal terms'>
+              <TableHeader className='bg-surface-sunken'>
+                <TableRow>
+                  <TableHead>Deal</TableHead>
+                  <TableHead>Setup</TableHead>
+                  <TableHead>Monthly</TableHead>
+                  <TableHead>Installments</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data.terms.map((t) => (
+                  <TableRow key={t.deal_id}>
+                    <TableCell className='font-medium'>
+                      {t.deal_title ?? deals.find((d) => d.id === t.deal_id)?.name ?? 'Deal'}
+                    </TableCell>
+                    <TableCell className='tabular-nums'>{usd(t.setup_cents)}</TableCell>
+                    <TableCell className='tabular-nums'>
+                      {t.monthly_cents ? `${usd(t.monthly_cents)} / month` : 'No recurring fee'}
+                    </TableCell>
+                    <TableCell className='tabular-nums'>
+                      {t.installments.map(usd).join(', ') || 'None'}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
       </section>
       <section className='agency-ledger my-8 space-y-3'>
-        <h2 className='font-semibold'>Invoices — stub ledger</h2>
+        <h2 className='font-medium'>Invoices — stub ledger</h2>
         {!data.invoices.length && (
           <AgencyEmptyState
             title='No invoice drafts yet'
@@ -155,8 +204,10 @@ export default async function AgencyBilling({
           <article key={i.id} className='agency-panel space-y-4'>
             <p>
               {agencyBillingCycle(i.cycle_key)} · <strong>{usd(i.amount_cents)}</strong> ·{' '}
-              <AgencyStatus value={i.status} /> · Due{' '}
-              <time dateTime={String(i.due_on)}>{agencyDate(String(i.due_on))}</time>
+              <StatusPill tone={invoiceTone[i.status] ?? 'neutral'}>
+                {invoiceWord[i.status] ?? i.status}
+              </StatusPill>{' '}
+              · Due <time dateTime={String(i.due_on)}>{agencyDate(String(i.due_on))}</time>
             </p>
             {!productionSimulationRefused() && (
               <div className='flex flex-wrap gap-3'>
@@ -178,7 +229,7 @@ export default async function AgencyBilling({
         ))}
       </section>
       <section className='my-6 space-y-3'>
-        <h2 className='font-semibold'>Overdue reminder drafts</h2>
+        <h2 className='font-medium'>Overdue reminder drafts</h2>
         <form action={dunningAction}>
           <Button type='submit' variant='outline'>
             Draft overdue reminders
@@ -189,6 +240,6 @@ export default async function AgencyBilling({
         ))}
         <p>Review drafts before any future manual delivery. Nothing is sent or charged.</p>
       </section>
-    </PageContainer>
+    </div>
   );
 }

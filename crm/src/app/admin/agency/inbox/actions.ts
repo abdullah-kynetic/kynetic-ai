@@ -9,6 +9,6 @@ export async function logDmAction(form: FormData) {
     platform: String(form.get('platform') ?? ''),
     body: String(form.get('body') ?? '')
   });
-  revalidatePath('/admin/agency/inbox');
-  revalidatePath('/admin/agency');
+  revalidatePath('/admin/sales/inbox');
+  revalidatePath('/admin/prospecting');
 }

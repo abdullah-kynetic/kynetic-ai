@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
@@ -83,69 +83,73 @@ export default async function AdminUsersPage({
           </Button>
         </form>
 
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Email</TableHead>
-              <TableHead>Client</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Last sign-in</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rows.length === 0 && (
+        <div className='bg-card rounded-xl border [contain:inline-size]'>
+          <Table scrollLabel='Users'>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={6} className='text-muted-foreground'>
-                  No users match.
-                </TableCell>
+                <TableHead>Email</TableHead>
+                <TableHead>Client</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Last sign-in</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
-            )}
-            {rows.map((r) => (
-              <TableRow key={`${r.userId ?? r.invitationId}:${r.tenantId ?? 'none'}`}>
-                <TableCell>
-                  <div className='font-medium'>{r.email}</div>
-                  {r.name && <div className='text-muted-foreground text-xs'>{r.name}</div>}
-                </TableCell>
-                <TableCell>{r.tenantName ?? 'Kynetic'}</TableCell>
-                <TableCell>
-                  {r.kyneticRole
-                    ? r.kyneticRole === 'admin'
-                      ? 'Kynetic admin'
-                      : 'Kynetic VA'
-                    : r.membershipRole === 'owner'
-                      ? 'Owner'
-                      : 'Staff'}
-                </TableCell>
-                <TableCell>
-                  <StatusBadge tone={TONE[r.status]}>{LABEL[r.status]}</StatusBadge>
-                </TableCell>
-                <TableCell>
-                  {r.status === 'invited'
-                    ? `Expires ${r.inviteExpiresAt?.toLocaleDateString('en-US') ?? ''}`
-                    : (r.lastLoginAt?.toLocaleDateString('en-US') ?? 'Never')}
-                </TableCell>
-                <TableCell>
-                  {r.userId && r.status !== 'invited' ? (
-                    <UserActions
-                      viewerRole={user.kyneticRole!}
-                      row={{
-                        userId: r.userId,
-                        email: r.email,
-                        status: r.status,
-                        kyneticRole: r.kyneticRole,
-                        tenantId: r.tenantId,
-                        membershipRole: r.membershipRole,
-                        isSelf: r.userId === user.id
-                      }}
-                    />
-                  ) : null}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {rows.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} className='text-muted-foreground'>
+                    No users match.
+                  </TableCell>
+                </TableRow>
+              )}
+              {rows.map((r) => (
+                <TableRow key={`${r.userId ?? r.invitationId}:${r.tenantId ?? 'none'}`}>
+                  <TableCell className='max-w-56 py-2 wrap-anywhere whitespace-normal'>
+                    <div className='font-medium'>{r.email}</div>
+                    {r.name && <div className='text-muted-foreground text-xs'>{r.name}</div>}
+                  </TableCell>
+                  <TableCell className='max-w-40 wrap-anywhere whitespace-normal'>
+                    {r.tenantName ?? 'Kynetic'}
+                  </TableCell>
+                  <TableCell>
+                    {r.kyneticRole
+                      ? r.kyneticRole === 'admin'
+                        ? 'Kynetic admin'
+                        : 'Kynetic VA'
+                      : r.membershipRole === 'owner'
+                        ? 'Owner'
+                        : 'Staff'}
+                  </TableCell>
+                  <TableCell>
+                    <StatusBadge tone={TONE[r.status]}>{LABEL[r.status]}</StatusBadge>
+                  </TableCell>
+                  <TableCell>
+                    {r.status === 'invited'
+                      ? `Expires ${r.inviteExpiresAt?.toLocaleDateString('en-US') ?? ''}`
+                      : (r.lastLoginAt?.toLocaleDateString('en-US') ?? 'Never')}
+                  </TableCell>
+                  <TableCell>
+                    {r.userId && r.status !== 'invited' ? (
+                      <UserActions
+                        viewerRole={user.kyneticRole!}
+                        row={{
+                          userId: r.userId,
+                          email: r.email,
+                          status: r.status,
+                          kyneticRole: r.kyneticRole,
+                          tenantId: r.tenantId,
+                          membershipRole: r.membershipRole,
+                          isSelf: r.userId === user.id
+                        }}
+                      />
+                    ) : null}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </PageContainer>
   );

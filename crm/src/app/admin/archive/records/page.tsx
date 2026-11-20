@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { NativeSelect } from '@/components/ui/native-select';

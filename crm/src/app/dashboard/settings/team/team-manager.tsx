@@ -46,13 +46,13 @@ export function TeamManager({ initial }: { initial: { members: Member[]; invites
         </p>
       )}
       <section aria-labelledby='members' className='space-y-3'>
-        <h2 id='members' className='text-lg font-semibold'>
+        <h2 id='members' className='text-lg font-medium'>
           Members
         </h2>
         <ul className='divide-y rounded-md border'>
           {initial.members.map((m) => (
             <li key={m.userId} className='flex flex-wrap items-center gap-3 p-3 text-sm'>
-              <span className='min-w-0 flex-1 truncate'>
+              <span className='min-w-0 basis-full break-words sm:basis-auto sm:flex-1'>
                 {m.name ?? m.email} <span className='text-muted-foreground'>({m.role})</span>
               </span>
               {m.role === 'staff' && (
@@ -100,7 +100,7 @@ export function TeamManager({ initial }: { initial: { members: Member[]; invites
       </section>
 
       <section aria-labelledby='invites' className='space-y-3'>
-        <h2 id='invites' className='text-lg font-semibold'>
+        <h2 id='invites' className='text-lg font-medium'>
           Invite staff
         </h2>
         <form
@@ -126,7 +126,7 @@ export function TeamManager({ initial }: { initial: { members: Member[]; invites
           <ul className='divide-y rounded-md border'>
             {initial.invites.map((i) => (
               <li key={i.id} className='flex items-center gap-3 p-3 text-sm'>
-                <span className='flex-1 truncate'>{i.email}</span>
+                <span className='min-w-0 flex-1 break-all'>{i.email}</span>
                 <Button
                   variant='outline'
                   size='sm'

@@ -24,11 +24,11 @@ export async function createCampaignAction(form: FormData) {
     if (!(error instanceof AppError)) throw error;
     invalid = true;
   }
-  revalidatePath('/admin/agency/campaigns');
-  if (invalid) redirect('/admin/agency/campaigns?error=invalid');
+  revalidatePath('/admin/prospecting/campaigns');
+  if (invalid) redirect('/admin/prospecting/campaigns?error=invalid');
 }
 export async function assignCampaignAction(campaignId: string, form: FormData) {
   await assignAgencyCampaign(await caller(), campaignId, String(form.get('contactId') ?? ''));
-  revalidatePath('/admin/agency/campaigns');
-  revalidatePath('/admin/agency/dialer');
+  revalidatePath('/admin/prospecting/campaigns');
+  revalidatePath('/admin/prospecting/dialer');
 }

@@ -1,5 +1,5 @@
 /* oxlint-disable jsx-a11y/no-noninteractive-tabindex -- scrollable table regions must be keyboard focusable (WCAG 2.1.1) */
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { Button } from '@/components/ui/button';
 import { decideAdminAccess, listBackups } from '@/server/admin';
 import { headers } from 'next/headers';
@@ -15,7 +15,7 @@ export default async function BackupsPage() {
   return (
     <PageContainer
       pageTitle='Backups'
-      pageDescription='Encrypted database backup history and restore test status.'
+      pageDescription='Encrypted database backup history and restore test status'
       pageHeaderAction={
         access.role === 'admin' ? (
           <form action={startBackup}>
@@ -25,13 +25,13 @@ export default async function BackupsPage() {
       }
     >
       <div
-        className='overflow-x-auto rounded border'
+        className='bg-card focus-visible:outline-ring overflow-x-auto rounded-xl border focus-visible:outline-2 focus-visible:outline-offset-2'
         role='region'
         aria-label='Backup history'
         tabIndex={0}
       >
         <table className='w-full text-left text-sm'>
-          <thead>
+          <thead className='bg-muted/50 text-muted-foreground'>
             <tr>
               <th className='p-3'>Started</th>
               <th className='p-3'>Kind</th>
@@ -55,7 +55,7 @@ export default async function BackupsPage() {
                       ? 'Passed'
                       : 'Failed'}
                 </td>
-                <td className='p-3'>{row.offsiteKey ?? '—'}</td>
+                <td className='max-w-72 p-3 wrap-anywhere'>{row.offsiteKey ?? '—'}</td>
               </tr>
             ))}
             {rows.length === 0 && (

@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import {
   decideAdminAccess,
   listAdminTenantOverview,
@@ -42,7 +42,7 @@ export default async function OperationsPage() {
   return (
     <PageContainer
       pageTitle='Jobs and integrations'
-      pageDescription='Integration health and staff review controls.'
+      pageDescription='Integration health and staff review controls'
     >
       {pause && (
         <PauseControls
@@ -54,11 +54,11 @@ export default async function OperationsPage() {
       )}
       {access.role === 'admin' && (
         <section className='mb-8 space-y-3' aria-labelledby='alerts-heading'>
-          <h2 id='alerts-heading' className='text-lg font-semibold'>
+          <h2 id='alerts-heading' className='text-lg font-medium'>
             Admin alerts
           </h2>
           {notices.length ? (
-            <ul className='divide-y rounded-lg border'>
+            <ul className='bg-card divide-y rounded-xl border'>
               {notices.map((notice) => (
                 <li key={notice.id} className='p-3'>
                   <p className='font-medium'>{notice.title}</p>
@@ -72,12 +72,12 @@ export default async function OperationsPage() {
         </section>
       )}
       <section className='mb-8 space-y-3' aria-labelledby='integrations-heading'>
-        <h2 id='integrations-heading' className='text-lg font-semibold'>
+        <h2 id='integrations-heading' className='text-lg font-medium'>
           Integration health
         </h2>
         {integrations.length ? (
           <div
-            className='overflow-x-auto rounded-lg border'
+            className='bg-card overflow-x-auto rounded-xl border'
             role='region'
             aria-label='Integration health table'
             tabIndex={0}
@@ -112,11 +112,11 @@ export default async function OperationsPage() {
         )}
       </section>
       <section className='mb-8 space-y-3' aria-labelledby='flagged-heading'>
-        <h2 id='flagged-heading' className='text-lg font-semibold'>
+        <h2 id='flagged-heading' className='text-lg font-medium'>
           Flagged calls for review
         </h2>
         {flagged.length ? (
-          <ul className='divide-y rounded-lg border'>
+          <ul className='bg-card divide-y rounded-xl border'>
             {flagged.map((row) => (
               <li key={row.callId} className='flex flex-wrap items-center gap-3 p-3'>
                 <div className='min-w-0 flex-1'>
@@ -143,14 +143,14 @@ export default async function OperationsPage() {
       </section>
       {access.role === 'admin' && (
         <section className='space-y-3' aria-labelledby='controls-heading'>
-          <h2 id='controls-heading' className='text-lg font-semibold'>
+          <h2 id='controls-heading' className='text-lg font-medium'>
             Tenant controls
           </h2>
-          <ul className='divide-y rounded-lg border'>
+          <ul className='bg-card divide-y rounded-xl border'>
             {tenants.map((tenant) => (
               <li key={tenant.tenantId} className='flex flex-wrap items-center gap-3 p-3'>
                 <Link
-                  className='min-h-11 flex-1 underline'
+                  className='flex min-h-11 min-w-0 flex-1 items-center wrap-anywhere underline'
                   href={`/admin/clients/${tenant.tenantId}/alex`}
                 >
                   {tenant.name} · Alex configuration
@@ -187,11 +187,11 @@ export default async function OperationsPage() {
       )}
       {access.role === 'admin' && (
         <section className='mt-8 space-y-3' aria-labelledby='webhook-heading'>
-          <h2 id='webhook-heading' className='text-lg font-semibold'>
+          <h2 id='webhook-heading' className='text-lg font-medium'>
             Failed webhooks
           </h2>
           {failedWebhooks.length ? (
-            <ul className='divide-y rounded-lg border'>
+            <ul className='bg-card divide-y rounded-xl border'>
               {failedWebhooks.map((event) => (
                 <li key={event.eventId} className='flex flex-wrap items-center gap-3 p-3'>
                   <div className='min-w-0 flex-1'>
@@ -218,12 +218,12 @@ export default async function OperationsPage() {
       )}
       {access.role === 'admin' && (
         <section className='mt-8 space-y-3' aria-labelledby='jobs-heading'>
-          <h2 id='jobs-heading' className='text-lg font-semibold'>
+          <h2 id='jobs-heading' className='text-lg font-medium'>
             Recent jobs
           </h2>
           {recentJobs.length ? (
             <div
-              className='overflow-x-auto rounded-lg border'
+              className='bg-card overflow-x-auto rounded-xl border'
               role='region'
               aria-label='Recent jobs table'
               tabIndex={0}

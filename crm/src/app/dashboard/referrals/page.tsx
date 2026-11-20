@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { Badge } from '@/components/ui/badge';
 import { EmptyState } from '@/components/ui/states';
 import {
@@ -109,14 +109,14 @@ export default async function ReferralsPage({
   return (
     <PageContainer
       pageTitle='Referrals'
-      pageDescription='People your customers send your way, and the rewards you owe.'
+      pageDescription='People your customers send your way, and the rewards you owe'
       pageHeaderAction={<NewReferral contacts={contacts} />}
     >
       <div className='grid gap-4 sm:grid-cols-3'>
         {kpis.map(([label, value]) => (
-          <div key={label} className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
+          <div key={label} className='rounded-[var(--radius-card)] bg-card p-4 sm:p-5 border'>
             <p className='text-muted-foreground text-sm'>{label}</p>
-            <p className='mt-2 text-2xl font-semibold'>{value}</p>
+            <p className='mt-2 text-2xl font-medium'>{value}</p>
           </div>
         ))}
       </div>

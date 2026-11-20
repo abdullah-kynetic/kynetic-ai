@@ -68,6 +68,8 @@ async function seedTenant(
   const n = key === 'a' ? 1 : 2;
   await admin`insert into tenants (id, slug, name, plan, timezone) values
     (${t}, ${'tenant-' + key}, ${'Tenant ' + key.toUpperCase()}, 'founding', 'America/Los_Angeles')`;
+  await admin`insert into client_lifecycle (tenant_id, stage, updated_by)
+    values (${t}, 'onboarding', ${owner})`;
   await admin`insert into memberships (tenant_id, user_id, role) values (${t}, ${owner}, 'owner')`;
   if (staff)
     await admin`insert into memberships (tenant_id, user_id, role) values (${t}, ${staff}, 'staff')`;

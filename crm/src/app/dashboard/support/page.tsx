@@ -1,6 +1,6 @@
 import { headers } from 'next/headers';
 import Link from 'next/link';
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { statusLabel } from '@/components/support/thread';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -82,7 +82,7 @@ export default async function SupportPage({
           </div>
         </form>
         <section aria-labelledby='support-history' className='grid gap-3'>
-          <h2 id='support-history' className='text-lg font-semibold'>
+          <h2 id='support-history' className='text-lg font-medium'>
             Your requests
           </h2>
           {requests.length === 0 ? (

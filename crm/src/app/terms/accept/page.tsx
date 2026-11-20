@@ -20,28 +20,35 @@ export default async function AcceptTermsPage({
   const query = await searchParams;
   const next = safeNextPath(query.next);
   return (
-    <main className='mx-auto grid max-w-2xl gap-6 px-4 py-10'>
-      <h1 className='text-2xl font-semibold'>Terms and privacy</h1>
-      <p role='status' className='rounded border p-3 text-sm font-medium'>
-        Draft wording. Counsel has not approved this text.
-      </p>
-      {CURRENT_DOCUMENTS.map((document) => (
-        <section key={document.document} aria-labelledby={`doc-${document.document}`}>
-          <h2 id={`doc-${document.document}`} className='text-lg font-semibold'>
-            {document.title}
-          </h2>
-          <p className='text-muted-foreground text-xs'>Version {document.version}</p>
-          {document.paragraphs.map((paragraph) => (
-            <p key={paragraph} className='mt-2 text-sm'>
-              {paragraph}
-            </p>
-          ))}
-        </section>
-      ))}
-      <form action={acceptTermsAction}>
-        <input type='hidden' name='next' value={next} />
-        <Button type='submit'>I accept</Button>
-      </form>
+    <main id='main-content' className='bg-background min-h-svh px-4 py-10'>
+      <div className='bg-card mx-auto grid max-w-2xl gap-6 rounded-[var(--radius-card)] border p-6 sm:p-8'>
+        <h1 className='text-[28px]/[1.15] font-medium tracking-[-0.01em] sm:text-[32px]/[1.1]'>
+          Terms and privacy
+        </h1>
+        <p
+          role='status'
+          className='bg-attention-soft text-attention rounded-[var(--radius-control)] p-3 text-sm font-medium'
+        >
+          Draft wording. Counsel has not approved this text.
+        </p>
+        {CURRENT_DOCUMENTS.map((document) => (
+          <section key={document.document} aria-labelledby={`doc-${document.document}`}>
+            <h2 id={`doc-${document.document}`} className='text-lg font-medium'>
+              {document.title}
+            </h2>
+            <p className='text-muted-foreground text-xs'>Version {document.version}</p>
+            {document.paragraphs.map((paragraph) => (
+              <p key={paragraph} className='mt-2 text-sm'>
+                {paragraph}
+              </p>
+            ))}
+          </section>
+        ))}
+        <form action={acceptTermsAction}>
+          <input type='hidden' name='next' value={next} />
+          <Button type='submit'>I accept</Button>
+        </form>
+      </div>
     </main>
   );
 }

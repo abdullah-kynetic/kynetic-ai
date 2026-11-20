@@ -45,17 +45,13 @@ describe('decideAdminAccess (M8a-01, F-53 shell)', () => {
 });
 
 describe('admin navigation (M8a-01)', () => {
-  it('has the six phase 7 groups and one entry point per group', () => {
-    expect(adminNavGroups.map((g) => g.label)).toEqual([
-      'Today',
-      'Sales',
-      'Clients',
-      'Money',
-      'Build',
-      'System'
-    ]);
+  it('has six top-level business areas and no sidebar sub-pages', () => {
+    expect(adminNavGroups.map((g) => g.label)).toEqual(['Business']);
     const urls = adminNavGroups.flatMap((g) => g.items.map((i) => i.url));
     expect(urls).toContain('/admin/clients');
+    expect(adminNavGroups.flatMap((g) => g.items).every((item) => item.items?.length === 0)).toBe(
+      true
+    );
     expect(new Set(adminNavGroups.flatMap((g) => g.items.map((i) => i.title))).size).toBe(
       adminNavGroups.flatMap((g) => g.items).length
     );
@@ -69,50 +65,39 @@ describe('admin navigation (M8a-01)', () => {
     );
     expect(admin.flatMap((g) => g.items.map((i) => i.url))).toEqual([
       '/admin',
-      '/admin/agency',
-      '/admin/agency/dialer',
-      '/admin/agency/inbox',
-      '/admin/agency/campaigns',
-      '/admin/agency/proposals',
-      '/admin/agency/contracts',
       '/admin/clients',
-      '/admin/clients/new',
-      '/admin/support',
-      '/admin/system-requests',
-      '/admin/agency/finance',
-      '/admin/agency/billing',
-      '/admin/usage',
-      '/admin/templates',
-      '/admin/operations',
-      '/admin/users',
-      '/admin/backups',
-      '/admin/archive',
-      '/admin/audit'
+      '/admin/prospecting',
+      '/admin/sales',
+      '/admin/money',
+      '/admin/settings'
     ]);
     const va = visibleNavGroups(
       adminNavGroups,
       { keys: new Set(['platform']), crmLevel: null },
       'va'
     );
-    expect(va.map((g) => g.label)).toEqual(['Today', 'Clients', 'Build', 'System']);
+    expect(va.map((g) => g.label)).toEqual(['Business']);
     expect(va.flatMap((g) => g.items.map((i) => i.url))).toEqual([
       '/admin',
       '/admin/clients',
-      '/admin/clients/new',
-      '/admin/support',
-      '/admin/system-requests',
-      '/admin/operations',
-      '/admin/users',
-      '/admin/backups',
-      '/admin/archive',
-      '/admin/audit'
+      '/admin/settings',
+      '/admin/help'
     ]);
-    expect(va.flatMap((g) => g.items.map((i) => i.url))).not.toContain('/admin/usage');
+    expect(admin[0]!.items).toHaveLength(6);
+    expect(va[0]!.items).toHaveLength(4);
   });
 
   it('keeps the admin entry out of the client registry', () => {
     const urls = navGroups.flatMap((g) => g.items.map((i) => i.url));
     expect(urls).not.toContain('/admin');
     expect(adminEntryGroup.items[0].url).toBe('/admin');
+    expect(urls).toEqual([
+      '/dashboard',
+      '/dashboard/leads',
+      '/dashboard/bookings',
+      '/dashboard/reputation',
+      '/dashboard/settings',
+      '/dashboard/help'
+    ]);
   });
 });

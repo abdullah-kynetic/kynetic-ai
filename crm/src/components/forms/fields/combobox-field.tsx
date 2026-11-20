@@ -23,7 +23,7 @@ export function ComboboxField({
   required,
   options,
   placeholder = 'Select an option',
-  searchPlaceholder = 'Search...',
+  searchPlaceholder = 'Search',
   emptyMessage = 'No results found.'
 }: BaseFieldProps & {
   options: { value: string; label: string; disabled?: boolean }[];

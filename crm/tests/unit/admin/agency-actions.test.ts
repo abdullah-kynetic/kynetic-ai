@@ -86,7 +86,7 @@ describe('M16 F-05/F-17 agency actions', () => {
         channel: 'cold_call'
       }
     );
-    expect(mocks.revalidate).toHaveBeenCalledWith('/admin/agency');
+    expect(mocks.revalidate).toHaveBeenCalledWith('/admin/prospecting');
   });
   it('returns fixed UI error feedback without exposing submitted data or backend details', async () => {
     mocks.access.mockResolvedValue({ kind: 'ok', role: 'admin', user: { id: 'synthetic-admin' } });
@@ -94,7 +94,7 @@ describe('M16 F-05/F-17 agency actions', () => {
       new AppError('CONFLICT', { message: 'synthetic-private-backend-detail' })
     );
     await expect(createAgencyLeadAction(form())).rejects.toThrow(
-      'REDIRECT:/admin/agency?error=invalid'
+      'REDIRECT:/admin/prospecting?error=invalid'
     );
   });
 });

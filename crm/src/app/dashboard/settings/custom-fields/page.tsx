@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { SettingsPage } from '../settings-page';
 import { CustomFieldsManager } from '@/features/custom-fields/custom-fields-manager';
 import { customFieldsScope, listFieldDefs } from '@/server/custom-fields';
 import { headers } from 'next/headers';
@@ -12,18 +12,18 @@ export default async function CustomFieldsPage() {
   const scope = await customFieldsScope(await headers());
   if (!scope) {
     return (
-      <PageContainer pageTitle='Custom fields' access={false}>
+      <SettingsPage pageTitle='Custom fields' access={false}>
         {null}
-      </PageContainer>
+      </SettingsPage>
     );
   }
   const defs = await listFieldDefs(scope.ctx);
   return (
-    <PageContainer
+    <SettingsPage
       pageTitle='Custom fields'
       pageDescription='Add fields that are specific to your business. They show up on every contact, in the list and in filters.'
     >
       <CustomFieldsManager defs={defs} canEdit={scope.canEdit} />
-    </PageContainer>
+    </SettingsPage>
   );
 }

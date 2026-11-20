@@ -2,18 +2,20 @@ import { expect, test } from './fixtures';
 
 const CLIENT = '11111111-1111-4111-8111-111111111111';
 
-test('Clients list: headline, numbers, pills with words, and the health legend', async ({
+test('Clients tables: headline, numbers, pills with words, and the health legend', async ({
   adminPage: page
 }) => {
+  await page.goto('/admin/clients/operations');
+  await expect(page.getByRole('heading', { name: 'All clients' })).toBeVisible();
+  await expect(
+    page.getByRole('main').getByRole('link', { name: 'Onboard a client' }).first()
+  ).toBeVisible();
+  await expect(page.getByRole('row').filter({ hasText: 'Tenant C' })).toContainText('At risk');
   await page.goto('/admin/clients');
-  await expect(page.getByRole('heading', { level: 1, name: 'All clients' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: 'Clients' })).toHaveCount(1);
   await expect(
     page.getByRole('list', { name: 'Clients in numbers' }).getByRole('listitem')
   ).toHaveCount(4);
-  await expect(
-    page.getByRole('main').getByRole('link', { name: 'Onboard a client' })
-  ).toBeVisible();
-  await expect(page.getByRole('row').filter({ hasText: 'Tenant C' })).toContainText('At risk');
 });
 
 test('Client page: tabs sit above the content and mark the current page', async ({

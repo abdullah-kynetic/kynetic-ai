@@ -86,7 +86,7 @@ export default async function UsagePage({
     ['Margin', feeRows.length ? formatCents(totalMargin) : 'Not recorded']
   ];
   return (
-    <div className='mx-auto flex w-full max-w-[1280px] flex-1 flex-col gap-6 px-4 pt-2 pb-8 md:px-6 md:pt-4'>
+    <div className='mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 pt-2 pb-8 md:px-6 md:pt-4'>
       <PageHeader
         title='Usage'
         description='Minutes, messages, provider cost, and the fee already recorded for each client. Clients do not see this page.'
@@ -95,7 +95,7 @@ export default async function UsagePage({
         {stats.map(([label, value]) => (
           <div key={label} className='bg-card rounded-[var(--radius-card)] border p-5'>
             <dt className='text-muted-foreground text-sm'>{label}</dt>
-            <dd className='mt-1 text-2xl font-semibold tabular-nums'>{value}</dd>
+            <dd className='mt-1 text-2xl font-medium tabular-nums'>{value}</dd>
           </div>
         ))}
       </dl>
@@ -128,7 +128,7 @@ export default async function UsagePage({
           aria-label='Cost versus recorded fee'
           className='bg-card  rounded-[var(--radius-card)] border p-5'
         >
-          <h2 className='mb-3 font-semibold'>Cost vs fee by client</h2>
+          <h2 className='mb-3 font-medium'>Cost vs fee by client</h2>
           <CostVsFeeChart
             rows={rows.map((row): UsageChartRow => ({
               tenantName: row.tenantName,

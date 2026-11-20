@@ -87,3 +87,11 @@ export {
   provisionClientAutomations,
   type OnboardingAutomationResult
 } from './onboarding-automation';
+export {
+  LIFECYCLE_STAGES,
+  defaultLifecycleStage,
+  isLifecycleStage,
+  listClientLifecycle,
+  moveClientLifecycle,
+  type LifecycleStage
+} from './client-lifecycle';

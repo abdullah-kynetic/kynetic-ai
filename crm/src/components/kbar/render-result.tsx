@@ -17,9 +17,7 @@ export default function RenderResults() {
       items={results}
       onRender={({ item, active }) =>
         typeof item === 'string' ? (
-          <div className='text-muted-foreground px-4 pt-3 pb-1 text-xs font-medium tracking-wider uppercase'>
-            {item}
-          </div>
+          <div className='text-muted-foreground px-4 pt-3 pb-1 text-xs font-medium'>{item}</div>
         ) : (
           <ResultItem action={item} active={active} currentRootActionId={rootActionId ?? ''} />
         )

@@ -11,15 +11,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import Link from 'next/link';
 
 export type ShellUser = { name: string | null; email: string; roleLabel: string };
 
 export function UserMenu({
   user,
-  showPersonas = false
+  showPersonas = false,
+  adminHref
 }: {
   user: ShellUser;
   showPersonas?: boolean;
+  adminHref?: string;
 }) {
   return (
     <DropdownMenu>
@@ -37,6 +40,14 @@ export function UserMenu({
             <span className='text-muted-foreground text-xs'>{user.roleLabel}</span>
           </DropdownMenuLabel>
         </DropdownMenuGroup>
+        {adminHref && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem render={<Link href={adminHref} aria-label='Kynetic admin' />}>
+              Kynetic admin
+            </DropdownMenuItem>
+          </>
+        )}
         {showPersonas && (
           <>
             <DropdownMenuSeparator />

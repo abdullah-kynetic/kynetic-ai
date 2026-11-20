@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { buttonVariants } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/states';
 import { MessageLogTable } from '@/components/messages/message-log-table';
@@ -81,7 +81,7 @@ export default async function MessagesPage({ searchParams }: { searchParams: Sea
   return (
     <PageContainer
       pageTitle='Messages'
-      pageDescription='Every text and email sent or received, with delivery status.'
+      pageDescription='Every text and email sent or received, with delivery status'
     >
       <MessageLogFilters channel={query.channel} status={query.status} />
       {page.rows.length === 0 ? (

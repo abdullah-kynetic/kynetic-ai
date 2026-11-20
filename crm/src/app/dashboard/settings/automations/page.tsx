@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { SettingsPage } from '../settings-page';
 import { AutomationHistoryDrawer } from '@/components/automations/history-drawer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -37,10 +37,15 @@ export default async function AutomationSettingsPage() {
     )
   );
   return (
-    <PageContainer
+    <SettingsPage
       pageTitle='Automations'
-      pageDescription='Turn approved follow-up templates on or off, and see how recent runs finished.'
+      pageDescription='Turn approved follow-up templates on or off, and see how recent runs finished'
     >
+      {!canEdit && (
+        <p role='status' className='bg-card rounded-xl border p-4 text-sm'>
+          Only the account owner can change automations. You can review their recent history here.
+        </p>
+      )}
       <div className='grid gap-4 md:grid-cols-2'>
         {templates.map(({ key, label, moduleKey, automation }) => {
           const history = byKey.get(key);
@@ -58,11 +63,13 @@ export default async function AutomationSettingsPage() {
                     runs={history.runs}
                   />
                 ) : null}
-                <form action={toggleAutomation.bind(null, key, !automation?.enabled)}>
-                  <Button type='submit' variant={automation?.enabled ? 'outline' : 'default'}>
-                    {automation?.enabled ? 'Disable' : 'Enable'}
-                  </Button>
-                </form>
+                {canEdit && (
+                  <form action={toggleAutomation.bind(null, key, !automation?.enabled)}>
+                    <Button type='submit' variant={automation?.enabled ? 'outline' : 'default'}>
+                      {automation?.enabled ? 'Disable' : 'Enable'}
+                    </Button>
+                  </form>
+                )}
                 {edits.get(key) ? (
                   <EditSection
                     templateKey={key}
@@ -76,7 +83,7 @@ export default async function AutomationSettingsPage() {
           );
         })}
       </div>
-    </PageContainer>
+    </SettingsPage>
   );
 }
 

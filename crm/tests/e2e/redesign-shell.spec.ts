@@ -72,10 +72,11 @@ test('every write during View as client is refused with a clear message', async 
   const origin = new URL(page.url()).origin;
   // A server-action style POST to a dashboard page, a JSON POST, and a PUT/DELETE: all refused.
   for (const [method, path] of [
-    ['post', '/dashboard/tasks'],
-    ['post', '/dashboard/contacts'],
+    // Old addresses answer 301, which turns a POST into a GET, so the writes go to the new ones.
+    ['post', '/dashboard/leads/tasks'],
+    ['post', '/dashboard/leads/contacts'],
     ['put', '/dashboard/settings/business'],
-    ['delete', '/dashboard/contacts']
+    ['delete', '/dashboard/leads/contacts']
   ] as const) {
     const res = await page.request[method](path, {
       headers: { origin, 'content-type': 'application/json' },

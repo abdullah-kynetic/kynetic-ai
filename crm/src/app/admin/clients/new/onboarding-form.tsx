@@ -80,7 +80,10 @@ export function OnboardingForm() {
   const fe = state.status === 'error' ? state.fieldErrors : undefined;
 
   return (
-    <form action={action} className='grid max-w-3xl gap-6'>
+    <form
+      action={action}
+      className='bg-card grid max-w-3xl gap-6 rounded-[var(--radius-card)] border p-5 sm:p-6'
+    >
       {state.status === 'error' && (
         <p role='alert' className='text-destructive text-sm'>
           {state.message}
@@ -129,8 +132,8 @@ export function OnboardingForm() {
         </FieldRow>
       </div>
 
-      <fieldset className='grid gap-3'>
-        <legend className='text-sm font-medium'>Business hours</legend>
+      <fieldset className='bg-surface-sunken grid gap-3 rounded-[var(--radius-panel)] p-4'>
+        <legend className='px-1 text-sm font-medium'>Business hours</legend>
         <div className='flex flex-wrap gap-4'>
           {DAY_LABELS.map(([v, l]) => (
             <div key={v} className='flex items-center gap-2'>
@@ -206,8 +209,8 @@ export function OnboardingForm() {
         </FieldRow>
       </div>
 
-      <fieldset className='grid gap-2'>
-        <legend className='text-sm font-medium'>Modules</legend>
+      <fieldset className='bg-surface-sunken grid gap-2 rounded-[var(--radius-panel)] p-4'>
+        <legend className='px-1 text-sm font-medium'>Modules</legend>
         {MODULES.map(([v, l]) => (
           <div key={v} className='flex items-center gap-2'>
             <Checkbox id={`mod-${v}`} name='modules' value={v} defaultChecked={v === 'alex_core'} />
@@ -230,11 +233,14 @@ function Created({ state }: { state: Extract<OnboardState, { status: 'created' }
   const [busy, setBusy] = React.useState(false);
   return (
     <div className='grid max-w-2xl gap-4'>
-      <p role='status' className='text-sm'>
+      <p
+        role='status'
+        className='bg-gain-soft text-gain rounded-[var(--radius-control)] p-3 text-sm'
+      >
         Client <strong>{state.slug}</strong> was created with its checklist. Nothing has been sent
         to {state.ownerEmail} yet.
       </p>
-      <div className='rounded-lg border p-4'>
+      <div className='bg-surface-sunken rounded-[var(--radius-panel)] p-4'>
         <p className='text-sm font-medium'>Invite email (draft)</p>
         <p className='text-muted-foreground mt-1 text-sm'>Subject: {state.draft.subject}</p>
         <pre className='mt-2 text-sm whitespace-pre-wrap'>{state.draft.body}</pre>

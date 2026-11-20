@@ -15,11 +15,11 @@ export async function saveSequence(id: string, form: FormData) {
       instructions: String(form.get(`instructions${n}`))
     }));
   await setAgencyCampaignPlan(await agencyCaller(), id, steps);
-  revalidatePath('/admin/agency/campaigns');
+  revalidatePath('/admin/prospecting/campaigns');
 }
 export async function enrollSequence(id: string) {
   await startAgencyCampaign(await agencyCaller(), id);
-  revalidatePath('/admin/agency/campaigns');
+  revalidatePath('/admin/prospecting/campaigns');
 }
 export async function completeSequence(
   campaignId: string,
@@ -27,8 +27,13 @@ export async function completeSequence(
   stepIndex: number,
   mode: 'simulate' | 'manual_complete' | 'done'
 ) {
-  await advanceAgencyCampaign(await agencyCaller(), { campaignId, contactId, stepIndex, mode });
-  revalidatePath('/admin/agency/campaigns');
+  await advanceAgencyCampaign(await agencyCaller(), {
+    campaignId,
+    contactId,
+    stepIndex,
+    mode
+  });
+  revalidatePath('/admin/prospecting/campaigns');
 }
 export async function skipSequence(
   campaignId: string,
@@ -43,7 +48,7 @@ export async function skipSequence(
     mode: 'skip',
     reason: String(form.get('reason') ?? '')
   });
-  revalidatePath('/admin/agency/campaigns');
+  revalidatePath('/admin/prospecting/campaigns');
 }
 export async function rescheduleSequence(
   campaignId: string,
@@ -59,5 +64,5 @@ export async function rescheduleSequence(
     callbackDate: String(form.get('callbackDate') ?? ''),
     callbackTime: String(form.get('callbackTime') ?? '')
   });
-  revalidatePath('/admin/agency/campaigns');
+  revalidatePath('/admin/prospecting/campaigns');
 }

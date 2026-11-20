@@ -37,20 +37,17 @@ export default async function ProposalPage({
       pageDescription={`Agency deal: ${data.dealTitle}`}
     >
       <nav aria-label='Proposal navigation' className='mb-5 flex flex-wrap gap-4'>
-        <Link
-          href='/admin/agency/proposals'
-          className='inline-flex min-h-11 items-center underline'
-        >
+        <Link href='/admin/sales/proposals' className='inline-flex min-h-11 items-center underline'>
           All drafts
         </Link>
         <Link
-          href={`/admin/agency/proposals/${proposalId}/preview`}
+          href={`/admin/sales/proposals/${proposalId}/preview`}
           className='inline-flex min-h-11 items-center underline'
         >
           Preview saved draft
         </Link>
         <Link
-          href={`/admin/agency/contracts?deal=${data.proposal.dealId}`}
+          href={`/admin/sales/contracts?deal=${data.proposal.dealId}`}
           className='inline-flex min-h-11 items-center underline'
         >
           Contract

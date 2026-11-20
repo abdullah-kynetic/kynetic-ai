@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { Badge } from '@/components/ui/badge';
 import { EmptyState } from '@/components/ui/states';
 import {
@@ -95,7 +95,7 @@ export default async function ReviewsPage({
   return (
     <PageContainer
       pageTitle='Reviews'
-      pageDescription='Your review rating, recent snapshots and requests you have asked us to send.'
+      pageDescription='Your review rating, recent snapshots and requests you have asked us to send'
     >
       <p role='status' className='rounded border p-3 text-sm'>
         Review requests go out once live messaging is on.
@@ -103,9 +103,9 @@ export default async function ReviewsPage({
 
       <div className='mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
         {kpis.map(([label, value]) => (
-          <div key={label} className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
+          <div key={label} className='rounded-[var(--radius-card)] bg-card p-4 sm:p-5 border'>
             <p className='text-muted-foreground text-sm'>{label}</p>
-            <p className='mt-2 text-2xl font-semibold'>{value}</p>
+            <p className='mt-2 text-2xl font-medium'>{value}</p>
           </div>
         ))}
       </div>

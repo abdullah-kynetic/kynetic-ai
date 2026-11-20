@@ -1,7 +1,7 @@
 import { headers } from 'next/headers';
 import Link from 'next/link';
 import { forbidden, notFound } from 'next/navigation';
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { decideAdminAccess, listTenantExports } from '@/server/admin';
 import { loadClientOverview } from '@/server/admin/client-overview';
 import { AppError } from '@/server/errors';
@@ -79,7 +79,7 @@ export default async function OffboardPage({
         </button>
       </form>
       <section className='mt-8' aria-labelledby='exports-heading'>
-        <h2 id='exports-heading' className='text-lg font-semibold'>
+        <h2 id='exports-heading' className='text-lg font-medium'>
           Record export
         </h2>
         {exports.length === 0 ? (

@@ -12,7 +12,11 @@ import { isLogoKey, logoKey, processLogo } from './logo';
 
 export { processLogo, logoKey, isLogoKey } from './logo';
 
-export type Branding = { name: string; primaryColor: string | null; logoKey: string | null };
+export type Branding = {
+  name: string;
+  primaryColor: string | null;
+  logoKey: string | null;
+};
 
 export const LOGO_ROUTE = '/api/branding/logo';
 
@@ -46,7 +50,11 @@ export async function getBranding(ctx: TenantContextInput, deps: Deps = {}): Pro
     ctx,
     (tx) =>
       tx
-        .select({ name: tenants.name, color: tenants.primaryColor, logo: tenants.logoUrl })
+        .select({
+          name: tenants.name,
+          color: tenants.primaryColor,
+          logo: tenants.logoUrl
+        })
         .from(tenants)
         .where(eq(tenants.id, ctx.tenantId))
         .limit(1),
@@ -96,15 +104,21 @@ export async function saveBranding(
   }
   if (Object.keys(fieldErrors).length > 0) throw new ValidationError(fieldErrors);
 
-  const storage = deps.storage ?? getStorage();
   const newKey = logo ? logoKey(ctx.tenantId, logo.hash) : null;
-  if (logo && newKey) await storage.put(newKey, logo.body, { contentType: logo.contentType });
+  if (logo && newKey)
+    await (deps.storage ?? getStorage()).put(newKey, logo.body, {
+      contentType: logo.contentType
+    });
 
   const { before, after } = await withTenant(
     ctx,
     async (tx) => {
       const [prev] = await tx
-        .select({ name: tenants.name, color: tenants.primaryColor, logo: tenants.logoUrl })
+        .select({
+          name: tenants.name,
+          color: tenants.primaryColor,
+          logo: tenants.logoUrl
+        })
         .from(tenants)
         .where(eq(tenants.id, ctx.tenantId))
         .limit(1);
@@ -130,7 +144,7 @@ export async function saveBranding(
 
   // The old file is only dropped once the new row has committed.
   if (isLogoKey(before.logo) && before.logo !== after.logo) {
-    await storage.remove(before.logo).catch(() => undefined);
+    await (deps.storage ?? getStorage()).remove(before.logo).catch(() => undefined);
   }
   return {
     name: after.name,

@@ -32,10 +32,10 @@ import { notify } from '@/lib/notify';
 export function ComponentGallery() {
   return (
     <main className='mx-auto flex max-w-3xl flex-col gap-8 p-6'>
-      <h1 className='font-display text-3xl font-semibold'>Base components</h1>
+      <h1 className='font-display text-3xl font-medium'>Base components</h1>
 
       <section aria-labelledby='g-buttons' className='flex flex-col gap-3'>
-        <h2 id='g-buttons' className='text-lg font-semibold'>
+        <h2 id='g-buttons' className='text-lg font-medium'>
           Buttons
         </h2>
         <div className='flex flex-wrap gap-2'>
@@ -49,7 +49,7 @@ export function ComponentGallery() {
       </section>
 
       <section aria-labelledby='g-fields' className='flex flex-col gap-3'>
-        <h2 id='g-fields' className='text-lg font-semibold'>
+        <h2 id='g-fields' className='text-lg font-medium'>
           Fields
         </h2>
         <div className='flex flex-col gap-1.5'>
@@ -74,7 +74,7 @@ export function ComponentGallery() {
       </section>
 
       <section aria-labelledby='g-chips' className='flex flex-col gap-3'>
-        <h2 id='g-chips' className='text-lg font-semibold'>
+        <h2 id='g-chips' className='text-lg font-medium'>
           Badges
         </h2>
         <div className='flex flex-wrap gap-2'>
@@ -88,7 +88,7 @@ export function ComponentGallery() {
       </section>
 
       <section aria-labelledby='g-table' className='flex flex-col gap-3'>
-        <h2 id='g-table' className='text-lg font-semibold'>
+        <h2 id='g-table' className='text-lg font-medium'>
           Table
         </h2>
         <Table>
@@ -114,7 +114,7 @@ export function ComponentGallery() {
       </section>
 
       <section aria-labelledby='g-overlays' className='flex flex-col gap-3'>
-        <h2 id='g-overlays' className='text-lg font-semibold'>
+        <h2 id='g-overlays' className='text-lg font-medium'>
           Dialog and toast
         </h2>
         <div className='flex flex-wrap gap-2'>
@@ -141,7 +141,7 @@ export function ComponentGallery() {
       </section>
 
       <section aria-labelledby='g-states' className='flex flex-col gap-3'>
-        <h2 id='g-states' className='text-lg font-semibold'>
+        <h2 id='g-states' className='text-lg font-medium'>
           Empty, loading, error
         </h2>
         <EmptyState

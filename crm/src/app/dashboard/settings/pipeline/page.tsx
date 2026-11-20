@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { SettingsPage } from '../settings-page';
 import { can } from '@/server/auth/permissions';
 import { listStagesWithCounts, stageScope } from '@/server/deals';
 import { isModuleEnabled } from '@/server/modules';
@@ -13,26 +13,26 @@ export default async function PipelineSettingsPage() {
   // F-85: configurable stages belong to CRM Lite. Without it the board keeps the default stages.
   if (!(await isModuleEnabled(ctx, 'crm', { level: 'lite' }))) {
     return (
-      <PageContainer
+      <SettingsPage
         pageTitle='Pipeline stages'
         access={false}
         accessFallback={
-          <p className='text-muted-foreground text-center text-lg'>
+          <p className='text-muted-foreground text-sm'>
             Configurable stages are part of the CRM build-out. Ask Kynetic to add it to your plan.
           </p>
         }
       >
         {null}
-      </PageContainer>
+      </SettingsPage>
     );
   }
   const stages = await listStagesWithCounts(ctx);
   return (
-    <PageContainer
+    <SettingsPage
       pageTitle='Pipeline stages'
       pageDescription='Rename, reorder and add the stages your deals move through. Deals keep their stage.'
     >
       <StagesManager initial={stages} canEdit={can(actor, 'settings.business', ctx.tenantId)} />
-    </PageContainer>
+    </SettingsPage>
   );
 }

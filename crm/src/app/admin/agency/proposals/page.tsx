@@ -36,9 +36,9 @@ export default async function ProposalsPage({
   return (
     <PageContainer
       pageTitle='Proposal drafts'
-      pageDescription='Internal proposal drafts linked to agency deals.'
+      pageDescription='Internal proposal drafts linked to agency deals'
     >
-      <Link href='/admin/agency' className='mb-4 inline-flex min-h-11 items-center underline'>
+      <Link href='/admin/prospecting' className='mb-4 inline-flex min-h-11 items-center underline'>
         Back to agency workspace
       </Link>
       <p className='agency-notice'>
@@ -71,7 +71,7 @@ export default async function ProposalsPage({
       ) : (
         <p className='mb-8'>Add an agency lead to create its deal first.</p>
       )}
-      <h2 className='mb-3 text-lg font-semibold'>Recent drafts</h2>
+      <h2 className='mb-3 text-lg font-medium'>Recent drafts</h2>
       <p className='text-muted-foreground mb-3 text-sm'>Latest 50 drafts for live agency deals.</p>
       <ul className='space-y-3'>
         {drafts.map((d) => (
@@ -81,7 +81,7 @@ export default async function ProposalsPage({
           >
             <div>
               <Link
-                href={`/admin/agency/proposals/${d.id}`}
+                href={`/admin/sales/proposals/${d.id}`}
                 className='inline-flex min-h-11 items-center font-medium underline'
               >
                 {d.title}
@@ -89,7 +89,7 @@ export default async function ProposalsPage({
               <p className='text-muted-foreground text-sm'>{d.dealTitle} · Draft</p>
             </div>
             <Link
-              href={`/admin/agency/proposals/${d.id}/preview`}
+              href={`/admin/sales/proposals/${d.id}/preview`}
               className='inline-flex min-h-11 items-center underline'
             >
               Preview draft

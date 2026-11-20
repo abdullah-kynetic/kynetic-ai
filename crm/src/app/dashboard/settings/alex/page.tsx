@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { SettingsPage } from '../settings-page';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { can, getSessionUser, resolveActor } from '@/server/auth';
@@ -9,6 +9,7 @@ import { AlexControls } from './alex-controls';
 import { requestAlexChangeAction } from './actions';
 import { requireModule } from '@/server/modules';
 import { loadShellContext } from '@/server/shell';
+import { VIEW_AS_COOKIE } from '@/server/impersonation';
 import { withTenant } from '@/server/tenancy';
 import type { Metadata } from 'next';
 import { cookies, headers } from 'next/headers';
@@ -52,22 +53,48 @@ export default async function AlexSettingsPage({
     headers(),
     searchParams
   ]);
-  const shell = await loadShellContext(requestHeaders, cookieStore.get('tenant_id')?.value);
+  const shell = await loadShellContext(
+    requestHeaders,
+    cookieStore.get('tenant_id')?.value,
+    undefined,
+    cookieStore.get(VIEW_AS_COOKIE)?.value
+  );
   if (!shell) redirect('/sign-in');
   if (!shell.tenant) notFound();
 
   const ctx = { tenantId: shell.tenant.id, userId: shell.user.id, role: shell.role };
+  if (shell.viewAs?.readOnly) {
+    return (
+      <SettingsPage
+        pageTitle='Alex settings'
+        access={false}
+        accessFallback='This view is read-only.'
+      >
+        {null}
+      </SettingsPage>
+    );
+  }
   await requireModule(ctx, 'alex_core');
 
   const user = await getSessionUser(requestHeaders);
   if (!user) redirect('/sign-in');
   const actor = await resolveActor(user, shell.tenant.id);
-  if (!can(actor, 'alex.settings.client', shell.tenant.id)) notFound();
+  if (!can(actor, 'alex.settings.client', shell.tenant.id)) {
+    return (
+      <SettingsPage
+        pageTitle='Alex settings'
+        access={false}
+        accessFallback='Only the account owner can change Alex settings.'
+      >
+        {null}
+      </SettingsPage>
+    );
+  }
 
   const settings = await withTenant(ctx, (tx) => getAlexSettingsView(tx));
 
   return (
-    <PageContainer
+    <SettingsPage
       pageTitle='Alex settings'
       pageDescription='How Alex answers and when Alex calls. You can pause Alex and set call hours here. To change anything else, ask Kynetic.'
     >
@@ -169,6 +196,6 @@ export default async function AlexSettingsPage({
           </Card>
         </div>
       )}
-    </PageContainer>
+    </SettingsPage>
   );
 }

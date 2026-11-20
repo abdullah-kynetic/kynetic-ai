@@ -15,8 +15,7 @@ export function ThemeModeToggle() {
   const handleThemeToggle = React.useCallback(
     (e?: React.MouseEvent) => {
       const newMode = resolvedTheme === 'dark' ? 'light' : 'dark';
-      // Circular reveal from the click point (falls back to center for the
-      // keyboard shortcut, which passes no event).
+      // Short crossfade; the event is kept for callers that pass an origin.
       startThemeTransition(() => setTheme(newMode), e);
     },
     [resolvedTheme, setTheme]

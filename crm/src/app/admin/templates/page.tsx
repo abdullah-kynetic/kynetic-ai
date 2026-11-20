@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { Badge } from '@/components/ui/badge';
 import { decideAdminAccess } from '@/server/admin';
 import { INDUSTRY_TEMPLATES, INDUSTRY_TEMPLATE_KEYS } from '@/server/admin/industry-templates';
@@ -31,14 +31,14 @@ export default async function TemplateLibraryPage() {
       pageDescription='Reusable industry and system templates. Applying a template twice does not duplicate anything.'
     >
       <section aria-labelledby='industry-heading' className='space-y-4'>
-        <h2 id='industry-heading' className='text-base font-semibold'>
+        <h2 id='industry-heading' className='text-base font-medium'>
           Industry templates
         </h2>
         <div className='grid gap-4 lg:grid-cols-2'>
           {INDUSTRY_TEMPLATE_KEYS.map((key) => {
             const template = INDUSTRY_TEMPLATES[key];
             return (
-              <article key={key} className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
+              <article key={key} className='bg-card rounded-xl border p-4 sm:p-6'>
                 <h3 className='font-medium'>{template.label}</h3>
                 <dl className='mt-3 space-y-2 text-sm'>
                   <div>
@@ -79,7 +79,7 @@ export default async function TemplateLibraryPage() {
       </section>
 
       <section aria-labelledby='systems-heading' className='mt-8 space-y-4'>
-        <h2 id='systems-heading' className='text-base font-semibold'>
+        <h2 id='systems-heading' className='text-base font-medium'>
           System templates
         </h2>
         <div className='grid gap-4 lg:grid-cols-2'>
@@ -87,7 +87,7 @@ export default async function TemplateLibraryPage() {
             const catalog = SYSTEM_CATALOG[key];
             const automations = AUTOMATION_TEMPLATE_CATALOG.filter((row) => row.moduleKey === key);
             return (
-              <article key={key} className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
+              <article key={key} className='bg-card rounded-xl border p-4 sm:p-6'>
                 <h3 className='font-medium'>{catalog.label}</h3>
                 <p className='text-muted-foreground mt-1 text-sm'>{catalog.outcome}</p>
                 <dl className='mt-3 space-y-2 text-sm'>
@@ -127,12 +127,12 @@ export default async function TemplateLibraryPage() {
       </section>
 
       <section aria-labelledby='soon-heading' className='mt-8 space-y-4'>
-        <h2 id='soon-heading' className='text-base font-semibold'>
+        <h2 id='soon-heading' className='text-base font-medium'>
           Coming soon
         </h2>
         <div className='grid gap-4 lg:grid-cols-3'>
           {COMING_SOON_SYSTEMS.map((system) => (
-            <article key={system.key} className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
+            <article key={system.key} className='bg-card rounded-xl border p-4 sm:p-6'>
               <div className='flex items-center justify-between gap-3'>
                 <h3 className='font-medium'>{system.name}</h3>
                 <Badge variant='secondary'>Coming soon</Badge>

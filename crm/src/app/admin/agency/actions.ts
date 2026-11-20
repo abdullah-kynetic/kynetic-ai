@@ -27,8 +27,8 @@ async function change(fn: () => Promise<unknown>) {
     if (!(error instanceof AppError)) throw error;
     invalid = true;
   }
-  revalidatePath('/admin/agency');
-  if (invalid) redirect('/admin/agency?error=invalid');
+  revalidatePath('/admin/prospecting');
+  if (invalid) redirect('/admin/prospecting?error=invalid');
 }
 export async function createAgencyWorkspaceAction() {
   await change(async () => getAgencyWorkspace(await caller(), true));

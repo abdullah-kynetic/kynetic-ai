@@ -28,7 +28,10 @@ export function RatingTrend({ rows, sources }: { rows: Row[]; sources: string[] 
   });
   const name = 'Rating trend by source';
   return (
-    <section aria-label={name} className='min-w-0 rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
+    <section
+      aria-label={name}
+      className='min-w-0 rounded-[var(--radius-card)] bg-card p-4 sm:p-5 border'
+    >
       <h2 className='font-medium'>{name}</h2>
       {!rows.length || !sources.length ? (
         <p className='text-muted-foreground mt-3 text-sm'>

@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { listPresence } from '@/server/presence';
 import { isModuleEnabled } from '@/server/modules';
@@ -19,7 +19,7 @@ export default async function PresencePage() {
   return (
     <PageContainer
       pageTitle='Online Presence'
-      pageDescription='Status of your business profile, reviews, listings and posts.'
+      pageDescription='Status of your business profile, reviews, listings and posts'
     >
       <div className='grid gap-4 md:grid-cols-2'>
         <Card>

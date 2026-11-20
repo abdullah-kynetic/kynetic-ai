@@ -192,18 +192,18 @@ export function SignInForm({
       </form>
       {mode === 'login' && (
         <p className='text-muted-foreground text-center text-sm'>
-          <Link className='underline' href='/sign-up'>
+          <Link className='text-primary-text underline underline-offset-4' href='/sign-up'>
             First time? Sign up
           </Link>
           <span aria-hidden='true'> · </span>
-          <Link className='underline' href='/sign-in/help'>
+          <Link className='text-primary-text underline underline-offset-4' href='/sign-in/help'>
             Can&apos;t sign in?
           </Link>
         </p>
       )}
       {mode === 'signup' && (
         <p className='text-muted-foreground text-center text-sm'>
-          <Link className='underline' href='/sign-in'>
+          <Link className='text-primary-text underline underline-offset-4' href='/sign-in'>
             Already have access? Log in
           </Link>
         </p>

@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -63,7 +63,7 @@ export default async function AppointmentsPage({
   return (
     <PageContainer
       pageTitle='Appointments'
-      pageDescription='Month, week, and day views of your booked estimates.'
+      pageDescription='Month, week, and day views of your booked estimates'
     >
       <Card className='mb-4'>
         <CardHeader>

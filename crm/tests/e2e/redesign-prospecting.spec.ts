@@ -17,14 +17,16 @@ async function addLead(page: Page, name: string, email: string) {
   await expect(page.getByRole('listitem').filter({ hasText: name })).toBeVisible();
 }
 
-test('Agency workspace: header action, pill tabs, and the metrics keep their regions', async ({
+test('Prospecting: one h1, funnel tab, header action and the metrics keep their regions', async ({
   adminPage: page
 }) => {
   await withWorkspace(page);
-  await expect(page.getByRole('heading', { level: 1, name: 'Agency workspace' })).toBeVisible();
+  await expect(page).toHaveURL(/\/admin\/prospecting$/);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+  await expect(page.getByRole('heading', { level: 1, name: 'Prospecting' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Add a lead' })).toBeVisible();
-  const nav = page.getByRole('navigation', { name: 'Agency navigation' });
-  await expect(nav.getByRole('link', { name: 'Overview' })).toHaveAttribute('aria-current', 'page');
+  const nav = page.getByRole('navigation', { name: 'Prospecting pages' });
+  await expect(nav.getByRole('link', { name: 'Funnel' })).toHaveAttribute('aria-current', 'page');
   await expect(page.getByRole('region', { name: 'Seven-day agency rates' })).toContainText(
     'Last seven days'
   );

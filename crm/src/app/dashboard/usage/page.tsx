@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -98,9 +98,9 @@ export default async function UsagePage({ searchParams }: { searchParams: Promis
 
       <div className='mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
         {kpis.map(([label, value]) => (
-          <div key={label} className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
+          <div key={label} className='rounded-[var(--radius-card)] bg-card p-4 sm:p-5 border'>
             <p className='text-muted-foreground text-sm'>{label}</p>
-            <p className='mt-2 text-2xl font-semibold'>{value}</p>
+            <p className='mt-2 text-2xl font-medium'>{value}</p>
           </div>
         ))}
       </div>

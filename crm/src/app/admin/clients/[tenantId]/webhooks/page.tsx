@@ -1,6 +1,6 @@
 import { headers } from 'next/headers';
 import { forbidden, notFound } from 'next/navigation';
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { decideAdminAccess } from '@/server/admin';
 import { getLeadWebhookSettings } from '@/server/admin/lead-webhooks';
 import { getEnv } from '@/server/env';
@@ -31,10 +31,7 @@ export default async function LeadWebhookPage({
   });
   const leadUrl = new URL(settings.leadPath, getEnv().APP_BASE_URL).toString();
   return (
-    <PageContainer
-      pageTitle='Lead webhooks'
-      pageDescription='Tenant intake URL and signing secret.'
-    >
+    <PageContainer pageTitle='Lead webhooks' pageDescription='Tenant intake URL and signing secret'>
       <dl className='mb-8 max-w-xl space-y-3'>
         <dt className='font-medium'>Portal lead intake URL</dt>
         <dd className='break-all'>{leadUrl}</dd>
@@ -47,7 +44,7 @@ export default async function LeadWebhookPage({
       </dl>
       <SecretPanel tenantId={tenantId} isSet={settings.secret.isSet} />
       <form action={saveN8nPushAction.bind(null, tenantId)} className='mt-10 grid max-w-xl gap-4'>
-        <h2 className='text-lg font-semibold'>n8n event push</h2>
+        <h2 className='text-lg font-medium'>n8n event push</h2>
         <p className='text-sm text-muted-foreground'>
           Portal events are signed and posted to this https URL. The signing secret is encrypted and
           is never shown again. Leave the secret blank to keep the current one.

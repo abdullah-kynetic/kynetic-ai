@@ -30,7 +30,12 @@ const selectClass = 'border-input bg-background min-h-11 rounded-md border px-3'
 export default async function AgencyPage({
   searchParams
 }: {
-  searchParams: Promise<{ direction?: string; channel?: string; stageId?: string; error?: string }>;
+  searchParams: Promise<{
+    direction?: string;
+    channel?: string;
+    stageId?: string;
+    error?: string;
+  }>;
 }) {
   const access = await decideAdminAccess(await headers());
   if (access.kind !== 'ok' || access.role !== 'admin') forbidden();
@@ -40,12 +45,12 @@ export default async function AgencyPage({
   if (!workspace)
     return (
       <PageContainer
-        pageTitle='Agency workspace'
-        pageDescription='A separate synthetic workspace for Kynetic’s own sales.'
+        pageTitle='Prospecting overview'
+        pageDescription='Your synthetic prospecting workspace'
       >
         <p className='mb-4'>
-          Create an empty workspace to try leads and sales stages. No calls, messages or invites are
-          sent.
+          No prospects yet. Set up a synthetic workspace to add fictional leads here. No calls,
+          messages or invites are sent.
         </p>
         <form action={createAgencyWorkspaceAction}>
           <Button type='submit'>Create synthetic agency workspace</Button>
@@ -60,7 +65,10 @@ export default async function AgencyPage({
     ...(channels.includes(query.channel ?? '') ? { channel: query.channel } : {}),
     ...(z.uuid().safeParse(query.stageId ?? '').success ? { stageId: query.stageId } : {})
   };
-  const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  const money = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD'
+  });
   const [{ stages }, data, rates, monthRates, rateSeries, finance] = await Promise.all([
     getAgencyPipeline(caller),
     listAgencyLeads(caller, filter),
@@ -72,7 +80,7 @@ export default async function AgencyPage({
   const totalLeads = data.counts.reduce((sum, c) => sum + c.count, 0);
   return (
     <PageContainer
-      pageTitle='Agency workspace'
+      pageTitle='Prospecting overview'
       pageDescription={`${totalLeads} ${totalLeads === 1 ? 'prospect' : 'prospects'} in the pipeline${rates.attempted ? `, pick rate ${percent(rates.pickRate)} over the last seven days` : ''}. Outbound is disabled.`}
       actions={
         <a href='#agency-add-lead' className={buttonVariants({ variant: 'default' })}>
@@ -104,7 +112,7 @@ export default async function AgencyPage({
             </div>
           </dl>
           <p>
-            <Link href='/admin/agency/finance'>Open finance</Link>
+            <Link href='/admin/money/finance'>Open finance</Link>
           </p>
         </section>
         <section aria-label='Seven-day agency rates' className='agency-metrics'>
@@ -167,7 +175,7 @@ export default async function AgencyPage({
       </p>
 
       <section className='mb-8 space-y-4' aria-labelledby='agency-leads'>
-        <h2 id='agency-leads' className='text-lg font-semibold'>
+        <h2 id='agency-leads' className='text-lg font-medium'>
           Leads
         </h2>
         <dl className='agency-source-counts' aria-label='Lead source counts'>
@@ -268,7 +276,7 @@ export default async function AgencyPage({
                 </p>
               </div>
               {lead.deal && (
-                <Link href={`/admin/agency/contracts?deal=${lead.deal.dealId}`}>Contract</Link>
+                <Link href={`/admin/sales/contracts?deal=${lead.deal.dealId}`}>Contract</Link>
               )}
               {lead.deal && (
                 <form
@@ -307,7 +315,7 @@ export default async function AgencyPage({
         )}
       </section>
       <section className='mb-8 space-y-4' aria-labelledby='agency-add-lead'>
-        <h2 id='agency-add-lead' className='text-lg font-semibold'>
+        <h2 id='agency-add-lead' className='text-lg font-medium'>
           Add a synthetic lead
         </h2>
         <form action={createAgencyLeadAction} className='agency-form grid gap-4 sm:grid-cols-2'>
@@ -371,7 +379,7 @@ export default async function AgencyPage({
         </form>
       </section>
       <section className='space-y-3' aria-labelledby='agency-stages'>
-        <h2 id='agency-stages' className='text-lg font-semibold'>
+        <h2 id='agency-stages' className='text-lg font-medium'>
           Pipeline stages
         </h2>
         {stages.map((stage) => (

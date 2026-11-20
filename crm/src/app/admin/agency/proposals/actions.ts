@@ -7,7 +7,11 @@ import { openAgencyProposal, saveAgencyProposal } from '@/server/proposals';
 import { AppError } from '@/server/errors';
 import { isViewingAs } from '../../view-as-guard';
 
-export type ProposalSaveState = { revision: number; ok: boolean; message: string };
+export type ProposalSaveState = {
+  revision: number;
+  ok: boolean;
+  message: string;
+};
 async function caller() {
   const access = await decideAdminAccess(await headers());
   if (access.kind !== 'ok' || access.role !== 'admin') forbidden();
@@ -22,9 +26,9 @@ export async function openProposalAction(form: FormData) {
   } catch (error) {
     if (!(error instanceof AppError)) console.error('Proposal draft creation failed');
   }
-  if (!id) redirect('/admin/agency/proposals?error=unavailable');
-  revalidatePath('/admin/agency/proposals');
-  redirect(`/admin/agency/proposals/${id}`);
+  if (!id) redirect('/admin/sales/proposals?error=unavailable');
+  revalidatePath('/admin/sales/proposals');
+  redirect(`/admin/sales/proposals/${id}`);
 }
 export async function saveProposalAction(
   proposalId: string,
@@ -42,9 +46,9 @@ export async function saveProposalAction(
       roi: String(form.get('roi') ?? ''),
       expectedRevision
     });
-    revalidatePath('/admin/agency/proposals');
-    revalidatePath(`/admin/agency/proposals/${proposalId}`);
-    revalidatePath(`/admin/agency/proposals/${proposalId}/preview`);
+    revalidatePath('/admin/sales/proposals');
+    revalidatePath(`/admin/sales/proposals/${proposalId}`);
+    revalidatePath(`/admin/sales/proposals/${proposalId}/preview`);
     return { revision: saved.revision, ok: true, message: 'Draft saved.' };
   } catch (error) {
     const conflict = error instanceof AppError && error.code === 'CONFLICT';

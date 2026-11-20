@@ -15,6 +15,7 @@ export type DealTerms = {
   setup_cents: number;
   monthly_cents: number | null;
   installments: number[];
+  deal_title?: string | null;
 };
 export type InvoiceDraft = {
   id: string;
@@ -26,6 +27,7 @@ export type InvoiceDraft = {
   status: string;
   terms_hash: string;
   last_event_created: number;
+  deal_title?: string | null;
 };
 const hash = (v: unknown) => createHash('sha256').update(JSON.stringify(v)).digest('hex');
 
@@ -169,12 +171,12 @@ export async function getAgencyBilling(caller: StaffCaller, opts: Options = {}) 
     async (tx) => ({
       terms: Array.from(
         await tx.execute<DealTerms>(
-          sql`select deal_id,currency,setup_cents,monthly_cents,installments from agency_deal_terms order by updated_at desc limit 100`
+          sql`select t.deal_id,t.currency,t.setup_cents,t.monthly_cents,t.installments,d.title as deal_title from agency_deal_terms t left join deals d on d.id=t.deal_id order by t.updated_at desc limit 100`
         )
       ),
       invoices: Array.from(
         await tx.execute<InvoiceDraft>(
-          sql`select * from agency_invoice_drafts order by created_at desc,id desc limit 100`
+          sql`select i.*,d.title as deal_title from agency_invoice_drafts i left join deals d on d.id=i.deal_id order by i.created_at desc,i.id desc limit 100`
         )
       ),
       reminders: Array.from(

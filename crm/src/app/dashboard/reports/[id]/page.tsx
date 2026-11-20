@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DailyTrend } from '../../metrics-charts';
 import { getReportDetail } from '@/server/reports';
@@ -27,7 +27,7 @@ export default async function ReportDetailPage({ params }: { params: Promise<{ i
   return (
     <PageContainer
       pageTitle={`${report.periodStart} ROI report`}
-      pageDescription='Tenant-scoped monthly report.'
+      pageDescription='Tenant-scoped monthly report'
     >
       <Card>
         <CardHeader>
@@ -61,9 +61,9 @@ export default async function ReportDetailPage({ params }: { params: Promise<{ i
           ],
           ['Guarantee result', content.sections.guarantee.data.result]
         ].map(([label, value]) => (
-          <div key={label} className='rounded-xl bg-card p-4 ring-1 ring-foreground/10'>
+          <div key={label} className='rounded-[var(--radius-card)] bg-card p-4 sm:p-5 border'>
             <dt className='text-muted-foreground text-sm'>{label}</dt>
-            <dd className='mt-2 text-xl font-semibold'>{value}</dd>
+            <dd className='mt-2 text-xl font-medium'>{value}</dd>
           </div>
         ))}
       </dl>

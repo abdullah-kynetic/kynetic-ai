@@ -315,7 +315,7 @@ export function ImportLeads({ history }: { history: ImportHistoryRow[] }) {
               ].map(([label, value]) => (
                 <div key={label} className='flex flex-col'>
                   <dt className='text-muted-foreground text-sm'>{label}</dt>
-                  <dd className='font-display text-2xl font-semibold tabular-nums'>{value}</dd>
+                  <dd className='font-display text-2xl font-medium tabular-nums'>{value}</dd>
                 </div>
               ))}
             </dl>
@@ -368,7 +368,7 @@ export function ImportLeads({ history }: { history: ImportHistoryRow[] }) {
       ) : null}
 
       <section aria-labelledby={`${id}-history`} className='flex flex-col gap-3'>
-        <h2 id={`${id}-history`} className='text-lg font-semibold'>
+        <h2 id={`${id}-history`} className='text-lg font-medium'>
           Your past imports
         </h2>
         {history.length === 0 ? (

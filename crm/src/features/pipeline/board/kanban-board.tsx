@@ -268,7 +268,7 @@ export function KanbanBoardView({ data, canWrite }: { data: BoardData; canWrite:
                         aria-hidden='true'
                         className={cn('size-2.5 shrink-0 rounded-full', TONE_DOT[tone])}
                       />
-                      <h2 className='truncate text-sm font-semibold'>{stage.name}</h2>
+                      <h2 className='truncate text-sm font-medium'>{stage.name}</h2>
                       <Badge variant='outline' className='tabular-nums'>
                         {count}
                       </Badge>
@@ -436,7 +436,7 @@ function DealCard({
         ) : null}
       </div>
       <div className='flex flex-wrap items-center gap-1.5'>
-        <span className='text-sm font-semibold tabular-nums'>{formatCents(deal.valueCents)}</span>
+        <span className='text-sm font-medium tabular-nums'>{formatCents(deal.valueCents)}</span>
         {deal.source ? <Badge variant='outline'>{deal.source}</Badge> : null}
         {isOverdue ? (
           <StatusBadge tone='error'>

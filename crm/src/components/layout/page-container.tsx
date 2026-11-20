@@ -1,4 +1,5 @@
 import React from 'react';
+import { PageHeader } from './page-header';
 import { Heading } from '../ui/heading';
 import type { InfobarContent } from '@/components/ui/infobar';
 
@@ -7,12 +8,12 @@ function PageSkeleton() {
     <div
       role='status'
       aria-label='Loading page'
-      className='flex flex-1 animate-pulse flex-col gap-4 p-4 md:px-6'
+      className='flex flex-1 animate-pulse flex-col gap-4 p-4 motion-reduce:animate-none md:px-6'
     >
       <div className='flex items-center justify-between'>
         <div>
           <div className='bg-muted mb-2 h-8 w-48 rounded' />
-          <div className='bg-muted h-4 w-96 rounded' />
+          <div className='bg-muted h-4 w-96 max-w-full rounded' />
         </div>
       </div>
       <div className='bg-muted mt-6 h-40 w-full rounded-lg' />
@@ -20,6 +21,17 @@ function PageSkeleton() {
     </div>
   );
 }
+
+type PageContainerProps = {
+  children: React.ReactNode;
+  isLoading?: boolean;
+  access?: boolean;
+  accessFallback?: React.ReactNode;
+  pageTitle?: string;
+  pageDescription?: string;
+  infoContent?: InfobarContent;
+  pageHeaderAction?: React.ReactNode;
+};
 
 export default function PageContainer({
   children,
@@ -29,17 +41,9 @@ export default function PageContainer({
   pageTitle,
   pageDescription,
   infoContent,
-  pageHeaderAction
-}: {
-  children: React.ReactNode;
-  isLoading?: boolean;
-  access?: boolean;
-  accessFallback?: React.ReactNode;
-  pageTitle?: string;
-  pageDescription?: string;
-  infoContent?: InfobarContent;
-  pageHeaderAction?: React.ReactNode;
-}) {
+  pageHeaderAction,
+  redesign = true
+}: PageContainerProps & { redesign?: boolean }) {
   if (!access) {
     return (
       <div role='status' className='flex flex-1 items-center justify-center p-4 md:px-6'>
@@ -56,6 +60,15 @@ export default function PageContainer({
 
   const hasHeader = pageTitle || pageHeaderAction;
 
+  if (redesign && pageTitle && !infoContent) {
+    return (
+      <div className='mx-auto flex w-full max-w-7xl min-w-0 flex-1 flex-col gap-6 px-4 pt-2 pb-8 md:px-6 md:pt-4'>
+        <PageHeader title={pageTitle} description={pageDescription} actions={pageHeaderAction} />
+        {content}
+      </div>
+    );
+  }
+
   return (
     <div className='flex flex-1 flex-col px-4 pt-2 pb-4 md:px-6 md:pt-4'>
       {hasHeader && (
@@ -71,4 +84,8 @@ export default function PageContainer({
       {content}
     </div>
   );
+}
+
+export function PortalPageContainer(props: PageContainerProps) {
+  return <PageContainer {...props} redesign />;
 }

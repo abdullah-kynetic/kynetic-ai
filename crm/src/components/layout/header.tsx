@@ -7,7 +7,7 @@ import { UserMenu, type ShellUser } from './user-menu';
 import { NotificationBell } from '../notifications/notification-bell';
 import { ThemeModeToggle } from '../themes/theme-mode-toggle';
 
-export default function Header({ user }: { user: ShellUser }) {
+export default function Header({ user, adminHref }: { user: ShellUser; adminHref?: string }) {
   return (
     <header className='bg-background sticky top-(--view-as-h,0px) z-20 flex h-16 shrink-0 items-center justify-between gap-2 border-b md:h-14'>
       <div className='flex items-center gap-2 px-4'>
@@ -19,7 +19,7 @@ export default function Header({ user }: { user: ShellUser }) {
       <div className='flex items-center gap-2 px-4'>
         <NotificationBell />
         <ThemeModeToggle />
-        <UserMenu user={user} showPersonas={personaSwitchingEnabled()} />
+        <UserMenu user={user} showPersonas={personaSwitchingEnabled()} adminHref={adminHref} />
       </div>
     </header>
   );

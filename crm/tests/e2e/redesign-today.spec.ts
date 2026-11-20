@@ -4,7 +4,9 @@ test('admin Today: conclusion headline, numbers, and one button per block', asyn
   adminPage: page
 }) => {
   await page.goto('/admin');
-  await expect(page.getByRole('heading', { level: 1 })).not.toHaveText('Today');
+  // The area owns the one h1; the conclusion headline sits under it.
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Today');
+  await expect(page.getByRole('heading', { level: 2 }).first()).not.toHaveText('Today');
   const numbers = page.getByRole('list', { name: 'Today in numbers' });
   await expect(numbers.getByRole('listitem')).toHaveCount(4);
   for (const [block, button] of [

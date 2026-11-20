@@ -8,9 +8,9 @@ export async function saveOpsAction(form: FormData) {
     workflowName: String(form.get('workflowName') ?? ''),
     workflowId: String(form.get('workflowId') ?? '')
   });
-  revalidatePath('/admin/agency/ops');
+  revalidatePath('/admin/clients/operations');
 }
 export async function rotateAgencySecretAction() {
   await rotateAgencySecret(await agencyCaller());
-  revalidatePath('/admin/agency/ops');
+  revalidatePath('/admin/clients/operations');
 }

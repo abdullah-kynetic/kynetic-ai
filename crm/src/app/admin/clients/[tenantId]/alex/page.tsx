@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { forbidden, notFound } from 'next/navigation';
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

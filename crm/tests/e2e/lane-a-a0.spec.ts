@@ -61,7 +61,7 @@ test('F-01 F-49 charts and reports show data, empty states and stay within 390px
   ).toBeVisible();
   await emptyContext.close();
   await page.goto('/dashboard/reports/bbbbbbbb-1000-4000-8000-000000000001');
-  await expect(page.getByRole('heading', { name: "Something's missing" })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'This page is missing' })).toBeVisible();
 });
 
 test('F-63 backups nav is available to admin and VA and absent for clients', async ({
@@ -70,8 +70,16 @@ test('F-63 backups nav is available to admin and VA and absent for clients', asy
   authenticatedPage
 }) => {
   for (const page of [adminPage, vaPage]) {
-    await page.goto('/admin');
-    await expect(page.getByRole('link', { name: 'Backups', exact: true })).toBeVisible();
+    // Backups is the System tab of Settings.
+    await page.goto('/admin/settings');
+    await expect(
+      page.getByRole('navigation', { name: 'Settings pages' }).getByRole('link', {
+        name: 'System',
+        exact: true
+      })
+    ).toBeVisible();
+    await page.goto('/admin/settings/system');
+    await expect(page.getByRole('heading', { name: 'Backups' })).toBeVisible();
   }
   await authenticatedPage.goto('/dashboard');
   await expect(authenticatedPage.getByRole('link', { name: 'Backups', exact: true })).toHaveCount(

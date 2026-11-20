@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { Icons } from '@/components/icons';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -49,7 +49,7 @@ export default async function CompaniesPage({
   return (
     <PageContainer
       pageTitle='Companies'
-      pageDescription='Businesses and property managers your contacts work for.'
+      pageDescription='Businesses and property managers your contacts work for'
       pageHeaderAction={
         <Link href='/dashboard/companies/new' className={buttonVariants()}>
           <Icons.add className='size-4' aria-hidden /> Add company

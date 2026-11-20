@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { Badge } from '@/components/ui/badge';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { NativeSelect } from '@/components/ui/native-select';
@@ -110,7 +110,7 @@ export default async function CallsPage({ searchParams }: { searchParams: Promis
   const hasRows = list.rows.length > 0;
 
   return (
-    <PageContainer pageTitle='Calls' pageDescription='Every call Alex has made or taken.'>
+    <PageContainer pageTitle='Calls' pageDescription='Every call Alex has made or taken'>
       <nav aria-label='Filter by outcome' className='mb-3 flex flex-wrap gap-2'>
         <OutcomeLink state={{ ...applied, outcome: undefined, page: 1 }} active={!filters.outcome}>
           All

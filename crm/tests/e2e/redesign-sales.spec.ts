@@ -4,12 +4,13 @@ import { expect, test } from './fixtures';
 // The tests share one synthetic workspace and its leads, so they run one after another.
 test.describe.configure({ mode: 'serial' });
 
+// [name, path, area (the page's one h1), page title (h2 under the area), pill tab label]
 const PAGES = [
-  ['dialer', '/admin/agency/dialer', 'Human dialer'],
-  ['inbox', '/admin/agency/inbox', 'Agency inbox'],
-  ['campaigns', '/admin/agency/campaigns', 'Agency campaigns'],
-  ['proposals', '/admin/agency/proposals', 'Proposal drafts'],
-  ['contracts', '/admin/agency/contracts', 'Contracts']
+  ['dialer', '/admin/prospecting/dialer', 'Prospecting', 'Human dialer', 'Human dialer'],
+  ['inbox', '/admin/sales/inbox', 'Sales', 'Agency inbox', 'Inbox'],
+  ['campaigns', '/admin/prospecting/campaigns', 'Prospecting', 'Agency campaigns', 'Campaigns'],
+  ['proposals', '/admin/sales/proposals', 'Sales', 'Proposal drafts', 'Proposals'],
+  ['contracts', '/admin/sales/contracts', 'Sales', 'Contracts', 'Contracts']
 ] as const;
 
 async function withLeads(page: Page) {
@@ -46,18 +47,20 @@ test('Sales pages: every page keeps its heading and the pill tab bar', async ({
     await create.click();
     await expect(page.getByRole('heading', { name: 'Leads', exact: true })).toBeVisible();
   }
-  for (const [, path, title] of PAGES) {
+  for (const [, path, area, title, tab] of PAGES) {
     await page.goto(path);
-    await expect(page.getByRole('heading', { level: 1, name: title })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+    await expect(page.getByRole('heading', { level: 1, name: area, exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: title, exact: true })).toBeVisible();
     await expect(
-      page.getByRole('navigation', { name: 'Agency navigation' }).locator('[aria-current=page]')
-    ).toHaveCount(1);
+      page.getByRole('navigation', { name: `${area} pages` }).locator('[aria-current=page]')
+    ).toHaveText(tab);
   }
 });
 
 test('Dialer: next lead shows status pills with words', async ({ adminPage: page }) => {
   await withLeads(page);
-  await page.goto('/admin/agency/dialer');
+  await page.goto('/admin/prospecting/dialer');
   await expect(page.getByText('DNC check: clear')).toBeVisible();
   await expect(page.getByText(/\d+ eligible/)).toBeVisible();
 });

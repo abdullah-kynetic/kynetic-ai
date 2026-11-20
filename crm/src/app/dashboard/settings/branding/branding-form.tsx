@@ -9,7 +9,7 @@ import {
   KYNETIC_ORANGE,
   normalizeHex
 } from '@/lib/branding/color';
-import { useState, useTransition } from 'react';
+import { useRef, useState, useTransition } from 'react';
 import { saveBrandingAction, type BrandingResult } from './actions';
 
 type Initial = { name: string; primaryColor: string; logoUrl: string | null };
@@ -19,6 +19,7 @@ export function BrandingForm({ initial }: { initial: Initial }) {
   const [color, setColor] = useState(initial.primaryColor);
   const [result, setResult] = useState<BrandingResult | null>(null);
   const [pending, start] = useTransition();
+  const saved = useRef({ name: initial.name, color: initial.primaryColor });
 
   const hex = normalizeHex(color);
   const check = hex ? checkPrimaryColor(hex) : null;
@@ -33,8 +34,14 @@ export function BrandingForm({ initial }: { initial: Initial }) {
 
   return (
     <form
-      className='flex max-w-xl flex-col gap-6'
-      action={(fd) => start(async () => setResult(await saveBrandingAction(fd)))}
+      className='bg-card flex w-full max-w-xl flex-col gap-6 rounded-xl border p-4 sm:p-6'
+      action={(fd) =>
+        start(async () => {
+          const outcome = await saveBrandingAction(fd);
+          if (outcome.ok) saved.current = { name, color };
+          setResult(outcome);
+        })
+      }
     >
       <div className='flex flex-col gap-2'>
         <Label htmlFor='name'>Business name</Label>
@@ -85,7 +92,10 @@ export function BrandingForm({ initial }: { initial: Initial }) {
         <div className='flex items-center gap-3 pt-1' aria-label='Preview'>
           <span
             className='rounded-md px-3 py-1.5 text-sm font-medium'
-            style={{ background: branding.light.primary, color: branding.light.onPrimary }}
+            style={{
+              background: branding.light.primary,
+              color: branding.light.onPrimary
+            }}
           >
             Sample button
           </span>
@@ -123,16 +133,34 @@ export function BrandingForm({ initial }: { initial: Initial }) {
       </div>
 
       {result && (
-        <p
+        <div
           role={result.ok ? 'status' : 'alert'}
-          className={result.ok ? 'text-success text-sm' : 'text-destructive text-sm'}
+          className={
+            result.ok
+              ? 'text-success text-sm'
+              : 'border-destructive/40 bg-destructive/10 text-destructive rounded-lg border p-3 text-sm'
+          }
         >
-          {result.ok ? 'Branding saved.' : result.message}
-        </p>
+          {result.ok ? 'Branding saved.' : `Branding was not saved. ${result.message}`}
+        </div>
       )}
-      <Button type='submit' disabled={pending || Boolean(live)} className='self-start'>
-        {pending ? 'Saving…' : 'Save branding'}
-      </Button>
+      <div className='flex flex-wrap gap-3'>
+        <Button type='submit' disabled={pending || Boolean(live)}>
+          {pending ? 'Saving…' : 'Save branding'}
+        </Button>
+        <Button
+          type='reset'
+          variant='outline'
+          disabled={pending}
+          onClick={() => {
+            setName(saved.current.name);
+            setColor(saved.current.color);
+            setResult(null);
+          }}
+        >
+          Cancel
+        </Button>
+      </div>
     </form>
   );
 }

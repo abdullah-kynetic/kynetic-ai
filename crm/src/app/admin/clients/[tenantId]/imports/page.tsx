@@ -1,6 +1,6 @@
 import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { decideAdminAccess } from '@/server/admin';
 import { resolveActor } from '@/server/auth';
 import { listImportBatches } from '@/server/imports';
@@ -24,7 +24,7 @@ export default async function AdminImportsPage({
   return (
     <PageContainer
       pageTitle='Imports'
-      pageDescription='Import contacts, companies, deals and notes into this client workspace.'
+      pageDescription='Import contacts, companies, deals and notes into this client workspace'
     >
       <ImportPanel
         tenantId={tenantId}

@@ -27,9 +27,9 @@ import { initials } from '@/lib/workspaces';
 export type SidebarFooterLink = { title: string; url: string; icon: keyof typeof Icons };
 export type SidebarUser = { name: string | null; email: string; roleLabel: string };
 
-// Active item: near-black pill (DESIGN.md). Hover is a quiet warm gray.
+// Active item: a surface step with a hairline, and the accent only on its icon. Quiet chrome.
 const ACTIVE_MARKER =
-  'rounded-lg data-active:bg-sidebar-primary data-active:text-sidebar-primary-foreground data-active:hover:bg-sidebar-primary data-active:hover:text-sidebar-primary-foreground';
+  'rounded-lg data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground data-active:shadow-[inset_0_0_0_1px_var(--sidebar-border)] data-active:[&>svg]:text-primary-text';
 
 function SidebarSearch() {
   const { query } = useKBar();
@@ -40,8 +40,11 @@ function SidebarSearch() {
       className='bg-card text-muted-foreground border-border hover:bg-card/70 focus-visible:ring-sidebar-ring flex min-h-9 w-full items-center gap-2 rounded-lg border px-2.5 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none group-data-[collapsible=icon]:hidden'
     >
       <Icons.search aria-hidden className='size-4' />
-      <span className='flex-1 text-left'>Search or jump to</span>
-      <kbd aria-hidden className='bg-muted rounded px-1.5 font-mono text-[10px]'>
+      <span className='flex-1 text-left'>Jump to</span>
+      <kbd
+        aria-hidden
+        className='bg-card text-muted-foreground rounded-[6px] border px-1.5 font-mono text-[11px] leading-5'
+      >
         ⌘K
       </kbd>
     </button>
@@ -66,6 +69,9 @@ export default function AppSidebar({
 }) {
   const pathname = usePathname();
   const filteredGroups = useFilteredNavGroups(groups, role);
+  const areaActive = (url: string) =>
+    pathname === url ||
+    (url !== '/admin' && url !== '/dashboard' && pathname.startsWith(`${url}/`));
 
   return (
     <Sidebar collapsible='icon'>
@@ -113,7 +119,7 @@ export default function AppSidebar({
                       render={
                         <SidebarMenuButton
                           tooltip={item.title}
-                          isActive={pathname === item.url}
+                          isActive={areaActive(item.url)}
                           className={`group/collapsible ${ACTIVE_MARKER}`}
                         />
                       }
@@ -142,7 +148,7 @@ export default function AppSidebar({
                     <SidebarMenuButton
                       render={<Link href={item.url} aria-label={item.title} />}
                       tooltip={item.title}
-                      isActive={pathname === item.url}
+                      isActive={areaActive(item.url)}
                       className={ACTIVE_MARKER}
                     >
                       <Icon />
@@ -180,7 +186,7 @@ export default function AppSidebar({
         >
           <span
             aria-hidden
-            className='bg-secondary text-secondary-foreground flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold'
+            className='bg-secondary text-secondary-foreground flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-medium'
           >
             {initials(user.name ?? user.email)}
           </span>

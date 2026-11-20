@@ -456,6 +456,20 @@
       "when": 1794000000000,
       "tag": "1091_service_idempotency",
       "breakpoints": true
+    },
+    {
+      "idx": 65,
+      "version": "7",
+      "when": 1795092000000,
+      "tag": "1092_client_lifecycle",
+      "breakpoints": true
+    },
+    {
+      "idx": 66,
+      "version": "7",
+      "when": 1795178400000,
+      "tag": "1093_agency_prospects",
+      "breakpoints": true
     }
   ]
 }

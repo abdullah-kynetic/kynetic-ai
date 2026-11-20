@@ -1,7 +1,8 @@
-import PageContainer from '@/components/layout/page-container';
+import { SettingsPage } from '../settings-page';
 import { can, requireUser, resolveActor } from '@/server/auth';
 import { getBranding, logoUrl } from '@/server/branding';
 import { loadShellContext } from '@/server/shell';
+import { VIEW_AS_COOKIE } from '@/server/impersonation';
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { BrandingForm } from './branding-form';
@@ -10,15 +11,31 @@ export const metadata = { title: 'Branding' };
 
 export default async function BrandingPage() {
   const [cookieStore, requestHeaders] = await Promise.all([cookies(), headers()]);
-  const shell = await loadShellContext(requestHeaders, cookieStore.get('tenant_id')?.value);
+  const shell = await loadShellContext(
+    requestHeaders,
+    cookieStore.get('tenant_id')?.value,
+    undefined,
+    cookieStore.get(VIEW_AS_COOKIE)?.value
+  );
   if (!shell?.tenant) redirect('/sign-in');
+  if (shell.viewAs?.readOnly) {
+    return (
+      <SettingsPage pageTitle='Branding' access={false} accessFallback='This view is read-only.'>
+        {null}
+      </SettingsPage>
+    );
+  }
   const user = await requireUser(requestHeaders);
   const actor = await resolveActor(user, shell.tenant.id);
   if (!can(actor, 'settings.business', shell.tenant.id)) {
     return (
-      <PageContainer pageTitle='Branding'>
-        <p className='text-muted-foreground text-sm'>Only the account owner can change branding.</p>
-      </PageContainer>
+      <SettingsPage
+        pageTitle='Branding'
+        access={false}
+        accessFallback='Only the account owner can change branding.'
+      >
+        {null}
+      </SettingsPage>
     );
   }
   const branding = await getBranding({
@@ -27,9 +44,9 @@ export default async function BrandingPage() {
     role: shell.role
   });
   return (
-    <PageContainer
+    <SettingsPage
       pageTitle='Branding'
-      pageDescription='Your logo, color and business name appear on every page. Layout and type stay the same.'
+      pageDescription='Choose the business name, logo and color your team sees in the portal'
     >
       <BrandingForm
         initial={{
@@ -38,6 +55,6 @@ export default async function BrandingPage() {
           logoUrl: logoUrl(branding.logoKey)
         }}
       />
-    </PageContainer>
+    </SettingsPage>
   );
 }

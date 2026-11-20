@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import type { Metadata } from 'next';
 import { listFieldDefs } from '@/server/custom-fields';
 import { companiesContext } from '../_lib/context';
@@ -12,7 +12,7 @@ export default async function NewCompanyPage() {
   const ctx = await companiesContext();
   const customDefs = await listFieldDefs(ctx, 'company');
   return (
-    <PageContainer pageTitle='Add company' pageDescription='Name is the only required field.'>
+    <PageContainer pageTitle='Add company' pageDescription='Name is the only required field'>
       <div className='max-w-2xl'>
         <CompanyForm
           action={createCompanyAction}

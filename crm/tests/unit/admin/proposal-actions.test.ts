@@ -86,7 +86,7 @@ describe('M17-01 F-105 proposal actions', () => {
         expectedRevision: 1
       }
     );
-    expect(mocks.revalidate).toHaveBeenCalledWith('/admin/agency/proposals/draft/preview');
+    expect(mocks.revalidate).toHaveBeenCalledWith('/admin/sales/proposals/draft/preview');
   });
   it('returns a conflict result without echoing backend content or advancing the stale version', async () => {
     mocks.access.mockResolvedValue({ kind: 'ok', role: 'admin', user: { id: 'synthetic-admin' } });

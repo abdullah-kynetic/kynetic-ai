@@ -11,7 +11,12 @@ export const dynamic = 'force-dynamic';
 export default async function Compose({
   searchParams
 }: {
-  searchParams: Promise<{ contactId?: string; channel?: string; saved?: string; error?: string }>;
+  searchParams: Promise<{
+    contactId?: string;
+    channel?: string;
+    saved?: string;
+    error?: string;
+  }>;
 }) {
   const caller = await agencyCaller();
   if (!(await getAgencyWorkspace(caller)))
@@ -26,7 +31,7 @@ export default async function Compose({
       pageTitle='Compose agency message'
       pageDescription='Save SMS/email drafts and check delivery gates. Real delivery is disabled.'
     >
-      <Link href='/admin/agency/inbox'>Agency inbox</Link>
+      <Link href='/admin/sales/inbox'>Agency inbox</Link>
       <p>
         Check gates records a local result. It does not text or email anyone, in stub mode or live
         mode. Real delivery stays off.

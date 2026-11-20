@@ -1,6 +1,6 @@
 import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { decideAdminAccess } from '@/server/admin';
 import { listPresence } from '@/server/presence';
 import { saveItem, saveReview } from './actions';
@@ -25,7 +25,7 @@ export default async function AdminPresencePage({
   return (
     <PageContainer
       pageTitle='Online Presence'
-      pageDescription='Track the work performed for this client.'
+      pageDescription='Track the work performed for this client'
       pageHeaderAction={
         <Link className='rounded border px-4 py-2' href={`/admin/clients/${tenantId}/imports`}>
           Imports
@@ -74,7 +74,7 @@ export default async function AdminPresencePage({
         </button>
       </form>
       <section className='mt-8 max-w-2xl rounded border p-4'>
-        <h2 className='text-lg font-semibold'>Record review snapshot</h2>
+        <h2 className='text-lg font-medium'>Record review snapshot</h2>
         <form action={saveReview} className='mt-3 grid gap-3 sm:grid-cols-2'>
           <input type='hidden' name='tenantId' value={tenantId} />
           <label>

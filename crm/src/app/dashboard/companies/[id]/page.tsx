@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -84,7 +84,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ id: st
                   {s.label}
                 </CardTitle>
               </CardHeader>
-              <CardContent className='font-display text-2xl font-semibold tabular-nums'>
+              <CardContent className='font-display text-2xl font-medium tabular-nums'>
                 {s.value}
               </CardContent>
             </Card>
@@ -92,7 +92,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ id: st
         </section>
 
         <section aria-labelledby='contacts-h'>
-          <h2 id='contacts-h' className='mb-2 text-lg font-semibold'>
+          <h2 id='contacts-h' className='mb-2 text-lg font-medium'>
             Contacts
           </h2>
           {contacts.length === 0 ? (
@@ -124,7 +124,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ id: st
         </section>
 
         <section aria-labelledby='deals-h'>
-          <h2 id='deals-h' className='mb-2 text-lg font-semibold'>
+          <h2 id='deals-h' className='mb-2 text-lg font-medium'>
             Deals
           </h2>
           {deals.length === 0 ? (
@@ -154,7 +154,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ id: st
         </section>
 
         <section aria-labelledby='edit-h' className='max-w-2xl'>
-          <h2 id='edit-h' className='mb-2 text-lg font-semibold'>
+          <h2 id='edit-h' className='mb-2 text-lg font-medium'>
             Details
           </h2>
           <CompanyForm

@@ -1,5 +1,5 @@
 /* oxlint-disable jsx-a11y/no-noninteractive-tabindex -- scrollable table regions must be keyboard focusable (WCAG 2.1.1) */
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { listAttachments } from '@/server/archive';
 import type { Metadata } from 'next';
 import { ArchiveTabs, Banner, requireArchiveStaff } from '../archive-shared';

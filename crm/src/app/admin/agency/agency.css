@@ -95,10 +95,10 @@
 .agency-page h2 {
   font-size: 1.125rem;
   line-height: 1.5;
-  font-weight: 600;
+  font-weight: 500;
 }
 .agency-page h3 {
-  font-weight: 600;
+  font-weight: 500;
 }
 .agency-page p {
   line-height: 1.65;
@@ -290,7 +290,7 @@
 }
 .agency-empty .agency-empty-title {
   color: var(--foreground);
-  font-weight: 600;
+  font-weight: 500;
   font-size: 1rem;
 }
 .agency-notice {
@@ -341,11 +341,11 @@
 }
 .agency-metrics dl {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
   gap: 1rem;
   margin-block: 1rem;
 }
-.agency-metrics dl > div + div {
+.agency-metrics dl > div {
   min-width: 0;
 }
 .agency-metrics dt {
@@ -355,11 +355,11 @@
 }
 .agency-metrics dd {
   margin-top: 0.25rem;
-  font-size: 2.25rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-size: 1.75rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
-  line-height: 1.1;
+  line-height: 2rem;
 }
 .agency-metrics dd span {
   display: block;
@@ -398,7 +398,7 @@
 .agency-page legend {
   padding: 0 0.5rem 0 0;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 500;
 }
 .agency-page :is(fieldset, .agency-filter) input {
   min-width: 0;
@@ -588,7 +588,7 @@
 .agency-kpis dd {
   margin: 0.25rem 0 0;
   font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
 }
 .agency-table {

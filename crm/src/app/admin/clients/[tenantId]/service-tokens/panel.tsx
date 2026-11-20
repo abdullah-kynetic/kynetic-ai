@@ -55,7 +55,7 @@ export function ServiceTokenPanel({
           });
         }}
       >
-        <h2 className='text-lg font-semibold'>Issue a token</h2>
+        <h2 className='text-lg font-medium'>Issue a token</h2>
         <p className='text-sm text-muted-foreground'>
           The token is shown once. The portal stores only its hash. A token can read or write this
           client only, and only the scopes you select.
@@ -85,7 +85,7 @@ export function ServiceTokenPanel({
         )}
       </form>
       <section className='grid gap-3'>
-        <h2 className='text-lg font-semibold'>Tokens</h2>
+        <h2 className='text-lg font-medium'>Tokens</h2>
         {rows.map((row) => (
           <article key={row.id} className='grid gap-1 rounded border p-4'>
             <h3 className='font-medium'>{row.label}</h3>

@@ -11,16 +11,16 @@ export async function saveMessageAction(form: FormData) {
     subject: String(form.get('subject') ?? ''),
     body: String(form.get('body') ?? '')
   });
-  revalidatePath('/admin/agency/compose');
-  redirect(`/admin/agency/compose?saved=${row.id}`);
+  revalidatePath('/admin/sales/compose');
+  redirect(`/admin/sales/compose?saved=${row.id}`);
 }
 export async function previewMessageAction(id: string) {
   try {
     await previewAgencyMessage(await agencyCaller(), id);
   } catch (error) {
     if (error instanceof AppError)
-      redirect(`/admin/agency/compose?error=${error.code === 'FORBIDDEN' ? 'blocked' : 'check'}`);
+      redirect(`/admin/sales/compose?error=${error.code === 'FORBIDDEN' ? 'blocked' : 'check'}`);
     throw error;
   }
-  revalidatePath('/admin/agency/compose');
+  revalidatePath('/admin/sales/compose');
 }

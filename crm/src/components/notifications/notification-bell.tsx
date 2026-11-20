@@ -26,7 +26,7 @@ export function NotificationBell() {
         {unread > 0 && (
           <span
             aria-hidden='true'
-            className='bg-primary text-primary-foreground absolute -end-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] leading-none font-semibold'
+            className='bg-primary text-primary-foreground absolute -end-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] leading-none font-medium'
           >
             {unread > 99 ? '99+' : unread}
           </span>
@@ -34,7 +34,7 @@ export function NotificationBell() {
       </PopoverTrigger>
       <PopoverContent align='end' className='w-80 gap-1 p-2'>
         <div className='flex items-center justify-between px-3 py-1'>
-          <h2 className='text-sm font-semibold'>Notifications</h2>
+          <h2 className='text-sm font-medium'>Notifications</h2>
           <span role='status' className='text-muted-foreground text-xs'>
             {unreadLabel(unread)}
           </span>

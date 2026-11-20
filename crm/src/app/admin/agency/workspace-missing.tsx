@@ -1,16 +1,13 @@
-import Link from 'next/link';
 import PageContainer from '@/components/agency/page';
 
-/** Shown instead of an error when the synthetic agency workspace has not been created yet. */
+/** A useful first-visit state for area tabs when no synthetic records exist. */
 export function AgencyWorkspaceMissing({ pageTitle }: { pageTitle: string }) {
   return (
-    <PageContainer pageTitle={pageTitle} pageDescription='Create the agency workspace first.'>
-      <p className='mb-4'>
-        This page needs the synthetic agency workspace, and it has not been created yet.
+    <PageContainer pageTitle={pageTitle} pageDescription='Ready for your first record'>
+      <p className='text-muted-foreground'>
+        Nothing to show here yet. As synthetic prospects and clients are added, their activity will
+        appear on this page.
       </p>
-      <Link href='/admin/agency' className='inline-flex min-h-11 items-center underline'>
-        Go to the agency workspace to create it
-      </Link>
     </PageContainer>
   );
 }

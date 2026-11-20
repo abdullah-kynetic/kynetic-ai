@@ -33,9 +33,9 @@ export default async function CampaignsPage({
   return (
     <PageContainer
       pageTitle='Agency campaigns'
-      pageDescription='Organize leads and review their recorded manual outcomes.'
+      pageDescription='Organize leads and review their recorded manual outcomes'
     >
-      <Link href='/admin/agency' className='mb-4 inline-flex min-h-11 items-center underline'>
+      <Link href='/admin/prospecting' className='mb-4 inline-flex min-h-11 items-center underline'>
         Back to agency workspace
       </Link>
       {query.error && (
@@ -71,7 +71,7 @@ export default async function CampaignsPage({
             className='agency-panel space-y-4'
             aria-labelledby={`campaign-${c.id}`}
           >
-            <h2 id={`campaign-${c.id}`} className='text-lg font-semibold'>
+            <h2 id={`campaign-${c.id}`} className='text-lg font-medium'>
               {c.name}
             </h2>
             <p>
@@ -107,7 +107,7 @@ export default async function CampaignsPage({
             </form>
             <CampaignSequence caller={caller} id={c.id} steps={c.steps} />
             <Link
-              href={`/admin/agency/dialer?campaignId=${c.id}`}
+              href={`/admin/prospecting/dialer?campaignId=${c.id}`}
               className='inline-flex min-h-11 items-center underline'
             >
               Open campaign queue

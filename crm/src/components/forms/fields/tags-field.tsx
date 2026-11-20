@@ -16,7 +16,7 @@ export function TagsField({
   label,
   description,
   required,
-  placeholder = 'Type and press Enter...'
+  placeholder = 'Type and press Enter'
 }: BaseFieldProps & { placeholder?: string }) {
   const field = useFieldContext<string[]>();
   const isInvalid = useFieldInvalid();

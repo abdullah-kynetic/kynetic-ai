@@ -1,5 +1,5 @@
 import { headers } from 'next/headers';
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { EmptyState } from '@/components/ui/states';
 import { contactsActorScope } from '@/server/contacts';
 import { listTenantDocuments } from '@/server/documents';
@@ -21,7 +21,7 @@ export default async function DocumentsPage() {
     );
   const documents = await listTenantDocuments(scope.ctx, scope.actor);
   return (
-    <PageContainer pageTitle='Documents' pageDescription='Files shared with your business.'>
+    <PageContainer pageTitle='Documents' pageDescription='Files shared with your business'>
       {documents.length === 0 ? (
         <EmptyState
           title='No documents yet'

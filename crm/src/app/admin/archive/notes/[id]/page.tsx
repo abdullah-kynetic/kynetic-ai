@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { getNote } from '@/server/archive';
 import { AppError } from '@/server/errors';
 import type { Metadata } from 'next';

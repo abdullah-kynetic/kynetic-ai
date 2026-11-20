@@ -9,7 +9,7 @@ export function NoClientSelected() {
   return (
     <PageContainer
       pageTitle='Pick a client'
-      pageDescription='Client pages show one client at a time.'
+      pageDescription='Client pages show one client at a time'
     >
       <p className='mb-4'>
         You are signed in as Kynetic staff, not inside a client. Choose a client to see their

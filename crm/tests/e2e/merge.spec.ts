@@ -5,7 +5,7 @@ test('owner can merge a duplicate contact into the selected survivor', async ({
 }) => {
   await authenticatedPage.goto('/dashboard/contacts');
   await authenticatedPage.getByRole('link', { name: /^Contact a$/i }).click();
-  await authenticatedPage.waitForURL(/\/dashboard\/contacts\/[^/]+$/);
+  await authenticatedPage.waitForURL(/\/dashboard\/(leads\/)?contacts\/[^/]+$/);
   await expect(authenticatedPage.getByText('Merge duplicate', { exact: true })).toBeVisible();
   await authenticatedPage
     .getByRole('combobox', { name: 'Duplicate contact' })

@@ -1,4 +1,4 @@
-import PageContainer from '@/components/layout/page-container';
+import { SettingsPage } from '../settings-page';
 import { can } from '@/server/auth/permissions';
 import { getBusinessSettings, settingsScope } from '@/server/settings';
 import { headers } from 'next/headers';
@@ -13,11 +13,11 @@ export default async function BusinessSettingsPage() {
   const settings = await getBusinessSettings(ctx);
   const canEdit = can(actor, 'settings.business', ctx.tenantId);
   return (
-    <PageContainer
+    <SettingsPage
       pageTitle='Business settings'
-      pageDescription='Hours, service area, services and the number Alex transfers calls to.'
+      pageDescription='Hours, service area, services and the number Alex transfers calls to'
     >
       <BusinessForm initial={settings} canEdit={canEdit} />
-    </PageContainer>
+    </SettingsPage>
   );
 }

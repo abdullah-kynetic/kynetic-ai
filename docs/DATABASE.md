@@ -34,6 +34,8 @@ Retention and classification are per table. Retention values are the PRD decisio
 | Entity (table) | Purpose | Owner | Retention | Class | Milestone | Module |
 | --- | --- | --- | --- | --- | --- | --- |
 | tenants | One client business: plan, tier, branding, hours, Alex transfer number, baseline, guarantee | Tenant (Kynetic creates) | Life of tenant. Offboarding delete is Later (Later) | Internal | M0 | platform |
+| client_lifecycle | Staff-managed lifecycle stage for the client board (migration 1092) | Kynetic admin | Life of tenant | Internal | Design 1092 | platform |
+| agency_prospects | Synthetic prospects moving through enrichment before they become Sales deals (migration 1093) | Kynetic admin | Life of the agency workspace | Internal | Design 1093 | platform |
 | users | Global identity for Kynetic staff and client users | System (auth library, see Auth tables) | Until disabled and purged on request | Personal | M0 | platform |
 | memberships | User to tenant link with role and staff permissions | Tenant | Until removed | Personal | M0 | platform |
 | invitations | Pending owner and staff invites | Tenant | 14 days after expiry, then purged (decided, recommended option) | Personal | M0 | platform |
