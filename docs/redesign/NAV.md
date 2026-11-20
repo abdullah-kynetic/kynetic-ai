@@ -11,7 +11,7 @@ Both portal shells show business areas in the sidebar. Each area owns one main p
 | Money | `/admin/money` | Overview, Finance, Billing, Invoices, Usage |
 | Settings | `/admin/settings` | Account, Team, Integrations, Build, System |
 
-VAs see Today, Clients, Settings, and Help in the admin shell. Admin-only areas remain guarded on the server. Proposal detail and preview live below Sales; support and system requests live below Clients → Operations; archive and audit live below Settings → System.
+VAs see Today, Clients, Settings, and Help in the admin shell. VA Help has Support and System requests tabs at `/admin/help`. Admin-only areas remain guarded on the server. Proposal detail and preview live below Sales; archive and audit live below Settings → System.
 
 | Client area | Main page | Tabs |
 | --- | --- | --- |

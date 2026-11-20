@@ -1,5 +1,5 @@
 import { expect, test } from './fixtures';
-import { adminAreas, clientAreas } from '@/config/area-nav';
+import { adminAreas, clientAreas, vaHelpArea } from '@/config/area-nav';
 import nextConfig from '../../next.config';
 
 async function sidebarLinks(page: import('@playwright/test').Page) {
@@ -59,6 +59,16 @@ test('client areas and every horizontal tab render', async ({ authenticatedPage:
         page.locator(`nav[aria-label="${area.title} pages"] a[aria-current="page"]`)
       ).toHaveAttribute('href', tab.href);
     }
+  }
+});
+
+test('VA Help has its own main page and horizontal sub-tabs', async ({ vaPage: page }) => {
+  for (const tab of vaHelpArea.tabs) {
+    expect((await page.goto(tab.href))?.status(), tab.href).toBe(200);
+    await expect(page.getByRole('navigation', { name: 'Help pages' })).toBeVisible();
+    await expect(
+      page.locator('nav[aria-label="Help pages"] a[aria-current="page"]')
+    ).toHaveAttribute('href', tab.href);
   }
 });
 

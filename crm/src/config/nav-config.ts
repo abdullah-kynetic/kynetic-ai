@@ -1,5 +1,5 @@
 import type { NavGroup } from '@/types';
-import { adminAreas, clientAreas } from './area-nav';
+import { adminAreas, clientAreas, vaHelpArea } from './area-nav';
 
 /** One sidebar entry per business area. Sub-pages live in each area's horizontal tabs. */
 export const navGroups: NavGroup[] = [
@@ -25,7 +25,13 @@ export const adminNavGroups: NavGroup[] = [
         access: area.adminOnly ? { role: 'admin' } : undefined,
         items: []
       })),
-      { title: 'Help', url: '/admin/support', icon: 'help', access: { role: 'va' }, items: [] }
+      {
+        title: vaHelpArea.title,
+        url: vaHelpArea.href,
+        icon: vaHelpArea.icon,
+        access: { role: 'va' },
+        items: []
+      }
     ]
   }
 ];

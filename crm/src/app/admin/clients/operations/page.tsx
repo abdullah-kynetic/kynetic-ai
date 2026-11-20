@@ -8,10 +8,10 @@ export default async function ClientOperations({
   return (
     <div className='space-y-5'>
       <div className='flex flex-wrap gap-3 text-sm'>
-        <Link href='/admin/support' className='underline'>
+        <Link href='/admin/help' className='underline'>
           Support requests
         </Link>
-        <Link href='/admin/system-requests' className='underline'>
+        <Link href='/admin/help/system-requests' className='underline'>
           System requests
         </Link>
         <Link href='/admin/clients/new' className='underline'>

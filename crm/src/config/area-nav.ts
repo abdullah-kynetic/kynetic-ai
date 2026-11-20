@@ -89,6 +89,18 @@ export const adminAreas: readonly Area[] = [
   }
 ];
 
+/** VA support area; admin-only business areas remain hidden from VA navigation. */
+export const vaHelpArea: Area = {
+  title: 'Help',
+  href: '/admin/help',
+  icon: 'help',
+  description: 'Client support and system requests.',
+  tabs: [
+    { label: 'Support', href: '/admin/help' },
+    { label: 'System requests', href: '/admin/help/system-requests' }
+  ]
+};
+
 export const clientAreas: readonly Area[] = [
   {
     title: 'Dashboard',
