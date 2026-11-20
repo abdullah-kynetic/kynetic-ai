@@ -1,6 +1,15 @@
 /* oxlint-disable jsx-a11y/no-noninteractive-tabindex -- scrollable table regions must be keyboard focusable (WCAG 2.1.1) */
 import Link from 'next/link';
-import PageContainer, { AgencyEmptyState } from '@/components/agency/page';
+import { AgencyEmptyState } from '@/components/agency/page';
+import { StatusPill } from '@/components/ui/status-pill';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
 import { AgencySubmitButton as Button } from '@/components/agency/motion';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -45,25 +54,32 @@ export default async function FinancePage({
     listAdminTenantOverview({ userId: caller.id, role: 'admin' })
   ]);
   return (
-    <PageContainer
-      pageTitle='Finance'
-      pageDescription='Revenue, expenses, referrals and case studies for the agency workspace. Nothing is sent.'
-    >
-      <Link href='/admin/prospecting'>Agency dashboard</Link>
-      <dl className='agency-kpis' aria-label='This month (Pacific)'>
-        <div>
-          <dt>Revenue</dt>
-          <dd>{usd(data.summary.revenueCents)}</dd>
-        </div>
-        <div>
-          <dt>Expenses</dt>
-          <dd>{usd(data.summary.expenseCents)}</dd>
-        </div>
-        <div>
-          <dt>Net</dt>
-          <dd>{usd(data.summary.netCents)}</dd>
-        </div>
-      </dl>
+    <div className='space-y-6'>
+      <p className='text-muted-foreground text-sm'>
+        Revenue, expenses, referrals and case studies for the agency workspace. Nothing is sent.
+      </p>
+      <ul aria-label='This month (Pacific)' className='grid grid-cols-1 gap-4 sm:grid-cols-3'>
+        {[
+          ['Revenue', data.summary.revenueCents, 'gain'],
+          ['Expenses', data.summary.expenseCents, 'neutral'],
+          ['Net', data.summary.netCents, data.summary.netCents < 0 ? 'alert' : 'gain']
+        ].map(([label, cents, tone]) => (
+          <li
+            key={label as string}
+            className='bg-card flex flex-col gap-2 rounded-[var(--radius-card)] border p-5'
+          >
+            <span className='text-muted-foreground text-[13px] font-medium'>{label}</span>
+            <span className='text-3xl/[1.1] font-semibold tracking-tight tabular-nums'>
+              {usd(cents as number)}
+            </span>
+            <span>
+              <StatusPill tone={tone as 'gain' | 'neutral' | 'alert'}>
+                This month · {data.summary.month}
+              </StatusPill>
+            </span>
+          </li>
+        ))}
+      </ul>
       <section
         aria-label='Monthly revenue versus expenses'
         className='bg-card mb-6 rounded-[var(--radius-card)] border p-5'
@@ -95,37 +111,34 @@ export default async function FinancePage({
               description='Won deals and manual entries show here. Amounts are the values already stored.'
             />
           )}
-          <div
-            className='overflow-x-auto'
-            role='region'
-            aria-label='Monthly revenue table'
-            tabIndex={0}
-          >
-            <table className='agency-table'>
-              <thead>
-                <tr>
-                  <th>Month</th>
-                  <th>Won deals</th>
-                  <th>Manual</th>
-                  <th>Revenue</th>
-                  <th>Expenses</th>
-                  <th>Net</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.months.map((month) => (
-                  <tr key={month.month}>
-                    <td>{month.month}</td>
-                    <td>{usd(month.wonCents)}</td>
-                    <td>{usd(month.manualCents)}</td>
-                    <td>{usd(month.revenueCents)}</td>
-                    <td>{usd(month.expenseCents)}</td>
-                    <td>{usd(month.netCents)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {data.months.length > 0 && (
+            <div className='bg-card overflow-hidden rounded-[var(--radius-card)] border'>
+              <Table scrollLabel='Monthly revenue table'>
+                <TableHeader className='bg-surface-sunken'>
+                  <TableRow>
+                    <TableHead>Month</TableHead>
+                    <TableHead>Won deals</TableHead>
+                    <TableHead>Manual</TableHead>
+                    <TableHead>Revenue</TableHead>
+                    <TableHead>Expenses</TableHead>
+                    <TableHead>Net</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.months.map((month) => (
+                    <TableRow key={month.month}>
+                      <TableCell className='font-medium'>{month.month}</TableCell>
+                      <TableCell className='tabular-nums'>{usd(month.wonCents)}</TableCell>
+                      <TableCell className='tabular-nums'>{usd(month.manualCents)}</TableCell>
+                      <TableCell className='tabular-nums'>{usd(month.revenueCents)}</TableCell>
+                      <TableCell className='tabular-nums'>{usd(month.expenseCents)}</TableCell>
+                      <TableCell className='tabular-nums'>{usd(month.netCents)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
           <form action={addRevenueAction} className='agency-form max-w-xl'>
             <h3 className='font-semibold'>Manual revenue</h3>
             <Label htmlFor='revenue-date'>Date</Label>
@@ -300,6 +313,6 @@ export default async function FinancePage({
           </form>
         </section>
       )}
-    </PageContainer>
+    </div>
   );
 }

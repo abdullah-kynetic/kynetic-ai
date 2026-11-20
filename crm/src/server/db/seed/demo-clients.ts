@@ -802,6 +802,7 @@ async function seedAgency(sql: Sql, anchor: string) {
       await seedAgencyOperations(tx, workspace.tenantId, admin.id as string, anchor);
     });
   await seedAgencyProspects(sql, workspace.tenantId, anchor);
+  await seedAgencyMoney(sql, workspace.tenantId, admin.id as string, anchor);
 }
 
 async function seedAgencyOperations(sql: Sql, tenantId: string, adminId: string, anchor: string) {
@@ -992,6 +993,79 @@ async function seedAgencyProspects(sql: Sql, tenantId: string, anchor: string) {
           ${stage === 'fully_enriched' ? `${slug}@example.test` : null},
           ${stage === 'fully_enriched' ? `${FIRST[i % FIRST.length]} ${LAST[i % LAST.length]}` : null},
           ${city},${state},${linked},${linked ? created : null},${created},${created})
+        on conflict do nothing returning id`
+    );
+  }
+}
+
+/** Month key (YYYY-MM) `back` months before the anchor day. */
+function monthBefore(anchor: string, back: number) {
+  const d = new Date(`${anchor}T00:00:00Z`);
+  d.setUTCDate(1);
+  d.setUTCMonth(d.getUTCMonth() - back);
+  return d.toISOString().slice(0, 7);
+}
+
+/**
+ * Synthetic recurring fees, invoices in every status and six months of received revenue so the
+ * Money dashboard has something to show. Fictional amounts on won demo deals only.
+ */
+async function seedAgencyMoney(sql: Sql, tenantId: string, adminId: string, anchor: string) {
+  const [existing] = await sql`select 1 from demo_seed_records
+    where tenant_id=${tenantId} and table_name='agency_revenue_entries' and seed_batch=${BATCH} limit 1`;
+  if (existing) return;
+  const plans = [
+    { deal: 4, monthly: 80_000, setup: 0 },
+    { deal: 11, monthly: 120_000, setup: 0 },
+    { deal: 18, monthly: 60_000, setup: 0 },
+    { deal: 25, monthly: 100_000, setup: 0 }
+  ];
+  for (const plan of plans) {
+    const dealId = id(AGENCY_SYNTHETIC_SLUG, 'deals', plan.deal);
+    const [deal] = await sql`select 1 from deals where id=${dealId}`;
+    if (!deal) continue;
+    const rows = await sql`insert into agency_deal_terms
+      (tenant_id,deal_id,currency,setup_cents,monthly_cents,installments,updated_by) values
+      (${tenantId},${dealId},'USD',${plan.setup},${plan.monthly},(${JSON.stringify([])}::text)::jsonb,${adminId})
+      on conflict do nothing returning deal_id`;
+    if (rows.length)
+      await ledger(
+        sql,
+        tenantId,
+        'agency_deal_terms',
+        id(AGENCY_SYNTHETIC_SLUG, 'agency_deal_terms', 100 + plan.deal),
+        { dealId }
+      );
+    const cycles: [number, string][] = [
+      [1, 'paid'],
+      [0, plan.deal === 11 ? 'past_due' : 'open']
+    ];
+    if (plan.deal === 18) cycles.push([-1, 'draft']);
+    for (const [back, status] of cycles) {
+      const month = monthBefore(anchor, back);
+      const invoiceId = id(AGENCY_SYNTHETIC_SLUG, 'agency_invoice_drafts', `${plan.deal}-${month}`);
+      await inserted(
+        sql,
+        tenantId,
+        'agency_invoice_drafts',
+        invoiceId,
+        () => sql`insert into agency_invoice_drafts
+          (id,tenant_id,deal_id,cycle_key,terms_hash,amount_cents,currency,due_on,status,provider) values
+          (${invoiceId},${tenantId},${dealId},${`monthly/${month}`},${createHash('sha256').update(`money-${plan.deal}-${month}`).digest('hex')},${plan.monthly},'USD',${`${month}-${status === 'past_due' ? '03' : '25'}`},${status},'stub')
+          on conflict do nothing returning id`
+      );
+    }
+  }
+  for (let m = 0; m < 6; m++) {
+    const recordId = id(AGENCY_SYNTHETIC_SLUG, 'agency_revenue_entries', m);
+    await inserted(
+      sql,
+      tenantId,
+      'agency_revenue_entries',
+      recordId,
+      () => sql`insert into agency_revenue_entries
+        (id,tenant_id,received_on,amount_cents,note,created_by) values
+        (${recordId},${tenantId},${`${monthBefore(anchor, 5 - m)}-05`},${150_000 + m * 40_000},'Synthetic demo revenue',${adminId})
         on conflict do nothing returning id`
     );
   }

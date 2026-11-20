@@ -20,8 +20,9 @@ test('Usage shows totals and keeps the table region', async ({ adminPage: page }
 
 test('Finance keeps its tabs and shows the month totals', async ({ adminPage: page }) => {
   await workspace(page);
-  await page.goto('/admin/agency/finance');
-  await expect(page.getByRole('heading', { level: 1, name: 'Finance' })).toBeVisible();
+  await page.goto('/admin/money/finance');
+  await expect(page.getByRole('heading', { level: 1, name: 'Money' })).toBeVisible();
+  await expect(page.getByRole('list', { name: 'This month (Pacific)' })).toBeVisible();
   await expect(
     page.getByRole('navigation', { name: 'Finance tabs' }).locator('[aria-current=page]')
   ).toHaveText('Revenue');

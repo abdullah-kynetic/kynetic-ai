@@ -127,7 +127,9 @@ describe('lane B demo client seed', () => {
       (select count(*)::int from agency_proposals where tenant_id=${workspace!.id}) as proposals,
       (select count(*)::int from agency_contracts where tenant_id=${workspace!.id}) as contracts,
       (select count(*)::int from agency_expenses where tenant_id=${workspace!.id}) as expenses,
-      (select count(*)::int from agency_invoice_drafts where tenant_id=${workspace!.id}) as invoices`;
+      (select count(*)::int from agency_invoice_drafts where tenant_id=${workspace!.id}) as invoices,
+      (select count(*)::int from agency_prospects where tenant_id=${workspace!.id}) as prospects,
+      (select count(*)::int from agency_revenue_entries where tenant_id=${workspace!.id}) as revenue`;
     expect(counts).toMatchObject({
       contacts: 60,
       attempts: 150,
@@ -135,10 +137,18 @@ describe('lane B demo client seed', () => {
       proposals: 6,
       contracts: 3,
       expenses: 8,
-      invoices: 2
+      invoices: 11,
+      prospects: 48,
+      revenue: 6
     });
     const removed = await removeDemoClients(db.admin, { only: 'demo-kynetic-agency' });
     expect(removed[0]?.status).toBe('removed');
     expect(await db.admin`select 1 from contacts where tenant_id=${workspace!.id}`).toHaveLength(0);
+    expect(
+      await db.admin`select 1 from agency_prospects where tenant_id=${workspace!.id}`
+    ).toHaveLength(0);
+    expect(
+      await db.admin`select 1 from agency_revenue_entries where tenant_id=${workspace!.id}`
+    ).toHaveLength(0);
   });
 });
