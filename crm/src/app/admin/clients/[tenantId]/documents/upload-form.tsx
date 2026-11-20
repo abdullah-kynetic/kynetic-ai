@@ -33,11 +33,11 @@ export function DocumentUploadForm({ tenantId }: { tenantId: string }) {
         void upload(event.currentTarget);
       }}
     >
-      <label className='grid gap-1'>
+      <label className='grid min-w-0 gap-1'>
         Title
         <input name='title' required maxLength={200} className='min-h-11 rounded border px-3' />
       </label>
-      <label className='grid gap-1'>
+      <label className='grid min-w-0 gap-1'>
         Type
         <select name='kind' className='min-h-11 rounded border px-3'>
           <option value='agreement'>Agreement</option>
@@ -47,14 +47,14 @@ export function DocumentUploadForm({ tenantId }: { tenantId: string }) {
           <option value='other'>Other</option>
         </select>
       </label>
-      <label className='grid gap-1'>
+      <label className='grid min-w-0 gap-1'>
         PDF file
         <input
           name='file'
           type='file'
           accept='.pdf,application/pdf'
           required
-          className='min-h-11'
+          className='min-h-11 w-full min-w-0'
         />
       </label>
       <button className='min-h-11 rounded border px-4' disabled={busy}>

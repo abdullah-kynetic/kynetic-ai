@@ -243,7 +243,7 @@ export function ImportPanel({
         <label>
           CSV or Excel file
           <input
-            className='mt-1 block min-h-11'
+            className='mt-1 block min-h-11 w-full min-w-0'
             type='file'
             accept='.csv,text/csv,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             onChange={(event) => setFile(event.target.files?.[0] ?? null)}
