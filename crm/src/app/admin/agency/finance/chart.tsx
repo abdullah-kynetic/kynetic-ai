@@ -1,11 +1,17 @@
 'use client';
 
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 
+// Neutral steps for every month, the accent only on the latest month's revenue (the number being tracked).
 const config = {
-  revenueCents: { label: 'Revenue', color: 'var(--chart-3)' },
-  expenseCents: { label: 'Expenses', color: 'var(--chart-4)' }
+  revenueCents: { label: 'Revenue', color: 'var(--chart-4)' },
+  expenseCents: { label: 'Expenses', color: 'var(--muted-foreground)' }
+};
+const usdWhole = (cents: number) => `$${Math.round(cents / 100).toLocaleString('en-US')}`;
+const usdAxis = (cents: number) => {
+  const dollars = cents / 100;
+  return Math.abs(dollars) >= 1000 ? `$${Number((dollars / 1000).toFixed(1))}k` : `$${dollars}`;
 };
 
 export type FinanceMonth = {
@@ -24,11 +30,14 @@ export function FinanceMonthsChart({ months }: { months: FinanceMonth[] }) {
       </p>
     );
   }
-  const rows = months.map((m) => ({
-    month: m.month,
-    revenueCents: m.revenueCents,
-    expenseCents: m.expenseCents
-  }));
+  // Oldest month first, so time runs left to right whatever order the caller sends.
+  const rows = months
+    .map((m) => ({
+      month: m.month,
+      revenueCents: m.revenueCents,
+      expenseCents: m.expenseCents
+    }))
+    .toSorted((a, b) => a.month.localeCompare(b.month));
   return (
     <div className='min-w-0'>
       <ChartContainer
@@ -40,29 +49,48 @@ export function FinanceMonthsChart({ months }: { months: FinanceMonth[] }) {
         <BarChart data={rows} accessibilityLayer>
           <CartesianGrid vertical={false} />
           <XAxis dataKey='month' />
-          <YAxis
-            tickFormatter={(v: number) =>
-              `${v >= 1000 || v <= -1000 ? `${Math.round(v / 1000)}k` : v}`
+          <YAxis tickFormatter={usdAxis} width={48} />
+          <ChartTooltip
+            content={
+              <ChartTooltipContent
+                formatter={(value, name) => (
+                  <span className='flex w-full justify-between gap-4'>
+                    <span className='text-muted-foreground'>
+                      {config[name as keyof typeof config]?.label ?? name}
+                    </span>
+                    <span className='font-mono font-medium tabular-nums'>
+                      {usdWhole(Number(value))}
+                    </span>
+                  </span>
+                )}
+              />
             }
-            width={44}
           />
-          <ChartTooltip content={<ChartTooltipContent />} />
           <Bar
             dataKey='revenueCents'
             fill='var(--color-revenueCents)'
             radius={4}
             isAnimationActive={false}
-          />
+          >
+            {rows.map((row, index) => (
+              <Cell
+                key={row.month}
+                fill={index === rows.length - 1 ? 'var(--chart-1)' : 'var(--color-revenueCents)'}
+              />
+            ))}
+          </Bar>
           <Bar
             dataKey='expenseCents'
             fill='var(--color-expenseCents)'
+            fillOpacity={0.5}
             radius={4}
             isAnimationActive={false}
           />
         </BarChart>
       </ChartContainer>
       <p className='text-muted-foreground mt-1 text-sm'>
-        Revenue: first bar · Expenses: second bar, per Pacific month.
+        Revenue is the first bar of each Pacific month and expenses the second. The accent marks the
+        latest month.
       </p>
       <details className='mt-2 text-sm'>
         <summary className='flex min-h-11 cursor-pointer items-center'>

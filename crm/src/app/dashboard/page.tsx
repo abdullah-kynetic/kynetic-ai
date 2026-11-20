@@ -143,6 +143,7 @@ export default async function DashboardPage({
           <DailyTrend days={metrics.days} />
           <CountChart
             name='Conversion funnel'
+            highlight='last'
             empty='No funnel activity in this range.'
             rows={[
               { label: 'Leads', value: metrics.totals.leads },
@@ -153,6 +154,7 @@ export default async function DashboardPage({
           />
           <CountChart
             name='Lead sources'
+            ranked
             empty='No leads in this range.'
             rows={metrics.sources.map((source) => ({ label: source.source, value: source.leads }))}
           />

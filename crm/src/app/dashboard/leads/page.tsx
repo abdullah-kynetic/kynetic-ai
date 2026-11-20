@@ -75,6 +75,7 @@ export default async function LeadsOverviewPage() {
       <div className='grid min-w-0 gap-4 lg:grid-cols-2'>
         <CountChart
           name='Lead sources'
+          ranked
           empty='No leads in this range.'
           rows={metrics.sources.map((s) => ({ label: s.source, value: s.leads }))}
         />

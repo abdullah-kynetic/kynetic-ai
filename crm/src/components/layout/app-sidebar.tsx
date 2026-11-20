@@ -27,9 +27,9 @@ import { initials } from '@/lib/workspaces';
 export type SidebarFooterLink = { title: string; url: string; icon: keyof typeof Icons };
 export type SidebarUser = { name: string | null; email: string; roleLabel: string };
 
-// Active item: near-black pill (DESIGN.md). Hover is a quiet warm gray.
+// Active item: a surface step with a hairline, and the accent only on its icon. Quiet chrome.
 const ACTIVE_MARKER =
-  'rounded-lg data-active:bg-sidebar-primary data-active:text-sidebar-primary-foreground data-active:hover:bg-sidebar-primary data-active:hover:text-sidebar-primary-foreground';
+  'rounded-lg data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground data-active:shadow-[inset_0_0_0_1px_var(--sidebar-border)] data-active:[&>svg]:text-primary-text';
 
 function SidebarSearch() {
   const { query } = useKBar();

@@ -79,9 +79,9 @@ export function FunnelDashboard({ funnel }: { funnel: ProspectFunnel }) {
                   {index > 0 && <> · {pct(step.conversion)} of previous step</>}
                 </span>
               </div>
-              <div className='bg-muted h-3 overflow-hidden rounded-full' aria-hidden='true'>
+              <div className='bg-muted h-2 overflow-hidden rounded-full' aria-hidden='true'>
                 <div
-                  className='bg-primary h-full rounded-full'
+                  className={`h-full rounded-full ${index === funnel.steps.length - 1 ? 'bg-chart-1' : 'bg-muted-foreground/40'}`}
                   style={{
                     width: `${Math.max((step.reached / top) * 100, step.reached ? 2 : 0)}%`
                   }}
@@ -109,9 +109,9 @@ export function FunnelDashboard({ funnel }: { funnel: ProspectFunnel }) {
                   {s.count} · {Math.round((s.count / funnel.total) * 100)}%
                 </span>
               </div>
-              <div className='bg-muted h-2 overflow-hidden rounded-full' aria-hidden='true'>
+              <div className='bg-muted h-1 overflow-hidden rounded-full' aria-hidden='true'>
                 <div
-                  className='bg-primary h-full rounded-full'
+                  className={`h-full rounded-full ${s.count === sourceTop ? 'bg-chart-1' : 'bg-muted-foreground/40'}`}
                   style={{ width: `${(s.count / sourceTop) * 100}%` }}
                 />
               </div>

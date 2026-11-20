@@ -11,6 +11,7 @@ export function MoneyDashboard({ data }: { data: MoneyOverview }) {
   const tiles = [
     {
       label: 'MRR',
+      key: true,
       value: usd(data.mrrCents),
       note: `${data.recurringClients.length} recurring ${data.recurringClients.length === 1 ? 'client' : 'clients'}`
     },
@@ -60,7 +61,7 @@ export function MoneyDashboard({ data }: { data: MoneyOverview }) {
         className='bg-card rounded-[var(--radius-card)] border p-5'
       >
         <h2 className='mb-3 font-semibold'>Revenue and expenses, last six months</h2>
-        <FinanceMonthsChart months={[...data.trend].reverse()} />
+        <FinanceMonthsChart months={data.trend} />
       </section>
       <div className='grid gap-6 lg:grid-cols-2'>
         <section
