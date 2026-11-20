@@ -108,7 +108,7 @@ export function SalesBoard({
   }
 
   return (
-    <div className='space-y-4'>
+    <div className='min-w-0 space-y-4'>
       {error && (
         <div
           role='alert'
@@ -121,7 +121,7 @@ export function SalesBoard({
         Drag a card to another stage. Changes are saved to the synthetic agency workspace.
       </p>
       <DndContext sensors={sensors} onDragEnd={onDragEnd}>
-        <div className='flex gap-4 overflow-x-auto pb-4' aria-label='Sales pipeline board'>
+        <div className='relative flex gap-4 overflow-x-auto pb-4' aria-label='Sales pipeline board'>
           {ordered.map((stage) => (
             <Column
               key={stage.id}
