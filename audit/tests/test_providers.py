@@ -1,0 +1,227 @@
+import importlib
+import os
+import tempfile
+import unittest
+from unittest.mock import patch
+from pathlib import Path
+
+from audit.checks.ai_mentions import OpenRouterError, check_mentions_with_fallback, parse_answer
+from audit.checks.geocode import geocode
+from audit.checks.maps import parse_maps_page
+from audit.checks.pagespeed import fetch_pagespeed, normalize_target
+from audit.checks.unlighthouse import parse_summary, run_unlighthouse, unlighthouse_command
+from audit.geogrid import full_audit_grid
+from audit.service import run
+
+
+class ProviderPolicyTests(unittest.TestCase):
+    fixtures = Path(__file__).parent / "fixtures"
+
+    def test_pagespeed_encoding_error_reason_and_retry(self):
+        self.assertEqual("https://example.test/path/", normalize_target("example.test/path"))
+        calls = []
+        def transport(url):
+            calls.append(url)
+            if len(calls) == 1: return 503, b'{"error":{"message":"temporarily unavailable"}}'
+            return 400, b'{"error":{"message":"invalid URL"}}'
+        result = fetch_pagespeed("example.test/path", "secret-not-printed", transport, sleep=lambda _: None)
+        self.assertEqual("couldnt_check", result.status)
+        self.assertIn("invalid URL", result.reason or "")
+        self.assertEqual(2, len(calls))
+        self.assertIn("strategy=mobile", calls[0])
+        self.assertEqual(4, calls[0].count("category="))
+        self.assertNotIn("secret-not-printed", result.reason or "")
+
+    def test_pagespeed_real_fixtures_parse_100_and_report_missing_category(self):
+        perfect = fetch_pagespeed("https://example.test", "fixture-key",
+                                  lambda _: (self.fixtures / "pagespeed-100.json").read_bytes())
+        self.assertEqual("ok", perfect.status)
+        self.assertEqual(100, perfect.data["performance_score"])
+        self.assertEqual(100, perfect.data["scores"]["best-practices"])
+        incomplete = fetch_pagespeed("https://example.test", "fixture-key",
+                                     lambda _: (self.fixtures / "pagespeed-missing-categories.json").read_bytes())
+        self.assertEqual("couldnt_check", incomplete.status)
+        self.assertIn("ValueError", incomplete.reason or "")
+        self.assertIn("missing seo score", incomplete.reason or "")
+
+    def test_pagespeed_missing_performance_retries_then_keeps_other_categories(self):
+        calls = []
+        sleeps = []
+        def transport(url):
+            calls.append(url)
+            return (self.fixtures / "pagespeed-missing-performance.json").read_bytes()
+        result = fetch_pagespeed("https://example.test", "fixture-key", transport, sleep=sleeps.append)
+        self.assertEqual("ok", result.status)
+        self.assertIsNone(result.data["performance_score"])
+        self.assertEqual(91, result.data["scores"]["seo"])
+        self.assertEqual("couldnt_check", result.data["performance"]["status"])
+        self.assertEqual(2, len(calls))
+        self.assertEqual([2.0], sleeps)
+
+    def test_ai_fallback_429_then_success_records_model(self):
+        calls = []
+        def ask(model, prompt):
+            calls.append(model)
+            if len(calls) == 1: raise OpenRouterError(429)
+            return "Synthetic Co is mentioned."
+        result = check_mentions_with_fallback({"name":"Synthetic Co", "city":"Austin", "industry":"contractor"},
+            ["first:free", "second:free"], ask, sleep=lambda _: None)
+        self.assertEqual("ok", result.status)
+        self.assertEqual("second:free", result.data["model"])
+        self.assertEqual("model recall, not live search", result.data["label"])
+        self.assertEqual([{"model": "first:free", "status": 429},
+                          {"model": "second:free", "status": 200}], result.data["models_tried"])
+
+    def test_ai_failure_populates_reason_and_models_tried(self):
+        result = check_mentions_with_fallback(
+            {"name": "Synthetic Co", "city": "Austin", "industry": "contractor"},
+            ["broken:free"], lambda *_: (_ for _ in ()).throw(RuntimeError("connection reset")), sleep=lambda _: None)
+        self.assertEqual("couldnt_check", result.status)
+        self.assertIn("RuntimeError", result.reason or "")
+        self.assertEqual([{"model": "broken:free", "status": 0}], result.data["models_tried"])
+
+    def test_ai_none_empty_429_then_success_records_each_status(self):
+        calls = []
+        def ask(model, prompt):
+            calls.append(model)
+            if model == "none:free": return None
+            if model == "empty:free": return "  "
+            if model == "rate:free": raise OpenRouterError(429)
+            return "Synthetic Co is mentioned."
+        result = check_mentions_with_fallback(
+            {"name": "Synthetic Co", "city": "Austin", "industry": "contractor"},
+            ["none:free", "empty:free", "rate:free", "success:free"], ask, sleep=lambda _: None)
+        self.assertEqual("ok", result.status)
+        self.assertEqual([{"model": "none:free", "status": "empty"},
+                          {"model": "empty:free", "status": "empty"},
+                          {"model": "rate:free", "status": 429},
+                          {"model": "success:free", "status": 200}], result.data["models_tried"])
+        with self.assertRaises(ValueError): parse_answer(None, "Synthetic Co")
+
+    def test_ai_404_then_success_tries_next_model(self):
+        def ask(model, prompt):
+            if model == "missing:free":
+                raise OpenRouterError(404)
+            return "Synthetic Co is mentioned."
+        result = check_mentions_with_fallback(
+            {"name": "Synthetic Co", "city": "Austin", "industry": "contractor"},
+            ["missing:free", "success:free"], ask, sleep=lambda _: None)
+        self.assertEqual("ok", result.status)
+        self.assertEqual("success:free", result.data["model"])
+        self.assertEqual([{"model": "missing:free", "status": 404},
+                          {"model": "success:free", "status": 200}], result.data["models_tried"])
+
+    def test_nominatim_mocked_and_cached(self):
+        calls = []
+        def transport(url, headers):
+            calls.append((url, headers))
+            return b'[{"lat":"30.2672","lon":"-97.7431"}]'
+        first = geocode("unique synthetic business Austin", transport, sleep=lambda _: None)
+        second = geocode("unique synthetic business Austin", transport, sleep=lambda _: None)
+        self.assertEqual("ok", first.status)
+        self.assertEqual(first.data, second.data)
+        self.assertEqual(1, len(calls))
+        self.assertIn("User-Agent", calls[0][1])
+
+    def test_geogrid_fallback_city_is_labeled_and_total_failure_is_couldnt_check(self):
+        calls = []
+        def city_only(url, headers):
+            calls.append(url)
+            if "Austin" in url and "Synthetic" not in url and "synthetic.test" not in url:
+                return b'[{"lat":"30.2672","lon":"-97.7431"}]'
+            return b"[]"
+        result = full_audit_grid({"name": "Synthetic", "website": "https://synthetic.test",
+                                  "city": "Austin", "state": "TX"}, city_only)
+        self.assertEqual("ok", result.status)
+        self.assertEqual("estimate; centered on city", result.data["label"])
+        self.assertEqual(9, len(result.data["points"]))
+        failed = full_audit_grid({"name": "No Place", "website": "https://none.test",
+                                  "city": "Nowhere", "state": "ZZ"}, lambda *_: b"[]")
+        self.assertEqual("couldnt_check", failed.status)
+        self.assertIn("Nominatim", failed.reason or "")
+
+    def test_unlighthouse_fixture_parser(self):
+        parsed = parse_summary((self.fixtures / "unlighthouse-summary.json").read_text())
+        self.assertEqual(15, parsed["pages"])
+        self.assertEqual(0.81, parsed["score"]["performance"])
+
+    def test_unlighthouse_command_is_pinned_and_bounded(self):
+        command = unlighthouse_command("https://synthetic.test", "/tmp/unlighthouse", "/tmp/unlighthouse.config.mjs")
+        self.assertEqual("unlighthouse-ci", command[0])
+        self.assertEqual("https://synthetic.test", command[command.index("--site") + 1])
+        self.assertEqual("/tmp/unlighthouse", command[command.index("--output-path") + 1])
+        self.assertEqual("jsonExpanded", command[command.index("--reporter") + 1])
+        self.assertEqual("/tmp/unlighthouse.config.mjs", command[command.index("--config-file") + 1])
+        from audit.checks.unlighthouse import write_unlighthouse_config
+        path = Path("/tmp/unlighthouse-test-config.mjs")
+        write_unlighthouse_config(path, max_routes=15, chrome_path="/tmp/fake-chrome")
+        contents = path.read_text()
+        self.assertIn('"maxRoutes": 15', contents)
+        self.assertIn("/tmp/fake-chrome", contents)
+        path.unlink(missing_ok=True)
+
+    def test_unlighthouse_parses_ci_result_payloads(self):
+        simple = parse_summary('[{"path":"/","score":0.8,"performance":0.81,"seo":0.94}]')
+        self.assertEqual(1, simple["pages"])
+        self.assertEqual(0.81, simple["score"]["performance"])
+        expanded = parse_summary('{"summary":{"score":0.8,"categories":{"performance":{"score":0.81},"seo":{"score":0.94}}},"routes":[{"path":"/"},{"path":"/about"}]}')
+        self.assertEqual(2, expanded["pages"])
+        self.assertEqual(0.81, expanded["score"]["performance"])
+
+    def test_unlighthouse_rejects_old_node_before_cli(self):
+        node = type("Completed", (), {"stdout": "v20.19.0", "stderr": ""})()
+        with patch("audit.checks.unlighthouse.subprocess.run", return_value=node) as run:
+            result = run_unlighthouse("full", "https://synthetic.test")
+        self.assertEqual("couldnt_check", result.status)
+        self.assertIn("requires Node 22+", result.reason or "")
+        run.assert_called_once_with(["node", "--version"], capture_output=True, text=True, timeout=5, check=True)
+
+    def test_maps_aria_fixture_parses_rating_and_reviews(self):
+        result = parse_maps_page((self.fixtures / "maps-aria.html").read_text(), "Synthetic Maps Result")
+        self.assertEqual("ok", result.status)
+        self.assertEqual(4.8, result.data["rating"])
+        self.assertEqual(216, result.data["review_count"])
+
+    def test_maps_failure_includes_debug_context(self):
+        result = parse_maps_page('<html><head><title>Consent</title></head><body>Consent Business</body></html>', "Consent Business")
+        self.assertEqual("couldnt_check", result.status)
+        self.assertIn("title='Consent'", result.reason or "")
+        self.assertIn("html_length=", result.reason or "")
+
+    def test_maps_js_and_fake_business_are_not_confirmed(self):
+        js = '<html><body><div>Acme Plumbing</div><script>rating=3.4; reviews=10;</script></body></html>'
+        self.assertEqual("couldnt_check", parse_maps_page(js, "Acme Plumbing").status)
+        fake = '<html><body><div aria-label="3.4 stars"></div><div aria-label="10 reviews"></div><div>Other Business</div></body></html>'
+        result = parse_maps_page(fake, "Acme Plumbing")
+        self.assertEqual("couldnt_check", result.status)
+        self.assertEqual("no confirmed listing", result.reason)
+
+    def test_public_request_ignores_phantomreach_flag(self):
+        payload = {"mode":"operator", "operator_phantomreach":True,
+            "business":{"name":"Synthetic","website":"https://synthetic.test","city":"Austin","state":"TX","industry":"contractor"},
+            "idempotency_key":"public-phantom-test", "html":"<title>Synthetic</title>"}
+        result = run(payload, "key", "key", html=payload["html"], operator_authorized=False)
+        self.assertEqual("skipped", result["checks"]["phantomreach"]["status"])
+
+    def test_daily_cap_override_is_startup_only(self):
+        import audit.app as app
+        previous = os.environ.get("AUDIT_DAILY_CAP_OVERRIDE")
+        previous_key = os.environ.get("AUDIT_SERVICE_API_KEY")
+        os.environ["AUDIT_SERVICE_API_KEY"] = "key"
+        os.environ["AUDIT_DAILY_CAP_OVERRIDE"] = "2"
+        app = importlib.reload(app)
+        app._runs.clear()
+        payload = {"mode":"free", "business":{"name":"Cap Synthetic","website":"https://cap.test","city":"Austin","state":"TX","industry":"contractor"}, "answers":{}, "html":"<title>Cap</title>"}
+        with tempfile.TemporaryDirectory() as directory:
+            for i in range(2):
+                status, _ = app.handle_request({**payload, "idempotency_key":f"cap-{i}"}, "key", directory)
+                self.assertEqual(200, status)
+            status, _ = app.handle_request({**payload, "idempotency_key":"cap-2"}, "key", directory)
+            self.assertEqual(429, status)
+        if previous is None: os.environ.pop("AUDIT_DAILY_CAP_OVERRIDE", None)
+        else: os.environ["AUDIT_DAILY_CAP_OVERRIDE"] = previous
+        if previous_key is None: os.environ.pop("AUDIT_SERVICE_API_KEY", None)
+        else: os.environ["AUDIT_SERVICE_API_KEY"] = previous_key
+        app = importlib.reload(app)
+        self.assertEqual(50, app._DAILY_CAP)
+

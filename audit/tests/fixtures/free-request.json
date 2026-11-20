@@ -1,0 +1,6 @@
+{
+  "mode": "free",
+  "business": {"name": "Synthetic Co", "website": "https://synthetic.test", "city": "Austin", "state": "TX", "industry": "contractor"},
+  "answers": {"q1": "20-50", "q2": "same-day callback", "q3": "20-40%"},
+  "idempotency_key": "deployment-smoke-free"
+}
