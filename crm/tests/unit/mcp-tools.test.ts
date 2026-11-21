@@ -137,7 +137,7 @@ describe('MCP tool definitions: scopes and routes match the portal', () => {
 
   it('path params appear in the path and use only GET, POST or PATCH', () => {
     for (const t of withRoute) {
-      expect(['GET', 'POST', 'PATCH']).toContain(t.route!.method);
+      expect(['GET', 'POST', 'PATCH', 'PUT', 'DELETE']).toContain(t.route!.method);
       const inPath = [...t.route!.path.matchAll(/\{(\w+)\}/g)].map((m) => m[1]);
       expect(inPath.sort(), t.name).toEqual([...t.pathParams].sort());
     }
@@ -206,15 +206,8 @@ describe('MCP tool definitions: safety rules', () => {
   const writes = TOOLS.filter((t) => t.access === 'write');
   const reads = TOOLS.filter((t) => t.access === 'read');
 
-  it('are exactly five writes, and every write is a POST or PATCH on a known route', () => {
-    expect(writes.map((t) => t.name).sort()).toEqual([
-      'add_note',
-      'create_task',
-      'log_call_outcome',
-      'move_deal_stage',
-      'update_task'
-    ]);
-    for (const t of writes) expect(['POST', 'PATCH']).toContain(t.route!.method);
+  it('every write is a non-GET call on a known route, and every read is a GET', () => {
+    for (const t of writes) expect(['POST', 'PATCH', 'PUT', 'DELETE']).toContain(t.route!.method);
     for (const t of reads) expect(t.route === null || t.route.method === 'GET').toBe(true);
   });
 
@@ -257,12 +250,11 @@ describe('MCP tool definitions: safety rules', () => {
     }
   });
 
-  it('no tool can send, dial, delete, bulk-edit or change a setting or flag', () => {
-    const forbidden =
-      /send|dial|sms|text_|email|delete|remove|bulk|setting|flag|provider|outbound|kill/i;
+  it('no tool can change PROVIDER_MODE or OUTBOUND_ENABLED, the two runtime flags', () => {
+    // Full access (chosen 11-21) covers deletes, bulk edits and settings. These two flags stay out.
+    const forbidden = /provider_?mode|outbound_?enabled/i;
     for (const t of TOOLS) {
-      const nameOk = !forbidden.test(t.name.replace('get_send_state', 'get_state'));
-      expect(nameOk, t.name).toBe(true);
+      expect(forbidden.test(t.name), t.name).toBe(false);
       for (const key of Object.keys(t.inputSchema.properties)) {
         expect(forbidden.test(key), `${t.name}.${key}`).toBe(false);
       }
@@ -280,22 +272,11 @@ describe('MCP tool definitions: safety rules', () => {
       '/api/service/contact-decisions',
       '/api/service/contacts',
       '/api/service/contacts/{id}',
-      '/api/service/contacts/{id}/tags',
-      '/api/service/contacts/{id}/tags',
-      '/api/service/contacts/{id}/owner',
-      '/api/service/contacts/merge',
-      '/api/service/contacts/{id}',
-      '/api/service/contacts/{id}/restore',
       '/api/service/contacts/export',
-      '/api/service/contacts/bulk',
       '/api/service/companies',
       '/api/service/companies',
       '/api/service/companies/{id}',
       '/api/service/companies/{id}',
-      '/api/service/tasks/{id}/complete',
-      '/api/service/tasks/{id}/reopen',
-      '/api/service/tasks/{id}/restore',
-      '/api/service/tasks/{id}',
       '/api/service/deals',
       '/api/service/deals/{id}',
       '/api/service/deals/{id}',
