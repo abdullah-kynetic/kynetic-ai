@@ -9,7 +9,12 @@ import {
 } from '@/server/service-auth';
 import { errorResponse } from '@/server/errors';
 import { ModuleDisabledError, moduleDisabledResponse } from '@/server/modules';
-import { readJsonBody, splitContactBody, updateServiceContact } from '@/server/service-api';
+import {
+  deleteServiceContact,
+  readJsonBody,
+  splitContactBody,
+  updateServiceContact
+} from '@/server/service-api';
 import { parseInput, uuidSchema } from '@/server/validation';
 
 export const dynamic = 'force-dynamic';
@@ -70,4 +75,28 @@ export const PATCH = withServiceAuth(
     }
   },
   { requiredScope: 'contacts:write' }
+);
+
+// Soft-deletes one contact. It can be restored. Needs contacts:delete. Requires an Idempotency-Key header.
+export const DELETE = withServiceAuth(
+  async (request, svc, context: { params: Promise<{ id: string }> }) => {
+    try {
+      const id = parseInput(uuidSchema, (await context.params).id);
+      const result = await runIdempotent(svc, request, '', async (tx) => {
+        const data = await deleteServiceContact(tx, svc, id);
+        await auditService(tx, svc, {
+          action: 'service.contact_delete',
+          entity: 'contact',
+          entityId: id,
+          after: { route: 'DELETE /api/service/contacts/{id}' }
+        });
+        return { status: 200, body: { ok: true, data } };
+      });
+      return idempotentResponse(result);
+    } catch (error) {
+      if (error instanceof ModuleDisabledError) return moduleDisabledResponse(error);
+      return errorResponse(error);
+    }
+  },
+  { requiredScope: 'contacts:delete' }
 );

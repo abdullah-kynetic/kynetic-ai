@@ -41,6 +41,18 @@ export async function exportContactsCsv(
   opts: { db?: Db } = {}
 ): Promise<string> {
   if (!can(actor, 'export.csv', ctx.tenantId)) throw new AppError('FORBIDDEN');
+  return buildContactsCsv(ctx, input, opts);
+}
+
+/**
+ * The CSV itself, with no matrix check. Callers must have checked the permission first: the
+ * UI path checks `export.csv`, the service API checks its `contacts:export` scope.
+ */
+export async function buildContactsCsv(
+  ctx: TenantContextInput,
+  input: SearchContactsInput,
+  opts: { db?: Db } = {}
+): Promise<string> {
   const parsed = searchContactsSchema.parse(input);
   return withTenant(
     ctx,
