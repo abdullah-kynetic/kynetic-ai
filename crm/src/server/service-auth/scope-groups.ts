@@ -66,6 +66,18 @@ export const SCOPE_GROUPS: {
     scopes: ['tenant:read', 'metrics:read', 'send-state:read']
   },
   {
+    id: 'reputation',
+    label: 'Reputation and presence',
+    hint: 'See review numbers. Edit presence items: only the owner key can, client keys get 403.',
+    scopes: ['reputation:read', 'reputation:write']
+  },
+  {
+    id: 'referrals',
+    label: 'Referrals',
+    hint: 'See and add client referrals, and update their status. Reward amounts stay with the owner.',
+    scopes: ['referrals:write']
+  },
+  {
     id: 'automation',
     label: 'Automation plumbing',
     hint: 'Acknowledge events from the portal.',
