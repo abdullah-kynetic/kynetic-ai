@@ -32,3 +32,4 @@ export * from './agency-finance';
 export * from './agency-ops';
 export * from './platform';
 export * from './platform-billing';
+export * from './platform-controls';

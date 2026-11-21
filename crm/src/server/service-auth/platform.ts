@@ -21,7 +21,7 @@ export type PlatformService = {
 };
 
 /** The owner's platform context for the portal's roll-up functions. */
-export function platformContext(plat: PlatformService): PlatformContext {
+export function platformContext(plat: PlatformService): PlatformContext & { role: 'admin' } {
   return { userId: plat.userId, role: 'admin' };
 }
 
