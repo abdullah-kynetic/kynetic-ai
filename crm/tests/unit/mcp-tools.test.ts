@@ -325,7 +325,11 @@ describe('MCP tool definitions: safety rules', () => {
       '/api/service/documents',
       '/api/service/documents',
       '/api/service/documents/{id}/url',
-      '/api/service/documents/{id}'
+      '/api/service/documents/{id}',
+      '/api/service/support',
+      '/api/service/support',
+      '/api/service/support/{id}',
+      '/api/service/support/{id}/reply'
     ]);
   });
 
