@@ -1,5 +1,13 @@
 import { errorResponse } from '@/server/errors';
-import { dealListSchema, listDealsDto, usedFilters } from '@/server/service-api';
+import {
+  createServiceDeal,
+  dealListSchema,
+  listDealsDto,
+  readJsonBody,
+  usedFilters
+} from '@/server/service-api';
+import { idempotentResponse, runIdempotent } from '@/server/service-auth';
+import { ModuleDisabledError, moduleDisabledResponse } from '@/server/modules';
 import { auditService, withServiceAuth, withServiceTenant } from '@/server/service-auth';
 import { parseSearchParams } from '@/server/validation';
 
@@ -32,4 +40,29 @@ export const GET = withServiceAuth(
     }
   },
   { requiredScope: 'deals:read' }
+);
+
+// Creates one deal. Requires an Idempotency-Key header.
+
+export const POST = withServiceAuth(
+  async (request, svc) => {
+    try {
+      const { raw, json } = await readJsonBody(request);
+      const result = await runIdempotent(svc, request, raw, async (tx) => {
+        const data = await createServiceDeal(tx, svc, json as Record<string, unknown>);
+        await auditService(tx, svc, {
+          action: 'service.deal_create',
+          entity: 'deal',
+          entityId: data.id,
+          after: { route: 'POST /api/service/deals' }
+        });
+        return { status: 201, body: { ok: true, data } };
+      });
+      return idempotentResponse(result);
+    } catch (error) {
+      if (error instanceof ModuleDisabledError) return moduleDisabledResponse(error);
+      return errorResponse(error);
+    }
+  },
+  { requiredScope: 'deals:write' }
 );

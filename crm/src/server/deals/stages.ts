@@ -110,7 +110,7 @@ export async function createStage(
   opts: DealOpts = {}
 ): Promise<StageRow[]> {
   await requireLite(ctx, opts);
-  requireWrite(actor, ctx);
+  if (opts.origin !== 'service-api') requireWrite(actor, ctx);
   const v = parseInput(createStageSchema, input);
   return run(ctx, opts, async (tx) => {
     const pipeline = await lockPipeline(tx, v.pipelineId);
@@ -160,7 +160,7 @@ export async function updateStage(
   opts: DealOpts = {}
 ): Promise<StageRow[]> {
   await requireLite(ctx, opts);
-  requireWrite(actor, ctx);
+  if (opts.origin !== 'service-api') requireWrite(actor, ctx);
   const v = parseInput(updateStageSchema, patch);
   return run(ctx, opts, async (tx) => {
     const stage = await loadStageOf(tx, stageId);
@@ -196,7 +196,7 @@ export async function reorderStages(
   opts: DealOpts = {}
 ): Promise<StageRow[]> {
   await requireLite(ctx, opts);
-  requireWrite(actor, ctx);
+  if (opts.origin !== 'service-api') requireWrite(actor, ctx);
   const v = parseInput(reorderStagesSchema, input);
   return run(ctx, opts, async (tx) => {
     const pipeline = await lockPipeline(tx, v.pipelineId);
@@ -238,7 +238,7 @@ export async function deleteStage(
   opts: DealOpts = {}
 ): Promise<StageRow[]> {
   await requireLite(ctx, opts);
-  requireWrite(actor, ctx);
+  if (opts.origin !== 'service-api') requireWrite(actor, ctx);
   const v = parseInput(deleteStageSchema, input);
   return run(ctx, opts, async (tx) => {
     const stage = await loadStageOf(tx, stageId);
