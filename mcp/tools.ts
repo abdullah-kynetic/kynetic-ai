@@ -661,4 +661,8 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'PATCH', path: '/api/service/settings/tags', scope: 'settings:write' },
   { method: 'DELETE', path: '/api/service/settings/tags', scope: 'settings:write' },
   { method: 'GET', path: '/api/service/settings/team', scope: 'settings:read' },
+  { method: 'GET', path: '/api/service/support', scope: 'support:read' },
+  { method: 'POST', path: '/api/service/support', scope: 'support:write' },
+  { method: 'GET', path: '/api/service/support/{id}', scope: 'support:read' },
+  { method: 'POST', path: '/api/service/support/{id}/reply', scope: 'support:write' },
 ] as const;

@@ -21,3 +21,4 @@ export * from './owner';
 export * from './notifications';
 export * from './reports-usage';
 export * from './settings';
+export * from './support';

@@ -341,7 +341,11 @@ describe('MCP tool definitions: safety rules', () => {
       '/api/service/settings/tags',
       '/api/service/settings/tags',
       '/api/service/settings/tags',
-      '/api/service/settings/team'
+      '/api/service/settings/team',
+      '/api/service/support',
+      '/api/service/support',
+      '/api/service/support/{id}',
+      '/api/service/support/{id}/reply'
     ]);
   });
 

@@ -102,6 +102,12 @@ export const SCOPE_GROUPS: {
     scopes: ['settings:read', 'settings:write']
   },
   {
+    id: 'support',
+    label: 'Support requests',
+    hint: 'See your support requests and replies. Open a request or reply to one.',
+    scopes: ['support:read', 'support:write']
+  },
+  {
     id: 'automation',
     label: 'Automation plumbing',
     hint: 'Acknowledge events from the portal.',
