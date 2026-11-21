@@ -63,7 +63,13 @@ export const SCOPE_GROUPS: {
     id: 'reporting',
     label: 'Reports and settings (read only)',
     hint: 'See client details, numbers and send state.',
-    scopes: ['tenant:read', 'metrics:read', 'send-state:read']
+    scopes: ['tenant:read', 'metrics:read', 'send-state:read', 'reputation:read']
+  },
+  {
+    id: 'referrals',
+    label: 'Referrals',
+    hint: 'See and add client referrals, and update their status. Reward amounts stay with the owner.',
+    scopes: ['referrals:write']
   },
   {
     id: 'automation',
