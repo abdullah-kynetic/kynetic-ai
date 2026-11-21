@@ -1,8 +1,30 @@
 # Kynetic MCP tools
 
 `tools.ts` holds the MCP tool definitions for the portal service API. It is data only: no imports, no
-network code, no secrets. The MCP server (a later PR, hosted per `docs/` plan) turns each entry into one
-`fetch` to one `/api/service/*` route, using the portal token of the chosen client.
+network code, no secrets.
+
+`server.ts` is the MCP server. It speaks MCP over stdio (JSON-RPC 2.0, one message per line) with no SDK
+dependency. Each tool call becomes one `fetch` to one `/api/service/*` route, using the portal token of the
+chosen client. `stdio.ts` is the entry point.
+
+## Running it
+
+```
+KYNETIC_PORTAL_URL=https://portal.kyneticai.com \
+KYNETIC_MCP_TOKENS='{"demo-kynetic-agency":"<that client's portal token>"}' \
+bun mcp/stdio.ts
+```
+
+- `KYNETIC_MCP_TOKENS` maps each client slug to that client's own portal token. A token only ever reads and
+  writes its own client. The server refuses to start on a malformed registry and never prints a token.
+- `list_clients` answers from the registry (slugs only). Every other tool takes `client`; a slug with no
+  token is refused before any call is made.
+- Writes send `Idempotency-Key` from the tool's `idempotencyKey` argument. Argument names outside the schema
+  are refused.
+- Errors from the portal come back as tool errors with the status and the portal's text (capped).
+
+Not done yet: the MCP tools for the other service routes (see `ROUTES_WITHOUT_TOOLS` in `tools.ts`), and the
+hosting and DNS for the server (B2).
 
 ## Rules, enforced by `crm/tests/unit/mcp-tools.test.ts`
 
