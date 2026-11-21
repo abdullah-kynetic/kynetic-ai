@@ -596,8 +596,7 @@ export const TOOLS: ToolDefinition[] = [
 export const ROUTES_WITHOUT_TOOLS = [
   { method: 'POST', path: '/api/service/call-results', scope: 'calls:write' },
   { method: 'POST', path: '/api/service/contact-decisions', scope: 'contact-decisions:write' },
-  // Contact writes (C1). Live on the API now; their MCP tools wait for the MCP server (B1), because the
-  // five-writes rule in tests/unit/mcp-tools.test.ts is the owner's call before the list grows.
+  // Contact writes (C1). Live on the API now. MCP tool ships with B1; this list must come back down to two.
   { method: 'POST', path: '/api/service/contacts', scope: 'contacts:write' },
   { method: 'PATCH', path: '/api/service/contacts/{id}', scope: 'contacts:write' },
   { method: 'POST', path: '/api/service/contacts/{id}/tags', scope: 'contacts:write' },
