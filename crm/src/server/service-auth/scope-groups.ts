@@ -13,7 +13,13 @@ export const SCOPE_GROUPS: {
     id: 'contacts',
     label: 'Contacts and leads',
     hint: 'See people, add a new lead, record a contact decision.',
-    scopes: ['contacts:read', 'create-contact', 'contact-decisions:write', 'contact-policy:read']
+    scopes: [
+      'contacts:read',
+      'contacts:write',
+      'create-contact',
+      'contact-decisions:write',
+      'contact-policy:read'
+    ]
   },
   {
     id: 'deals',
@@ -65,6 +71,7 @@ export const SCOPE_PRESETS: { id: string; label: string; scopes: ServiceTokenSco
     scopes: [
       ...READ_ONLY,
       'create-contact',
+      'contacts:write',
       'update-deal-stage',
       'deals:write',
       'tasks:write',

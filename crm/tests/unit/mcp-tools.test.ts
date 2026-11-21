@@ -273,9 +273,16 @@ describe('MCP tool definitions: safety rules', () => {
   it('the do-not-call outcome is not loggable through a tool, and consent routes have no tool', () => {
     const log = TOOLS.find((t) => t.name === 'log_call_outcome')!;
     expect((log.inputSchema.properties.outcome as { enum: string[] }).enum).not.toContain('dnc');
+    // TODO(B1): the MCP tools for the C1 contact routes ship with the MCP server. When B1 lands,
+    // bring this list back down to the original two routes.
     expect(ROUTES_WITHOUT_TOOLS.map((r) => r.path)).toEqual([
       '/api/service/call-results',
-      '/api/service/contact-decisions'
+      '/api/service/contact-decisions',
+      '/api/service/contacts',
+      '/api/service/contacts/{id}',
+      '/api/service/contacts/{id}/tags',
+      '/api/service/contacts/{id}/tags',
+      '/api/service/contacts/{id}/owner'
     ]);
   });
 

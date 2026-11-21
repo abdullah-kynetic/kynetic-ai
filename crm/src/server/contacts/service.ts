@@ -22,13 +22,20 @@ import {
 // write. Pass `tx` to join a caller's transaction (imports, lead intake), or `db` in tests.
 
 export type Contact = typeof contacts.$inferSelect;
-export type ContactOpts = { db?: Db; tx?: Tx };
+export type ContactOpts = { db?: Db; tx?: Tx; origin?: 'service-api' };
+
+/** Events from the service API carry this tag, so outbound consumers (n8n push, automations) skip them. */
+const originTag = (opts: ContactOpts) => (opts.origin ? { origin: opts.origin } : {});
 
 function run<T>(ctx: TenantContextInput, opts: ContactOpts, fn: (tx: Tx) => Promise<T>) {
   return opts.tx ? fn(opts.tx) : withTenant(ctx, fn, { db: opts.db });
 }
 
 const actorOf = (ctx: TenantContextInput) => ({ type: 'user' as const, id: ctx.userId });
+
+/** Service-API writes are system actions: they have no signed-in user to name. */
+const actorFor = (ctx: TenantContextInput, opts: ContactOpts) =>
+  opts.origin ? { type: 'system' as const } : actorOf(ctx);
 
 export class NotFoundError extends AppError {
   constructor() {
@@ -163,15 +170,15 @@ export async function createContact(
     await emitEvent(tx, {
       name: 'contact.created',
       tenantId: row.tenantId,
-      actor: actorOf(ctx),
-      payload: { contactId: row.id, source: row.source, importBatchId: null }
+      actor: actorFor(ctx, opts),
+      payload: { contactId: row.id, source: row.source, importBatchId: null, ...originTag(opts) }
     });
     if (opts.asLead) {
       await emitEvent(tx, {
         name: 'lead.created',
         tenantId: row.tenantId,
-        actor: actorOf(ctx),
-        payload: { contactId: row.id, source: row.source }
+        actor: actorFor(ctx, opts),
+        payload: { contactId: row.id, source: row.source, ...originTag(opts) }
       });
     }
     return row;
@@ -276,8 +283,8 @@ export async function updateContact(
       await emitEvent(tx, {
         name: 'contact.updated',
         tenantId: after.tenantId,
-        actor: actorOf(ctx),
-        payload: { contactId: id, changed }
+        actor: actorFor(ctx, opts),
+        payload: { contactId: id, changed, ...originTag(opts) }
       });
     }
     return after;
@@ -299,7 +306,12 @@ export async function addContactTags(
 ): Promise<Contact> {
   return run(ctx, opts, async (tx) => {
     const cur = await loadLive(tx, id);
-    return updateContact(ctx, id, { tags: uniqueTags([...cur.tags, ...tags]) }, { tx });
+    return updateContact(
+      ctx,
+      id,
+      { tags: uniqueTags([...cur.tags, ...tags]) },
+      { tx, origin: opts.origin }
+    );
   });
 }
 
@@ -316,7 +328,7 @@ export async function removeContactTags(
       ctx,
       id,
       { tags: cur.tags.filter((t) => !drop.has(t.toLowerCase())) },
-      { tx }
+      { tx, origin: opts.origin }
     );
   });
 }
