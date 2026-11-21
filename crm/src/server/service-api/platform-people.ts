@@ -26,9 +26,11 @@ const replySchema = z.unknown();
 /** The owner's own account and the account behind this key cannot have their role or access changed here. */
 function notSelf(plat: PlatformService, userId: string) {
   parseInput(uuidSchema, userId);
+  // The owner is the one account behind the key. The API never deactivates or re-roles it, so no
+  // admin reached through this key can demote or lock out the owner.
   if (userId === plat.userId)
     throw new AppError('FORBIDDEN', {
-      message: 'Your own account cannot be changed through the API.'
+      message: 'The owner account cannot be changed through the API.'
     });
 }
 

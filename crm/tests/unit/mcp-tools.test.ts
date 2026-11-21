@@ -431,6 +431,7 @@ describe('MCP tool definitions: safety rules', () => {
       '/api/service/platform/audit',
       '/api/service/platform/backups',
       '/api/service/platform/backups',
+      '/api/service/platform/runtime-flags',
       '/api/service/support',
       '/api/service/support',
       '/api/service/support/{id}',

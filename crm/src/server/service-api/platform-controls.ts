@@ -16,6 +16,7 @@ import {
   replayFailedWebhook
 } from '../admin/operations';
 import { suspendTenant } from '../admin/operations-tools';
+import { getEnv } from '../env';
 import { AppError } from '../errors';
 import { parseInput, uuidSchema } from '../validation';
 import { platformContext, type PlatformService } from '../service-auth/platform';
@@ -123,4 +124,10 @@ export async function reviewServiceFlaggedCall(plat: PlatformService, id: string
   const { tenantId } = parseInput(reviewSchema, body);
   const ok = await markFlaggedCallReviewed(platformContext(plat), { tenantId, callId: id });
   return { reviewed: ok };
+}
+
+/** Read-only: the deploy's provider mode and the outbound switch from the environment. Nothing is changed here. */
+export function getServiceRuntimeFlags(_plat: PlatformService) {
+  const env = getEnv();
+  return { providerMode: env.PROVIDER_MODE, outboundEnabled: env.OUTBOUND_ENABLED };
 }

@@ -750,6 +750,7 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'GET', path: '/api/service/platform/audit', scope: 'settings:read' },
   { method: 'GET', path: '/api/service/platform/backups', scope: 'settings:read' },
   { method: 'POST', path: '/api/service/platform/backups', scope: 'settings:write' },
+  { method: 'GET', path: '/api/service/platform/runtime-flags', scope: 'settings:read' },
   { method: 'GET', path: '/api/service/support', scope: 'support:read' },
   { method: 'POST', path: '/api/service/support', scope: 'support:write' },
   { method: 'GET', path: '/api/service/support/{id}', scope: 'support:read' },
