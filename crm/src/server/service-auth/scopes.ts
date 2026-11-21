@@ -5,6 +5,8 @@ export const SERVICE_TOKEN_SCOPES = [
   'event-ack',
   'contacts:read',
   'contacts:write',
+  'contacts:delete',
+  'contacts:export',
   'appointments:read',
   'appointments:write',
   'calls:write',

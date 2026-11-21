@@ -6,3 +6,4 @@ export * from './notes-write';
 export * from './deal-stage';
 export * from './tasks-write';
 export * from './contacts-write';
+export * from './contacts-admin';

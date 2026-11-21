@@ -16,6 +16,8 @@ export const SCOPE_GROUPS: {
     scopes: [
       'contacts:read',
       'contacts:write',
+      'contacts:delete',
+      'contacts:export',
       'create-contact',
       'contact-decisions:write',
       'contact-policy:read'

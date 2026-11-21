@@ -352,8 +352,8 @@ export async function deleteContact(
     await emitEvent(tx, {
       name: 'contact.deleted',
       tenantId: row.tenantId,
-      actor: actorOf(ctx),
-      payload: { contactId: id }
+      actor: actorFor(ctx, opts),
+      payload: { contactId: id, ...originTag(opts) }
     });
   });
 }
@@ -385,8 +385,8 @@ export async function restoreContact(
     await emitEvent(tx, {
       name: 'contact.updated',
       tenantId: after.tenantId,
-      actor: actorOf(ctx),
-      payload: { contactId: id, changed: ['deletedAt'] }
+      actor: actorFor(ctx, opts),
+      payload: { contactId: id, changed: ['deletedAt'], ...originTag(opts) }
     });
     return after;
   });
@@ -558,8 +558,8 @@ export async function mergeContacts(
     await emitEvent(tx, {
       name: 'contact.merged',
       tenantId: after.tenantId,
-      actor: actorOf(ctx),
-      payload: { survivorId, loserId }
+      actor: actorFor(ctx, opts),
+      payload: { survivorId, loserId, ...originTag(opts) }
     });
     return after;
   });
