@@ -625,6 +625,8 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'PUT', path: '/api/service/pipelines/{id}/stages/order', scope: 'pipeline:write' },
   { method: 'PATCH', path: '/api/service/stages/{id}', scope: 'pipeline:write' },
   { method: 'DELETE', path: '/api/service/stages/{id}', scope: 'pipeline:write' },
+  { method: 'GET', path: '/api/service/conversations', scope: 'messages:read' },
+  { method: 'GET', path: '/api/service/conversations/{id}/messages', scope: 'messages:read' },
   { method: 'GET', path: '/api/service/calls/{id}', scope: 'calls:read' },
   { method: 'POST', path: '/api/service/calls/{id}/flag', scope: 'calls:write' },
   { method: 'GET', path: '/api/service/calls/{id}/recording', scope: 'calls:recording' },

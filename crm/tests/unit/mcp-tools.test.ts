@@ -306,6 +306,8 @@ describe('MCP tool definitions: safety rules', () => {
       '/api/service/pipelines/{id}/stages/order',
       '/api/service/stages/{id}',
       '/api/service/stages/{id}',
+      '/api/service/conversations',
+      '/api/service/conversations/{id}/messages',
       '/api/service/calls/{id}',
       '/api/service/calls/{id}/flag',
       '/api/service/calls/{id}/recording',
