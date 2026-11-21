@@ -29,5 +29,7 @@ export const SERVICE_TOKEN_SCOPES = [
   'reputation:read',
   'reputation:write',
   'referrals:write',
+  'documents:read',
+  'documents:write',
   'tasks:write'
 ] as const;

@@ -78,6 +78,12 @@ export const SCOPE_GROUPS: {
     scopes: ['referrals:write']
   },
   {
+    id: 'documents',
+    label: 'Documents',
+    hint: 'See client documents and get signed links. Upload and remove documents (PDF, up to 10 MB).',
+    scopes: ['documents:read', 'documents:write']
+  },
+  {
     id: 'automation',
     label: 'Automation plumbing',
     hint: 'Acknowledge events from the portal.',
