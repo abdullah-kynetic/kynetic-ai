@@ -31,3 +31,4 @@ export * from './agency-pipeline';
 export * from './agency-finance';
 export * from './agency-ops';
 export * from './platform';
+export * from './platform-billing';
