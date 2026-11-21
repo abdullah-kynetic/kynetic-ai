@@ -606,5 +606,9 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'DELETE', path: '/api/service/contacts/{id}', scope: 'contacts:delete' },
   { method: 'POST', path: '/api/service/contacts/{id}/restore', scope: 'contacts:write' },
   { method: 'GET', path: '/api/service/contacts/export', scope: 'contacts:export' },
-  { method: 'POST', path: '/api/service/contacts/bulk', scope: 'contacts:write' }
+  { method: 'POST', path: '/api/service/contacts/bulk', scope: 'contacts:write' },
+  { method: 'POST', path: '/api/service/tasks/{id}/complete', scope: 'tasks:write' },
+  { method: 'POST', path: '/api/service/tasks/{id}/reopen', scope: 'tasks:write' },
+  { method: 'POST', path: '/api/service/tasks/{id}/restore', scope: 'tasks:write' },
+  { method: 'DELETE', path: '/api/service/tasks/{id}', scope: 'tasks:write' }
 ] as const;

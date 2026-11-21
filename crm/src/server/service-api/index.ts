@@ -7,3 +7,4 @@ export * from './deal-stage';
 export * from './tasks-write';
 export * from './contacts-write';
 export * from './contacts-admin';
+export * from './tasks-lifecycle';

@@ -1,6 +1,10 @@
 import { errorResponse, ValidationError } from '@/server/errors';
 import { moduleDisabledResponse, ModuleDisabledError } from '@/server/modules';
-import { serviceTaskUpdateSchema, updateServiceTask } from '@/server/service-api';
+import {
+  deleteServiceTask,
+  serviceTaskUpdateSchema,
+  updateServiceTask
+} from '@/server/service-api';
 import {
   auditService,
   idempotentResponse,
@@ -34,6 +38,30 @@ export const PATCH = withServiceAuth(
           entity: 'task',
           entityId: id,
           after: { route: 'PATCH /api/service/tasks/{id}', fields }
+        });
+        return { status: 200, body: { ok: true, data } };
+      });
+      return idempotentResponse(result);
+    } catch (error) {
+      if (error instanceof ModuleDisabledError) return moduleDisabledResponse(error);
+      return errorResponse(error);
+    }
+  },
+  { requiredScope: 'tasks:write' }
+);
+
+// Soft-deletes one task. It can be restored. Requires an Idempotency-Key header and no body.
+export const DELETE = withServiceAuth(
+  async (request, svc, context: { params: Promise<{ id: string }> }) => {
+    try {
+      const id = parseInput(uuidSchema, (await context.params).id);
+      const result = await runIdempotent(svc, request, '', async (tx) => {
+        const data = await deleteServiceTask(tx, svc, id);
+        await auditService(tx, svc, {
+          action: 'service.task_delete',
+          entity: 'task',
+          entityId: id,
+          after: { route: 'DELETE /api/service/tasks/{id}' }
         });
         return { status: 200, body: { ok: true, data } };
       });
