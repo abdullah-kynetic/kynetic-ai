@@ -42,7 +42,12 @@ export function buildLeadBriefMessages(sources: BriefSource[]) {
 
 /** Lowercase, straight quotes, single spaces: so a quote matches despite formatting, but not wording. */
 export function normalizeForQuote(s: string): string {
-  return s.toLowerCase().replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/\s+/g, ' ').trim();
+  return s
+    .toLowerCase()
+    .replace(/[‘’]/g, "'")
+    .replace(/[“”]/g, '"')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /**
