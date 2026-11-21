@@ -1,6 +1,20 @@
 import { errorResponse } from '@/server/errors';
-import { auditService, withServiceAuth, withServiceTenant } from '@/server/service-auth';
-import { contactListSchema, listContactsDto, usedFilters } from '@/server/service-api';
+import { ModuleDisabledError, moduleDisabledResponse } from '@/server/modules';
+import {
+  auditService,
+  idempotentResponse,
+  runIdempotent,
+  withServiceAuth,
+  withServiceTenant
+} from '@/server/service-auth';
+import {
+  contactListSchema,
+  createServiceContact,
+  listContactsDto,
+  readJsonBody,
+  splitContactBody,
+  usedFilters
+} from '@/server/service-api';
 import { parseSearchParams } from '@/server/validation';
 
 export const dynamic = 'force-dynamic';
@@ -33,4 +47,30 @@ export const GET = withServiceAuth(
     }
   },
   { requiredScope: 'contacts:read' }
+);
+
+// Creates one contact. A duplicate phone or email is a 409 that names the matching contact, unless the
+// body sets acknowledgeDuplicates. Free text is plain text. Requires an Idempotency-Key header.
+export const POST = withServiceAuth(
+  async (request, svc) => {
+    try {
+      const { raw, json } = await readJsonBody(request);
+      const { body, acknowledgeDuplicates } = splitContactBody(json);
+      const result = await runIdempotent(svc, request, raw, async (tx) => {
+        const data = await createServiceContact(tx, svc, body, acknowledgeDuplicates);
+        await auditService(tx, svc, {
+          action: 'service.contact_create',
+          entity: 'contact',
+          entityId: data.id,
+          after: { route: 'POST /api/service/contacts', status: data.status, source: data.source }
+        });
+        return { status: 201, body: { ok: true, data } };
+      });
+      return idempotentResponse(result);
+    } catch (error) {
+      if (error instanceof ModuleDisabledError) return moduleDisabledResponse(error);
+      return errorResponse(error);
+    }
+  },
+  { requiredScope: 'contacts:write' }
 );

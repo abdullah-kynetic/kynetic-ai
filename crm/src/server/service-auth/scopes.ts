@@ -4,6 +4,7 @@ export const SERVICE_TOKEN_SCOPES = [
   'update-deal-stage',
   'event-ack',
   'contacts:read',
+  'contacts:write',
   'appointments:read',
   'appointments:write',
   'calls:write',
