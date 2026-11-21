@@ -145,3 +145,34 @@ describe('agency prospects funnel', () => {
     expect(rows[0]!.n).toBe(1);
   });
 });
+
+describe('agency prospects do-not-call guard', () => {
+  it('does not move a prospect whose phone is on the active do-not-call list', async () => {
+    const dncProspect = await make({
+      businessName: 'Dnc Co',
+      email: 'dnc@example.test',
+      phone: '+12025550103'
+    });
+    await agency.test.admin`insert into dnc_entries (tenant_id, e164, source)
+      values (${agency.tenantId}, '+12025550103', 'test')`;
+    const result = await moveProspectsToSales(agencyAdmin, [dncProspect.id], { db });
+    expect(result.moved).toEqual([]);
+    expect(result.skipped).toEqual([
+      expect.objectContaining({ prospectId: dncProspect.id, reason: 'On the do-not-call list.' })
+    ]);
+    const deals = await agency.test.admin`select count(*)::int n from deals where title = 'Dnc Co'`;
+    expect(deals[0]!.n).toBe(0);
+  });
+
+  it('moves a prospect again once its do-not-call entry is removed', async () => {
+    const p = await make({
+      businessName: 'Lifted Co',
+      email: 'lifted@example.test',
+      phone: '+12025550104'
+    });
+    await agency.test.admin`insert into dnc_entries (tenant_id, e164, source, removed_at)
+      values (${agency.tenantId}, '+12025550104', 'test', now())`;
+    const result = await moveProspectsToSales(agencyAdmin, [p.id], { db });
+    expect(result.moved.map((m) => m.prospectId)).toEqual([p.id]);
+  });
+});
