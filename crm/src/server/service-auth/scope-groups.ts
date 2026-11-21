@@ -96,6 +96,12 @@ export const SCOPE_GROUPS: {
     scopes: ['reports:read', 'reports:write', 'usage:read']
   },
   {
+    id: 'settings',
+    label: 'Business settings',
+    hint: 'See and change business hours, the business profile and tags. Read the team list.',
+    scopes: ['settings:read', 'settings:write']
+  },
+  {
     id: 'automation',
     label: 'Automation plumbing',
     hint: 'Acknowledge events from the portal.',
