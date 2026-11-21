@@ -35,6 +35,8 @@ export const SERVICE_TOKEN_SCOPES = [
   'reports:read',
   'reports:write',
   'usage:read',
+  'settings:read',
+  'settings:write',
   'support:read',
   'support:write',
   'tasks:write'
