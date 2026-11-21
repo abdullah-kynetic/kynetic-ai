@@ -108,6 +108,18 @@ export const SCOPE_GROUPS: {
     scopes: ['support:read', 'support:write']
   },
   {
+    id: 'alex',
+    label: 'Alex',
+    hint: 'Pause Alex and change its call hours. Other Alex settings stay with Kynetic.',
+    scopes: ['alex:write']
+  },
+  {
+    id: 'automations',
+    label: 'Automations',
+    hint: 'Turn automation templates on or off.',
+    scopes: ['automation:write']
+  },
+  {
     id: 'automation',
     label: 'Automation plumbing',
     hint: 'Acknowledge events from the portal.',
