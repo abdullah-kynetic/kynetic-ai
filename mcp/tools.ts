@@ -36,7 +36,7 @@ export type ToolDefinition = {
   scope: string | null;
   access: 'read' | 'write';
   /** The one portal route this tool calls. `null` for tools the MCP server answers itself. */
-  route: { method: 'GET' | 'POST' | 'PATCH'; path: string } | null;
+  route: { method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'; path: string } | null;
   /** Input names sent in the URL path (`{id}` style), in the query string, or in the JSON body. */
   pathParams: string[];
   queryParams: string[];
@@ -798,6 +798,178 @@ export const TOOLS: ToolDefinition[] = [
       before: instant('Only notifications created before this time.')
     },
     required: []
+  }),
+  // Contact and task writes and deletes (full access, chosen 11-21). Each keeps its route's own scope.
+  write({
+    name: 'merge_contacts',
+    title: 'Merge two contacts',
+    summary: 'Merges the loser contact into the survivor. The survivor keeps its record; the loser is hidden.',
+    scope: 'contacts:delete',
+    route: { method: 'POST', path: '/api/service/contacts/merge' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['survivorId', 'loserId'],
+    freeText: [],
+    inputs: { survivorId: uuid('Contact that stays.'), loserId: uuid('Contact that is merged into the survivor and hidden.') },
+    required: ['survivorId', 'loserId'],
+    repeat: 'A repeat with the same two ids changes nothing more.'
+  }),
+  write({
+    name: 'bulk_contact_action',
+    title: 'Bulk action on contacts',
+    summary:
+      'Applies one action to up to 200 contacts: add or remove tags, set the owner, set the status, or delete them.',
+    scope: 'contacts:write',
+    route: { method: 'POST', path: '/api/service/contacts/bulk' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['ids', 'action'],
+    freeText: [],
+    inputs: {
+      ids: { type: 'array', items: uuid('Contact id.'), minItems: 1, maxItems: 200, description: 'Contacts to act on.' },
+      action: {
+        type: 'object',
+        description:
+          'One action. {"type":"tag","add":[],"remove":[]}, {"type":"owner","ownerId":uuid or null}, {"type":"status","status":enum}, or {"type":"delete"}.'
+      }
+    },
+    required: ['ids', 'action'],
+    repeat: 'A repeat with the same key and input returns the first result.'
+  }),
+  write({
+    name: 'set_contact_owner',
+    title: 'Set contact owner',
+    summary: 'Sets or clears the owner of one contact.',
+    scope: 'contacts:write',
+    route: { method: 'PUT', path: '/api/service/contacts/{id}/owner' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['ownerId'],
+    freeText: [],
+    inputs: {
+      id: uuid('Contact id.'),
+      ownerId: { ...uuid('Team member id, or null to clear the owner.'), type: ['string', 'null'] }
+    },
+    required: ['id', 'ownerId'],
+    repeat: 'A repeat sets the same owner again.'
+  }),
+  write({
+    name: 'add_contact_tags',
+    title: 'Add tags to a contact',
+    summary: 'Adds one or more tags to a contact. Existing tags stay.',
+    scope: 'contacts:write',
+    route: { method: 'POST', path: '/api/service/contacts/{id}/tags' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['tags'],
+    freeText: [],
+    inputs: {
+      id: uuid('Contact id.'),
+      tags: { type: 'array', items: { type: 'string', minLength: 1, maxLength: 50 }, minItems: 1, maxItems: 50 }
+    },
+    required: ['id', 'tags'],
+    repeat: 'A repeat adds the same tags, which are already there, so nothing changes.'
+  }),
+  write({
+    name: 'remove_contact_tags',
+    title: 'Remove tags from a contact',
+    summary: 'Removes one or more tags from a contact.',
+    scope: 'contacts:write',
+    route: { method: 'DELETE', path: '/api/service/contacts/{id}/tags' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['tags'],
+    freeText: [],
+    inputs: {
+      id: uuid('Contact id.'),
+      tags: { type: 'array', items: { type: 'string', minLength: 1, maxLength: 50 }, minItems: 1, maxItems: 50 }
+    },
+    required: ['id', 'tags'],
+    repeat: 'A repeat removes the same tags, which are already gone, so nothing changes.'
+  }),
+  write({
+    name: 'restore_contact',
+    title: 'Restore a deleted contact',
+    summary: 'Restores a contact that was deleted.',
+    scope: 'contacts:write',
+    route: { method: 'POST', path: '/api/service/contacts/{id}/restore' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: [],
+    inputs: { id: uuid('Contact id.') },
+    required: ['id'],
+    repeat: 'A repeat on a contact that is already restored changes nothing.'
+  }),
+  write({
+    name: 'delete_contact',
+    title: 'Delete a contact',
+    summary: 'Deletes one contact. It can be restored with restore_contact.',
+    scope: 'contacts:delete',
+    route: { method: 'DELETE', path: '/api/service/contacts/{id}' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: [],
+    inputs: { id: uuid('Contact id.') },
+    required: ['id'],
+    repeat: 'A repeat on a contact that is already deleted changes nothing.'
+  }),
+  write({
+    name: 'complete_task',
+    title: 'Complete a task',
+    summary: 'Marks one task as complete.',
+    scope: 'tasks:write',
+    route: { method: 'POST', path: '/api/service/tasks/{id}/complete' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: [],
+    inputs: { id: uuid('Task id.') },
+    required: ['id'],
+    repeat: 'A repeat on a completed task changes nothing.'
+  }),
+  write({
+    name: 'reopen_task',
+    title: 'Reopen a task',
+    summary: 'Marks one completed task as open again.',
+    scope: 'tasks:write',
+    route: { method: 'POST', path: '/api/service/tasks/{id}/reopen' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: [],
+    inputs: { id: uuid('Task id.') },
+    required: ['id'],
+    repeat: 'A repeat on an open task changes nothing.'
+  }),
+  write({
+    name: 'restore_task',
+    title: 'Restore a deleted task',
+    summary: 'Restores a task that was deleted.',
+    scope: 'tasks:write',
+    route: { method: 'POST', path: '/api/service/tasks/{id}/restore' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: [],
+    inputs: { id: uuid('Task id.') },
+    required: ['id'],
+    repeat: 'A repeat on a restored task changes nothing.'
+  }),
+  write({
+    name: 'delete_task',
+    title: 'Delete a task',
+    summary: 'Deletes one task. It can be restored with restore_task.',
+    scope: 'tasks:write',
+    route: { method: 'DELETE', path: '/api/service/tasks/{id}' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: [],
+    inputs: { id: uuid('Task id.') },
+    required: ['id'],
+    repeat: 'A repeat on a deleted task changes nothing.'
   })
 ];
 
@@ -812,22 +984,11 @@ export const ROUTES_WITHOUT_TOOLS = [
   // Contact writes (C1, C2) and company routes (C3). Live on the API now. MCP tools ship with B1; this list must come back down to two.
   { method: 'POST', path: '/api/service/contacts', scope: 'contacts:write' },
   { method: 'PATCH', path: '/api/service/contacts/{id}', scope: 'contacts:write' },
-  { method: 'POST', path: '/api/service/contacts/{id}/tags', scope: 'contacts:write' },
-  { method: 'DELETE', path: '/api/service/contacts/{id}/tags', scope: 'contacts:write' },
-  { method: 'PUT', path: '/api/service/contacts/{id}/owner', scope: 'contacts:write' },
-  { method: 'POST', path: '/api/service/contacts/merge', scope: 'contacts:delete' },
-  { method: 'DELETE', path: '/api/service/contacts/{id}', scope: 'contacts:delete' },
-  { method: 'POST', path: '/api/service/contacts/{id}/restore', scope: 'contacts:write' },
   { method: 'GET', path: '/api/service/contacts/export', scope: 'contacts:export' },
-  { method: 'POST', path: '/api/service/contacts/bulk', scope: 'contacts:write' },
   { method: 'GET', path: '/api/service/companies', scope: 'companies:read' },
   { method: 'POST', path: '/api/service/companies', scope: 'companies:write' },
   { method: 'PATCH', path: '/api/service/companies/{id}', scope: 'companies:write' },
   { method: 'DELETE', path: '/api/service/companies/{id}', scope: 'companies:write' },
-  { method: 'POST', path: '/api/service/tasks/{id}/complete', scope: 'tasks:write' },
-  { method: 'POST', path: '/api/service/tasks/{id}/reopen', scope: 'tasks:write' },
-  { method: 'POST', path: '/api/service/tasks/{id}/restore', scope: 'tasks:write' },
-  { method: 'DELETE', path: '/api/service/tasks/{id}', scope: 'tasks:write' },
   { method: 'POST', path: '/api/service/deals', scope: 'deals:write' },
   { method: 'PATCH', path: '/api/service/deals/{id}', scope: 'deals:write' },
   { method: 'DELETE', path: '/api/service/deals/{id}', scope: 'deals:write' },
