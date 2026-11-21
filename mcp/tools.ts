@@ -638,5 +638,7 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'GET', path: '/api/service/reviews/summary', scope: 'reputation:read' },
   { method: 'GET', path: '/api/service/referrals', scope: 'referrals:write' },
   { method: 'POST', path: '/api/service/referrals', scope: 'referrals:write' },
-  { method: 'PATCH', path: '/api/service/referrals/{id}', scope: 'referrals:write' }
+  { method: 'PATCH', path: '/api/service/referrals/{id}', scope: 'referrals:write' },
+  { method: 'GET', path: '/api/service/presence', scope: 'reputation:read' },
+  { method: 'PUT', path: '/api/service/presence/{id}', scope: 'reputation:write' }
 ] as const;

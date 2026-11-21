@@ -484,6 +484,13 @@
       "when": 1795351200000,
       "tag": "1095_admin_api_keys",
       "breakpoints": true
+    },
+    {
+      "idx": 69,
+      "version": "7",
+      "when": 1795437600000,
+      "tag": "1096_admin_api_key_owner",
+      "breakpoints": true
     }
   ]
 }
