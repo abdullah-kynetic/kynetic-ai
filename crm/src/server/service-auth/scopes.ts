@@ -21,6 +21,7 @@ export const SERVICE_TOKEN_SCOPES = [
   'tasks:read',
   'calls:read',
   'messages:read',
+  'calls:recording',
   'call-log:write',
   'notes:write',
   'deals:write',
