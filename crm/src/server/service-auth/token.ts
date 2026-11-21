@@ -32,3 +32,18 @@ export function bearerFromHeader(header: string | null | undefined): string | nu
   const m = /^Bearer ([^\s]+)$/i.exec(header.trim());
   return m ? m[1] : null;
 }
+
+// kad_<16 hex prefix>_<64 hex secret>: the owner's admin key. Same shape, different prefix, so a client
+// token can never be mistaken for it (and the reverse).
+const ADMIN_KEY_RE = /^kad_([0-9a-f]{16})_([0-9a-f]{64})$/;
+
+export function generateAdminKey(): NewServiceToken {
+  const prefix = randomBytes(8).toString('hex');
+  const secret = randomBytes(32).toString('hex');
+  return { token: `kad_${prefix}_${secret}`, prefix, keyHash: hashSecret(secret) };
+}
+
+export function parseAdminKey(raw: string): { prefix: string; keyHash: string } | null {
+  const m = ADMIN_KEY_RE.exec(raw);
+  return m ? { prefix: m[1], keyHash: hashSecret(m[2]) } : null;
+}

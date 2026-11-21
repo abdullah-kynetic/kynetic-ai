@@ -86,7 +86,8 @@ export async function recordContactDecision(
           eventId: value.eventId,
           version: value.version,
           occurredAt: value.occurredAt,
-          serviceTokenId: svc.tokenId
+          serviceTokenId: svc.tokenId,
+          adminKeyId: svc.adminKeyId ?? null
         }
       });
       return { id: created.id, status: 'recorded' };

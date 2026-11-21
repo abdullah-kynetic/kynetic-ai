@@ -7,10 +7,12 @@ import { issueAdminServiceToken, revokeAdminServiceToken } from '@/server/admin/
 import { AppError } from '@/server/errors';
 import { isViewingAs } from '../../../view-as-guard';
 
+const OWNER_ONLY = 'Only the portal owner can manage service tokens.';
+
 async function adminCaller() {
   const access = await decideAdminAccess(await headers());
   if (access.kind !== 'ok' || access.role !== 'admin')
-    return { ok: false as const, message: 'Only a Kynetic admin can manage service tokens.' };
+    return { ok: false as const, message: OWNER_ONLY };
   if (await isViewingAs(access.user))
     return { ok: false as const, message: 'Exit view-as before managing service tokens.' };
   return { ok: true as const, caller: { id: access.user.id, kyneticRole: access.role } };
@@ -29,6 +31,8 @@ export async function issueServiceTokenAction(
   } catch (error) {
     if (error instanceof AppError && error.code === 'VALIDATION_FAILED')
       return { ok: false, message: error.message };
+    if (error instanceof AppError && error.code === 'FORBIDDEN')
+      return { ok: false, message: OWNER_ONLY };
     return { ok: false, message: 'The token could not be issued.' };
   }
 }
@@ -43,7 +47,9 @@ export async function revokeServiceTokenAction(
     await revokeAdminServiceToken(access.caller, tenantId, tokenId);
     revalidatePath(`/admin/clients/${tenantId}/service-tokens`);
     return { ok: true };
-  } catch {
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'FORBIDDEN')
+      return { ok: false, message: OWNER_ONLY };
     return { ok: false, message: 'The token could not be revoked.' };
   }
 }

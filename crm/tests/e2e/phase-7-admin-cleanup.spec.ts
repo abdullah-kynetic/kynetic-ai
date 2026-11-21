@@ -38,7 +38,6 @@ const OLD_ADMIN_ADDRESSES = [
   '/admin/clients/11111111-1111-4111-8111-111111111111/checklist',
   '/admin/clients/11111111-1111-4111-8111-111111111111/imports',
   '/admin/clients/11111111-1111-4111-8111-111111111111/webhooks',
-  '/admin/clients/11111111-1111-4111-8111-111111111111/service-tokens',
   '/admin/clients/11111111-1111-4111-8111-111111111111/presence',
   '/admin/clients/11111111-1111-4111-8111-111111111111/modules',
   '/admin/clients/11111111-1111-4111-8111-111111111111/offboard'
@@ -49,6 +48,15 @@ test('phase 7 every old admin address resolves', async ({ adminPage }) => {
     const response = await adminPage.request.get(address, { maxRedirects: 0 });
     expect(response.status(), address).toBeLessThan(400);
   }
+});
+
+// Service tokens are owner only. The e2e admin is not the configured owner, so the page refuses.
+test('phase 7 service tokens page refuses an admin who is not the owner', async ({ adminPage }) => {
+  const response = await adminPage.request.get(
+    '/admin/clients/11111111-1111-4111-8111-111111111111/service-tokens',
+    { maxRedirects: 0 }
+  );
+  expect(response.status()).toBe(403);
 });
 
 test('phase 7 screenshots at phone and desktop widths', async ({ adminPage, vaPage }) => {

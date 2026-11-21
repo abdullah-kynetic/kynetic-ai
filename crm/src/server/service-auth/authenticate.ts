@@ -4,13 +4,33 @@ import { serviceTokens, tenants } from '../db/schema';
 import { errorResponse, RateLimitedError } from '../errors';
 import { withTenant } from '../tenancy';
 import { consumeRateLimit, RATE_LIMITS } from '../security/rate-limit';
-import { bearerFromHeader, generateServiceToken, hashesEqual, parseServiceToken } from './token';
+import { SERVICE_TOKEN_SCOPES } from './scopes';
+import { addressAllowed } from './address';
+import {
+  bearerFromHeader,
+  generateServiceToken,
+  hashesEqual,
+  parseAdminKey,
+  parseServiceToken
+} from './token';
+import { clientIp } from '../security/with-api';
 
 export type ServiceContext = {
   tenantId: string;
-  tokenId: string;
+  /** The client token, or null when the call came from the owner's admin key. */
+  tokenId: string | null;
+  /** The admin key, or null for a client token. Exactly one of the two is set. */
+  adminKeyId?: string | null;
   scopes: string[];
 };
+
+/** Header an admin key uses to say which client it is acting for (the client's slug). */
+export const ADMIN_CLIENT_HEADER = 'x-kynetic-client';
+
+async function serviceApiEnabled(db: Db): Promise<boolean> {
+  const rows = await db.execute<{ on: boolean }>(sql`select service_api_enabled() as on`);
+  return rows[0]?.on === true;
+}
 
 type Opts = { db?: Db };
 
@@ -21,12 +41,16 @@ type Opts = { db?: Db };
  */
 export async function authenticateServiceToken(
   authorization: string | null | undefined,
-  opts: Opts & { requiredScope?: string } = {}
+  opts: Opts & { requiredScope?: string; request?: Request } = {}
 ): Promise<ServiceContext | null> {
   const raw = bearerFromHeader(authorization);
-  const parsed = raw ? parseServiceToken(raw) : null;
-  if (!parsed) return null;
+  if (!raw) return null;
   const db = opts.db ?? getDb();
+  if (raw.startsWith('kad_')) return authenticateAdminKey(raw, db, opts);
+  const parsed = parseServiceToken(raw);
+  if (!parsed) return null;
+  // The owner's stop-all switch also stops every client token.
+  if (!(await serviceApiEnabled(db))) return null;
 
   const rows = await db.execute<{
     id: string;
@@ -52,6 +76,47 @@ export async function authenticateServiceToken(
     tenantId: row.tenant_id,
     tokenId: row.id,
     scopes: row.scopes.filter(Boolean)
+  };
+}
+
+/**
+ * The owner's admin key. It acts for ONE client per request, named in the X-Kynetic-Client header, and
+ * holds every scope. It must come from an allowed address when the key has an address list. A switched-off
+ * API, a revoked key, a wrong address, an unknown client, or a suspended client all look like 401.
+ */
+async function authenticateAdminKey(
+  raw: string,
+  db: Db,
+  opts: { requiredScope?: string; request?: Request }
+): Promise<ServiceContext | null> {
+  const parsed = parseAdminKey(raw);
+  if (!parsed || !opts.request) return null;
+  const rows = await db.execute<{
+    id: string;
+    key_hash: string;
+    allowed_cidrs: string[];
+    revoked_at: string | null;
+  }>(sql`select * from admin_api_key_lookup(${parsed.prefix})`);
+  const row = rows[0];
+  if (!row || !hashesEqual(row.key_hash, parsed.keyHash) || row.revoked_at) return null;
+  if (!(await serviceApiEnabled(db))) return null;
+  // Fail closed: a key with an address list is useless from anywhere else, including an unknown address.
+  if (row.allowed_cidrs.length > 0 && !addressAllowed(clientIp(opts.request), row.allowed_cidrs))
+    return null;
+  const slug = opts.request.headers.get(ADMIN_CLIENT_HEADER)?.trim().toLowerCase() ?? '';
+  if (!/^[a-z0-9-]{3,40}$/.test(slug)) return null;
+  const client = (
+    await db.execute<{ tenant_id: string; status: string }>(
+      sql`select * from admin_api_key_client(${slug})`
+    )
+  )[0];
+  if (!client || client.status === 'suspended' || client.status === 'offboarded') return null;
+  await db.execute(sql`select admin_api_key_touch(${row.id}::uuid)`);
+  return {
+    tenantId: client.tenant_id,
+    tokenId: null,
+    adminKeyId: row.id,
+    scopes: [...SERVICE_TOKEN_SCOPES]
   };
 }
 
@@ -128,7 +193,10 @@ export function withServiceAuth<A extends unknown[]>(
   opts: Opts & { requiredScope?: string } = {}
 ) {
   return async (req: Request, ...rest: A): Promise<Response> => {
-    const svc = await authenticateServiceToken(req.headers.get('authorization'), opts);
+    const svc = await authenticateServiceToken(req.headers.get('authorization'), {
+      ...opts,
+      request: req
+    });
     if (!svc) {
       return Response.json(
         { error: 'unauthorized' },
@@ -145,7 +213,11 @@ export function withServiceAuth<A extends unknown[]>(
     const rule = ['GET', 'HEAD'].includes(req.method)
       ? RATE_LIMITS.serviceRead
       : RATE_LIMITS.serviceWrite;
-    const limit = await consumeRateLimit(opts.db ?? getDb(), rule, svc.tokenId);
+    const limit = await consumeRateLimit(
+      opts.db ?? getDb(),
+      rule,
+      (svc.tokenId ?? svc.adminKeyId) as string
+    );
     if (!limit.allowed) return errorResponse(new RateLimitedError(limit.retryAfterSeconds));
     return handler(req, svc, ...rest);
   };

@@ -80,6 +80,7 @@ export async function recordCallLog(
     meta: {
       source: 'service-api',
       serviceTokenId: svc.tokenId,
+      adminKeyId: svc.adminKeyId ?? null,
       outcome: input.outcome,
       ...(input.durationS !== undefined ? { durationS: input.durationS } : {}),
       ...(note ? { note } : {})

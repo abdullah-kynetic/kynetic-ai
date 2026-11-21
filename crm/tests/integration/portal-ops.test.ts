@@ -16,6 +16,7 @@ import { IDS, seedTwoTenants } from '../helpers/fixtures';
 
 let test: TestDatabase;
 let worker: Db;
+const ownerEmail = 'admin@example.test';
 const admin = { id: IDS.admin, kyneticRole: 'admin' as const };
 const keyring = buildKeyring({
   APP_ENCRYPTION_KEY: 'synthetic-test-key-not-real-000000000000',
@@ -26,6 +27,7 @@ const storage = new FakeStorage();
 beforeAll(async () => {
   test = await createTestDatabase();
   await seedTwoTenants(test.admin);
+  await test.admin`update users set email_verified = true where id = ${IDS.admin}`;
   worker = createDb(test.worker);
   setStorage(storage);
 });
@@ -41,14 +43,14 @@ describe('admin service tokens', () => {
       admin,
       IDS.tenantA,
       { label: 'n8n lead', scopes: ['contacts:read', 'event-ack'] },
-      { db: worker }
+      { db: worker, ownerEmail }
     );
     const secret = issued.token.split('_')[2] ?? '';
     const [row] =
       await test.admin`select key_hash, prefix from service_tokens where id = ${issued.id}`;
     expect(row.key_hash).not.toContain(secret);
     expect(JSON.stringify(row)).not.toContain(secret);
-    const listed = await listServiceTokens(admin, IDS.tenantA, { db: worker });
+    const listed = await listServiceTokens(admin, IDS.tenantA, { db: worker, ownerEmail });
     const saved = listed.find((item) => item.id === issued.id);
     expect(saved).toMatchObject({
       label: 'n8n lead',
@@ -58,12 +60,16 @@ describe('admin service tokens', () => {
     expect(JSON.stringify(listed)).not.toContain(secret);
     expect(JSON.stringify(listed)).not.toContain(row.key_hash);
     await expect(
-      listServiceTokens({ id: IDS.va, kyneticRole: 'va' }, IDS.tenantA, { db: worker })
+      listServiceTokens({ id: IDS.va, kyneticRole: 'va' }, IDS.tenantA, { db: worker, ownerEmail })
     ).rejects.toMatchObject({ code: 'FORBIDDEN' });
-    expect(await revokeAdminServiceToken(admin, IDS.tenantB, issued.id, { db: worker })).toEqual({
+    expect(
+      await revokeAdminServiceToken(admin, IDS.tenantB, issued.id, { db: worker, ownerEmail })
+    ).toEqual({
       revoked: false
     });
-    expect(await revokeAdminServiceToken(admin, IDS.tenantA, issued.id, { db: worker })).toEqual({
+    expect(
+      await revokeAdminServiceToken(admin, IDS.tenantA, issued.id, { db: worker, ownerEmail })
+    ).toEqual({
       revoked: true
     });
     const audits = await test.admin`
