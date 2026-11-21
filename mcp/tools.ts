@@ -1381,6 +1381,82 @@ export const TOOLS: ToolDefinition[] = [
     inputs: { id: uuid('Appointment id.') },
     required: ['id'],
     repeat: 'A repeat on a cancelled appointment changes nothing.'
+  }),
+  // Call and conversation tools (full access). Each keeps its route's scope.
+  read({
+    name: 'get_call',
+    title: 'Get one call',
+    summary: 'Returns one call: time, direction, outcome, duration, summary and flags. No recording.',
+    scope: 'calls:read',
+    route: { method: 'GET', path: '/api/service/calls/{id}' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: ['summary'],
+    inputs: { id: uuid('Call id.') },
+    required: ['id']
+  }),
+  read({
+    name: 'get_call_recording_link',
+    title: 'Get a call recording link',
+    summary: 'Returns a signed link to the call recording, valid for five minutes. The storage key is never returned.',
+    scope: 'calls:recording',
+    route: { method: 'GET', path: '/api/service/calls/{id}/recording' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: [],
+    inputs: { id: uuid('Call id.') },
+    required: ['id']
+  }),
+  write({
+    name: 'flag_call',
+    title: 'Flag a call for review',
+    summary: 'Flags one call for a person to review, with an optional reason.',
+    scope: 'calls:write',
+    route: { method: 'POST', path: '/api/service/calls/{id}/flag' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['reason'],
+    freeText: ['reason'],
+    inputs: {
+      id: uuid('Call id.'),
+      reason: { type: 'string', maxLength: 1000, description: 'Why the call is flagged. Optional.' }
+    },
+    required: ['id'],
+    repeat: 'A repeat on a flagged call changes nothing more.'
+  }),
+  read({
+    name: 'list_conversations',
+    title: 'List conversations',
+    summary: 'Lists conversations, newest first. Names only, with no phone or email.',
+    scope: 'messages:read',
+    route: { method: 'GET', path: '/api/service/conversations' },
+    pathParams: [],
+    queryParams: ['limit', 'offset'],
+    bodyParams: [],
+    freeText: ['name'],
+    inputs: {
+      limit,
+      offset: { type: 'integer', minimum: 0, maximum: 10000, default: 0 }
+    },
+    required: []
+  }),
+  read({
+    name: 'get_conversation_messages',
+    title: 'Get conversation messages',
+    summary: 'Returns the messages in one conversation, newest first.',
+    scope: 'messages:read',
+    route: { method: 'GET', path: '/api/service/conversations/{id}/messages' },
+    pathParams: ['id'],
+    queryParams: ['limit'],
+    bodyParams: [],
+    freeText: ['body'],
+    inputs: {
+      id: uuid('Conversation id.'),
+      limit
+    },
+    required: ['id']
   })
 ];
 
@@ -1394,11 +1470,6 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'POST', path: '/api/service/contact-decisions', scope: 'contact-decisions:write' },
   // Contact writes (C1, C2) and company routes (C3). Live on the API now. MCP tools ship with B1; this list must come back down to two.
   { method: 'GET', path: '/api/service/contacts/export', scope: 'contacts:export' },
-  { method: 'GET', path: '/api/service/conversations', scope: 'messages:read' },
-  { method: 'GET', path: '/api/service/conversations/{id}/messages', scope: 'messages:read' },
-  { method: 'GET', path: '/api/service/calls/{id}', scope: 'calls:read' },
-  { method: 'POST', path: '/api/service/calls/{id}/flag', scope: 'calls:write' },
-  { method: 'GET', path: '/api/service/calls/{id}/recording', scope: 'calls:recording' },
   { method: 'POST', path: '/api/service/referrals', scope: 'referrals:write' },
   { method: 'PATCH', path: '/api/service/referrals/{id}', scope: 'referrals:write' },
   { method: 'PUT', path: '/api/service/presence/{id}', scope: 'reputation:write' },
