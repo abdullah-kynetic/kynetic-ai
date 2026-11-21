@@ -35,7 +35,6 @@ const adminHeaders = (slug = agencySlug): Record<string, string> => ({
   [ADMIN_CLIENT_HEADER]: slug
 });
 const bearer = (t: string): Record<string, string> => ({ authorization: `Bearer ${t}` });
-const noCtx = { params: Promise.resolve({}) };
 
 beforeAll(async () => {
   setup = await setupAgency();
@@ -93,8 +92,7 @@ describe('service API agency prospects (D1)', () => {
     );
     expect(created.status).toBe(201);
     const funnel = await funnelRoute(
-      req('/api/service/agency/prospects/funnel', 'GET', adminHeaders()),
-      noCtx
+      req('/api/service/agency/prospects/funnel', 'GET', adminHeaders())
     );
     expect((await funnel.json()).data.total).toBeGreaterThan(0);
     const list = await listRoute(
