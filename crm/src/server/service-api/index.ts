@@ -8,3 +8,4 @@ export * from './tasks-write';
 export * from './contacts-write';
 export * from './contacts-admin';
 export * from './tasks-lifecycle';
+export * from './messages-read';

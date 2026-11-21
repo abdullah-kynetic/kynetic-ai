@@ -36,6 +36,12 @@ export const SCOPE_GROUPS: {
     scopes: ['tasks:read', 'tasks:write', 'notes:write']
   },
   {
+    id: 'messages',
+    label: 'Messages',
+    hint: 'Read contact message threads. Sending is not offered yet.',
+    scopes: ['messages:read']
+  },
+  {
     id: 'calls',
     label: 'Calls',
     hint: 'See call history and log call results.',
