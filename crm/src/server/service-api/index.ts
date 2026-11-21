@@ -17,3 +17,6 @@ export * from './appointments-write';
 export * from './reviews-referrals';
 export * from './presence';
 export * from './documents';
+export * from './owner';
+export * from './notifications';
+export * from './reports-usage';

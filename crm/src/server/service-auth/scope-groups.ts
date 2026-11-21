@@ -84,6 +84,18 @@ export const SCOPE_GROUPS: {
     scopes: ['documents:read', 'documents:write']
   },
   {
+    id: 'notifications',
+    label: 'Notifications',
+    hint: 'See the owner notifications and mark them read.',
+    scopes: ['notifications:read']
+  },
+  {
+    id: 'reports',
+    label: 'Reports and usage',
+    hint: 'Read monthly reports and client usage, and generate a report for a month.',
+    scopes: ['reports:read', 'reports:write', 'usage:read']
+  },
+  {
     id: 'automation',
     label: 'Automation plumbing',
     hint: 'Acknowledge events from the portal.',
