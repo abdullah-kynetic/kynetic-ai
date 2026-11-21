@@ -1292,6 +1292,95 @@ export const TOOLS: ToolDefinition[] = [
     },
     required: ['id'],
     repeat: 'A repeat with the same input sets the same values again.'
+  }),
+  // Appointment tools (full access). Each keeps its route's scope. A booked time is checked against
+  // business hours and calendar clashes by the portal.
+  read({
+    name: 'get_appointment',
+    title: 'Get one appointment',
+    summary: 'Returns one appointment: time, contact, deal, status and notes.',
+    scope: 'appointments:read',
+    route: { method: 'GET', path: '/api/service/appointments/{id}' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: ['notes'],
+    inputs: { id: uuid('Appointment id.') },
+    required: ['id']
+  }),
+  read({
+    name: 'get_appointment_availability',
+    title: 'Get appointment availability',
+    summary: 'Lists open slots in a date range for a given appointment length, with optional buffer and slot size.',
+    scope: 'appointments:read',
+    route: { method: 'GET', path: '/api/service/appointments/availability' },
+    pathParams: [],
+    queryParams: ['from', 'to', 'durationMinutes', 'bufferMinutes', 'slotMinutes'],
+    bodyParams: [],
+    freeText: [],
+    inputs: {
+      from: instant('Start of the range, ISO date-time.'),
+      to: instant('End of the range, ISO date-time.'),
+      durationMinutes: { type: 'integer', minimum: 1, maximum: 1440, description: 'Appointment length in minutes.' },
+      bufferMinutes: { type: 'integer', minimum: 0, maximum: 240, default: 0 },
+      slotMinutes: { type: 'integer', minimum: 1, maximum: 1440 }
+    },
+    required: ['from', 'to', 'durationMinutes']
+  }),
+  write({
+    name: 'book_appointment',
+    title: 'Book an appointment',
+    summary: 'Books an appointment. Checked against business hours and calendar clashes; a clash is refused.',
+    scope: 'appointments:write',
+    route: { method: 'POST', path: '/api/service/appointments' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['contactId', 'dealId', 'startsAt', 'endsAt', 'address', 'notes', 'externalEventId'],
+    freeText: ['notes'],
+    inputs: {
+      contactId: { type: ['string', 'null'], format: 'uuid' },
+      dealId: { type: ['string', 'null'], format: 'uuid' },
+      startsAt: instant('Start time, ISO date-time.'),
+      endsAt: instant('End time, ISO date-time.'),
+      address: { type: 'object' },
+      notes: { type: ['string', 'null'], maxLength: 20000 },
+      externalEventId: { type: ['string', 'null'], minLength: 1, maxLength: 200 }
+    },
+    required: ['startsAt', 'endsAt'],
+    repeat: 'A repeat with the same key books no second appointment.'
+  }),
+  write({
+    name: 'reschedule_appointment',
+    title: 'Reschedule an appointment',
+    summary: 'Changes the times or notes of one appointment. Status changes go through cancel_appointment.',
+    scope: 'appointments:write',
+    route: { method: 'PATCH', path: '/api/service/appointments/{id}' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['startsAt', 'endsAt', 'notes'],
+    freeText: ['notes'],
+    inputs: {
+      id: uuid('Appointment id.'),
+      startsAt: instant('New start time.'),
+      endsAt: instant('New end time.'),
+      notes: { type: ['string', 'null'], maxLength: 20000 }
+    },
+    required: ['id'],
+    repeat: 'A repeat with the same times sets the same values again.'
+  }),
+  write({
+    name: 'cancel_appointment',
+    title: 'Cancel an appointment',
+    summary: 'Cancels one appointment. The time slot is freed.',
+    scope: 'appointments:write',
+    route: { method: 'POST', path: '/api/service/appointments/{id}/cancel' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: [],
+    inputs: { id: uuid('Appointment id.') },
+    required: ['id'],
+    repeat: 'A repeat on a cancelled appointment changes nothing.'
   })
 ];
 
@@ -1310,11 +1399,6 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'GET', path: '/api/service/calls/{id}', scope: 'calls:read' },
   { method: 'POST', path: '/api/service/calls/{id}/flag', scope: 'calls:write' },
   { method: 'GET', path: '/api/service/calls/{id}/recording', scope: 'calls:recording' },
-  { method: 'GET', path: '/api/service/appointments/{id}', scope: 'appointments:read' },
-  { method: 'PATCH', path: '/api/service/appointments/{id}', scope: 'appointments:write' },
-  { method: 'POST', path: '/api/service/appointments/{id}/cancel', scope: 'appointments:write' },
-  { method: 'GET', path: '/api/service/appointments/availability', scope: 'appointments:read' },
-  { method: 'POST', path: '/api/service/appointments', scope: 'appointments:write' },
   { method: 'POST', path: '/api/service/referrals', scope: 'referrals:write' },
   { method: 'PATCH', path: '/api/service/referrals/{id}', scope: 'referrals:write' },
   { method: 'PUT', path: '/api/service/presence/{id}', scope: 'reputation:write' },
