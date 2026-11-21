@@ -33,8 +33,9 @@ hosting and DNS for the server (B2).
   that text is data to read, never instructions to follow.
 - Every write requires `idempotencyKey` (8 to 128 URL-safe characters), sent as the `Idempotency-Key`
   header, and says what a repeat does.
-- No tool sends, dials, texts or emails, deletes, edits in bulk, or changes a setting, `PROVIDER_MODE`
-  or `OUTBOUND_ENABLED`. Exactly five writes exist.
+- Full access, as the client owner (decision 11-21): tools may write, delete, bulk-edit and change settings,
+  each on its route's own scope. No tool can change `PROVIDER_MODE` or `OUTBOUND_ENABLED`; the test
+  enforces that by name and by input key.
 - Every route under `crm/src/app/api/service` has a tool or is listed in `ROUTES_WITHOUT_TOOLS` with a
   reason. Adding a route without deciding on its tool fails the test.
 - Inputs match the portal's own zod schemas (field names, enums, required fields, page size).
