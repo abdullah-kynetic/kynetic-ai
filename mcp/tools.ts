@@ -652,4 +652,8 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'POST', path: '/api/service/reports/generate', scope: 'reports:write' },
   { method: 'GET', path: '/api/service/usage', scope: 'usage:read' },
   { method: 'GET', path: '/api/service/search', scope: 'contacts:read' },
+  { method: 'GET', path: '/api/service/support', scope: 'support:read' },
+  { method: 'POST', path: '/api/service/support', scope: 'support:write' },
+  { method: 'GET', path: '/api/service/support/{id}', scope: 'support:read' },
+  { method: 'POST', path: '/api/service/support/{id}/reply', scope: 'support:write' },
 ] as const;
