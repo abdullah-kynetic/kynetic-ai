@@ -10,7 +10,7 @@ export {
   type VoiceProcessorDeps
 } from './process';
 export { getVoiceProvider, isVoiceProviderId } from './provider';
-export { getCallRecordingUrl } from './recording';
+export { getCallRecordingUrl, getCallRecordingUrlFor } from './recording';
 export {
   KILL_SWITCH_RECHECK_MS,
   MAX_LEAD_AGE_MS,
@@ -35,6 +35,8 @@ export {
 } from './list';
 export {
   flagCall,
+  flagCallFor,
+  getCallDetailFor,
   getCallDetail,
   transcriptLines,
   type CallDetail,
