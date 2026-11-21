@@ -287,7 +287,12 @@ describe('MCP tool definitions: safety rules', () => {
       '/api/service/contacts/{id}',
       '/api/service/contacts/{id}/restore',
       '/api/service/contacts/export',
-      '/api/service/contacts/bulk'
+      '/api/service/contacts/bulk',
+      '/api/service/companies',
+      '/api/service/companies',
+      '/api/service/companies/{id}',
+      '/api/service/companies/{id}',
+      '/api/service/companies/{id}'
     ]);
   });
 
