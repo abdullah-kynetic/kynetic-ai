@@ -33,7 +33,7 @@ export const SCOPE_GROUPS: {
     id: 'deals',
     label: 'Deals',
     hint: 'See deals and move them between stages.',
-    scopes: ['deals:read', 'deals:write', 'update-deal-stage']
+    scopes: ['deals:read', 'deals:write', 'update-deal-stage', 'pipeline:write']
   },
   {
     id: 'tasks-notes',

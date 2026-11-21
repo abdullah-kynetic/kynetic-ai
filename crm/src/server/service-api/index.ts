@@ -9,3 +9,5 @@ export * from './contacts-write';
 export * from './contacts-admin';
 export * from './companies';
 export * from './tasks-lifecycle';
+export * from './deals-write';
+export * from './stages-write';

@@ -615,5 +615,14 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'POST', path: '/api/service/tasks/{id}/complete', scope: 'tasks:write' },
   { method: 'POST', path: '/api/service/tasks/{id}/reopen', scope: 'tasks:write' },
   { method: 'POST', path: '/api/service/tasks/{id}/restore', scope: 'tasks:write' },
-  { method: 'DELETE', path: '/api/service/tasks/{id}', scope: 'tasks:write' }
+  { method: 'DELETE', path: '/api/service/tasks/{id}', scope: 'tasks:write' },
+  { method: 'POST', path: '/api/service/deals', scope: 'deals:write' },
+  { method: 'PATCH', path: '/api/service/deals/{id}', scope: 'deals:write' },
+  { method: 'DELETE', path: '/api/service/deals/{id}', scope: 'deals:write' },
+  { method: 'POST', path: '/api/service/deals/{id}/restore', scope: 'deals:write' },
+  { method: 'GET', path: '/api/service/pipelines/{id}/stages', scope: 'deals:read' },
+  { method: 'POST', path: '/api/service/pipelines/{id}/stages', scope: 'pipeline:write' },
+  { method: 'PUT', path: '/api/service/pipelines/{id}/stages/order', scope: 'pipeline:write' },
+  { method: 'PATCH', path: '/api/service/stages/{id}', scope: 'pipeline:write' },
+  { method: 'DELETE', path: '/api/service/stages/{id}', scope: 'pipeline:write' }
 ] as const;
