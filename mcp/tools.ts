@@ -624,5 +624,10 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'POST', path: '/api/service/pipelines/{id}/stages', scope: 'pipeline:write' },
   { method: 'PUT', path: '/api/service/pipelines/{id}/stages/order', scope: 'pipeline:write' },
   { method: 'PATCH', path: '/api/service/stages/{id}', scope: 'pipeline:write' },
-  { method: 'DELETE', path: '/api/service/stages/{id}', scope: 'pipeline:write' }
+  { method: 'DELETE', path: '/api/service/stages/{id}', scope: 'pipeline:write' },
+  { method: 'GET', path: '/api/service/appointments/{id}', scope: 'appointments:read' },
+  { method: 'PATCH', path: '/api/service/appointments/{id}', scope: 'appointments:write' },
+  { method: 'POST', path: '/api/service/appointments/{id}/cancel', scope: 'appointments:write' },
+  { method: 'GET', path: '/api/service/appointments/availability', scope: 'appointments:read' },
+  { method: 'POST', path: '/api/service/appointments', scope: 'appointments:write' }
 ] as const;

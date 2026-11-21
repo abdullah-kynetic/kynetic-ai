@@ -1,6 +1,19 @@
 import { errorResponse } from '@/server/errors';
-import { appointmentListSchema, listAppointmentsDto, usedFilters } from '@/server/service-api';
-import { auditService, withServiceAuth, withServiceTenant } from '@/server/service-auth';
+import {
+  appointmentListSchema,
+  bookServiceAppointment,
+  listAppointmentsDto,
+  readJsonBody,
+  usedFilters
+} from '@/server/service-api';
+import {
+  auditService,
+  idempotentResponse,
+  runIdempotent,
+  withServiceAuth,
+  withServiceTenant
+} from '@/server/service-auth';
+import { ModuleDisabledError, moduleDisabledResponse } from '@/server/modules';
 import { parseSearchParams } from '@/server/validation';
 
 export const dynamic = 'force-dynamic';
@@ -32,4 +45,29 @@ export const GET = withServiceAuth(
     }
   },
   { requiredScope: 'appointments:read' }
+);
+
+// Books one appointment. Sends no invite and no text. A clash is a 409 and a time outside business
+// hours is a 400. Requires an Idempotency-Key header.
+export const POST = withServiceAuth(
+  async (request, svc) => {
+    try {
+      const { raw, json } = await readJsonBody(request);
+      const result = await runIdempotent(svc, request, raw, async (tx) => {
+        const data = await bookServiceAppointment(tx, svc, json as Record<string, unknown>);
+        await auditService(tx, svc, {
+          action: 'service.appointment_create',
+          entity: 'appointment',
+          entityId: data.id,
+          after: { route: 'POST /api/service/appointments', status: data.status }
+        });
+        return { status: 201, body: { ok: true, data } };
+      });
+      return idempotentResponse(result);
+    } catch (error) {
+      if (error instanceof ModuleDisabledError) return moduleDisabledResponse(error);
+      return errorResponse(error);
+    }
+  },
+  { requiredScope: 'appointments:write' }
 );

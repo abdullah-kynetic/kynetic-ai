@@ -305,7 +305,12 @@ describe('MCP tool definitions: safety rules', () => {
       '/api/service/pipelines/{id}/stages',
       '/api/service/pipelines/{id}/stages/order',
       '/api/service/stages/{id}',
-      '/api/service/stages/{id}'
+      '/api/service/stages/{id}',
+      '/api/service/appointments/{id}',
+      '/api/service/appointments/{id}',
+      '/api/service/appointments/{id}/cancel',
+      '/api/service/appointments/availability',
+      '/api/service/appointments'
     ]);
   });
 

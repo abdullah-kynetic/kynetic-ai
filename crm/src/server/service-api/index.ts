@@ -11,3 +11,4 @@ export * from './companies';
 export * from './tasks-lifecycle';
 export * from './deals-write';
 export * from './stages-write';
+export * from './appointments-write';
