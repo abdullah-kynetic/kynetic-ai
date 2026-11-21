@@ -1205,6 +1205,93 @@ export const TOOLS: ToolDefinition[] = [
     },
     required: ['id'],
     repeat: 'A repeat on a deleted stage changes nothing.'
+  }),
+  // Contact create and update (full access). Each keeps its route's scope.
+  write({
+    name: 'create_contact',
+    title: 'Create a contact',
+    summary:
+      'Creates a contact. At least one phone or email is required. If a likely duplicate exists, the portal refuses unless acknowledgeDuplicates is true.',
+    scope: 'contacts:write',
+    route: { method: 'POST', path: '/api/service/contacts' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: [
+      'firstName',
+      'lastName',
+      'companyId',
+      'phones',
+      'emails',
+      'address',
+      'timezone',
+      'source',
+      'status',
+      'tags',
+      'ownerId',
+      'custom',
+      'acknowledgeDuplicates'
+    ],
+    freeText: ['firstName', 'lastName', 'source', 'tags'],
+    inputs: {
+      firstName: { type: 'string', maxLength: 100, description: 'First name. Empty string allowed.' },
+      lastName: { type: ['string', 'null'], maxLength: 100 },
+      companyId: { type: ['string', 'null'], format: 'uuid' },
+      phones: { type: 'array', items: { type: 'string' }, maxItems: 10, description: 'Phone numbers. The first is primary.' },
+      emails: { type: 'array', items: { type: 'string', format: 'email' }, maxItems: 10, description: 'Email addresses. The first is primary.' },
+      address: { type: 'object' },
+      timezone: { type: ['string', 'null'], maxLength: 64 },
+      source: { type: ['string', 'null'], maxLength: 100 },
+      status: { type: 'string', enum: ['new', 'working', 'booked', 'won', 'lost', 'dead'], default: 'new' },
+      tags: { type: 'array', items: { type: 'string' } },
+      ownerId: { type: ['string', 'null'], format: 'uuid' },
+      custom: { type: 'object' },
+      acknowledgeDuplicates: { type: 'boolean', default: false, description: 'Set true to create the contact even though a likely duplicate exists.' }
+    },
+    required: [],
+    repeat: 'A repeat with the same key creates no second contact.'
+  }),
+  write({
+    name: 'update_contact',
+    title: 'Update a contact',
+    summary: 'Changes the fields you send on one contact. Fields you leave out are kept.',
+    scope: 'contacts:write',
+    route: { method: 'PATCH', path: '/api/service/contacts/{id}' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [
+      'firstName',
+      'lastName',
+      'companyId',
+      'phones',
+      'emails',
+      'address',
+      'timezone',
+      'source',
+      'status',
+      'tags',
+      'ownerId',
+      'custom',
+      'acknowledgeDuplicates'
+    ],
+    freeText: ['firstName', 'lastName', 'source', 'tags'],
+    inputs: {
+      id: uuid('Contact id.'),
+      firstName: { type: 'string', maxLength: 100 },
+      lastName: { type: ['string', 'null'], maxLength: 100 },
+      companyId: { type: ['string', 'null'], format: 'uuid' },
+      phones: { type: 'array', items: { type: 'string' }, maxItems: 10 },
+      emails: { type: 'array', items: { type: 'string', format: 'email' }, maxItems: 10 },
+      address: { type: 'object' },
+      timezone: { type: ['string', 'null'], maxLength: 64 },
+      source: { type: ['string', 'null'], maxLength: 100 },
+      status: { type: 'string', enum: ['new', 'working', 'booked', 'won', 'lost', 'dead'] },
+      tags: { type: 'array', items: { type: 'string' } },
+      ownerId: { type: ['string', 'null'], format: 'uuid' },
+      custom: { type: 'object' },
+      acknowledgeDuplicates: { type: 'boolean', description: 'Set true to save even though a likely duplicate exists.' }
+    },
+    required: ['id'],
+    repeat: 'A repeat with the same input sets the same values again.'
   })
 ];
 
@@ -1217,8 +1304,6 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'POST', path: '/api/service/call-results', scope: 'calls:write' },
   { method: 'POST', path: '/api/service/contact-decisions', scope: 'contact-decisions:write' },
   // Contact writes (C1, C2) and company routes (C3). Live on the API now. MCP tools ship with B1; this list must come back down to two.
-  { method: 'POST', path: '/api/service/contacts', scope: 'contacts:write' },
-  { method: 'PATCH', path: '/api/service/contacts/{id}', scope: 'contacts:write' },
   { method: 'GET', path: '/api/service/contacts/export', scope: 'contacts:export' },
   { method: 'GET', path: '/api/service/conversations', scope: 'messages:read' },
   { method: 'GET', path: '/api/service/conversations/{id}/messages', scope: 'messages:read' },

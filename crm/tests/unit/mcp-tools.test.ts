@@ -270,8 +270,6 @@ describe('MCP tool definitions: safety rules', () => {
     expect(ROUTES_WITHOUT_TOOLS.map((r) => r.path)).toEqual([
       '/api/service/call-results',
       '/api/service/contact-decisions',
-      '/api/service/contacts',
-      '/api/service/contacts/{id}',
       '/api/service/contacts/export',
       '/api/service/conversations',
       '/api/service/conversations/{id}/messages',
