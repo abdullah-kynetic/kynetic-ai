@@ -16,6 +16,7 @@ describe('error shape (SECURITY 5.1)', () => {
       FORBIDDEN: 403,
       MODULE_DISABLED: 403,
       NOT_FOUND: 404,
+      PAYLOAD_TOO_LARGE: 413,
       VALIDATION_FAILED: 400,
       CONFLICT: 409,
       RATE_LIMITED: 429,
