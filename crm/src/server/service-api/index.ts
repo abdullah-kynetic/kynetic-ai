@@ -27,3 +27,4 @@ export * from './branding';
 export * from './alex';
 export * from './automations';
 export * from './agency';
+export * from './agency-pipeline';

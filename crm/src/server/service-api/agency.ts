@@ -31,7 +31,7 @@ async function agencyCaller(tx: Tx, svc: ServiceContext): Promise<StaffCaller> {
 }
 
 /** Refuses unless this tenant is the agency workspace. A missing workspace reads as not found. */
-async function requireAgency(tx: Tx, svc: ServiceContext): Promise<StaffCaller> {
+export async function requireAgency(tx: Tx, svc: ServiceContext): Promise<StaffCaller> {
   const caller = await agencyCaller(tx, svc);
   const workspace = await getAgencyWorkspace(caller, false);
   if (!workspace) throw new AppError('NOT_FOUND');
