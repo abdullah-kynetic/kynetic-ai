@@ -1,7 +1,7 @@
 import { and, count, desc, eq, ilike, inArray, isNotNull, isNull, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import type { Db } from '../db/client';
-import { agencyProspects } from '../db/schema';
+import { agencyProspects, dncEntries } from '../db/schema';
 import { audit } from '../audit';
 import { AppError } from '../errors';
 import { parseInput } from '../validation';
@@ -242,12 +242,32 @@ export async function moveProspectsToSales(
       for (const id of picked)
         if (!found.has(id))
           result.skipped.push({ prospectId: id, name: 'Unknown', reason: 'Not found.' });
+      // Compliance: a prospect whose number is on the active do-not-call list never becomes a sales lead.
+      const phones = rows.map((r) => r.phone).filter((v): v is string => Boolean(v));
+      const dnc = new Set(
+        phones.length
+          ? (
+              await tx
+                .select({ number: dncEntries.e164 })
+                .from(dncEntries)
+                .where(and(isNull(dncEntries.removedAt), inArray(dncEntries.e164, phones)))
+            ).map((r) => r.number)
+          : []
+      );
       for (const p of rows) {
         if (p.movedDealId) {
           result.skipped.push({
             prospectId: p.id,
             name: p.businessName,
             reason: 'Already in Sales.'
+          });
+          continue;
+        }
+        if (p.phone && dnc.has(p.phone)) {
+          result.skipped.push({
+            prospectId: p.id,
+            name: p.businessName,
+            reason: 'On the do-not-call list.'
           });
           continue;
         }
