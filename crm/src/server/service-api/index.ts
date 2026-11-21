@@ -22,3 +22,4 @@ export * from './notifications';
 export * from './reports-usage';
 export * from './settings';
 export * from './support';
+export * from './custom-fields';
