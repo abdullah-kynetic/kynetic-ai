@@ -81,9 +81,10 @@ describe('admin API keys', () => {
       })
     ).toBeNull();
     expect(await authenticateServiceToken(`Bearer ${key}`, { db: worker })).toBeNull();
-    // Wrong secret.
+    // Wrong secret. The last character must differ from the real one, or the "wrong" key is the real key.
+    const wrongLast = key.endsWith('0') ? '1' : '0';
     expect(
-      await authenticateServiceToken(`Bearer ${key.slice(0, -1)}0`, {
+      await authenticateServiceToken(`Bearer ${key.slice(0, -1)}${wrongLast}`, {
         db: worker,
         request: req({ 'x-kynetic-client': slugA })
       })

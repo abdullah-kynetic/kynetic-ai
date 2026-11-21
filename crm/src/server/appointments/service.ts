@@ -11,8 +11,8 @@ import { businessHoursSchema, type BusinessHours } from '../settings/hours';
 import { availableSlots } from './availability';
 import { z } from 'zod';
 
-const isoDate = z.coerce.date();
-const appointmentInput = z
+export const isoDate = z.coerce.date();
+export const appointmentInput = z
   .object({
     contactId: uuidSchema.nullish(),
     dealId: uuidSchema.nullish(),
@@ -36,6 +36,10 @@ export type BookAppointmentInput = z.input<typeof appointmentInput>;
 export type AvailabilityInput = z.input<typeof availabilityInputSchema>;
 export type Appointment = typeof appointments.$inferSelect;
 export const appointmentStatusSchema = z.enum(['scheduled', 'completed', 'no_show', 'cancelled']);
+
+/** Service-API writes pass origin 'service-api' so automations skip them, as the contact writes do. */
+export type AppointmentOpts = { db?: Db; tx?: Tx; origin?: 'service-api' };
+const originTag = (opts: AppointmentOpts) => (opts.origin ? { origin: opts.origin } : {});
 
 function run<T>(ctx: TenantContextInput, opts: { db?: Db; tx?: Tx }, fn: (tx: Tx) => Promise<T>) {
   return opts.tx ? fn(opts.tx) : withTenant(ctx, fn, { db: opts.db });
@@ -77,6 +81,21 @@ async function assertLinks(tx: Tx, contactId?: string | null, dealId?: string | 
   }
 }
 
+/** Throws unless [startsAt, endsAt) sits inside the tenant's business hours. Same rule as booking. */
+export async function assertInsideBusinessHours(tx: Tx, startsAt: Date, endsAt: Date) {
+  const settings = await tenantSettings(tx);
+  const inside = availableSlots({
+    hours: settings.businessHours,
+    timezone: settings.timezone,
+    from: startsAt,
+    to: endsAt,
+    durationMinutes: (endsAt.getTime() - startsAt.getTime()) / 60000,
+    slotMinutes: 1
+  });
+  if (!inside.some((at) => at.getTime() === startsAt.getTime()))
+    throw new ValidationError({ startsAt: ['outside_business_hours'] });
+}
+
 export async function listAvailableSlots(
   ctx: TenantContextInput,
   input: AvailabilityInput,
@@ -110,7 +129,7 @@ export async function listAvailableSlots(
 export async function bookAppointment(
   ctx: TenantContextInput,
   input: BookAppointmentInput,
-  opts: { db?: Db; tx?: Tx; bookedBy?: 'alex' | 'user' | 'automation' | 'client_portal' } = {}
+  opts: AppointmentOpts & { bookedBy?: 'alex' | 'user' | 'automation' | 'client_portal' } = {}
 ): Promise<Appointment> {
   const v = parseInput(appointmentInput, input);
   if (v.endsAt <= v.startsAt) throw new ValidationError({ endsAt: ['after_starts_at'] });
@@ -182,7 +201,12 @@ export async function bookAppointment(
       name: 'appointment.booked',
       tenantId: ctx.tenantId,
       actor: { type: (opts.bookedBy === 'user' ? 'user' : 'alex') as 'alex' | 'user' },
-      payload: { appointmentId: row.id, contactId: row.contactId, dealId: row.dealId }
+      payload: {
+        appointmentId: row.id,
+        contactId: row.contactId,
+        dealId: row.dealId,
+        ...originTag(opts)
+      }
     });
     return row;
   });
@@ -197,7 +221,7 @@ export async function updateAppointment(
     status?: z.input<typeof appointmentStatusSchema>;
     notes?: string | null;
   },
-  opts: { db?: Db; tx?: Tx } = {}
+  opts: AppointmentOpts = {}
 ): Promise<Appointment> {
   parseInput(uuidSchema, id);
   const v = parseInput(
@@ -260,17 +284,13 @@ export async function updateAppointment(
       name: `appointment.${v.status === 'cancelled' ? 'cancelled' : 'updated'}`,
       tenantId: ctx.tenantId,
       actor: { type: 'user', id: ctx.userId },
-      payload: { appointmentId: id }
+      payload: { appointmentId: id, ...originTag(opts) }
     });
     return after;
   });
 }
 
-export function cancelAppointment(
-  ctx: TenantContextInput,
-  id: string,
-  opts: { db?: Db; tx?: Tx } = {}
-) {
+export function cancelAppointment(ctx: TenantContextInput, id: string, opts: AppointmentOpts = {}) {
   return updateAppointment(ctx, id, { status: 'cancelled' }, opts);
 }
 
