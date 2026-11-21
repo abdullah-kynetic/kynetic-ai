@@ -7,6 +7,12 @@ import { AppError, ValidationError } from '../errors';
 import { emitEvent } from '../events';
 import { requireModule } from '../modules';
 import { withTenant, type TenantContextInput } from '../tenancy';
+import type { Tx } from '../db/client';
+
+/** Service-API calls pass their own transaction; portal calls open one per call. */
+type TxOpts = { tx?: Tx };
+const inTenant = <T>(ctx: TenantContextInput, opts: TxOpts, fn: (tx: Tx) => Promise<T>) =>
+  opts.tx ? fn(opts.tx) : withTenant(ctx, fn);
 
 export type TranscriptLine = { speaker: string; text: string; startS: number | null };
 
@@ -68,8 +74,17 @@ export async function getCallDetail(
   callId: string
 ): Promise<CallDetail> {
   authorize(actor, 'calls.read', ctx.tenantId);
-  await requireModule(ctx, 'alex_core');
-  const row = await withTenant(ctx, async (tx) => {
+  return getCallDetailFor(ctx, callId);
+}
+
+/** Runs after the caller's permission check. The service API uses this with its token scope as the check. */
+export async function getCallDetailFor(
+  ctx: TenantContextInput,
+  callId: string,
+  opts: TxOpts = {}
+): Promise<CallDetail> {
+  await requireModule(ctx, 'alex_core', opts);
+  const row = await inTenant(ctx, opts, async (tx) => {
     const [r] = await tx
       .select({
         call: calls,
@@ -130,13 +145,23 @@ export async function flagCall(
   input: { reason?: string }
 ): Promise<{ flagged: true; alreadyFlagged: boolean }> {
   authorize(actor, 'calls.flag', ctx.tenantId);
-  await requireModule(ctx, 'alex_core');
+  return flagCallFor(ctx, callId, input, { userId: actor.userId });
+}
+
+/** Runs after the caller's permission check. Service-API flags pass `origin: 'service-api'` and no user. */
+export async function flagCallFor(
+  ctx: TenantContextInput,
+  callId: string,
+  input: { reason?: string },
+  opts: TxOpts & { origin?: 'service-api'; userId?: string } = {}
+): Promise<{ flagged: true; alreadyFlagged: boolean }> {
+  await requireModule(ctx, 'alex_core', opts);
   const parsed = flagInput.safeParse(input);
   if (!parsed.success) {
     throw new ValidationError({ reason: parsed.error.issues.map((i) => i.message) });
   }
   const { reason } = parsed.data;
-  return withTenant(ctx, async (tx) => {
+  return inTenant(ctx, opts, async (tx) => {
     const [row] = await tx
       .select({ flagged: calls.flagged, contactId: calls.contactId })
       .from(calls)
@@ -150,7 +175,7 @@ export async function flagCall(
       .update(calls)
       .set({
         flagged: true,
-        flaggedBy: actor.userId,
+        flaggedBy: opts.userId ?? null,
         flaggedAt: new Date().toISOString(),
         flagNote: reason ?? null,
         updatedAt: new Date().toISOString()
@@ -166,8 +191,8 @@ export async function flagCall(
     await emitEvent(tx, {
       name: 'call.flagged',
       tenantId: ctx.tenantId,
-      actor: { type: 'user', id: actor.userId },
-      payload: { callId, contactId: row.contactId }
+      actor: opts.userId ? { type: 'user', id: opts.userId } : { type: 'system' },
+      payload: { callId, contactId: row.contactId, ...(opts.origin ? { origin: opts.origin } : {}) }
     });
     return { flagged: true as const, alreadyFlagged: false };
   });

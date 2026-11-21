@@ -45,7 +45,7 @@ export const SCOPE_GROUPS: {
     id: 'calls',
     label: 'Calls',
     hint: 'See call history and log call results.',
-    scopes: ['calls:read', 'calls:write', 'call-log:write']
+    scopes: ['calls:read', 'calls:write', 'calls:recording', 'call-log:write']
   },
   {
     id: 'appointments',
