@@ -616,6 +616,8 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'POST', path: '/api/service/tasks/{id}/reopen', scope: 'tasks:write' },
   { method: 'POST', path: '/api/service/tasks/{id}/restore', scope: 'tasks:write' },
   { method: 'DELETE', path: '/api/service/tasks/{id}', scope: 'tasks:write' },
+  { method: 'GET', path: '/api/service/conversations', scope: 'messages:read' },
+  { method: 'GET', path: '/api/service/conversations/{id}/messages', scope: 'messages:read' },
   { method: 'GET', path: '/api/service/calls/{id}', scope: 'calls:read' },
   { method: 'POST', path: '/api/service/calls/{id}/flag', scope: 'calls:write' },
   { method: 'GET', path: '/api/service/calls/{id}/recording', scope: 'calls:recording' },
