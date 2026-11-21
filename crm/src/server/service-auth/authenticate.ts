@@ -27,7 +27,7 @@ export type ServiceContext = {
 /** Header an admin key uses to say which client it is acting for (the client's slug). */
 export const ADMIN_CLIENT_HEADER = 'x-kynetic-client';
 
-async function serviceApiEnabled(db: Db): Promise<boolean> {
+export async function serviceApiEnabled(db: Db): Promise<boolean> {
   const rows = await db.execute<{ on: boolean }>(sql`select service_api_enabled() as on`);
   return rows[0]?.on === true;
 }

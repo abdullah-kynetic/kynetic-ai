@@ -7,3 +7,4 @@ export {
   purgeServiceIdempotency,
   runIdempotent
 } from './idempotency';
+export * from './platform';
