@@ -131,10 +131,9 @@ for (const [name, size] of sizes) {
     await page.getByRole('link', { name: 'Contact a' }).click();
     await page.getByRole('link', { name: 'Roof replacement' }).click();
     await page.waitForLoadState('networkidle');
-    await expect(async () => {
-      await page.getByRole('button', { name: 'Edit', exact: true }).click();
-      await expect(page.getByLabel('Permit cost')).toBeVisible({ timeout: 3_000 });
-    }).toPass({ timeout: 15_000 });
+    // Edit opens a sheet, so click it once. Re-clicking on retry hits the open sheet's overlay.
+    await page.getByRole('button', { name: 'Edit', exact: true }).click();
+    await expect(page.getByLabel('Permit cost')).toBeVisible({ timeout: 15_000 });
     await scan(page, `deal panel ${name}`);
   });
 
