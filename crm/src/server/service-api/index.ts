@@ -9,5 +9,5 @@ export * from './contacts-write';
 export * from './contacts-admin';
 export * from './companies';
 export * from './tasks-lifecycle';
-
+export * from './calls-read';
 export * from './appointments-write';
