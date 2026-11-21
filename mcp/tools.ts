@@ -596,7 +596,7 @@ export const TOOLS: ToolDefinition[] = [
 export const ROUTES_WITHOUT_TOOLS = [
   { method: 'POST', path: '/api/service/call-results', scope: 'calls:write' },
   { method: 'POST', path: '/api/service/contact-decisions', scope: 'contact-decisions:write' },
-  // Contact writes (C1, C2). Live on the API now. MCP tools ship with B1; this list must come back down to two.
+  // Contact writes (C1, C2) and company routes (C3). Live on the API now. MCP tools ship with B1; this list must come back down to two.
   { method: 'POST', path: '/api/service/contacts', scope: 'contacts:write' },
   { method: 'PATCH', path: '/api/service/contacts/{id}', scope: 'contacts:write' },
   { method: 'POST', path: '/api/service/contacts/{id}/tags', scope: 'contacts:write' },
@@ -607,6 +607,11 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'POST', path: '/api/service/contacts/{id}/restore', scope: 'contacts:write' },
   { method: 'GET', path: '/api/service/contacts/export', scope: 'contacts:export' },
   { method: 'POST', path: '/api/service/contacts/bulk', scope: 'contacts:write' },
+  { method: 'GET', path: '/api/service/companies', scope: 'companies:read' },
+  { method: 'POST', path: '/api/service/companies', scope: 'companies:write' },
+  { method: 'GET', path: '/api/service/companies/{id}', scope: 'companies:read' },
+  { method: 'PATCH', path: '/api/service/companies/{id}', scope: 'companies:write' },
+  { method: 'DELETE', path: '/api/service/companies/{id}', scope: 'companies:write' },
   { method: 'POST', path: '/api/service/tasks/{id}/complete', scope: 'tasks:write' },
   { method: 'POST', path: '/api/service/tasks/{id}/reopen', scope: 'tasks:write' },
   { method: 'POST', path: '/api/service/tasks/{id}/restore', scope: 'tasks:write' },
