@@ -38,9 +38,8 @@ export async function moveServiceAgencyDeal(
 ) {
   parseInput(uuidSchema, dealId);
   const input = parseInput(moveSchema, body);
-  return moveAgencyDeal(await requireAgency(tx, svc), dealId, input.stageId, {
-    ...(input.lostReason ? { lostReason: input.lostReason } : {})
-  });
+  const options = input.lostReason ? { lostReason: input.lostReason } : {};
+  return moveAgencyDeal(await requireAgency(tx, svc), dealId, input.stageId, options);
 }
 
 export async function renameServiceAgencyStage(
