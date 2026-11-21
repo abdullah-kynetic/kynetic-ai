@@ -1,4 +1,6 @@
-import { SERVICE_TOKEN_SCOPES, type ServiceTokenScope } from './scopes';
+import { SERVICE_TOKEN_SCOPES } from './scopes';
+
+type ServiceTokenScope = (typeof SERVICE_TOKEN_SCOPES)[number];
 
 /** Plain-language groups for the owner's tick-box page. Every scope sits in exactly one group. */
 export const SCOPE_GROUPS: {
