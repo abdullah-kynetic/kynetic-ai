@@ -64,6 +64,13 @@ hosting and DNS for the server (B2).
 | `add_note` | write | `notes:write` | `POST /api/service/notes` | no |
 | `log_call_outcome` | write | `call-log:write` | `POST /api/service/call-log` | no |
 
+B1 adds 17 read tools for tenant GET routes that had no tool: `get_referrals`, `get_presence`,
+`get_review_summary`, `get_usage`, `get_business_profile`, `get_opening_hours`, `list_team_members`,
+`get_brand_profile`, `list_pipeline_stages`, `get_company`, `get_agency_pipeline`, `get_agency_prospect_funnel`,
+`get_agency_operating_plan`, `get_agency_alerts`, `get_agency_rates`, `get_agency_finance_summary`,
+`get_notifications`. Each keeps its route's own scope. Writes, deletes, settings changes and the platform
+(admin-key) routes are still in `ROUTES_WITHOUT_TOOLS`, pending a decision.
+
 Left out on purpose: `POST /api/service/call-results` (Alex ingest: provider call ids, transcripts,
 recordings) and `POST /api/service/contact-decisions` (consent-engine verdicts, which are compliance
 state). Both are written by Alex and n8n, not by an assistant.
