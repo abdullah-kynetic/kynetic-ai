@@ -1133,6 +1133,78 @@ export const TOOLS: ToolDefinition[] = [
     inputs: { id: uuid('Deal id.') },
     required: ['id'],
     repeat: 'A repeat on a restored deal changes nothing.'
+  }),
+  // Pipeline stage tools (full access). Each keeps its route's own scope.
+  write({
+    name: 'create_stage',
+    title: 'Create a pipeline stage',
+    summary: 'Adds a stage to a pipeline. Probability is the chance a deal wins at this stage, 0 to 100.',
+    scope: 'pipeline:write',
+    route: { method: 'POST', path: '/api/service/pipelines/{id}/stages' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['name', 'probability'],
+    freeText: ['name'],
+    inputs: {
+      id: uuid('Pipeline id.'),
+      name: { type: 'string', minLength: 1, maxLength: 60, description: 'Stage name.' },
+      probability: { type: 'integer', minimum: 0, maximum: 100, default: 20 }
+    },
+    required: ['id', 'name'],
+    repeat: 'A repeat with the same key adds no second stage.'
+  }),
+  write({
+    name: 'reorder_stages',
+    title: 'Reorder pipeline stages',
+    summary: 'Sets the order of the stages in a pipeline. Send every stage id, in the new order.',
+    scope: 'pipeline:write',
+    route: { method: 'PUT', path: '/api/service/pipelines/{id}/stages/order' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['stageIds'],
+    freeText: [],
+    inputs: {
+      id: uuid('Pipeline id.'),
+      stageIds: { type: 'array', items: uuid('Stage id.'), minItems: 1, maxItems: 50 }
+    },
+    required: ['id', 'stageIds'],
+    repeat: 'A repeat with the same order changes nothing.'
+  }),
+  write({
+    name: 'update_stage',
+    title: 'Update a pipeline stage',
+    summary: 'Changes the name or probability of one stage. Fields you leave out are kept.',
+    scope: 'pipeline:write',
+    route: { method: 'PATCH', path: '/api/service/stages/{id}' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['name', 'probability'],
+    freeText: ['name'],
+    inputs: {
+      id: uuid('Stage id.'),
+      name: { type: 'string', minLength: 1, maxLength: 60 },
+      probability: { type: 'integer', minimum: 0, maximum: 100 }
+    },
+    required: ['id'],
+    repeat: 'A repeat with the same input sets the same values again.'
+  }),
+  write({
+    name: 'delete_stage',
+    title: 'Delete a pipeline stage',
+    summary:
+      'Deletes one stage. If it still has deals, moveToStageId is required and the deals move there in their current order.',
+    scope: 'pipeline:write',
+    route: { method: 'DELETE', path: '/api/service/stages/{id}' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['moveToStageId'],
+    freeText: [],
+    inputs: {
+      id: uuid('Stage id.'),
+      moveToStageId: uuid('Stage that receives the deals, if the stage has any.')
+    },
+    required: ['id'],
+    repeat: 'A repeat on a deleted stage changes nothing.'
   })
 ];
 
@@ -1148,10 +1220,6 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'POST', path: '/api/service/contacts', scope: 'contacts:write' },
   { method: 'PATCH', path: '/api/service/contacts/{id}', scope: 'contacts:write' },
   { method: 'GET', path: '/api/service/contacts/export', scope: 'contacts:export' },
-  { method: 'POST', path: '/api/service/pipelines/{id}/stages', scope: 'pipeline:write' },
-  { method: 'PUT', path: '/api/service/pipelines/{id}/stages/order', scope: 'pipeline:write' },
-  { method: 'PATCH', path: '/api/service/stages/{id}', scope: 'pipeline:write' },
-  { method: 'DELETE', path: '/api/service/stages/{id}', scope: 'pipeline:write' },
   { method: 'GET', path: '/api/service/conversations', scope: 'messages:read' },
   { method: 'GET', path: '/api/service/conversations/{id}/messages', scope: 'messages:read' },
   { method: 'GET', path: '/api/service/calls/{id}', scope: 'calls:read' },
