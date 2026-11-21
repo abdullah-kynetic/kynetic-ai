@@ -1,7 +1,12 @@
 import type { Tx } from '../db/client';
 import { AppError, ValidationError } from '../errors';
 import { getClientUsage, resolveUsageMonth } from '../client-usage';
-import { generateMonthlyReport, getReport, listReports, reportPeriodSchema } from '../reports/service';
+import {
+  generateMonthlyReport,
+  getReport,
+  listReports,
+  reportPeriodSchema
+} from '../reports/service';
 import { searchContacts } from '../contacts/search';
 import type { ServiceContext } from '../service-auth/authenticate';
 import { ownerCtx, ownerUserId } from './owner';
