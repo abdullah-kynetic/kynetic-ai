@@ -23,3 +23,6 @@ export * from './reports-usage';
 export * from './settings';
 export * from './support';
 export * from './custom-fields';
+export * from './branding';
+export * from './alex';
+export * from './automations';
