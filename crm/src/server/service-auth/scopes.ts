@@ -7,6 +7,8 @@ export const SERVICE_TOKEN_SCOPES = [
   'contacts:write',
   'contacts:delete',
   'contacts:export',
+  'companies:read',
+  'companies:write',
   'appointments:read',
   'appointments:write',
   'calls:write',

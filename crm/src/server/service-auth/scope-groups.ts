@@ -24,6 +24,12 @@ export const SCOPE_GROUPS: {
     ]
   },
   {
+    id: 'companies',
+    label: 'Companies',
+    hint: 'See companies and their contacts and deals, add or edit a company.',
+    scopes: ['companies:read', 'companies:write']
+  },
+  {
     id: 'deals',
     label: 'Deals',
     hint: 'See deals and move them between stages.',

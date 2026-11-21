@@ -20,7 +20,16 @@ import {
 // module first (403 when off, nothing written), then runs through withTenant so RLS isolates tenants.
 
 export type Company = typeof companies.$inferSelect;
-export type CompanyOpts = { db?: Db };
+export type CompanyOpts = { db?: Db; tx?: Tx };
+
+/** Runs inside the caller's transaction when one is passed (the service API), else opens its own. */
+function run<T>(
+  ctx: TenantContextInput,
+  fn: (tx: Tx) => Promise<T>,
+  opts: CompanyOpts
+): Promise<T> {
+  return opts.tx ? fn(opts.tx) : withTenant(ctx, fn, { db: opts.db });
+}
 
 /** Rows listed on a company page. The roll-up totals always cover every row, not just these. */
 const DETAIL_ROW_LIMIT = 100;
@@ -30,8 +39,8 @@ async function gated<T>(
   opts: CompanyOpts,
   fn: (tx: Tx) => Promise<T>
 ): Promise<T> {
-  await requireModule(ctx, 'crm', { db: opts.db });
-  return withTenant(ctx, fn, { db: opts.db });
+  await requireModule(ctx, 'crm', { db: opts.db, tx: opts.tx });
+  return run(ctx, fn, opts);
 }
 
 /** `%` and `_` in a search box mean themselves. */
@@ -54,9 +63,9 @@ export async function createCompany(
   input: CreateCompanyInput,
   opts: CompanyOpts = {}
 ): Promise<Company> {
-  await requireModule(ctx, 'crm', { db: opts.db });
+  await requireModule(ctx, 'crm', { db: opts.db, tx: opts.tx });
   const v = parseInput(createCompanySchema, input);
-  return withTenant(
+  return run(
     ctx,
     async (tx) => {
       const custom = await validateCustomValues(ctx, tx, 'company', v.custom);
@@ -79,7 +88,7 @@ export async function createCompany(
       });
       return row;
     },
-    { db: opts.db }
+    opts
   );
 }
 
@@ -147,9 +156,9 @@ export async function updateCompany(
   patch: UpdateCompanyInput,
   opts: CompanyOpts = {}
 ): Promise<Company> {
-  await requireModule(ctx, 'crm', { db: opts.db });
+  await requireModule(ctx, 'crm', { db: opts.db, tx: opts.tx });
   const v = parseInput(updateCompanySchema, patch);
-  return withTenant(
+  return run(
     ctx,
     async (tx) => {
       const before = await loadLive(tx, id, true);
@@ -183,7 +192,7 @@ export async function updateCompany(
       }
       return after;
     },
-    { db: opts.db }
+    opts
   );
 }
 
