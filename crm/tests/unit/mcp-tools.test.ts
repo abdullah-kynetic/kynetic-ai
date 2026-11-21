@@ -292,7 +292,11 @@ describe('MCP tool definitions: safety rules', () => {
       '/api/service/companies',
       '/api/service/companies/{id}',
       '/api/service/companies/{id}',
-      '/api/service/companies/{id}'
+      '/api/service/companies/{id}',
+      '/api/service/tasks/{id}/complete',
+      '/api/service/tasks/{id}/reopen',
+      '/api/service/tasks/{id}/restore',
+      '/api/service/tasks/{id}'
     ]);
   });
 

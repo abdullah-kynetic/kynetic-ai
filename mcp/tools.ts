@@ -611,5 +611,9 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'POST', path: '/api/service/companies', scope: 'companies:write' },
   { method: 'GET', path: '/api/service/companies/{id}', scope: 'companies:read' },
   { method: 'PATCH', path: '/api/service/companies/{id}', scope: 'companies:write' },
-  { method: 'DELETE', path: '/api/service/companies/{id}', scope: 'companies:write' }
+  { method: 'DELETE', path: '/api/service/companies/{id}', scope: 'companies:write' },
+  { method: 'POST', path: '/api/service/tasks/{id}/complete', scope: 'tasks:write' },
+  { method: 'POST', path: '/api/service/tasks/{id}/reopen', scope: 'tasks:write' },
+  { method: 'POST', path: '/api/service/tasks/{id}/restore', scope: 'tasks:write' },
+  { method: 'DELETE', path: '/api/service/tasks/{id}', scope: 'tasks:write' }
 ] as const;
