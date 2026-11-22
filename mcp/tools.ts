@@ -1457,6 +1457,118 @@ export const TOOLS: ToolDefinition[] = [
       limit
     },
     required: ['id']
+  }),
+  // Document, report and notification tools (full access). Each keeps its route's scope.
+  read({
+    name: 'list_documents',
+    title: 'List documents',
+    summary: 'Lists the documents stored for this client: agreements, proposals, invoices and reports.',
+    scope: 'documents:read',
+    route: { method: 'GET', path: '/api/service/documents' },
+    ...none,
+    freeText: ['title', 'fileName'],
+    inputs: {},
+    required: []
+  }),
+  read({
+    name: 'get_document_link',
+    title: 'Get a document link',
+    summary: 'Returns a signed link to one document, valid for a few minutes. The storage key is never returned.',
+    scope: 'documents:read',
+    route: { method: 'GET', path: '/api/service/documents/{id}/url' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: [],
+    inputs: { id: uuid('Document id.') },
+    required: ['id']
+  }),
+  write({
+    name: 'upload_document',
+    title: 'Upload a document',
+    summary: 'Stores a document for this client. The file is sent as base64 in the request body, within the portal size limit.',
+    scope: 'documents:write',
+    route: { method: 'POST', path: '/api/service/documents' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['title', 'kind', 'fileName', 'contentBase64'],
+    freeText: ['title', 'fileName'],
+    inputs: {
+      title: { type: 'string', minLength: 1, maxLength: 200 },
+      kind: { type: 'string', enum: ['agreement', 'proposal', 'invoice', 'report', 'other'] },
+      fileName: { type: 'string', minLength: 1, maxLength: 255 },
+      contentBase64: { type: 'string', minLength: 1, description: 'The file bytes, base64 encoded.' }
+    },
+    required: ['title', 'kind', 'fileName', 'contentBase64'],
+    repeat: 'A repeat with the same key stores no second copy.'
+  }),
+  write({
+    name: 'delete_document',
+    title: 'Delete a document',
+    summary: 'Deletes one stored document.',
+    scope: 'documents:write',
+    route: { method: 'DELETE', path: '/api/service/documents/{id}' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: [],
+    inputs: { id: uuid('Document id.') },
+    required: ['id'],
+    repeat: 'A repeat on a deleted document changes nothing.'
+  }),
+  read({
+    name: 'list_reports',
+    title: 'List reports',
+    summary: 'Lists the reports generated for this client.',
+    scope: 'reports:read',
+    route: { method: 'GET', path: '/api/service/reports' },
+    ...none,
+    freeText: ['title'],
+    inputs: {},
+    required: []
+  }),
+  read({
+    name: 'get_report',
+    title: 'Get one report',
+    summary: 'Returns one generated report.',
+    scope: 'reports:read',
+    route: { method: 'GET', path: '/api/service/reports/{id}' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: ['title'],
+    inputs: { id: uuid('Report id.') },
+    required: ['id']
+  }),
+  write({
+    name: 'generate_report',
+    title: 'Generate a report',
+    summary: 'Generates a report for the period that starts on the given date.',
+    scope: 'reports:write',
+    route: { method: 'POST', path: '/api/service/reports/generate' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['periodStart'],
+    freeText: [],
+    inputs: {
+      periodStart: { type: 'string', format: 'date', description: 'Start of the reporting period, YYYY-MM-DD.' }
+    },
+    required: ['periodStart'],
+    repeat: 'A repeat for the same period returns the report already made.'
+  }),
+  write({
+    name: 'mark_notifications_read',
+    title: 'Mark notifications read',
+    summary: 'Marks all of this client notifications as read.',
+    scope: 'notifications:read',
+    route: { method: 'POST', path: '/api/service/notifications/read' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: [],
+    freeText: [],
+    inputs: {},
+    required: [],
+    repeat: 'A repeat marks the same notifications read again, which changes nothing.'
   })
 ];
 
@@ -1473,14 +1585,6 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'POST', path: '/api/service/referrals', scope: 'referrals:write' },
   { method: 'PATCH', path: '/api/service/referrals/{id}', scope: 'referrals:write' },
   { method: 'PUT', path: '/api/service/presence/{id}', scope: 'reputation:write' },
-  { method: 'GET', path: '/api/service/documents', scope: 'documents:read' },
-  { method: 'POST', path: '/api/service/documents', scope: 'documents:write' },
-  { method: 'GET', path: '/api/service/documents/{id}/url', scope: 'documents:read' },
-  { method: 'DELETE', path: '/api/service/documents/{id}', scope: 'documents:write' },
-  { method: 'POST', path: '/api/service/notifications/read', scope: 'notifications:read' },
-  { method: 'GET', path: '/api/service/reports', scope: 'reports:read' },
-  { method: 'GET', path: '/api/service/reports/{id}', scope: 'reports:read' },
-  { method: 'POST', path: '/api/service/reports/generate', scope: 'reports:write' },
   { method: 'GET', path: '/api/service/search', scope: 'contacts:read' },
   { method: 'PATCH', path: '/api/service/settings/business', scope: 'settings:write' },
   { method: 'PATCH', path: '/api/service/settings/hours', scope: 'settings:write' },
