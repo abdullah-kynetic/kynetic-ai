@@ -2460,6 +2460,183 @@ export const TOOLS: ToolDefinition[] = [
     },
     required: ['dealId', 'kind', 'dueOn'],
     repeat: 'A repeat creates no second draft.'
+  }),
+  read({
+    name: 'get_agency_dialer',
+    title: 'Get the agency dialer queue',
+    summary:
+      'Returns the queue of people a human can call, optionally for one campaign. Nothing is dialed by reading it.',
+    auth: 'agency',
+    scope: 'contacts:read',
+    route: { method: 'GET', path: '/api/service/agency/dialer' },
+    pathParams: [],
+    queryParams: ['campaignId'],
+    bodyParams: [],
+    freeText: ['name', 'notes'],
+    inputs: { campaignId: uuid('Only contacts in this campaign.') },
+    required: []
+  }),
+  write({
+    name: 'log_agency_call',
+    title: 'Log a call a human made',
+    summary:
+      'Records the outcome of a call a human already made. Nothing is dialed. A callback outcome needs a callback date and time. A dnc outcome puts the contact on the do-not-call list.',
+    auth: 'agency',
+    scope: 'call-log:write',
+    route: { method: 'POST', path: '/api/service/agency/dialer/calls' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['eventId', 'contactId', 'outcome', 'notes', 'callbackDate', 'callbackTime'],
+    freeText: ['notes'],
+    inputs: {
+      eventId: uuid('Unique id for this call event. The same id with different details is a conflict.'),
+      contactId: uuid('Contact called.'),
+      outcome: {
+        type: 'string',
+        enum: ['no_answer', 'voicemail', 'connected', 'interested', 'not_interested', 'callback', 'dnc']
+      },
+      notes: { type: 'string', maxLength: 1000, default: '' },
+      callbackDate: { type: 'string', format: 'date', description: 'YYYY-MM-DD. Required for callback.' },
+      callbackTime: { type: 'string', pattern: '^\\d{2}:\\d{2}$', description: 'HH:MM. Required for callback.' }
+    },
+    required: ['eventId', 'contactId', 'outcome'],
+    repeat: 'A repeat with the same eventId and details returns the first result and logs nothing more.'
+  }),
+  write({
+    name: 'mark_agency_dnc',
+    title: 'Put an agency contact on the do-not-call list',
+    summary: 'Puts one agency contact on the do-not-call list. This is permanent through the API.',
+    auth: 'agency',
+    scope: 'contacts:write',
+    route: { method: 'POST', path: '/api/service/agency/dnc' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['contactId'],
+    freeText: [],
+    inputs: { contactId: uuid('Contact to add.') },
+    required: ['contactId'],
+    repeat: 'A repeat finds the contact already listed and changes nothing.'
+  }),
+  read({
+    name: 'list_agency_inbox',
+    title: 'List the agency inbox',
+    summary: 'Lists agency messages, optionally by channel, status or contact.',
+    auth: 'agency',
+    scope: 'messages:read',
+    route: { method: 'GET', path: '/api/service/agency/inbox' },
+    pathParams: [],
+    queryParams: ['channel', 'status', 'contactId'],
+    bodyParams: [],
+    freeText: ['body', 'subject'],
+    inputs: {
+      channel: { type: 'string', enum: ['sms', 'email', 'dm'] },
+      status: {
+        type: 'string',
+        enum: ['queued', 'sent', 'delivered', 'failed', 'bounced', 'complained', 'received', 'logged']
+      },
+      contactId: uuid('Only this contact.')
+    },
+    required: []
+  }),
+  write({
+    name: 'log_agency_dm',
+    title: 'Log a direct message',
+    summary: 'Records a direct message a human sent or received. Nothing is sent.',
+    auth: 'agency',
+    scope: 'notes:write',
+    route: { method: 'POST', path: '/api/service/agency/inbox/dm' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['contactId', 'direction', 'platform', 'body'],
+    freeText: ['body', 'platform'],
+    inputs: {
+      contactId: uuid('Contact the message is with.'),
+      direction: { type: 'string', enum: ['inbound', 'outbound'] },
+      platform: { type: 'string', minLength: 1, maxLength: 80 },
+      body: { type: 'string', minLength: 1, maxLength: 5000 }
+    },
+    required: ['contactId', 'direction', 'platform', 'body'],
+    repeat: 'A repeat records no second message.'
+  }),
+  read({
+    name: 'list_agency_campaigns',
+    title: 'List agency campaigns',
+    summary: 'Lists agency campaigns. Starting, advancing and sending are not possible through the API.',
+    auth: 'agency',
+    scope: 'contacts:read',
+    route: { method: 'GET', path: '/api/service/agency/campaigns' },
+    ...none,
+    freeText: ['name', 'script'],
+    inputs: {},
+    required: []
+  }),
+  write({
+    name: 'create_agency_campaign',
+    title: 'Create an agency campaign draft',
+    summary:
+      'Creates a campaign draft with a name and call script. Starting, advancing and sending are not possible through the API.',
+    auth: 'agency',
+    scope: 'contacts:write',
+    route: { method: 'POST', path: '/api/service/agency/campaigns' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['name', 'script'],
+    freeText: ['name', 'script'],
+    inputs: {
+      name: { type: 'string', minLength: 1, maxLength: 120 },
+      script: { type: 'string', minLength: 1, maxLength: 5000 }
+    },
+    required: ['name', 'script'],
+    repeat: 'A repeat creates no second campaign.'
+  }),
+  write({
+    name: 'assign_contact_to_agency_campaign',
+    title: 'Add a contact to an agency campaign',
+    summary: 'Adds one agency contact to a campaign. Nothing is sent.',
+    auth: 'agency',
+    scope: 'contacts:write',
+    route: { method: 'POST', path: '/api/service/agency/campaigns/{id}/assign' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['contactId'],
+    freeText: [],
+    inputs: { id: uuid('Campaign id.'), contactId: uuid('Contact to add.') },
+    required: ['id', 'contactId'],
+    repeat: 'A repeat finds the contact already assigned and changes nothing.'
+  }),
+  read({
+    name: 'get_agency_campaign_stats',
+    title: 'Get agency campaign stats',
+    summary: 'Returns the stats for one agency campaign.',
+    auth: 'agency',
+    scope: 'contacts:read',
+    route: { method: 'GET', path: '/api/service/agency/campaigns/{id}/stats' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: [],
+    inputs: { id: uuid('Campaign id.') },
+    required: ['id']
+  }),
+  write({
+    name: 'save_agency_ops_settings',
+    title: 'Save agency ops draft settings',
+    summary:
+      'Saves the ops draft metadata: the DEV lead-hook URL (https://dev.kyneticai.com/api/hooks/leads/..., no credentials or query), the workflow name (starts with "DEV - ") and the workflow id. Draft metadata only: the API never configures or calls n8n.',
+    auth: 'agency',
+    scope: 'settings:write',
+    route: { method: 'PUT', path: '/api/service/agency/ops' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['devWebhookUrl', 'workflowName', 'workflowId'],
+    freeText: ['workflowName'],
+    inputs: {
+      devWebhookUrl: { type: 'string', format: 'uri', maxLength: 500 },
+      workflowName: { type: 'string', minLength: 7, maxLength: 120, pattern: '^DEV - ' },
+      workflowId: { type: 'string', pattern: '^[A-Za-z0-9_-]{1,80}$' }
+    },
+    required: ['devWebhookUrl', 'workflowName', 'workflowId'],
+    repeat: 'A repeat saves the same values again, which changes nothing.'
   })
 ];
 
@@ -2472,16 +2649,6 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'POST', path: '/api/service/call-results', scope: 'calls:write' },
   { method: 'POST', path: '/api/service/contact-decisions', scope: 'contact-decisions:write' },
   // Contact writes (C1, C2) and company routes (C3). Live on the API now. MCP tools ship with B1; this list must come back down to two.
-  { method: 'GET', path: '/api/service/agency/dialer', scope: 'contacts:read' },
-  { method: 'POST', path: '/api/service/agency/dialer/calls', scope: 'call-log:write' },
-  { method: 'POST', path: '/api/service/agency/dnc', scope: 'contacts:write' },
-  { method: 'GET', path: '/api/service/agency/inbox', scope: 'messages:read' },
-  { method: 'POST', path: '/api/service/agency/inbox/dm', scope: 'notes:write' },
-  { method: 'GET', path: '/api/service/agency/campaigns', scope: 'contacts:read' },
-  { method: 'POST', path: '/api/service/agency/campaigns', scope: 'contacts:write' },
-  { method: 'POST', path: '/api/service/agency/campaigns/{id}/assign', scope: 'contacts:write' },
-  { method: 'GET', path: '/api/service/agency/campaigns/{id}/stats', scope: 'contacts:read' },
-  { method: 'PUT', path: '/api/service/agency/ops', scope: 'settings:write' },
   { method: 'GET', path: '/api/service/platform/clients', scope: 'settings:read' },
   { method: 'POST', path: '/api/service/platform/clients', scope: 'settings:write' },
   { method: 'GET', path: '/api/service/platform/clients/{id}', scope: 'settings:read' },
