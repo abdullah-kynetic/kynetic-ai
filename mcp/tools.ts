@@ -2044,6 +2044,250 @@ export const TOOLS: ToolDefinition[] = [
     },
     required: ['id', 'body'],
     repeat: 'A repeat adds no second reply.'
+  }),
+  read({
+    name: 'list_agency_prospects',
+    title: 'List agency prospects',
+    summary: 'Lists agency prospects, optionally by stage, source, state or text.',
+    auth: 'agency',
+    scope: 'contacts:read',
+    route: { method: 'GET', path: '/api/service/agency/prospects' },
+    pathParams: [],
+    queryParams: ['stage', 'q', 'source', 'state'],
+    bodyParams: [],
+    freeText: ['businessName', 'ownerName', 'city'],
+    inputs: {
+      stage: { type: 'string', enum: ['scraped', 'half_enriched', 'fully_enriched'] },
+      q: { type: 'string', maxLength: 100 },
+      source: { type: 'string', enum: ['google_maps', 'directory', 'referral', 'manual'] },
+      state: { type: 'string', minLength: 2, maxLength: 2, description: 'Two-letter US state.' }
+    },
+    required: []
+  }),
+  write({
+    name: 'create_agency_prospect',
+    title: 'Add an agency prospect',
+    summary:
+      'Adds one prospect to the agency list. Florida and Oklahoma are refused. The portal currently accepts only synthetic test phones and @example.test emails. Nothing is sent to the prospect.',
+    auth: 'agency',
+    scope: 'contacts:write',
+    route: { method: 'POST', path: '/api/service/agency/prospects' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['businessName', 'source', 'website', 'phone', 'email', 'ownerName', 'city', 'state'],
+    freeText: ['businessName', 'ownerName', 'city'],
+    inputs: {
+      businessName: { type: 'string', minLength: 1, maxLength: 200 },
+      source: { type: 'string', enum: ['google_maps', 'directory', 'referral', 'manual'] },
+      website: { type: 'string', maxLength: 300 },
+      phone: { type: 'string', description: 'Synthetic test phone only, for now.' },
+      email: { type: 'string', maxLength: 254, description: 'An @example.test address only, for now.' },
+      ownerName: { type: 'string', maxLength: 200 },
+      city: { type: 'string', maxLength: 120 },
+      state: { type: 'string', minLength: 2, maxLength: 2, description: 'Two-letter US state, not FL or OK.' }
+    },
+    required: ['businessName', 'source'],
+    repeat: 'A repeat adds no second prospect.'
+  }),
+  write({
+    name: 'move_prospects_to_sales',
+    title: 'Move prospects to Sales',
+    summary:
+      'Turns up to 100 prospects into sales leads. A prospect whose phone is on the do-not-call list is skipped with a reason. Nothing is sent.',
+    auth: 'agency',
+    scope: 'contacts:write',
+    route: { method: 'POST', path: '/api/service/agency/prospects/move-to-sales' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['ids'],
+    freeText: ['name'],
+    inputs: {
+      ids: { type: 'array', minItems: 1, maxItems: 100, items: { type: 'string', format: 'uuid' } }
+    },
+    required: ['ids'],
+    repeat: 'A repeat finds the prospects already moved and creates no second lead.'
+  }),
+  read({
+    name: 'list_agency_leads',
+    title: 'List agency leads',
+    summary: 'Lists agency sales leads, optionally by direction, channel or stage.',
+    auth: 'agency',
+    scope: 'contacts:read',
+    route: { method: 'GET', path: '/api/service/agency/leads' },
+    pathParams: [],
+    queryParams: ['direction', 'channel', 'stageId'],
+    bodyParams: [],
+    freeText: ['firstName', 'notes'],
+    inputs: {
+      direction: { type: 'string', enum: ['inbound', 'outbound'] },
+      channel: {
+        type: 'string',
+        enum: ['form', 'booking', 'referral', 'other', 'cold_call', 'sms', 'email', 'dm']
+      },
+      stageId: uuid('Pipeline stage id.')
+    },
+    required: []
+  }),
+  write({
+    name: 'create_agency_lead',
+    title: 'Add an agency lead',
+    summary:
+      'Adds one agency lead and its deal. Direction and channel must agree: cold_call is outbound, and form, booking, referral and other are inbound. The portal currently accepts only synthetic test phones and @example.test emails. Nothing is sent.',
+    auth: 'agency',
+    scope: 'contacts:write',
+    route: { method: 'POST', path: '/api/service/agency/leads' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['firstName', 'email', 'phone', 'state', 'direction', 'channel'],
+    freeText: ['firstName'],
+    inputs: {
+      firstName: { type: 'string', minLength: 1, maxLength: 200 },
+      email: { type: 'string', maxLength: 254, description: 'An @example.test address only, for now.' },
+      phone: { type: 'string', description: 'Synthetic test phone only, for now.' },
+      state: { type: 'string', minLength: 2, maxLength: 2, description: 'Two-letter US state, not FL or OK.' },
+      direction: { type: 'string', enum: ['inbound', 'outbound'] },
+      channel: {
+        type: 'string',
+        enum: ['form', 'booking', 'referral', 'other', 'cold_call', 'sms', 'email', 'dm']
+      }
+    },
+    required: ['firstName', 'email', 'direction', 'channel'],
+    repeat: 'A repeat creates no second lead.'
+  }),
+  write({
+    name: 'move_agency_deal',
+    title: 'Move an agency deal to a stage',
+    summary:
+      'Moves one agency deal to a pipeline stage; a lost reason is optional. Moving to the stage it is already in changes nothing.',
+    auth: 'agency',
+    scope: 'pipeline:write',
+    route: { method: 'POST', path: '/api/service/agency/deals/{id}/move' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['stageId', 'lostReason'],
+    freeText: ['lostReason'],
+    inputs: {
+      id: uuid('Deal id.'),
+      stageId: uuid('Target stage id.'),
+      lostReason: { type: 'string', maxLength: 200 }
+    },
+    required: ['id', 'stageId'],
+    repeat: 'A repeat leaves the deal in the same stage.'
+  }),
+  write({
+    name: 'rename_agency_stage',
+    title: 'Rename an agency pipeline stage',
+    summary: 'Renames one agency pipeline stage. Rename only.',
+    auth: 'agency',
+    scope: 'pipeline:write',
+    route: { method: 'PATCH', path: '/api/service/agency/stages/{id}' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['name'],
+    freeText: ['name'],
+    inputs: { id: uuid('Stage id.'), name: { type: 'string', minLength: 1, maxLength: 60 } },
+    required: ['id', 'name'],
+    repeat: 'A repeat sets the same name again, which changes nothing.'
+  }),
+  read({
+    name: 'list_agency_contracts',
+    title: 'List agency contracts',
+    summary: 'Lists agency contracts, optionally by status or stage.',
+    auth: 'agency',
+    scope: 'deals:read',
+    route: { method: 'GET', path: '/api/service/agency/contracts' },
+    pathParams: [],
+    queryParams: ['status', 'stageId'],
+    bodyParams: [],
+    freeText: ['title'],
+    inputs: {
+      status: { type: 'string', enum: ['draft', 'sent', 'signed', 'void'] },
+      stageId: uuid('Pipeline stage id.')
+    },
+    required: []
+  }),
+  write({
+    name: 'create_agency_contract',
+    title: 'Create an agency contract',
+    summary: 'Creates one draft contract for a deal.',
+    auth: 'agency',
+    scope: 'deals:write',
+    route: { method: 'POST', path: '/api/service/agency/contracts' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['dealId', 'title'],
+    freeText: ['title'],
+    inputs: { dealId: uuid('Deal id.'), title: { type: 'string', minLength: 1, maxLength: 200 } },
+    required: ['dealId', 'title'],
+    repeat: 'A repeat creates no second contract.'
+  }),
+  write({
+    name: 'mark_contract_sent',
+    title: 'Record a contract as sent',
+    summary:
+      'Records that a draft contract was sent on a date. It does not email anything. Only a draft can be marked sent.',
+    auth: 'agency',
+    scope: 'deals:write',
+    route: { method: 'POST', path: '/api/service/agency/contracts/{id}/mark-sent' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['sentOn'],
+    freeText: [],
+    inputs: {
+      id: uuid('Contract id.'),
+      sentOn: { type: 'string', format: 'date', description: 'YYYY-MM-DD.' }
+    },
+    required: ['id', 'sentOn'],
+    repeat: 'A repeat finds the contract already sent and changes nothing.'
+  }),
+  write({
+    name: 'mark_contract_signed',
+    title: 'Record a contract as signed',
+    summary:
+      'Records that a draft or sent contract was signed on a date, with optional notes. The signed PDF is uploaded in the portal, not here.',
+    auth: 'agency',
+    scope: 'deals:write',
+    route: { method: 'POST', path: '/api/service/agency/contracts/{id}/mark-signed' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['signedOn', 'notes'],
+    freeText: ['notes'],
+    inputs: {
+      id: uuid('Contract id.'),
+      signedOn: { type: 'string', format: 'date', description: 'YYYY-MM-DD.' },
+      notes: { type: 'string', maxLength: 2000, default: '' }
+    },
+    required: ['id', 'signedOn'],
+    repeat: 'A repeat finds the contract already signed and changes nothing.'
+  }),
+  write({
+    name: 'void_contract',
+    title: 'Void a contract',
+    summary: 'Voids one contract. A signed contract cannot be voided here.',
+    auth: 'agency',
+    scope: 'deals:write',
+    route: { method: 'POST', path: '/api/service/agency/contracts/{id}/void' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: [],
+    inputs: { id: uuid('Contract id.') },
+    required: ['id'],
+    repeat: 'A repeat finds the contract already void and changes nothing.'
+  }),
+  read({
+    name: 'get_contract_file_link',
+    title: 'Get a contract file link',
+    summary: 'Returns a link to the signed contract file. The link stops working after 5 minutes.',
+    auth: 'agency',
+    scope: 'deals:read',
+    route: { method: 'GET', path: '/api/service/agency/contracts/{id}/file' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: [],
+    inputs: { id: uuid('Contract id.') },
+    required: ['id']
   })
 ];
 
@@ -2056,19 +2300,6 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'POST', path: '/api/service/call-results', scope: 'calls:write' },
   { method: 'POST', path: '/api/service/contact-decisions', scope: 'contact-decisions:write' },
   // Contact writes (C1, C2) and company routes (C3). Live on the API now. MCP tools ship with B1; this list must come back down to two.
-  { method: 'GET', path: '/api/service/agency/prospects', scope: 'contacts:read' },
-  { method: 'POST', path: '/api/service/agency/prospects', scope: 'contacts:write' },
-  { method: 'POST', path: '/api/service/agency/prospects/move-to-sales', scope: 'contacts:write' },
-  { method: 'GET', path: '/api/service/agency/leads', scope: 'contacts:read' },
-  { method: 'POST', path: '/api/service/agency/leads', scope: 'contacts:write' },
-  { method: 'POST', path: '/api/service/agency/deals/{id}/move', scope: 'pipeline:write' },
-  { method: 'PATCH', path: '/api/service/agency/stages/{id}', scope: 'pipeline:write' },
-  { method: 'GET', path: '/api/service/agency/contracts', scope: 'deals:read' },
-  { method: 'POST', path: '/api/service/agency/contracts', scope: 'deals:write' },
-  { method: 'POST', path: '/api/service/agency/contracts/{id}/mark-sent', scope: 'deals:write' },
-  { method: 'POST', path: '/api/service/agency/contracts/{id}/mark-signed', scope: 'deals:write' },
-  { method: 'POST', path: '/api/service/agency/contracts/{id}/void', scope: 'deals:write' },
-  { method: 'GET', path: '/api/service/agency/contracts/{id}/file', scope: 'deals:read' },
   { method: 'GET', path: '/api/service/agency/finance', scope: 'deals:read' },
   { method: 'GET', path: '/api/service/agency/finance/export', scope: 'deals:read' },
   { method: 'POST', path: '/api/service/agency/expenses', scope: 'deals:write' },
