@@ -76,7 +76,11 @@ describe('MCP tool definitions: shape', () => {
       expect(t.inputSchema.additionalProperties).toBe(false);
       const declared = new Set([...t.pathParams, ...t.queryParams, ...t.bodyParams]);
       const extra =
-        t.name === 'list_clients' ? [] : t.name === 'get_kpi_summary' ? ['clients'] : ['client'];
+        t.name === 'list_clients' || t.auth === 'platform'
+          ? []
+          : t.name === 'get_kpi_summary'
+            ? ['clients']
+            : ['client'];
       if (t.access === 'write') extra.push('idempotencyKey');
       expect(Object.keys(t.inputSchema.properties).sort(), t.name).toEqual(
         [...declared, ...extra].sort()
@@ -87,9 +91,19 @@ describe('MCP tool definitions: shape', () => {
     }
   });
 
+  it('platform tools take no client and say they need the admin key', () => {
+    for (const t of TOOLS.filter((x) => x.auth === 'platform')) {
+      expect(t.inputSchema.properties, t.name).not.toHaveProperty('client');
+      expect(t.description, t.name).toContain('admin key');
+    }
+    for (const t of TOOLS.filter((x) => x.auth === 'agency')) {
+      expect(t.description, t.name).toContain('admin key');
+    }
+  });
+
   it('every tool except list_clients names the client it acts for', () => {
     for (const t of TOOLS) {
-      if (t.name === 'list_clients') continue;
+      if (t.name === 'list_clients' || t.auth === 'platform') continue;
       const key = t.name === 'get_kpi_summary' ? 'clients' : 'client';
       expect(t.inputSchema.required, t.name).toContain(key);
     }

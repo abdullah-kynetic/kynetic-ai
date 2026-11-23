@@ -9,6 +9,7 @@ import {
 
 const TOKEN_A = 'tok_client_a_0123456789abcdef';
 const TOKEN_B = 'tok_client_b_0123456789abcdef';
+const ADMIN_KEY = `kad_${'a'.repeat(16)}_${'b'.repeat(64)}`;
 
 type Call = { url: string; init: RequestInit };
 
@@ -155,7 +156,57 @@ describe('MCP server: tool calls', () => {
   });
 });
 
+describe('MCP server: admin key', () => {
+  const withAdmin = (cfg: ServerConfig): ServerConfig => ({ ...cfg, adminKey: ADMIN_KEY });
+
+  it('a client with no token uses the admin key and names the client in the header', async () => {
+    const { cfg, calls } = setup();
+    const res = await call(withAdmin(cfg), 'list_deals', { client: 'new-client' });
+    expect(res.result.isError).toBeUndefined();
+    const headers = calls[0].init.headers as Record<string, string>;
+    expect(headers.Authorization).toBe(`Bearer ${ADMIN_KEY}`);
+    expect(headers['X-Kynetic-Client']).toBe('new-client');
+  });
+
+  it('a registered client token still wins over the admin key', async () => {
+    const { cfg, calls } = setup();
+    await call(withAdmin(cfg), 'list_deals', { client: 'client-a' });
+    const headers = calls[0].init.headers as Record<string, string>;
+    expect(headers.Authorization).toBe(`Bearer ${TOKEN_A}`);
+    expect(headers).not.toHaveProperty('X-Kynetic-Client');
+  });
+
+  it('a platform tool sends the admin key with no client header, and refuses without one', async () => {
+    const platform = TOOLS.find((t) => t.auth === 'platform');
+    if (!platform) return;
+    const { cfg, calls } = setup();
+    const refused = await call(cfg, platform.name, {});
+    expect(refused.result.isError).toBe(true);
+    expect(refused.result.content[0].text).toContain('KYNETIC_MCP_ADMIN_KEY');
+    expect(calls).toHaveLength(0);
+  });
+
+  it('never puts the admin key in a result or an error', async () => {
+    const { cfg } = setup(500, 'boom');
+    const res = await call(withAdmin(cfg), 'list_deals', { client: 'new-client' });
+    expect(JSON.stringify(res)).not.toContain(ADMIN_KEY);
+  });
+});
+
 describe('MCP server: configuration', () => {
+  it('reads the admin key and refuses a malformed one without printing it', () => {
+    expect(configFromEnv({ KYNETIC_MCP_ADMIN_KEY: ADMIN_KEY }).adminKey).toBe(ADMIN_KEY);
+    expect(configFromEnv({}).adminKey).toBeUndefined();
+    let message = '';
+    try {
+      configFromEnv({ KYNETIC_MCP_ADMIN_KEY: 'kad_nope_secretvalue' });
+    } catch (e) {
+      message = (e as Error).message;
+    }
+    expect(message).toContain('not a valid admin key');
+    expect(message).not.toContain('secretvalue');
+  });
+
   it('reads the portal URL and the token registry from the environment', () => {
     const cfg = configFromEnv({
       KYNETIC_PORTAL_URL: 'https://p.example.test',

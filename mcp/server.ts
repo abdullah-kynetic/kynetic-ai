@@ -2,22 +2,32 @@
 // line) with no SDK dependency. Every tool in tools.ts becomes one fetch to one /api/service/* route with
 // the portal token of the chosen client. Nothing here stores a token, logs one, or puts one in a result.
 //
-// Config comes from the environment (see README.md): KYNETIC_PORTAL_URL and KYNETIC_MCP_TOKENS, a JSON
-// object that maps each client slug to that client's own portal token.
+// Config comes from the environment (see README.md): KYNETIC_PORTAL_URL, KYNETIC_MCP_TOKENS (a JSON
+// object that maps each client slug to that client's own portal token) and, optionally,
+// KYNETIC_MCP_ADMIN_KEY, the owner's admin key. The admin key reaches every client (named with the
+// X-Kynetic-Client header) and the platform routes (no header). It is never sent to the caller.
 
 import { TOOLS, type ToolDefinition } from './tools';
 
 export const PROTOCOL_VERSION = '2025-06-18';
 export const SERVER_INFO = { name: 'kynetic-portal', version: '0.1.0' };
 const SLUG = /^[a-z0-9][a-z0-9-]{0,63}$/;
+// The portal's own limit for the X-Kynetic-Client header, which is stricter than SLUG.
+const ADMIN_CLIENT_SLUG = /^[a-z0-9-]{3,40}$/;
+const ADMIN_KEY = /^kad_[0-9a-f]{16}_[0-9a-f]{64}$/;
 const MAX_ERROR_TEXT = 2000;
 
 export type ServerConfig = {
   portalUrl: string;
   /** client slug -> portal service token. Never sent to the caller, never logged. */
   tokens: Record<string, string>;
+  /** The owner's admin key (kad_...). Never sent to the caller, never logged. */
+  adminKey?: string;
   fetch?: typeof fetch;
 };
+
+/** What one portal call is sent with: a bearer secret, plus the client the admin key acts for. */
+type Credential = { bearer: string; adminClient?: string };
 
 type Request = {
   jsonrpc?: string;
@@ -88,16 +98,17 @@ export function buildPortalRequest(tool: ToolDefinition, args: Record<string, un
 
 async function callPortal(
   cfg: ServerConfig,
-  token: string,
+  credential: Credential,
   tool: ToolDefinition,
   args: Record<string, unknown>
 ): Promise<ToolResult> {
   const doFetch = cfg.fetch ?? fetch;
   const req = buildPortalRequest(tool, args, cfg.portalUrl);
   const headers: Record<string, string> = {
-    Authorization: `Bearer ${token}`,
+    Authorization: `Bearer ${credential.bearer}`,
     Accept: 'application/json'
   };
+  if (credential.adminClient) headers['X-Kynetic-Client'] = credential.adminClient;
   if (req.body !== undefined) headers['Content-Type'] = 'application/json';
   if (req.idempotencyKey) headers['Idempotency-Key'] = req.idempotencyKey;
   const res = await doFetch(req.url, {
@@ -111,6 +122,9 @@ async function callPortal(
   }
   return text(body);
 }
+
+const NEEDS_ADMIN_KEY =
+  'This tool needs the owner admin key. Set KYNETIC_MCP_ADMIN_KEY in the server environment.';
 
 export async function callTool(
   cfg: ServerConfig,
@@ -126,29 +140,50 @@ export async function callTool(
     return text(JSON.stringify({ clients: Object.keys(cfg.tokens).sort() }));
   }
 
-  const slugs = name === 'get_kpi_summary' ? (args.clients as string[] | undefined) ?? [] : [args.client];
-  if (name === 'get_kpi_summary' && (!Array.isArray(args.clients) || args.clients.length === 0)) {
-    return text('"clients" must be a non-empty list of client slugs.', true);
-  }
-  for (const slug of slugs) {
-    if (typeof slug !== 'string' || !SLUG.test(slug) || !cfg.tokens[slug]) {
-      return text(`No portal token is registered for client "${String(slug)}". Use list_clients.`, true);
-    }
+  if (tool.auth === 'platform') {
+    if (!cfg.adminKey) return text(NEEDS_ADMIN_KEY, true);
+    return callPortal(cfg, { bearer: cfg.adminKey }, tool, args);
   }
 
+  // A registered client token wins. Without one, the admin key acts for the named client.
+  const credentialFor = (slug: unknown): Credential | string => {
+    if (typeof slug !== 'string' || !SLUG.test(slug)) {
+      return `No portal token is registered for client "${String(slug)}". Use list_clients.`;
+    }
+    if (tool.auth === 'agency') {
+      if (!cfg.adminKey) return NEEDS_ADMIN_KEY;
+      if (!ADMIN_CLIENT_SLUG.test(slug)) return `"${slug}" is not a valid client slug for the admin key.`;
+      return { bearer: cfg.adminKey, adminClient: slug };
+    }
+    if (cfg.tokens[slug]) return { bearer: cfg.tokens[slug] };
+    if (cfg.adminKey && ADMIN_CLIENT_SLUG.test(slug)) return { bearer: cfg.adminKey, adminClient: slug };
+    return `No portal token is registered for client "${slug}". Use list_clients.`;
+  };
+
   if (name === 'get_kpi_summary') {
+    if (!Array.isArray(args.clients) || args.clients.length === 0) {
+      return text('"clients" must be a non-empty list of client slugs.', true);
+    }
+    const credentials: Credential[] = [];
+    for (const slug of args.clients as unknown[]) {
+      const credential = credentialFor(slug);
+      if (typeof credential === 'string') return text(credential, true);
+      credentials.push(credential);
+    }
     const results = [];
-    for (const slug of slugs as string[]) {
+    for (const [i, slug] of (args.clients as string[]).entries()) {
       const rest = { ...args };
       delete rest.clients;
-      const res = await callPortal(cfg, cfg.tokens[slug], tool, rest);
+      const res = await callPortal(cfg, credentials[i], tool, rest);
       results.push({ client: slug, isError: res.isError === true, text: res.content[0].text });
     }
     return text(JSON.stringify({ results }));
   }
 
   const { client, ...rest } = args;
-  return callPortal(cfg, cfg.tokens[client as string], tool, rest);
+  const credential = credentialFor(client);
+  if (typeof credential === 'string') return text(credential, true);
+  return callPortal(cfg, credential, tool, rest);
 }
 
 export async function handleRequest(cfg: ServerConfig, req: Request): Promise<object | null> {
@@ -224,5 +259,9 @@ export function configFromEnv(env: Record<string, string | undefined>): ServerCo
     if (typeof token !== 'string' || token.length < 16) throw new Error(`Token for "${slug}" is missing or too short.`);
     tokens[slug] = token;
   }
-  return { portalUrl, tokens };
+  const adminKey = env.KYNETIC_MCP_ADMIN_KEY?.trim();
+  if (adminKey && !ADMIN_KEY.test(adminKey)) {
+    throw new Error('KYNETIC_MCP_ADMIN_KEY is not a valid admin key (kad_ then 16 and 64 hex characters).');
+  }
+  return { portalUrl, tokens, ...(adminKey ? { adminKey } : {}) };
 }
