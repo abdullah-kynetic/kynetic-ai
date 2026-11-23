@@ -41,13 +41,17 @@ The agency workspace can schedule a Pacific-time callback, mark a campaign step 
 The client dashboard can show 7, 30, or 90 days, or a custom range, in the client's time zone. Speed-to-lead and booking rate use the same formulas as the monthly report. The 30-day booking guarantee is unchanged. Appointments have month, week, and day views and a contact search instead of a raw id. Automations show recent run results and stay read-only. Pipeline owner and source filters were already on `main`; this batch adds browser coverage. Support is a thread on both the client side and the Kynetic side, with an in-app alert and no email. Alex settings can file a change request. The terms acceptance page exists and stays off unless `TERMS_GATE_ENABLED=true`. Migration `1019_support_threads_category` follows `1018_admin_ops_safety`. This note does not deploy. `PROVIDER_MODE=stub` and `OUTBOUND_ENABLED=false` are unchanged. Left open: terms wording (KI-026), calendar sync (KI-027), automation editing (KI-028), and support email (KI-029).
 
 
+## Pitch change (2026-11-23 PST)
+
+Abdullah ended Alex as the main pitch. Alex stays built as one optional system (the portal `alex_core` module and the protected live agent are untouched), but sales material, the first call and the offer lead with the niche outcome and the 20% guarantee, not Alex. Older lines in this repo that call Alex the sole or main offer (D-013 "Plan 1 only", D-017 pricing, `docs/progress.md` historical plan, `docs/roadmap/`) are history and were left as written. Niche choice is open (remodelers or business brokers). No decision number assigned here.
+
 ## Current direction
 
 Abdullah's five steps are the operating order. There is one roadmap: Twenty note `7bfdcb7e`. Frozen checks and weights stay in note `603fe300` (baseline v1). Current scores stay in note `5c44b12e`. The Twenty twin of this file is note `2489986e`. Those ids were already on main. This pass did not re-read the notes.
 
 1. Consolidate the plan. GitHub instructions point here. The broader systems roadmap stays later. It is kept, and it is not a build-everything-first gate.
 2. Sales-ready foundation, in parallel with step 3: verify portal access protection, keep the approved outcomes-focused site and offer, and finish the audit, pitch, and close scripts.
-3. Productize the delivery package, in parallel with step 2: Alex on ElevenLabs through n8n on the VPS, one configurable CRM, scheduling, essential follow-up, and demo end-to-end templates.
+3. Productize the delivery package, in parallel with step 2: one configurable CRM, scheduling, essential follow-up, and demo end-to-end templates. Alex is no longer the main pitch (Abdullah, 2026-11-23); it is one optional system among the others, and the pitch is the niche outcome and guarantee.
 4. Cold-call remodelers until the first three clients are signed. Other channels wait until then.
 5. Deliver, measure appointments and effort, improve the templates, write case studies, then expand channels and multi-location.
 

@@ -4,7 +4,7 @@ Durable context for agent sessions. Twenty is the business source of truth. GitH
 
 ## Current direction (2026-11-08 PST)
 
-- Five steps, one roadmap (Twenty note `7bfdcb7e`): consolidate the plan; sales-ready foundation in parallel with productizing Alex, one CRM, scheduling, essential follow-up, and demo templates; cold-call remodelers until the first three clients are signed; then deliver, measure, and expand. Broader systems stay later.
+- Five steps, one roadmap (Twenty note `7bfdcb7e`): consolidate the plan; sales-ready foundation in parallel with productizing one CRM (Alex is no longer the main pitch, 2026-11-23), scheduling, essential follow-up, and demo templates; cold-call remodelers until the first three clients are signed; then deliver, measure, and expand. Broader systems stay later.
 - Alex runs on ElevenLabs through n8n on the VPS. Retell is parked for Alex. The live agent `agent_8201m5afn2rbeb7v29xfkhh1pjef` is protected: do not change it and do not invoke it.
 - The CRM is one configurable deliverable. `lite` / `full` in the portal code are internal capability flags from 2026-10-25, not commercial tiers.
 - Offer in force (2026-11-05): "We book remodelers 20% more appointments than last month in 30 days, or we work free until we do." Baseline is last month's booked appointments. The client keeps ads running and takes the appointments. Booking the jobs is the client's job.
