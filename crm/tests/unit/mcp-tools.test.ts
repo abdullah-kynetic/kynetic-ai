@@ -270,21 +270,6 @@ describe('MCP tool definitions: safety rules', () => {
     expect(ROUTES_WITHOUT_TOOLS.map((r) => r.path)).toEqual([
       '/api/service/call-results',
       '/api/service/contact-decisions',
-      '/api/service/settings/business',
-      '/api/service/settings/hours',
-      '/api/service/settings/tags',
-      '/api/service/settings/tags',
-      '/api/service/settings/tags',
-      '/api/service/settings/tags',
-      '/api/service/settings/custom-fields',
-      '/api/service/settings/custom-fields',
-      '/api/service/settings/custom-fields/{id}',
-      '/api/service/settings/custom-fields/{id}',
-      '/api/service/settings/branding',
-      '/api/service/settings/alex',
-      '/api/service/settings/alex',
-      '/api/service/settings/automations',
-      '/api/service/settings/automations/{key}',
       '/api/service/agency/prospects',
       '/api/service/agency/prospects',
       '/api/service/agency/prospects/move-to-sales',
@@ -358,11 +343,7 @@ describe('MCP tool definitions: safety rules', () => {
       '/api/service/platform/audit',
       '/api/service/platform/backups',
       '/api/service/platform/backups',
-      '/api/service/platform/runtime-flags',
-      '/api/service/support',
-      '/api/service/support',
-      '/api/service/support/{id}',
-      '/api/service/support/{id}/reply'
+      '/api/service/platform/runtime-flags'
     ]);
   });
 
