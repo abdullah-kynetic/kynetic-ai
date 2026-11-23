@@ -6,6 +6,9 @@
 Mirror of open problems tracked in Twenty. Twenty is canonical; this file mirrors it. On a mismatch, flag it rather than silently picking one.
 
 ## Open
+### KI-044: MCP tools are built but not deployed, and the platform support reply has no integration test (low)
+Found 2026-11-23. The MCP server and a tool for every service route are in PRs #239 to #253. Nothing is hosted: B2 (hosting, DNS, Caddy for mcp.kyneticai.com) and a portal deploy are held for a yes. The admin key has not been created on the server, and `SERVICE_API_OWNER_EMAIL` is still unset there, so admin key pages refuse everyone (see STATUS). The staff support reply route (`POST /api/service/platform/support/{id}/reply`) used to fail on any object body because the portal function reads only a string; #253 accepts `{ "body": "..." }`, but no integration test covers that route yet.
+
 ### KI-042: Website back end is parked: Snapshot engine, lead save, email report (medium)
 Found 2026-11-14. Abdullah decided to finish the website front end first and leave the back end for later. The free AI Score idea (in-page questions, scores, PDF, "email me my report") was built as a front-end demo, then removed from the home page on 2026-11-14 (replaced by "How it works"), so nothing on the site needs this engine today. If it comes back it has no engine yet: Google Places, PageSpeed and OpenRouter checks, scoring, PDF, lead save in the portal, Turnstile, rate limits and a daily spend cap. The website contact workflow also still writes visitors into Twenty (now read-only) and must point at the portal; text confirmations need stored consent. Design: `/mnt/project-files/website/free-audit-layout-and-plan-2026-11-14.md` (project files). Any server step goes through Abdullah's VPS chat.
 

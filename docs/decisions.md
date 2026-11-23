@@ -229,3 +229,14 @@ The portal owns consent, quiet hours and DNC; every follow-up passes the outboun
 ## 2026-11-14 — website home is the short static page; Score and FAQ removed
 
 Abdullah chose the simple jtsolutions-style home: hero, why now, what changes, services map, how it works (audit, build, run), final call. The free AI Score section and the FAQ were removed after trial. The site serves every industry. It went live on www.kyneticai.com the same day at his yes. Back end for any future Score stays parked (KI-042).
+
+## D-027: The MCP server reaches clients through the owner admin key as well as per-client tokens
+Status: decided (built, not deployed)
+Date: 2026-11-23
+Why: Decision 11-20 asked for two key types: an admin key for every client and the platform, and a client key for one workspace. The portal already has both. The MCP server needed a way to send each. Abdullah left the design choices to the build ("full permission to do anything you need").
+Decided:
+1. Every tool has an `auth` kind. `client` tools use the client's registered token, or the admin key with `X-Kynetic-Client` when none is registered. `agency` tools always use the admin key and `client` names the agency workspace. `platform` tools use the admin key with no client header and no `client` input.
+2. The admin key comes from `KYNETIC_MCP_ADMIN_KEY`, is format-checked at startup, and is never returned or logged. A tool that needs it is refused before any call when it is missing.
+3. The portal keeps its own one-way rules and the tools mirror them: caps only lowered, email flags only switched off, outbound only paused, no reinstating a suspended client, no voiding a signed contract. Loosening one is a portal change and Abdullah's call.
+4. Two settings tools can turn customer-facing activity on in the portal's own data: `update_alex_settings` (pause or resume Alex) and `set_automation` / `set_client_module`. Real sends stay off while OUTBOUND_ENABLED is off and PROVIDER_MODE is stub, which no tool can change. Abdullah should confirm he wants these two exposed before the server goes live.
+Replaced: nothing.
