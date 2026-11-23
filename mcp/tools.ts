@@ -155,6 +155,40 @@ function emptySchema(): JsonSchema {
 
 const none = { pathParams: [], queryParams: [], bodyParams: [] };
 
+const hhmm = { type: 'string', pattern: '^([01]\\d|2[0-3]):[0-5]\\d$', description: '24-hour time, HH:MM.' };
+const dayWindows = {
+  type: 'array',
+  maxItems: 4,
+  items: {
+    type: 'object',
+    properties: { open: hhmm, close: hhmm },
+    required: ['open', 'close'],
+    additionalProperties: false
+  },
+  description: 'Open windows for the day, close after open, no overlap. Empty or missing means closed.'
+};
+const businessHoursInput = {
+  type: 'object',
+  properties: {
+    mon: dayWindows,
+    tue: dayWindows,
+    wed: dayWindows,
+    thu: dayWindows,
+    fri: dayWindows,
+    sat: dayWindows,
+    sun: dayWindows
+  },
+  additionalProperties: false,
+  description: 'Weekly opening hours.'
+};
+const customFieldEntity = { type: 'string', enum: ['contact', 'company', 'deal'] };
+const customFieldOptions = {
+  type: 'array',
+  maxItems: 100,
+  items: { type: 'string', minLength: 1, maxLength: 100 },
+  description: 'Choices for select and multi_select fields, no repeats.'
+};
+
 export const TOOLS: ToolDefinition[] = [
   // Answered by the MCP server from its own registry. No portal route.
   read({
@@ -1664,6 +1698,267 @@ export const TOOLS: ToolDefinition[] = [
     },
     required: ['id', 'kind', 'title', 'status'],
     repeat: 'A repeat saves the same values again, which changes nothing.'
+  }),
+  read({
+    name: 'list_tags',
+    title: 'List tags',
+    summary: 'Lists every tag in use with the number of contacts that carry it.',
+    scope: 'settings:read',
+    route: { method: 'GET', path: '/api/service/settings/tags' },
+    ...none,
+    freeText: ['name'],
+    inputs: {},
+    required: []
+  }),
+  write({
+    name: 'create_tag',
+    title: 'Create a tag',
+    summary: 'Creates one tag by name, at most 50 characters.',
+    scope: 'settings:write',
+    route: { method: 'POST', path: '/api/service/settings/tags' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['name'],
+    freeText: ['name'],
+    inputs: { name: { type: 'string', minLength: 1, maxLength: 50, description: 'Tag name.' } },
+    required: ['name'],
+    repeat: 'A repeat creates no second tag.'
+  }),
+  write({
+    name: 'rename_tag',
+    title: 'Rename a tag',
+    summary:
+      'Renames a tag on every contact that has it. Renaming onto an existing tag merges the two.',
+    scope: 'settings:write',
+    route: { method: 'PATCH', path: '/api/service/settings/tags' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['from', 'to'],
+    freeText: ['name'],
+    inputs: {
+      from: { type: 'string', minLength: 1, maxLength: 50, description: 'Current tag name.' },
+      to: { type: 'string', minLength: 1, maxLength: 50, description: 'New tag name.' }
+    },
+    required: ['from', 'to'],
+    repeat: 'A repeat finds nothing left to rename and changes nothing.'
+  }),
+  write({
+    name: 'delete_tag',
+    title: 'Delete a tag',
+    summary:
+      'Removes a tag from every contact that has it. The contacts stay. This cannot be undone.',
+    scope: 'settings:write',
+    route: { method: 'DELETE', path: '/api/service/settings/tags' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['name'],
+    freeText: ['name'],
+    inputs: { name: { type: 'string', minLength: 1, maxLength: 50, description: 'Tag name.' } },
+    required: ['name'],
+    repeat: 'A repeat finds nothing left to remove and changes nothing.'
+  }),
+  read({
+    name: 'list_custom_fields',
+    title: 'List custom fields',
+    summary: 'Lists custom field definitions, optionally for one entity.',
+    scope: 'settings:read',
+    route: { method: 'GET', path: '/api/service/settings/custom-fields' },
+    pathParams: [],
+    queryParams: ['entity'],
+    bodyParams: [],
+    freeText: ['label', 'options'],
+    inputs: { entity: customFieldEntity },
+    required: []
+  }),
+  write({
+    name: 'create_custom_field',
+    title: 'Create a custom field',
+    summary:
+      'Creates one custom field definition. The key (lowercase letters, digits, underscore, 2 to 41 characters, starting with a letter), type and entity cannot change later. Select types need options; other types must have none.',
+    scope: 'settings:write',
+    route: { method: 'POST', path: '/api/service/settings/custom-fields' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['entity', 'key', 'label', 'type', 'options', 'showInTable', 'filterable', 'importable'],
+    freeText: ['label', 'options'],
+    inputs: {
+      entity: customFieldEntity,
+      key: { type: 'string', pattern: '^[a-z][a-z0-9_]{1,40}$' },
+      label: { type: 'string', minLength: 1, maxLength: 100 },
+      type: {
+        type: 'string',
+        enum: ['text', 'number', 'money', 'date', 'select', 'multi_select', 'checkbox']
+      },
+      options: customFieldOptions,
+      showInTable: { type: 'boolean', default: false },
+      filterable: { type: 'boolean', default: false },
+      importable: { type: 'boolean', default: true }
+    },
+    required: ['entity', 'key', 'label', 'type'],
+    repeat: 'A repeat creates no second field.'
+  }),
+  write({
+    name: 'update_custom_field',
+    title: 'Edit a custom field',
+    summary:
+      'Edits the label, options and the show, filter and import flags of one field; at least one. Key, type and entity cannot change.',
+    scope: 'settings:write',
+    route: { method: 'PATCH', path: '/api/service/settings/custom-fields/{id}' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['label', 'options', 'showInTable', 'filterable', 'importable'],
+    freeText: ['label', 'options'],
+    inputs: {
+      id: uuid('Custom field id.'),
+      label: { type: 'string', minLength: 1, maxLength: 100 },
+      options: customFieldOptions,
+      showInTable: { type: 'boolean' },
+      filterable: { type: 'boolean' },
+      importable: { type: 'boolean' }
+    },
+    required: ['id'],
+    repeat: 'A repeat sets the same values again, which changes nothing.'
+  }),
+  write({
+    name: 'delete_custom_field',
+    title: 'Delete a custom field',
+    summary:
+      'Removes one custom field definition and every stored value of it on every record. This cannot be undone.',
+    scope: 'settings:write',
+    route: { method: 'DELETE', path: '/api/service/settings/custom-fields/{id}' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: ['label'],
+    inputs: { id: uuid('Custom field id.') },
+    required: ['id'],
+    repeat: 'A repeat finds the field already gone and changes nothing.'
+  }),
+  write({
+    name: 'update_business_settings',
+    title: 'Edit business settings',
+    summary:
+      'Edits the time zone, weekly hours, service area, service list and transfer number; send only the fields to change. Plan and status cannot be sent.',
+    scope: 'settings:write',
+    route: { method: 'PATCH', path: '/api/service/settings/business' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['timezone', 'businessHours', 'serviceArea', 'services', 'transferNumber'],
+    freeText: ['services'],
+    inputs: {
+      timezone: { type: 'string', maxLength: 64, description: 'IANA time zone, for example America/Chicago.' },
+      businessHours: businessHoursInput,
+      serviceArea: {
+        type: 'object',
+        description:
+          'One of {type:"none"}, {type:"zips", zips:[5-digit strings, 1 to 500]} or {type:"radius", centerZip, miles 1 to 500}.',
+        additionalProperties: true
+      },
+      services: {
+        type: 'array',
+        maxItems: 50,
+        items: { type: 'string', minLength: 1, maxLength: 100 },
+        description: 'Service names, no repeats ignoring case.'
+      },
+      transferNumber: { type: ['string', 'null'], description: 'Transfer phone in E.164 format, or null to clear.' }
+    },
+    required: [],
+    repeat: 'A repeat sets the same values again, which changes nothing.'
+  }),
+  write({
+    name: 'update_business_hours',
+    title: 'Edit business hours',
+    summary: 'Replaces the weekly opening hours. Days left out are closed.',
+    scope: 'settings:write',
+    route: { method: 'PATCH', path: '/api/service/settings/hours' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['businessHours'],
+    freeText: [],
+    inputs: { businessHours: businessHoursInput },
+    required: ['businessHours'],
+    repeat: 'A repeat sets the same hours again, which changes nothing.'
+  }),
+  write({
+    name: 'update_branding',
+    title: 'Edit branding',
+    summary: 'Edits the brand name and primary color (#rrggbb, or null to clear).',
+    scope: 'settings:write',
+    route: { method: 'PATCH', path: '/api/service/settings/branding' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['name', 'primaryColor'],
+    freeText: ['name'],
+    inputs: {
+      name: { type: 'string', minLength: 1, maxLength: 100 },
+      primaryColor: { type: ['string', 'null'], pattern: '^#[0-9a-fA-F]{6}$' }
+    },
+    required: [],
+    repeat: 'A repeat sets the same values again, which changes nothing.'
+  }),
+  read({
+    name: 'get_alex_settings',
+    title: 'Get Alex settings',
+    summary: 'Returns whether Alex is paused and the call windows.',
+    scope: 'settings:read',
+    route: { method: 'GET', path: '/api/service/settings/alex' },
+    ...none,
+    freeText: [],
+    inputs: {},
+    required: []
+  }),
+  write({
+    name: 'update_alex_settings',
+    title: 'Edit Alex settings',
+    summary:
+      'Pauses or resumes Alex and sets the call windows; at least one. No call is placed by this tool. Real calls stay off while OUTBOUND_ENABLED is off and PROVIDER_MODE is stub, which this tool cannot change.',
+    scope: 'alex:write',
+    route: { method: 'PATCH', path: '/api/service/settings/alex' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['paused', 'callWindows'],
+    freeText: [],
+    inputs: {
+      paused: { type: 'boolean' },
+      callWindows: {
+        type: 'object',
+        properties: { start: hhmm, end: hhmm },
+        required: ['start', 'end'],
+        additionalProperties: false,
+        description: 'Start must be before end.'
+      }
+    },
+    required: [],
+    repeat: 'A repeat sets the same values again, which changes nothing.'
+  }),
+  read({
+    name: 'list_automations',
+    title: 'List automations',
+    summary: 'Lists the automation templates and whether each is on.',
+    scope: 'settings:read',
+    route: { method: 'GET', path: '/api/service/settings/automations' },
+    ...none,
+    freeText: ['name'],
+    inputs: {},
+    required: []
+  }),
+  write({
+    name: 'set_automation',
+    title: 'Turn an automation on or off',
+    summary:
+      'Turns one automation template on or off. Turning it off cancels that template pending runs. Nothing is sent by this tool; real sends stay off while OUTBOUND_ENABLED is off.',
+    scope: 'automation:write',
+    route: { method: 'PATCH', path: '/api/service/settings/automations/{key}' },
+    pathParams: ['key'],
+    queryParams: [],
+    bodyParams: ['enabled'],
+    freeText: [],
+    inputs: {
+      key: { type: 'string', minLength: 1, maxLength: 100, description: 'Automation template key.' },
+      enabled: { type: 'boolean' }
+    },
+    required: ['key', 'enabled'],
+    repeat: 'A repeat sets the same state again, which changes nothing.'
   })
 ];
 
@@ -1676,21 +1971,6 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'POST', path: '/api/service/call-results', scope: 'calls:write' },
   { method: 'POST', path: '/api/service/contact-decisions', scope: 'contact-decisions:write' },
   // Contact writes (C1, C2) and company routes (C3). Live on the API now. MCP tools ship with B1; this list must come back down to two.
-  { method: 'PATCH', path: '/api/service/settings/business', scope: 'settings:write' },
-  { method: 'PATCH', path: '/api/service/settings/hours', scope: 'settings:write' },
-  { method: 'GET', path: '/api/service/settings/tags', scope: 'settings:read' },
-  { method: 'POST', path: '/api/service/settings/tags', scope: 'settings:write' },
-  { method: 'PATCH', path: '/api/service/settings/tags', scope: 'settings:write' },
-  { method: 'DELETE', path: '/api/service/settings/tags', scope: 'settings:write' },
-  { method: 'GET', path: '/api/service/settings/custom-fields', scope: 'settings:read' },
-  { method: 'POST', path: '/api/service/settings/custom-fields', scope: 'settings:write' },
-  { method: 'PATCH', path: '/api/service/settings/custom-fields/{id}', scope: 'settings:write' },
-  { method: 'DELETE', path: '/api/service/settings/custom-fields/{id}', scope: 'settings:write' },
-  { method: 'PATCH', path: '/api/service/settings/branding', scope: 'settings:write' },
-  { method: 'GET', path: '/api/service/settings/alex', scope: 'settings:read' },
-  { method: 'PATCH', path: '/api/service/settings/alex', scope: 'alex:write' },
-  { method: 'GET', path: '/api/service/settings/automations', scope: 'settings:read' },
-  { method: 'PATCH', path: '/api/service/settings/automations/{key}', scope: 'automation:write' },
   { method: 'GET', path: '/api/service/agency/prospects', scope: 'contacts:read' },
   { method: 'POST', path: '/api/service/agency/prospects', scope: 'contacts:write' },
   { method: 'POST', path: '/api/service/agency/prospects/move-to-sales', scope: 'contacts:write' },
