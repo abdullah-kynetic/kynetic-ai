@@ -35,6 +35,12 @@ export type ToolDefinition = {
   /** Portal service-token scope the route requires. `null` for tools the MCP server answers itself. */
   scope: string | null;
   access: 'read' | 'write';
+  /**
+   * Which credential the server sends. `client` (the default) uses that client's own token, or the
+   * admin key when no token is registered. `agency` always uses the admin key with `client` naming the
+   * agency workspace. `platform` uses the admin key with no client at all, so it has no `client` input.
+   */
+  auth: 'client' | 'agency' | 'platform';
   /** The one portal route this tool calls. `null` for tools the MCP server answers itself. */
   route: { method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'; path: string } | null;
   /** Input names sent in the URL path (`{id}` style), in the query string, or in the JSON body. */
@@ -81,8 +87,12 @@ const updatedSince = instant('Only rows updated at or after this time.');
 
 function schema(
   properties: Record<string, Record<string, unknown>>,
-  required: string[]
+  required: string[],
+  auth: ToolDefinition['auth'] = 'client'
 ): JsonSchema {
+  if (auth === 'platform') {
+    return { type: 'object', properties, required, additionalProperties: false };
+  }
   return {
     type: 'object',
     properties: { client, ...properties },
@@ -91,7 +101,16 @@ function schema(
   };
 }
 
-type Spec = Omit<ToolDefinition, 'annotations' | 'description' | 'inputSchema'> & {
+const AUTH_NOTE: Record<ToolDefinition['auth'], string> = {
+  client: '',
+  agency:
+    'Agency workspace route: needs the owner admin key, and client must name the agency workspace. A client token gets 403.',
+  platform:
+    'Platform route: needs the owner admin key and works across every client. It takes no client.'
+};
+
+type Spec = Omit<ToolDefinition, 'annotations' | 'description' | 'inputSchema' | 'auth'> & {
+  auth?: ToolDefinition['auth'];
   summary: string;
   /** Only for tools that do not take a single `client`. */
   schemaOverride?: JsonSchema;
@@ -102,18 +121,21 @@ type Spec = Omit<ToolDefinition, 'annotations' | 'description' | 'inputSchema'> 
 function read(spec: Omit<Spec, 'access'>): ToolDefinition {
   const { summary, inputs, required, schemaOverride, ...rest } = spec;
   const route = rest.route;
+  const auth = rest.auth ?? 'client';
   return {
     ...rest,
+    auth,
     access: 'read',
     description: [
       summary,
       route ? `Read only. Calls ${route.method} ${route.path}.` : 'Read only.',
       rest.scope ? `Requires the portal scope ${rest.scope}.` : '',
+      AUTH_NOTE[auth],
       rest.freeText.length ? DATA_NOTICE : ''
     ]
       .filter(Boolean)
       .join(' '),
-    inputSchema: schemaOverride ?? schema(inputs, required),
+    inputSchema: schemaOverride ?? schema(inputs, required, auth),
     annotations: {
       readOnlyHint: true,
       destructiveHint: false,
@@ -125,13 +147,16 @@ function read(spec: Omit<Spec, 'access'>): ToolDefinition {
 
 function write(spec: Omit<Spec, 'access'> & { repeat: string }): ToolDefinition {
   const { summary, inputs, required, repeat, ...rest } = spec;
+  const auth = rest.auth ?? 'client';
   return {
     ...rest,
+    auth,
     access: 'write',
     description: [
       summary,
       `Calls ${rest.route!.method} ${rest.route!.path}.`,
       `Requires the portal scope ${rest.scope}.`,
+      AUTH_NOTE[auth],
       IDEMPOTENCY_NOTE,
       repeat,
       'Sends nothing: no call, text or email is made.',
@@ -139,7 +164,7 @@ function write(spec: Omit<Spec, 'access'> & { repeat: string }): ToolDefinition 
     ]
       .filter(Boolean)
       .join(' '),
-    inputSchema: schema({ ...inputs, idempotencyKey }, [...required, 'idempotencyKey']),
+    inputSchema: schema({ ...inputs, idempotencyKey }, [...required, 'idempotencyKey'], auth),
     annotations: {
       readOnlyHint: false,
       destructiveHint: false,
