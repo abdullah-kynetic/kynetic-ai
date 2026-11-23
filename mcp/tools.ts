@@ -1569,6 +1569,101 @@ export const TOOLS: ToolDefinition[] = [
     inputs: {},
     required: [],
     repeat: 'A repeat marks the same notifications read again, which changes nothing.'
+  }),
+  read({
+    name: 'export_contacts_csv',
+    title: 'Export contacts as CSV',
+    summary:
+      'Returns a CSV of every live contact matching the optional text and status: names, phone, email, status, source, tags and owner. Spreadsheet formulas are neutralized. The portal records the row count, never the values.',
+    scope: 'contacts:export',
+    route: { method: 'GET', path: '/api/service/contacts/export' },
+    pathParams: [],
+    queryParams: ['q', 'status'],
+    bodyParams: [],
+    freeText: ['name', 'notes'],
+    inputs: {
+      q: { type: 'string', minLength: 1, maxLength: 100, description: 'Name, phone or email text.' },
+      status: { type: 'string', enum: ['new', 'working', 'booked', 'won', 'lost', 'dead'] }
+    },
+    required: []
+  }),
+  read({
+    name: 'quick_search_contacts',
+    title: 'Search contacts by text',
+    summary: 'Finds contacts by name, phone or email. The text is required, at most 100 characters.',
+    scope: 'contacts:read',
+    route: { method: 'GET', path: '/api/service/search' },
+    pathParams: [],
+    queryParams: ['q'],
+    bodyParams: [],
+    freeText: ['name'],
+    inputs: {
+      q: { type: 'string', minLength: 1, maxLength: 100, description: 'Name, phone or email text.' }
+    },
+    required: ['q']
+  }),
+  write({
+    name: 'create_referral',
+    title: 'Create a referral',
+    summary:
+      'Records one referral: the contact who referred, and the referee name and phone. Creates the referee as a contact. Reward fields cannot be set here.',
+    scope: 'referrals:write',
+    route: { method: 'POST', path: '/api/service/referrals' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['referrerContactId', 'refereeName', 'refereePhone', 'status', 'notes'],
+    freeText: ['refereeName', 'notes'],
+    inputs: {
+      referrerContactId: uuid('Contact who made the referral.'),
+      refereeName: { type: 'string', minLength: 1, maxLength: 200, description: 'Name of the person referred.' },
+      refereePhone: { type: 'string', maxLength: 40, description: 'Phone of the person referred.' },
+      status: { type: 'string', enum: ['new', 'contacted', 'booked', 'won', 'lost'], default: 'new' },
+      notes: { type: 'string', maxLength: 2000, default: '' }
+    },
+    required: ['referrerContactId', 'refereeName', 'refereePhone'],
+    repeat: 'A repeat creates no second referral.'
+  }),
+  write({
+    name: 'update_referral',
+    title: 'Edit a referral',
+    summary:
+      'Edits status, notes, referee name or referee phone of one referral; at least one field. Reward fields are refused with a 403 on this route.',
+    scope: 'referrals:write',
+    route: { method: 'PATCH', path: '/api/service/referrals/{id}' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['status', 'notes', 'refereeName', 'refereePhone'],
+    freeText: ['refereeName', 'notes'],
+    inputs: {
+      id: uuid('Referral id.'),
+      status: { type: 'string', enum: ['new', 'contacted', 'booked', 'won', 'lost'] },
+      notes: { type: 'string', maxLength: 2000 },
+      refereeName: { type: 'string', minLength: 1, maxLength: 200 },
+      refereePhone: { type: ['string', 'null'], maxLength: 40 }
+    },
+    required: ['id'],
+    repeat: 'A repeat sets the same values again, which changes nothing.'
+  }),
+  write({
+    name: 'save_presence_item',
+    title: 'Update a presence item',
+    summary:
+      'Replaces one presence item (profile, review site, directory or social post) with the fields given. Works only with the owner admin key: a client token gets 403 even with the scope ticked.',
+    scope: 'reputation:write',
+    route: { method: 'PUT', path: '/api/service/presence/{id}' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['kind', 'title', 'status', 'notes'],
+    freeText: ['title', 'notes'],
+    inputs: {
+      id: uuid('Presence item id.'),
+      kind: { type: 'string', enum: ['profile', 'review_site', 'directory', 'social_post'] },
+      title: { type: 'string', minLength: 1, maxLength: 200 },
+      status: { type: 'string', enum: ['planned', 'in_progress', 'done', 'needs_attention'] },
+      notes: { type: 'string', maxLength: 5000, default: '' }
+    },
+    required: ['id', 'kind', 'title', 'status'],
+    repeat: 'A repeat saves the same values again, which changes nothing.'
   })
 ];
 
@@ -1581,11 +1676,6 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'POST', path: '/api/service/call-results', scope: 'calls:write' },
   { method: 'POST', path: '/api/service/contact-decisions', scope: 'contact-decisions:write' },
   // Contact writes (C1, C2) and company routes (C3). Live on the API now. MCP tools ship with B1; this list must come back down to two.
-  { method: 'GET', path: '/api/service/contacts/export', scope: 'contacts:export' },
-  { method: 'POST', path: '/api/service/referrals', scope: 'referrals:write' },
-  { method: 'PATCH', path: '/api/service/referrals/{id}', scope: 'referrals:write' },
-  { method: 'PUT', path: '/api/service/presence/{id}', scope: 'reputation:write' },
-  { method: 'GET', path: '/api/service/search', scope: 'contacts:read' },
   { method: 'PATCH', path: '/api/service/settings/business', scope: 'settings:write' },
   { method: 'PATCH', path: '/api/service/settings/hours', scope: 'settings:write' },
   { method: 'GET', path: '/api/service/settings/tags', scope: 'settings:read' },
