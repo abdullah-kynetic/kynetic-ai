@@ -2288,6 +2288,178 @@ export const TOOLS: ToolDefinition[] = [
     freeText: [],
     inputs: { id: uuid('Contract id.') },
     required: ['id']
+  }),
+  read({
+    name: 'get_agency_finance',
+    title: 'Get agency finance',
+    summary: 'Returns the agency months, expenses, revenue entries and referrals. Money is integer cents.',
+    auth: 'agency',
+    scope: 'deals:read',
+    route: { method: 'GET', path: '/api/service/agency/finance' },
+    ...none,
+    freeText: ['vendor', 'note', 'referrerName'],
+    inputs: {},
+    required: []
+  }),
+  read({
+    name: 'export_agency_finance_csv',
+    title: 'Export agency finance as CSV',
+    summary: 'Returns a CSV of one finance tab.',
+    auth: 'agency',
+    scope: 'deals:read',
+    route: { method: 'GET', path: '/api/service/agency/finance/export' },
+    pathParams: [],
+    queryParams: ['tab'],
+    bodyParams: [],
+    freeText: ['vendor', 'note', 'referrerName'],
+    inputs: { tab: { type: 'string', enum: ['revenue', 'expenses', 'referrals', 'case-studies'] } },
+    required: ['tab']
+  }),
+  write({
+    name: 'add_agency_expense',
+    title: 'Add an agency expense',
+    summary: 'Records one expense. The amount is integer cents.',
+    auth: 'agency',
+    scope: 'deals:write',
+    route: { method: 'POST', path: '/api/service/agency/expenses' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['spentOn', 'vendor', 'category', 'amountCents', 'note'],
+    freeText: ['vendor', 'note'],
+    inputs: {
+      spentOn: { type: 'string', format: 'date', description: 'YYYY-MM-DD.' },
+      vendor: { type: 'string', minLength: 1, maxLength: 200 },
+      category: { type: 'string', minLength: 1, maxLength: 80 },
+      amountCents: { type: 'integer', minimum: 0, maximum: 2000000000 },
+      note: { type: 'string', maxLength: 2000, default: '' }
+    },
+    required: ['spentOn', 'vendor', 'category', 'amountCents'],
+    repeat: 'A repeat records no second expense.'
+  }),
+  write({
+    name: 'update_agency_expense',
+    title: 'Edit an agency expense',
+    summary:
+      'Replaces the fields of one expense. All of date, vendor, category and amount are required. The audit row keeps the before and after values.',
+    auth: 'agency',
+    scope: 'deals:write',
+    route: { method: 'PATCH', path: '/api/service/agency/expenses/{id}' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['spentOn', 'vendor', 'category', 'amountCents', 'note'],
+    freeText: ['vendor', 'note'],
+    inputs: {
+      id: uuid('Expense id.'),
+      spentOn: { type: 'string', format: 'date', description: 'YYYY-MM-DD.' },
+      vendor: { type: 'string', minLength: 1, maxLength: 200 },
+      category: { type: 'string', minLength: 1, maxLength: 80 },
+      amountCents: { type: 'integer', minimum: 0, maximum: 2000000000 },
+      note: { type: 'string', maxLength: 2000, default: '' }
+    },
+    required: ['id', 'spentOn', 'vendor', 'category', 'amountCents'],
+    repeat: 'A repeat sets the same values again, which changes nothing.'
+  }),
+  write({
+    name: 'delete_agency_expense',
+    title: 'Delete an agency expense',
+    summary: 'Soft-deletes one expense. It drops out of the totals.',
+    auth: 'agency',
+    scope: 'deals:write',
+    route: { method: 'DELETE', path: '/api/service/agency/expenses/{id}' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: [],
+    inputs: { id: uuid('Expense id.') },
+    required: ['id'],
+    repeat: 'A repeat finds the expense already deleted and changes nothing.'
+  }),
+  write({
+    name: 'add_agency_revenue',
+    title: 'Record agency revenue',
+    summary: 'Records revenue received on a date. The amount is integer cents, at least 1. Nothing is charged.',
+    auth: 'agency',
+    scope: 'deals:write',
+    route: { method: 'POST', path: '/api/service/agency/revenue' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['receivedOn', 'amountCents', 'note'],
+    freeText: ['note'],
+    inputs: {
+      receivedOn: { type: 'string', format: 'date', description: 'YYYY-MM-DD.' },
+      amountCents: { type: 'integer', minimum: 1, maximum: 2000000000 },
+      note: { type: 'string', maxLength: 2000, default: '' }
+    },
+    required: ['receivedOn', 'amountCents'],
+    repeat: 'A repeat records no second entry.'
+  }),
+  write({
+    name: 'add_agency_referral',
+    title: 'Record an agency referral',
+    summary: 'Records a referral to the agency by name, optionally linked to a lead, with a reward note.',
+    auth: 'agency',
+    scope: 'deals:write',
+    route: { method: 'POST', path: '/api/service/agency/referrals' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['referrerName', 'contactId', 'rewardNote'],
+    freeText: ['referrerName', 'rewardNote'],
+    inputs: {
+      referrerName: { type: 'string', minLength: 1, maxLength: 200 },
+      contactId: uuid('Lead contact id.'),
+      rewardNote: { type: 'string', maxLength: 2000, default: '' }
+    },
+    required: ['referrerName'],
+    repeat: 'A repeat records no second referral.'
+  }),
+  write({
+    name: 'approve_agency_referral',
+    title: 'Approve an agency referral',
+    summary: 'Approves one agency referral. No payout is made.',
+    auth: 'agency',
+    scope: 'deals:write',
+    route: { method: 'POST', path: '/api/service/agency/referrals/{id}/approve' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: [],
+    inputs: { id: uuid('Referral id.') },
+    required: ['id'],
+    repeat: 'A repeat finds the referral already approved and changes nothing.'
+  }),
+  read({
+    name: 'get_agency_billing',
+    title: 'Get agency billing',
+    summary: 'Returns deal terms and invoice drafts. Nothing is charged or sent.',
+    auth: 'agency',
+    scope: 'deals:read',
+    route: { method: 'GET', path: '/api/service/agency/billing' },
+    ...none,
+    freeText: ['title', 'note'],
+    inputs: {},
+    required: []
+  }),
+  write({
+    name: 'create_agency_invoice_draft',
+    title: 'Create an invoice draft',
+    summary:
+      'Creates an invoice DRAFT for one cycle of a deal terms. Nothing is charged, reminded or emailed, and the portal refuses live charges.',
+    auth: 'agency',
+    scope: 'deals:write',
+    route: { method: 'POST', path: '/api/service/agency/billing/invoices' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['dealId', 'kind', 'installment', 'period', 'dueOn'],
+    freeText: [],
+    inputs: {
+      dealId: uuid('Deal id.'),
+      kind: { type: 'string', enum: ['setup', 'monthly'] },
+      installment: { type: 'integer', minimum: 0, maximum: 11, default: 0 },
+      period: { type: 'string', pattern: '^\\d{4}-(0[1-9]|1[0-2])$', description: 'YYYY-MM.' },
+      dueOn: { type: 'string', format: 'date', description: 'YYYY-MM-DD.' }
+    },
+    required: ['dealId', 'kind', 'dueOn'],
+    repeat: 'A repeat creates no second draft.'
   })
 ];
 
@@ -2300,16 +2472,6 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'POST', path: '/api/service/call-results', scope: 'calls:write' },
   { method: 'POST', path: '/api/service/contact-decisions', scope: 'contact-decisions:write' },
   // Contact writes (C1, C2) and company routes (C3). Live on the API now. MCP tools ship with B1; this list must come back down to two.
-  { method: 'GET', path: '/api/service/agency/finance', scope: 'deals:read' },
-  { method: 'GET', path: '/api/service/agency/finance/export', scope: 'deals:read' },
-  { method: 'POST', path: '/api/service/agency/expenses', scope: 'deals:write' },
-  { method: 'PATCH', path: '/api/service/agency/expenses/{id}', scope: 'deals:write' },
-  { method: 'DELETE', path: '/api/service/agency/expenses/{id}', scope: 'deals:write' },
-  { method: 'POST', path: '/api/service/agency/revenue', scope: 'deals:write' },
-  { method: 'POST', path: '/api/service/agency/referrals', scope: 'deals:write' },
-  { method: 'POST', path: '/api/service/agency/referrals/{id}/approve', scope: 'deals:write' },
-  { method: 'GET', path: '/api/service/agency/billing', scope: 'deals:read' },
-  { method: 'POST', path: '/api/service/agency/billing/invoices', scope: 'deals:write' },
   { method: 'GET', path: '/api/service/agency/dialer', scope: 'contacts:read' },
   { method: 'POST', path: '/api/service/agency/dialer/calls', scope: 'call-log:write' },
   { method: 'POST', path: '/api/service/agency/dnc', scope: 'contacts:write' },
