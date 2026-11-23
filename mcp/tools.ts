@@ -2637,6 +2637,345 @@ export const TOOLS: ToolDefinition[] = [
     },
     required: ['devWebhookUrl', 'workflowName', 'workflowId'],
     repeat: 'A repeat saves the same values again, which changes nothing.'
+  }),
+  read({
+    name: 'list_platform_clients',
+    title: 'List every client',
+    summary: 'Lists every client workspace with its health and plan.',
+    auth: 'platform',
+    scope: 'settings:read',
+    route: { method: 'GET', path: '/api/service/platform/clients' },
+    ...none,
+    freeText: ['businessName', 'name'],
+    inputs: {},
+    required: []
+  }),
+  write({
+    name: 'onboard_client',
+    title: 'Onboard a client workspace',
+    summary:
+      'Creates a client workspace with defaults. No invite is sent to the owner. The slug is 3 to 40 lowercase letters, digits or hyphens.',
+    auth: 'platform',
+    scope: 'settings:write',
+    route: { method: 'POST', path: '/api/service/platform/clients' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: [
+      'businessName',
+      'slug',
+      'ownerEmail',
+      'phone',
+      'industry',
+      'timezone',
+      'hours',
+      'serviceZips',
+      'primaryColor',
+      'logoUrl',
+      'plan',
+      'tier',
+      'modules',
+      'crmLevel',
+      'templateId'
+    ],
+    freeText: ['businessName'],
+    inputs: {
+      businessName: { type: 'string', minLength: 1, maxLength: 200 },
+      slug: { type: 'string', pattern: '^[a-z0-9-]{3,40}$' },
+      ownerEmail: { type: 'string', maxLength: 254, description: 'Owner email. No invite is sent.' },
+      phone: { type: 'string', description: 'Business phone, normalized to E.164.' },
+      industry: {
+        type: 'string',
+        enum: ['roofing', 'restoration', 'hvac', 'plumbing', 'remodeling', 'pools', 'windows_doors', 'general']
+      },
+      timezone: { type: 'string', maxLength: 64, description: 'IANA time zone.' },
+      hours: {
+        type: 'object',
+        properties: {
+          days: {
+            type: 'array',
+            minItems: 1,
+            items: { type: 'string', enum: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] }
+          },
+          open: hhmm,
+          close: hhmm
+        },
+        required: ['days', 'open', 'close'],
+        additionalProperties: false
+      },
+      serviceZips: { type: 'array', maxItems: 500, items: { type: 'string', pattern: '^\\d{5}$' } },
+      primaryColor: { type: 'string', pattern: '^#[0-9A-Fa-f]{6}$' },
+      logoUrl: { type: 'string', maxLength: 2048, description: 'An https URL.' },
+      plan: { type: 'string', enum: ['founding', 'value'] },
+      tier: { type: 'string', enum: ['T1', 'T2', 'T3'] },
+      modules: {
+        type: 'array',
+        items: {
+          type: 'string',
+          enum: [
+            'alex_core',
+            'quote_followup',
+            'after_hours',
+            'missed_call_textback',
+            'reactivation',
+            'opm',
+            'followup_bundle'
+          ]
+        }
+      },
+      crmLevel: { type: 'string', enum: ['lite', 'full'] },
+      templateId: uuid('Account template to preload.')
+    },
+    required: ['businessName', 'ownerEmail', 'phone', 'industry', 'timezone', 'hours', 'plan'],
+    repeat: 'A repeat with the same slug is refused or returns the first result; it makes no second workspace.'
+  }),
+  read({
+    name: 'get_platform_client',
+    title: 'Get one client',
+    summary: 'Returns one client row from the roll-up: health, plan and usage.',
+    auth: 'platform',
+    scope: 'settings:read',
+    route: { method: 'GET', path: '/api/service/platform/clients/{id}' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: ['businessName', 'name'],
+    inputs: { id: uuid('Client (tenant) id.') },
+    required: ['id']
+  }),
+  read({
+    name: 'get_client_checklist',
+    title: 'Get a client onboarding checklist',
+    summary: 'Returns the onboarding checklist for one client.',
+    auth: 'platform',
+    scope: 'settings:read',
+    route: { method: 'GET', path: '/api/service/platform/clients/{id}/checklist' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: ['note', 'label'],
+    inputs: { id: uuid('Client (tenant) id.') },
+    required: ['id']
+  }),
+  write({
+    name: 'update_client_checklist_step',
+    title: 'Update a checklist step',
+    summary: 'Updates one onboarding checklist step: status, owner, due date or note; at least one besides key.',
+    auth: 'platform',
+    scope: 'settings:write',
+    route: { method: 'PATCH', path: '/api/service/platform/clients/{id}/checklist' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['key', 'status', 'ownerUserId', 'dueDate', 'note'],
+    freeText: ['note'],
+    inputs: {
+      id: uuid('Client (tenant) id.'),
+      key: { type: 'string', minLength: 1, maxLength: 80, description: 'Checklist step key.' },
+      status: { type: 'string', enum: ['todo', 'doing', 'blocked', 'done', 'n/a'] },
+      ownerUserId: { ...uuid('Staff user who owns the step.'), type: ['string', 'null'] },
+      dueDate: { type: ['string', 'null'], format: 'date', description: 'YYYY-MM-DD, or null.' },
+      note: { type: ['string', 'null'], maxLength: 2000 }
+    },
+    required: ['id', 'key'],
+    repeat: 'A repeat sets the same values again, which changes nothing.'
+  }),
+  write({
+    name: 'go_live_client',
+    title: 'Mark a client live',
+    summary: 'Marks one client go-live. Refused while required checklist items are open.',
+    auth: 'platform',
+    scope: 'settings:write',
+    route: { method: 'POST', path: '/api/service/platform/clients/{id}/go-live' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: [],
+    inputs: { id: uuid('Client (tenant) id.') },
+    required: ['id'],
+    repeat: 'A repeat finds the client already live and changes nothing.'
+  }),
+  write({
+    name: 'set_client_lifecycle',
+    title: 'Set a client lifecycle stage',
+    summary: 'Moves one client to a lifecycle stage.',
+    auth: 'platform',
+    scope: 'settings:write',
+    route: { method: 'POST', path: '/api/service/platform/clients/{id}/lifecycle' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['stage'],
+    freeText: [],
+    inputs: {
+      id: uuid('Client (tenant) id.'),
+      stage: { type: 'string', enum: ['onboarding', 'live', 'at_risk', 'churned', 'demo'] }
+    },
+    required: ['id', 'stage'],
+    repeat: 'A repeat sets the same stage again, which changes nothing.'
+  }),
+  write({
+    name: 'apply_industry_template',
+    title: 'Apply an industry template to a client',
+    summary: 'Applies one industry template to a client.',
+    auth: 'platform',
+    scope: 'settings:write',
+    route: { method: 'POST', path: '/api/service/platform/clients/{id}/apply-template' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['industry'],
+    freeText: [],
+    inputs: {
+      id: uuid('Client (tenant) id.'),
+      industry: {
+        type: 'string',
+        enum: ['roofing', 'restoration', 'hvac', 'plumbing', 'remodeling', 'pools', 'windows_doors', 'general']
+      }
+    },
+    required: ['id', 'industry'],
+    repeat: 'A repeat applies the same template again.'
+  }),
+  read({
+    name: 'get_client_modules',
+    title: 'Get a client modules',
+    summary: 'Returns which automation templates and modules are on for one client.',
+    auth: 'platform',
+    scope: 'settings:read',
+    route: { method: 'GET', path: '/api/service/platform/clients/{id}/modules' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: [],
+    inputs: { id: uuid('Client (tenant) id.') },
+    required: ['id']
+  }),
+  write({
+    name: 'set_client_module',
+    title: 'Turn a client automation template on or off',
+    summary:
+      'Turns one automation template on or off for a client, one at a time. Nothing is sent by this tool.',
+    auth: 'platform',
+    scope: 'settings:write',
+    route: { method: 'PUT', path: '/api/service/platform/clients/{id}/modules' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['templateKey', 'enabled'],
+    freeText: [],
+    inputs: {
+      id: uuid('Client (tenant) id.'),
+      templateKey: { type: 'string', minLength: 1, maxLength: 80 },
+      enabled: { type: 'boolean' }
+    },
+    required: ['id', 'templateKey', 'enabled'],
+    repeat: 'A repeat sets the same state again, which changes nothing.'
+  }),
+  read({
+    name: 'list_account_templates',
+    title: 'List account templates',
+    summary: 'Lists the saved account templates.',
+    auth: 'platform',
+    scope: 'settings:read',
+    route: { method: 'GET', path: '/api/service/platform/templates' },
+    ...none,
+    freeText: ['name', 'description'],
+    inputs: {},
+    required: []
+  }),
+  write({
+    name: 'save_account_template',
+    title: 'Save an account template from a client',
+    summary: 'Saves a template from the settings of an existing client.',
+    auth: 'platform',
+    scope: 'settings:write',
+    route: { method: 'POST', path: '/api/service/platform/templates' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['sourceTenantId', 'name', 'description'],
+    freeText: ['name', 'description'],
+    inputs: {
+      sourceTenantId: uuid('Client to copy the settings from.'),
+      name: { type: 'string', minLength: 1, maxLength: 80 },
+      description: { type: 'string', maxLength: 500 }
+    },
+    required: ['sourceTenantId', 'name'],
+    repeat: 'A repeat saves no second template.'
+  }),
+  read({
+    name: 'get_platform_billing',
+    title: 'Get platform billing',
+    summary: 'Returns every client plan and live totals, with a grand total in cents.',
+    auth: 'platform',
+    scope: 'settings:read',
+    route: { method: 'GET', path: '/api/service/platform/billing' },
+    ...none,
+    freeText: ['businessName', 'name'],
+    inputs: {},
+    required: []
+  }),
+  read({
+    name: 'get_client_billing',
+    title: 'Get one client billing',
+    summary: 'Returns the plan, billing profile and totals for one client.',
+    auth: 'platform',
+    scope: 'settings:read',
+    route: { method: 'GET', path: '/api/service/platform/clients/{id}/billing' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: ['notes'],
+    inputs: { id: uuid('Client (tenant) id.') },
+    required: ['id']
+  }),
+  write({
+    name: 'set_client_plan',
+    title: 'Set a client plan',
+    summary: 'Sets the plan and pricing tier for one client; at least one.',
+    auth: 'platform',
+    scope: 'settings:write',
+    route: { method: 'PUT', path: '/api/service/platform/clients/{id}/plan' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['plan', 'pricingTier'],
+    freeText: [],
+    inputs: {
+      id: uuid('Client (tenant) id.'),
+      plan: { type: 'string', enum: ['founding', 'value'] },
+      pricingTier: { type: ['string', 'null'], enum: ['T1', 'T2', 'T3', null] }
+    },
+    required: ['id'],
+    repeat: 'A repeat sets the same values again, which changes nothing.'
+  }),
+  write({
+    name: 'update_client_billing_profile',
+    title: 'Edit a client billing profile',
+    summary:
+      'Edits the billing start date, Stripe customer id and notes for one client. Nothing is charged.',
+    auth: 'platform',
+    scope: 'settings:write',
+    route: { method: 'PATCH', path: '/api/service/platform/clients/{id}/billing-profile' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['billingStartDate', 'stripeCustomerId', 'notes'],
+    freeText: ['notes'],
+    inputs: {
+      id: uuid('Client (tenant) id.'),
+      billingStartDate: { type: ['string', 'null'], format: 'date', description: 'YYYY-MM-DD, or null.' },
+      stripeCustomerId: { type: ['string', 'null'], maxLength: 100 },
+      notes: { type: ['string', 'null'], maxLength: 4000 }
+    },
+    required: ['id'],
+    repeat: 'A repeat sets the same values again, which changes nothing.'
+  }),
+  read({
+    name: 'get_platform_usage',
+    title: 'Get usage across clients',
+    summary: 'Returns usage and cost per client for a month, default the current month.',
+    auth: 'platform',
+    scope: 'usage:read',
+    route: { method: 'GET', path: '/api/service/platform/usage' },
+    pathParams: [],
+    queryParams: ['month'],
+    bodyParams: [],
+    freeText: ['businessName', 'name'],
+    inputs: { month: { type: 'string', pattern: '^\\d{4}-(0[1-9]|1[0-2])$', description: 'YYYY-MM.' } },
+    required: []
   })
 ];
 
@@ -2649,23 +2988,6 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'POST', path: '/api/service/call-results', scope: 'calls:write' },
   { method: 'POST', path: '/api/service/contact-decisions', scope: 'contact-decisions:write' },
   // Contact writes (C1, C2) and company routes (C3). Live on the API now. MCP tools ship with B1; this list must come back down to two.
-  { method: 'GET', path: '/api/service/platform/clients', scope: 'settings:read' },
-  { method: 'POST', path: '/api/service/platform/clients', scope: 'settings:write' },
-  { method: 'GET', path: '/api/service/platform/clients/{id}', scope: 'settings:read' },
-  { method: 'GET', path: '/api/service/platform/clients/{id}/checklist', scope: 'settings:read' },
-  { method: 'PATCH', path: '/api/service/platform/clients/{id}/checklist', scope: 'settings:write' },
-  { method: 'POST', path: '/api/service/platform/clients/{id}/go-live', scope: 'settings:write' },
-  { method: 'POST', path: '/api/service/platform/clients/{id}/lifecycle', scope: 'settings:write' },
-  { method: 'POST', path: '/api/service/platform/clients/{id}/apply-template', scope: 'settings:write' },
-  { method: 'GET', path: '/api/service/platform/clients/{id}/modules', scope: 'settings:read' },
-  { method: 'PUT', path: '/api/service/platform/clients/{id}/modules', scope: 'settings:write' },
-  { method: 'GET', path: '/api/service/platform/templates', scope: 'settings:read' },
-  { method: 'POST', path: '/api/service/platform/templates', scope: 'settings:write' },
-  { method: 'GET', path: '/api/service/platform/billing', scope: 'settings:read' },
-  { method: 'GET', path: '/api/service/platform/clients/{id}/billing', scope: 'settings:read' },
-  { method: 'PUT', path: '/api/service/platform/clients/{id}/plan', scope: 'settings:write' },
-  { method: 'PATCH', path: '/api/service/platform/clients/{id}/billing-profile', scope: 'settings:write' },
-  { method: 'GET', path: '/api/service/platform/usage', scope: 'usage:read' },
   { method: 'GET', path: '/api/service/platform/outbound-pause', scope: 'settings:read' },
   { method: 'PUT', path: '/api/service/platform/outbound-pause', scope: 'settings:write' },
   { method: 'PUT', path: '/api/service/platform/clients/{id}/spend-cap', scope: 'settings:write' },
