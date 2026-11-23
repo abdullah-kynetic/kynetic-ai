@@ -283,31 +283,7 @@ describe('MCP tool definitions: safety rules', () => {
     // bring this list back down to the original two routes.
     expect(ROUTES_WITHOUT_TOOLS.map((r) => r.path)).toEqual([
       '/api/service/call-results',
-      '/api/service/contact-decisions',
-      '/api/service/platform/outbound-pause',
-      '/api/service/platform/outbound-pause',
-      '/api/service/platform/clients/{id}/spend-cap',
-      '/api/service/platform/clients/{id}/llm-cap',
-      '/api/service/platform/clients/{id}/email-flags',
-      '/api/service/platform/clients/{id}/suspend',
-      '/api/service/platform/webhooks/failed',
-      '/api/service/platform/webhooks/{id}/replay',
-      '/api/service/platform/jobs',
-      '/api/service/platform/integrations/health',
-      '/api/service/platform/flagged-calls',
-      '/api/service/platform/flagged-calls/{id}/reviewed',
-      '/api/service/platform/users',
-      '/api/service/platform/users/{id}/deactivate',
-      '/api/service/platform/users/{id}/reactivate',
-      '/api/service/platform/users/{id}/role',
-      '/api/service/platform/support',
-      '/api/service/platform/support/{id}',
-      '/api/service/platform/support/{id}/reply',
-      '/api/service/platform/support/{id}/status',
-      '/api/service/platform/audit',
-      '/api/service/platform/backups',
-      '/api/service/platform/backups',
-      '/api/service/platform/runtime-flags'
+      '/api/service/contact-decisions'
     ]);
   });
 
