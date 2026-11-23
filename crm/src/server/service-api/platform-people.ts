@@ -77,7 +77,10 @@ export async function getPlatformSupportThread(plat: PlatformService, id: string
 export async function replyPlatformSupport(plat: PlatformService, id: string, body: unknown) {
   parseInput(uuidSchema, id);
   parseInput(replySchema, body);
-  return replyAsStaff(staffCtx(plat), id, body);
+  // The route used to hand the whole JSON body to the portal, which only reads a bare string, so an
+  // object body always failed. Accept { "body": "..." } as well as a bare JSON string.
+  const text = typeof body === 'string' ? body : (body as { body?: unknown } | null)?.body;
+  return replyAsStaff(staffCtx(plat), id, text);
 }
 
 export async function setPlatformSupportStatus(plat: PlatformService, id: string, body: unknown) {
