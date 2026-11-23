@@ -1959,6 +1959,66 @@ export const TOOLS: ToolDefinition[] = [
     },
     required: ['key', 'enabled'],
     repeat: 'A repeat sets the same state again, which changes nothing.'
+  }),
+  read({
+    name: 'list_support_requests',
+    title: 'List support requests',
+    summary: 'Lists this client support requests, newest first.',
+    scope: 'support:read',
+    route: { method: 'GET', path: '/api/service/support' },
+    ...none,
+    freeText: ['subject', 'body'],
+    inputs: {},
+    required: []
+  }),
+  read({
+    name: 'get_support_request',
+    title: 'Get a support request',
+    summary: 'Returns one support request with its messages.',
+    scope: 'support:read',
+    route: { method: 'GET', path: '/api/service/support/{id}' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: [],
+    freeText: ['subject', 'body'],
+    inputs: { id: uuid('Support request id.') },
+    required: ['id']
+  }),
+  write({
+    name: 'create_support_request',
+    title: 'Open a support request',
+    summary:
+      'Opens one support request. Kynetic is alerted in the app only; nothing is emailed.',
+    scope: 'support:write',
+    route: { method: 'POST', path: '/api/service/support' },
+    pathParams: [],
+    queryParams: [],
+    bodyParams: ['subject', 'body', 'category'],
+    freeText: ['subject', 'body'],
+    inputs: {
+      subject: { type: 'string', minLength: 1, maxLength: 200 },
+      body: { type: 'string', minLength: 1, maxLength: 5000 },
+      category: { type: 'string', enum: ['general', 'alex_change', 'system_request'], default: 'general' }
+    },
+    required: ['subject', 'body'],
+    repeat: 'A repeat opens no second request.'
+  }),
+  write({
+    name: 'reply_to_support_request',
+    title: 'Reply to a support request',
+    summary: 'Adds a client reply to one support request. Nothing is emailed.',
+    scope: 'support:write',
+    route: { method: 'POST', path: '/api/service/support/{id}/reply' },
+    pathParams: ['id'],
+    queryParams: [],
+    bodyParams: ['body'],
+    freeText: ['body'],
+    inputs: {
+      id: uuid('Support request id.'),
+      body: { type: 'string', minLength: 1, maxLength: 5000 }
+    },
+    required: ['id', 'body'],
+    repeat: 'A repeat adds no second reply.'
   })
 ];
 
@@ -2045,8 +2105,4 @@ export const ROUTES_WITHOUT_TOOLS = [
   { method: 'GET', path: '/api/service/platform/backups', scope: 'settings:read' },
   { method: 'POST', path: '/api/service/platform/backups', scope: 'settings:write' },
   { method: 'GET', path: '/api/service/platform/runtime-flags', scope: 'settings:read' },
-  { method: 'GET', path: '/api/service/support', scope: 'support:read' },
-  { method: 'POST', path: '/api/service/support', scope: 'support:write' },
-  { method: 'GET', path: '/api/service/support/{id}', scope: 'support:read' },
-  { method: 'POST', path: '/api/service/support/{id}/reply', scope: 'support:write' },
 ] as const;
