@@ -30,11 +30,12 @@ const auth = { authorization: `Bearer ${ACCESS}` };
 
 describe("mcp http transport", () => {
   it("refuses a missing or wrong token and never echoes secrets", async () => {
-    for (const h of [
+    const wrong: Record<string, string>[] = [
       {},
       { authorization: "Bearer nope" },
       { authorization: `Bearer ${ADMIN_KEY}` },
-    ]) {
+    ];
+    for (const h of wrong) {
       const res = await handleHttp(
         cfg(),
         post({ jsonrpc: "2.0", id: 1, method: "ping" }, h),
