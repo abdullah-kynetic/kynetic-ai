@@ -77,7 +77,7 @@ export default async function ProposalsPage({
         {drafts.map((d) => (
           <li
             key={d.id}
-            className='flex flex-wrap items-center justify-between gap-3 bg-card rounded-[var(--radius-card)] border p-5'
+            className='flex flex-wrap items-center justify-between gap-3 bg-card rounded-[var(--radius-card)] border p-4 sm:p-5'
           >
             <div>
               <Link

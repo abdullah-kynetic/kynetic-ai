@@ -7,7 +7,10 @@ import { redirect } from 'next/navigation';
 import { acceptTermsAction } from './actions';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Terms and privacy', robots: { index: false, follow: false } };
+export const metadata = {
+  title: 'Terms and privacy',
+  robots: { index: false, follow: false }
+};
 
 export default async function AcceptTermsPage({
   searchParams
@@ -21,7 +24,7 @@ export default async function AcceptTermsPage({
   const next = safeNextPath(query.next);
   return (
     <main id='main-content' className='bg-background min-h-svh px-4 py-10'>
-      <div className='bg-card mx-auto grid max-w-2xl gap-6 rounded-[var(--radius-card)] border p-6 sm:p-8'>
+      <div className='bg-card mx-auto grid max-w-2xl gap-6 rounded-[var(--radius-card)] border p-5 sm:p-8'>
         <h1 className='text-[28px]/[1.15] font-medium tracking-[-0.01em] sm:text-[32px]/[1.1]'>
           Terms and privacy
         </h1>

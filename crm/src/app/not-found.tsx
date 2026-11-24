@@ -9,7 +9,7 @@ export default function NotFound() {
       className='bg-background flex min-h-svh flex-col items-center justify-center gap-6 px-4 py-10 text-center'
     >
       <Wordmark />
-      <div className='bg-card w-full max-w-sm rounded-[var(--radius-card)] border p-6 sm:p-8'>
+      <div className='bg-card w-full max-w-sm rounded-[var(--radius-card)] border p-5 sm:p-8'>
         <p className='text-muted-foreground text-sm font-medium'>Error 404</p>
         <h1 className='mt-1 text-[28px]/[1.15] font-medium tracking-[-0.01em]'>
           This page is missing

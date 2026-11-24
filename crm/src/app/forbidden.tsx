@@ -8,7 +8,7 @@ export default function Forbidden() {
       id='main-content'
       className='bg-background flex min-h-svh flex-col items-center justify-center px-4 py-10 text-center'
     >
-      <div className='bg-card w-full max-w-sm rounded-[var(--radius-card)] border p-6 sm:p-8'>
+      <div className='bg-card w-full max-w-sm rounded-[var(--radius-card)] border p-5 sm:p-8'>
         <p className='text-muted-foreground text-sm font-medium'>Error 403</p>
         <h1 className='mt-1 text-[28px]/[1.15] font-medium tracking-[-0.01em]'>
           You do not have access to this page

@@ -19,7 +19,12 @@ type Win = { open: string; close: string };
 type Initial = {
   timezone: string;
   businessHours: Partial<Record<(typeof DAYS)[number][0], Win[]>>;
-  serviceArea: { type?: string; zips?: string[]; centerZip?: string; miles?: number };
+  serviceArea: {
+    type?: string;
+    zips?: string[];
+    centerZip?: string;
+    miles?: number;
+  };
   services: string[];
   transferNumber: string | null;
 };
@@ -103,7 +108,10 @@ export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: 
             }
       );
     } catch {
-      setStatus({ ok: false, text: 'Could not save. Check your connection and try again.' });
+      setStatus({
+        ok: false,
+        text: 'Could not save. Check your connection and try again.'
+      });
     } finally {
       setSaving(false);
     }
@@ -124,7 +132,7 @@ export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: 
         </div>
       )}
       <fieldset disabled={!canEdit} className='space-y-4'>
-        <section className='bg-card space-y-4 rounded-[var(--radius-card)] border p-4 sm:p-6'>
+        <section className='bg-card space-y-4 rounded-[var(--radius-card)] border p-4 sm:p-5'>
           <h2 className='text-lg font-medium'>Business hours</h2>
           <div className='space-y-1'>
             <Label htmlFor='timezone'>Time zone</Label>
@@ -180,7 +188,7 @@ export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: 
           })}
         </section>
 
-        <section className='bg-card space-y-2 rounded-[var(--radius-card)] border p-4 sm:p-6'>
+        <section className='bg-card space-y-2 rounded-[var(--radius-card)] border p-4 sm:p-5'>
           <Label htmlFor='zips'>Service area (ZIP codes, comma separated)</Label>
           <Input
             id='zips'
@@ -196,7 +204,7 @@ export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: 
           )}
         </section>
 
-        <section className='bg-card space-y-2 rounded-[var(--radius-card)] border p-4 sm:p-6'>
+        <section className='bg-card space-y-2 rounded-[var(--radius-card)] border p-4 sm:p-5'>
           <Label htmlFor='services'>Services offered (one per line)</Label>
           <textarea
             id='services'
@@ -214,7 +222,7 @@ export function BusinessForm({ initial, canEdit }: { initial: Initial; canEdit: 
           )}
         </section>
 
-        <section className='bg-card space-y-2 rounded-[var(--radius-card)] border p-4 sm:p-6'>
+        <section className='bg-card space-y-2 rounded-[var(--radius-card)] border p-4 sm:p-5'>
           <Label htmlFor='transfer'>Transfer number (E.164, for example +15555550123)</Label>
           <Input
             id='transfer'

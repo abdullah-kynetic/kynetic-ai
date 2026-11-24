@@ -72,7 +72,7 @@ export async function ClientList({
           aria-label='Search clients'
           placeholder='Search clients'
           defaultValue={filters.q ?? ''}
-          className='max-w-sm'
+          className='h-9 max-w-sm'
         />
         <select
           name='health'
@@ -192,4 +192,8 @@ export async function ClientList({
   );
 }
 
-export type ClientListSearch = Promise<{ q?: string; health?: string; stage?: string }>;
+export type ClientListSearch = Promise<{
+  q?: string;
+  health?: string;
+  stage?: string;
+}>;
