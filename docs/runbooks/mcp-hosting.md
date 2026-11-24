@@ -16,8 +16,9 @@ Every step below is a live change and needs Abdullah's yes on that change.
 ## Steps
 
 1. DNS (Cloudflare): `mcp` A record to the VPS address, proxied.
-2. On the VPS: `/opt/mcp-server/{app,mcp.env}`; `mcp.env` mode 600 with the variables above plus
-   `KYNETIC_PORTAL_URL=https://portal.kyneticai.com`.
+2. Create `/opt/mcp-server/mcp.env` (mode 600 root) from your own terminal: `bash mcp/deploy/write-env.sh`. It asks
+   for the admin key (hidden) and writes the variables above plus `KYNETIC_PORTAL_URL=https://portal.kyneticai.com`
+   over ssh. Run it as a script, not pasted lines: a pasted `read` swallows the next line.
 3. Copy the code: `git archive <full sha>:mcp | ssh kynetic-vps "tar -x -C /opt/mcp-server/app"`; copy
    `mcp/deploy/compose.yml` to `/opt/mcp-server/compose.yml`.
 4. `docker compose -f /opt/mcp-server/compose.yml up -d`.
