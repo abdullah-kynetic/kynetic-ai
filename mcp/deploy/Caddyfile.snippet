@@ -1,0 +1,7 @@
+mcp.kyneticai.com {
+	# Do not log request paths: with KYNETIC_MCP_ALLOW_PATH_TOKEN=1 the path carries the access token.
+	log {
+		output discard
+	}
+	reverse_proxy 127.0.0.1:8787
+}

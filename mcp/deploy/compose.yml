@@ -1,0 +1,21 @@
+# Hosted MCP server. Lives at /opt/mcp-server on the VPS, separate from the portal compose project.
+# Bound to loopback only; Caddy terminates TLS and proxies mcp.kyneticai.com to 127.0.0.1:8787.
+services:
+  mcp:
+    image: oven/bun:1.1
+    working_dir: /app
+    command: ['bun', 'http.ts']
+    restart: unless-stopped
+    env_file: /opt/mcp-server/mcp.env
+    volumes:
+      - /opt/mcp-server/app:/app:ro
+    ports:
+      - '127.0.0.1:8787:8787'
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']
+    healthcheck:
+      test: ['CMD', 'bun', '-e', "fetch('http://127.0.0.1:8787/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
