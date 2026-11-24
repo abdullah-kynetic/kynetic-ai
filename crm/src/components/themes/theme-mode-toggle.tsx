@@ -7,7 +7,7 @@ import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Kbd } from '@/components/ui/kbd';
-import { startThemeTransition } from '@/lib/theme-transition';
+import { originFromElement, startThemeTransition } from '@/lib/theme-transition';
 
 export function ThemeModeToggle() {
   const { setTheme, resolvedTheme } = useTheme();
@@ -15,8 +15,8 @@ export function ThemeModeToggle() {
   const handleThemeToggle = React.useCallback(
     (e?: React.MouseEvent) => {
       const newMode = resolvedTheme === 'dark' ? 'light' : 'dark';
-      // Short crossfade; the event is kept for callers that pass an origin.
-      startThemeTransition(() => setTheme(newMode), e);
+      // Circular reveal from the button; the shortcut has no button, so it falls back to the header corner.
+      startThemeTransition(() => setTheme(newMode), originFromElement(e?.currentTarget));
     },
     [resolvedTheme, setTheme]
   );
