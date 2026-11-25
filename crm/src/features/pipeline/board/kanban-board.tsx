@@ -19,6 +19,7 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger
@@ -35,7 +36,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { notify } from '@/lib/notify';
 import { cn } from '@/lib/utils';
 import { formatCents } from '@/server/deals/money';
-import type { BoardDeal, Stage } from '@/server/deals/pipelines';
+import type { BoardDeal, Stage as FullStage } from '@/server/deals/pipelines';
+
+/** The board only needs these stage fields, so other screens can build it from lighter data. */
+type Stage = Pick<FullStage, 'id' | 'name' | 'isWon' | 'isLost'>;
 import {
   columnStats,
   locate,
@@ -52,6 +56,8 @@ export type BoardData = {
   contactNames: Record<string, string>;
   overdueDealIds: string[];
   owners: { id: string; name: string }[];
+  /** Optional per-deal content that replaces the amount row (the shop jobs board shows car details). */
+  bodies?: Record<string, React.ReactNode>;
 };
 
 const stageTone = (s: Stage): StatusTone => (s.isWon ? 'success' : s.isLost ? 'neutral' : 'info');
@@ -302,6 +308,7 @@ export function KanbanBoardView({ data, canWrite }: { data: BoardData; canWrite:
                         contactName={data.contactNames[deal.id]}
                         ownerName={deal.ownerId ? ownerName.get(deal.ownerId) : undefined}
                         isOverdue={overdue.has(deal.id)}
+                        body={data.bodies?.[deal.id]}
                         canWrite={canWrite}
                         onMove={(stageId) => requestMove(deal.id, { stageId })}
                       />
@@ -327,6 +334,7 @@ export function KanbanBoardView({ data, canWrite }: { data: BoardData; canWrite:
                 contactName={data.contactNames[deal.id]}
                 ownerName={deal.ownerId ? ownerName.get(deal.ownerId) : undefined}
                 isOverdue={overdue.has(deal.id)}
+                body={data.bodies?.[deal.id]}
                 canWrite={false}
                 onMove={() => {}}
               />
@@ -377,9 +385,11 @@ function DealCard({
   contactName,
   ownerName,
   isOverdue,
+  body,
   canWrite,
   onMove
 }: {
+  body?: React.ReactNode;
   deal: BoardDeal;
   stages: Stage[];
   contactName?: string;
@@ -404,7 +414,10 @@ function DealCard({
           <div className='-mt-1 -mr-1 flex shrink-0 items-center'>
             <KanbanItemHandle
               aria-label={`Drag ${deal.title}. Space to lift, arrow keys to move, Space to drop, Escape to cancel.`}
-              className='text-muted-foreground hover:bg-accent hidden size-8 items-center justify-center rounded-md md:inline-flex'
+              className={cn(
+                'text-muted-foreground hover:bg-accent hidden items-center justify-center rounded-md md:inline-flex',
+                body ? 'size-11' : 'size-8'
+              )}
             >
               <IconGripVertical className='size-4' aria-hidden='true' />
             </KanbanItemHandle>
@@ -415,6 +428,7 @@ function DealCard({
                     type='button'
                     variant='ghost'
                     size='icon'
+                    className={body ? 'size-11' : undefined}
                     aria-label={`Move ${deal.title} to stage`}
                   />
                 }
@@ -422,35 +436,41 @@ function DealCard({
                 <IconDots />
               </DropdownMenuTrigger>
               <DropdownMenuContent align='end' className='w-auto'>
-                <DropdownMenuLabel>Move to stage</DropdownMenuLabel>
-                {stages
-                  .filter((s) => s.id !== deal.stageId)
-                  .map((s) => (
-                    <DropdownMenuItem key={s.id} onClick={() => onMove(s.id)}>
-                      {s.name}
-                    </DropdownMenuItem>
-                  ))}
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>Move to stage</DropdownMenuLabel>
+                  {stages
+                    .filter((s) => s.id !== deal.stageId)
+                    .map((s) => (
+                      <DropdownMenuItem key={s.id} onClick={() => onMove(s.id)}>
+                        {s.name}
+                      </DropdownMenuItem>
+                    ))}
+                </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
         ) : null}
       </div>
-      <div className='flex flex-wrap items-center gap-1.5'>
-        <span className='text-sm font-medium tabular-nums'>{formatCents(deal.valueCents)}</span>
-        {deal.source ? <Badge variant='outline'>{deal.source}</Badge> : null}
-        {isOverdue ? (
-          <StatusBadge tone='error'>
-            <span className='sr-only'>Has an </span>Overdue task
-          </StatusBadge>
-        ) : null}
-        {ownerName ? (
-          <Avatar size='sm' className='ms-auto' title={ownerName}>
-            <AvatarFallback aria-label={`Owner: ${ownerName}`}>
-              {initials(ownerName)}
-            </AvatarFallback>
-          </Avatar>
-        ) : null}
-      </div>
+      {body ? (
+        body
+      ) : (
+        <div className='flex flex-wrap items-center gap-1.5'>
+          <span className='text-sm font-medium tabular-nums'>{formatCents(deal.valueCents)}</span>
+          {deal.source ? <Badge variant='outline'>{deal.source}</Badge> : null}
+          {isOverdue ? (
+            <StatusBadge tone='error'>
+              <span className='sr-only'>Has an </span>Overdue task
+            </StatusBadge>
+          ) : null}
+          {ownerName ? (
+            <Avatar size='sm' className='ms-auto' title={ownerName}>
+              <AvatarFallback aria-label={`Owner: ${ownerName}`}>
+                {initials(ownerName)}
+              </AvatarFallback>
+            </Avatar>
+          ) : null}
+        </div>
+      )}
     </article>
   );
 }
