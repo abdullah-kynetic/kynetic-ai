@@ -33,7 +33,7 @@
   - Test: integration test
   - Commit: "Test that shop actions never send"
   - Covers: F-5
-- [ ] **F-S6.** Write `FINAL-REPORT.md` from `../REPORT-TEMPLATE.md` and finish `LIVE-STEPS.md`.
+- [x] **F-S6.** Write `FINAL-REPORT.md` from `../REPORT-TEMPLATE.md` and finish `LIVE-STEPS.md`.
   - Test: file check
   - Commit: "Write the AA shop final report"
   - Covers: F-6
