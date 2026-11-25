@@ -19,88 +19,132 @@ export type IndustryTemplate = {
 };
 
 export const REMODELING_STAGES = [
-  { name: 'New lead', probability: 5, isWon: false, isLost: false },
-  { name: 'Consultation booked', probability: 20, isWon: false, isLost: false },
-  { name: 'Design in progress', probability: 40, isWon: false, isLost: false },
-  { name: 'Proposal sent', probability: 60, isWon: false, isLost: false },
-  { name: 'Contract signed', probability: 80, isWon: false, isLost: false },
-  { name: 'Build scheduled', probability: 90, isWon: false, isLost: false },
-  { name: 'Won', probability: 100, isWon: true, isLost: false },
-  { name: 'Lost', probability: 0, isWon: false, isLost: true }
+  { name: "New lead", probability: 5, isWon: false, isLost: false },
+  { name: "Consultation booked", probability: 20, isWon: false, isLost: false },
+  { name: "Design in progress", probability: 40, isWon: false, isLost: false },
+  { name: "Proposal sent", probability: 60, isWon: false, isLost: false },
+  { name: "Contract signed", probability: 80, isWon: false, isLost: false },
+  { name: "Build scheduled", probability: 90, isWon: false, isLost: false },
+  { name: "Won", probability: 100, isWon: true, isLost: false },
+  { name: "Lost", probability: 0, isWon: false, isLost: true },
 ] as const satisfies readonly TemplateStage[];
 
 export const POOL_BUILDER_STAGES = [
-  { name: 'New lead', probability: 5, isWon: false, isLost: false },
-  { name: 'Consultation booked', probability: 20, isWon: false, isLost: false },
-  { name: 'Site evaluation', probability: 40, isWon: false, isLost: false },
-  { name: 'Proposal sent', probability: 60, isWon: false, isLost: false },
-  { name: 'Contract signed', probability: 80, isWon: false, isLost: false },
-  { name: 'Build scheduled', probability: 90, isWon: false, isLost: false },
-  { name: 'Won', probability: 100, isWon: true, isLost: false },
-  { name: 'Lost', probability: 0, isWon: false, isLost: true }
+  { name: "New lead", probability: 5, isWon: false, isLost: false },
+  { name: "Consultation booked", probability: 20, isWon: false, isLost: false },
+  { name: "Site evaluation", probability: 40, isWon: false, isLost: false },
+  { name: "Proposal sent", probability: 60, isWon: false, isLost: false },
+  { name: "Contract signed", probability: 80, isWon: false, isLost: false },
+  { name: "Build scheduled", probability: 90, isWon: false, isLost: false },
+  { name: "Won", probability: 100, isWon: true, isLost: false },
+  { name: "Lost", probability: 0, isWon: false, isLost: true },
 ] as const satisfies readonly TemplateStage[];
 
 export const WINDOWS_DOORS_STAGES = [
-  { name: 'New lead', probability: 5, isWon: false, isLost: false },
-  { name: 'Consultation booked', probability: 20, isWon: false, isLost: false },
-  { name: 'In-home estimate', probability: 40, isWon: false, isLost: false },
-  { name: 'Proposal sent', probability: 60, isWon: false, isLost: false },
-  { name: 'Contract signed', probability: 80, isWon: false, isLost: false },
-  { name: 'Installation scheduled', probability: 90, isWon: false, isLost: false },
-  { name: 'Won', probability: 100, isWon: true, isLost: false },
-  { name: 'Lost', probability: 0, isWon: false, isLost: true }
+  { name: "New lead", probability: 5, isWon: false, isLost: false },
+  { name: "Consultation booked", probability: 20, isWon: false, isLost: false },
+  { name: "In-home estimate", probability: 40, isWon: false, isLost: false },
+  { name: "Proposal sent", probability: 60, isWon: false, isLost: false },
+  { name: "Contract signed", probability: 80, isWon: false, isLost: false },
+  {
+    name: "Installation scheduled",
+    probability: 90,
+    isWon: false,
+    isLost: false,
+  },
+  { name: "Won", probability: 100, isWon: true, isLost: false },
+  { name: "Lost", probability: 0, isWon: false, isLost: true },
+] as const satisfies readonly TemplateStage[];
+
+export const AUTO_BODY_STAGES = [
+  { name: "New lead", probability: 5, isWon: false, isLost: false },
+  { name: "Estimate", probability: 25, isWon: false, isLost: false },
+  {
+    name: "Waiting on insurance",
+    probability: 45,
+    isWon: false,
+    isLost: false,
+  },
+  { name: "Parts ordered", probability: 65, isWon: false, isLost: false },
+  { name: "In repair and paint", probability: 85, isWon: false, isLost: false },
+  { name: "Ready for pickup", probability: 95, isWon: false, isLost: false },
+  { name: "Picked up", probability: 100, isWon: true, isLost: false },
+  { name: "Lost", probability: 0, isWon: false, isLost: true },
 ] as const satisfies readonly TemplateStage[];
 
 export const INDUSTRY_TEMPLATES: Record<
-  | 'roofing'
-  | 'restoration'
-  | 'hvac'
-  | 'plumbing'
-  | 'remodeling'
-  | 'pools'
-  | 'windows_doors'
-  | 'general',
+  | "roofing"
+  | "restoration"
+  | "hvac"
+  | "plumbing"
+  | "remodeling"
+  | "pools"
+  | "windows_doors"
+  | "auto_body"
+  | "general",
   IndustryTemplate
 > = {
   roofing: {
-    label: 'Roofing',
-    services: ['Roof repair', 'Roof replacement', 'Storm damage', 'Inspection']
+    label: "Roofing",
+    services: ["Roof repair", "Roof replacement", "Storm damage", "Inspection"],
   },
   restoration: {
-    label: 'Restoration',
-    services: ['Water damage', 'Fire and smoke damage', 'Mold remediation', 'Storm damage']
+    label: "Restoration",
+    services: [
+      "Water damage",
+      "Fire and smoke damage",
+      "Mold remediation",
+      "Storm damage",
+    ],
   },
   hvac: {
-    label: 'HVAC',
-    services: ['AC repair', 'Heating repair', 'System replacement', 'Maintenance']
+    label: "HVAC",
+    services: [
+      "AC repair",
+      "Heating repair",
+      "System replacement",
+      "Maintenance",
+    ],
   },
   plumbing: {
-    label: 'Plumbing',
-    services: ['Leak repair', 'Drain cleaning', 'Water heater', 'Repiping']
+    label: "Plumbing",
+    services: ["Leak repair", "Drain cleaning", "Water heater", "Repiping"],
   },
   remodeling: {
-    label: 'Remodeling (bath and kitchen)',
-    services: ['Bathroom remodel', 'Kitchen remodel', 'Design consultation'],
+    label: "Remodeling (bath and kitchen)",
+    services: ["Bathroom remodel", "Kitchen remodel", "Design consultation"],
     stages: REMODELING_STAGES,
-    stagesAreEditableDefaults: true
+    stagesAreEditableDefaults: true,
   },
   pools: {
-    label: 'Pool builder',
-    services: ['Custom pool build', 'Pool remodel', 'Outdoor living'],
+    label: "Pool builder",
+    services: ["Custom pool build", "Pool remodel", "Outdoor living"],
     stages: POOL_BUILDER_STAGES,
-    stagesAreEditableDefaults: true
+    stagesAreEditableDefaults: true,
   },
   windows_doors: {
-    label: 'Windows and doors',
-    services: ['Window replacement', 'Door replacement'],
+    label: "Windows and doors",
+    services: ["Window replacement", "Door replacement"],
     stages: WINDOWS_DOORS_STAGES,
-    stagesAreEditableDefaults: true
+    stagesAreEditableDefaults: true,
   },
-  general: { label: 'Other home service', services: [] }
+  auto_body: {
+    label: "Auto body and collision",
+    services: [
+      "Collision repair",
+      "Dent and scratch repair",
+      "Paint",
+      "Wheel repair",
+      "Insurance claim repair",
+    ],
+    stages: AUTO_BODY_STAGES,
+    stagesAreEditableDefaults: true,
+  },
+  general: { label: "Other home service", services: [] },
 };
 
 export type IndustryTemplateKey = keyof typeof INDUSTRY_TEMPLATES;
 export const INDUSTRY_TEMPLATE_KEYS = Object.keys(INDUSTRY_TEMPLATES) as [
   IndustryTemplateKey,
-  ...IndustryTemplateKey[]
+  ...IndustryTemplateKey[],
 ];
