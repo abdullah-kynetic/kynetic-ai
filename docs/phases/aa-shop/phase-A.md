@@ -33,7 +33,7 @@ Goal: the switch, the sidebar, the data layer, the shared UI pieces and the samp
   - Test: unit test comparing a non-shop tenant's nav to today's
   - Commit: "Show the shop sidebar for shop clients"
   - Covers: A-5
-- [ ] **A-S5.** Shop data layer in `crm/src/server/shop/`: typed read functions for jobs by stage, quotes, follow-up runs, insurance deals and supplements (empty until backend), team by owner, money in (won deals) and money out (empty), customers with totals, away settings (default off). Each reads through `withTenant` and requires the module.
+- [x] **A-S5.** Shop data layer in `crm/src/server/shop/`: typed read functions for jobs by stage, quotes, follow-up runs, insurance deals and supplements (empty until backend), team by owner, money in (won deals) and money out (empty), customers with totals, away settings (default off). Each reads through `withTenant` and requires the module.
   - Test: integration test with two tenants
   - Commit: "Add the shop data layer"
   - Covers: A-6
