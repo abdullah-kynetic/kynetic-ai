@@ -111,6 +111,10 @@ export type CustomerRow = {
   jobs: number;
   lifetimeCents: number;
   lastJobAt: string | null;
+  /** The latest job's car ("2019 Toyota Camry"), or its title when no car details were saved. */
+  lastJobLabel: string | null;
+  /** True when at least one of their jobs was picked up. */
+  pickedUp: boolean;
   reviewStatus: 'not_requested' | 'requested' | 'reviewed';
 };
 

@@ -12,23 +12,23 @@
 
 ## Steps
 
-- [ ] **E-S1.** Customers page with totals and review status.
+- [x] **E-S1.** Customers page with totals and review status.
   - Test: integration test for totals; browser test
   - Commit: "Add shop customers"
   - Covers: E-1
-- [ ] **E-S2.** Bring back old customers preview (no send).
+- [x] **E-S2.** Bring back old customers preview (no send).
   - Test: browser test: Send is disabled
   - Commit: "Add bring-back preview"
   - Covers: E-1
-- [ ] **E-S3.** Reviews shop variant: summary, list, request list, drafted replies with Approve.
+- [x] **E-S3.** Reviews shop variant: summary, list, request list, drafted replies with Approve.
   - Test: browser test
   - Commit: "Add shop reviews"
   - Covers: E-2, E-3
-- [ ] **E-S4.** Get found from presence records.
+- [x] **E-S4.** Get found from presence records.
   - Test: browser test
   - Commit: "Add shop get found"
   - Covers: E-4
-- [ ] **E-S5.** Regroup Referrals; phase pass at both widths, both themes, accessibility scan.
+- [x] **E-S5.** Regroup Referrals; phase pass at both widths, both themes, accessibility scan.
   - Test: `bun run verify:e2e`; screenshots reviewed
   - Commit: "Polish the customer pages"
   - Covers: E-1 to E-5
