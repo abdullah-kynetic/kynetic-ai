@@ -155,3 +155,9 @@ input.search{width:100%;max-width:320px;padding:10px 14px;border:1px solid var(-
 .bar b{font-size:12px}
 @media(min-width:901px){.colm{flex:1 0 142px;padding:8px}.job{padding:10px}.job b{font-size:14px}.job .mv .d{font-size:11px}.page{max-width:1500px}}
 @media(max-width:900px){.bars{gap:5px}.bar b{font-size:10px}.bar span{font-size:10px}}
+.grp{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#8a837a;padding:14px 12px 4px}
+.nav button{padding:8px 12px}
+.side{overflow-y:auto}
+.sheet.show{max-height:70vh;overflow:auto}
+.card{overflow-x:auto}
+@media(max-width:900px){td,th{padding:10px 6px;font-size:14px}}

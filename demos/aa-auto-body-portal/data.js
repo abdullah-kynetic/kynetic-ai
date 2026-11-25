@@ -106,6 +106,36 @@ window.DEMO = {
     ["Carmen, 2019 Kia Sorento", "Goes out after pickup", "Queued"],
     ["Natalie O., 2022 Mazda CX-30", "Reminder sent after 3 days, no reply yet", "Reminder"]
   ],
+
+  calls: [
+    ["Tue 9:42 PM", "Marcus T.", "After hours", "Maya (AI) answered. Fender claim, photos requested. Lead created.", "ai"],
+    ["Tue 6:48 PM", "Gabriela M.", "Missed call", "Auto text sent in 20 seconds. She sent a photo and asked for a price.", "text"],
+    ["Tue 3:20 PM", "Unknown caller", "Shop busy", "Not answered after 4 rings. Maya (AI) took the message and texted a link.", "ai"],
+    ["Mon 7:05 PM", "Dustin K.", "After hours", "Maya (AI) answered. Hail damage. Photos received next morning.", "ai"],
+    ["Sun 2:10 PM", "Patricia L.", "Closed (Sunday)", "Maya (AI) booked a Monday 9:00 AM drop-off. Reminder sent.", "ai"],
+    ["Sun 11:30 AM", "Unknown caller", "Closed (Sunday)", "Caller hung up. Auto text went out with a photo link.", "text"],
+    ["Sat 4:15 PM", "Omar S.", "Closed (Saturday)", "Maya (AI) answered. Insurance job, booked a Thursday estimate.", "ai"]
+  ],
+  supplements: [
+    ["2023 Dodge Challenger", "Ricardo", 22000, 3850, "Sent to insurance", "2 days"],
+    ["2024 Tesla Model 3", "Brandon", 11200, 2100, "Waiting on adjuster", "4 days"],
+    ["2018 Chevy Silverado", "Tyler", 8400, 1200, "Approved", "1 day"],
+    ["2022 Jeep Wrangler", "Chris", 6100, 640, "Approved", "3 days"],
+    ["2021 Hyundai Elantra", "Ana", 3900, 480, "Draft, needs your OK", "Today"]
+  ],
+  outside: [
+    ["Alignment", "2021 Hyundai Elantra", "Outside alignment shop", 120, 180],
+    ["Upholstery seat repair", "2017 BMW 3 Series", "Outside upholstery", 260, 400],
+    ["Tow in", "2023 Dodge Challenger", "Tow partner", 95, 150]
+  ],
+  connections: [
+    ["Google Calendar", "Demo shows the layout", "plan", "Two-way sync with the shop calendar."],
+    ["Text and phone line", "Demo only. Nothing sent", "plan", "The shop number, text-back and the AI receptionist."],
+    ["QuickBooks", "Phase 2, needs your access", "ask", "Money in and invoices. Only if QuickBooks gives us access."],
+    ["Audatex (insurance estimating)", "Phase 2, needs your access", "ask", "We can track supplements today. A direct link depends on Audatex access."],
+    ["Parts Trader", "Phase 2, needs your access", "ask", "Parts lookup from the estimate. Same condition."],
+    ["Google Business Profile", "Demo shows the layout", "plan", "Reviews, replies and posts."]
+  ],
   weeks: [ ["Oct 5", 14.2], ["Oct 12", 18.9], ["Oct 19", 11.6], ["Oct 26", 21.4], ["Nov 2", 16.8], ["Nov 9", 23.1], ["Nov 16", 19.7], ["Nov 23", 24.3] ],
   found: [
     ["Google Business Profile", "Claimed and up to date", "ok", "Hours, address, phone, photos and services match."],

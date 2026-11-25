@@ -12,15 +12,24 @@
     reviews: '<path d="M12 3l2.700 5.500 6 .9-4.400 4.200 1 6-5.300-2.800-5.300 2.800 1-6L3.300 9.400l6-.9z"/>',
     report: '<path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/>',
     found: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/>',
+    calls: '<path d="M5 4h4l2 5-2.500 1.500a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
+    insurance: '<path d="M12 3l8 3v6c0 5-3.500 8-8 9-4.500-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+    money: '<circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.500 9.500c0-1.200 1.100-2 2.500-2s2.500.8 2.500 2-1.100 1.800-2.500 2-2.500.8-2.500 2 1.100 2 2.500 2 2.500-.8 2.500-2"/>',
+    team: '<circle cx="12" cy="8" r="3.500"/><path d="M5 21c0-4 3-6 7-6s7 2 7 6"/>',
+    away: '<path d="M21 12.500A9 9 0 1 1 11.500 3a7 7 0 0 0 9.500 9.500z"/>',
+    connections: '<path d="M9 7H6a4 4 0 0 0 0 8h3M15 7h3a4 4 0 0 1 0 8h-3M8 11h8"/>',
     more: '<circle cx="5" cy="12" r="1.600"/><circle cx="12" cy="12" r="1.600"/><circle cx="19" cy="12" r="1.600"/>'
   };
   var icon = function (n) { return '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + I[n] + '</svg>'; };
   var NAV = [
-    ["today", "Today"], ["leads", "Leads"], ["quotes", "Quotes"], ["jobs", "Jobs board"], ["calendar", "Calendar"],
-    ["customers", "Customers"], ["reviews", "Reviews"], ["report", "Weekly report"], ["found", "Get found"]
+    "Daily", ["today", "Today"], ["leads", "Leads"], ["calls", "Calls and texts"], ["quotes", "Quotes"], ["jobs", "Jobs board"], ["calendar", "Calendar"],
+    "Money", ["report", "Weekly report"], ["money", "Money in and out"], ["insurance", "Insurance"],
+    "Grow", ["customers", "Customers"], ["reviews", "Reviews"], ["found", "Get found"],
+    "Shop", ["team", "Team"], ["away", "Away mode"], ["connections", "Connections"]
   ];
+  var ITEMS = NAV.filter(function (n) { return typeof n !== "string"; });
   var TABS = ["today", "leads", "jobs", "calendar"];
-  var state = { leadId: 1, sheet: false };
+  var state = { leadId: 1, sheet: false, away: false };
   var jobs = D.jobs.map(function (j) { return Object.assign({}, j); });
   var reviews = D.reviews.map(function (r) { return Object.assign({}, r); });
   var toastT;
@@ -60,7 +69,7 @@
     var list = D.leads.map(function (l) {
       return '<button class="row ' + (l.id === state.leadId ? "on" : "") + '" data-lead="' + l.id + '"><div class="a"><b>' + l.name + '</b>' + statusPill(l.status) + '</div><div class="b">' + l.car + ' · ' + l.when + '</div><div style="margin-top:8px">' + srcPill(l.src) + '</div></button>';
     }).join("");
-    var ph = ""; for (var i = 1; i <= cur.photos; i++) ph += photo("photo " + i);
+    var ph = ""; for (var i = 1; i <= cur.photos; i++) ph += photo("photo " + i); if (!cur.photos) ph = '<span class="hint">No photos yet. Text the customer a photo link.</span>';
     var est = "";
     if (cur.est) {
       var tot = cur.est.reduce(function (a, r) { return a + r[1]; }, 0);
@@ -70,7 +79,7 @@
         '<div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap"><button class="btn" data-toast="Estimate and deposit link sent to ' + cur.name + ' (demo)">Approve and send with deposit link</button><button class="btn ghost" data-toast="Opened for editing (demo)">Edit</button></div>';
     }
     var chat = cur.lines.map(function (l) { var us = l[0] !== "Customer" && l[0] !== "Caller"; return '<div class="bub ' + (us ? "us" : "them") + '"><small>' + l[0] + '</small>' + l[1] + '</div>'; }).join("");
-    return '<p class="hint">Every call, text, photo and walk-in lands here, with a summary, so nothing gets lost in your text messages.</p><div class="split"><div>' + list + '</div><div class="card"><div class="a" style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><div><h2 style="margin:0">' + cur.name + '</h2><div class="hint" style="margin:4px 0 0">' + cur.car + ' · ' + cur.when + '</div></div><div>' + srcPill(cur.src) + ' ' + statusPill(cur.status) + '</div></div>' +
+    return '<div class="bar-tools"><p class="hint" style="margin:0">Every call, text, photo and walk-in lands here, so nothing gets lost in your text messages.</p><span class="sp"></span><button class="btn" data-walkin="1">Add walk-in</button></div><div class="split"><div>' + list + '</div><div class="card"><div class="a" style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><div><h2 style="margin:0">' + cur.name + '</h2><div class="hint" style="margin:4px 0 0">' + cur.car + ' · ' + cur.when + '</div></div><div>' + srcPill(cur.src) + ' ' + statusPill(cur.status) + '</div></div>' +
       '<h2 style="margin-top:18px">Summary</h2><p style="margin:0">' + cur.summary + '</p>' +
       '<h2 style="margin-top:18px">Conversation</h2>' + chat +
       '<h2 style="margin-top:18px">Damage photos</h2><div class="photos">' + ph + '</div>' + est +
@@ -152,8 +161,52 @@
     return '<p class="hint">One consistent shop listing everywhere people look: Google, Apple, Yelp and AI assistants. Demo statuses.</p><div class="grid g2" style="align-items:start"><div class="card"><h2>Where the shop shows up</h2>' + rows + '</div><div class="card"><h2>Posts, written from your work</h2>' + posts + '<p class="note">Seasonal posts (like hail season) and before/after photos from finished jobs, ready for your OK.</p></div></div>';
   }
 
-  var PAGES = { today: today, leads: leads, quotes: quotes, jobs: jobsPage, calendar: calendar, customers: customers, reviews: reviewsPage, report: report, found: found };
-  var TITLES = { today: "Today", leads: "Leads", quotes: "Quotes", jobs: "Jobs board", calendar: "Calendar", customers: "Customers", reviews: "Reviews", report: "Weekly report", found: "Get found" };
+
+  function calls() {
+    var rows = D.calls.map(function (c) { return '<div class="need"><span class="pill ' + (c[4] === "ai" ? "or" : "bl") + '">' + (c[4] === "ai" ? "AI answered" : "Auto text") + '</span><span class="t" style="font-weight:500"><b>' + c[1] + '</b> · ' + c[0] + ' · ' + c[2] + '<br><span style="color:var(--muted);font-size:14px">' + c[3] + '</span></span></div>'; }).join("");
+    var opts = jobs.filter(function (j) { return j.col !== "picked"; }).map(function (j) { return '<option value="' + j.id + '">' + j.name + ', ' + j.car + '</option>'; }).join("");
+    return '<div class="grid g3" style="margin-bottom:16px">' + kpi("Calls answered this week", 31, "7 by the AI after hours", "calls") + kpi("Missed calls texted back", 5, "Average 20 seconds", "calls") + kpi("Photos collected", 11, "Straight into each lead", "leads") + '</div>' +
+      '<div class="grid g2" style="align-items:start"><div class="card"><h2>AI receptionist (Maya)</h2><p class="hint">Picks up when nobody answers and when the shop is closed. Always says it is an AI. Never quotes a price. Books estimates and drop-offs.</p>' +
+      [["Answers after 6 PM and on weekends", true], ["Answers when the shop is busy (after 4 rings)", true], ["Texts photo link to every caller", true], ["Forwards to Edwin if it is an emergency", true]].map(function (r) { return '<div class="need"><span class="t" style="font-weight:500">' + r[0] + '</span><span class="pill ok">On</span></div>'; }).join("") +
+      '<h2 style="margin-top:18px">Missed-call text</h2><div class="mail" style="margin:0">Sorry we missed your call, this is AA Auto Body Shop. What happened with your car? Send photos here and we will get you an estimate.</div>' +
+      '<h2 style="margin-top:18px">"Where is my car?" by text</h2><p class="hint">Customers text the shop line and get a live answer from the jobs board. Try it:</p><div style="display:flex;gap:8px;flex-wrap:wrap"><select id="wc" style="padding:10px;border:1px solid var(--line);border-radius:10px;font:inherit;flex:1;min-width:180px">' + opts + '</select><button class="btn" data-where="1">Ask</button></div><div id="wa"></div></div>' +
+      '<div class="card"><h2>Recent calls and texts</h2>' + rows + '</div></div>';
+  }
+  function insurancePage() {
+    var open = D.supplements.filter(function (s) { return s[4] !== "Approved"; }).length;
+    var tot = D.supplements.reduce(function (a, s) { return a + s[3]; }, 0);
+    var rows = D.supplements.map(function (s) { return '<tr><td><b>' + s[0] + '</b><br><span style="color:var(--muted);font-size:13px">' + s[1] + '</span></td><td>' + money(s[2]) + '</td><td>+' + money(s[3]) + '</td><td class="hide-m">' + s[5] + '</td><td><span class="pill ' + (s[4] === "Approved" ? "ok" : s[4].indexOf("Draft") === 0 ? "or" : "warn") + '">' + s[4] + '</span></td></tr>'; }).join("");
+    return '<div class="grid g3" style="margin-bottom:16px">' + kpi("Supplements open", open, "Waiting on insurance or on you", "insurance") + kpi("Extra money requested", money(tot), "Across 5 jobs (demo)", "insurance") + kpi("Cars waiting on insurance", jobs.filter(function (j) { return j.col === "insurance"; }).length, "On the jobs board", "jobs") + '</div>' +
+      '<p class="hint">A tracker so no supplement gets forgotten: what was sent, to whom, and what is still open. It does not connect to Audatex yet.</p><div class="card" style="padding:8px 14px"><table><tr><th>Job</th><th>Estimate</th><th>Supplement</th><th class="hide-m">Age</th><th>Status</th></tr>' + rows + '</table></div>';
+  }
+  function moneyPage() {
+    var out = D.outside.map(function (o) { return '<tr><td><b>' + o[0] + '</b><br><span style="color:var(--muted);font-size:13px">' + o[1] + '</span></td><td class="hide-m">' + o[2] + '</td><td>' + money(o[3]) + '</td><td>' + money(o[4]) + '</td><td><span class="pill ok">+' + money(o[4] - o[3]) + '</span></td></tr>'; }).join("");
+    return '<div class="grid g4" style="margin-bottom:16px">' + kpi("Money in", "$24,300", "This week", "report") + kpi("Money out", "$8,900", "Parts, outside work, supplies", "money") + kpi("Left over", "$15,400", "Before payroll (demo)", "money") + kpi("Outside work profit", "$115", "Your markup this week", "money") + '</div>' +
+      '<div class="grid g2" style="align-items:start"><div class="card"><h2>Where the money went</h2>' + [["Parts", 6200, 70], ["Outside work (alignment, upholstery, tow)", 1350, 15], ["Paint and shop supplies", 1350, 15]].map(function (r) { return '<div style="margin:10px 0"><div style="display:flex;justify-content:space-between;font-weight:600"><span>' + r[0] + '</span><span>' + money(r[1]) + '</span></div><div class="split-bar" style="margin:6px 0"><div style="width:' + r[2] + '%;background:var(--orange)"></div><div style="flex:1;background:var(--soft)"></div></div></div>'; }).join("") + '<p class="note">Demo data. Goes into QuickBooks once connected.</p></div>' +
+      '<div class="card"><h2>Outside work</h2><p class="hint">What you paid other shops vs what you charged.</p><table><tr><th>Work</th><th class="hide-m">Shop</th><th>Cost</th><th>Charged</th><th>Made</th></tr>' + out + '</table></div></div>';
+  }
+  function team() {
+    var people = ["Edwin", "Robert", "Marcos", "Dani", "Luis"];
+    var roles = { Edwin: "Owner, paint", Robert: "Estimates and parts", Marcos: "Tech", Dani: "Tech", Luis: "Tech" };
+    var cards = people.map(function (p) {
+      var js = jobs.filter(function (j) { return j.tech === p && j.col !== "picked"; });
+      return '<div class="card"><div style="display:flex;justify-content:space-between"><div><b style="font-size:18px">' + p + '</b><div class="hint" style="margin:0">' + roles[p] + '</div></div><div class="kpi"><div class="n" style="font-size:32px">' + js.length + '</div></div></div>' + (js.length ? js.map(function (j) { return '<div class="need"><span class="t" style="font-weight:500">' + j.car + '<br><span style="color:var(--muted);font-size:13px">' + D.columns.filter(function (c) { return c.id === j.col; })[0].name + ' · ' + j.days + ' days in</span></span></div>'; }).join("") : '<p class="hint" style="margin-top:12px">No cars right now.</p>') + '</div>';
+    }).join("");
+    var q = jobs.filter(function (j) { return j.col === "repair"; });
+    return '<p class="hint">Each person sees only their own cars. Edwin paints, so the paint booth is the bottleneck to watch.</p><div class="card" style="margin-bottom:16px"><h2>Paint booth</h2><div class="need"><span class="pill or">In booth</span><span class="t">' + jobs.filter(function (j) { return j.col === "paint"; }).map(function (j) { return j.car + ' (' + j.name + ')'; }).join(", ") + '</span></div><div class="need"><span class="pill">Next up</span><span class="t" style="font-weight:500">' + q.map(function (j) { return j.car + ' (' + j.name + ')'; }).join(", ") + '</span></div><p class="note">If paint backs up, the board warns you before you promise a pickup date. Demo data.</p></div><div class="grid g3">' + cards + '</div>';
+  }
+  function away() {
+    var on = state.away;
+    return '<div class="card" style="margin-bottom:16px"><div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><div style="flex:1;min-width:220px"><h2 style="margin:0 0 4px">Away mode</h2><p class="hint" style="margin:0">The shop keeps running. You only get a message when something truly needs you.</p></div><button class="btn" data-away="1">' + (on ? "Turn off" : "Turn on for Dec 14 to 21") + '</button></div>' + (on ? '<p style="margin:12px 0 0"><span class="pill ok">On: Dec 14 to 21 (demo)</span></p>' : '') + '</div>' +
+      '<div class="grid g2" style="align-items:start"><div class="card"><h2>Your daily message (preview)</h2><div class="mail" style="margin:0"><div class="h">Text to Edwin · 6:00 PM · Demo preview</div>Good evening Edwin. Today: 3 cars picked up, 2 dropped off, $6,400 collected. 4 calls answered by Maya, 2 new quotes sent. Tomorrow: 2 estimates, 1 pickup. 1 thing needs you: insurance approval on the Challenger supplement.</div></div>' +
+      '<div class="card"><h2>You only get alerts for</h2>' + ["Insurance approval needed on a big job", "A customer is upset or says they will leave a bad review", "A quote over $5,000 is ready to send", "A drop-off or pickup is missed", "Anything that looks like an emergency call"].map(function (t) { return '<div class="need"><span style="color:var(--ok);font-weight:800">✓</span><span class="t" style="font-weight:500">' + t + '</span></div>'; }).join("") + '</div></div>';
+  }
+  function connections() {
+    var rows = D.connections.map(function (c) { return '<div class="need"><span class="pill ' + (c[2] === "ask" ? "warn" : "") + '">' + c[1] + '</span><span class="t"><b>' + c[0] + '</b><br><span style="font-weight:500;color:var(--muted);font-size:14px">' + c[3] + '</span></span></div>'; }).join("");
+    return '<p class="hint">What this portal connects to. Nothing is connected in this demo. The items marked "needs your access" are phase 2 and depend on the software company giving us a way in.</p><div class="card">' + rows + '</div>';
+  }
+  var PAGES = { calls: calls, money: moneyPage, insurance: insurancePage, team: team, away: away, connections: connections, today: today, leads: leads, quotes: quotes, jobs: jobsPage, calendar: calendar, customers: customers, reviews: reviewsPage, report: report, found: found };
+  var TITLES = { calls: "Calls and texts", money: "Money in and out", insurance: "Insurance supplements", team: "Team", away: "Away mode", connections: "Connections", today: "Today", leads: "Leads", quotes: "Quotes", jobs: "Jobs board", calendar: "Calendar", customers: "Customers", reviews: "Reviews", report: "Weekly report", found: "Get found" };
   function cur() { var h = location.hash.slice(1); return PAGES[h] ? h : "today"; }
 
   function render() {
@@ -167,10 +220,13 @@
   function go(p) { state.sheet = false; if (location.hash.slice(1) === p) render(); else location.hash = p; window.scrollTo(0, 0); }
 
   document.addEventListener("click", function (e) {
-    var t = e.target.closest("[data-p],[data-go],[data-lead],[data-toast],[data-mv],[data-modal],[data-approve],[data-close]");
+    var t = e.target.closest("[data-where],[data-away],[data-walkin],[data-p],[data-go],[data-lead],[data-toast],[data-mv],[data-modal],[data-approve],[data-close]");
     if (!t) { if (state.sheet) { state.sheet = false; render(); } return; }
     var d = t.dataset;
-    if (d.p) { if (d.p === "more") { state.sheet = !state.sheet; render(); } else go(d.p); }
+    if (d.where != null) { var jj = jobs.filter(function (x) { return x.id === +$("#wc").value; })[0]; var cc = D.columns.filter(function (c) { return c.id === jj.col; })[0]; $("#wa").innerHTML = '<div class="bub them" style="margin-top:10px"><small>' + jj.name + '</small>Where is my car?</div><div class="bub us"><small>AA Auto Body (auto reply)</small>Hi ' + jj.name + ', your ' + jj.car + ' is in: ' + cc.name + '.' + (jj.flag ? ' ' + jj.flag + '.' : '') + ' ' + jj.days + ' days in the shop. We will text you when it moves.</div>'; }
+    else if (d.away != null) { state.away = !state.away; toast(state.away ? "Away mode on (demo). Nothing changes in the real shop" : "Away mode off (demo)"); render(); }
+    else if (d.walkin != null) { var id = D.leads.length + 1; D.leads.unshift({ id: id, name: "Walk-in (new)", car: "2021 Toyota Corolla", src: "walk", when: "Just now", status: "New", photos: 0, summary: "Robert entered this walk-in in about 10 seconds from the front desk. Photos can be added from a phone.", lines: [["Robert", "Walk-in at the front desk. Rear bumper scrape."]] }); state.leadId = id; toast("Walk-in added to Leads (demo)"); render(); }
+    else if (d.p) { if (d.p === "more") { state.sheet = !state.sheet; render(); } else go(d.p); }
     else if (d.go) go(d.go);
     else if (d.lead) { state.leadId = +d.lead; render(); }
     else if (d.toast) { toast(d.toast); if (d.close != null) $("#modal").classList.remove("show"); }
@@ -189,9 +245,9 @@
   document.addEventListener("keydown", function (e) { if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".kpi[data-go]")) { e.preventDefault(); go(e.target.dataset.go); } if (e.key === "Escape") $("#modal").classList.remove("show"); });
 
   // chrome
-  $("#nav").innerHTML = NAV.map(function (n) { return '<button data-p="' + n[0] + '">' + icon(n[0]) + n[1] + '</button>'; }).join("");
+  $("#nav").innerHTML = NAV.map(function (n) { return typeof n === "string" ? '<div class="grp">' + n + '</div>' : '<button data-p="' + n[0] + '">' + icon(n[0]) + n[1] + '</button>'; }).join("");
   $("#tabs").innerHTML = TABS.map(function (k) { return '<button data-p="' + k + '">' + icon(k) + TITLES[k] + '</button>'; }).join("") + '<button data-p="more">' + icon("more") + 'More</button>';
-  $("#sheet").innerHTML = NAV.filter(function (n) { return TABS.indexOf(n[0]) < 0; }).map(function (n) { return '<button data-p="' + n[0] + '">' + icon(n[0]) + n[1] + '</button>'; }).join("");
+  $("#sheet").innerHTML = ITEMS.filter(function (n) { return TABS.indexOf(n[0]) < 0; }).map(function (n) { return '<button data-p="' + n[0] + '">' + icon(n[0]) + n[1] + '</button>'; }).join("");
   window.addEventListener("hashchange", render);
   render();
 })();
