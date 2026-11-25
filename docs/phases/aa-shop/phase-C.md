@@ -15,7 +15,7 @@ Goal: the pages that run the day in the shop.
 
 ## Steps
 
-- [ ] **C-S1.** Jobs board: restyle Pipeline for shop clients with car cards (from deal fields and the auto body custom fields), drag and arrow-button move.
+- [x] **C-S1.** Jobs board: restyle Pipeline for shop clients with car cards (from deal fields and the auto body custom fields), drag and arrow-button move.
   - Test: browser test for both move methods; integration test that a move writes a stage change and no outbound row
   - Commit: "Add the shop jobs board"
   - Covers: C-1, C-2, C-6
