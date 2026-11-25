@@ -11,19 +11,19 @@
 
 ## Steps
 
-- [ ] **D-S1.** Weekly report shop variant from the data layer.
+- [x] **D-S1.** Weekly report shop variant from the data layer.
   - Test: integration test for each number; browser test
   - Commit: "Add the shop weekly report"
   - Covers: D-1
-- [ ] **D-S2.** Money in and out page.
+- [x] **D-S2.** Money in and out page.
   - Test: browser test
   - Commit: "Add shop money page"
   - Covers: D-2
-- [ ] **D-S3.** Regroup Documents under Money; show the weekly email control with its two-flag rule.
+- [x] **D-S3.** Regroup Documents under Money; show the weekly email control with its two-flag rule.
   - Test: unit test
   - Commit: "Group documents under Money"
   - Covers: D-3, D-4
-- [ ] **D-S4.** Phase pass at both widths, both themes, accessibility scan.
+- [x] **D-S4.** Phase pass at both widths, both themes, accessibility scan.
   - Test: `bun run verify:e2e`; screenshots reviewed
   - Commit: "Polish the money pages"
   - Covers: D-1 to D-4
