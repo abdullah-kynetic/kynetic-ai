@@ -5,14 +5,12 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { audit } from '@/server/audit';
-import { createContact, DuplicateContactError } from '@/server/contacts';
 import { normalizePhone } from '@/server/contacts/phone';
-import { listFieldDefs } from '@/server/custom-fields';
-import { createDeal } from '@/server/deals';
 import { AppError } from '@/server/errors';
 import { VIEW_AS_COOKIE } from '@/server/impersonation';
 import { requireModule } from '@/server/modules';
 import { loadShellContext } from '@/server/shell';
+import { createWalkIn } from '@/server/shop';
 import { withTenant } from '@/server/tenancy';
 
 export type WalkInState = {
@@ -75,35 +73,22 @@ export async function addWalkIn(_prev: WalkInState, form: FormData): Promise<Wal
   if (Object.keys(fieldErrors).length) return { fieldErrors, values };
 
   const [first, ...rest] = values.name.split(/\s+/);
-  let contactId: string;
-  try {
-    const contact = await createContact(ctx, {
-      firstName: first!,
-      lastName: rest.join(' ') || undefined,
-      phones: [phone!],
-      source: 'walk_in'
-    });
-    contactId = contact.id;
-  } catch (error) {
-    if (error instanceof DuplicateContactError)
-      return {
-        error: 'A customer with this phone number already exists. Open them from Leads.',
-        values
-      };
-    throw error;
-  }
-  const defs = new Set((await listFieldDefs(ctx, 'deal')).map((d) => d.key));
-  const custom: Record<string, string | number> = {};
-  if (defs.has('vehicle_year') && values.year) custom.vehicle_year = Number(values.year);
-  if (defs.has('vehicle_make') && values.make) custom.vehicle_make = values.make;
-  if (defs.has('vehicle_model') && values.model) custom.vehicle_model = values.model;
   const car = [values.year, values.make, values.model].filter(Boolean).join(' ');
-  await createDeal(ctx, {
-    title: car ? `Walk-in: ${car}` : `Walk-in: ${values.name}`,
-    contactId,
-    source: 'walk_in',
-    custom
+  const result = await createWalkIn(ctx, {
+    firstName: first!,
+    lastName: rest.join(' '),
+    phone: phone!,
+    year: values.year,
+    make: values.make,
+    model: values.model,
+    title: car ? `Walk-in: ${car}` : `Walk-in: ${values.name}`
   });
+  if ('duplicate' in result)
+    return {
+      error: 'A customer with this phone number already exists. Open them from Leads.',
+      values
+    };
+  const contactId = result.contactId;
   revalidatePath('/dashboard/shop/leads');
   redirect(`/dashboard/shop/leads/${contactId}`);
 }

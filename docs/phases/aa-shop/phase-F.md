@@ -13,27 +13,27 @@
 
 ## Steps
 
-- [ ] **F-S1.** Away mode page and its settings read and write (setting only).
+- [x] **F-S1.** Away mode page and its settings read and write (setting only).
   - Test: integration and browser tests
   - Commit: "Add shop away mode"
   - Covers: F-1
-- [ ] **F-S2.** Connections page.
+- [x] **F-S2.** Connections page.
   - Test: browser test
   - Commit: "Add shop connections"
   - Covers: F-2
-- [ ] **F-S3.** Regroup Settings and Help into Control; redirects and old URLs checked.
+- [x] **F-S3.** Regroup Settings and Help into Control; redirects and old URLs checked.
   - Test: browser test
   - Commit: "Group settings and help under Control"
   - Covers: F-3
-- [ ] **F-S4.** Whole-product pass: every page, both widths, both themes, module on and off, empty and sample-data states. Fix everything found, retest.
+- [x] **F-S4.** Whole-product pass: every page, both widths, both themes, module on and off, empty and sample-data states. Fix everything found, retest.
   - Test: `bun run verify:e2e`; screenshots reviewed
   - Commit: "Final polish for the shop pages"
   - Covers: F-4
-- [ ] **F-S5.** Outbound-off test across every shop action.
+- [x] **F-S5.** Outbound-off test across every shop action.
   - Test: integration test
   - Commit: "Test that shop actions never send"
   - Covers: F-5
-- [ ] **F-S6.** Write `FINAL-REPORT.md` from `../REPORT-TEMPLATE.md` and finish `LIVE-STEPS.md`.
+- [x] **F-S6.** Write `FINAL-REPORT.md` from `../REPORT-TEMPLATE.md` and finish `LIVE-STEPS.md`.
   - Test: file check
   - Commit: "Write the AA shop final report"
   - Covers: F-6
