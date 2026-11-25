@@ -19,3 +19,18 @@ export const day = (iso: string, timeZone = 'America/Chicago'): string =>
     day: 'numeric',
     timeZone
   });
+
+/** "Insurance · Allstate", "Out-of-pocket", or null when the job has no payment type yet. */
+export const paymentLabel = (job: {
+  paymentType: 'insurance' | 'out_of_pocket' | null;
+  insurer: string | null;
+}): string | null =>
+  job.paymentType === 'insurance'
+    ? job.insurer
+      ? `Insurance · ${job.insurer}`
+      : 'Insurance'
+    : job.paymentType === 'out_of_pocket'
+      ? 'Out-of-pocket'
+      : null;
+
+export const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
