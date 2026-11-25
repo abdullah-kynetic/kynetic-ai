@@ -17,7 +17,7 @@ Goal: the switch, the sidebar, the data layer, the shared UI pieces and the samp
 
 ## Steps
 
-- [ ] **A-S1.** Add `shop_ops` to `MODULE_KEYS`, the module catalog copy and the admin module toggle. One migration adds the `module_catalog` row. Route and nav gating use the existing `requireModule` and `module` fields.
+- [x] **A-S1.** Add `shop_ops` to `MODULE_KEYS`, the module catalog copy and the admin module toggle. One migration adds the `module_catalog` row. Route and nav gating use the existing `requireModule` and `module` fields.
   - Test: unit, integration gating test, migration test
   - Commit: "Add the shop operations module"
   - Covers: A-1, A-2

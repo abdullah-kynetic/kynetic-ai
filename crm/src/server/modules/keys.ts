@@ -8,7 +8,8 @@ export const MODULE_KEYS = [
   'reactivation',
   'opm',
   'followup_bundle',
-  'crm'
+  'crm',
+  'shop_ops'
 ] as const;
 export type ModuleKey = (typeof MODULE_KEYS)[number];
 

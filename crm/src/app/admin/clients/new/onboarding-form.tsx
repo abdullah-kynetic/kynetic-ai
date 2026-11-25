@@ -27,7 +27,8 @@ const MODULES = [
   ['missed_call_textback', 'Missed-call text-back'],
   ['reactivation', 'Lead reactivation'],
   ['followup_bundle', 'Follow-up bundle (quote follow-up, reactivation, text-back)'],
-  ['opm', 'Online presence']
+  ['opm', 'Online presence'],
+  ['shop_ops', 'Shop operations (repair shop screens)']
 ] as const;
 
 const INDUSTRIES = Object.entries(INDUSTRY_TEMPLATES) as [

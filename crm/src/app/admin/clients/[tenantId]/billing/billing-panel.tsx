@@ -25,7 +25,8 @@ const MODULE_LABELS: Record<string, string> = {
   reactivation: 'Reactivation (one-time)',
   opm: 'Operations manager (OPM)',
   followup_bundle: 'Follow-up bundle',
-  crm: 'CRM'
+  crm: 'CRM',
+  shop_ops: 'Shop operations'
 };
 
 const TIERS = [
