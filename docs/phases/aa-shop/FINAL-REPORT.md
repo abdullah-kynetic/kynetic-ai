@@ -10,8 +10,8 @@ Proof files are under `crm/tests/integration`, `crm/tests/unit` and `crm/tests/e
 |---|---|---|---|
 | A-1 | `shop_ops` module gates every shop route and read | shop-ops-module.test.ts, shop-foundation.spec.ts | pass |
 | A-2 | One idempotent migration (1097) adds the `shop_ops` catalog row | shop-ops-module.test.ts | pass |
-| A-3 | Auto body stages and quote follow-up enrollment on Quoted | shop-ops-module.test.ts and the industry template tests | pass |
-| A-4 | Auto body custom fields ensure idempotently | shop-ops-module.test.ts | pass |
+| A-3 | Auto body stages and quote follow-up enrollment on Quoted | auto-body-stages.test.ts, systems-templates.test.ts | pass |
+| A-4 | Auto body custom fields ensure idempotently | auto-body-fields.test.ts | pass |
 | A-5 | Shop client sees five sidebar groups; other clients' nav unchanged | shop-nav.test.ts | pass |
 | A-6 | Shop reads return real rows, empty results on an empty tenant, never cross tenants | shop-data-layer.test.ts (two tenants) | pass |
 | A-7 | Seeder is dry-run by default, tags `aa-shop-demo-v1`, remove deletes exactly that batch | shop-demo-seed.test.ts | pass |
