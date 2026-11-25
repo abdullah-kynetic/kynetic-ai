@@ -33,6 +33,7 @@
     "db:seed:demo-clients": "bun src/server/db/seed/demo-clients-cli.ts",
     "db:seed:shop-demo": "bun src/server/db/seed/shop-demo-cli.ts",
     "db:remove:shop-demo": "bun src/server/db/seed/shop-demo-remove-cli.ts",
+    "db:ensure:shop-fields": "bun src/server/db/seed/shop-fields-cli.ts",
     "db:remove:demo-clients": "bun src/server/db/seed/demo-clients-remove-cli.ts",
     "db:remove:tenants": "bun src/server/db/seed/prospects-remove-cli.ts",
     "monitor:check": "bun src/server/monitoring/cli.ts",
