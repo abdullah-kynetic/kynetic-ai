@@ -414,7 +414,10 @@ function DealCard({
           <div className='-mt-1 -mr-1 flex shrink-0 items-center'>
             <KanbanItemHandle
               aria-label={`Drag ${deal.title}. Space to lift, arrow keys to move, Space to drop, Escape to cancel.`}
-              className='text-muted-foreground hover:bg-accent hidden size-8 items-center justify-center rounded-md md:inline-flex'
+              className={cn(
+                'text-muted-foreground hover:bg-accent hidden items-center justify-center rounded-md md:inline-flex',
+                body ? 'size-11' : 'size-8'
+              )}
             >
               <IconGripVertical className='size-4' aria-hidden='true' />
             </KanbanItemHandle>
@@ -425,6 +428,7 @@ function DealCard({
                     type='button'
                     variant='ghost'
                     size='icon'
+                    className={body ? 'size-11' : undefined}
                     aria-label={`Move ${deal.title} to stage`}
                   />
                 }

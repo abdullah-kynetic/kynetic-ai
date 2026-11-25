@@ -112,6 +112,55 @@ async function target(page: Page, name: string) {
   await stage(page, name).scrollIntoViewIfNeeded();
 }
 
+test.describe('quotes, insurance, team', () => {
+  test('Quotes shows the close rate and the quotes out (C-3)', async ({ shopPage }) => {
+    await shopPage.goto('/dashboard/shop/quotes');
+    await expect(shopPage.getByTestId('close-rate')).toContainText('%');
+    await expect(shopPage.getByText('Won divided by won, lost and still out.')).toBeVisible();
+    const rows = shopPage.getByRole('list', { name: 'Quotes out' }).getByRole('listitem');
+    await expect(rows.first()).toContainText(/\$[\d,]+/);
+    await expect(rows.first()).toContainText(/old|today/);
+  });
+
+  test('Follow-ups tab shows each run with its steps and reply state (C-3)', async ({
+    shopPage
+  }) => {
+    await shopPage.goto('/dashboard/shop/quotes');
+    await shopPage.getByRole('link', { name: 'Follow-ups' }).click();
+    await expect(shopPage).toHaveURL(/tab=followups/);
+    const run = shopPage.getByTestId('follow-up-run').first();
+    await expect(run).toContainText('Waiting to go out');
+    await expect(run).toContainText(/Pending|Next|Sent/);
+    await expect(run).toContainText('No reply yet.');
+  });
+
+  test('Insurance lists cars waiting and a disabled supplement add (C-4)', async ({ shopPage }) => {
+    await shopPage.goto('/dashboard/shop/insurance');
+    await expect(shopPage.getByTestId('insurance-row').first()).toContainText(/Claim|claim number/);
+    await expect(shopPage.getByText('No supplements yet')).toBeVisible();
+    await expect(shopPage.getByRole('button', { name: 'Add supplement' })).toBeDisabled();
+  });
+
+  test('Team groups open jobs by owner and shows the paint queue (C-5)', async ({ shopPage }) => {
+    await shopPage.goto('/dashboard/shop/team');
+    await expect(shopPage.getByRole('heading', { name: 'Paint queue' })).toBeVisible();
+    await expect(shopPage.getByTestId('paint-queue').getByRole('listitem').first()).toBeVisible();
+    await expect(shopPage.getByTestId('team-owner').first()).toContainText('open job');
+  });
+
+  test('empty shop shows designed empty states', async ({ emptyShopPage }) => {
+    for (const [route, text] of [
+      ['jobs', 'No jobs yet'],
+      ['quotes', 'No quotes out right now'],
+      ['insurance', 'Nothing waiting on insurance'],
+      ['team', 'No open jobs yet']
+    ] as const) {
+      await emptyShopPage.goto(`/dashboard/shop/${route}`);
+      await expect(emptyShopPage.getByText(text)).toBeVisible();
+    }
+  });
+});
+
 test.describe('shop floor pages', () => {
   test('pass the page checks at both widths in both themes', async ({ shopPage }) => {
     test.setTimeout(300_000);

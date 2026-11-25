@@ -19,23 +19,23 @@ Goal: the pages that run the day in the shop.
   - Test: browser test for both move methods; integration test that a move writes a stage change and no outbound row
   - Commit: "Add the shop jobs board"
   - Covers: C-1, C-2, C-6
-- [ ] **C-S2.** Quotes list with close rate.
+- [x] **C-S2.** Quotes list with close rate.
   - Test: integration test for close rate; browser test
   - Commit: "Add shop quotes"
   - Covers: C-3
-- [ ] **C-S3.** Follow-ups tab on Quotes from automation runs and steps.
+- [x] **C-S3.** Follow-ups tab on Quotes from automation runs and steps.
   - Test: browser test with a seeded run
   - Commit: "Add follow-ups tab to quotes"
   - Covers: C-3
-- [ ] **C-S4.** Insurance page.
+- [x] **C-S4.** Insurance page.
   - Test: browser test
   - Commit: "Add the shop insurance page"
   - Covers: C-4
-- [ ] **C-S5.** Team page.
+- [x] **C-S5.** Team page.
   - Test: integration and browser tests
   - Commit: "Add the shop team page"
   - Covers: C-5
-- [ ] **C-S6.** Phase pass at both widths, both themes, accessibility scan.
+- [x] **C-S6.** Phase pass at both widths, both themes, accessibility scan.
   - Test: `bun run verify:e2e`; screenshots reviewed
   - Commit: "Polish the shop floor pages"
   - Covers: C-1 to C-6
