@@ -48,6 +48,12 @@ export function weekStart(now: Date, timeZone: string): Date {
   return new Date(zonedInstant(mondayLocal, timeZone));
 }
 
+/** Start of the local day in the given IANA zone, as a UTC instant. */
+export function dayStart(now: Date, timeZone: string): Date {
+  const d = localDate(now, timeZone);
+  return new Date(zonedInstant(Date.UTC(d.year, d.month - 1, d.day), timeZone));
+}
+
 /** Start of the month (the 1st, 00:00) in the given IANA zone, as a UTC instant. */
 export function monthStart(now: Date, timeZone: string): Date {
   const d = localDate(now, timeZone);
@@ -57,7 +63,12 @@ export function monthStart(now: Date, timeZone: string): Date {
 export type MoneySummary = {
   moneyIn: MoneyInRow[];
   moneyOut: MoneyOutRow[];
-  totals: { weekInCents: number; monthInCents: number; allInCents: number; outCents: number };
+  totals: {
+    weekInCents: number;
+    monthInCents: number;
+    allInCents: number;
+    outCents: number;
+  };
 };
 
 /**

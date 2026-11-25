@@ -1,4 +1,4 @@
-import { requireModule } from '@/server/modules';
+import { isModuleEnabled, requireModule } from '@/server/modules';
 import { StatTiles } from '@/components/layout/stat-tiles';
 import { CountChart, DailyTrend } from './metrics-charts';
 import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
@@ -9,6 +9,7 @@ import { loadSetupProgress } from '@/server/admin';
 import { loadShellContext } from '@/server/shell';
 import { getBusinessSettings } from '@/server/settings/business';
 import { cookies, headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 import {
   DASHBOARD_RANGE_NOTICE,
   getDashboardMetrics,
@@ -55,6 +56,8 @@ export default async function DashboardPage({
     ? { tenantId: shell.tenant.id, userId: shell.user.id, role: shell.role }
     : null;
   if (ctx) await requireModule(ctx, 'platform');
+  // Repair shops land on their own Today page. Every other client keeps this dashboard unchanged.
+  if (ctx && (await isModuleEnabled(ctx, 'shop_ops'))) redirect('/dashboard/shop/today');
   const timeZone = ctx ? (await getBusinessSettings(ctx)).timezone : 'UTC';
   // Dashboard defaults are intentionally request-time values in this server component.
   // eslint-disable-next-line react/purity

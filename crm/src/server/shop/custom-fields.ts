@@ -12,9 +12,24 @@ type FieldSpec = Omit<CreateFieldDefInput, 'entity' | 'options'> & {
 };
 
 export const AUTO_BODY_FIELDS = [
-  { key: 'vehicle_year', label: 'Vehicle year', type: 'number', showInTable: true },
-  { key: 'vehicle_make', label: 'Vehicle make', type: 'text', showInTable: true },
-  { key: 'vehicle_model', label: 'Vehicle model', type: 'text', showInTable: true },
+  {
+    key: 'vehicle_year',
+    label: 'Vehicle year',
+    type: 'number',
+    showInTable: true
+  },
+  {
+    key: 'vehicle_make',
+    label: 'Vehicle make',
+    type: 'text',
+    showInTable: true
+  },
+  {
+    key: 'vehicle_model',
+    label: 'Vehicle model',
+    type: 'text',
+    showInTable: true
+  },
   {
     key: 'payment_type',
     label: 'Payment type',
@@ -25,8 +40,18 @@ export const AUTO_BODY_FIELDS = [
   },
   { key: 'insurer', label: 'Insurer', type: 'text', filterable: true },
   { key: 'claim_number', label: 'Claim number', type: 'text' },
-  { key: 'estimate_amount', label: 'Estimate amount', type: 'money', showInTable: true },
-  { key: 'drop_off_date', label: 'Drop-off date', type: 'date', showInTable: true },
+  {
+    key: 'estimate_amount',
+    label: 'Estimate amount',
+    type: 'money',
+    showInTable: true
+  },
+  {
+    key: 'drop_off_date',
+    label: 'Drop-off date',
+    type: 'date',
+    showInTable: true
+  },
   { key: 'tech', label: 'Tech', type: 'text', filterable: true }
 ] as const satisfies readonly FieldSpec[];
 

@@ -14,23 +14,23 @@ Goal: the first group of pages, restyled or extended from what exists. All pages
 
 ## Steps
 
-- [ ] **B-S1.** Today: shop tiles, Needs you, Running without you. Shop variant of the dashboard behind the module check; non-shop dashboard untouched.
+- [x] **B-S1.** Today: shop tiles, Needs you, Running without you. Shop variant of the dashboard behind the module check; non-shop dashboard untouched.
   - Test: integration test for each tile query; browser test; screenshots
   - Commit: "Add the shop Today page"
   - Covers: B-1, B-5
-- [ ] **B-S2.** Leads: source chips, status, detail panel (summary, conversation), photos area (empty state until storage exists), Add walk-in.
+- [x] **B-S2.** Leads: source chips, status, detail panel (summary, conversation), photos area (empty state until storage exists), Add walk-in.
   - Test: browser test including creating a walk-in
   - Commit: "Add shop lead view and walk-in"
   - Covers: B-2, B-5
-- [ ] **B-S3.** Calls and texts: combined view over calls and messages, receptionist rules (read-only), Where is my car preview.
+- [x] **B-S3.** Calls and texts: combined view over calls and messages, receptionist rules (read-only), Where is my car preview.
   - Test: browser test
   - Commit: "Add shop calls and texts"
   - Covers: B-3, B-5
-- [ ] **B-S4.** Calendar: appointment types, reminder badges, readable on a phone.
+- [x] **B-S4.** Calendar: appointment types, reminder badges, readable on a phone.
   - Test: browser test at 390 px
   - Commit: "Add shop calendar view"
   - Covers: B-4, B-5
-- [ ] **B-S5.** Phase pass: all four pages at both widths in both themes, accessibility scan clean, empty states reviewed.
+- [x] **B-S5.** Phase pass: all four pages at both widths in both themes, accessibility scan clean, empty states reviewed.
   - Test: `bun run verify:e2e`; screenshots reviewed
   - Commit: "Polish the front desk pages"
   - Covers: B-1 to B-5
