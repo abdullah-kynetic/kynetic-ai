@@ -34,6 +34,8 @@ export type JobsStage = {
   totalCents: number;
 };
 
+export type InsuranceRow = JobCard & { waitingDays: number };
+
 export type QuoteRow = JobCard & { ageDays: number };
 
 export type CloseRate = {

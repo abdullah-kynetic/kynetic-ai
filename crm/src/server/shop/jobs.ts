@@ -11,7 +11,7 @@ import {
 } from '../db/schema';
 import type { TenantContextInput } from '../tenancy';
 import { shopRun, type ShopOpts } from './guard';
-import type { JobCard, JobsStage, PaymentType, Supplement, TeamOwner } from './types';
+import type { InsuranceRow, JobCard, JobsStage, PaymentType, Supplement, TeamOwner } from './types';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 /** Picked up and Lost columns only show the last 60 days, so the board stays a working view. */
@@ -186,12 +186,20 @@ export async function getJobsBoard(
 export async function getInsurance(
   ctx: TenantContextInput,
   opts: ShopOpts = {}
-): Promise<{ waiting: JobCard[]; supplements: Supplement[] }> {
+): Promise<{ waiting: InsuranceRow[]; supplements: Supplement[] }> {
   const now = opts.now ?? new Date();
   return shopRun(ctx, opts, async (tx) => {
     const { cards } = await loadJobCards(tx, now);
     return {
-      waiting: cards.filter((c) => c.stageName === 'Waiting on insurance'),
+      waiting: cards
+        .filter((c) => c.stageName === 'Waiting on insurance')
+        .map((c) => ({
+          ...c,
+          waitingDays: Math.max(
+            0,
+            Math.floor((now.getTime() - new Date(c.updatedAt).getTime()) / DAY_MS)
+          )
+        })),
       supplements: []
     };
   });
