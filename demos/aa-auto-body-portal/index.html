@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>AA Auto Body Shop · Shop Command Center (demo)</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand">AA Auto Body Shop<small>Shop Command Center</small></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="foot">Powered by Kynetic AI</div>
+  </aside>
+  <div class="main">
+    <header class="top"><h1 id="title">Today</h1><span class="tag">Demo data</span><span class="sp"></span><span class="date" id="date"></span></header>
+    <main class="page" id="view"></main>
+    <div class="mfoot">AA Auto Body Shop · Powered by Kynetic AI</div>
+  </div>
+</div>
+<div class="sheet" id="sheet"></div>
+<nav class="tabs" id="tabs"></nav>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Email preview">
+  <div class="box">
+    <div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">Bring back old customers</h2><span class="tag">Demo preview</span></div>
+    <p class="hint" style="margin-top:8px">This email goes to the 12 customers who haven't been in for a while, in Edwin's voice. Nothing is sent in this demo.</p>
+    <div class="mail"><div class="h">From: AA Auto Body Shop · Subject: It's been a while, how's the car?</div>
+      Hi {first name},<br><br>It's Edwin from AA Auto Body Shop. It's been a while since we worked on your {car}, and I wanted to check in. If you've got a new ding, scratch or anything that needs a look, just reply with a few photos and we'll get you an estimate the same day.<br><br>Thanks again for trusting us, and thank you for being part of the AA family.<br><br>Edwin<br>AA Auto Body Shop · 11310 Newkirk St, Suite B, Dallas
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" data-toast="Preview only. No email was sent (demo)" data-close>Send (demo)</button><button class="btn ghost" data-close>Close</button></div>
+  </div>
+</div>
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script>document.getElementById("date").textContent=window.DEMO.today;</script>
+</body>
+</html>
