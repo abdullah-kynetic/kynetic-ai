@@ -41,7 +41,7 @@ Goal: the switch, the sidebar, the data layer, the shared UI pieces and the samp
   - Test: integration test
   - Commit: "Add shop sample data seed and remove commands"
   - Covers: A-7
-- [ ] **A-S7.** Shared pieces: shop page container, stat tiles reuse, the "Demo data" banner, the disabled-action-with-note pattern ("Turns on when this is connected"), empty-state wrapper. Phone layout checked at 390 px.
+- [x] **A-S7.** Shared pieces: shop page container, stat tiles reuse, the "Demo data" banner, the disabled-action-with-note pattern ("Turns on when this is connected"), empty-state wrapper. Phone layout checked at 390 px.
   - Test: browser test, screenshots reviewed
   - Commit: "Add shared shop page components"
   - Covers: A-8
