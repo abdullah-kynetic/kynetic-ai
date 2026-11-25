@@ -110,6 +110,52 @@ const STAGE_PLAN = [
   'Lost'
 ] as const;
 
+/** Sample reviews with a drafted reply each; stored as `review_site` presence items with a JSON `type: review_reply` in the notes. */
+const REVIEWS = [
+  [
+    'Alicia M.',
+    5,
+    'Google',
+    'They matched the paint perfectly and kept me posted by text the whole time.',
+    'Thank you, Alicia! We are glad the color match came out right. See you next time, the AA team.'
+  ],
+  [
+    'Rob T.',
+    4,
+    'Google',
+    'Good work on my bumper. Took two days longer than quoted.',
+    'Thanks, Rob. Sorry about the extra two days, a part came in late. We will give you a heads-up sooner next time.'
+  ],
+  [
+    'Dana K.',
+    5,
+    'Yelp',
+    'Fair price and honest about what the insurance would cover.',
+    'We appreciate that, Dana. Being straight about the claim matters to us.'
+  ],
+  [
+    'Chris P.',
+    2,
+    'Google',
+    'Paint had a small run near the door handle when I picked it up.',
+    'Chris, we are sorry about the run. Please bring it back and we will fix it at no charge. Call us any time.'
+  ]
+] as const;
+
+const LISTINGS = [
+  ['profile', 'Google Business Profile', 'done'],
+  ['directory', 'Apple Business Connect', 'planned'],
+  ['review_site', 'Yelp', 'needs_attention'],
+  ['directory', 'Bing Places', 'planned'],
+  ['directory', 'AI assistants (ChatGPT, Gemini, Siri answers)', 'in_progress']
+] as const;
+
+const POSTS = [
+  'Before and after: a hail-damaged hood repainted in two days.',
+  'How a body shop works with your insurance, in four steps.',
+  'We will text you when your car is ready. No more calling to ask.'
+] as const;
+
 const phone = (n: number) => `+1214555${String(100 + n).padStart(4, '0')}`;
 
 type Plan = {
@@ -122,7 +168,18 @@ type Plan = {
 };
 const PLAN: Plan = { contacts: 24, deals: 24, calls: 18, messages: 12, appointments: 10, tasks: 6 };
 const plannedRows = () =>
-  PLAN.contacts + PLAN.deals * 2 + PLAN.calls + PLAN.messages + PLAN.appointments + PLAN.tasks + 9;
+  PLAN.contacts +
+  PLAN.deals * 2 +
+  PLAN.calls +
+  PLAN.messages +
+  PLAN.appointments +
+  PLAN.tasks +
+  9 +
+  4 +
+  5 +
+  5 +
+  3 +
+  4;
 
 async function ledger(
   sql: Sql,
@@ -253,6 +310,60 @@ async function seedTenant(sql: Sql, tenantId: string, now: Date): Promise<number
     people.push({ contactId, dealId, name: `${first} ${last}`, stage });
   }
 
+  // Reviews and listings: ratings, review requests for picked-up customers, listings and post drafts.
+  for (const [i, [source, capturedOn, reviewCount, rating]] of [
+    ['Google', daysAgo(30).toISOString().slice(0, 10), 205, 4.7],
+    ['Google', now.toISOString().slice(0, 10), 212, 4.8],
+    ['Yelp', now.toISOString().slice(0, 10), 38, 4.5],
+    ['Facebook', now.toISOString().slice(0, 10), 54, 4.6]
+  ].entries()) {
+    const snapshotId = id(`review-snapshot:${i}`);
+    await sql`insert into review_snapshots (id, tenant_id, source, captured_on, review_count, average_rating)
+      values (${snapshotId}, ${tenantId}, ${source as string}, ${capturedOn as string}, ${reviewCount as number}, ${rating as number})`;
+    await ledger(sql, tenantId, 'review_snapshots', snapshotId);
+    count++;
+  }
+  const pickedUp = people.filter((q) => q.stage === 'Picked up');
+  for (const [i, p] of pickedUp.entries()) {
+    const requestId = id(`review-request:${i}`);
+    const status = ['completed', 'completed', 'sent', 'completed', 'queued'][i % 5]!;
+    await sql`insert into review_requests (id, tenant_id, contact_id, channel, status, requested_at, completed_at)
+      values (${requestId}, ${tenantId}, ${p.contactId}, 'sms', ${status}, ${daysAgo(2 + i).toISOString()},
+        ${status === 'completed' ? daysAgo(1 + i).toISOString() : null})`;
+    await ledger(sql, tenantId, 'review_requests', requestId);
+    count++;
+  }
+  for (const [i, [kind, title, status]] of LISTINGS.entries()) {
+    const itemId = id(`listing:${i}`);
+    await sql`insert into presence_items (id, tenant_id, kind, title, status, notes)
+      values (${itemId}, ${tenantId}, ${kind}, ${title}, ${status}, 'Sample listing.')`;
+    await ledger(sql, tenantId, 'presence_items', itemId);
+    count++;
+  }
+  for (const [i, post] of POSTS.entries()) {
+    const itemId = id(`post:${i}`);
+    await sql`insert into presence_items (id, tenant_id, kind, title, status, notes)
+      values (${itemId}, ${tenantId}, 'social_post', ${`Post draft ${i + 1}`}, 'planned', ${post})`;
+    await ledger(sql, tenantId, 'presence_items', itemId);
+    count++;
+  }
+  for (const [i, [reviewer, rating, source, text, reply]] of REVIEWS.entries()) {
+    const itemId = id(`review-reply:${i}`);
+    const notes = JSON.stringify({
+      type: 'review_reply',
+      reviewer,
+      rating,
+      source,
+      text,
+      reply,
+      sample: true
+    });
+    await sql`insert into presence_items (id, tenant_id, kind, title, status, notes)
+      values (${itemId}, ${tenantId}, 'review_site', ${`Reply to ${reviewer}`}, 'planned', ${notes})`;
+    await ledger(sql, tenantId, 'presence_items', itemId);
+    count++;
+  }
+
   const OUTCOMES = ['booked', 'qualified', 'voicemail', 'no_answer', 'other'] as const;
   for (let i = 0; i < PLAN.calls; i++) {
     const p = people[i % people.length]!;
@@ -348,6 +459,9 @@ async function seedTenant(sql: Sql, tenantId: string, now: Date): Promise<number
 }
 
 const CHILD_FIRST = [
+  'review_requests',
+  'review_snapshots',
+  'presence_items',
   'automation_runs',
   'automation_steps',
   'automations',
