@@ -33,3 +33,5 @@ export {
   type CalendarDay,
   type CalendarItem
 } from './calendar';
+export * from './report';
+export * from './weekly-email';
