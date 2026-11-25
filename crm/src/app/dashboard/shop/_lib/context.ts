@@ -13,7 +13,11 @@ export async function shopContext(): Promise<TenantContextInput> {
   const shell = await loadShellContext(requestHeaders, cookieStore.get('tenant_id')?.value);
   if (!shell) redirect('/sign-in');
   if (!shell.tenant) forbidden();
-  const ctx = { tenantId: shell.tenant.id, userId: shell.user.id, role: shell.role };
+  const ctx = {
+    tenantId: shell.tenant.id,
+    userId: shell.user.id,
+    role: shell.role
+  };
   if (!(await isModuleEnabled(ctx, 'shop_ops'))) forbidden();
   return ctx;
 }

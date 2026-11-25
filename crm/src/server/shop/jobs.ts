@@ -212,7 +212,10 @@ export async function getTeam(
     const { stages, cards } = await loadJobCards(tx, now);
     const open = cards.filter((c) => OPEN(c, stages));
     const members = await tx
-      .select({ id: users.id, name: sql<string>`coalesce(${users.name}, ${users.email})` })
+      .select({
+        id: users.id,
+        name: sql<string>`coalesce(${users.name}, ${users.email})`
+      })
       .from(memberships)
       .innerJoin(users, eq(users.id, memberships.userId))
       .where(sql`${memberships.tenantId} = app_tenant_id()`)
@@ -233,6 +236,9 @@ export async function getTeam(
       openJobs: unassigned,
       totalCents: unassigned.reduce((n, j) => n + j.amountCents, 0)
     });
-    return { owners, paintQueue: open.filter((c) => c.stageName === 'In repair and paint') };
+    return {
+      owners,
+      paintQueue: open.filter((c) => c.stageName === 'In repair and paint')
+    };
   });
 }

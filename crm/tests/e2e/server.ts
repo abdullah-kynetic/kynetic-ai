@@ -174,6 +174,9 @@ async function main(): Promise<void> {
     await seedShopPipeline(db.admin, tenantId, []);
   }
   await seedShopDemo(db.admin, { slug: 'aa-auto-body-shop', apply: true });
+  await db.admin`insert into alex_configs (tenant_id, provider, agent_ref, greeting, questions, transfer_number_e164, paused)
+    values (${SHOP_TENANT}, 'elevenlabs', 'synthetic-e2e-shop-agent', 'Thanks for calling AA Auto Body.',
+      ${JSON.stringify(['What year, make and model is the car?', 'Is this an insurance claim?'])}::jsonb, '+15555550142', false)`;
 
   await mkdir('/tmp', { recursive: true });
   await db.admin`insert into users (id, email, name, kynetic_role) values
