@@ -25,7 +25,7 @@ Goal: the switch, the sidebar, the data layer, the shared UI pieces and the samp
   - Test: unit test; automation test that a deal moved into Quoted starts `quote_followup`
   - Commit: "Name the auto body quote stage Quoted"
   - Covers: A-3
-- [ ] **A-S3.** An idempotent function that ensures the auto body custom fields exist for a tenant. Not run live.
+- [x] **A-S3.** An idempotent function that ensures the auto body custom fields exist for a tenant. Not run live.
   - Test: integration test
   - Commit: "Add auto body custom fields helper"
   - Covers: A-4
