@@ -159,14 +159,14 @@ async function main(): Promise<void> {
 
   // AA shop track: one shop client with sample data, one with the module on and no data.
   for (const [tenantId, owner, slug, name] of [
-    [SHOP_TENANT, SHOP_OWNER, 'aa-auto-body-shop', 'AA Auto Body Shop'],
-    [EMPTY_SHOP_TENANT, EMPTY_SHOP_OWNER, 'empty-body-shop', 'Empty Body Shop']
+    [SHOP_TENANT, SHOP_OWNER, 'aa-auto-body-shop', 'E2E AA Auto Body Shop'],
+    [EMPTY_SHOP_TENANT, EMPTY_SHOP_OWNER, 'empty-body-shop', 'E2E Shop Without Data']
   ] as const) {
     await db.admin`insert into users (id, email, name, email_verified) values
       (${owner}, ${`${slug}-owner@example.test`}, ${`${name} Owner`}, true)`;
     await db.admin`insert into tenants (id, slug, name, plan, status, timezone)
-      values (${tenantId}, ${slug}, ${name}, 'founding', 'active', 'America/Chicago')`;
-    await db.admin`insert into client_lifecycle (tenant_id, stage, updated_by) values (${tenantId}, 'live', ${owner})`;
+      values (${tenantId}, ${slug}, ${name}, 'founding', 'onboarding', 'America/Chicago')`;
+    await db.admin`insert into client_lifecycle (tenant_id, stage, updated_by) values (${tenantId}, 'onboarding', ${owner})`;
     await db.admin`insert into memberships (tenant_id, user_id, role) values (${tenantId}, ${owner}, 'owner')`;
     await db.admin`insert into tenant_modules (tenant_id, module_key, enabled, level) values
       (${tenantId}, 'platform', true, ''), (${tenantId}, 'shop_ops', true, ''), (${tenantId}, 'crm', true, 'full')`;
