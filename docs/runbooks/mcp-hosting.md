@@ -26,6 +26,18 @@ Every step below is a live change and needs Abdullah's yes on that change.
 6. Check: `curl https://mcp.kyneticai.com/health` is 200; without the token `POST /mcp` is 401; with it,
    `tools/list` returns the tools.
 
+## Lock or rotate the admin key
+
+Allowed addresses are set only when a key is issued; an existing key cannot be edited. To lock the key to the VPS:
+
+1. Issue a new key at `/admin/api-keys` with allowed addresses `40.160.150.91`.
+2. `bash mcp/deploy/write-env.sh --key-only` replaces only the admin key in `mcp.env` and keeps the access token, so the
+   connector address does not change.
+3. `ssh kynetic-vps "sudo docker compose -f /opt/mcp-server/compose.yml up -d --force-recreate"` (the container reads the env file at start).
+4. Re-run a platform call (for example `list_platform_clients`). If it returns 401, the portal did not see the VPS address:
+   restore the old key (or issue one with no addresses) and investigate.
+5. Revoke the old key only after step 4 works.
+
 ## Connect Claude
 
 - Claude Code: `claude mcp add --transport http kynetic https://mcp.kyneticai.com/mcp --header "Authorization: Bearer <token>"`.
