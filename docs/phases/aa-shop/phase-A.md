@@ -29,7 +29,7 @@ Goal: the switch, the sidebar, the data layer, the shared UI pieces and the samp
   - Test: integration test
   - Commit: "Add auto body custom fields helper"
   - Covers: A-4
-- [ ] **A-S4.** Shop sidebar: when `shop_ops` is on, the client nav is the five groups from `README.md`. Group and item config lives beside `area-nav.ts`.
+- [x] **A-S4.** Shop sidebar: when `shop_ops` is on, the client nav is the five groups from `README.md`. Group and item config lives beside `area-nav.ts`.
   - Test: unit test comparing a non-shop tenant's nav to today's
   - Commit: "Show the shop sidebar for shop clients"
   - Covers: A-5
