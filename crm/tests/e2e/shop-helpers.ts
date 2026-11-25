@@ -75,6 +75,8 @@ export async function checkShopPage(page: Page, route: string, step: string): Pr
           if (style.display === 'inline' && el.tagName === 'A') continue;
           const r = el.getBoundingClientRect();
           if (r.width === 0 || r.height === 0) continue;
+          // Native inputs a custom control hides at 1 px are not the thing a person taps.
+          if (r.width <= 2 && r.height <= 2) continue;
           if (r.height < 43.5 && r.width < 43.5)
             out.push(
               `${el.tagName.toLowerCase()} "${(el.textContent ?? '').trim().slice(0, 24)}" ${Math.round(r.width)}x${Math.round(r.height)}`
