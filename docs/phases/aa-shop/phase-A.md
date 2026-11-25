@@ -37,7 +37,7 @@ Goal: the switch, the sidebar, the data layer, the shared UI pieces and the samp
   - Test: integration test with two tenants
   - Commit: "Add the shop data layer"
   - Covers: A-6
-- [ ] **A-S6.** Sample data seeder and remover, modeled on `demo-clients.ts`: `bun run db:seed:shop-demo` (dry-run unless `--apply`) and `bun run db:remove:shop-demo`. Realistic Dallas names, fake 555 numbers, tickets $200 to $6K out-of-pocket and $1.2K to $22K insurance, tagged `aa-shop-demo-v1`. Never run against a live database by this track.
+- [x] **A-S6.** Sample data seeder and remover, modeled on `demo-clients.ts`: `bun run db:seed:shop-demo` (dry-run unless `--apply`) and `bun run db:remove:shop-demo`. Realistic Dallas names, fake 555 numbers, tickets $200 to $6K out-of-pocket and $1.2K to $22K insurance, tagged `aa-shop-demo-v1`. Never run against a live database by this track.
   - Test: integration test
   - Commit: "Add shop sample data seed and remove commands"
   - Covers: A-7
