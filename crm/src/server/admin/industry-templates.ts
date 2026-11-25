@@ -58,7 +58,7 @@ export const WINDOWS_DOORS_STAGES = [
 
 export const AUTO_BODY_STAGES = [
   { name: 'New lead', probability: 5, isWon: false, isLost: false },
-  { name: 'Estimate', probability: 25, isWon: false, isLost: false },
+  { name: 'Quoted', probability: 25, isWon: false, isLost: false },
   {
     name: 'Waiting on insurance',
     probability: 45,

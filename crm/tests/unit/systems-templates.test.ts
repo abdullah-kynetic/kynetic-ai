@@ -142,6 +142,18 @@ describe('template library content', () => {
       stages: AUTO_BODY_STAGES,
       stagesAreEditableDefaults: true
     });
+    expect(AUTO_BODY_STAGES.map((stage) => stage.name)).toEqual([
+      'New lead',
+      'Quoted',
+      'Waiting on insurance',
+      'Parts ordered',
+      'In repair and paint',
+      'Ready for pickup',
+      'Picked up',
+      'Lost'
+    ]);
+    // The quote follow-up worker matches the stage name 'quoted', case-insensitively.
+    expect(AUTO_BODY_STAGES[1]!.name.toLowerCase()).toBe('quoted');
     expect(AUTO_BODY_STAGES).toHaveLength(REMODELING_STAGES.length);
     expect(AUTO_BODY_STAGES.at(-2)).toMatchObject({
       name: 'Picked up',

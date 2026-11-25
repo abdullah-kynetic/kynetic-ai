@@ -21,7 +21,7 @@ Goal: the switch, the sidebar, the data layer, the shared UI pieces and the samp
   - Test: unit, integration gating test, migration test
   - Commit: "Add the shop operations module"
   - Covers: A-1, A-2
-- [ ] **A-S2.** Auto body industry: rename stages as in A-3 (the stage must be named exactly `Quoted`; `crm/src/server/automations/worker.ts` matches that name). Update `AUTO_BODY_STAGES` and its tests.
+- [x] **A-S2.** Auto body industry: rename stages as in A-3 (the stage must be named exactly `Quoted`; `crm/src/server/automations/worker.ts` matches that name). Update `AUTO_BODY_STAGES` and its tests.
   - Test: unit test; automation test that a deal moved into Quoted starts `quote_followup`
   - Commit: "Name the auto body quote stage Quoted"
   - Covers: A-3
