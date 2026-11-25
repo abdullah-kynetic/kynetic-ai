@@ -24,9 +24,9 @@ describe('workspace model', () => {
     expect(list.map((w) => w.name)).toEqual(['Alpha Pools', 'Demo One', 'Zeta Roofing']);
   });
 
-  it('only lets ready and demo portals be viewed as the client', () => {
+  it('lets every client except suspended ones be viewed as the client', () => {
     expect(Object.fromEntries(list.map((w) => [w.name, w.canView]))).toEqual({
-      'Alpha Pools': false,
+      'Alpha Pools': true,
       'Demo One': true,
       'Zeta Roofing': true
     });

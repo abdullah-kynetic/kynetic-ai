@@ -18,6 +18,7 @@ export * from './operations-safety';
 export * from './demo-seed';
 export * from './client-growth';
 export * from './client-lifecycle';
+export * from './client-build-systems';
 export * from './archive';
 export * from './worker-heartbeat';
 export * from './ai-features';

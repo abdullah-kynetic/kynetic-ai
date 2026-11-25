@@ -10,7 +10,8 @@ export default async function ClientsBoardPage() {
   const { user, rows } = await loadClientRows();
   const count = (stage: string) => rows.filter((r) => r.stage === stage).length;
   const stats = [
-    { label: 'Onboarding', value: count('onboarding') },
+    { label: 'Building', value: count('building') },
+    { label: 'Testing', value: count('testing') },
     { label: 'Live', value: count('live') },
     { label: 'At risk', value: count('at_risk') },
     { label: 'Churned', value: count('churned') }

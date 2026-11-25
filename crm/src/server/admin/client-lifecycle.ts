@@ -4,7 +4,14 @@ import { audit } from '../audit';
 import { AppError } from '../errors';
 import type { Db } from '../db/client';
 
-export const LIFECYCLE_STAGES = ['onboarding', 'live', 'at_risk', 'churned', 'demo'] as const;
+export const LIFECYCLE_STAGES = [
+  'building',
+  'testing',
+  'live',
+  'at_risk',
+  'churned',
+  'demo'
+] as const;
 export type LifecycleStage = (typeof LIFECYCLE_STAGES)[number];
 
 export function isLifecycleStage(value: string): value is LifecycleStage {
@@ -23,7 +30,7 @@ export function defaultLifecycleStage(input: {
 }): LifecycleStage {
   if (input.isDemo) return 'live';
   if (input.status === 'offboarded') return 'churned';
-  if (input.status === 'onboarding') return 'onboarding';
+  if (input.status === 'onboarding') return 'building';
   return input.healthTone === 'red' ? 'at_risk' : 'live';
 }
 

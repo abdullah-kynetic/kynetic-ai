@@ -166,7 +166,7 @@ async function main(): Promise<void> {
       (${owner}, ${`${slug}-owner@example.test`}, ${`${name} Owner`}, true)`;
     await db.admin`insert into tenants (id, slug, name, plan, status, timezone)
       values (${tenantId}, ${slug}, ${name}, 'founding', 'onboarding', 'America/Chicago')`;
-    await db.admin`insert into client_lifecycle (tenant_id, stage, updated_by) values (${tenantId}, 'onboarding', ${owner})`;
+    await db.admin`insert into client_lifecycle (tenant_id, stage, updated_by) values (${tenantId}, 'building', ${owner})`;
     await db.admin`insert into memberships (tenant_id, user_id, role) values (${tenantId}, ${owner}, 'owner')`;
     await db.admin`insert into tenant_modules (tenant_id, module_key, enabled, level) values
       (${tenantId}, 'platform', true, ''), (${tenantId}, 'shop_ops', true, ''), (${tenantId}, 'crm', true, 'full')`;

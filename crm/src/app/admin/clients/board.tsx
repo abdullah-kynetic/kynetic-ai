@@ -14,7 +14,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { moveClientStageAction } from './actions';
 
-export type ClientStageId = 'onboarding' | 'live' | 'at_risk' | 'churned' | 'demo';
+export type ClientStageId = 'building' | 'testing' | 'live' | 'at_risk' | 'churned' | 'demo';
 export type ClientCard = {
   id: string;
   name: string;
@@ -25,7 +25,8 @@ export type ClientCard = {
 };
 
 export const CLIENT_STAGES: { id: ClientStageId; name: string }[] = [
-  { id: 'onboarding', name: 'Onboarding' },
+  { id: 'building', name: 'Building' },
+  { id: 'testing', name: 'Testing' },
   { id: 'live', name: 'Live' },
   { id: 'at_risk', name: 'At risk' },
   { id: 'churned', name: 'Churned' },

@@ -5,7 +5,7 @@ import { PortalPageContainer as PageContainer } from '@/components/layout/page-c
 import { SetupProgressCard } from '@/components/onboarding/setup-progress-card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { loadSetupProgress } from '@/server/admin';
+import { loadClientBuildState, loadSetupProgress } from '@/server/admin';
 import { loadShellContext } from '@/server/shell';
 import { getBusinessSettings } from '@/server/settings/business';
 import { cookies, headers } from 'next/headers';
@@ -57,6 +57,7 @@ export default async function DashboardPage({
     : null;
   if (ctx) await requireModule(ctx, 'platform');
   // Repair shops land on their own Today page. Every other client keeps this dashboard unchanged.
+  if (ctx && (await loadClientBuildState(ctx))) redirect('/dashboard/build');
   if (ctx && (await isModuleEnabled(ctx, 'shop_ops'))) redirect('/dashboard/shop/today');
   const timeZone = ctx ? (await getBusinessSettings(ctx)).timezone : 'UTC';
   // Dashboard defaults are intentionally request-time values in this server component.
@@ -173,7 +174,10 @@ export default async function DashboardPage({
             name='Lead sources'
             ranked
             empty='No leads in this range.'
-            rows={metrics.sources.map((source) => ({ label: source.source, value: source.leads }))}
+            rows={metrics.sources.map((source) => ({
+              label: source.source,
+              value: source.leads
+            }))}
           />
           <div className='bg-card rounded-[var(--radius-card)] border p-4 sm:p-5 lg:col-span-2'>
             <h2 className='text-base font-medium'>Recent activity</h2>

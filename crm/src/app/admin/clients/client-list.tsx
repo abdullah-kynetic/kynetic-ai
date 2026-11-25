@@ -21,14 +21,16 @@ const healthPill: Record<'green' | 'yellow' | 'red', { tone: Tone; word: string 
   red: { tone: 'alert', word: 'At risk' }
 };
 const stageWord: Record<string, string> = {
-  onboarding: 'Onboarding',
+  building: 'Building',
+  testing: 'Testing',
   live: 'Live',
   at_risk: 'At risk',
   churned: 'Churned',
   demo: 'Demo'
 };
 const stageTone: Record<string, Tone> = {
-  onboarding: 'attention',
+  building: 'attention',
+  testing: 'attention',
   live: 'gain',
   at_risk: 'alert',
   churned: 'neutral',

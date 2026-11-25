@@ -83,6 +83,7 @@ export async function proxy(request: NextRequest) {
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-nonce', nonce);
+  requestHeaders.set('x-pathname', path);
   requestHeaders.set('Content-Security-Policy', headers['Content-Security-Policy']);
 
   const response = NextResponse.next({ request: { headers: requestHeaders } });
