@@ -7,7 +7,10 @@ export const usd = (cents: number) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(cents / 100);
 
 const monthName = (month: string) =>
-  new Date(`${month}-01T12:00:00Z`).toLocaleString('en-US', { month: 'short', timeZone: 'UTC' });
+  new Date(`${month}-01T12:00:00Z`).toLocaleString('en-US', {
+    month: 'short',
+    timeZone: 'UTC'
+  });
 
 /** What this month's revenue compares to, in words: `+$1,200 vs Oct`. */
 function vsLastMonth(trend: MoneyOverview['trend']) {
@@ -70,7 +73,7 @@ export function MoneyDashboard({ data }: { data: MoneyOverview }) {
       )}
       <section
         aria-label='Six-month revenue trend'
-        className='bg-card rounded-[var(--radius-card)] border p-5'
+        className='bg-card rounded-[var(--radius-card)] border p-4 sm:p-5'
       >
         <h2 className='mb-3 font-medium'>Revenue and expenses, last six months</h2>
         <FinanceMonthsChart months={data.trend} />
@@ -78,7 +81,7 @@ export function MoneyDashboard({ data }: { data: MoneyOverview }) {
       <div className='grid gap-6 lg:grid-cols-2'>
         <section
           aria-label='Outstanding invoices'
-          className='bg-card space-y-3 rounded-[var(--radius-card)] border p-5'
+          className='bg-card space-y-3 rounded-[var(--radius-card)] border p-4 sm:p-5'
         >
           <h2 className='font-medium'>Outstanding</h2>
           <dl className='divide-y text-sm'>
@@ -99,7 +102,7 @@ export function MoneyDashboard({ data }: { data: MoneyOverview }) {
         </section>
         <section
           aria-label='Recurring revenue by client'
-          className='bg-card space-y-3 rounded-[var(--radius-card)] border p-5'
+          className='bg-card space-y-3 rounded-[var(--radius-card)] border p-4 sm:p-5'
         >
           <h2 className='font-medium'>Recurring revenue</h2>
           {data.recurringClients.length === 0 ? (

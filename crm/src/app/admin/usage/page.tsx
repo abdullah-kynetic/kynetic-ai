@@ -93,7 +93,7 @@ export default async function UsagePage({
       />
       <dl className=' grid gap-3 sm:grid-cols-2 lg:grid-cols-4' aria-label={`Totals for ${month}`}>
         {stats.map(([label, value]) => (
-          <div key={label} className='bg-card rounded-[var(--radius-card)] border p-5'>
+          <div key={label} className='bg-card rounded-[var(--radius-card)] border p-4 sm:p-5'>
             <dt className='text-muted-foreground text-sm'>{label}</dt>
             <dd className='mt-1 text-2xl font-medium tabular-nums'>{value}</dd>
           </div>
@@ -126,7 +126,7 @@ export default async function UsagePage({
       {!empty && (
         <section
           aria-label='Cost versus recorded fee'
-          className='bg-card  rounded-[var(--radius-card)] border p-5'
+          className='bg-card  rounded-[var(--radius-card)] border p-4 sm:p-5'
         >
           <h2 className='mb-3 font-medium'>Cost vs fee by client</h2>
           <CostVsFeeChart

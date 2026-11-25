@@ -114,7 +114,7 @@ export default async function ClientOverviewPage({
         )}
       </nav>
       <div className='grid gap-4 lg:grid-cols-2 [&>section]:min-w-0'>
-        <section className='bg-card rounded-[var(--radius-card)] border p-6'>
+        <section className='bg-card rounded-[var(--radius-card)] border p-4 sm:p-5'>
           <h2 className='text-lg font-medium'>Profile</h2>
           <dl className='mt-3 space-y-2 text-sm'>
             <div>
@@ -157,7 +157,7 @@ export default async function ClientOverviewPage({
           </dl>
         </section>
 
-        <section className='bg-card rounded-[var(--radius-card)] border p-6'>
+        <section className='bg-card rounded-[var(--radius-card)] border p-4 sm:p-5'>
           <h2 className='text-lg font-medium'>Booking guarantee</h2>
           <p className='text-muted-foreground mt-1 text-sm'>
             20% more booked appointments than last month, measured over 30 days.
@@ -194,7 +194,7 @@ export default async function ClientOverviewPage({
           )}
         </section>
 
-        <section className='bg-card rounded-[var(--radius-card)] border p-6'>
+        <section className='bg-card rounded-[var(--radius-card)] border p-4 sm:p-5'>
           <h2 className='text-lg font-medium'>Systems</h2>
           {active.length === 0 ? (
             <p className='text-muted-foreground mt-3 text-sm'>No systems are on yet.</p>
@@ -212,7 +212,7 @@ export default async function ClientOverviewPage({
           )}
         </section>
 
-        <section className='bg-card rounded-[var(--radius-card)] border p-6'>
+        <section className='bg-card rounded-[var(--radius-card)] border p-4 sm:p-5'>
           <h2 className='text-lg font-medium'>Pipeline</h2>
           {overview.stages.length === 0 ? (
             <p className='text-muted-foreground mt-3 text-sm'>No pipeline yet.</p>
@@ -222,7 +222,7 @@ export default async function ClientOverviewPage({
         </section>
 
         {access.role === 'admin' && (
-          <section className='bg-card rounded-[var(--radius-card)] border p-6'>
+          <section className='bg-card rounded-[var(--radius-card)] border p-4 sm:p-5'>
             <h2 className='text-lg font-medium'>Spend cap</h2>
             <p className='text-muted-foreground mt-1 text-sm'>
               Month-to-date provider cost. Blank means no cap. This does not change the monthly fee.
@@ -279,7 +279,7 @@ export default async function ClientOverviewPage({
           </section>
         )}
 
-        <section className='bg-card rounded-[var(--radius-card)] border p-6 lg:col-span-2'>
+        <section className='bg-card rounded-[var(--radius-card)] border p-4 sm:p-5 lg:col-span-2'>
           <h2 className='text-lg font-medium'>Recent activity</h2>
           {overview.activity.length === 0 ? (
             <p className='text-muted-foreground mt-3 text-sm'>No activity yet.</p>

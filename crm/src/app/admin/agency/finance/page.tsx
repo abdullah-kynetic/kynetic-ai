@@ -72,12 +72,16 @@ export default async function FinancePage({
             value: usd(data.summary.expenseCents),
             note: `${data.summary.month}`
           },
-          { label: 'Net', value: usd(data.summary.netCents), note: `${data.summary.month}` }
+          {
+            label: 'Net',
+            value: usd(data.summary.netCents),
+            note: `${data.summary.month}`
+          }
         ]}
       />
       <section
         aria-label='Monthly revenue versus expenses'
-        className='bg-card mb-6 rounded-[var(--radius-card)] border p-5'
+        className='bg-card mb-6 rounded-[var(--radius-card)] border p-4 sm:p-5'
       >
         <h2 className='mb-3 font-medium'>Revenue vs expenses by month</h2>
         <FinanceMonthsChart months={data.months} />
@@ -227,7 +231,10 @@ export default async function FinancePage({
             />
           )}
           {data.referrals.map((referral) => (
-            <article key={referral.id} className='bg-card rounded-[var(--radius-card)] border p-5'>
+            <article
+              key={referral.id}
+              className='bg-card rounded-[var(--radius-card)] border p-4 sm:p-5'
+            >
               <p>
                 {referral.referrerName}
                 {referral.contactName ? ` · ${referral.contactName}` : ''} · {referral.status}

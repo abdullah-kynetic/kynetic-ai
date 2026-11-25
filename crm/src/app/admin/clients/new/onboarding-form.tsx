@@ -82,7 +82,7 @@ export function OnboardingForm({ templates = [] }: { templates?: { id: string; n
   return (
     <form
       action={action}
-      className='bg-card grid max-w-3xl gap-6 rounded-[var(--radius-card)] border p-5 sm:p-6'
+      className='bg-card grid max-w-3xl gap-6 rounded-[var(--radius-card)] border p-4 sm:p-5'
     >
       {state.status === 'error' && (
         <p role='alert' className='text-destructive text-sm'>

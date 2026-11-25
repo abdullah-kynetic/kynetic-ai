@@ -22,7 +22,7 @@ export function AuthFrame({
       </div>
       <div className='w-full max-w-sm'>
         <Wordmark className='mb-8' />
-        <div className='bg-card rounded-[var(--radius-card)] border p-6 sm:p-8'>
+        <div className='bg-card rounded-[var(--radius-card)] border p-5 sm:p-8'>
           <h1 className='text-[28px]/[1.15] font-medium tracking-[-0.01em] sm:text-[32px]/[1.1] sm:tracking-[-0.015em]'>
             {title}
           </h1>

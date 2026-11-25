@@ -35,7 +35,11 @@ export function PreferencesForm({ initial }: { initial: Pref[] }) {
         body: JSON.stringify({ preferences: prefs })
       });
       const body = await res.json().catch(() => ({}));
-      if (!res.ok) return setStatus({ ok: false, text: body.error?.message ?? 'Could not save.' });
+      if (!res.ok)
+        return setStatus({
+          ok: false,
+          text: body.error?.message ?? 'Could not save.'
+        });
       setPrefs(body.preferences);
       setSaved(body.preferences);
       setStatus({ ok: true, text: 'Preferences saved.' });
@@ -56,7 +60,7 @@ export function PreferencesForm({ initial }: { initial: Pref[] }) {
           <strong>Preferences were not saved.</strong> {status.text}
         </div>
       )}
-      <fieldset className='bg-card space-y-1 rounded-[var(--radius-card)] border p-4 sm:p-6'>
+      <fieldset className='bg-card space-y-1 rounded-[var(--radius-card)] border p-4 sm:p-5'>
         <legend className='sr-only'>Email me about</legend>
         <p className='pb-2 font-medium' aria-hidden='true'>
           Email me about

@@ -56,7 +56,9 @@
   width: 100%;
   max-width: 80rem;
   margin-inline: auto;
-  padding: 2rem 1.5rem 3rem;
+  /* The area layout already sets the page's side padding; adding more here pushed every
+     agency page 24px in from the headings and tabs above it. */
+  padding: 0 0 3rem;
   min-width: 0;
 }
 .agency-page-heading {
@@ -64,7 +66,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 .agency-page-heading > header {
   flex: 1;
@@ -106,6 +108,9 @@
 }
 .agency-page :is(form, section, article, aside, fieldset, li) {
   min-width: 0;
+}
+.agency-page :is(label, [data-slot='label']) + :is(input, textarea, select) {
+  margin-top: 0.5rem;
 }
 .agency-page label {
   display: grid;
@@ -189,7 +194,7 @@
   gap: 1.25rem;
   max-width: none;
   margin: 0;
-  padding: 1.5rem;
+  padding: 1.25rem;
   border: 1px solid var(--border);
   border-radius: 1.25rem;
   background: var(--card);
@@ -333,7 +338,7 @@
   height: 100%;
 }
 .agency-metrics {
-  padding: 1.5rem;
+  padding: 1.25rem;
   border: 1px solid var(--border);
   border-radius: 1.25rem;
   background: var(--card);
@@ -385,7 +390,7 @@
 }
 .agency-panel {
   margin-block: 1.5rem;
-  padding: 1.5rem;
+  padding: 1.25rem;
   border: 1px solid var(--border);
   border-radius: 1rem;
   background: var(--card);

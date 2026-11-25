@@ -48,7 +48,14 @@ export function WorkspaceSwitcher({
   const rows = React.useMemo(
     () => [
       ...(showAgency
-        ? [{ id: AGENCY_ID, name: agencyName, detail: agencyDetail, canView: false }]
+        ? [
+            {
+              id: AGENCY_ID,
+              name: agencyName,
+              detail: agencyDetail,
+              canView: false
+            }
+          ]
         : []),
       ...matches
     ],
@@ -123,7 +130,7 @@ export function WorkspaceSwitcher({
           <label htmlFor={`${listId}-search`} className='sr-only'>
             Search workspaces
           </label>
-          <div className='bg-secondary flex items-center gap-2 rounded-md px-2.5'>
+          <div className='bg-secondary focus-within:ring-ring flex items-center gap-2.5 rounded-md px-3 focus-within:ring-2'>
             <Icons.search aria-hidden className='text-muted-foreground size-4 shrink-0' />
             <input
               id={`${listId}-search`}
@@ -137,7 +144,7 @@ export function WorkspaceSwitcher({
               value={query}
               onChange={(e) => changeQuery(e.target.value)}
               onKeyDown={onKeyDown}
-              className='focus-visible:ring-ring placeholder:text-muted-foreground h-9 w-full rounded-md bg-transparent text-sm outline-none focus-visible:ring-2'
+              className='placeholder:text-muted-foreground h-9 w-full bg-transparent text-sm outline-none'
             />
           </div>
         </div>
