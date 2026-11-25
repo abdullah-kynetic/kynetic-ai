@@ -118,9 +118,21 @@ export type CustomerRow = {
   reviewStatus: 'not_requested' | 'requested' | 'reviewed';
 };
 
+export type AwayAlerts = {
+  /** Tell me right away about a call marked urgent. */
+  urgentCalls: boolean;
+  /** Tell me when a customer replies to a quote. */
+  quoteReplies: boolean;
+  /** Tell me when a car is ready and nobody has picked it up. */
+  pickupsWaiting: boolean;
+};
+
+/** Away mode is a saved setting only. Nothing in the portal acts on it yet. */
 export type AwaySettings = {
   enabled: boolean;
+  /** First and last day away, as YYYY-MM-DD in the shop's time zone. */
+  from: string | null;
   until: string | null;
-  greeting: string | null;
-  receptionistPaused: boolean;
+  dailySummary: boolean;
+  alerts: AwayAlerts;
 };

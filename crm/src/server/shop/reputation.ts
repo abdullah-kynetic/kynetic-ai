@@ -4,6 +4,7 @@ import { contacts, presenceItems, reviewRequests, reviewSnapshots } from '../db/
 import { AppError } from '../errors';
 import { weightedRating } from '../reviews';
 import type { TenantContextInput } from '../tenancy';
+import { AWAY_ITEM_TITLE } from './away';
 import { shopRun, type ShopOpts } from './guard';
 
 /**
@@ -192,7 +193,7 @@ export async function getGetFound(
     return {
       listings: items
         .filter((i) => ['profile', 'review_site', 'directory'].includes(i.kind))
-        .filter((i) => !parseReply(i))
+        .filter((i) => !parseReply(i) && i.title !== AWAY_ITEM_TITLE)
         .map((i) => ({ id: i.id, title: i.title, kind: i.kind, status: i.status, notes: i.notes })),
       posts: items
         .filter((i) => i.kind === 'social_post')

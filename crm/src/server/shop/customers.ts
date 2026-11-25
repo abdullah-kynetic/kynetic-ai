@@ -9,7 +9,7 @@ import {
 } from '../db/schema';
 import type { TenantContextInput } from '../tenancy';
 import { shopRun, type ShopOpts } from './guard';
-import type { AwaySettings, CustomerRow } from './types';
+import type { CustomerRow } from './types';
 
 /** Customers: contacts with job count, what they have paid (picked-up jobs) and review status. */
 export async function getCustomers(
@@ -121,19 +121,6 @@ export async function getCustomers(
       })
     };
   });
-}
-
-/** Away mode has no settings table yet. It always reads as off. */
-export async function getAwaySettings(
-  ctx: TenantContextInput,
-  opts: ShopOpts = {}
-): Promise<AwaySettings> {
-  return shopRun(ctx, opts, async () => ({
-    enabled: false,
-    until: null,
-    greeting: null,
-    receptionistPaused: false
-  }));
 }
 
 /**
