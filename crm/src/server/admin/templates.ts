@@ -77,6 +77,15 @@ export async function applyStageDefaults(
   if (current.length === 0) return 'missing';
   const plan = planStageApply(current, templateStages);
   if (plan.status !== 'rename') return plan.status;
+  // Stage names are unique per pipeline, and a template can move a name that the standard stages
+  // already use to a different position (auto body puts 'Quoted' second; the standard stages have
+  // it sixth). Park every renamed row on a temporary name first, then write the final names.
+  for (const update of plan.updates) {
+    await tx
+      .update(pipelineStages)
+      .set({ name: `__renaming_${update.id}` })
+      .where(eq(pipelineStages.id, update.id));
+  }
   for (const update of plan.updates) {
     await tx
       .update(pipelineStages)

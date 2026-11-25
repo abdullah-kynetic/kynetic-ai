@@ -9,6 +9,7 @@ import {
 import { MODULE_KEYS } from '../../src/server/modules/keys';
 import {
   INDUSTRY_TEMPLATES,
+  AUTO_BODY_STAGES,
   POOL_BUILDER_STAGES,
   REMODELING_STAGES,
   WINDOWS_DOORS_STAGES
@@ -20,7 +21,10 @@ import {
 } from '../../src/server/admin/template-plan';
 import { onboardTenantSchema } from '../../src/server/admin';
 
-const defaults = defaultStageSpecs().map((stage, index) => ({ ...stage, id: `s${index}` }));
+const defaults = defaultStageSpecs().map((stage, index) => ({
+  ...stage,
+  id: `s${index}`
+}));
 
 describe('30-day booking guarantee', () => {
   test('targets 20% more than the baseline over 30 days', () => {
@@ -34,7 +38,14 @@ describe('30-day booking guarantee', () => {
         booked: 6,
         today: new Date('2026-01-16T00:00:00Z')
       })
-    ).toEqual({ baseline: 10, target: 12, booked: 6, percent: 50, daysLeft: 15, windowDays: 30 });
+    ).toEqual({
+      baseline: 10,
+      target: 12,
+      booked: 6,
+      percent: 50,
+      daysLeft: 15,
+      windowDays: 30
+    });
   });
 
   test('hides the tracker until a baseline and a start date exist', () => {
@@ -112,9 +123,48 @@ describe('template library content', () => {
     });
     for (const stages of [POOL_BUILDER_STAGES, WINDOWS_DOORS_STAGES]) {
       expect(stages).toHaveLength(REMODELING_STAGES.length);
-      expect(stages.at(-2)).toMatchObject({ name: 'Won', isWon: true, isLost: false });
-      expect(stages.at(-1)).toMatchObject({ name: 'Lost', isWon: false, isLost: true });
+      expect(stages.at(-2)).toMatchObject({
+        name: 'Won',
+        isWon: true,
+        isLost: false
+      });
+      expect(stages.at(-1)).toMatchObject({
+        name: 'Lost',
+        isWon: false,
+        isLost: true
+      });
     }
+  });
+
+  test('auto body template provides an editable default pipeline', () => {
+    expect(INDUSTRY_TEMPLATES.auto_body).toMatchObject({
+      label: 'Auto body and collision',
+      stages: AUTO_BODY_STAGES,
+      stagesAreEditableDefaults: true
+    });
+    expect(AUTO_BODY_STAGES.map((stage) => stage.name)).toEqual([
+      'New lead',
+      'Quoted',
+      'Waiting on insurance',
+      'Parts ordered',
+      'In repair and paint',
+      'Ready for pickup',
+      'Picked up',
+      'Lost'
+    ]);
+    // The quote follow-up worker matches the stage name 'quoted', case-insensitively.
+    expect(AUTO_BODY_STAGES[1]!.name.toLowerCase()).toBe('quoted');
+    expect(AUTO_BODY_STAGES).toHaveLength(REMODELING_STAGES.length);
+    expect(AUTO_BODY_STAGES.at(-2)).toMatchObject({
+      name: 'Picked up',
+      isWon: true,
+      isLost: false
+    });
+    expect(AUTO_BODY_STAGES.at(-1)).toMatchObject({
+      name: 'Lost',
+      isWon: false,
+      isLost: true
+    });
   });
 
   test('stage apply renames only the untouched default pipeline and is idempotent', () => {

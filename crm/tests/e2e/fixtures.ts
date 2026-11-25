@@ -5,12 +5,16 @@ const storageState = join('/tmp', 'kynetic-crm-e2e-owner.json');
 const adminStorageState = join('/tmp', 'kynetic-crm-e2e-admin.json');
 const vaStorageState = join('/tmp', 'kynetic-crm-e2e-va.json');
 const enrolStorageState = join('/tmp', 'kynetic-crm-e2e-enrol.json');
+const shopStorageState = join('/tmp', 'kynetic-crm-e2e-shop.json');
+const emptyShopStorageState = join('/tmp', 'kynetic-crm-e2e-shop-empty.json');
 
 export const test = base.extend<{
   authenticatedPage: Page;
   adminPage: Page;
   vaPage: Page;
   enrolPage: Page;
+  shopPage: Page;
+  emptyShopPage: Page;
 }>({
   authenticatedPage: async ({ browser }, runFixture) => {
     const context = await browser.newContext({ storageState });
@@ -26,6 +30,18 @@ export const test = base.extend<{
   },
   vaPage: async ({ browser }, runFixture) => {
     const context = await browser.newContext({ storageState: vaStorageState });
+    const page = await context.newPage();
+    await runFixture(page);
+    await context.close();
+  },
+  shopPage: async ({ browser }, runFixture) => {
+    const context = await browser.newContext({ storageState: shopStorageState });
+    const page = await context.newPage();
+    await runFixture(page);
+    await context.close();
+  },
+  emptyShopPage: async ({ browser }, runFixture) => {
+    const context = await browser.newContext({ storageState: emptyShopStorageState });
     const page = await context.newPage();
     await runFixture(page);
     await context.close();

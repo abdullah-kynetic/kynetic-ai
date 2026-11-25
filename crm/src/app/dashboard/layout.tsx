@@ -1,4 +1,5 @@
 import { navGroups } from '@/config/nav-config';
+import { clientNavFor } from '@/config/shop-nav';
 import { StaticWorkspaceCard } from '@/components/workspace/workspace-card';
 import KBar from '@/components/kbar';
 import AppSidebar from '@/components/layout/app-sidebar';
@@ -73,7 +74,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   // Only Kynetic staff are shown the way into the admin side; the admin routes check the role again.
   // Inside a view-as session the page is the client's, so there is no way into the admin side.
-  const groups = navGroups;
+  const groups = clientNavFor(shell.modules, navGroups);
   const adminHref =
     (shell.role === 'admin' || shell.role === 'va') && !shell.viewAs ? '/admin' : undefined;
   const defaultOpen = cookieStore.get('sidebar_state')?.value !== 'false';

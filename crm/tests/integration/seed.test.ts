@@ -17,10 +17,10 @@ const count = async (table: string) =>
   Number((await db.admin.unsafe(`select count(*)::int as n from ${table}`))[0]!.n);
 
 describe('M0-26 reference seed (migration 0012)', () => {
-  it('seeds the nine modules with only platform always on', async () => {
+  it('seeds the ten modules with only platform always on', async () => {
     const rows =
       await db.admin`select module_key, always_on from module_catalog order by module_key`;
-    expect(rows).toHaveLength(9);
+    expect(rows).toHaveLength(10);
     expect(rows.filter((r) => r.always_on).map((r) => r.module_key)).toEqual(['platform']);
   });
 
@@ -81,7 +81,7 @@ describe('M0-26 reference seed (migration 0012)', () => {
       'utf8'
     ).replaceAll('--> statement-breakpoint', '');
     await db.admin.unsafe(sqlText);
-    expect(await count('module_catalog')).toBe(9);
+    expect(await count('module_catalog')).toBe(10);
     expect(await count('module_prices')).toBe(23);
     expect(await count('automation_templates')).toBe(6);
     const [p] =

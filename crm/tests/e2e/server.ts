@@ -6,6 +6,8 @@ import { createTestDatabase, type TestDatabase } from '../helpers/db';
 import { IDS, seedTwoTenants } from '../helpers/fixtures';
 import { importArchive } from '../../src/server/archive';
 import { seedPhase3 } from './phase3-seed';
+import { seedShopDemo } from '../../src/server/db/seed/shop-demo';
+import { seedShopPipeline } from '../helpers/shop';
 
 const port = Number(process.env.E2E_PORT ?? 3100);
 const baseUrl = `http://localhost:${port}`;
@@ -14,6 +16,12 @@ const staffStoragePath = join('/tmp', 'kynetic-crm-e2e-staff.json');
 const adminStoragePath = join('/tmp', 'kynetic-crm-e2e-admin.json');
 const vaStoragePath = join('/tmp', 'kynetic-crm-e2e-va.json');
 const enrolStoragePath = join('/tmp', 'kynetic-crm-e2e-enrol.json');
+const shopStoragePath = join('/tmp', 'kynetic-crm-e2e-shop.json');
+const emptyShopStoragePath = join('/tmp', 'kynetic-crm-e2e-shop-empty.json');
+const SHOP_TENANT = '55555555-5555-4555-8555-555555555555';
+const EMPTY_SHOP_TENANT = '66666666-6666-4666-8666-666666666666';
+const SHOP_OWNER = 'cccccccc-0000-4000-8000-0000000000f1';
+const EMPTY_SHOP_OWNER = 'cccccccc-0000-4000-8000-0000000000f2';
 const ENROL_USER = 'cccccccc-0000-4000-8000-0000000000e1';
 const RESET_USER = 'cccccccc-0000-4000-8000-0000000000e2';
 const secret = 'e2e-only-secret-not-for-real-use-0000';
@@ -21,8 +29,17 @@ let db: TestDatabase | undefined;
 let child: ReturnType<typeof spawn> | undefined;
 
 // Authenticated synthetic storage state. Production builds never enable persona switching.
-async function sessionState(persona: 'owner' | 'staff' | 'admin' | 'va'): Promise<string> {
-  const userId = { owner: IDS.ownerA, staff: IDS.staffA, admin: IDS.admin, va: IDS.va }[persona];
+async function sessionState(
+  persona: 'owner' | 'staff' | 'admin' | 'va' | 'shop' | 'emptyShop'
+): Promise<string> {
+  const userId = {
+    owner: IDS.ownerA,
+    staff: IDS.staffA,
+    admin: IDS.admin,
+    va: IDS.va,
+    shop: SHOP_OWNER,
+    emptyShop: EMPTY_SHOP_OWNER
+  }[persona];
   const token = randomBytes(32).toString('hex');
   await db!.admin`insert into sessions (user_id, token, expires_at, two_factor_verified_at)
     values (${userId}, ${token}, now() + interval '1 hour', now())`;
@@ -140,6 +157,24 @@ async function main(): Promise<void> {
   // No worker runs under e2e; /api/health needs a fresh heartbeat to report ok (the readiness wait below).
   await db.admin`insert into worker_heartbeats (name, commit_sha) values ('worker', 'e2e')`;
 
+  // AA shop track: one shop client with sample data, one with the module on and no data.
+  for (const [tenantId, owner, slug, name] of [
+    [SHOP_TENANT, SHOP_OWNER, 'aa-auto-body-shop', 'E2E AA Auto Body Shop'],
+    [EMPTY_SHOP_TENANT, EMPTY_SHOP_OWNER, 'empty-body-shop', 'E2E Shop Without Data']
+  ] as const) {
+    await db.admin`insert into users (id, email, name, email_verified) values
+      (${owner}, ${`${slug}-owner@example.test`}, ${`${name} Owner`}, true)`;
+    await db.admin`insert into tenants (id, slug, name, plan, status, timezone)
+      values (${tenantId}, ${slug}, ${name}, 'founding', 'onboarding', 'America/Chicago')`;
+    await db.admin`insert into client_lifecycle (tenant_id, stage, updated_by) values (${tenantId}, 'onboarding', ${owner})`;
+    await db.admin`insert into memberships (tenant_id, user_id, role) values (${tenantId}, ${owner}, 'owner')`;
+    await db.admin`insert into tenant_modules (tenant_id, module_key, enabled, level) values
+      (${tenantId}, 'platform', true, ''), (${tenantId}, 'shop_ops', true, ''), (${tenantId}, 'crm', true, 'full')`;
+    await db.admin`insert into pipelines (tenant_id, name, is_default) values (${tenantId}, 'Sales', true)`;
+    await seedShopPipeline(db.admin, tenantId, []);
+  }
+  await seedShopDemo(db.admin, { slug: 'aa-auto-body-shop', apply: true });
+
   await mkdir('/tmp', { recursive: true });
   await db.admin`insert into users (id, email, name, kynetic_role) values
     (${ENROL_USER}, 'enrol-va@example.test', 'Enrol VA', 'va'),
@@ -153,6 +188,8 @@ async function main(): Promise<void> {
   await writeFile(staffStoragePath, await sessionState('staff'));
   await writeFile(adminStoragePath, await sessionState('admin'));
   await writeFile(vaStoragePath, await sessionState('va'));
+  await writeFile(shopStoragePath, await sessionState('shop'));
+  await writeFile(emptyShopStoragePath, await sessionState('emptyShop'));
   await writeFile(
     enrolStoragePath,
     JSON.stringify({
@@ -186,7 +223,8 @@ async function main(): Promise<void> {
     ELEVENLABS_LIVE_ENABLED: 'false',
     COMPONENT_GALLERY: '1'
   };
-  child = spawn('bun', ['run', 'start', '-p', String(port)], {
+  // E2E_DEV=1 serves with `next dev` so page changes show without a build (screenshot review only).
+  child = spawn('bun', ['run', process.env.E2E_DEV ? 'dev' : 'start', '-p', String(port)], {
     cwd: process.cwd(),
     env,
     stdio: 'inherit'

@@ -46,8 +46,29 @@ export const WINDOWS_DOORS_STAGES = [
   { name: 'In-home estimate', probability: 40, isWon: false, isLost: false },
   { name: 'Proposal sent', probability: 60, isWon: false, isLost: false },
   { name: 'Contract signed', probability: 80, isWon: false, isLost: false },
-  { name: 'Installation scheduled', probability: 90, isWon: false, isLost: false },
+  {
+    name: 'Installation scheduled',
+    probability: 90,
+    isWon: false,
+    isLost: false
+  },
   { name: 'Won', probability: 100, isWon: true, isLost: false },
+  { name: 'Lost', probability: 0, isWon: false, isLost: true }
+] as const satisfies readonly TemplateStage[];
+
+export const AUTO_BODY_STAGES = [
+  { name: 'New lead', probability: 5, isWon: false, isLost: false },
+  { name: 'Quoted', probability: 25, isWon: false, isLost: false },
+  {
+    name: 'Waiting on insurance',
+    probability: 45,
+    isWon: false,
+    isLost: false
+  },
+  { name: 'Parts ordered', probability: 65, isWon: false, isLost: false },
+  { name: 'In repair and paint', probability: 85, isWon: false, isLost: false },
+  { name: 'Ready for pickup', probability: 95, isWon: false, isLost: false },
+  { name: 'Picked up', probability: 100, isWon: true, isLost: false },
   { name: 'Lost', probability: 0, isWon: false, isLost: true }
 ] as const satisfies readonly TemplateStage[];
 
@@ -59,6 +80,7 @@ export const INDUSTRY_TEMPLATES: Record<
   | 'remodeling'
   | 'pools'
   | 'windows_doors'
+  | 'auto_body'
   | 'general',
   IndustryTemplate
 > = {
@@ -94,6 +116,18 @@ export const INDUSTRY_TEMPLATES: Record<
     label: 'Windows and doors',
     services: ['Window replacement', 'Door replacement'],
     stages: WINDOWS_DOORS_STAGES,
+    stagesAreEditableDefaults: true
+  },
+  auto_body: {
+    label: 'Auto body and collision',
+    services: [
+      'Collision repair',
+      'Dent and scratch repair',
+      'Paint',
+      'Wheel repair',
+      'Insurance claim repair'
+    ],
+    stages: AUTO_BODY_STAGES,
     stagesAreEditableDefaults: true
   },
   general: { label: 'Other home service', services: [] }

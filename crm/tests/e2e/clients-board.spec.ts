@@ -9,6 +9,8 @@ const saved = (page: Page) =>
   );
 
 async function drag(page: Page, card: Locator, stage: string) {
+  // More clients on the board push this card down; bring it into view before reading its box.
+  await card.scrollIntoViewIfNeeded();
   const source = await card.boundingBox();
   const target = await page.getByRole('region', { name: `${stage} stage` }).boundingBox();
   if (!source || !target) throw new Error('Client card or stage is not visible');

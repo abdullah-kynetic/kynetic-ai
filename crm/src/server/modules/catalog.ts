@@ -44,6 +44,11 @@ export const SYSTEM_CATALOG: Record<ModuleKey, { label: string; outcome: string 
   crm: {
     label: 'CRM',
     outcome: 'Companies, tasks, notes, and pipeline stages match how this business works.'
+  },
+  shop_ops: {
+    label: 'Shop operations',
+    outcome:
+      'Front desk, jobs board, quotes, insurance, money, and reviews are laid out the way a repair shop runs.'
   }
 };
 
