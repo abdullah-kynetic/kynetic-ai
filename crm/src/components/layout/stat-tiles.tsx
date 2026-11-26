@@ -19,7 +19,13 @@ export function StatTiles({
   tiles: readonly StatTile[];
   className?: string;
 }) {
-  const wide = tiles.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4';
+  // Fill whole rows: 3 and 6 tiles in threes, 5 in one row, anything else in fours.
+  const wide =
+    tiles.length === 3 || tiles.length === 6
+      ? 'lg:grid-cols-3'
+      : tiles.length === 5
+        ? 'lg:grid-cols-5'
+        : 'lg:grid-cols-4';
   return (
     <ul
       aria-label={label}

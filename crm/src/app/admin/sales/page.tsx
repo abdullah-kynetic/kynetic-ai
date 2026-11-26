@@ -58,7 +58,7 @@ export default async function PipelinePage({
         </p>
       )}
       <PipelineDnd canMove={canMove}>
-        <div className='grid gap-4 md:grid-cols-2 xl:grid-cols-5'>
+        <div className='-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 md:mx-0 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible md:px-0 xl:grid-cols-5'>
           {PIPELINE_COLUMNS.map((column) => {
             const deals = sales.deals.filter((d) => d.column === column);
             const here = clients.filter((c) => CLIENT_COLUMN[c.stage] === column);
@@ -102,7 +102,7 @@ export default async function PipelinePage({
                         </Link>
                         <form
                           action={setDealColumnAction.bind(null, d.dealId, 'declined')}
-                          className='flex gap-2'
+                          className='grid gap-2'
                         >
                           <Input
                             name='reason'

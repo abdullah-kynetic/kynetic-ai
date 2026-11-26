@@ -44,7 +44,7 @@ export function AreaLayout({ area, children }: { area: Area; children: ReactNode
           </div>
         </nav>
       )}
-      <div className='min-w-0'>
+      <div className='min-w-0 [&>div.mx-auto]:px-0 [&>div.mx-auto]:pt-0 [&>div.mx-auto]:pb-0'>
         <HeadingLevelProvider value='h2'>{children}</HeadingLevelProvider>
       </div>
     </div>
