@@ -73,11 +73,19 @@ function FieldRow({
   );
 }
 
-export function OnboardingForm({ templates = [] }: { templates?: { id: string; name: string }[] }) {
+export type DealPrefill = { dealId: string; businessName: string; ownerEmail: string };
+
+export function OnboardingForm({
+  templates = [],
+  deal
+}: {
+  templates?: { id: string; name: string }[];
+  deal?: DealPrefill;
+}) {
   const [state, action, pending] = React.useActionState<OnboardState, FormData>(onboardClient, {
     status: 'idle'
   });
-  if (state.status === 'created') return <Created state={state} />;
+  if (state.status === 'created') return <Created state={state} atProposal={Boolean(deal)} />;
   const fe = state.status === 'error' ? state.fieldErrors : undefined;
 
   return (
@@ -90,9 +98,24 @@ export function OnboardingForm({ templates = [] }: { templates?: { id: string; n
           {state.message}
         </p>
       )}
+      {deal && (
+        <div className='bg-secondary grid gap-2 rounded-lg p-3 text-sm'>
+          <input type='hidden' name='dealId' value={deal.dealId} />
+          <p>
+            This creates the client account at the Proposal stage so it is ready and prepped.
+            Nothing is sent to the owner until the contract is signed and the deposit is paid.
+          </p>
+        </div>
+      )}
       <div className='grid gap-4 sm:grid-cols-2'>
         <FieldRow id='businessName' label='Business name' error={fe?.businessName}>
-          <Input id='businessName' name='businessName' required maxLength={200} />
+          <Input
+            id='businessName'
+            name='businessName'
+            required
+            maxLength={200}
+            defaultValue={deal?.businessName}
+          />
         </FieldRow>
         <FieldRow
           id='slug'
@@ -103,7 +126,13 @@ export function OnboardingForm({ templates = [] }: { templates?: { id: string; n
           <Input id='slug' name='slug' pattern='[a-z0-9\-]{3,40}' />
         </FieldRow>
         <FieldRow id='ownerEmail' label='Owner email' error={fe?.ownerEmail}>
-          <Input id='ownerEmail' name='ownerEmail' type='email' required />
+          <Input
+            id='ownerEmail'
+            name='ownerEmail'
+            type='email'
+            required
+            defaultValue={deal?.ownerEmail}
+          />
         </FieldRow>
         <FieldRow
           id='phone'
@@ -246,7 +275,13 @@ export function OnboardingForm({ templates = [] }: { templates?: { id: string; n
   );
 }
 
-function Created({ state }: { state: Extract<OnboardState, { status: 'created' }> }) {
+function Created({
+  state,
+  atProposal
+}: {
+  state: Extract<OnboardState, { status: 'created' }>;
+  atProposal: boolean;
+}) {
   const [send, setSend] = React.useState<SendState>({ status: 'idle' });
   const [busy, setBusy] = React.useState(false);
   return (
@@ -263,7 +298,16 @@ function Created({ state }: { state: Extract<OnboardState, { status: 'created' }
         <p className='text-muted-foreground mt-1 text-sm'>Subject: {state.draft.subject}</p>
         <pre className='mt-2 text-sm whitespace-pre-wrap'>{state.draft.body}</pre>
       </div>
-      {send.status === 'sent' ? (
+      {atProposal ? (
+        <p className='text-muted-foreground text-sm'>
+          The account is at Proposal. Once the contract is signed and the deposit is paid, move it
+          to Building on the{' '}
+          <Link className='underline' href='/admin/sales'>
+            pipeline
+          </Link>{' '}
+          and send the invite from there.
+        </p>
+      ) : send.status === 'sent' ? (
         <p role='status' className='text-sm'>
           Invite sent to {state.ownerEmail}. It works once and expires in 7 days.
         </p>

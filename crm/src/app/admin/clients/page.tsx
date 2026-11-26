@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function ClientsBoardPage() {
   const { user, rows: allRows } = await loadClientRows();
-  const rows = allRows.filter((r) => r.stage !== 'archived');
+  const rows = allRows.filter((r) => r.stage !== 'archived' && r.stage !== 'proposal');
   const count = (stage: string) => rows.filter((r) => r.stage === stage).length;
   const stats = [
     { label: 'Building', value: count('building') },

@@ -63,9 +63,10 @@ test('Lead tables search, filter and bulk-select; Move to Sales creates deals on
   await expect(page.getByRole('status')).toContainText('Moved 2 to Sales');
   await expect(page.getByRole('row').filter({ hasText: 'Bulk Move Alpha' })).toHaveCount(0);
 
-  await page.goto('/admin/sales');
-  await expect(page.getByRole('button', { name: /Bulk Move Alpha/ })).toBeVisible();
-  await expect(page.getByRole('button', { name: /Bulk Move Beta/ })).toBeVisible();
+  // New deals are not in contact yet, so they wait on the Leads tab until an audit is booked.
+  await page.goto('/admin/sales/leads');
+  await expect(page.getByText('Bulk Move Alpha')).toBeVisible();
+  await expect(page.getByText('Bulk Move Beta')).toBeVisible();
 });
 
 test('A prospect without an email is skipped with a reason', async ({ adminPage: page }) => {

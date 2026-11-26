@@ -4,6 +4,7 @@ import {
   DAYS,
   draftOwnerInvite,
   getInviteMailer,
+  moveClientLifecycle,
   onboardTenant,
   sendOwnerInvite
 } from '@/server/admin';
@@ -11,6 +12,7 @@ import { authorize, ForbiddenError, requireUser, resolveActor } from '@/server/a
 import { getEnv } from '@/server/env';
 import { AppError } from '@/server/errors';
 import { headers } from 'next/headers';
+import { markDealWon } from '@/server/agency/pipeline';
 import { refuseDuringViewAs } from '../../view-as-guard';
 
 export type OnboardState =
@@ -62,6 +64,7 @@ function failure(err: unknown): {
 export async function onboardClient(_prev: OnboardState, form: FormData): Promise<OnboardState> {
   try {
     const ctx = await adminCtx();
+    const dealId = text(form, 'dealId');
     const zips = text(form, 'serviceZips')
       .split(/[\s,]+/)
       .filter(Boolean);
@@ -86,6 +89,16 @@ export async function onboardClient(_prev: OnboardState, form: FormData): Promis
       crmLevel: text(form, 'crmLevel') || undefined,
       templateId: text(form, 'templateId') || undefined
     });
+    // Created from a deal: the account is ready at Proposal, and the deal card is closed so the
+    // client shows once. Nothing is sent; the invite goes out after the contract is signed and paid.
+    if (dealId) {
+      try {
+        await moveClientLifecycle(ctx, result.tenantId, 'proposal');
+        await markDealWon({ id: ctx.userId, kyneticRole: 'admin' }, dealId);
+      } catch {
+        // The client exists either way; the stage and the deal can be moved by hand.
+      }
+    }
     return {
       status: 'created',
       ...result,

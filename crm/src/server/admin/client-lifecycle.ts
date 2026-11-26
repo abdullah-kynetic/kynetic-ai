@@ -5,6 +5,7 @@ import { AppError } from '../errors';
 import type { Db } from '../db/client';
 
 export const LIFECYCLE_STAGES = [
+  'proposal',
   'building',
   'testing',
   'live',
