@@ -10,6 +10,7 @@ import {
   type DragEndEvent
 } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
+import { Icons } from '@/components/icons';
 import { useRouter } from 'next/navigation';
 import * as React from 'react';
 import { movePipelineCardAction } from './actions';
@@ -86,11 +87,13 @@ export function PipelineColumn({
     <section
       ref={setNodeRef}
       aria-label={`${label} stage`}
-      className={`bg-secondary/40 flex min-h-48 min-w-0 flex-col gap-2 rounded-xl border p-3 ${isOver ? 'ring-primary ring-2' : ''}`}
+      className={`hover:bg-secondary/60 bg-secondary/30 flex min-h-48 min-w-[82%] shrink-0 snap-start flex-col gap-2 rounded-lg p-2 md:min-w-0 md:shrink ${isOver ? 'ring-primary ring-2' : ''}`}
     >
-      <div className='flex items-center justify-between'>
-        <h2 className='font-medium'>{label}</h2>
-        <span className='ticket-meta'>{count}</span>
+      <div className='flex items-center gap-2 px-1 pb-1'>
+        <h2 className='text-sm font-medium'>{label}</h2>
+        <span className='bg-muted text-muted-foreground rounded px-1.5 text-xs tabular-nums'>
+          {count}
+        </span>
       </div>
       {children}
     </section>
@@ -118,17 +121,17 @@ export function PipelineCard({
     <div
       ref={setNodeRef}
       style={{ transform: CSS.Translate.toString(transform) }}
-      className={`bg-card grid gap-2 rounded-lg border p-3 ${isDragging ? 'z-10 opacity-70 shadow-md' : ''}`}
+      className={`bg-card relative grid gap-2 rounded-lg border px-3 pt-2.5 pb-2 text-sm ${canMove ? 'pr-10' : ''} ${isDragging ? 'z-10 opacity-70 shadow-md' : ''}`}
     >
       {canMove && (
         <button
           type='button'
           aria-label={`Drag ${name} to another stage`}
-          className='text-muted-foreground cursor-grab touch-none justify-self-start text-xs focus-visible:ring-2 focus-visible:ring-ring'
+          className='text-muted-foreground hover:bg-secondary absolute top-1.5 right-1.5 flex size-8 cursor-grab touch-none items-center justify-center rounded-md focus-visible:ring-2 focus-visible:ring-ring'
           {...attributes}
           {...listeners}
         >
-          ⠿ Drag
+          <Icons.gripVertical aria-hidden className='size-4' />
         </button>
       )}
       {children}

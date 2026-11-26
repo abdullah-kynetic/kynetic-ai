@@ -22,6 +22,8 @@ const routeMapping: Record<string, BreadcrumbItem[]> = {
   // Add more custom mappings as needed
 };
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export function useBreadcrumbs() {
   const pathname = usePathname();
 
@@ -35,8 +37,14 @@ export function useBreadcrumbs() {
     const segments = pathname.split('/').filter(Boolean);
     return segments.map((segment, index) => {
       const path = `/${segments.slice(0, index + 1).join('/')}`;
+      // A record id is not a name. Show "Client" under /clients and "Details" elsewhere.
+      const label = UUID.test(segment)
+        ? segments[index - 1] === 'clients'
+          ? 'Client'
+          : 'Details'
+        : segment.replace(/-/g, ' ');
       return {
-        title: segment.charAt(0).toUpperCase() + segment.slice(1),
+        title: label.charAt(0).toUpperCase() + label.slice(1),
         link: path
       };
     });
