@@ -25,7 +25,7 @@ export async function loadClientRows() {
   if (!user.kyneticRole) forbidden();
   const ctx = { userId: user.id, role: user.kyneticRole };
   const [overview, saved] = await Promise.all([
-    listAdminTenantOverview(ctx),
+    listAdminTenantOverview(ctx, { includeArchived: true }),
     listClientLifecycle(ctx)
   ]);
   const rows: ClientRow[] = overview.map((row) => {

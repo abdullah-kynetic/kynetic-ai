@@ -47,41 +47,52 @@ export function calculateHealthScore(input: {
 
 export async function listAdminTenantOverview(
   ctx: PlatformContext,
-  opts: { db?: Db } = {}
+  opts: { db?: Db; includeArchived?: boolean } = {}
 ): Promise<AdminTenantOverview[]> {
-  const rows = await withPlatform(
+  const { includeArchived, ...dbOpts } = opts;
+  const { rows, archived } = await withPlatform(
     ctx,
-    (tx) => tx.execute(sql`select * from admin_tenant_overview()`),
-    opts
+    async (tx) => ({
+      rows: await tx.execute(sql`select * from admin_tenant_overview()`),
+      archived: includeArchived
+        ? []
+        : await tx.execute<{ tenant_id: string }>(
+            sql`select tenant_id from admin_client_lifecycle_list() where stage = 'archived'`
+          )
+    }),
+    dbOpts
   );
-  return (rows as unknown as Record<string, unknown>[]).map((r) => {
-    const healthScore = calculateHealthScore({
-      bookingRate: r.booking_rate === null ? null : Number(r.booking_rate),
-      leads30d: Number(r.leads_30d),
-      integrationErrors: Number(r.integration_errors),
-      lastLoginAt: (r.last_login_at as string | null) ?? null
+  const hidden = new Set(Array.from(archived).map((a) => a.tenant_id));
+  return (rows as unknown as Record<string, unknown>[])
+    .filter((r) => !hidden.has(String(r.tenant_id)))
+    .map((r) => {
+      const healthScore = calculateHealthScore({
+        bookingRate: r.booking_rate === null ? null : Number(r.booking_rate),
+        leads30d: Number(r.leads_30d),
+        integrationErrors: Number(r.integration_errors),
+        lastLoginAt: (r.last_login_at as string | null) ?? null
+      });
+      return {
+        tenantId: String(r.tenant_id),
+        slug: String(r.slug),
+        name: String(r.name),
+        plan: String(r.plan),
+        status: String(r.status),
+        pricingTier: (r.pricing_tier as string | null) ?? null,
+        leads30d: Number(r.leads_30d),
+        calls30d: Number(r.calls_30d),
+        appointments30d: Number(r.appointments_30d),
+        bookingRate: r.booking_rate === null ? null : Number(r.booking_rate),
+        guaranteeTarget:
+          r.guarantee_target_bookings === null ? null : Number(r.guarantee_target_bookings),
+        guaranteeBookings: r.guarantee_bookings === null ? null : Number(r.guarantee_bookings),
+        guaranteeStartDate: (r.guarantee_start_date as string | null) ?? null,
+        integrationErrors: Number(r.integration_errors),
+        lastLoginAt: (r.last_login_at as string | null) ?? null,
+        goLiveAt: (r.go_live_at as string | null) ?? null,
+        modules: Array.isArray(r.modules_enabled) ? (r.modules_enabled as string[]) : [],
+        healthScore,
+        healthTone: healthScore >= 70 ? 'green' : healthScore >= 40 ? 'yellow' : 'red'
+      };
     });
-    return {
-      tenantId: String(r.tenant_id),
-      slug: String(r.slug),
-      name: String(r.name),
-      plan: String(r.plan),
-      status: String(r.status),
-      pricingTier: (r.pricing_tier as string | null) ?? null,
-      leads30d: Number(r.leads_30d),
-      calls30d: Number(r.calls_30d),
-      appointments30d: Number(r.appointments_30d),
-      bookingRate: r.booking_rate === null ? null : Number(r.booking_rate),
-      guaranteeTarget:
-        r.guarantee_target_bookings === null ? null : Number(r.guarantee_target_bookings),
-      guaranteeBookings: r.guarantee_bookings === null ? null : Number(r.guarantee_bookings),
-      guaranteeStartDate: (r.guarantee_start_date as string | null) ?? null,
-      integrationErrors: Number(r.integration_errors),
-      lastLoginAt: (r.last_login_at as string | null) ?? null,
-      goLiveAt: (r.go_live_at as string | null) ?? null,
-      modules: Array.isArray(r.modules_enabled) ? (r.modules_enabled as string[]) : [],
-      healthScore,
-      healthTone: healthScore >= 70 ? 'green' : healthScore >= 40 ? 'yellow' : 'red'
-    };
-  });
 }

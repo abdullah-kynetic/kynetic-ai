@@ -7,7 +7,8 @@ import { loadClientRows } from './rows';
 export const dynamic = 'force-dynamic';
 
 export default async function ClientsBoardPage() {
-  const { user, rows } = await loadClientRows();
+  const { user, rows: allRows } = await loadClientRows();
+  const rows = allRows.filter((r) => r.stage !== 'archived');
   const count = (stage: string) => rows.filter((r) => r.stage === stage).length;
   const stats = [
     { label: 'Building', value: count('building') },

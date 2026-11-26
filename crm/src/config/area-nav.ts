@@ -27,6 +27,7 @@ export const adminAreas: readonly Area[] = [
       { label: 'Live', href: '/admin/clients/live' },
       { label: 'Demo', href: '/admin/clients/demo' },
       { label: 'Churned', href: '/admin/clients/churned' },
+      { label: 'Archived', href: '/admin/clients/archived' },
       { label: 'Operations', href: '/admin/clients/operations' }
     ]
   },

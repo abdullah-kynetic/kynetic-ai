@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
+  listAdminTenantOverview,
   listBuildSystems,
   loadClientBuildState,
   moveClientLifecycle,
@@ -74,5 +75,36 @@ describe('client build stages', () => {
   it('removes a system', async () => {
     await removeBuildSystem(admin, IDS.tenantA, 'b', { db });
     expect((await listBuildSystems(admin, IDS.tenantA, { db })).map((s) => s.key)).toEqual(['a']);
+  });
+
+  it('archives a client without deleting it, hides it from the overview, and restores it', async () => {
+    await moveClientLifecycle(admin, IDS.tenantB, 'archived', { db });
+    const hidden = await listAdminTenantOverview(admin, { db });
+    expect(hidden.some((r) => r.tenantId === IDS.tenantB)).toBe(false);
+    const all = await listAdminTenantOverview(admin, { db, includeArchived: true });
+    expect(all.some((r) => r.tenantId === IDS.tenantB)).toBe(true);
+    const [kept] =
+      await t.admin`select count(*)::int as n from contacts where tenant_id = ${IDS.tenantB}`;
+    expect(kept!.n).toBeGreaterThan(0);
+    await moveClientLifecycle(admin, IDS.tenantB, 'building', { db });
+    expect(
+      (await listAdminTenantOverview(admin, { db })).some((r) => r.tenantId === IDS.tenantB)
+    ).toBe(true);
+  });
+
+  it('never archives AA Auto Body or a shop client', async () => {
+    await t.admin`update tenants set name = 'AA Auto Body' where id = ${IDS.tenantB}`;
+    await expect(moveClientLifecycle(admin, IDS.tenantB, 'archived', { db })).rejects.toMatchObject(
+      {
+        code: 'FORBIDDEN'
+      }
+    );
+    await t.admin`update tenants set name = 'Tenant B' where id = ${IDS.tenantB}`;
+    await t.admin`insert into tenant_modules (tenant_id, module_key, enabled, level) values (${IDS.tenantB}, 'shop_ops', true, '') on conflict (tenant_id, module_key) do update set enabled = true`;
+    await expect(moveClientLifecycle(admin, IDS.tenantB, 'archived', { db })).rejects.toMatchObject(
+      {
+        code: 'FORBIDDEN'
+      }
+    );
   });
 });

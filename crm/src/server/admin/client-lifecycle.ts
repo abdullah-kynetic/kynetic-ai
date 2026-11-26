@@ -10,7 +10,8 @@ export const LIFECYCLE_STAGES = [
   'live',
   'at_risk',
   'churned',
-  'demo'
+  'demo',
+  'archived'
 ] as const;
 export type LifecycleStage = (typeof LIFECYCLE_STAGES)[number];
 
@@ -93,6 +94,10 @@ export async function moveClientLifecycle(
       (error as { cause?: { message?: string }; message?: string })?.cause?.message ??
         (error as Error).message
     );
+    if (message.includes('protected client'))
+      throw new AppError('FORBIDDEN', {
+        message: 'AA Auto Body and shop clients cannot be archived.'
+      });
     if (message.includes('protected demo client'))
       throw new AppError('FORBIDDEN', {
         message: 'This demo client is protected and cannot be moved.'

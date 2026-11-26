@@ -8,7 +8,7 @@ ALTER TABLE client_lifecycle DROP CONSTRAINT IF EXISTS client_lifecycle_stage_ch
 UPDATE client_lifecycle SET stage = 'building' WHERE stage = 'onboarding';
 --> statement-breakpoint
 ALTER TABLE client_lifecycle ADD CONSTRAINT client_lifecycle_stage_check
-  CHECK (stage IN ('building', 'testing', 'live', 'at_risk', 'churned', 'demo'));
+  CHECK (stage IN ('building', 'testing', 'live', 'at_risk', 'churned', 'demo', 'archived'));
 --> statement-breakpoint
 -- The systems being built for one client, and where each one is.
 CREATE TABLE client_build_systems (
@@ -77,6 +77,7 @@ BEGIN
   PERFORM rollup_audit(p_tenant, 'build_system.remove', 'build_system', p_key, NULL, NULL);
 END $$;
 --> statement-breakpoint
+-- Archived is a sixth stage that hides a client and keeps its data; moving it back restores it.
 -- Moving the stage now also moves the tenant: Building and Testing keep it in onboarding (View as client
 -- allowed, owner sees the build portal); Live sets it active and stamps go_live_at once.
 CREATE OR REPLACE FUNCTION admin_client_lifecycle_move(p_tenant uuid, p_stage text)
@@ -86,13 +87,21 @@ BEGIN
   IF app_role() <> 'admin' OR app_user_id() IS NULL OR app_read_only() THEN
     RAISE EXCEPTION 'admin only' USING ERRCODE = '42501';
   END IF;
-  IF p_stage NOT IN ('building', 'testing', 'live', 'at_risk', 'churned', 'demo') THEN
+  IF p_stage NOT IN ('building', 'testing', 'live', 'at_risk', 'churned', 'demo', 'archived') THEN
     RAISE EXCEPTION 'invalid lifecycle stage' USING ERRCODE = '22023';
   END IF;
   SELECT name, status INTO client_name, v_status FROM tenants WHERE id = p_tenant FOR UPDATE;
   IF client_name IS NULL THEN RAISE EXCEPTION 'client not found' USING ERRCODE = '02000'; END IF;
   IF client_name = 'Kynetic Restoration (Demo)' THEN
     RAISE EXCEPTION 'protected demo client' USING ERRCODE = '42501';
+  END IF;
+  -- Archived hides a client from the board, switcher and numbers without deleting anything. The AA Auto
+  -- Body client (name, or the shop operations module) can never be archived.
+  IF p_stage = 'archived' AND (
+       client_name ILIKE '%AA Auto Body%'
+       OR EXISTS (SELECT 1 FROM tenant_modules m WHERE m.tenant_id = p_tenant AND m.module_key = 'shop_ops' AND m.enabled)
+     ) THEN
+    RAISE EXCEPTION 'protected client' USING ERRCODE = '42501';
   END IF;
   IF v_status IN ('suspended', 'offboarded') AND p_stage IN ('building', 'testing', 'live') THEN
     RAISE EXCEPTION 'client is %', v_status USING ERRCODE = '55000';

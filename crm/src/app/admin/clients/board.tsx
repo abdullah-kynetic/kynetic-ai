@@ -14,7 +14,14 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { moveClientStageAction } from './actions';
 
-export type ClientStageId = 'building' | 'testing' | 'live' | 'at_risk' | 'churned' | 'demo';
+export type ClientStageId =
+  | 'building'
+  | 'testing'
+  | 'live'
+  | 'at_risk'
+  | 'churned'
+  | 'demo'
+  | 'archived';
 export type ClientCard = {
   id: string;
   name: string;
