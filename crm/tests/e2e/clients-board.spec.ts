@@ -9,6 +9,8 @@ const saved = (page: Page) =>
   );
 
 async function drag(page: Page, card: Locator, stage: string) {
+  // Six stage columns scroll sideways; a wide window keeps the source and target on screen together.
+  await page.setViewportSize({ width: 2400, height: 1000 });
   // More clients on the board push this card down; bring it into view before reading its box.
   await card.scrollIntoViewIfNeeded();
   const source = await card.boundingBox();
@@ -41,11 +43,11 @@ test('dragging a client saves its stage and survives a reload', async ({ adminPa
   // Move it back so other specs see the original board.
   await page.goto('/admin/clients');
   const back = saved(page);
-  await drag(page, page.getByRole('button', { name: new RegExp(NAME) }), 'Live');
+  await drag(page, page.getByRole('button', { name: new RegExp(NAME) }), 'Building');
   await back;
-  await expect(cardIn(page, 'Live')).toBeVisible();
+  await expect(cardIn(page, 'Building')).toBeVisible();
   await page.reload();
-  await expect(cardIn(page, 'Live')).toBeVisible();
+  await expect(cardIn(page, 'Building')).toBeVisible();
 });
 
 test('a failed save puts the client back and shows an error', async ({ adminPage: page }) => {
@@ -55,7 +57,7 @@ test('a failed save puts the client back and shows an error', async ({ adminPage
     .filter({ has: page.getByRole('button', { name: new RegExp(NAME) }) })
     .getAttribute('aria-label');
   const startStage = start!.replace(/ stage$/, '');
-  const other = startStage === 'At risk' ? 'Onboarding' : 'At risk';
+  const other = startStage === 'At risk' ? 'Building' : 'At risk';
   await page.route('**/admin/clients', async (route) => {
     if (route.request().method() === 'POST') await route.abort('failed');
     else await route.continue();

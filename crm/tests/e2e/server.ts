@@ -154,6 +154,9 @@ async function main(): Promise<void> {
   await db.admin`insert into backup_runs (kind, status, size_bytes, offsite_key, restore_test_passed)
     values ('restore_test', 'ok', 4096, 'backups/synthetic/test.dump.enc', true)`;
 
+  // The shared fixture lists a build system for every client; the e2e clients use the normal portal.
+  await db.admin`delete from client_build_systems`;
+
   // No worker runs under e2e; /api/health needs a fresh heartbeat to report ok (the readiness wait below).
   await db.admin`insert into worker_heartbeats (name, commit_sha) values ('worker', 'e2e')`;
 
