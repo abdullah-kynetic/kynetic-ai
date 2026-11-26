@@ -4,6 +4,7 @@ import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { decideAdminAccess } from '@/server/admin';
 import { moveAgencyDeal } from '@/server/agency';
+import { setDealColumn } from '@/server/agency/pipeline';
 import { AppError } from '@/server/errors';
 import { isViewingAs } from '../view-as-guard';
 
@@ -22,4 +23,23 @@ export async function moveSalesDealAction(dealId: string, stageId: string, lostR
     if (error instanceof AppError) return { ok: false, message: error.message } as const;
     return { ok: false, message: 'Could not save the stage. Try again.' } as const;
   }
+}
+
+async function pipelineCaller() {
+  const access = await decideAdminAccess(await headers());
+  if (access.kind !== 'ok' || access.role !== 'admin' || (await isViewingAs(access.user)))
+    throw new AppError('FORBIDDEN', { message: 'Only a Kynetic admin can move deals.' });
+  return { id: access.user.id, kyneticRole: 'admin' as const };
+}
+
+/** Moves a deal between Audit pending and Proposal, or declines it (the reason is required). */
+export async function setDealColumnAction(
+  dealId: string,
+  to: 'audit_pending' | 'proposal' | 'declined',
+  formData: FormData
+) {
+  const reason = String(formData.get('reason') ?? '');
+  await setDealColumn(await pipelineCaller(), dealId, to, { reason });
+  revalidatePath('/admin/sales');
+  revalidatePath('/admin/sales/leads');
 }

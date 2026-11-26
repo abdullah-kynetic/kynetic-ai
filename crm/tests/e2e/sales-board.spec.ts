@@ -14,7 +14,7 @@ test('moving a synthetic sales card saves its stage', async ({ adminPage: page }
   await expect(
     page.getByRole('region', { name: 'Leads' }).getByText('Board Prospect')
   ).toBeVisible();
-  await page.goto('/admin/sales');
+  await page.goto('/admin/sales/stages');
   const card = page.getByRole('button', { name: /Board Prospect/ });
   await expect(card).toBeVisible();
   const source = await card.boundingBox();
@@ -40,13 +40,13 @@ test('moving a synthetic sales card saves its stage', async ({ adminPage: page }
 });
 
 test('failed sales move restores the original stage', async ({ adminPage: page }) => {
-  await page.goto('/admin/sales');
+  await page.goto('/admin/sales/stages');
   const sourceStage = page.getByRole('region', { name: 'New stage' });
   const card = sourceStage.getByRole('button').first();
   const cardName = await card.getAttribute('aria-describedby');
   const label = await card.innerText();
   expect(cardName).toBeTruthy();
-  await page.route('**/admin/sales', async (route) => {
+  await page.route('**/admin/sales/stages', async (route) => {
     if (route.request().method() === 'POST') await route.abort('failed');
     else await route.continue();
   });

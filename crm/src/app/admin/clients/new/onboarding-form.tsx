@@ -73,7 +73,15 @@ function FieldRow({
   );
 }
 
-export function OnboardingForm({ templates = [] }: { templates?: { id: string; name: string }[] }) {
+export type DealPrefill = { dealId: string; businessName: string; ownerEmail: string };
+
+export function OnboardingForm({
+  templates = [],
+  deal
+}: {
+  templates?: { id: string; name: string }[];
+  deal?: DealPrefill;
+}) {
   const [state, action, pending] = React.useActionState<OnboardState, FormData>(onboardClient, {
     status: 'idle'
   });
@@ -90,9 +98,28 @@ export function OnboardingForm({ templates = [] }: { templates?: { id: string; n
           {state.message}
         </p>
       )}
+      {deal && (
+        <div className='bg-secondary grid gap-2 rounded-lg p-3 text-sm'>
+          <input type='hidden' name='dealId' value={deal.dealId} />
+          <p>
+            This moves the deal into Building and creates the client account. Only do this once the
+            contract is signed and the deposit is paid.
+          </p>
+          <label htmlFor='contractSigned' className='flex items-center gap-2 font-medium'>
+            <Checkbox id='contractSigned' name='contractSigned' required />
+            Contract signed and deposit paid
+          </label>
+        </div>
+      )}
       <div className='grid gap-4 sm:grid-cols-2'>
         <FieldRow id='businessName' label='Business name' error={fe?.businessName}>
-          <Input id='businessName' name='businessName' required maxLength={200} />
+          <Input
+            id='businessName'
+            name='businessName'
+            required
+            maxLength={200}
+            defaultValue={deal?.businessName}
+          />
         </FieldRow>
         <FieldRow
           id='slug'
@@ -103,7 +130,13 @@ export function OnboardingForm({ templates = [] }: { templates?: { id: string; n
           <Input id='slug' name='slug' pattern='[a-z0-9\-]{3,40}' />
         </FieldRow>
         <FieldRow id='ownerEmail' label='Owner email' error={fe?.ownerEmail}>
-          <Input id='ownerEmail' name='ownerEmail' type='email' required />
+          <Input
+            id='ownerEmail'
+            name='ownerEmail'
+            type='email'
+            required
+            defaultValue={deal?.ownerEmail}
+          />
         </FieldRow>
         <FieldRow
           id='phone'

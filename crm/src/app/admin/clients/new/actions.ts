@@ -11,6 +11,7 @@ import { authorize, ForbiddenError, requireUser, resolveActor } from '@/server/a
 import { getEnv } from '@/server/env';
 import { AppError } from '@/server/errors';
 import { headers } from 'next/headers';
+import { markDealWon } from '@/server/agency/pipeline';
 import { refuseDuringViewAs } from '../../view-as-guard';
 
 export type OnboardState =
@@ -62,6 +63,12 @@ function failure(err: unknown): {
 export async function onboardClient(_prev: OnboardState, form: FormData): Promise<OnboardState> {
   try {
     const ctx = await adminCtx();
+    const dealId = text(form, 'dealId');
+    if (dealId && form.get('contractSigned') !== 'on')
+      return {
+        status: 'error',
+        message: 'Confirm the contract is signed and the deposit is paid first.'
+      };
     const zips = text(form, 'serviceZips')
       .split(/[\s,]+/)
       .filter(Boolean);
@@ -86,6 +93,14 @@ export async function onboardClient(_prev: OnboardState, form: FormData): Promis
       crmLevel: text(form, 'crmLevel') || undefined,
       templateId: text(form, 'templateId') || undefined
     });
+    // The client account now carries the stage (Building), so the deal is closed as Won.
+    if (dealId) {
+      try {
+        await markDealWon({ id: ctx.userId, kyneticRole: 'admin' }, dealId);
+      } catch {
+        // The client exists either way; the deal can be moved to Won by hand.
+      }
+    }
     return {
       status: 'created',
       ...result,

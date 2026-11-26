@@ -50,10 +50,12 @@ export const adminAreas: readonly Area[] = [
     title: 'Sales',
     href: '/admin/sales',
     icon: 'kanban',
-    description: 'Deals from audit to decision',
+    description: 'Everyone in contact, from audit to live',
     adminOnly: true,
     tabs: [
       { label: 'Pipeline', href: '/admin/sales' },
+      { label: 'Leads', href: '/admin/sales/leads' },
+      { label: 'Old stages', href: '/admin/sales/stages' },
       { label: 'Inbox', href: '/admin/sales/inbox' },
       { label: 'Compose', href: '/admin/sales/compose' },
       { label: 'Free audits', href: '/admin/sales/audits' },
