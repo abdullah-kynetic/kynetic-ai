@@ -51,7 +51,7 @@ function Card({ card, canMove }: { card: ClientCard; canMove: boolean }) {
     <div
       ref={setNodeRef}
       style={{ transform: CSS.Translate.toString(transform) }}
-      className={`bg-card rounded-md border p-2.5 text-sm ${isDragging ? 'z-10 opacity-70 shadow-md' : ''}`}
+      className={`bg-card rounded-xl border px-3.5 pt-3 pb-2.5 text-sm ${isDragging ? 'z-10 opacity-70 shadow-md' : ''}`}
     >
       <button
         type='button'
@@ -91,7 +91,7 @@ function Column({
     <section
       ref={setNodeRef}
       aria-label={`${stage.name} stage`}
-      className={`bg-surface-sunken min-h-48 w-64 shrink-0 space-y-2 rounded-[var(--radius-panel)] border p-2 ${isOver ? 'ring-primary ring-2' : ''}`}
+      className={`hover:bg-secondary/60 bg-secondary/30 min-h-48 w-72 shrink-0 space-y-2.5 rounded-xl p-2.5 ${isOver ? 'ring-primary ring-2' : ''}`}
     >
       <div className='flex justify-between gap-2 px-1 pt-1'>
         <h2 className='font-medium'>{stage.name}</h2>
