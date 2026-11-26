@@ -74,7 +74,7 @@ test.describe('control', () => {
     await expect(items.getByRole('link')).toHaveCount(0);
   });
 
-  test('Settings and Help are in Control and every old URL still works (F-3)', async ({
+  test('Settings and Help are sidebar areas and every old URL still works (F-3)', async ({
     shopPage
   }) => {
     await shopPage.goto('/dashboard/shop/away');

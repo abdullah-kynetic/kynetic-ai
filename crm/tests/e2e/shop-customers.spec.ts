@@ -101,11 +101,11 @@ test.describe('customers and reputation', () => {
     await expect(shopPage.getByText('Reply to Alicia M.')).toHaveCount(0);
   });
 
-  test('Referrals sits in the group and opens the existing page (E-5)', async ({ shopPage }) => {
+  test('Referrals is a Customers tab and opens the existing page (E-5)', async ({ shopPage }) => {
     await shopPage.goto('/dashboard/shop/customers');
-    const sidebar = shopPage.locator('[data-slot="sidebar"]').first();
-    await sidebar.getByRole('link', { name: 'Referrals' }).click();
-    await expect(shopPage).toHaveURL(/\/dashboard\/reputation\/referrals/);
+    const tabs = shopPage.getByRole('navigation', { name: 'Customers pages' });
+    await tabs.getByRole('link', { name: 'Referrals' }).click();
+    await expect(shopPage).toHaveURL(/\/dashboard\/shop\/referrals/);
     await expect(shopPage.getByRole('heading', { level: 1 })).toBeVisible();
   });
 

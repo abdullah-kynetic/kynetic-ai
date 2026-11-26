@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { navGroups } from '@/config/nav-config';
+import { shopAreas } from '@/config/area-nav';
 import { clientNavFor, shopNavGroups } from '@/config/shop-nav';
 import { visibleNavGroups } from '@/config/nav-registry';
 import type { EnabledModules, ModuleKey } from '@/server/modules/keys';
@@ -47,26 +48,27 @@ describe('A-5 shop sidebar', () => {
     );
   });
 
-  it('a shop client sees five groups in order', () => {
+  it('a shop client sees one entry per area, with pages as tabs', () => {
     const groups = visibleNavGroups(
       clientNavFor({ keys: ['platform', 'shop_ops'] }, navGroups),
       enabled('shop_ops'),
       'owner'
     );
-    expect(groups.map((g) => g.label)).toEqual([
+    expect(groups.flatMap((g) => g.items.map((i) => i.title))).toEqual([
+      'Today',
       'Front desk',
       'Shop floor',
       'Money',
-      'Customers and reputation',
-      'Control'
+      'Customers',
+      'Control',
+      'Settings',
+      'Help'
     ]);
-    expect(groups.map((g) => g.items.map((i) => i.title))).toEqual([
-      ['Today', 'Leads', 'Calls and texts', 'Calendar'],
-      ['Jobs board', 'Quotes', 'Insurance', 'Team'],
-      ['Weekly report', 'Money in and out', 'Documents'],
-      ['Customers', 'Reviews', 'Get found', 'Referrals'],
-      ['Away mode', 'Connections', 'Settings', 'Help']
-    ]);
+    const tabs = (title: string) =>
+      shopAreas.find((a) => a.title === title)!.tabs.map((t) => t.label);
+    expect(tabs('Front desk')).toEqual(['Leads', 'Calls and texts', 'Calendar']);
+    expect(tabs('Shop floor')).toEqual(['Jobs board', 'Quotes', 'Insurance', 'Team']);
+    expect(tabs('Customers')).toEqual(['Customers', 'Reviews', 'Get found', 'Referrals']);
   });
 
   it('every shop entry needs shop_ops, so the registry hides all of them without it', () => {

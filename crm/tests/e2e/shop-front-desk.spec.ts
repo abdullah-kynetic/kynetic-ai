@@ -45,7 +45,7 @@ test.describe('front desk', () => {
     await shopPage.getByLabel('Make').fill('Honda');
     await shopPage.getByLabel('Model').fill('Civic');
     await shopPage.getByRole('button', { name: 'Add walk-in' }).click();
-    await expect(shopPage.getByRole('heading', { name: 'Pat Walkin', level: 1 })).toBeVisible();
+    await expect(shopPage.getByRole('heading', { name: 'Pat Walkin', level: 2 })).toBeVisible();
     await shopPage.goto('/dashboard/shop/leads');
     await expect(shopPage.getByText('Pat Walkin').first()).toBeVisible();
   });
@@ -93,6 +93,6 @@ test.describe('front desk without sample data', () => {
     await emptyShopPage.goto('/dashboard/shop/calls');
     await expect(emptyShopPage.getByText('No calls yet')).toBeVisible();
     await emptyShopPage.goto('/dashboard/shop/calendar');
-    await expect(emptyShopPage.getByRole('heading', { name: 'Calendar', level: 1 })).toBeVisible();
+    await expect(emptyShopPage.getByRole('heading', { name: 'Calendar', level: 2 })).toBeVisible();
   });
 });

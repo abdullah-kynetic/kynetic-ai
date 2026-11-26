@@ -47,12 +47,10 @@ test.describe('money pages', () => {
     await expect(shopPage.getByRole('button', { name: 'Add expense' })).toBeDisabled();
   });
 
-  test('Documents sits in the Money group and opens the existing page (D-3)', async ({
-    shopPage
-  }) => {
-    await shopPage.goto('/dashboard/shop/money');
-    const sidebar = shopPage.locator('[data-slot="sidebar"]').first();
-    await sidebar.getByRole('link', { name: 'Documents' }).click();
+  test('Documents is a Help tab and opens the existing page (D-3)', async ({ shopPage }) => {
+    await shopPage.goto('/dashboard/help');
+    const tabs = shopPage.getByRole('navigation', { name: 'Help pages' });
+    await tabs.getByRole('link', { name: 'Documents' }).click();
     await expect(shopPage).toHaveURL(/\/dashboard\/help\/documents/);
     await expect(
       shopPage.getByRole('heading', { name: 'Documents', level: 2, exact: true })

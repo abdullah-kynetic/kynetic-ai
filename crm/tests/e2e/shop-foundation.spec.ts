@@ -2,7 +2,16 @@ import { expect, test } from './fixtures';
 import { checkShopPage } from './shop-helpers';
 
 // A-1, A-5, A-8: the shop sidebar, the module gate on routes, and the Demo data banner.
-const GROUPS = ['Front desk', 'Shop floor', 'Money', 'Customers and reputation', 'Control'];
+const AREAS = [
+  'Today',
+  'Front desk',
+  'Shop floor',
+  'Money',
+  'Customers',
+  'Control',
+  'Settings',
+  'Help'
+];
 const SHOP_ROUTES = [
   'today',
   'leads',
@@ -18,17 +27,22 @@ const SHOP_ROUTES = [
   'reviews',
   'found',
   'away',
-  'connections'
+  'connections',
+  'referrals'
 ].map((k) => `/dashboard/shop/${k}`);
 
 test.describe('shop client', () => {
-  test('sees the five sidebar groups and every entry loads', async ({ shopPage }) => {
+  test('sees the eight sidebar areas, with their pages as tabs', async ({ shopPage }) => {
     await shopPage.goto('/dashboard/shop/today');
     const sidebar = shopPage.locator('[data-slot="sidebar"]').first();
-    for (const label of GROUPS)
-      await expect(sidebar.getByText(label, { exact: true })).toBeVisible();
-    await expect(sidebar.getByRole('link', { name: 'Jobs board' })).toBeVisible();
-    await expect(sidebar.getByRole('link', { name: 'Away mode' })).toBeVisible();
+    for (const label of AREAS)
+      await expect(sidebar.getByRole('link', { name: label, exact: true })).toBeVisible();
+    // Pages are tabs inside their area, not sidebar links.
+    await expect(sidebar.getByRole('link', { name: 'Jobs board' })).toHaveCount(0);
+    await shopPage.goto('/dashboard/shop/jobs');
+    const tabs = shopPage.getByRole('navigation', { name: 'Shop floor pages' });
+    await expect(tabs.getByRole('link', { name: 'Jobs board' })).toBeVisible();
+    await expect(tabs.getByRole('link', { name: 'Quotes' })).toBeVisible();
     // The standard client entries are not in the shop sidebar.
     await expect(sidebar.getByText('Calls & Bookings')).toHaveCount(0);
   });
@@ -66,8 +80,8 @@ test.describe('client without the module', () => {
     await authenticatedPage.goto('/dashboard');
     const sidebar = authenticatedPage.locator('[data-slot="sidebar"]').first();
     await expect(sidebar.getByRole('link', { name: 'Calls & Bookings' })).toBeVisible();
-    for (const label of GROUPS)
-      await expect(sidebar.getByText(label, { exact: true })).toHaveCount(0);
+    for (const label of ['Front desk', 'Shop floor', 'Control'])
+      await expect(sidebar.getByRole('link', { name: label, exact: true })).toHaveCount(0);
     // Module-off pages show the 403 screen and none of the shop page. (The HTTP status stays 200
     // because the dashboard's loading boundary has already started streaming; the reads behind the
     // page refuse with ModuleDisabledError, 403, and are covered by the integration tests.)
