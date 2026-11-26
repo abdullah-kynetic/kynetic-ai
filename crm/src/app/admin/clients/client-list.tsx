@@ -133,7 +133,7 @@ export async function ClientList({
               <TableHead>Status</TableHead>
               <TableHead className='hidden md:table-cell'>Plan</TableHead>
               <TableHead>Health</TableHead>
-              <TableHead className='hidden md:table-cell'>Open as client</TableHead>
+              <TableHead>Open as client</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -185,7 +185,7 @@ export async function ClientList({
                         {row.healthScore} · {health.word}
                       </StatusPill>
                     </TableCell>
-                    <TableCell className='hidden md:table-cell'>{open}</TableCell>
+                    <TableCell>{open}</TableCell>
                   </TableRow>
                 );
               })
