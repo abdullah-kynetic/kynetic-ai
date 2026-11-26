@@ -3,7 +3,7 @@ export type AreaTab = { label: string; href: string };
 export type Area = {
   title: string;
   href: string;
-  icon: 'dashboard' | 'teams' | 'kanban' | 'billing' | 'settings' | 'help' | 'phone';
+  icon: 'dashboard' | 'teams' | 'kanban' | 'billing' | 'settings' | 'help' | 'phone' | 'calendar';
   description: string;
   tabs: readonly AreaTab[];
   adminOnly?: boolean;
@@ -179,6 +179,77 @@ export const clientAreas: readonly Area[] = [
       { label: 'Reports', href: '/dashboard/help/reports' },
       { label: 'Usage', href: '/dashboard/help/usage' },
       { label: 'Notifications', href: '/dashboard/help/notifications' }
+    ]
+  }
+];
+
+/**
+ * Shop module (shop_ops) areas. Settings and Help are the standard client areas, so the shop
+ * sidebar is these areas plus those two. Hrefs are the first tab of each area.
+ */
+export const SHOP_BASE = '/dashboard/shop';
+
+export const shopAreas: readonly Area[] = [
+  {
+    title: 'Today',
+    href: `${SHOP_BASE}/today`,
+    icon: 'dashboard',
+    description: 'What needs doing in the shop today',
+    tabs: []
+  },
+  {
+    title: 'Front desk',
+    href: `${SHOP_BASE}/leads`,
+    icon: 'phone',
+    description: 'Leads, calls and the calendar',
+    tabs: [
+      { label: 'Leads', href: `${SHOP_BASE}/leads` },
+      { label: 'Calls and texts', href: `${SHOP_BASE}/calls` },
+      { label: 'Calendar', href: `${SHOP_BASE}/calendar` }
+    ]
+  },
+  {
+    title: 'Shop floor',
+    href: `${SHOP_BASE}/jobs`,
+    icon: 'kanban',
+    description: 'Jobs, quotes, insurance and the team',
+    tabs: [
+      { label: 'Jobs board', href: `${SHOP_BASE}/jobs` },
+      { label: 'Quotes', href: `${SHOP_BASE}/quotes` },
+      { label: 'Insurance', href: `${SHOP_BASE}/insurance` },
+      { label: 'Team', href: `${SHOP_BASE}/team` }
+    ]
+  },
+  {
+    title: 'Money',
+    href: `${SHOP_BASE}/report`,
+    icon: 'billing',
+    description: 'The weekly report and money in and out',
+    tabs: [
+      { label: 'Weekly report', href: `${SHOP_BASE}/report` },
+      { label: 'Money in and out', href: `${SHOP_BASE}/money` }
+    ]
+  },
+  {
+    title: 'Customers',
+    href: `${SHOP_BASE}/customers`,
+    icon: 'teams',
+    description: 'Customers, reviews and being found',
+    tabs: [
+      { label: 'Customers', href: `${SHOP_BASE}/customers` },
+      { label: 'Reviews', href: `${SHOP_BASE}/reviews` },
+      { label: 'Get found', href: `${SHOP_BASE}/found` },
+      { label: 'Referrals', href: `${SHOP_BASE}/referrals` }
+    ]
+  },
+  {
+    title: 'Control',
+    href: `${SHOP_BASE}/away`,
+    icon: 'calendar',
+    description: 'Away mode and connections',
+    tabs: [
+      { label: 'Away mode', href: `${SHOP_BASE}/away` },
+      { label: 'Connections', href: `${SHOP_BASE}/connections` }
     ]
   }
 ];
