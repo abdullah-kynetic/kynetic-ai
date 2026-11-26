@@ -82,3 +82,36 @@ export async function sendInviteAction(tenantId: string) {
   }
   redirect(`/admin/sales?invite=${result}`);
 }
+
+const COLUMNS = ['audit_pending', 'proposal', 'building', 'testing', 'live'] as const;
+type PipelineColumnId = (typeof COLUMNS)[number];
+
+/**
+ * Saves a drag on the pipeline board. A deal moves between Audit pending and Proposal; a client
+ * account moves between Proposal, Building, Testing and Live through the one client stage.
+ */
+export async function movePipelineCardAction(
+  kind: 'deal' | 'client',
+  id: string,
+  to: string
+): Promise<{ ok: true } | { ok: false; message: string }> {
+  if (!(COLUMNS as readonly string[]).includes(to)) return { ok: false, message: 'Unknown stage.' };
+  const column = to as PipelineColumnId;
+  try {
+    if (kind === 'deal') {
+      if (column !== 'audit_pending' && column !== 'proposal')
+        return { ok: false, message: 'Create the client account first.' };
+      await setDealColumn(await pipelineCaller(), id, column, {});
+    } else {
+      if (column === 'audit_pending')
+        return { ok: false, message: 'A client account cannot go back to Audit pending.' };
+      await moveClientLifecycle(await adminPlatform(), id, column);
+    }
+    revalidatePath('/admin/sales');
+    revalidatePath('/admin/clients');
+    return { ok: true };
+  } catch (error) {
+    if (error instanceof AppError) return { ok: false, message: error.message };
+    return { ok: false, message: 'Could not save the stage. Try again.' };
+  }
+}
