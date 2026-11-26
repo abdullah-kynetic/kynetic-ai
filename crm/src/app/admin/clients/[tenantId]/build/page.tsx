@@ -7,6 +7,8 @@ import { LIFECYCLE_STAGES, listClientLifecycle } from '@/server/admin/client-lif
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { forbidden } from 'next/navigation';
+import { StartViewAsForm } from '../../../view-as/start-form';
+import { loadClientRows } from '../../rows';
 import {
   loadAutoBodyAction,
   moveStageAction,
@@ -33,6 +35,7 @@ export default async function ClientBuildPage({
     listClientLifecycle(ctx)
   ]);
   const stage = stages.get(tenantId) ?? 'building';
+  const client = (await loadClientRows()).rows.find((r) => r.tenantId === tenantId);
   const canEdit = access.role === 'admin';
   const select = 'bg-background min-h-11 rounded-[var(--radius-control)] border px-3 text-sm';
   return (
@@ -40,6 +43,19 @@ export default async function ClientBuildPage({
       pageTitle='Build stage'
       pageDescription='One stage per client. Building and Testing show the client a build progress page instead of the working pages. Live opens everything.'
     >
+      {client && client.status !== 'suspended' && client.status !== 'offboarded' && (
+        <section className='bg-card rounded-[var(--radius-card)] border p-4 sm:p-5'>
+          <h2 className='font-medium'>See it as the client does</h2>
+          <p className='text-muted-foreground mt-1 mb-3 text-sm'>
+            Opens this client&apos;s portal exactly as they will see it, at any stage.
+          </p>
+          <StartViewAsForm
+            tenantId={tenantId}
+            tenantName={client.name}
+            reasonRequired={access.role !== 'admin'}
+          />
+        </section>
+      )}
       <section className='bg-card rounded-[var(--radius-card)] border p-4 sm:p-5'>
         <h2 className='font-medium'>Client stage</h2>
         <p className='text-muted-foreground mt-1 text-sm'>

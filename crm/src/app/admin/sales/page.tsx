@@ -5,6 +5,7 @@ import { getAgencyWorkspace } from '@/server/agency';
 import { COLUMN_LABELS, PIPELINE_COLUMNS, loadSalesSide } from '@/server/agency/pipeline';
 import { agencyCaller } from '../agency/caller';
 import { loadClientRows } from '../clients/rows';
+import { StartViewAsForm } from '../view-as/start-form';
 import { AGENCY_SYNTHETIC_SLUG } from '@/server/agency/constants';
 import { sendInviteAction, setDealColumnAction, startBuildingAction } from './actions';
 
@@ -33,7 +34,7 @@ export default async function PipelinePage({
   const { invite } = await searchParams;
   const caller = await agencyCaller();
   const workspace = await getAgencyWorkspace(caller);
-  const [{ rows }, sales] = await Promise.all([
+  const [{ rows, user }, sales] = await Promise.all([
     loadClientRows(),
     workspace ? loadSalesSide(caller) : Promise.resolve({ deals: [], leadRows: [] })
   ]);
@@ -118,6 +119,11 @@ export default async function PipelinePage({
                       {c.stage === 'at_risk' ? 'At risk' : COLUMN_LABELS[column]} · client account
                     </span>
                   </Link>
+                  <StartViewAsForm
+                    tenantId={c.tenantId}
+                    tenantName={c.name}
+                    reasonRequired={user.kyneticRole !== 'admin'}
+                  />
                   {c.stage === 'proposal' && (
                     <>
                       <p className='text-muted-foreground text-xs'>
