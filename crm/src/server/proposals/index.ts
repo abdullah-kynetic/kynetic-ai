@@ -1,19 +1,19 @@
-import { and, desc, eq, isNull } from "drizzle-orm";
-import { z } from "zod";
-import { inAgency } from "../agency";
-import { renderProposalPdf, type ProposalPricing } from "./pdf";
-import type { StaffCaller } from "../admin/users";
-import { audit } from "../audit";
-import type { Db, Tx } from "../db/client";
-import { agencyDealTerms, agencyProposals, deals } from "../db/schema";
-import { AppError } from "../errors";
-import { parseInput } from "../validation";
+import { and, desc, eq, isNull } from 'drizzle-orm';
+import { z } from 'zod';
+import { inAgency } from '../agency';
+import { renderProposalPdf, type ProposalPricing } from './pdf';
+import type { StaffCaller } from '../admin/users';
+import { audit } from '../audit';
+import type { Db, Tx } from '../db/client';
+import { agencyDealTerms, agencyProposals, deals } from '../db/schema';
+import { AppError } from '../errors';
+import { parseInput } from '../validation';
 
 export const PROPOSAL_SECTIONS = [
-  { key: "problem", title: "Problem" },
-  { key: "solution", title: "Agentic Solution" },
-  { key: "roadmap", title: "Roadmap" },
-  { key: "roi", title: "ROI" },
+  { key: 'problem', title: 'Problem' },
+  { key: 'solution', title: 'Agentic Solution' },
+  { key: 'roadmap', title: 'Roadmap' },
+  { key: 'roi', title: 'ROI' }
 ] as const;
 const section = z.string().max(6000);
 export const proposalSaveSchema = z.strictObject({
@@ -22,7 +22,7 @@ export const proposalSaveSchema = z.strictObject({
   solution: section,
   roadmap: section,
   roi: section,
-  expectedRevision: z.number().int().min(1).max(2_000_000_000),
+  expectedRevision: z.number().int().min(1).max(2_000_000_000)
 });
 type Options = { db?: Db; now?: Date };
 async function liveDeal(tx: Tx, dealId: string) {
@@ -31,16 +31,12 @@ async function liveDeal(tx: Tx, dealId: string) {
     .from(deals)
     .where(and(eq(deals.id, dealId), isNull(deals.deletedAt)))
     .limit(1);
-  if (!deal) throw new AppError("NOT_FOUND");
+  if (!deal) throw new AppError('NOT_FOUND');
   return deal;
 }
 
 /** One working draft per deal; opening/creating again preserves any existing edits. */
-export async function openAgencyProposal(
-  caller: StaffCaller,
-  dealId: string,
-  opts: Options = {},
-) {
+export async function openAgencyProposal(caller: StaffCaller, dealId: string, opts: Options = {}) {
   return inAgency(
     caller,
     async (tx, tenantId) => {
@@ -53,18 +49,18 @@ export async function openAgencyProposal(
           dealId,
           title: `${deal.title} proposal`.slice(0, 200),
           createdBy: caller.id,
-          updatedBy: caller.id,
+          updatedBy: caller.id
         })
         .onConflictDoNothing({
-          target: [agencyProposals.tenantId, agencyProposals.dealId],
+          target: [agencyProposals.tenantId, agencyProposals.dealId]
         })
         .returning();
       if (created) {
         await audit(tx, {
-          action: "agency.proposal.create",
-          entity: "proposal",
+          action: 'agency.proposal.create',
+          entity: 'proposal',
           entityId: created.id,
-          after: { dealId, revision: 1 },
+          after: { dealId, revision: 1 }
         });
         return created;
       }
@@ -73,17 +69,13 @@ export async function openAgencyProposal(
         .from(agencyProposals)
         .where(eq(agencyProposals.dealId, dealId))
         .limit(1);
-      if (!existing) throw new AppError("CONFLICT");
+      if (!existing) throw new AppError('CONFLICT');
       return existing;
     },
-    opts,
+    opts
   );
 }
-export async function getAgencyProposal(
-  caller: StaffCaller,
-  id: string,
-  opts: Options = {},
-) {
+export async function getAgencyProposal(caller: StaffCaller, id: string, opts: Options = {}) {
   return inAgency(
     caller,
     async (tx) => {
@@ -94,12 +86,12 @@ export async function getAgencyProposal(
         .innerJoin(deals, eq(deals.id, agencyProposals.dealId))
         .where(and(eq(agencyProposals.id, id), isNull(deals.deletedAt)))
         .limit(1);
-      if (!row) throw new AppError("NOT_FOUND");
+      if (!row) throw new AppError('NOT_FOUND');
       const [terms] = await tx
         .select({
           setupCents: agencyDealTerms.setupCents,
           monthlyCents: agencyDealTerms.monthlyCents,
-          installments: agencyDealTerms.installments,
+          installments: agencyDealTerms.installments
         })
         .from(agencyDealTerms)
         .where(eq(agencyDealTerms.dealId, row.proposal.dealId))
@@ -109,19 +101,16 @@ export async function getAgencyProposal(
             setupCents: terms.setupCents,
             monthlyCents: terms.monthlyCents,
             installments: (terms.installments as unknown[]).filter(
-              (n): n is number => typeof n === "number",
-            ),
+              (n): n is number => typeof n === 'number'
+            )
           }
         : null;
       return { ...row, pricing };
     },
-    opts,
+    opts
   );
 }
-export async function listAgencyProposals(
-  caller: StaffCaller,
-  opts: Options = {},
-) {
+export async function listAgencyProposals(caller: StaffCaller, opts: Options = {}) {
   return inAgency(
     caller,
     (tx) =>
@@ -130,20 +119,17 @@ export async function listAgencyProposals(
           id: agencyProposals.id,
           title: agencyProposals.title,
           dealTitle: deals.title,
-          updatedAt: agencyProposals.updatedAt,
+          updatedAt: agencyProposals.updatedAt
         })
         .from(agencyProposals)
         .innerJoin(deals, eq(deals.id, agencyProposals.dealId))
         .where(isNull(deals.deletedAt))
         .orderBy(desc(agencyProposals.updatedAt), agencyProposals.id)
         .limit(50),
-    opts,
+    opts
   );
 }
-export async function listProposalDeals(
-  caller: StaffCaller,
-  opts: Options = {},
-) {
+export async function listProposalDeals(caller: StaffCaller, opts: Options = {}) {
   return inAgency(
     caller,
     (tx) =>
@@ -153,14 +139,14 @@ export async function listProposalDeals(
         .where(isNull(deals.deletedAt))
         .orderBy(desc(deals.createdAt), deals.id)
         .limit(50),
-    opts,
+    opts
   );
 }
 export async function saveAgencyProposal(
   caller: StaffCaller,
   id: string,
   raw: unknown,
-  opts: Options = {},
+  opts: Options = {}
 ) {
   return inAgency(
     caller,
@@ -171,17 +157,17 @@ export async function saveAgencyProposal(
         .select()
         .from(agencyProposals)
         .where(eq(agencyProposals.id, id))
-        .for("update");
-      if (!before) throw new AppError("NOT_FOUND");
+        .for('update');
+      if (!before) throw new AppError('NOT_FOUND');
       await liveDeal(tx, before.dealId);
       const { expectedRevision, ...content } = input;
-      const keys = ["title", "problem", "solution", "roadmap", "roi"] as const;
+      const keys = ['title', 'problem', 'solution', 'roadmap', 'roi'] as const;
       const changed = keys.filter((key) => before[key] !== content[key]);
       // A lost-response retry of identical content is safe even after its first save advanced revision.
       if (!changed.length) return before;
       if (before.revision !== expectedRevision)
-        throw new AppError("CONFLICT", {
-          message: "A newer draft exists. Your edits were not applied.",
+        throw new AppError('CONFLICT', {
+          message: 'A newer draft exists. Your edits were not applied.'
         });
       const [after] = await tx
         .update(agencyProposals)
@@ -189,28 +175,24 @@ export async function saveAgencyProposal(
           ...content,
           revision: before.revision + 1,
           updatedBy: caller.id,
-          updatedAt: (opts.now ?? new Date()).toISOString(),
+          updatedAt: (opts.now ?? new Date()).toISOString()
         })
         .where(eq(agencyProposals.id, id))
         .returning();
       await audit(tx, {
-        action: "agency.proposal.update",
-        entity: "proposal",
+        action: 'agency.proposal.update',
+        entity: 'proposal',
         entityId: id,
         before: { revision: before.revision },
-        after: { revision: after!.revision, changed },
+        after: { revision: after!.revision, changed }
       });
       return after!;
     },
-    opts,
+    opts
   );
 }
 
-export async function exportAgencyProposal(
-  caller: StaffCaller,
-  id: string,
-  opts: Options = {},
-) {
+export async function exportAgencyProposal(caller: StaffCaller, id: string, opts: Options = {}) {
   const data = await getAgencyProposal(caller, id, opts);
   const bytes = await renderProposalPdf({
     title: data.proposal.title,
@@ -219,18 +201,18 @@ export async function exportAgencyProposal(
     solution: data.proposal.solution,
     roadmap: data.proposal.roadmap,
     roi: data.proposal.roi,
-    pricing: data.pricing,
+    pricing: data.pricing
   });
   await inAgency(
     caller,
     (tx) =>
       audit(tx, {
-        action: "agency.proposal.export",
-        entity: "proposal",
+        action: 'agency.proposal.export',
+        entity: 'proposal',
         entityId: id,
-        after: { bytes: bytes.byteLength },
+        after: { bytes: bytes.byteLength }
       }),
-    opts,
+    opts
   );
   return bytes;
 }

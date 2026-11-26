@@ -1,27 +1,27 @@
-import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
-import { forbidden } from "next/navigation";
-import { PortalPageContainer as PageContainer } from "@/components/layout/page-container";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { decideAdminAccess } from "@/server/admin";
-import { alexConfigs } from "@/server/db/schema";
-import { withTenant } from "@/server/tenancy";
-import { placeAlexTestCallAction, updateAlexConfigAction } from "./actions";
+import { eq } from 'drizzle-orm';
+import { headers } from 'next/headers';
+import { forbidden } from 'next/navigation';
+import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { decideAdminAccess } from '@/server/admin';
+import { alexConfigs } from '@/server/db/schema';
+import { withTenant } from '@/server/tenancy';
+import { placeAlexTestCallAction, updateAlexConfigAction } from './actions';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export default async function AdminAlexConfigPage({
-  params,
+  params
 }: {
   params: Promise<{ tenantId: string }>;
 }) {
   const { tenantId } = await params;
   const access = await decideAdminAccess(await headers());
-  if (access.kind !== "ok" || access.role !== "admin") forbidden();
+  if (access.kind !== 'ok' || access.role !== 'admin') forbidden();
   const config = await withTenant(
-    { tenantId, userId: access.user.id, role: "admin" },
+    { tenantId, userId: access.user.id, role: 'admin' },
     async (tx) =>
       (
         await tx
@@ -32,123 +32,105 @@ export default async function AdminAlexConfigPage({
             greeting: alexConfigs.greeting,
             transferNumberE164: alexConfigs.transferNumberE164,
             paused: alexConfigs.paused,
-            promptVersion: alexConfigs.promptVersion,
+            promptVersion: alexConfigs.promptVersion
           })
           .from(alexConfigs)
           .where(eq(alexConfigs.tenantId, tenantId))
           .limit(1)
-      )[0],
+      )[0]
   );
   if (!config)
     return (
       <PageContainer
-        pageTitle="Alex configuration"
-        pageDescription="This client has no Alex setup yet."
+        pageTitle='Alex configuration'
+        pageDescription='This client has no Alex setup yet.'
       >
-        <p className="text-muted-foreground max-w-xl text-sm">
-          Alex is not configured for this client, so there is nothing to edit.
-          Turn on the Alex system for them on the Systems tab and the settings
-          appear here.
+        <p className='text-muted-foreground max-w-xl text-sm'>
+          Alex is not configured for this client, so there is nothing to edit. Turn on the Alex
+          system for them on the Systems tab and the settings appear here.
         </p>
       </PageContainer>
     );
   return (
     <PageContainer
-      pageTitle="Alex configuration"
+      pageTitle='Alex configuration'
       pageDescription={`Provider, call settings and prompt version ${config.promptVersion}. Changes are audited.`}
     >
-      <form
-        action={updateAlexConfigAction.bind(null, tenantId)}
-        className="max-w-xl space-y-5"
-      >
-        <div className="space-y-2">
-          <Label htmlFor="provider">Provider</Label>
-          {config.provider === "retell" ? (
-            <p className="rounded border px-3 py-2">
-              Retell <span className="font-medium">Parked</span>
-              <span className="text-muted-foreground block text-sm">
-                Retell is parked and cannot be saved. ElevenLabs is the only
-                provider for new saves.
+      <form action={updateAlexConfigAction.bind(null, tenantId)} className='max-w-xl space-y-5'>
+        <div className='space-y-2'>
+          <Label htmlFor='provider'>Provider</Label>
+          {config.provider === 'retell' ? (
+            <p className='rounded border px-3 py-2'>
+              Retell <span className='font-medium'>Parked</span>
+              <span className='text-muted-foreground block text-sm'>
+                Retell is parked and cannot be saved. ElevenLabs is the only provider for new saves.
               </span>
             </p>
           ) : null}
           <select
-            id="provider"
-            name="provider"
-            defaultValue={config.provider === "retell" ? "" : "elevenlabs"}
-            className="bg-background border-input min-h-11 w-full rounded-md border px-3"
+            id='provider'
+            name='provider'
+            defaultValue={config.provider === 'retell' ? '' : 'elevenlabs'}
+            className='bg-background border-input min-h-11 w-full rounded-md border px-3'
           >
-            {config.provider === "retell" ? (
-              <option value="">Keep parked Retell</option>
-            ) : null}
-            <option value="elevenlabs">ElevenLabs</option>
+            {config.provider === 'retell' ? <option value=''>Keep parked Retell</option> : null}
+            <option value='elevenlabs'>ElevenLabs</option>
           </select>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="agentRef">Agent reference</Label>
-          <Input
-            id="agentRef"
-            name="agentRef"
-            defaultValue={config.agentRef ?? ""}
-          />
+        <div className='space-y-2'>
+          <Label htmlFor='agentRef'>Agent reference</Label>
+          <Input id='agentRef' name='agentRef' defaultValue={config.agentRef ?? ''} />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="voice">Voice reference</Label>
-          <Input id="voice" name="voice" defaultValue={config.voice ?? ""} />
+        <div className='space-y-2'>
+          <Label htmlFor='voice'>Voice reference</Label>
+          <Input id='voice' name='voice' defaultValue={config.voice ?? ''} />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="greeting">Greeting</Label>
+        <div className='space-y-2'>
+          <Label htmlFor='greeting'>Greeting</Label>
           <textarea
-            id="greeting"
-            name="greeting"
-            defaultValue={config.greeting ?? ""}
-            className="border-input bg-background min-h-24 w-full rounded-md border p-3"
+            id='greeting'
+            name='greeting'
+            defaultValue={config.greeting ?? ''}
+            className='border-input bg-background min-h-24 w-full rounded-md border p-3'
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="transferNumberE164">Transfer number (E.164)</Label>
+        <div className='space-y-2'>
+          <Label htmlFor='transferNumberE164'>Transfer number (E.164)</Label>
           <Input
-            id="transferNumberE164"
-            name="transferNumberE164"
-            defaultValue={config.transferNumberE164 ?? ""}
+            id='transferNumberE164'
+            name='transferNumberE164'
+            defaultValue={config.transferNumberE164 ?? ''}
           />
         </div>
-        <label className="flex min-h-11 items-center gap-3">
-          <input type="checkbox" name="paused" defaultChecked={config.paused} />{" "}
-          Pause Alex for this client
+        <label className='flex min-h-11 items-center gap-3'>
+          <input type='checkbox' name='paused' defaultChecked={config.paused} /> Pause Alex for this
+          client
         </label>
-        <div className="space-y-2">
-          <Label htmlFor="prompt">New prompt (optional)</Label>
+        <div className='space-y-2'>
+          <Label htmlFor='prompt'>New prompt (optional)</Label>
           <textarea
-            id="prompt"
-            name="prompt"
-            className="border-input bg-background min-h-40 w-full rounded-md border p-3"
+            id='prompt'
+            name='prompt'
+            className='border-input bg-background min-h-40 w-full rounded-md border p-3'
           />
-          <p className="text-muted-foreground text-sm">
-            Saving a prompt creates the next version; the raw prompt is not
-            shown here.
+          <p className='text-muted-foreground text-sm'>
+            Saving a prompt creates the next version; the raw prompt is not shown here.
           </p>
         </div>
-        <Button type="submit">Save Alex settings</Button>
+        <Button type='submit'>Save Alex settings</Button>
       </form>
       <form
         action={placeAlexTestCallAction.bind(null, tenantId)}
-        className="mt-10 flex max-w-xl flex-wrap items-end gap-3"
+        className='mt-10 flex max-w-xl flex-wrap items-end gap-3'
       >
-        <div className="min-w-56 flex-1 space-y-2">
-          <Label htmlFor="test-phone">Test call destination</Label>
-          <Input
-            id="test-phone"
-            name="phone"
-            type="tel"
-            placeholder="+15555550123"
-            required
-          />
+        <div className='min-w-56 flex-1 space-y-2'>
+          <Label htmlFor='test-phone'>Test call destination</Label>
+          <Input id='test-phone' name='phone' type='tel' placeholder='+15555550123' required />
         </div>
-        <Button type="submit" variant="outline">
+        <Button type='submit' variant='outline'>
           Place test call
         </Button>
-        <p className="text-muted-foreground basis-full text-sm">
+        <p className='text-muted-foreground basis-full text-sm'>
           Uses the configured voice adapter and writes an audit record.
         </p>
       </form>
