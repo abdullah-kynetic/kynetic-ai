@@ -1,7 +1,7 @@
 /* Kynetic tokens (DESIGN_SYSTEM "UI tokens"). Light is the default; dark is a user toggle.
    The sidebar is a light warm panel in the light theme and an espresso band in dark (DESIGN.md). Components use the shadcn names only. */
 [data-theme='kynetic'] {
-  --background: #faf8f5;
+  --background: #ffffff;
   --foreground: #14100c;
   --card: #ffffff;
   --card-foreground: #14100c;
@@ -10,15 +10,15 @@
   /* Near-black primary, white label (DESIGN.md). Brand orange is an accent only. */
   --primary: #14100c;
   --primary-foreground: #ffffff;
-  --secondary: #f2eee8;
+  --secondary: #f6f4f0;
   --secondary-foreground: #14100c;
-  --muted: #f2eee8;
+  --muted: #f6f4f0;
   --muted-foreground: #5c5650;
-  --accent: #f2eee8;
+  --accent: #f1eee9;
   --accent-foreground: #14100c;
   --destructive: #b3261e;
   --destructive-foreground: #ffffff;
-  --border: #e8e2d8;
+  --border: #ece9e3;
   /* Status tones (DESIGN_SYSTEM "not in the base tokens"). Text-safe values; chips tint them to 12%. */
   --primary-text: #a8461a;
   --success: #1e7a46;
@@ -33,19 +33,19 @@
   --chart-3: #14100c;
   --chart-4: #5c5650;
   --chart-5: #1e7a46;
-  --sidebar: #f4f0ea;
+  --sidebar: #faf9f6;
   --sidebar-foreground: #14100c;
   --sidebar-primary: #14100c;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #eae4da;
+  --sidebar-accent: #efece6;
   --sidebar-accent-foreground: #14100c;
-  --sidebar-border: #e8e2d8;
+  --sidebar-border: #ece9e3;
   --sidebar-ring: #a8461a;
   --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-display: var(--font-cormorant), Georgia, serif;
   --font-serif: var(--font-cormorant), Georgia, serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
-  --radius: 0.5rem;
+  --radius: 0.375rem;
   --shadow-x: 0;
   --shadow-y: 1px;
   --shadow-blur: 2px;
@@ -69,10 +69,10 @@
   --attention-soft: #fdf0d8;
   --neutral: #5c5650;
   --neutral-soft: #f2eee8;
-  --surface-sunken: #f4f0ea;
-  --radius-card: 0.75rem;
-  --radius-panel: 0.625rem;
-  --radius-control: 0.5rem;
+  --surface-sunken: #f6f4f0;
+  --radius-card: 0.5rem;
+  --radius-panel: 0.5rem;
+  --radius-control: 0.375rem;
   --shadow-popover: 0 8px 24px rgb(20 16 12 / 12%), 0 0 0 1px #e8e2d8;
 }
 

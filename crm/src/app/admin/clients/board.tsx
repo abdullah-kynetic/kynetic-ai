@@ -51,7 +51,7 @@ function Card({ card, canMove }: { card: ClientCard; canMove: boolean }) {
     <div
       ref={setNodeRef}
       style={{ transform: CSS.Translate.toString(transform) }}
-      className={`bg-card rounded-xl border px-3.5 pt-3 pb-2.5 text-sm ${isDragging ? 'z-10 opacity-70 shadow-md' : ''}`}
+      className={`bg-card rounded-lg border px-3 pt-2.5 pb-2 text-sm ${isDragging ? 'z-10 opacity-70 shadow-md' : ''}`}
     >
       <button
         type='button'
