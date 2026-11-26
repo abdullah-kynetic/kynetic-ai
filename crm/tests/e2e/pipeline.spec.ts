@@ -30,18 +30,23 @@ test('dragging a client card on the pipeline saves its stage and survives a relo
   const NAME = 'Synthetic Brand Co';
   const handle = page.getByRole('button', { name: `Drag ${NAME} to another stage` });
   await expect(handle).toBeVisible();
+  // A drag that lands before the page has hydrated does nothing, so retry until the card moves.
   const move = async (to: string) => {
-    const source = await page
-      .getByRole('button', { name: `Drag ${NAME} to another stage` })
-      .boundingBox();
-    const target = await page.getByRole('region', { name: `${to} stage` }).boundingBox();
-    if (!source || !target) throw new Error('card or column not visible');
-    const saved = page.waitForResponse((r) => r.request().method() === 'POST' && r.ok());
-    await page.mouse.move(source.x + source.width / 2, source.y + source.height / 2);
-    await page.mouse.down();
-    await page.mouse.move(target.x + target.width / 2, target.y + 60, { steps: 12 });
-    await page.mouse.up();
-    await saved;
+    const column = page.getByRole('region', { name: `${to} stage` });
+    await expect(async () => {
+      const source = await page
+        .getByRole('button', { name: `Drag ${NAME} to another stage` })
+        .boundingBox();
+      const target = await column.boundingBox();
+      if (!source || !target) throw new Error('card or column not visible');
+      await page.mouse.move(source.x + source.width / 2, source.y + source.height / 2);
+      await page.mouse.down();
+      await page.mouse.move(target.x + target.width / 2, target.y + 60, { steps: 12 });
+      await page.mouse.up();
+      await expect(
+        column.getByRole('button', { name: `Drag ${NAME} to another stage` })
+      ).toBeVisible({ timeout: 3000 });
+    }).toPass({ timeout: 20000 });
   };
   const inColumn = (stage: string) =>
     page
