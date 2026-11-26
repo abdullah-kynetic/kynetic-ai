@@ -87,7 +87,7 @@ export function PipelineColumn({
     <section
       ref={setNodeRef}
       aria-label={`${label} stage`}
-      className={`hover:bg-secondary/60 bg-secondary/30 flex min-h-48 min-w-[82%] shrink-0 snap-start flex-col gap-2.5 rounded-xl p-2.5 md:min-w-0 md:shrink ${isOver ? 'ring-primary ring-2' : ''}`}
+      className={`hover:bg-secondary/60 bg-secondary/30 flex min-h-48 min-w-[82%] shrink-0 snap-start flex-col gap-2 rounded-lg p-2 md:min-w-0 md:shrink ${isOver ? 'ring-primary ring-2' : ''}`}
     >
       <div className='flex items-center gap-2 px-1 pb-1'>
         <h2 className='text-sm font-medium'>{label}</h2>
@@ -121,7 +121,7 @@ export function PipelineCard({
     <div
       ref={setNodeRef}
       style={{ transform: CSS.Translate.toString(transform) }}
-      className={`bg-card relative grid gap-2 rounded-xl border px-3.5 pt-3 pb-2.5 text-sm ${canMove ? 'pr-10' : ''} ${isDragging ? 'z-10 opacity-70 shadow-md' : ''}`}
+      className={`bg-card relative grid gap-2 rounded-lg border px-3 pt-2.5 pb-2 text-sm ${canMove ? 'pr-10' : ''} ${isDragging ? 'z-10 opacity-70 shadow-md' : ''}`}
     >
       {canMove && (
         <button
