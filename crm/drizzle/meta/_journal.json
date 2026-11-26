@@ -505,6 +505,13 @@
       "when": 1795610400000,
       "tag": "1098_client_build_stages",
       "breakpoints": true
+    },
+    {
+      "idx": 72,
+      "version": "7",
+      "when": 1795696800000,
+      "tag": "1099_client_proposal_stage",
+      "breakpoints": true
     }
   ]
 }

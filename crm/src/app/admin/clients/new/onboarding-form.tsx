@@ -85,7 +85,7 @@ export function OnboardingForm({
   const [state, action, pending] = React.useActionState<OnboardState, FormData>(onboardClient, {
     status: 'idle'
   });
-  if (state.status === 'created') return <Created state={state} />;
+  if (state.status === 'created') return <Created state={state} atProposal={Boolean(deal)} />;
   const fe = state.status === 'error' ? state.fieldErrors : undefined;
 
   return (
@@ -102,13 +102,9 @@ export function OnboardingForm({
         <div className='bg-secondary grid gap-2 rounded-lg p-3 text-sm'>
           <input type='hidden' name='dealId' value={deal.dealId} />
           <p>
-            This moves the deal into Building and creates the client account. Only do this once the
-            contract is signed and the deposit is paid.
+            This creates the client account at the Proposal stage so it is ready and prepped.
+            Nothing is sent to the owner until the contract is signed and the deposit is paid.
           </p>
-          <label htmlFor='contractSigned' className='flex items-center gap-2 font-medium'>
-            <Checkbox id='contractSigned' name='contractSigned' required />
-            Contract signed and deposit paid
-          </label>
         </div>
       )}
       <div className='grid gap-4 sm:grid-cols-2'>
@@ -279,7 +275,13 @@ export function OnboardingForm({
   );
 }
 
-function Created({ state }: { state: Extract<OnboardState, { status: 'created' }> }) {
+function Created({
+  state,
+  atProposal
+}: {
+  state: Extract<OnboardState, { status: 'created' }>;
+  atProposal: boolean;
+}) {
   const [send, setSend] = React.useState<SendState>({ status: 'idle' });
   const [busy, setBusy] = React.useState(false);
   return (
@@ -296,7 +298,16 @@ function Created({ state }: { state: Extract<OnboardState, { status: 'created' }
         <p className='text-muted-foreground mt-1 text-sm'>Subject: {state.draft.subject}</p>
         <pre className='mt-2 text-sm whitespace-pre-wrap'>{state.draft.body}</pre>
       </div>
-      {send.status === 'sent' ? (
+      {atProposal ? (
+        <p className='text-muted-foreground text-sm'>
+          The account is at Proposal. Once the contract is signed and the deposit is paid, move it
+          to Building on the{' '}
+          <Link className='underline' href='/admin/sales'>
+            pipeline
+          </Link>{' '}
+          and send the invite from there.
+        </p>
+      ) : send.status === 'sent' ? (
         <p role='status' className='text-sm'>
           Invite sent to {state.ownerEmail}. It works once and expires in 7 days.
         </p>

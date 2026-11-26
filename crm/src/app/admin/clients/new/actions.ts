@@ -4,6 +4,7 @@ import {
   DAYS,
   draftOwnerInvite,
   getInviteMailer,
+  moveClientLifecycle,
   onboardTenant,
   sendOwnerInvite
 } from '@/server/admin';
@@ -64,11 +65,6 @@ export async function onboardClient(_prev: OnboardState, form: FormData): Promis
   try {
     const ctx = await adminCtx();
     const dealId = text(form, 'dealId');
-    if (dealId && form.get('contractSigned') !== 'on')
-      return {
-        status: 'error',
-        message: 'Confirm the contract is signed and the deposit is paid first.'
-      };
     const zips = text(form, 'serviceZips')
       .split(/[\s,]+/)
       .filter(Boolean);
@@ -93,12 +89,14 @@ export async function onboardClient(_prev: OnboardState, form: FormData): Promis
       crmLevel: text(form, 'crmLevel') || undefined,
       templateId: text(form, 'templateId') || undefined
     });
-    // The client account now carries the stage (Building), so the deal is closed as Won.
+    // Created from a deal: the account is ready at Proposal, and the deal card is closed so the
+    // client shows once. Nothing is sent; the invite goes out after the contract is signed and paid.
     if (dealId) {
       try {
+        await moveClientLifecycle(ctx, result.tenantId, 'proposal');
         await markDealWon({ id: ctx.userId, kyneticRole: 'admin' }, dealId);
       } catch {
-        // The client exists either way; the deal can be moved to Won by hand.
+        // The client exists either way; the stage and the deal can be moved by hand.
       }
     }
     return {

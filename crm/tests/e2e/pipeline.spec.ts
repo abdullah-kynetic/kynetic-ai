@@ -11,7 +11,7 @@ test('pipeline shows the five stages, and the leads tab shows who is not in cont
   await expect(page.getByRole('region', { name: 'Declined' })).toBeVisible();
 });
 
-test('onboarding from a deal asks for the signed contract and paid deposit', async ({
+test('onboarding from a deal creates the account at Proposal and sends nothing', async ({
   adminPage: page
 }) => {
   await page.goto(
@@ -19,5 +19,5 @@ test('onboarding from a deal asks for the signed contract and paid deposit', asy
   );
   await expect(page.getByLabel('Business name')).toHaveValue('Acme');
   await expect(page.getByLabel('Owner email')).toHaveValue('a@example.test');
-  await expect(page.getByLabel('Contract signed and deposit paid')).toBeVisible();
+  await expect(page.getByText('creates the client account at the Proposal stage')).toBeVisible();
 });

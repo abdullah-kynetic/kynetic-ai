@@ -2811,7 +2811,10 @@ export const TOOLS: ToolDefinition[] = [
     freeText: [],
     inputs: {
       id: uuid('Client (tenant) id.'),
-      stage: { type: 'string', enum: ['building', 'testing', 'live', 'at_risk', 'churned', 'demo'] }
+      stage: {
+        type: 'string',
+        enum: ['proposal', 'building', 'testing', 'live', 'at_risk', 'churned', 'demo']
+      }
     },
     required: ['id', 'stage'],
     repeat: 'A repeat sets the same stage again, which changes nothing.'

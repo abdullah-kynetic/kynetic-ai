@@ -15,6 +15,7 @@ import { useState } from 'react';
 import { moveClientStageAction } from './actions';
 
 export type ClientStageId =
+  | 'proposal'
   | 'building'
   | 'testing'
   | 'live'

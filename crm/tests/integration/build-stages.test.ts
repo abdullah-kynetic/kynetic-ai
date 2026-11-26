@@ -3,6 +3,7 @@ import {
   listAdminTenantOverview,
   listBuildSystems,
   loadClientBuildState,
+  listClientLifecycle,
   moveClientLifecycle,
   removeBuildSystem,
   saveBuildSystem
@@ -90,6 +91,14 @@ describe('client build stages', () => {
     expect(
       (await listAdminTenantOverview(admin, { db })).some((r) => r.tenantId === IDS.tenantB)
     ).toBe(true);
+  });
+
+  it('holds a prepped client at Proposal without opening the build portal', async () => {
+    await moveClientLifecycle(admin, IDS.tenantB, 'proposal', { db });
+    const [row] = await t.admin`select status from tenants where id = ${IDS.tenantB}`;
+    expect(row!.status).toBe('onboarding');
+    expect((await listClientLifecycle(admin, { db })).get(IDS.tenantB)).toBe('proposal');
+    await moveClientLifecycle(admin, IDS.tenantB, 'building', { db });
   });
 
   it('never archives AA Auto Body or a shop client', async () => {
