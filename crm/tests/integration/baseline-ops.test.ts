@@ -68,6 +68,8 @@ const EXTRA_TABLES = [
   'support_request_messages',
   // Client requests for a system that is off.
   'system_requests',
+  // Systems being built for a client (Building, Testing, Live stages).
+  'client_build_systems',
   // Batch 3 admin operations. platform_settings and staff_notifications are global.
   'platform_settings',
   'usage_daily',

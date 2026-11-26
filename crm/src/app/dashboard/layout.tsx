@@ -10,6 +10,8 @@ import { ViewAsProvider } from '@/components/view-as/view-as-context';
 import { ViewAsBanner, VIEW_AS_BANNER_HEIGHT } from '@/components/view-as/view-as-banner';
 import { VIEW_AS_COOKIE } from '@/server/impersonation';
 import { loadShellContext, roleLabel } from '@/server/shell';
+import { isAllowedDuringBuild, loadClientBuildState } from '@/server/admin/build-systems';
+import { buildNavGroups } from '@/config/build-nav';
 import { getEnv } from '@/server/env';
 import { pendingDocuments } from '@/server/terms';
 import { termsRedirectTarget } from '@/server/terms/gate';
@@ -74,7 +76,17 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   // Only Kynetic staff are shown the way into the admin side; the admin routes check the role again.
   // Inside a view-as session the page is the client's, so there is no way into the admin side.
-  const groups = clientNavFor(shell.modules, navGroups);
+  // A client that is not live yet and has systems listed sees the build portal only (Building, Testing).
+  const buildState = shell.tenant
+    ? await loadClientBuildState({
+        tenantId: shell.tenant.id,
+        userId: shell.user.id,
+        role: shell.role
+      })
+    : null;
+  if (buildState && !isAllowedDuringBuild(requestPath(requestHeaders)))
+    redirect('/dashboard/build');
+  const groups = buildState ? buildNavGroups : clientNavFor(shell.modules, navGroups);
   const adminHref =
     (shell.role === 'admin' || shell.role === 'va') && !shell.viewAs ? '/admin' : undefined;
   const defaultOpen = cookieStore.get('sidebar_state')?.value !== 'false';

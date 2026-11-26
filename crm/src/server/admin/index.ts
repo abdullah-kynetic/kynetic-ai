@@ -95,3 +95,20 @@ export {
   moveClientLifecycle,
   type LifecycleStage
 } from './client-lifecycle';
+export {
+  AUTO_BODY_SYSTEMS,
+  BUILD_ALLOWED_PREFIXES,
+  isAllowedDuringBuild,
+  loadClientBuildState,
+  type ClientBuildState,
+  BUILD_STAGES,
+  derivePhase,
+  listBuildSystems,
+  loadBuildSystems,
+  removeBuildSystem,
+  saveBuildSystem,
+  saveBuildSystemSchema,
+  type BuildPhase,
+  type BuildStage,
+  type BuildSystem
+} from './build-systems';

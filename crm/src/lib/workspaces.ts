@@ -16,7 +16,7 @@ export type Workspace = {
   name: string;
   /** Second line under the name. */
   detail: string;
-  /** False while the client portal is still being built: "View as client" is disabled. */
+  /** False only for suspended clients: "View as client" is disabled. */
   canView: boolean;
 };
 
@@ -30,7 +30,8 @@ export function planLabel(plan: string): string {
 export function portalState(status: string, isDemo: boolean): { label: string; canView: boolean } {
   if (status === 'active') return { label: 'Ready', canView: true };
   if (status === 'onboarding' && isDemo) return { label: 'Ready', canView: true };
-  if (status === 'onboarding') return { label: 'Building', canView: false };
+  // Staff can always preview a client that is being built; the server allows it.
+  if (status === 'onboarding') return { label: 'Building', canView: true };
   return { label: 'Suspended', canView: false };
 }
 

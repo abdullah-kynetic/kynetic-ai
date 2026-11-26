@@ -154,6 +154,9 @@ async function main(): Promise<void> {
   await db.admin`insert into backup_runs (kind, status, size_bytes, offsite_key, restore_test_passed)
     values ('restore_test', 'ok', 4096, 'backups/synthetic/test.dump.enc', true)`;
 
+  // The shared fixture lists a build system for every client; the e2e clients use the normal portal.
+  await db.admin`delete from client_build_systems`;
+
   // No worker runs under e2e; /api/health needs a fresh heartbeat to report ok (the readiness wait below).
   await db.admin`insert into worker_heartbeats (name, commit_sha) values ('worker', 'e2e')`;
 
@@ -166,7 +169,7 @@ async function main(): Promise<void> {
       (${owner}, ${`${slug}-owner@example.test`}, ${`${name} Owner`}, true)`;
     await db.admin`insert into tenants (id, slug, name, plan, status, timezone)
       values (${tenantId}, ${slug}, ${name}, 'founding', 'onboarding', 'America/Chicago')`;
-    await db.admin`insert into client_lifecycle (tenant_id, stage, updated_by) values (${tenantId}, 'onboarding', ${owner})`;
+    await db.admin`insert into client_lifecycle (tenant_id, stage, updated_by) values (${tenantId}, 'building', ${owner})`;
     await db.admin`insert into memberships (tenant_id, user_id, role) values (${tenantId}, ${owner}, 'owner')`;
     await db.admin`insert into tenant_modules (tenant_id, module_key, enabled, level) values
       (${tenantId}, 'platform', true, ''), (${tenantId}, 'shop_ops', true, ''), (${tenantId}, 'crm', true, 'full')`;

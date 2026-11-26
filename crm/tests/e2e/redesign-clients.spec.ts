@@ -15,7 +15,7 @@ test('Clients tables: headline, numbers, pills with words, and the health legend
   await expect(page.getByRole('heading', { level: 1, name: 'Clients' })).toHaveCount(1);
   await expect(
     page.getByRole('list', { name: 'Clients in numbers' }).getByRole('listitem')
-  ).toHaveCount(4);
+  ).toHaveCount(5);
 });
 
 test('Client page: tabs sit above the content and mark the current page', async ({

@@ -12,7 +12,7 @@ import {
 import { StartViewAsForm } from '../view-as/start-form';
 import { loadClientRows, type ClientRow } from './rows';
 
-export type ClientListKind = 'live' | 'demo' | 'churned' | 'operations';
+export type ClientListKind = 'live' | 'demo' | 'churned' | 'archived' | 'operations';
 export type ClientListFilters = { q?: string; health?: string; stage?: string };
 
 const healthPill: Record<'green' | 'yellow' | 'red', { tone: Tone; word: string }> = {
@@ -21,23 +21,28 @@ const healthPill: Record<'green' | 'yellow' | 'red', { tone: Tone; word: string 
   red: { tone: 'alert', word: 'At risk' }
 };
 const stageWord: Record<string, string> = {
-  onboarding: 'Onboarding',
+  building: 'Building',
+  testing: 'Testing',
   live: 'Live',
   at_risk: 'At risk',
   churned: 'Churned',
-  demo: 'Demo'
+  demo: 'Demo',
+  archived: 'Archived'
 };
 const stageTone: Record<string, Tone> = {
-  onboarding: 'attention',
+  building: 'attention',
+  testing: 'attention',
   live: 'gain',
   at_risk: 'alert',
   churned: 'neutral',
-  demo: 'neutral'
+  demo: 'neutral',
+  archived: 'neutral'
 };
 const titles: Record<ClientListKind, string> = {
   live: 'Live clients',
   demo: 'Demo clients',
   churned: 'Churned clients',
+  archived: 'Archived clients',
   operations: 'All clients'
 };
 
@@ -45,7 +50,8 @@ function inKind(kind: ClientListKind, row: ClientRow) {
   if (kind === 'live') return row.stage === 'live' || row.stage === 'at_risk';
   if (kind === 'demo') return row.stage === 'demo';
   if (kind === 'churned') return row.stage === 'churned';
-  return row.stage !== 'churned';
+  if (kind === 'archived') return row.stage === 'archived';
+  return row.stage !== 'churned' && row.stage !== 'archived';
 }
 
 export async function ClientList({
@@ -133,7 +139,7 @@ export async function ClientList({
               <TableRow>
                 <TableCell colSpan={5} className='text-muted-foreground'>
                   {filtered ? 'No clients match these filters.' : 'No clients here yet.'}{' '}
-                  {kind !== 'churned' && (
+                  {kind !== 'churned' && kind !== 'archived' && (
                     <Link className='underline' href='/admin/clients/new'>
                       Onboard a client
                     </Link>
@@ -143,7 +149,7 @@ export async function ClientList({
             ) : (
               rows.map((row) => {
                 const health = healthPill[row.healthTone];
-                const openable = row.status === 'active' || row.isDemo;
+                const openable = row.status !== 'suspended' && row.status !== 'offboarded';
                 const open = openable ? (
                   <StartViewAsForm
                     tenantId={row.tenantId}

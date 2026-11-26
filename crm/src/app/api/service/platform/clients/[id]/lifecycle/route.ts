@@ -4,7 +4,7 @@ import { withPlatformAuth } from '@/server/service-auth';
 
 export const dynamic = 'force-dynamic';
 
-// Body: { "stage": "onboarding" | "live" | "at_risk" | "churned" | "demo" }.
+// Body: { "stage": "building" | "testing" | "live" | "at_risk" | "churned" | "demo" }.
 export const POST = withPlatformAuth(
   async (request, plat, context: { params: Promise<{ id: string }> }) => {
     try {

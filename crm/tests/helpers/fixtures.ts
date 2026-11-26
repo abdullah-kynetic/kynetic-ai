@@ -69,7 +69,7 @@ async function seedTenant(
   await admin`insert into tenants (id, slug, name, plan, timezone) values
     (${t}, ${'tenant-' + key}, ${'Tenant ' + key.toUpperCase()}, 'founding', 'America/Los_Angeles')`;
   await admin`insert into client_lifecycle (tenant_id, stage, updated_by)
-    values (${t}, 'onboarding', ${owner})`;
+    values (${t}, 'building', ${owner})`;
   await admin`insert into memberships (tenant_id, user_id, role) values (${t}, ${owner}, 'owner')`;
   if (staff)
     await admin`insert into memberships (tenant_id, user_id, role) values (${t}, ${staff}, 'staff')`;
@@ -143,6 +143,7 @@ async function seedTenant(
     await admin`insert into support_requests (tenant_id, subject, body, submitted_by) values (${t}, 'Fixture request', 'Synthetic support request.', ${owner}) returning id`;
   await admin`insert into support_request_messages (tenant_id, request_id, author_user_id, author_side, body) values (${t}, ${request.id}, ${owner}, 'client', 'Synthetic support message.')`;
   await admin`insert into system_requests (tenant_id, module_key, requested_by) values (${t}, 'quote_followup', ${owner})`;
+  await admin`insert into client_build_systems (tenant_id, system_key, name, stage) values (${t}, 'fixture_system', 'Fixture system', 'building')`;
   await admin`insert into usage_daily (tenant_id, day, call_count, call_seconds, call_cost_cents, sms_count, email_count, cost_unknown)
     values (${t}, current_date, 1, 60, 10, 1, 0, true)`;
   await admin`insert into tenant_exports (tenant_id, storage_key, status)

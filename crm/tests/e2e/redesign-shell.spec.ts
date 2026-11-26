@@ -97,12 +97,12 @@ test('every write during View as client is refused with a clear message', async 
   await expect(page).toHaveURL(/\/admin\/clients$/);
 });
 
-test('a building portal cannot be viewed as the client', async ({ adminPage: page }) => {
+test('a building portal can be previewed as the client', async ({ adminPage: page }) => {
   await page.goto('/admin');
   await page.getByRole('button', { name: /Switch workspace/ }).click();
   await expect(
     page.getByRole('button', { name: 'View as client: Synthetic Brand Co' })
-  ).toBeDisabled();
+  ).toBeEnabled();
 });
 
 test('client owner card is static: no chevron, no switcher, no admin navigation', async ({

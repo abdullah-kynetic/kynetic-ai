@@ -88,6 +88,7 @@ export default async function ClientOverviewPage({
           </summary>
           <div className='bg-popover absolute z-10 mt-1 grid min-w-52 gap-1 rounded-xl border p-2 shadow-[0_8px_24px_rgb(20_16_12/0.12)]'>
             {[
+              ['Build stage', `${base}/build`],
               ['Checklist', `${base}/checklist`],
               ['Import', `${base}/imports`],
               ['Webhooks', `${base}/webhooks`],
