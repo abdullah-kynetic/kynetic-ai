@@ -54,13 +54,13 @@ Full local run at the end of phase B (typecheck, lint, format, unit, integration
 | #261 | C | pass | pass |
 | #262 | D | pass | pass |
 | #263 | E | pass | pass |
-| #264 | F | see PR | see PR |
+| #264 | F | pass | pass |
 
 CI run links are on each PR at https://github.com/abdullah-kynetic/kynetic-ai/pulls.
 
 ## What changed
 
-- PRs #259 to #264, all merged with merge commits (F's status is on the PR).
+- PRs #259 to #264, all merged with merge commits (final main commit 009e9d0916b45e7419fe647b1ddd717d95ca12dc).
 - One migration: 1097, adds the `shop_ops` row to `module_catalog`. No new tables.
 - 15 shop pages under `/dashboard/shop/*`: Today, Leads, Calls and texts, Calendar, Jobs, Quotes, Insurance, Team, Report, Money, Customers, Reviews, Get found, Away mode, Connections.
 - Shop data layer in `crm/src/server/shop/`, shared UI in `crm/src/components/shop/`, sample-data seeder and remove CLI (`db:seed:shop-demo`, `db:remove:shop-demo`).
