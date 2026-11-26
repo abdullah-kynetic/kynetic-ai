@@ -34,6 +34,10 @@ test('dragging a client card on the pipeline saves its stage and survives a relo
   const move = async (to: string) => {
     const column = page.getByRole('region', { name: `${to} stage` });
     await expect(async () => {
+      // With many clients the card can sit below the fold; mouse events outside the viewport do nothing.
+      await page
+        .getByRole('button', { name: `Drag ${NAME} to another stage` })
+        .scrollIntoViewIfNeeded();
       const source = await page
         .getByRole('button', { name: `Drag ${NAME} to another stage` })
         .boundingBox();
