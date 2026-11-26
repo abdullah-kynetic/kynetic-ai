@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
-import { forbidden, notFound } from 'next/navigation';
+import { forbidden } from 'next/navigation';
 import { PortalPageContainer as PageContainer } from '@/components/layout/page-container';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,7 +39,18 @@ export default async function AdminAlexConfigPage({
           .limit(1)
       )[0]
   );
-  if (!config) notFound();
+  if (!config)
+    return (
+      <PageContainer
+        pageTitle='Alex configuration'
+        pageDescription='This client has no Alex setup yet.'
+      >
+        <p className='text-muted-foreground max-w-xl text-sm'>
+          Alex is not configured for this client, so there is nothing to edit. Turn on the Alex
+          system for them on the Systems tab and the settings appear here.
+        </p>
+      </PageContainer>
+    );
   return (
     <PageContainer
       pageTitle='Alex configuration'

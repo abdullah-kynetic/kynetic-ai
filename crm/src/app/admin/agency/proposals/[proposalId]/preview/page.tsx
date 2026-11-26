@@ -4,7 +4,7 @@ import { forbidden, notFound } from 'next/navigation';
 import PageContainer from '@/components/agency/page';
 import { decideAdminAccess } from '@/server/admin';
 import { getAgencyProposal, PROPOSAL_SECTIONS } from '@/server/proposals';
-import { PRICING_PLACEHOLDER } from '@/server/proposals/pdf';
+import { pricingLines } from '@/server/proposals/pdf';
 import { ModuleDisabledError } from '@/server/modules';
 import { AppError } from '@/server/errors';
 import { isViewingAs } from '../../../../view-as-guard';
@@ -75,7 +75,9 @@ export default async function ProposalPreview({
           <h2 id='preview-pricing' className='mb-3 text-xl font-medium'>
             Pricing
           </h2>
-          <p>{PRICING_PLACEHOLDER}</p>
+          {pricingLines(data.pricing).map((line) => (
+            <p key={line}>{line}</p>
+          ))}
         </section>
       </article>
     </PageContainer>

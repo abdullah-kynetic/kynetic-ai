@@ -7,7 +7,33 @@ const SECTIONS = [
   ['roi', 'ROI']
 ] as const;
 
+/** Shown only while the deal has no saved terms (Money > Billing). */
 export const PRICING_PLACEHOLDER = 'Pricing to be confirmed';
+
+export type ProposalPricing = {
+  setupCents: number;
+  monthlyCents: number | null;
+  installments: number[];
+};
+
+const usd = (cents: number) =>
+  new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: cents % 100 === 0 ? 0 : 2
+  }).format(cents / 100);
+
+/** The pricing lines from the deal's saved terms, or the placeholder when none are saved. */
+export function pricingLines(pricing: ProposalPricing | null | undefined): string[] {
+  if (!pricing) return [PRICING_PLACEHOLDER];
+  const lines = [`Setup: ${usd(pricing.setupCents)}`];
+  if (pricing.installments.length > 1)
+    lines.push(
+      `Setup paid in ${pricing.installments.length} parts: ${pricing.installments.map(usd).join(', ')}`
+    );
+  lines.push(pricing.monthlyCents ? `Monthly: ${usd(pricing.monthlyCents)}` : 'No monthly fee');
+  return lines;
+}
 
 type ProposalPdfInput = {
   title: string;
@@ -16,6 +42,7 @@ type ProposalPdfInput = {
   solution: string;
   roadmap: string;
   roi: string;
+  pricing?: ProposalPricing | null;
 };
 
 function sectionText(value: string) {
@@ -26,7 +53,11 @@ function sectionText(value: string) {
 /** Printable PDF from the saved draft. Standard fonts only, so generation makes no network request. */
 export function renderProposalPdf(input: ProposalPdfInput): Promise<Uint8Array> {
   return new Promise((resolve, reject) => {
-    const doc = new PDFDocument({ size: 'LETTER', margin: 54, compress: false });
+    const doc = new PDFDocument({
+      size: 'LETTER',
+      margin: 54,
+      compress: false
+    });
     const chunks: Buffer[] = [];
     doc.on('data', (chunk: Buffer) => chunks.push(chunk));
     doc.on('error', reject);
@@ -51,7 +82,11 @@ export function renderProposalPdf(input: ProposalPdfInput): Promise<Uint8Array> 
     }
     doc.font('Helvetica-Bold').fontSize(13).fillColor('#111111').text('Pricing');
     doc.moveDown(0.3);
-    doc.font('Helvetica').fontSize(11).fillColor('#222222').text(PRICING_PLACEHOLDER);
+    doc
+      .font('Helvetica')
+      .fontSize(11)
+      .fillColor('#222222')
+      .text(pricingLines(input.pricing).join('\n'));
     doc.end();
   });
 }

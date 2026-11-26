@@ -1,11 +1,11 @@
 import { and, desc, eq, isNull } from 'drizzle-orm';
 import { z } from 'zod';
 import { inAgency } from '../agency';
-import { renderProposalPdf } from './pdf';
+import { renderProposalPdf, type ProposalPricing } from './pdf';
 import type { StaffCaller } from '../admin/users';
 import { audit } from '../audit';
 import type { Db, Tx } from '../db/client';
-import { agencyProposals, deals } from '../db/schema';
+import { agencyDealTerms, agencyProposals, deals } from '../db/schema';
 import { AppError } from '../errors';
 import { parseInput } from '../validation';
 
@@ -51,7 +51,9 @@ export async function openAgencyProposal(caller: StaffCaller, dealId: string, op
           createdBy: caller.id,
           updatedBy: caller.id
         })
-        .onConflictDoNothing({ target: [agencyProposals.tenantId, agencyProposals.dealId] })
+        .onConflictDoNothing({
+          target: [agencyProposals.tenantId, agencyProposals.dealId]
+        })
         .returning();
       if (created) {
         await audit(tx, {
@@ -85,7 +87,25 @@ export async function getAgencyProposal(caller: StaffCaller, id: string, opts: O
         .where(and(eq(agencyProposals.id, id), isNull(deals.deletedAt)))
         .limit(1);
       if (!row) throw new AppError('NOT_FOUND');
-      return row;
+      const [terms] = await tx
+        .select({
+          setupCents: agencyDealTerms.setupCents,
+          monthlyCents: agencyDealTerms.monthlyCents,
+          installments: agencyDealTerms.installments
+        })
+        .from(agencyDealTerms)
+        .where(eq(agencyDealTerms.dealId, row.proposal.dealId))
+        .limit(1);
+      const pricing: ProposalPricing | null = terms
+        ? {
+            setupCents: terms.setupCents,
+            monthlyCents: terms.monthlyCents,
+            installments: (terms.installments as unknown[]).filter(
+              (n): n is number => typeof n === 'number'
+            )
+          }
+        : null;
+      return { ...row, pricing };
     },
     opts
   );
@@ -180,7 +200,8 @@ export async function exportAgencyProposal(caller: StaffCaller, id: string, opts
     problem: data.proposal.problem,
     solution: data.proposal.solution,
     roadmap: data.proposal.roadmap,
-    roi: data.proposal.roi
+    roi: data.proposal.roi,
+    pricing: data.pricing
   });
   await inAgency(
     caller,

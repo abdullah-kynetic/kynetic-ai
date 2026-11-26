@@ -3,7 +3,7 @@ import { buildFinanceMonths, financeSummaryForMonth } from '@/server/agency/fina
 import { pacificDateTimeToUtc, pacificMonth } from '@/server/agency/pacific-time';
 import { productionSimulationRefused } from '@/server/agency/production-guard';
 import { agencyFinanceCsv } from '@/server/agency/finance';
-import { PRICING_PLACEHOLDER, renderProposalPdf } from '@/server/proposals/pdf';
+import { PRICING_PLACEHOLDER, pricingLines, renderProposalPdf } from '@/server/proposals/pdf';
 import {
   inspectXlsxZip,
   parseImportXlsx,
@@ -44,7 +44,12 @@ describe('finance month math', () => {
   it('neutralizes formula text in a finance CSV', () => {
     const csv = agencyFinanceCsv('expenses', {
       months: [],
-      summary: { month: '2026-11', revenueCents: 0, expenseCents: 0, netCents: 0 },
+      summary: {
+        month: '2026-11',
+        revenueCents: 0,
+        expenseCents: 0,
+        netCents: 0
+      },
       won: [],
       manual: [],
       expenses: [
@@ -97,7 +102,11 @@ describe('xlsx safety', () => {
     expect(() =>
       inspectXlsxZip(
         buildZip([
-          { name: 'xl/workbook.xml', data: Buffer.from('x'), uncompressedSize: 2_000_000_000 }
+          {
+            name: 'xl/workbook.xml',
+            data: Buffer.from('x'),
+            uncompressedSize: 2_000_000_000
+          }
         ])
       )
     ).toThrow(XlsxRejectedError);
@@ -147,5 +156,22 @@ describe('proposal pdf', () => {
     expect(text).toContain('Week 1 setup.');
     expect(text).toContain('More booked estimates.');
     expect(text).toContain(PRICING_PLACEHOLDER);
+  });
+});
+
+describe('proposal pricing lines', () => {
+  it('uses the deal terms when saved and the placeholder when not', () => {
+    expect(pricingLines(null)).toEqual([PRICING_PLACEHOLDER]);
+    expect(
+      pricingLines({
+        setupCents: 350000,
+        monthlyCents: 120000,
+        installments: [175000, 175000]
+      })
+    ).toEqual(['Setup: $3,500', 'Setup paid in 2 parts: $1,750, $1,750', 'Monthly: $1,200']);
+    expect(pricingLines({ setupCents: 50000, monthlyCents: null, installments: [] })).toEqual([
+      'Setup: $500',
+      'No monthly fee'
+    ]);
   });
 });
