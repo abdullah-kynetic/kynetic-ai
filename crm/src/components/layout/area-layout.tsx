@@ -10,12 +10,12 @@ import { HeadingLevelProvider } from './heading-level';
 export function AreaLayout({ area, children }: { area: Area; children: ReactNode }) {
   const pathname = usePathname();
   return (
-    <div className='mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 pt-2 pb-8 md:px-6 md:pt-4'>
+    <div className='mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 pt-2 pb-8 md:px-6 md:pt-4'>
       <header className='space-y-2'>
-        <h1 className='text-[28px]/[1.15] font-medium tracking-[-0.01em] md:text-[32px]/[1.1]'>
+        <h1 className='text-[22px]/[1.2] font-medium tracking-[-0.01em] md:text-[24px]/[1.2]'>
           {area.title}
         </h1>
-        <p className='text-muted-foreground text-[15px]'>{area.description}</p>
+        <p className='text-muted-foreground text-sm'>{area.description}</p>
       </header>
       {area.tabs.length > 0 && (
         <nav

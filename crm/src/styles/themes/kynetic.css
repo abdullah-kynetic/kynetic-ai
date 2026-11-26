@@ -70,9 +70,9 @@
   --neutral: #5c5650;
   --neutral-soft: #f2eee8;
   --surface-sunken: #f4f0ea;
-  --radius-card: 1.25rem;
-  --radius-panel: 1rem;
-  --radius-control: 0.75rem;
+  --radius-card: 0.75rem;
+  --radius-panel: 0.625rem;
+  --radius-control: 0.5rem;
   --shadow-popover: 0 8px 24px rgb(20 16 12 / 12%), 0 0 0 1px #e8e2d8;
 }
 

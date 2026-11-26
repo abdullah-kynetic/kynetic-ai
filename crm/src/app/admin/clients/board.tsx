@@ -51,7 +51,7 @@ function Card({ card, canMove }: { card: ClientCard; canMove: boolean }) {
     <div
       ref={setNodeRef}
       style={{ transform: CSS.Translate.toString(transform) }}
-      className={`bg-card rounded-lg border p-3 ${isDragging ? 'z-10 opacity-70 shadow-md' : ''}`}
+      className={`bg-card rounded-md border p-2.5 text-sm ${isDragging ? 'z-10 opacity-70 shadow-md' : ''}`}
     >
       <button
         type='button'
@@ -60,7 +60,7 @@ function Card({ card, canMove }: { card: ClientCard; canMove: boolean }) {
         {...listeners}
       >
         <span className='block font-medium'>{card.name}</span>
-        <span className='ticket-meta mt-2 block border-t border-dashed pt-2'>
+        <span className='ticket-meta mt-1.5 block border-t border-dashed pt-1.5'>
           {card.plan} · Health {card.health}
         </span>
         <span className='sr-only'>

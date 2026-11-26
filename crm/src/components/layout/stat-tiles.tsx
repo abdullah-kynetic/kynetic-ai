@@ -29,16 +29,16 @@ export function StatTiles({
   return (
     <ul
       aria-label={label}
-      className={`grid grid-cols-2 gap-3 sm:gap-4 ${wide} [&>li]:min-w-0 ${className ?? ''}`}
+      className={`grid grid-cols-2 gap-3 sm:gap-4 ${wide} [&>li]:min-w-0 [&>li:last-child:nth-child(odd)]:col-span-2 lg:[&>li:last-child:nth-child(odd)]:col-span-1 ${className ?? ''}`}
     >
       {tiles.map((tile) => (
         <li
           key={tile.label}
-          className='bg-card flex flex-col gap-1 rounded-[var(--radius-card)] border p-4 sm:p-5'
+          className='bg-card flex flex-col gap-1 rounded-[var(--radius-card)] border p-3 sm:p-4'
         >
           <span className='text-muted-foreground text-[13px] leading-5'>{tile.label}</span>
           <span
-            className={`text-[28px]/8 font-medium tracking-[-0.01em] tabular-nums ${tile.key ? 'text-primary-text' : ''}`}
+            className={`text-2xl/8 font-medium tracking-[-0.01em] tabular-nums ${tile.key ? 'text-primary-text' : ''}`}
           >
             {tile.value}
           </span>

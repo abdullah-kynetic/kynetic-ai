@@ -20,14 +20,11 @@ export function PageHeader({
         {createElement(
           tag,
           {
-            className:
-              'text-[28px]/[1.15] font-medium tracking-[-0.01em] md:text-[32px]/[1.1] md:tracking-[-0.015em]'
+            className: 'text-[22px]/[1.2] font-medium tracking-[-0.01em] md:text-[24px]/[1.2]'
           },
           title
         )}
-        {description ? (
-          <p className='text-muted-foreground mt-1 text-[15px]'>{description}</p>
-        ) : null}
+        {description ? <p className='text-muted-foreground mt-0.5 text-sm'>{description}</p> : null}
       </div>
       {actions ? <div className='flex shrink-0 items-center gap-2'>{actions}</div> : null}
     </header>
